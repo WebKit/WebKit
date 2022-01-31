@@ -1178,7 +1178,6 @@ $(PROJECT_DIR)/html/HTMLIFrameElement.idl
 $(PROJECT_DIR)/html/HTMLImageElement+CSSOMView.idl
 $(PROJECT_DIR)/html/HTMLImageElement.idl
 $(PROJECT_DIR)/html/HTMLInputElement.idl
-$(PROJECT_DIR)/html/HTMLKeygenElement.idl
 $(PROJECT_DIR)/html/HTMLLIElement.idl
 $(PROJECT_DIR)/html/HTMLLabelElement.idl
 $(PROJECT_DIR)/html/HTMLLegendElement.idl

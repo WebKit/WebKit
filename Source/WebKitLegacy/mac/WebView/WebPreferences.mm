@@ -2688,16 +2688,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitCustomPasteboardDataEnabledPreferenceKey];
 }
 
-- (BOOL)keygenElementEnabled
-{
-    return [self _boolValueForKey:WebKitKeygenElementEnabledPreferenceKey];
-}
-
-- (void)setKeygenElementEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitKeygenElementEnabledPreferenceKey];
-}
-
 - (BOOL)cacheAPIEnabled
 {
     return [self _boolValueForKey:WebKitCacheAPIEnabledPreferenceKey];
@@ -3436,6 +3426,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (BOOL)customElementsEnabled
 {
     return YES;
+}
+
+- (BOOL)keygenElementEnabled
+{
+    return false;
+}
+
+- (void)setKeygenElementEnabled:(BOOL)flag
+{
 }
 
 - (void)setVideoPluginProxyEnabled:(BOOL)flag

@@ -11,7 +11,7 @@ PASS typeof document.getElementsByTagName("select")[0].setCustomValidity is "fun
 PASS typeof document.getElementsByTagName("textarea")[0].setCustomValidity is "function"
 PASS typeof document.getElementsByTagName("output")[0].setCustomValidity is "function"
 PASS typeof document.getElementsByTagName("object")[0].setCustomValidity is "function"
-PASS typeof document.getElementsByTagName("keygen")[0].setCustomValidity is "function"
+PASS typeof document.getElementsByTagName("keygen")[0].setCustomValidity is "undefined"
 PASS successfullyParsed is true
 
 TEST COMPLETE

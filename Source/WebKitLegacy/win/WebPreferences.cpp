@@ -2116,13 +2116,12 @@ HRESULT WebPreferences::keygenElementEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitKeygenElementEnabledPreferenceKey);
+    *enabled = false;
     return S_OK;
 }
 
-HRESULT WebPreferences::setKeygenElementEnabled(BOOL enabled)
+HRESULT WebPreferences::setKeygenElementEnabled(BOOL)
 {
-    setBoolValue(WebKitKeygenElementEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

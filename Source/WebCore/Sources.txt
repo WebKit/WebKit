@@ -1234,7 +1234,6 @@ html/HTMLIFrameElement.cpp
 html/HTMLImageElement.cpp
 html/HTMLImageLoader.cpp
 html/HTMLInputElement.cpp
-html/HTMLKeygenElement.cpp
 html/HTMLLIElement.cpp
 html/HTMLLabelElement.cpp
 html/HTMLLegendElement.cpp
@@ -3329,7 +3328,6 @@ JSHTMLHyperlinkElementUtils.cpp
 JSHTMLIFrameElement.cpp
 JSHTMLImageElement.cpp
 JSHTMLInputElement.cpp
-JSHTMLKeygenElement.cpp
 JSHTMLLIElement.cpp
 JSHTMLLabelElement.cpp
 JSHTMLLegendElement.cpp

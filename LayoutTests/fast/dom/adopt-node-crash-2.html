@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <div>Tests for a crash due to adopting a DOM node when unfocusing. Test passes if it doesn't crash.</div>
 <script>
@@ -29,9 +29,9 @@ function assert_true(assert, text) {
 }
 
 function doit() {
-    assert_true(document.activeElement == keygen, "Focused node should be keygen");
+    assert_true(document.activeElement != keygen, "Focused node should not be keygen");
     div1.outerHTML = header1.outerHTML;
-    assert_true(document.activeElement != keygen, "Focused node should no longer be keygen");
+    assert_true(document.activeElement != keygen, "Focused node should not be keygen");
     document.implementation.createDocument("", "", null).adoptNode(div2);
     if (window.internals)
         internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();

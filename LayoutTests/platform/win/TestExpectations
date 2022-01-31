@@ -2462,9 +2462,6 @@ webkit.org/b/138041 fast/borders/fieldsetBorderRadius.html [ Failure ]
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
-# fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
-fast/html/keygen.html [ Failure ]
-
 # Sometimes times out
 fast/frames/flattening/scrolling-in-object.html [ Skip ] # Crashing
 fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
@@ -4001,8 +3998,6 @@ webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Fail
 webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
 
 webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
-
-webkit.org/b/184428 http/tests/misc/submit-post-keygen.html [ Skip ]
 
 webkit.org/b/185075 css3/color-filters/color-filter-backgrounds-borders.html [ ImageOnlyFailure ]
 webkit.org/b/185075 css3/color-filters/color-filter-box-shadow.html [ ImageOnlyFailure ]

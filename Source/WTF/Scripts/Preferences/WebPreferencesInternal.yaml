@@ -472,18 +472,6 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
     WebCore:
       default: false
 
-KeygenElementEnabled:
-  type: bool
-  webKitLegacyPreferenceKey: WebKitKeygenElementEnabledPreferenceKey
-  webcoreBinding: RuntimeEnabledFeatures
-  humanReadableName: "HTMLKeygenElement"
-  humanReadableDescription: "Enables the deprecated and disabled-by-default HTML keygen element."
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 LayerBasedSVGEngineEnabled:
   type: bool
   humanReadableName: "Layer-based SVG Engine (LBSE)"

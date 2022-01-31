@@ -72,7 +72,7 @@ img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 kbd interfaceName=HTMLElement
-keygen constructorNeedsFormElement, runtimeEnabled=keygenElement
+keygen interfaceName=HTMLUnknownElement
 label
 layer interfaceName=HTMLElement
 legend

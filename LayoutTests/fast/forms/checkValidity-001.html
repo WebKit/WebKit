@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -26,7 +26,7 @@ shouldBe('document.getElementsByTagName("select")[0].checkValidity()', 'true');
 shouldBe('document.getElementsByTagName("textarea")[0].checkValidity()', 'true');
 shouldBe('document.getElementsByTagName("output")[0].checkValidity()', 'true');
 shouldBe('document.getElementsByTagName("object")[0].checkValidity()', 'true');
-shouldBe('document.getElementsByTagName("keygen")[0].checkValidity()', 'true');
+shouldThrow('document.getElementsByTagName("keygen")[0].checkValidity()');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

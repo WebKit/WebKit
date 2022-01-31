@@ -1,5 +1,130 @@
 2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Delete code for keygen element
+        https://bugs.webkit.org/show_bug.cgi?id=235867
+
+        Reviewed by Antti Koivisto.
+
+        Deleted the relevant keygen tests and rebaselined other tests.
+
+        Most of the tests that happens to test keygen elements along side other form control elements
+        have been updated to expect keygen to behave like HTMLUnknownElement as expected.
+
+        * accessibility/content-changed-notification-causes-crash.html:
+        * accessibility/contenteditable-table-check-causes-crash.html:
+        * accessibility/duplicate-axrenderobject-crash-expected.txt:
+        * accessibility/duplicate-axrenderobject-crash.html:
+        * fast/block/float/float-not-removed-from-first-letter-expected.txt:
+        * fast/block/float/float-not-removed-from-first-letter.html:
+        * fast/block/float/split-inline-sibling-of-float-crash.html:
+        * fast/css/pseudo-required-optional-unapplied.html:
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html:
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt: Removed.
+        * fast/dom/HTMLKeygenElement/keygen-keytype-expected.txt: Removed.
+        * fast/dom/HTMLKeygenElement/keygen-keytype.html: Removed.
+        * fast/dom/HTMLKeygenElement/keygen.html: Removed.
+        * fast/dom/adopt-node-crash-2-expected.txt:
+        * fast/dom/adopt-node-crash-2.html:
+        * fast/dom/attribute-set-before-element-in-tree.html:
+        * fast/dom/domstring-attribute-reflection-expected.txt:
+        * fast/dom/domstring-attribute-reflection.html:
+        * fast/dom/set-custom-validity-with-too-few-arguments-expected.txt:
+        * fast/dom/set-custom-validity-with-too-few-arguments.html:
+        * fast/dom/tabindex-defaults-expected.txt:
+        * fast/dom/tabindex-defaults.html:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/dynamic/insertAdjacentHTML-allowed-parents.html:
+        * fast/flexbox/crash-button-keygen.html:
+        * fast/forms/ValidityState-001-expected.txt:
+        * fast/forms/ValidityState-001.html:
+        * fast/forms/autofocus-keygen-expected.txt: Removed.
+        * fast/forms/autofocus-keygen.html: Removed.
+        * fast/forms/checkValidity-001-expected.txt:
+        * fast/forms/checkValidity-001.html:
+        * fast/forms/fieldset/fieldset-elements-expected.txt:
+        * fast/forms/fieldset/fieldset-elements-htmlcollection-expected.txt:
+        * fast/forms/fieldset/fieldset-elements-htmlcollection.html:
+        * fast/forms/fieldset/fieldset-elements.html:
+        * fast/forms/form-associated-element-crash3.html:
+        * fast/forms/form-attribute-expected.txt:
+        * fast/forms/form-attribute.html:
+        * fast/forms/form-collection-elements-expected.txt:
+        * fast/forms/form-collection-elements-order-expected.txt:
+        * fast/forms/form-collection-elements-order.html:
+        * fast/forms/form-collection-elements.html:
+        * fast/forms/form-collection-radio-node-list-expected.txt:
+        * fast/forms/form-collection-radio-node-list.html:
+        * fast/forms/label/labelable-elements-expected.txt:
+        * fast/forms/label/labelable-elements.html:
+        * fast/forms/label/labels-add-htmlFor-label-expected.txt:
+        * fast/forms/label/labels-add-htmlFor-label.html:
+        * fast/forms/label/labels-add-parent-label-expected.txt:
+        * fast/forms/label/labels-add-parent-label.html:
+        * fast/forms/label/labels-change-htmlFor-attribute-expected.txt:
+        * fast/forms/label/labels-change-htmlFor-attribute.html:
+        * fast/forms/label/labels-multiple-sibling-labels-expected.txt:
+        * fast/forms/label/labels-multiple-sibling-labels.html:
+        * fast/forms/label/labels-parent-and-sibling-labels-expected.txt:
+        * fast/forms/label/labels-parent-and-sibling-labels.html:
+        * fast/forms/label/labels-remove-htmlFor-attribute-expected.txt:
+        * fast/forms/label/labels-remove-htmlFor-attribute.html:
+        * fast/forms/label/labels-remove-htmlFor-label-expected.txt:
+        * fast/forms/label/labels-remove-htmlFor-label.html:
+        * fast/forms/label/labels-remove-parent-label-expected.txt:
+        * fast/forms/label/labels-remove-parent-label.html:
+        * fast/forms/large-parts.html:
+        * fast/forms/resources/common.js:
+        (createFormControlDataSet): Removed keygen form the list of form control elements.
+        * fast/forms/scrollheight-with-mutation-crash.html:
+        * fast/forms/setCustomValidity-arguments-expected.txt:
+        * fast/forms/setCustomValidity-arguments.html:
+        * fast/forms/setCustomValidity-existence-expected.txt:
+        * fast/forms/setCustomValidity-existence.html:
+        * fast/forms/setCustomValidity-null-parameter-expected.txt:
+        * fast/forms/setCustomValidity-null-parameter.html:
+        * fast/forms/state-restore-skip-stateless.html:
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure.html:
+        * fast/forms/validationMessage-expected.txt:
+        * fast/forms/validationMessage.html:
+        * fast/forms/willvalidate-expected.txt:
+        * fast/forms/willvalidate.html:
+        * fast/html/clone-keygen-expected.txt: Removed.
+        * fast/html/clone-keygen.html: Removed.
+        * fast/html/keygen.html: Removed.
+        * fast/html/marquee-reparent-check.html:
+        * fast/invalid/residual-style-expected.html:
+        * fast/invalid/residual-style.html:
+        * fast/multicol/span/positioned-child-not-removed-crash-expected.txt:
+        * fast/multicol/span/positioned-child-not-removed-crash.html:
+        * fast/ruby/float-object-doesnt-crash.html:
+        * fast/shadow-dom/keygen-shadow-manipulation-expected.txt:
+        * fast/shadow-dom/keygen-shadow-manipulation.html:
+        * fast/table/crash-splitColumn-2.html:
+        * fast/table/multiple-captions-crash3-expected.html:
+        * fast/table/multiple-captions-crash3.html:
+        * http/tests/misc/resources/check-keygen-post.py: Removed.
+        * http/tests/misc/submit-post-keygen-expected.txt: Removed.
+        * http/tests/misc/submit-post-keygen.html: Removed.
+        * imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow-expected.html: Removed.
+        * imported/blink/fast/dom/shadow/shadowdom-for-keygen-only-shadow.html: Removed.
+        * imported/blink/fast/text/international-iteration-simple-text.html:
+        * platform/glib/fast/html/keygen-expected.txt: Removed.
+        * platform/gtk/fast/forms/label/labelable-elements-expected.txt:
+        * platform/gtk/fast/html/keygen-expected.png: Removed.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/fast/forms/label/labelable-elements-expected.txt:
+        * platform/ios/fast/html/keygen-expected.txt: Removed.
+        * platform/mac-wk2/fast/forms/label/labelable-elements-expected.txt:
+        * platform/mac/fast/html/keygen-expected.png: Removed.
+        * platform/mac/fast/html/keygen-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/wincairo/fast/html/keygen-expected.txt: Removed.
+        * svg/dom/css-animate-input-foucs-crash-expected.txt:
+        * svg/dom/css-animate-input-foucs-crash.html:
+
+2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Delete runtime preference for enabling input events
         https://bugs.webkit.org/show_bug.cgi?id=235864
 

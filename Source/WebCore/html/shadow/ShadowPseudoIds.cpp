@@ -135,12 +135,6 @@ const AtomString& webkitInnerSpinButton()
     return webkitInnerSpinButton;
 }
 
-const AtomString& webkitKeygenSelect()
-{
-    static MainThreadNeverDestroyed<const AtomString> webkitKeygenSelect("-webkit-keygen-select", AtomString::ConstructFromLiteral);
-    return webkitKeygenSelect;
-}
-
 const AtomString& webkitListButton()
 {
     static MainThreadNeverDestroyed<const AtomString> webkitListButton("-webkit-list-button", AtomString::ConstructFromLiteral);

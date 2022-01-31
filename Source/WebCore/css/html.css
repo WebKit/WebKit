@@ -377,11 +377,11 @@ button {
 }
 
 /* Form controls don't go vertical. */
-input, textarea, keygen, select, button, meter, progress {
+input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
 }
 
-input, textarea, keygen, select, button {
+input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     font: -webkit-small-control;
@@ -708,12 +708,8 @@ input::-webkit-list-button {
 }
 #endif
 
-keygen, select {
+select {
     border-radius: 5px;
-}
-
-keygen::-webkit-keygen-select {
-    margin: 0px;
 }
 
 textarea {
@@ -911,7 +907,7 @@ input[readonly], textarea[readonly] {
 
 input:is([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button, button:disabled,
-select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
+select:disabled, optgroup:disabled, option:disabled,
 select[disabled]>option {
     color: GrayText;
 }
@@ -1272,7 +1268,7 @@ html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe
 }
 
 #if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
-input:focus, textarea:focus, keygen:focus, select:focus {
+input:focus, textarea:focus, select:focus {
     outline-offset: -2px;
 }
 #endif

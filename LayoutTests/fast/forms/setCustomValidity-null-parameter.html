@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <body>
 <script src="../../resources/testharness.js"></script>
@@ -74,7 +74,6 @@ testFormControl(document.createElement("textarea"), "textarea Element");
 
 // The following controls are not validated in WebKit (only object seems to be barred from validation in the specification).
 testFormControlBarredFromValidation(document.createElement("fieldset"), "fieldset Element");
-testFormControlBarredFromValidation(document.createElement("keygen"), "keygen Element");
 testFormControlBarredFromValidation(document.createElement("object"), "object Element");
 testFormControlBarredFromValidation(document.createElement("output"), "output Element");
 

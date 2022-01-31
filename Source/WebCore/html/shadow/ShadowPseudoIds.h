@@ -58,8 +58,6 @@ const AtomString& webkitGenericCueRoot();
 
 const AtomString& webkitInnerSpinButton();
 
-const AtomString& webkitKeygenSelect();
-
 const AtomString& webkitListButton();
 
 const AtomString& webkitMediaSliderThumb();

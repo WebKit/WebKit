@@ -173,8 +173,6 @@ namespace WebCore {
     macro(HTMLDataListElement) \
     macro(HTMLMenuItemElement) \
     macro(HTMLModelElement) \
-    macro(HTMLKeygenElement) \
-    macro(HTMLSlotElement) \
     macro(Headers) \
     macro(IDBCursor) \
     macro(IDBCursorWithValue) \

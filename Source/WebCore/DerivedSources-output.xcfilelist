@@ -1263,8 +1263,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLInputElement+EntriesAPI.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLInputElement+EntriesAPI.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLInputElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLInputElement.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLKeygenElement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLKeygenElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLLIElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLLIElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLLabelElement.cpp

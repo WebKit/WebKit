@@ -848,7 +848,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLImageElement.h
     html/HTMLImageLoader.h
     html/HTMLInputElement.h
-    html/HTMLKeygenElement.h
     html/HTMLLIElement.h
     html/HTMLLabelElement.h
     html/HTMLLegendElement.h

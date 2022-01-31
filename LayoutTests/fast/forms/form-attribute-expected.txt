@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS document.getElementsByTagName("button")[0].form is owner
 PASS document.getElementsByTagName("fieldset")[0].form is owner
 PASS document.getElementsByTagName("input")[0].form is owner
-PASS document.getElementsByTagName("keygen")[0].form is owner
+PASS document.getElementsByTagName("keygen")[0].form is undefined.
 PASS document.getElementsByTagName("label")[0].form is null
 PASS document.getElementsByTagName("object")[0].form is owner
 PASS document.getElementsByTagName("output")[0].form is owner

@@ -11,7 +11,7 @@ PASS document.getElementsByTagName("select")[0].checkValidity() is true
 PASS document.getElementsByTagName("textarea")[0].checkValidity() is true
 PASS document.getElementsByTagName("output")[0].checkValidity() is true
 PASS document.getElementsByTagName("object")[0].checkValidity() is true
-PASS document.getElementsByTagName("keygen")[0].checkValidity() is true
+PASS document.getElementsByTagName("keygen")[0].checkValidity() threw exception TypeError: document.getElementsByTagName("keygen")[0].checkValidity is not a function. (In 'document.getElementsByTagName("keygen")[0].checkValidity()', 'document.getElementsByTagName("keygen")[0].checkValidity' is undefined).
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1022,7 +1022,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLImageElement+CSSOMView.idl \
     $(WebCore)/html/HTMLImageElement.idl \
     $(WebCore)/html/HTMLInputElement.idl \
-    $(WebCore)/html/HTMLKeygenElement.idl \
     $(WebCore)/html/HTMLLIElement.idl \
     $(WebCore)/html/HTMLLabelElement.idl \
     $(WebCore)/html/HTMLLegendElement.idl \

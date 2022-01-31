@@ -1,3 +1,21 @@
+2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete code for keygen element
+        https://bugs.webkit.org/show_bug.cgi?id=235867
+
+        Reviewed by Antti Koivisto and Darin Adler.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRequestVideoFrameCallbackEnabled):
+        (WKPreferencesGetRequestVideoFrameCallbackEnabled):
+        (WKPreferencesSetKeygenElementEnabled):
+        (WKPreferencesGetKeygenElementEnabled):
+        (WKPreferencesGetXSSAuditorEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/Automation/atoms/ElementAttribute.js:
+        (isBooleanAttribute):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPrivate.cpp:
+
 2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete runtime preference for enabling request animation frame

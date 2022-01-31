@@ -128,9 +128,6 @@ public:
     void setWebSQLEnabled(bool isEnabled) { m_webSQLEnabled = isEnabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
 
-    void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
-    bool keygenElementEnabled() const { return m_keygenElementEnabled; }
-
     void setHighlightAPIEnabled(bool isEnabled) { m_highlightAPIEnabled = isEnabled; }
     bool highlightAPIEnabled() const { return m_highlightAPIEnabled; }
 

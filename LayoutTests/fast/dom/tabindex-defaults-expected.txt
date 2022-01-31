@@ -11,7 +11,7 @@ PASS button.tabIndex is 0
 PASS input.tabIndex is 0
 PASS select.tabIndex is 0
 PASS textarea.tabIndex is 0
-PASS keygen.tabIndex is 0
+PASS keygen.tabIndex is -1
 PASS activeSummary.tabIndex is 0
 PASS editableDiv.tabIndex is -1
 PASS normalDiv.tabIndex is -1
@@ -31,7 +31,7 @@ PASS button.setAttribute("tabindex", "invalid"); button.tabIndex is 0
 PASS input.setAttribute("tabindex", "invalid"); input.tabIndex is 0
 PASS select.setAttribute("tabindex", "invalid"); select.tabIndex is 0
 PASS textarea.setAttribute("tabindex", "invalid"); textarea.tabIndex is 0
-PASS keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex is 0
+PASS keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex is -1
 PASS activeSummary.setAttribute("tabindex", "invalid"); activeSummary.tabIndex is 0
 PASS editableDiv.setAttribute("tabindex", "invalid"); editableDiv.tabIndex is -1
 PASS normalDiv.setAttribute("tabindex", "invalid"); normalDiv.tabIndex is -1
@@ -51,7 +51,7 @@ PASS button.setAttribute("tabindex", "9999999999"); button.tabIndex is 0
 PASS input.setAttribute("tabindex", "9999999999"); input.tabIndex is 0
 PASS select.setAttribute("tabindex", "9999999999"); select.tabIndex is 0
 PASS textarea.setAttribute("tabindex", "9999999999"); textarea.tabIndex is 0
-PASS keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex is 0
+PASS keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex is -1
 PASS activeSummary.setAttribute("tabindex", "9999999999"); activeSummary.tabIndex is 0
 PASS editableDiv.setAttribute("tabindex", "9999999999"); editableDiv.tabIndex is -1
 PASS normalDiv.setAttribute("tabindex", "9999999999"); normalDiv.tabIndex is -1

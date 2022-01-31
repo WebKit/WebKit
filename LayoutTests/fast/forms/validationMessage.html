@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -100,7 +100,7 @@ shouldBe("happyObject.validationMessage", "''");
 var happyKeygen = document.createElement("keygen");
 happySelect.name = "keygen";
 form.appendChild(happyKeygen);
-shouldBe("happyKeygen.validationMessage", "''");
+shouldBeUndefined("happyKeygen.validationMessage");
 
 form.remove();
 </script>

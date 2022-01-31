@@ -18,9 +18,6 @@ PASS element.labels is not null
 Labelable: input [object HTMLInputElement]
 PASS element.labels.length is 1
 
-Labelable: keygen [object HTMLKeygenElement]
-PASS element.labels.length is 1
-
 Not labelable: label [object HTMLLabelElement]
 PASS element.labels is undefined.
 PASS element.labels is not null

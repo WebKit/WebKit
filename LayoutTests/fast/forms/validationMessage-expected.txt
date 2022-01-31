@@ -17,7 +17,7 @@ PASS happyFieldset.validationMessage is ''
 PASS happySelect.validationMessage is ''
 PASS happyOutput.validationMessage is ''
 PASS happyObject.validationMessage is ''
-PASS happyKeygen.validationMessage is ''
+PASS happyKeygen.validationMessage is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

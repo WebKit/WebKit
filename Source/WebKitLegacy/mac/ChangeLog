@@ -1,3 +1,15 @@
+2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling keygen element
+        https://bugs.webkit.org/show_bug.cgi?id=235867
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences keygenElementEnabled]):
+        (-[WebPreferences setKeygenElementEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete runtime preference for enabling request animation frame

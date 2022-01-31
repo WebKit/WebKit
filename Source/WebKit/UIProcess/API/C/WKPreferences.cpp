@@ -1595,16 +1595,6 @@ bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->customPasteboardDataEnabled();
 }
 
-void WKPreferencesSetKeygenElementEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setKeygenElementEnabled(flag);
-}
-
-bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->keygenElementEnabled();
-}
-
 void WKPreferencesSetWebShareEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebShareEnabled(flag);
@@ -2055,6 +2045,16 @@ void WKPreferencesSetShouldUseServiceWorkerShortTimeout(WKPreferencesRef prefere
     WebKit::toImpl(preferencesRef)->setShouldUseServiceWorkerShortTimeout(enabled);
 }
 
+void WKPreferencesSetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setRequestVideoFrameCallbackEnabled(enabled);
+}
+
+bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->requestVideoFrameCallbackEnabled();
+}
+
 
 // The following are all deprecated and do nothing. They should be removed when possible.
 
@@ -2072,6 +2072,15 @@ void WKPreferencesSetIgnoreViewportScalingConstraints(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetKeygenElementEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef preferencesRef)
 {
     return false;
 }
@@ -2213,14 +2222,4 @@ void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef)
 {
     return false;
-}
-
-void WKPreferencesSetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setRequestVideoFrameCallbackEnabled(enabled);
-}
-
-bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->requestVideoFrameCallbackEnabled();
 }
