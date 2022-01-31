@@ -1,3 +1,23 @@
+2022-01-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Collapsed ranges return zero rects in DocumentContext
+        https://bugs.webkit.org/show_bug.cgi?id=235844
+
+        Reviewed by Tim Horton.
+
+        Test: DocumentEditingContext.RectsRequestInContentEditableWithDivBreaks
+
+        When getting the DocumentContext for a line, followed by a blank line, the blank link will 
+        be represented by a collapsed range. This is a result of the emitCharacter call from representNodeOffsetZero.
+        This possibly a bug, but rather than try and fix this issue within TextIterator itself, we are
+        mitigating this issue by instead of using the collapsed range and the resulting non-existent character rect,
+        using the caret bounding rect. This gives us a more accurate bounding rect for situations like
+        this that result in collapsed ranges. And this would cover all other situations that might result in
+        a collapsed range from TextIterator. 
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2022-01-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Crash in WebKit::WebInspectorUIProxy::attachmentViewDidChange
