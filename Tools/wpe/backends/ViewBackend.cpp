@@ -31,7 +31,7 @@ ViewBackend::ViewBackend(uint32_t width, uint32_t height)
     : m_width(width)
     , m_height(height)
 {
-    wpe_loader_init("libWPEBackend-fdo-1.0.so");
+    wpe_loader_init(WPE_BACKEND);
 }
 
 ViewBackend::~ViewBackend() = default;

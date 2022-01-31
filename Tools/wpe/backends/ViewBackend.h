@@ -26,24 +26,10 @@
 #pragma once
 
 #include <memory>
-#include <wpe/fdo.h>
+#include <wpe/wpe.h>
 
 #if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 typedef struct _AtkObject AtkObject;
-#endif
-
-typedef void* EGLConfig;
-typedef void* EGLContext;
-typedef void* EGLDisplay;
-struct wpe_fdo_egl_exported_image;
-
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-struct wpe_fdo_shm_exported_buffer;
-#endif
-
-// Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
-#ifndef EGL_CAST
-#define EGL_CAST(type, value) (static_cast<type>(value))
 #endif
 
 namespace WPEToolingBackends {

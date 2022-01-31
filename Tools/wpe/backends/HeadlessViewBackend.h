@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +27,23 @@
 #pragma once
 
 #include "ViewBackend.h"
+
+#if defined(WPE_BACKEND_FDO)
+#include <wpe/fdo.h>
+
+using PlatformBuffer = struct wpe_fdo_shm_exported_buffer*;
+using PlatformViewBackend = struct wpe_view_backend_exportable_fdo*;
+#endif
+
+#if defined(USE_CAIRO) && USE_CAIRO
 #include <cairo.h>
+
+using PlatformImage = cairo_surface_t*;
+#endif
+
+#if defined(USE_GLIB) && USE_GLIB
 #include <glib.h>
+#endif
 
 namespace WPEToolingBackends {
 
@@ -38,10 +54,10 @@ public:
 
     struct wpe_view_backend* backend() const override;
 
-    cairo_surface_t* snapshot();
+    PlatformImage snapshot();
 
 private:
-    void updateSnapshot(struct wpe_fdo_shm_exported_buffer*);
+    void updateSnapshot(PlatformBuffer);
     void vsync();
 
 #if WPE_CHECK_VERSION(1, 11, 1)
@@ -49,15 +65,15 @@ private:
     void dispatchFullscreenEvent();
 #endif
 
+    PlatformViewBackend m_exportable { nullptr };
+    PlatformImage m_snapshot { nullptr };
 
-    struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
-
-    cairo_surface_t* m_snapshot { nullptr };
-
+#if defined(USE_GLIB) && USE_GLIB
     struct {
         GSource* source { nullptr };
         bool pending { false };
     } m_update;
+#endif
 
 #if WPE_CHECK_VERSION(1, 11, 1)
     bool m_is_fullscreen { false };

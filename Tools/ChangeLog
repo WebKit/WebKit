@@ -1,3 +1,40 @@
+2022-01-31  Don Olmstead  <don.olmstead@sony.com>
+
+        Support additional WPEToolingBackend types
+        https://bugs.webkit.org/show_bug.cgi?id=235745
+
+        Reviewed by Adrian Perez de Castro.
+
+        Split up code specific to the fdo backend to allow for additional WPE backend types to be
+        used. Add some platform defines based on the underlying backend.
+
+        This is a precursor to landing a PlayStation variant.
+
+        * wpe/backends/CMakeLists.txt:
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessInstance::singleton): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::backend const): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::snapshot): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::updateSnapshot): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::vsync): Deleted.
+        * wpe/backends/HeadlessViewBackend.h:
+        * wpe/backends/PlatformWPE.cmake:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::ViewBackend):
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/fdo/HeadlessViewBackendFdo.cpp: Copied from Tools/wpe/backends/HeadlessViewBackend.cpp.
+        (WPEToolingBackends::HeadlessInstance::singleton):
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::backend const):
+        (WPEToolingBackends::HeadlessViewBackend::snapshot):
+        (WPEToolingBackends::HeadlessViewBackend::updateSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::vsync):
+        * wpe/backends/fdo/WindowViewBackend.cpp: Renamed from Tools/wpe/backends/WindowViewBackend.cpp.
+        * wpe/backends/fdo/WindowViewBackend.h: Renamed from Tools/wpe/backends/WindowViewBackend.h.
+
 2022-01-31  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] No longer updating due to expired GPG key

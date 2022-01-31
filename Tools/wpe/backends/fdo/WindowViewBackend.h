@@ -29,9 +29,20 @@
 #include "xdg-shell-unstable-v6-client-protocol.h"
 #include <glib.h>
 #include <unordered_map>
+#include <wpe/fdo.h>
 
+typedef void* EGLConfig;
+typedef void* EGLContext;
+typedef void* EGLDisplay;
 typedef void* EGLSurface;
-typedef struct wl_egl_window  *EGLNativeWindowType;
+typedef struct wl_egl_window *EGLNativeWindowType;
+
+// Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
+#ifndef EGL_CAST
+#define EGL_CAST(type, value) (static_cast<type>(value))
+#endif
+
+struct wpe_fdo_egl_exported_image;
 
 namespace WPEToolingBackends {
 
