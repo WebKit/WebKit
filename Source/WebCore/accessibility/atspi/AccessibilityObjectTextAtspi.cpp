@@ -363,9 +363,10 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
+    String maskedText = m_coreObject->isPasswordField() ? utf16Text.substring(utf16Offset - insertedText.length(), insertedText.length()) : String();
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
-    auto utf8InsertedText = insertedText.utf8();
+    auto utf8InsertedText = maskedText.isNull() ? insertedText.utf8() : maskedText.utf8();
     auto insertedTextLength = g_utf8_strlen(utf8InsertedText.data(), -1);
     AccessibilityAtspi::singleton().textChanged(*this, "insert", WTFMove(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }

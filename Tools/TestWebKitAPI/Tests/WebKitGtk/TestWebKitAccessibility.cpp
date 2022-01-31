@@ -1302,6 +1302,44 @@ static void testTextIterator(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(range->content, ==, "field");
     g_assert_cmpint(range->start_offset, ==, 14);
     g_assert_cmpint(range->end_offset, ==, 19);
+
+    // Password field now.
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <input type='password' value='password value'/>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
+
+    section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(input.get()));
+    length = atspi_text_get_character_count(ATSPI_TEXT(input.get()), nullptr);
+    g_assert_cmpint(length, ==, 14);
+    text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), 0, length, nullptr));
+    g_assert_cmpstr(text.get(), ==, "••••••••••••••");
+
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 0, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "•");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 1);
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 13, ATSPI_TEXT_GRANULARITY_CHAR, nullptr));
+    g_assert_cmpstr(range->content, ==, "•");
+    g_assert_cmpint(range->start_offset, ==, 13);
+    g_assert_cmpint(range->end_offset, ==, 14);
+
+    range.reset(atspi_text_get_string_at_offset(ATSPI_TEXT(input.get()), 0, ATSPI_TEXT_GRANULARITY_WORD, nullptr));
+    g_assert_cmpstr(range->content, ==, "••••••••••••••");
+    g_assert_cmpint(range->start_offset, ==, 0);
+    g_assert_cmpint(range->end_offset, ==, 14);
 }
 
 static void testTextExtents(AccessibilityTest* test, gconstpointer)
@@ -1363,6 +1401,7 @@ static void testTextSelections(AccessibilityTest* test, gconstpointer)
         "  <body>"
         "    <p>This is a line of text</p>"
         "    <input value='This is text input value'/>"
+        "    <input type='password' value='secret'/>"
         "  </body>"
         "</html>",
         nullptr);
@@ -1415,7 +1454,7 @@ static void testTextSelections(AccessibilityTest* test, gconstpointer)
 
     auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
-    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 2);
     auto input = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_TEXT(input.get()));
     g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(input.get()), 5, nullptr));
@@ -1432,6 +1471,23 @@ static void testTextSelections(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(selection->end_offset, ==, 12);
     text.reset(atspi_text_get_text(ATSPI_TEXT(input.get()), selection->start_offset, selection->end_offset, nullptr));
     g_assert_cmpstr(text.get(), ==, "is text");
+
+    auto password = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(password.get()));
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(password.get()), 2, nullptr));
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(password.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 2);
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(password.get()), 0, 2, 5, nullptr));
+    selectionCount = atspi_text_get_n_selections(ATSPI_TEXT(password.get()), nullptr);
+    g_assert_cmpuint(selectionCount, ==, 1);
+    caretOffset = atspi_text_get_caret_offset(ATSPI_TEXT(password.get()), nullptr);
+    g_assert_cmpint(caretOffset, ==, 5);
+    selection.reset(atspi_text_get_selection(ATSPI_TEXT(password.get()), 0, nullptr));
+    g_assert_nonnull(selection.get());
+    g_assert_cmpint(selection->start_offset, ==, 2);
+    g_assert_cmpint(selection->end_offset, ==, 5);
+    text.reset(atspi_text_get_text(ATSPI_TEXT(password.get()), selection->start_offset, selection->end_offset, nullptr));
+    g_assert_cmpstr(text.get(), ==, "•••");
 }
 
 static void testTextAttributes(AccessibilityTest* test, gconstpointer)
@@ -1558,6 +1614,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
         "    <p>This is a line of text</p>"
         "    <input value='This is a text field'/>"
         "    <div contenteditable=true>This is content editable</div>"
+        "    <input type='password' value='123'/>"
         "  </body>"
         "</html>",
         nullptr);
@@ -1568,7 +1625,7 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
 
     auto documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
-    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 4);
 
     // Text caret moved.
     auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
@@ -1601,6 +1658,18 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(events[0]->type, ==, "object:text-caret-moved");
     g_assert_cmpuint(events[0]->detail1, ==, 15);
 
+    section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 3, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
+    auto password = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_TEXT(password.get()));
+    test->startEventMonitor(password.get(), { "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(password.get()), 2, nullptr));
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-caret-moved");
+    g_assert_cmpuint(events[0]->detail1, ==, 2);
+
 #if USE(ATSPI) // Selection changed seems to be broken with ATK.
     // Selection changed.
     test->startEventMonitor(p.get(), { "object:text-selection-changed", "object:text-caret-moved" });
@@ -1628,6 +1697,15 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     event = AccessibilityTest::findEvent(events, "object:text-caret-moved");
     g_assert_nonnull(event);
     g_assert_cmpuint(event->detail1, ==, 18);
+    g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
+
+    test->startEventMonitor(password.get(), { "object:text-selection-changed", "object:text-caret-moved" });
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(password.get()), 0, 2, 3, nullptr));
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    event = AccessibilityTest::findEvent(events, "object:text-caret-moved");
+    g_assert_nonnull(event);
+    g_assert_cmpuint(event->detail1, ==, 3);
     g_assert_nonnull(AccessibilityTest::findEvent(events, "object:text-selection-changed"));
 #endif
 
@@ -1680,6 +1758,29 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "n");
 
+    g_assert_true(atspi_text_set_caret_offset(ATSPI_TEXT(password.get()), 2, nullptr));
+    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_a);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:insert");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 2);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "•");
+    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_BackSpace);
+    events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[0]->detail1, ==, 2);
+#endif
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "•");
+
     // Text replaced.
     g_assert_true(atspi_text_set_selection(ATSPI_TEXT(input.get()), 0, 5, 10, nullptr));
     test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
@@ -1712,6 +1813,24 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "bntet ed");
 
+    g_assert_true(atspi_text_set_selection(ATSPI_TEXT(password.get()), 0, 0, 3, nullptr));
+    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->keyStroke(GDK_KEY_z);
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+    g_assert_cmpuint(events[0]->detail1, ==, 1);
+    g_assert_cmpuint(events[0]->detail2, ==, 3);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "•••");
+    g_assert_cmpstr(events[1]->type, ==, "object:text-changed:insert");
+#if USE(ATSPI)
+    g_assert_cmpuint(events[1]->detail1, ==, 0);
+#endif
+    g_assert_cmpuint(events[1]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "•");
+
 #if USE(ATSPI)
     // Text input value changed.
     test->startEventMonitor(input.get(), { "object:text-changed:insert", "object:text-changed:delete" });
@@ -1728,6 +1847,21 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
     g_assert_cmpuint(events[1]->detail2, ==, 3);
     g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
     g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "foo");
+
+    test->startEventMonitor(password.get(), { "object:text-changed:insert", "object:text-changed:delete" });
+    test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[1].value = '7890';", nullptr);
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    g_assert_cmpstr(events[0]->type, ==, "object:text-changed:delete");
+    g_assert_cmpuint(events[0]->detail1, ==, 0);
+    g_assert_cmpuint(events[0]->detail2, ==, 1);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[0]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[0]->any_data), ==, "•");
+    g_assert_cmpstr(events[1]->type, ==, "object:text-changed:insert");
+    g_assert_cmpuint(events[1]->detail1, ==, 0);
+    g_assert_cmpuint(events[1]->detail2, ==, 4);
+    g_assert_true(G_VALUE_HOLDS_STRING(&events[1]->any_data));
+    g_assert_cmpstr(g_value_get_string(&events[1]->any_data), ==, "••••");
 #endif
 }
 

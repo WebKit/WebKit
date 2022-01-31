@@ -30,6 +30,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/UUID.h>
@@ -1215,6 +1216,9 @@ void AccessibilityObjectAtspi::loadEvent(const char* event)
 
 std::optional<unsigned> AccessibilityObjectAtspi::effectiveRole() const
 {
+    if (m_coreObject->isPasswordField())
+        return Atspi::Role::PasswordText;
+
     switch (m_coreObject->roleValue()) {
     case AccessibilityRole::ListMarker: {
         auto* renderer = m_coreObject->renderer();
@@ -1285,6 +1289,8 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
         return "invalid";
     case Atspi::Role::Panel:
         return "panel";
+    case Atspi::Role::PasswordText:
+        return "password text";
     case Atspi::Role::Table:
         return "table";
     case Atspi::Role::TableRow:
@@ -1336,6 +1342,8 @@ const char* AccessibilityObjectAtspi::effectiveLocalizedRoleName() const
         return _("invalid");
     case Atspi::Role::Panel:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Group);
+    case Atspi::Role::PasswordText:
+        return _("password text");
     case Atspi::Role::Table:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Table);
     case Atspi::Role::TableRow:
@@ -1479,6 +1487,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // we have good reasons for that (e.g. focusable or visible because of containing
     // a meaningful accessible name, maybe set through ARIA).
     if (is<HTMLSpanElement>(node) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion() && !supportsARIAAttributes())
+        return AccessibilityObjectInclusion::IgnoreObject;
+
+    if (is<TextControlInnerTextElement>(node))
         return AccessibilityObjectInclusion::IgnoreObject;
 
     return AccessibilityObjectInclusion::DefaultBehavior;

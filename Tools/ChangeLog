@@ -1,3 +1,17 @@
+2022-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add support for password fields to ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=235778
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add test cases for password inputs.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (testTextIterator):
+        (testTextSelections):
+        (testTextStateChanged):
+
 2022-01-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] GstStructure to JSON serialization

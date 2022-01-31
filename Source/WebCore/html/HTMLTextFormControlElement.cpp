@@ -568,6 +568,16 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
     if (textIsChanged || !innerText->hasChildNodes()) {
 #if ENABLE(ACCESSIBILITY) && !PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
+#if USE(ATSPI)
+            if (is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(*this).isPasswordField()) {
+                // Get the rendered text instead to not expose actual value to accessibility.
+                RenderObject* renderer = this->renderer();
+                while (renderer && !is<RenderText>(renderer))
+                    renderer = downcast<RenderElement>(*renderer).firstChild();
+                if (is<RenderText>(renderer))
+                    previousValue = downcast<RenderText>(renderer)->textWithoutConvertingBackslashToYenSymbol();
+            }
+#endif
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->postNotification(this, AXObjectCache::AXValueChanged, PostTarget::ObservableParent);
         }
