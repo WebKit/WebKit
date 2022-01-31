@@ -1,3 +1,14 @@
+2022-01-31  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        REGRESSION(r288644): [GTK4] Criticals when using pinch zoom
+        https://bugs.webkit.org/show_bug.cgi?id=235883
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseZoomBegin):
+        Only cancel the click gesture on GTK3. We don't use g_object_set_data() on GTK4.
+
 2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete code for keygen element
