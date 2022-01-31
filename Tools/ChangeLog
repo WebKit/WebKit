@@ -1,3 +1,16 @@
+2022-01-31  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Provide SPI to export/import local credentials
+        https://bugs.webkit.org/show_bug.cgi?id=234112
+        rdar://84822000
+
+        Reviewed by Brent Fulgham.
+
+        Add tests for SPI to import / export local webauthn credentials.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST): New tests for import/export
+
 2022-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         Support additional WPEToolingBackend types

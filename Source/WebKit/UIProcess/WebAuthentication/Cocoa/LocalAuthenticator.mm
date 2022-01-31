@@ -177,7 +177,7 @@ void LocalAuthenticator::clearAllCredentials()
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatiorAccessGroup),
+        (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatorAccessGroup),
         (id)kSecUseDataProtectionKeychain: @YES
     }];
     updateQueryIfNecessary(query.get());

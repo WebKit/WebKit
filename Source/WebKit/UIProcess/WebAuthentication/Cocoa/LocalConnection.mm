@@ -170,7 +170,7 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
     RetainPtr privateKeyAttributes = @{
         (id)kSecAttrAccessControl: (id)accessControlRef,
         (id)kSecAttrIsPermanent: @YES,
-        (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatiorAccessGroup),
+        (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatorAccessGroup),
         (id)kSecAttrLabel: secAttrLabel,
         (id)kSecAttrApplicationTag: secAttrApplicationTag,
     };

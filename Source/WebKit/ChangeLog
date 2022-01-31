@@ -1,3 +1,25 @@
+2022-01-31  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Provide SPI to export/import local credentials
+        https://bugs.webkit.org/show_bug.cgi?id=234112
+        rdar://84822000
+
+        Reviewed by Brent Fulgham.
+
+        Covered by new API tests.
+
+        This patch adds new SPI to _WKWebAuthenticationPanel.h to import and export local
+        webauthn credentials. CBOR is used for serialization. WKErrors are used to differentiate
+        between malformed vs duplicate keys during import.
+
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel importLocalAuthenticatorCredential:error:]):
+        (+[_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:error:]):
+
 2022-01-31  Alexander Mikhaylenko  <alexm@gnome.org>
 
         REGRESSION(r288644): [GTK4] Criticals when using pinch zoom

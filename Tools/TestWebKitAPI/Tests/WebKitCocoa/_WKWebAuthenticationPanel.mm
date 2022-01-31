@@ -2228,6 +2228,61 @@ TEST(WebAuthenticationPanel, UpdateCredentialUsername)
     cleanUpKeychain("example.com");
 }
 
+TEST(WebAuthenticationPanel, ExportImportCredential)
+{
+    reset();
+
+    addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64);
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    NSError *error = nil;
+    auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
+    
+    cleanUpKeychain("example.com");
+
+    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorCredential:exportedKey error:&error];
+    EXPECT_WK_STREQ([[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] base64EncodedStringWithOptions:0], [credentialId base64EncodedStringWithOptions:0]);
+
+    cleanUpKeychain("example.com");
+}
+
+TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
+{
+    reset();
+    cleanUpKeychain("");
+
+    addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64);
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    NSError *error = nil;
+    auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
+
+    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorCredential:exportedKey error:&error];
+    EXPECT_EQ(credentialId, nil);
+    EXPECT_EQ(error.code, WKErrorDuplicateCredential);
+
+    cleanUpKeychain("example.com");
+}
+
+TEST(WebAuthenticationPanel, ImportMalformedCredential)
+{
+    reset();
+
+    NSError *error = nil;
+    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorCredential:adoptNS([[NSData alloc] initWithBase64EncodedString:testUserEntityBundleBase64 options:0]).get() error:&error];
+
+    EXPECT_EQ(error.code, WKErrorMalformedCredential);
+    EXPECT_EQ(credentialId, nil);
+}
+
 TEST(WebAuthenticationPanel, DeleteOneCredential)
 {
     reset();
