@@ -7,13 +7,13 @@ if (window.internals)
     internals.settings.setGenericCueAPIEnabled(true);
 
 test( test => {
-    assert_throws(new TypeError, _ => { new TextTrackCue(0, 10, "") });
-    assert_throws(new TypeError, _ => { new TextTrackCue(0, 10, { }) });
-    assert_throws(new TypeError, _ => { new TextTrackCue(0, 10, document.createElement('div')) });
+    assert_throws_js(TypeError, _ => { new TextTrackCue(0, 10, "") });
+    assert_throws_js(TypeError, _ => { new TextTrackCue(0, 10, { }) });
+    assert_throws_js(TypeError, _ => { new TextTrackCue(0, 10, document.createElement('div')) });
 }, 'TextTrackCue should throw "TypeError" if the cue node is not a documentFragment');
 
 test( test => {
-    assert_throws("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, document.createDocumentFragment()) });
+    assert_throws_dom("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, document.createDocumentFragment()) });
 }, 'TextTrackCue should throw "InvalidNodeTypeError" if passed an invalid documentFragment');
 
 function createValidCueFragment()
@@ -36,7 +36,7 @@ test( test => {
     let validCue = new TextTrackCue(0, 10, fragment);
 
     fragment.appendChild(document.createElement('table'));
-    assert_throws("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, fragment) });
+    assert_throws_dom("InvalidNodeTypeError", _ => { new TextTrackCue(0, 10, fragment) });
 
 }, `TextTrackCue should throw "InvalidNodeTypeError" if documentFragment has an invalid node`);
 
@@ -45,11 +45,11 @@ test( test => {
     let validCue = new TextTrackCue(0, 10, fragment);
 
     fragment.firstChild.removeAttribute('cuebackground')
-    assert_throws("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
+    assert_throws_dom("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
 
     fragment = createValidCueFragment();
     fragment.firstChild.firstChild.removeAttribute('cue')
-    assert_throws("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
+    assert_throws_dom("InvalidStateError", _ => { new TextTrackCue(0, 10, fragment) });
 }, `TextTrackCue should throw "InvalidStateError" if documentFragment doesn't have 'cuebackground' and 'cue' nodes`);
 
 test( test => {

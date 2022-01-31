@@ -10,8 +10,8 @@ test(function() {
 }, 'TransformStream can be constructed with a transform function');
 
 test(function() {
-    assert_throws(new TypeError(), function() { new TransformStream(); }, 'TransformStream cannot be constructed with no arguments');
-    assert_throws(new TypeError(), function() { new TransformStream({}); }, 'TransformStream cannot be constructed with an empty object');
+    assert_throws_js(TypeError, function() { new TransformStream(); }, 'TransformStream cannot be constructed with no arguments');
+    assert_throws_js(TypeError, function() { new TransformStream({}); }, 'TransformStream cannot be constructed with an empty object');
 }, 'TransformStream cannot be constructed with no transform function');
 
 test(function() {

@@ -11,7 +11,7 @@
 test(() => {
     const { set } = Object.getOwnPropertyDescriptor(window, "opener");
     Object.defineProperty(window, "opener", { value: 1, writable: false, configurable: false });
-    assert_throws(new TypeError, () => { set.call(window, 2); });
+    assert_throws_js(TypeError, () => { set.call(window, 2); });
 
     const desc = Object.getOwnPropertyDescriptor(window, "opener");
     assert_equals(desc.value, 1);

@@ -1,3 +1,142 @@
+2022-01-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update LayoutTests/resources/testharness.js to 2021-6-24 version
+        https://bugs.webkit.org/show_bug.cgi?id=235398
+        <rdar://problem/88126222>
+
+        Reviewed by Youenn Fablet.
+
+        Copy testharness.js from imported/w3c/web-platform-tests
+
+        Copy idlharness.js from imported/w3c/web-platform-tests because it uses
+        the new testharness.js APIs.
+
+        Copy webidl2.js from imported/w3c/web-platform-tests to resources/WebIDLParser.js
+        because idlharness uses new webidl2.js logic.
+
+        Delete testharness.css, it is now bundled in testharness.js.
+
+        Update tests to accommodate the API change:
+         - assert_throws_js check that the exception is of a particular JS
+           exception type
+         - assert_throws_dom check that the exception is of a particular
+           DOMException type from a particular global object.
+         - assert_throws_exactly check that the exception is a specific
+           object.
+
+        Previously assert_throws was used and it hid unexpected exception errors.
+
+        Same for promise_rejects_*
+
+        async_test(f) now warns if f is not a normal function.
+
+        Singl page tests need a setup function.
+
+        * animations/animation-direction-normal.html:
+        * animations/animation-direction-reverse.html:
+        * animations/change-keyframes-name.html:
+        * animations/play-state-paused.html:
+        async_test(async function {...}) is incorrect (async test expects normal
+        function that has asynchronous logic, not a function returning a promise.
+        Use correct form:
+        promise_test(async function { ... });
+
+        * css-custom-properties-api/registerProperty.html:
+        Update exception expectation functions.
+
+        * editing/pasteboard/datatransfer-idl-expected.txt:
+        * editing/pasteboard/datatransfer-idl.html:
+        Update the datatransfer related idls from source, otherwise
+        tests fail (harness now tests for constructor).
+        Update the results.
+
+        * editing/text-iterator/count-matches-in-frames.html:
+        * editing/text-iterator/hidden-textarea-selection-quirk.html:
+        * fast/canvas/webgl/webgl2/bindings.html:
+        * fast/custom-elements/defined-pseudo-class.html:
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html:
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html:
+        * fast/dom/document-all.html:
+        * fast/dom/elementFromPoint-parameters.html:
+        * fast/dom/replaceable-setter-throws-if-defineownproperty-fails.html:
+        * fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html:
+        * fast/dom/window-opener-setter-throws-if-defineownproperty-fails-2.html:
+        * fast/events/clipboard-event-constructor.html:
+        * fast/files/workers/resources/worker-file-reader-sync-bad-parameter.js:
+        * fast/files/xhr-blob-request.html:
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-exceptions.html:
+        * fast/mediasession/metadata/artworkdownload.html:
+        * fast/mediastream/screencapture-user-gesture.html:
+        * fetch/fetch-url-serialization.html:
+        * http/tests/fetch/fetching-same-resource-with-different-options.html:
+        * http/tests/fetch/redirectmode-and-preload.html:
+        * http/tests/navigation/pushstate-at-unique-origin-denied.py:
+        * http/tests/notifications/notification.html:
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html:
+        * http/tests/paymentrequest/payment-is-showing.https.html:
+        * http/tests/paymentrequest/payment-request-abort-method.https.html:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html:
+        * http/tests/paymentrequest/payment-request-merchant-validation.https.html:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+        * http/tests/paymentrequest/payment-response-rejects-if-not-active.https.html:
+        * http/tests/paymentrequest/payment-response-retry-method.https.html:
+        * http/tests/paymentrequest/rejects_if_not_active.https.html:
+        * http/tests/paymentrequest/updateWith-method-pmi-handling.https.html:
+        * http/tests/security/bypassing-cors-checks-for-extension-urls.html:
+        * http/tests/security/clean-origin-css-exposed-resource-timing.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html:
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html:
+        * http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html:
+        * http/tests/security/cross-origin-clean-css-resource-timing.html:
+        * http/tests/security/cross-origin-css-resource-timing.html:
+        * http/tests/subresource-integrity/sri-fetch.js:
+        * http/tests/workers/service/service-worker-crossorigin-fetch.html:
+        * http/tests/xmlhttprequest/set-bad-headervalue.html:
+        * intersection-observer/intersection-observer-interface.html:
+        * js/dom/dom-getters-type-check.html:
+        * js/dom/legacy-platform-object-defineOwnProperty.html:
+        * js/dom/post-message-symbol.html:
+        * js/dom/queue-microtask-window.html:
+        * media/track/opera/interfaces/TextTrackCue/vertical.html:
+        * media/track/opera/resources/idlharness.js:
+        * media/track/texttrackcue/texttrackcue-constructor.html:
+        * media/track/w3c/interfaces/TextTrackCue/align.html:
+        * pointerevents/ios/pointer-events-implicit-capture-release-exception.html:
+        * pointerevents/ios/pointer-events-set-pointer-capture-exceptions.html:
+        * pointerevents/pointer-id-crash.html:
+        * resources/WebIDLParser.js:
+        * resources/idlharness.js:
+        Update from wpt.
+        * resources/testharness.css: Removed.
+        * resources/testharness.js:
+        Update from wpt.
+        * storage/websql/openDatabase-deprecation.html:
+        * streams/readable-byte-stream-controller.js:
+        * streams/readable-stream-byob-reader.js:
+        * streams/readable-stream-byob-request.js:
+        * streams/readable-stream-getReader.html:
+        * streams/reference-implementation/bad-strategies.html:
+        * streams/reference-implementation/bad-underlying-sinks.html:
+        * streams/reference-implementation/transform-stream-expected.txt:
+        * streams/reference-implementation/transform-stream.html:
+        * webanimations/accelerated-animation-single-keyframe.html:
+        * webanimations/frame-rate/animation-frame-rate.html:
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-effect.html:
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-keyframe.html:
+        * webanimations/scheduling-of-css-animation-with-explicit-steps-timing-function-on-some-keyframes.html:
+        * webanimations/scheduling-of-css-animation-with-implicit-steps-timing-function.html:
+        * webaudio/webaudio-gc.html:
+        * webrtc/calling-peerconnection-once-closed.html:
+        * webrtc/certificates-indexeddb.html:
+        * webrtc/datachannel/creation.html:
+        * webrtc/datachannel/datachannel-event.html:
+        * webrtc/datachannel/getStats-no-prflx-remote-candidate.html:
+        * webrtc/disable-encryption.html:
+        * webrtc/legacy-api-expected.txt:
+        * webrtc/pc-detached-document.html:
+        * webrtc/stun-server-filtering.html:
+
 2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete code for keygen element

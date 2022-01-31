@@ -38,7 +38,7 @@ test(() => {
 
     let string510 = string509 + 'a';
 
-    assert_throws(new TypeError, () => new RTCPeerConnection({iceServers:[{username: 'test', credential: string510, urls:['turn:foo.com']}]}));
-    assert_throws(new TypeError, () => new RTCPeerConnection({iceServers:[{username: string510, credential: 'test', urls:['turn:foo.com']}]}));
+    assert_throws_js(TypeError, () => new RTCPeerConnection({iceServers:[{username: 'test', credential: string510, urls:['turn:foo.com']}]}));
+    assert_throws_js(TypeError, () => new RTCPeerConnection({iceServers:[{username: string510, credential: 'test', urls:['turn:foo.com']}]}));
 }, "RTCPeerConnection and big TURN username/credential");
 </script>

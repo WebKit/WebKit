@@ -9,6 +9,7 @@ Details
 
 Result	Test Name	Message
 Pass	Testing legacy API is not defined	
+Asserts run
 
 PASS Testing legacy API is not defined
 

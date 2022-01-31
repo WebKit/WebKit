@@ -29,7 +29,7 @@ promise_test(async t => {
   const { response } = await getPaymentRequestResponse();
   // sets response.[[complete]] to true.
   await response.complete("success");
-  return promise_rejects(
+  return promise_rejects_dom(
     t,
     "InvalidStateError",
     response.retry({}),
@@ -40,7 +40,7 @@ promise_test(async t => {
 promise_test(async t => {
   const { response } = await getPaymentRequestResponse();
   const retryPromise = response.retry({});
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.retry({}),
@@ -54,7 +54,7 @@ promise_test(async t => {
 promise_test(async t => {
   const { response } = await getPaymentRequestResponse();
   const retryPromise = response.retry({});
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.complete("success"),
@@ -68,7 +68,7 @@ promise_test(async t => {
 promise_test(async t => {
   const { response, request } = await getPaymentRequestResponse();
   const retryPromise = response.retry({});
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     request.abort(),
@@ -96,7 +96,7 @@ promise_test(async t => {
     "Expected undefined as the resolve value"
   );
   await response.complete("success");
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.retry({}),
@@ -108,19 +108,19 @@ promise_test(async t => {
   const { response } = await getPaymentRequestResponse();
   var promise = response.retry({});
   internals.mockPaymentCoordinator.cancelPayment();
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "AbortError",
     promise,
     "The user aborting a retry rejects with a AbortError"
   );
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.retry({}),
     "After the user aborts, response [[complete]] is true so retry() must reject with InvalidStateError"
   );
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.complete("success"),
@@ -158,13 +158,13 @@ promise_test(async t => {
   const retryPromise = response.retry({});
   internals.mockPaymentCoordinator.changeShippingOption("option");
   await shippingChangedPromise;
-  await promise_rejects(
+  await promise_rejects_js(
     t,
-    new TypeError(),
+    TypeError,
     retryPromise,
     "retry() aborts with a TypeError, because totals' value is invalid"
   );
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "InvalidStateError",
     response.complete("success"),

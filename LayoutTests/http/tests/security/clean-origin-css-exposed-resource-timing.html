@@ -9,6 +9,8 @@
 <body>
 <div id="mydiv" style="font: 12px 'ahem'">Test</div>
 <script>
+setup({ single_test: true });
+
 if (window.internals) {
     internals.clearMemoryCache();
     internals.invalidateFontCache();

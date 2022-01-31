@@ -944,11 +944,11 @@ IdlException.prototype.test_members = function()
                 // the exception on which the exception field was declared,
                 // then throw a TypeError."
                 // TODO: Test on a platform object representing an exception.
-                assert_throws(new TypeError(), function()
+                assert_throws_js(TypeError, function()
                 {
                     window[this.name].prototype[member.name];
                 }.bind(this), "getting property on prototype object must throw TypeError");
-                assert_throws(new TypeError(), function()
+                assert_throws_js(TypeError, function()
                 {
                     desc.get.call({});
                 }.bind(this), "calling getter on wrong object type must throw TypeError");
@@ -1083,11 +1083,11 @@ IdlInterface.prototype.test_self = function()
             //
             // "If I was not declared with a [Constructor] extended attribute,
             // then throw a TypeError."
-            assert_throws(new TypeError(), function()
+            assert_throws_js(TypeError, function()
             {
                 window[this.name]();
             }.bind(this), "interface object didn't throw TypeError when called as a function");
-            assert_throws(new TypeError(), function()
+            assert_throws_js(TypeError, function()
             {
                 new window[this.name]();
             }.bind(this), "interface object didn't throw TypeError when called as a constructor");
@@ -1311,7 +1311,7 @@ IdlInterface.prototype.test_members = function()
                                     'interface "' + this.name + '" does not have own property "prototype"');
 
                 // TODO: Needs to test for LenientThis.
-                assert_throws(new TypeError(), function() {
+                assert_throws_js(TypeError, function() {
                     window[this.name].prototype[member.name];
                 }.bind(this), "getting property on prototype object must throw TypeError");
 
@@ -1384,7 +1384,7 @@ IdlInterface.prototype.test_members = function()
                 //
                 // TODO: We currently ignore the static and [ImplicitThis]
                 // cases.
-                assert_throws(new TypeError(), function() {
+                assert_throws_js(TypeError, function() {
                     window[this.name].prototype[member.name].apply(null, args);
                 }, "calling operation with this = null didn't throw TypeError");
 
@@ -1393,7 +1393,7 @@ IdlInterface.prototype.test_members = function()
                 //
                 // TODO: Test a platform object that implements some other
                 // interface.  (Have to be sure to get inheritance right.)
-                assert_throws(new TypeError(), function() {
+                assert_throws_js(TypeError, function() {
                     window[this.name].prototype[member.name].apply({}, args);
                 }, "calling operation with this = {} didn't throw TypeError");
             }.bind(this), this.name + " interface: operation " + member.name +
@@ -1565,7 +1565,7 @@ IdlInterface.prototype.test_interface_of = function(desc, obj, exception, expect
                     {
                         break;
                     }
-                    assert_throws(new TypeError(), function()
+                    assert_throws_js(TypeError, function()
                     {
                         obj[member.name].apply(obj, args);
                     }.bind(this), "Called with " + i + " arguments");
@@ -1634,7 +1634,7 @@ function do_interface_attribute_asserts(obj, member)
     assert_equals(typeof desc.get, "function", "getter must be Function");
     assert_equals(desc.get.length, 0, "getter length must be 0");
     // TODO: Account for LenientThis
-    assert_throws(new TypeError(), function()
+    assert_throws_js(TypeError, function()
     {
         desc.get.call({});
     }.bind(this), "calling getter on wrong object type must throw TypeError");

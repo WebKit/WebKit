@@ -16,10 +16,10 @@
     }, "DOM getter should be a function");
 
     test(() => {
-        assert_throws(new TypeError(), () => { getter(); }, "DOM getter throws an error with undefined");
-        assert_throws(new TypeError(), () => { getter.call(null); }, "DOM getter throws an error with null");
-        assert_throws(new TypeError(), () => { getter.call({}); }, "DOM getter throws an error with unrelated object");
-        assert_throws(new TypeError(), () => { getter.call(document.createText("Hello")); }, "DOM getter throws an error with unrelated DOM object");
+        assert_throws_js(TypeError, () => { getter(); }, "DOM getter throws an error with undefined");
+        assert_throws_js(TypeError, () => { getter.call(null); }, "DOM getter throws an error with null");
+        assert_throws_js(TypeError, () => { getter.call({}); }, "DOM getter throws an error with unrelated object");
+        assert_throws_js(TypeError, () => { getter.call(document.createText("Hello")); }, "DOM getter throws an error with unrelated DOM object");
     }, "DOM getter throws an error with unrelated values");
 
     test(() => {
@@ -32,14 +32,14 @@
         Object.defineProperty(object, "scrollTop", {
             get: getter
         });
-        assert_throws(new TypeError(), () => { object.scrollTop; });
+        assert_throws_js(TypeError, () => { object.scrollTop; });
     }, "DOM getter access throws an error with unrelated object");
 
     test(() => {
         var object = {
             __proto__: Element.prototype
         };
-        assert_throws(new TypeError(), () => { object.scrollTop; });
+        assert_throws_js(TypeError, () => { object.scrollTop; });
     }, "DOM getter access through Element.prototype throws an error with unrelated object");
 </script>
 </body>

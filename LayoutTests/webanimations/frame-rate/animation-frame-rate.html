@@ -27,7 +27,7 @@ test(t => {
 test(t => {
     const animation = new Animation;
     for (let value of ["default", "120", null, undefined, [], {}]) {
-        assert_throws(new TypeError, () => animation.frameRate = value, `Setting the value ${value} throws`);
+        assert_throws_js(TypeError, () => animation.frameRate = value, `Setting the value ${value} throws`);
         assert_equals(animation.frameRate, "auto", `Setting the invalid value "${value}" does not change the value`);
     }
 }, "Invalid animation.frameRate values");

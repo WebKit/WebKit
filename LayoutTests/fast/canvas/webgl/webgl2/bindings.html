@@ -48,7 +48,7 @@ setup(function() {
 
 for (var [method, args, name] of error_methods) {
   test(function() {
-    assert_throws(new TypeError(), () => context[method](...args));
+    assert_throws_js(TypeError, () => context[method](...args));
   }, name);
 }
 </script>

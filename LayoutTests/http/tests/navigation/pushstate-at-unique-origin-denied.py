@@ -10,7 +10,7 @@ sys.stdout.write(
     '<script>\n'
     'var originURL = document.URL;\n'
     'test(function () {\n'
-    '    assert_throws(\'SecurityError\', function () {\n'
+    '    assert_throws_dom(\'SecurityError\', function () {\n'
     '        history.pushState(null, null, originURL + "/path");\n'
     '    });\n'
     '}, \'pushState to a new path in unique origin should fail with SecurityError\');\n'

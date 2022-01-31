@@ -1,3 +1,122 @@
+2022-01-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update LayoutTests/resources/testharness.js to 2021-6-24 version
+        https://bugs.webkit.org/show_bug.cgi?id=235398
+        <rdar://problem/88126222>
+
+        Reviewed by Youenn Fablet.
+
+        Update tests to accommodate the API change:
+         - assert_throws_js check that the exception is of a particular JS
+           exception type
+         - assert_throws_dom check that the exception is of a particular
+           DOMException type from a particular global object.
+         - assert_throws_exactly check that the exception is a specific
+           object.
+
+        * IndexedDB-private-browsing/close-in-upgradeneeded.html:
+        * IndexedDB-private-browsing/idbcursor-advance-invalid.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index2.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index3.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index6.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index7.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index8.html:
+        * IndexedDB-private-browsing/idbcursor_advance_index9.html:
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore2.html:
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore3.html:
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore4.html:
+        * IndexedDB-private-browsing/idbcursor_advance_objectstore5.html:
+        * IndexedDB-private-browsing/idbcursor_continue_index2.html:
+        * IndexedDB-private-browsing/idbcursor_continue_index3.html:
+        * IndexedDB-private-browsing/idbcursor_continue_index4.html:
+        * IndexedDB-private-browsing/idbcursor_continue_index7.html:
+        * IndexedDB-private-browsing/idbcursor_continue_index8.html:
+        * IndexedDB-private-browsing/idbcursor_continue_invalid.html:
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore2.html:
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore3.html:
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore4.html:
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore5.html:
+        * IndexedDB-private-browsing/idbcursor_continue_objectstore6.html:
+        * IndexedDB-private-browsing/idbcursor_delete_index2.html:
+        * IndexedDB-private-browsing/idbcursor_delete_index3.html:
+        * IndexedDB-private-browsing/idbcursor_delete_index4.html:
+        * IndexedDB-private-browsing/idbcursor_delete_index5.html:
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore2.html:
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore3.html:
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore4.html:
+        * IndexedDB-private-browsing/idbcursor_delete_objectstore5.html:
+        * IndexedDB-private-browsing/idbcursor_update_index2.html:
+        * IndexedDB-private-browsing/idbcursor_update_index3.html:
+        * IndexedDB-private-browsing/idbcursor_update_index4.html:
+        * IndexedDB-private-browsing/idbcursor_update_index5.html:
+        * IndexedDB-private-browsing/idbcursor_update_index6.html:
+        * IndexedDB-private-browsing/idbcursor_update_index7.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore2.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore3.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore5.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore6.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore7.html:
+        * IndexedDB-private-browsing/idbcursor_update_objectstore8.html:
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore11.html:
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore3.html:
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore4.html:
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore6.html:
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore9-invalidparameters.html:
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore2.html:
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore3.html:
+        * IndexedDB-private-browsing/idbdatabase_deleteObjectStore4-not_reused.html:
+        * IndexedDB-private-browsing/idbdatabase_transaction.html:
+        * IndexedDB-private-browsing/idbdatabase_transaction3.html:
+        * IndexedDB-private-browsing/idbdatabase_transaction4.html:
+        * IndexedDB-private-browsing/idbdatabase_transaction5.html:
+        * IndexedDB-private-browsing/idbfactory_cmp2.html:
+        * IndexedDB-private-browsing/idbfactory_open9.html:
+        * IndexedDB-private-browsing/idbindex-multientry-arraykeypath.html:
+        * IndexedDB-private-browsing/idbindex_count4.html:
+        * IndexedDB-private-browsing/idbindex_get5.html:
+        * IndexedDB-private-browsing/idbindex_get6.html:
+        * IndexedDB-private-browsing/idbindex_get7.html:
+        * IndexedDB-private-browsing/idbindex_getKey5.html:
+        * IndexedDB-private-browsing/idbindex_getKey6.html:
+        * IndexedDB-private-browsing/idbindex_getKey7.html:
+        * IndexedDB-private-browsing/idbindex_openCursor.html:
+        * IndexedDB-private-browsing/idbindex_openCursor2.html:
+        * IndexedDB-private-browsing/idbindex_openKeyCursor.html:
+        * IndexedDB-private-browsing/idbindex_openKeyCursor2.html:
+        * IndexedDB-private-browsing/idbindex_openKeyCursor3.html:
+        * IndexedDB-private-browsing/idbkeyrange_incorrect.html:
+        * IndexedDB-private-browsing/idbobjectstore_add10.html:
+        * IndexedDB-private-browsing/idbobjectstore_add11.html:
+        * IndexedDB-private-browsing/idbobjectstore_add12.html:
+        * IndexedDB-private-browsing/idbobjectstore_add13.html:
+        * IndexedDB-private-browsing/idbobjectstore_add15.html:
+        * IndexedDB-private-browsing/idbobjectstore_add16.html:
+        * IndexedDB-private-browsing/idbobjectstore_add9.html:
+        * IndexedDB-private-browsing/idbobjectstore_clear3.html:
+        * IndexedDB-private-browsing/idbobjectstore_clear4.html:
+        * IndexedDB-private-browsing/idbobjectstore_count4.html:
+        * IndexedDB-private-browsing/idbobjectstore_createIndex10.html:
+        * IndexedDB-private-browsing/idbobjectstore_createIndex11.html:
+        * IndexedDB-private-browsing/idbobjectstore_createIndex12.html:
+        * IndexedDB-private-browsing/idbobjectstore_createIndex13.html:
+        * IndexedDB-private-browsing/idbobjectstore_delete6.html:
+        * IndexedDB-private-browsing/idbobjectstore_delete7.html:
+        * IndexedDB-private-browsing/idbobjectstore_deleteIndex.html:
+        * IndexedDB-private-browsing/idbobjectstore_deleted.html:
+        * IndexedDB-private-browsing/idbobjectstore_get6.html:
+        * IndexedDB-private-browsing/idbobjectstore_get7.html:
+        * IndexedDB-private-browsing/idbobjectstore_openCursor_invalid.html:
+        * IndexedDB-private-browsing/idbobjectstore_put10.html:
+        * IndexedDB-private-browsing/idbobjectstore_put11.html:
+        * IndexedDB-private-browsing/idbobjectstore_put12.html:
+        * IndexedDB-private-browsing/idbobjectstore_put13.html:
+        * IndexedDB-private-browsing/idbobjectstore_put15.html:
+        * IndexedDB-private-browsing/idbobjectstore_put16.html:
+        * IndexedDB-private-browsing/idbobjectstore_put9.html:
+        * IndexedDB-private-browsing/key_invalid.html:
+        * IndexedDB-private-browsing/keypath_invalid.html:
+        * IndexedDB-private-browsing/transaction-create_in_versionchange.html:
+
 2022-01-29  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Properly block image content in object elements

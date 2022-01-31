@@ -24,7 +24,7 @@ function integrity(desc, url, options, expectedError) {
         }, desc);
     } else {
         promise_test(function(test) {
-            return promise_rejects(test, expectedError, fetch(url, options));
+            return promise_rejects_js(test, expectedError, fetch(url, options));
         }, desc);
     }
 }
@@ -40,25 +40,25 @@ integrity("Empty string integrity", resource, { 'integrity': "" });
 integrity("SHA-256 integrity", resource, { 'integrity': topSha256 });
 integrity("SHA-384 integrity", resource, { 'integrity': topSha384 });
 integrity("SHA-512 integrity", resource, { 'integrity': topSha512 });
-integrity("Invalid integrity", resource, { 'integrity': invalidSha256 }, new TypeError());
+integrity("Invalid integrity", resource, { 'integrity': invalidSha256 }, TypeError);
 integrity("Unknown integrity", resource, { 'integrity': unknownAlgorithm });
 integrity("Multiple integrities: valid stronger than invalid", resource, { 'integrity': invalidSha256 + " " + topSha384 });
-integrity("Multiple integrities: invalid stronger than valid", resource, { 'integrity': invalidSha512 + " " + topSha384 }, new TypeError());
+integrity("Multiple integrities: invalid stronger than valid", resource, { 'integrity': invalidSha512 + " " + topSha384 }, TypeError);
 integrity("Multiple integrities: invalid as strong as valid", resource, { 'integrity': invalidSha512 + " " + topSha512 });
 integrity("Multiple integrities: both are valid", resource,  { 'integrity': topSha384 + " " + topSha512 });
-integrity("Multiple integrities: both are invalid", resource, { 'integrity': invalidSha256 + " " + invalidSha512 }, new TypeError());
+integrity("Multiple integrities: both are invalid", resource, { 'integrity': invalidSha256 + " " + invalidSha512 }, TypeError);
 integrity("Anonymous CORS empty integrity", crossorigin_anon_resource, { 'integrity': "" });
 integrity("Anonymous CORS SHA-512 integrity", crossorigin_anon_resource, { 'integrity': topSha512 });
-integrity("Anonymous CORS invalid integrity", crossorigin_anon_resource, { 'integrity': invalidSha512 }, new TypeError());
+integrity("Anonymous CORS invalid integrity", crossorigin_anon_resource, { 'integrity': invalidSha512 }, TypeError);
 
 // FIXME: Upstream these additional tests to the official web-platform-tests repository.
 
 integrity("Credential CORS empty integrity", crossorigin_creds_resource, { 'integrity': "", 'credentials': 'include' });
 integrity("Credential CORS SHA-512 integrity", crossorigin_creds_resource, { 'integrity': topSha512, 'credentials': 'include' });
-integrity("Credential CORS invalid integrity", crossorigin_creds_resource, { 'integrity': invalidSha512, 'credentials': 'include' }, new TypeError());
-integrity("Ineligible CORS empty integrity", crossorigin_ineligible_resource, { 'integrity': "" }, new TypeError());
-integrity("Ineligible CORS SHA-512 integrity", crossorigin_ineligible_resource, { 'integrity': topSha512 }, new TypeError());
-integrity("Ineligible CORS invalid integrity", crossorigin_ineligible_resource, { 'integrity': invalidSha512 }, new TypeError());
+integrity("Credential CORS invalid integrity", crossorigin_creds_resource, { 'integrity': invalidSha512, 'credentials': 'include' }, TypeError);
+integrity("Ineligible CORS empty integrity", crossorigin_ineligible_resource, { 'integrity': "" }, TypeError);
+integrity("Ineligible CORS SHA-512 integrity", crossorigin_ineligible_resource, { 'integrity': topSha512 }, TypeError);
+integrity("Ineligible CORS invalid integrity", crossorigin_ineligible_resource, { 'integrity': invalidSha512 }, TypeError);
 integrity("SHA-256 integrity with 'no-cors' mode", resource, { 'integrity': topSha256, 'mode': 'no-cors' });
 integrity("Resource with zero length body", empty_resource, { 'integrity': "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=" });
 

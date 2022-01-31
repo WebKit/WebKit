@@ -16,7 +16,7 @@
 <div></div>
 <script>
 
-async_test(async t => {
+promise_test(async t => {
     const animation = document.querySelector("div").getAnimations()[0];
 
     await animation.ready;
@@ -32,8 +32,6 @@ async_test(async t => {
 
     animation.currentTime = 780;
     assert_equals(internals.timeToNextAnimationTick(animation), 20, "Progress contained in the interval for an implicit 100% keyframe.");
-
-    t.done();
 }, "Computing the time until the next tick for a CSS Animation with implicit and explicit steps() timing functions.");
 
 </script>

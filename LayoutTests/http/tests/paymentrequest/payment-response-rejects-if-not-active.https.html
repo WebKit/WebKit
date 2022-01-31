@@ -54,6 +54,8 @@ function methodNotFullyActive(text, methodName, ...args) {
       iframe,
       "/payment-request/resources/page1.html"
     );
+    const iframeDOMException = iframe.contentWindow.DOMException;
+
     // We navigate the iframe again, putting response's document into an inactive state.
     await new Promise(resolve => {
       iframe.addEventListener("load", resolve);
@@ -62,9 +64,10 @@ function methodNotFullyActive(text, methodName, ...args) {
     // Now, response's relevant global object's document is no longer active.
     // So, promise needs to reject appropriately.
     const promise = response[methodName](...args);
-    await promise_rejects(
+    await promise_rejects_dom(
       t,
       "AbortError",
+      iframeDOMException,
       promise,
       "Inactive document, so must throw AbortError"
     );
@@ -84,6 +87,7 @@ function methodBecomesNotFullyActive(text, methodName, ...args) {
       iframe,
       "/payment-request/resources/page1.html"
     );
+    const iframeDOMException = iframe.contentWindow.DOMException;
 
     // we get the promise from page1.html, while it's active!
     const promise = response[methodName](...args);
@@ -96,9 +100,10 @@ function methodBecomesNotFullyActive(text, methodName, ...args) {
 
     // Now, response's relevant global object's document is no longer active.
     // So, promise needs to reject appropriately.
-    await promise_rejects(
+    await promise_rejects_dom(
       t,
       "AbortError",
+      iframeDOMException,
       promise,
       "Inactive document, so must throw AbortError"
     );

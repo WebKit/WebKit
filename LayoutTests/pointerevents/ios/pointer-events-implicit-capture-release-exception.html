@@ -15,7 +15,7 @@
 target_test((target, test) => {
     target.addEventListener("pointerdown", event => {
         assert_true(target.hasPointerCapture(event.pointerId));
-        assert_throws("NotFoundError", () => target.releasePointerCapture(event.pointerId + 1));
+        assert_throws_dom("NotFoundError", () => target.releasePointerCapture(event.pointerId + 1));
         assert_true(target.hasPointerCapture(event.pointerId));
     });
     ui.tap({ x: 50, y: 50 }).then(() => test.done());

@@ -26,7 +26,7 @@ test(function(){
     assert_equals(c1.vertical, 'rl');
     c1.vertical = 'lr';
     assert_equals(c1.vertical, 'lr');
-    assert_throws('SYNTAX_ERR', function() {
+    assert_throws_dom('SYNTAX_ERR', function() {
         c1.vertical = 'rl\u0000';
     });
 }, document.title+', script-created cue');

@@ -50,7 +50,7 @@ function test_notAllowed_method_sync(method) {
             assert_unreached('Exception should be thrown for synchronous ' + method + ' XHR');
         }
 
-        assert_throws('NetworkError', () => { req.send(); }, 'Exception thrown for synchronous ' + method + ' XHR');
+        assert_throws_dom('NetworkError', () => { req.send(); }, 'Exception thrown for synchronous ' + method + ' XHR');
 
         assert_false(onError, 'Error callback is called');
     }, 'Synchronous XHR request should throw exception with ' + method);
@@ -97,7 +97,7 @@ function test_method_async(method, shouldLoad) {
 
 function test_forbidden_method(request) {
     test(() => {
-        assert_throws('SecurityError', () => {
+        assert_throws_dom('SecurityError', () => {
             var req = new XMLHttpRequest;
             req.open(request, url);
         })
