@@ -1,3 +1,24 @@
+2022-01-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Revert pull request when retrying
+        https://bugs.webkit.org/show_bug.cgi?id=235825
+        <rdar://problem/88187688>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (UnApplyPatch.doStepIf): Only run if 'patch_id' is defined.
+        (UnApplyPatch.hideStepIf): Hide step if we aren't doing it.
+        (RevertPullRequestChanges): Clean checkout and checkout base hash if
+        'github.base.sha' is define.
+        (CompileWebKit.evaluateCommand): Add RevertPullRequestChanges step.
+        (RunJavaScriptCoreTests.evaluateCommand): Ditto.
+        (ReRunWebKitTests.evaluateCommand): Ditto.
+        (RunWebKitTestsRedTree.evaluateCommand): Ditto.
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand): Ditto.
+        (ReRunAPITests.evaluateCommand): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-01-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Fix TestWebKitAPI build

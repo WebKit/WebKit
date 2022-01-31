@@ -1462,6 +1462,38 @@ class UnApplyPatch(CleanWorkingDirectory):
     name = 'unapply-patch'
     descriptionDone = ['Unapplied patch']
 
+    def doStepIf(self, step):
+        return self.getProperty('patch_id')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+class RevertPullRequestChanges(steps.ShellSequence):
+    name = 'revert-pull-request-changes'
+    description = ['revert-pull-request-changes running']
+    descriptionDone = ['Reverted pull request changes']
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(RevertPullRequestChanges, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def run(self):
+        self.commands = []
+        for command in [
+            ['git', 'clean', '-f', '-d'],
+            ['git', 'checkout', self.getProperty('github.base.sha')],
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+        return super(RevertPullRequestChanges, self).run()
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
 
 class Trigger(trigger.Trigger):
     def __init__(self, schedulerNames, include_revision=True, triggers=None, patch=True, pull_request=False, **kwargs):
@@ -1920,7 +1952,7 @@ class CompileWebKit(shell.Compile):
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
-            steps_to_add = [UnApplyPatch(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -2197,6 +2229,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.build.addStepsAfterCurrentStep([UnApplyPatch(),
+                                                RevertPullRequestChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileJSCWithoutPatch(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -2716,6 +2749,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 UploadTestResults(identifier='rerun'),
                                                 ExtractTestResults(identifier='rerun'),
                                                 UnApplyPatch(),
+                                                RevertPullRequestChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
@@ -3064,7 +3098,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([UnApplyPatch(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
+                next_steps.extend([UnApplyPatch(), RevertPullRequestChanges(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
@@ -3093,7 +3127,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         self.setProperty('with_patch_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
-            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatch(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
+            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatch(), RevertPullRequestChanges(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
         else:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
@@ -3512,7 +3546,7 @@ class ReRunAPITests(RunAPITests):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            steps_to_add = [UnApplyPatch(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())

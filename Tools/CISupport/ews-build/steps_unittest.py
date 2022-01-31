@@ -49,7 +49,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
-                   ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                   ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
@@ -3144,6 +3144,7 @@ class TestUnApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(UnApplyPatch())
+        self.setProperty('patch_id', 1234)
         self.expectHidden(False)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3157,6 +3158,7 @@ class TestUnApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(UnApplyPatch())
+        self.setProperty('patch_id', 1234)
         self.expectHidden(False)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3167,6 +3169,69 @@ class TestUnApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Unapplied patch (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(UnApplyPatch())
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='Unapplied patch (skipped)')
+        return self.runStep()
+
+
+class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RevertPullRequestChanges())
+        self.setProperty('github.base.sha', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('github.number', 1234)
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'clean', '-f', '-d'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reverted pull request changes')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RevertPullRequestChanges())
+        self.setProperty('github.base.sha', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('github.number', 1234)
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'clean', '-f', '-d'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
+            ) + ExpectShell.log('stdio', stdout='Unexpected failure.') + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Reverted pull request changes (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(RevertPullRequestChanges())
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='Reverted pull request changes (skipped)')
         return self.runStep()
 
 
