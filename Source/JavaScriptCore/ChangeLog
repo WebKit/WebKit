@@ -1,3 +1,27 @@
+2022-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Fix offlineasm lowering of arithmetic branch instructions with address destinations
+        https://bugs.webkit.org/show_bug.cgi?id=235887
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix lowering of baddi* and bsubi* instructions in the riscv64 offlineasm
+        backend. Node.riscCloneWithOperandsLowered() doesn't do the job properly
+        when the result of the arithmetic operation has to be stored back into
+        memory. In that case, right now these instructions are lowered into a
+        sequence that loads from memory, performs the arithmetic operation,
+        sets up the branch and only then stores the result back into memory,
+        which means the result never gets written back if the branch is taken.
+        Most prominently this breaks the execution counter through which JIT
+        entry is decided.
+
+        The riscv64LowerMisplacedAddresses() pass is specialized to cover
+        baddi* and bsubi* instructions whose destination operand is an address.
+        A manual sequence is constructed, loading, adding/subtracting, storing
+        and only then branching on the given condition.
+
+        * offlineasm/riscv64.rb:
+
 2022-01-31  Keith Miller  <keith_miller@apple.com>
 
         Reland StructureID overhaul

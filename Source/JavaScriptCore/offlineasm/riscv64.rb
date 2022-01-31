@@ -400,10 +400,17 @@ def riscv64LowerMisplacedAddresses(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when /^baddi/, /^bsubi/, /^bmuli/
-                postInstructions = []
-                newList << node.riscCloneWithOperandsLowered(newList, postInstructions, "i")
-                newList += postInstructions
+            when /^b(add|sub)i(z|nz|s)$/
+                case riscv64OperandTypes(node.operands)
+                when [Immediate, Address, LocalLabelReference]
+                    tmp = Tmp.new(node.codeOrigin, :gpr)
+                    newList << Instruction.new(node.codeOrigin, "loadi", [node.operands[1], tmp])
+                    newList << Instruction.new(node.codeOrigin, "#{$1}i", [tmp, node.operands[0], tmp])
+                    newList << Instruction.new(node.codeOrigin, "storei", [tmp, node.operands[1]])
+                    newList << Instruction.new(node.codeOrigin, "bti#{$2}", [tmp, node.operands[2]])
+                else
+                    newList << node
+                end
             else
                 newList << node
             end
@@ -1465,8 +1472,8 @@ class Sequence
                 false
             end
         }
-        result = riscLowerMisplacedAddresses(result)
         result = riscv64LowerMisplacedAddresses(result)
+        result = riscLowerMisplacedAddresses(result)
         result = riscv64LowerAddressLoads(result)
 
         result = riscLowerMisplacedImmediates(result, ["storeb", "storeh", "storei", "storep", "storeq"])
