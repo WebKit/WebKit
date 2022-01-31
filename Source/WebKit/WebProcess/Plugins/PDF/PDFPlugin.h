@@ -288,8 +288,6 @@ private:
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    void convertPostScriptDataIfNeeded();
-
     void setSuggestedFilename(const String&);
 
     // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.

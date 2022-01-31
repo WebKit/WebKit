@@ -1,5 +1,21 @@
 2022-01-31  Per Arne Vollan  <pvollan@apple.com>
 
+        [WP] Remove PostScript conversion code
+        https://bugs.webkit.org/show_bug.cgi?id=235892
+        <rdar://88172449>
+
+        Reviewed by Brent Fulgham.
+
+        The WebContent process no longer has access to the PostScript conversion service, so there is no need to keep this code.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::streamDidFinishLoading):
+        (WebKit::PDFPlugin::manualStreamDidFinishLoading):
+        (WebKit::PDFPlugin::convertPostScriptDataIfNeeded): Deleted.
+
+2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS][WP] Restrict image decoders
         https://bugs.webkit.org/show_bug.cgi?id=234175
 
