@@ -1,3 +1,48 @@
+2022-01-31  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288095. rdar://problem/88286876
+
+    [LFC][IFC] ASSERT in InlineContentBreaker::tryBreakingPreviousNonOverflowingRuns (!partialRun->length) when webinspector is open
+    https://bugs.webkit.org/show_bug.cgi?id=235286
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When the overflowing run is non-breakable (in this case an "inline box end" with padding), we try to find a breakable
+    previous run in the candidate list. If we find such text run, we try to break it by looking at the applicable CSS properties
+    (e.g. word-break, overflow-wrap). Now text runs with 1 (and 0) length and no adjacent text runs need special handling
+    as they can't be broken "within word" or at boundary (they treated as "unbreakable").
+    
+    Test: fast/text/overflow-wrap-assert-with-zero-width-overflowing-content.html
+    
+    * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+    (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+    (WebCore::Layout::InlineContentBreaker::tryBreakingPreviousNonOverflowingRuns const): The trailing run starts
+    at the beginning of the run and ends right before at the last character.
+    
+    LayoutTests:
+    
+    * fast/text/overflow-wrap-assert-with-zero-width-overflowing-content-expected.txt: Added.
+    * fast/text/overflow-wrap-assert-with-zero-width-overflowing-content.html: Added.
+    * platform/ios/fast/text/basic/015-expected.txt: Progressions.
+    * platform/mac/fast/text/basic/015-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288095 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  Alan Bujtas  <zalan@apple.com>
+
+            [LFC][IFC] ASSERT in InlineContentBreaker::tryBreakingPreviousNonOverflowingRuns (!partialRun->length) when webinspector is open
+            https://bugs.webkit.org/show_bug.cgi?id=235286
+
+            Reviewed by Antti Koivisto.
+
+            * fast/text/overflow-wrap-assert-with-zero-width-overflowing-content-expected.txt: Added.
+            * fast/text/overflow-wrap-assert-with-zero-width-overflowing-content.html: Added.
+            * platform/ios/fast/text/basic/015-expected.txt: Progressions.
+            * platform/mac/fast/text/basic/015-expected.txt:
+
 2022-01-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r288267. rdar://problem/87785288
