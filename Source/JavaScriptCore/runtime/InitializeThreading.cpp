@@ -66,7 +66,6 @@ void initialize()
 #endif
         {
             Options::AllowUnfinalizedAccessScope scope;
-            StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
             JITOperationList::initialize();
             ExecutableAllocator::initialize();
             VM::computeCanUseJIT();
@@ -78,6 +77,7 @@ void initialize()
                 g_jscConfig.arm64eHashPins.initializeAtStartup();
 #endif
             }
+            StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
 
