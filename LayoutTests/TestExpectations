@@ -4747,15 +4747,8 @@ imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-003.html [
 imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-004.html [ ImageOnlyFailure ]
 
 # Container queries
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/change-display-in-container.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-in-container-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-in-container.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/display-in-container.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/fieldset-legend-change.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/multicol-inside-container.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/resize-while-content-visibility-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/top-layer-dialog-backdrop.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/whitespace-update-after-removal.html [ ImageOnlyFailure ]
 

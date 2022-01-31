@@ -426,6 +426,10 @@ void TreeResolver::popParent()
 
     scope().selectorMatchingState.selectorFilter.popParent();
 
+    auto& queryContainers = scope().selectorMatchingState.queryContainers;
+    if (!queryContainers.isEmpty() && queryContainers.last().ptr() == &parentElement)
+        queryContainers.removeLast();
+
     m_parentStack.removeLast();
 }
 
@@ -594,6 +598,9 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
+        if (shouldIterateChildren)
+            updateQueryContainer(element, *style);
+
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
 
@@ -610,6 +617,16 @@ void TreeResolver::resolveComposedTree()
     }
 
     popParentsToDepth(1);
+}
+
+void TreeResolver::updateQueryContainer(const Element& element, const RenderStyle& style)
+{
+    if (style.containerType() == ContainerType::None)
+        return;
+
+    scope().selectorMatchingState.queryContainers.append(element);
+
+    // FIXME: Skip the subtree and ensure the container is resolved by doing a layout if needed.
 }
 
 std::unique_ptr<Update> TreeResolver::resolve()

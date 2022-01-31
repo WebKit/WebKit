@@ -59,6 +59,7 @@ private:
     std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const ResolutionContext&);
 
     void resolveComposedTree();
+    void updateQueryContainer(const Element&, const RenderStyle&);
 
     ElementUpdates resolveElement(Element&);
 

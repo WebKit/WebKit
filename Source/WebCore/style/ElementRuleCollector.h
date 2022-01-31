@@ -82,7 +82,7 @@ public:
     void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
     void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
 
-    bool hasAnyMatchingRules(const RuleSet*);
+    bool hasAnyMatchingRules(const RuleSet&);
 
     const MatchResult& matchResult() const;
     const Vector<RefPtr<const StyleRule>>& matchedRuleList() const;
@@ -112,6 +112,7 @@ private:
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
+    bool containerQueryMatches(const ContainerQuery&);
 
     void sortMatchedRules();
 
