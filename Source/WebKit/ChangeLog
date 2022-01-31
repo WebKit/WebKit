@@ -1,3 +1,21 @@
+2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][WP] Restrict image decoders
+        https://bugs.webkit.org/show_bug.cgi?id=234175
+
+        Reviewed by Brent Fulgham.
+
+        Restrict image decoders in order to enable further sandbox strengthening.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-01-31  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Provide SPI to export/import local credentials

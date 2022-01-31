@@ -205,6 +205,7 @@ struct WebProcessCreationParameters {
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
     Vector<SandboxExtension::Handle> videoDecoderExtensionHandles;
+    bool restrictImageAndVideoDecoders { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)

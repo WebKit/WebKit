@@ -149,7 +149,6 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
 
-
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "WebCaptionPreferencesDelegate.h"
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
@@ -157,8 +156,13 @@
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
+#import <pal/cf/VideoToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/VideoToolboxAdditions.h>
+#endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
@@ -290,8 +294,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
+#if PLATFORM(MAC)
     SandboxExtension::consumePermanently(parameters.videoDecoderExtensionHandles);
-#endif
+#elif USE(APPLE_INTERNAL_SDK)
+    if (parameters.restrictImageAndVideoDecoders)
+        restrictImageAndVideoDecoders();
+#endif // PLATFORM(MAC)
+#endif // HAVE(VIDEO_RESTRICTED_DECODING)
 
     // Disable NSURLCache.
     auto urlCache = adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]);
