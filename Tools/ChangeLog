@@ -1,3 +1,18 @@
+2022-01-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Fix TestWebKitAPI build
+        https://bugs.webkit.org/show_bug.cgi?id=235906
+
+        Reviewed by Tim Horton.
+
+        /usr/include/cups/cups.h has this:
+        # define UniversalPrint 1
+
+        And Source/ThirdParty/gtest/include/gtest/gtest-printers.h has this:
+        void UniversalPrint(const T& value, ::std::ostream* os);
+
+        * TestWebKitAPI/config.h:
+
 2022-01-31  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Provide SPI to export/import local credentials
