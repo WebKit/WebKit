@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,12 +134,6 @@ void RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers(DisplayList::Se
         fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier);
 
     handleItem(WTFMove(item), strokePatternImage.get(), fillPatternImage.get());
-
-    if (strokePatternImage)
-        resourceCache().recordResourceUse(strokePatternImageIdentifier);
-
-    if (fillPatternImage)
-        resourceCache().recordResourceUse(fillPatternImageIdentifier);
 }
 
 void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
@@ -193,7 +187,6 @@ void RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier(Qualifi
     }
 
     handleItem(DisplayList::ClipToImageBuffer(imageBufferIdentifier.object(), destinationRect), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier);
 }
 
 void RemoteDisplayListRecorder::clipOutToPath(const Path& path)
@@ -275,7 +268,6 @@ void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::D
     }
 
     handleItem(WTFMove(item), *font);
-    resourceCache().recordResourceUse(fontIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -294,7 +286,6 @@ void RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier(Qualified
     }
 
     handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier.object(), destinationRect, srcRect, options), *imageBuffer);
-    resourceCache().recordResourceUse(imageBufferIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -313,7 +304,6 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
     }
 
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier);
 }
 
 void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -332,7 +322,6 @@ void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRend
     }
 
     handleItem(DisplayList::DrawPattern(imageIdentifier.object(), imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
-    resourceCache().recordResourceUse(imageIdentifier);
 }
 
 void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)

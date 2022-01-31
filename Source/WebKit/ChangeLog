@@ -1,3 +1,62 @@
+2022-01-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Remove the resource use counters from the remote resource cache
+        https://bugs.webkit.org/show_bug.cgi?id=235636
+
+        Reviewed by Simon Fraser.
+
+        The display list items and the resource management messages are both
+        communicated from the WebProcess and the GPUProcess through the stream
+        connection. The resources will be sent to the GPUProcess, consumed by
+        the display items and then released in the right order. So there is no
+        need anymore for the resource use counters.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers):
+        (WebKit::RemoteDisplayListRecorder::clipToImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier):
+        (WebKit::RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheImageBuffer):
+        (WebKit::RemoteResourceCache::cacheNativeImage):
+        (WebKit::RemoteResourceCache::cacheFont):
+        (WebKit::RemoteResourceCache::releaseRemoteResource):
+        (WebKit::RemoteResourceCache::ensureResourceUseCounter): Deleted.
+        (WebKit::RemoteResourceCache::maybeRemoveResource): Deleted.
+        (WebKit::RemoteResourceCache::recordResourceUse): Deleted.
+        (WebKit::RemoteResourceCache::updateHasActiveDrawables): Deleted.
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::hasActiveDrawables const):
+        (): Deleted.
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::recordResourceUse):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::recordNativeImageUse): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::recordFontUse): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::recordImageBufferUse): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::cacheImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::cachedImageBuffer const):
+        (WebKit::RemoteResourceCacheProxy::releaseImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::recordImageBufferUse):
+        (WebKit::RemoteResourceCacheProxy::recordNativeImageUse):
+        (WebKit::RemoteResourceCacheProxy::recordFontUse):
+        (WebKit::RemoteResourceCacheProxy::releaseNativeImage):
+        (WebKit::RemoteResourceCacheProxy::clearNativeImageMap):
+        (WebKit::RemoteResourceCacheProxy::releaseAllRemoteFonts):
+        (WebKit::RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts):
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2022-01-31  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required syscall

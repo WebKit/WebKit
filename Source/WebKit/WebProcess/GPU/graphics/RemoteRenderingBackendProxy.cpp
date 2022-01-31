@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -258,9 +258,9 @@ void RemoteRenderingBackendProxy::deleteAllFonts()
     sendToStream(Messages::RemoteRenderingBackend::DeleteAllFonts());
 }
 
-void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    sendToStream(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier, useCount));
+    sendToStream(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier));
 }
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
@@ -324,21 +324,6 @@ void RemoteRenderingBackendProxy::didCreateWakeUpSemaphoreForDisplayListStream(I
 
     m_streamConnection->setWakeUpSemaphore(WTFMove(semaphore));
     m_needsWakeUpSemaphoreForDisplayListStream = false;
-}
-
-void RemoteRenderingBackendProxy::recordNativeImageUse(NativeImage& image)
-{
-    m_remoteResourceCacheProxy.recordNativeImageUse(image);
-}
-
-void RemoteRenderingBackendProxy::recordFontUse(Font& font)
-{
-    m_remoteResourceCacheProxy.recordFontUse(font);
-}
-
-void RemoteRenderingBackendProxy::recordImageBufferUse(ImageBuffer& imageBuffer)
-{
-    m_remoteResourceCacheProxy.recordImageBufferUse(imageBuffer);
 }
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
