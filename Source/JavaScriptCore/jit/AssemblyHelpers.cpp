@@ -320,7 +320,7 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 #if USE(JSVALUE64)
     jit.store64(TrustedImm64(structurePtr->idBlob()), MacroAssembler::Address(dest, JSCell::structureIDOffset()));
     if (ASSERT_ENABLED) {
-        Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id()));
+        Jump correctStructure = jit.branch32(Equal, MacroAssembler::Address(dest, JSCell::structureIDOffset()), TrustedImm32(structurePtr->id().bits()));
         jit.abortWithReason(AHStructureIDIsValid);
         correctStructure.link(&jit);
 
@@ -389,44 +389,29 @@ void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg off
         BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
-void AssemblyHelpers::emitLoadStructure(VM& vm, RegisterID source, RegisterID dest, RegisterID scratch)
+void AssemblyHelpers::emitNonNullDecodeStructureID(RegisterID source, RegisterID dest)
 {
-#if USE(JSVALUE64)
-#if CPU(ARM64) || CPU(RISCV64)
-    RegisterID scratch2 = dataTempRegister;
-#elif CPU(X86_64)
-    RegisterID scratch2 = scratchRegister();
-#else
-#error "Unsupported cpu"
-#endif
-
-    ASSERT(dest != scratch);
-    ASSERT(dest != scratch2);
-    ASSERT(scratch != scratch2);
-
-    load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), scratch2);
-    loadPtr(vm.heap.structureIDTable().base(), scratch);
-    rshift32(scratch2, TrustedImm32(StructureIDTable::s_numberOfEntropyBits), dest);
-    loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::ScalePtr), dest);
-    lshiftPtr(TrustedImm32(StructureIDTable::s_entropyBitsShiftForStructurePointer), scratch2);
-    xorPtr(scratch2, dest);
-#else // not USE(JSVALUE64)
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(vm);
-    loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
-#endif // not USE(JSVALUE64)
+    move(source, dest);
+#if CPU(ADDRESS64)
+    // This could use BFI on arm64 but that only helps if the start of structure heap is encodable as a mov and not as an immediate in the add so it's probably not super important.
+    and32(TrustedImm32(structureIDMask), dest);
+    add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
+#endif // not CPU(ADDRESS64)
 }
 
-void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs resultRegs, GPRReg scratchGPR, JumpList& slowPath)
+void AssemblyHelpers::emitLoadStructure(VM&, RegisterID source, RegisterID dest)
+{
+    load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
+    emitNonNullDecodeStructureID(dest, dest);
+}
+
+void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath)
 {
     ASSERT(resultRegs.payloadGPR() != objectGPR);
-    ASSERT(resultRegs.payloadGPR() != scratchGPR);
-    ASSERT(objectGPR != scratchGPR);
 
-    emitLoadStructure(vm, objectGPR, resultRegs.payloadGPR(), scratchGPR);
+    emitLoadStructure(vm, objectGPR, resultRegs.payloadGPR());
 
-    load16(MacroAssembler::Address(resultRegs.payloadGPR(), Structure::outOfLineTypeFlagsOffset()), scratchGPR);
-    auto overridesGetPrototype = branchTest32(MacroAssembler::NonZero, scratchGPR, TrustedImm32(OverridesGetPrototypeOutOfLine));
+    auto overridesGetPrototype = branchTest32(MacroAssembler::NonZero, MacroAssembler::Address(resultRegs.payloadGPR(), Structure::outOfLineTypeFlagsOffset()), TrustedImm32(OverridesGetPrototypeOutOfLine));
     slowPath.append(overridesGetPrototype);
 
     loadValue(MacroAssembler::Address(resultRegs.payloadGPR(), Structure::prototypeOffset()), resultRegs);
@@ -525,7 +510,7 @@ void AssemblyHelpers::emitRandomThunk(JSGlobalObject* globalObject, GPRReg scrat
 void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg result)
 {
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, scratch3);
-    emitLoadStructure(vm, scratch3, scratch3, scratch0);
+    emitLoadStructure(vm, scratch3, scratch3);
     loadPtr(Address(scratch3, Structure::globalObjectOffset()), scratch3);
     // Now, scratch3 holds JSGlobalObject*.
 
@@ -838,7 +823,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
         JumpList isNotMasqueradesAsUndefined;
         isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
-        emitLoadStructure(vm, value.payloadGPR(), result, scratchIfShouldCheckMasqueradesAsUndefined);
+        emitLoadStructure(vm, value.payloadGPR(), result);
         move(TrustedImmPtr(globalObject), scratchIfShouldCheckMasqueradesAsUndefined);
         isNotMasqueradesAsUndefined.append(branchPtr(NotEqual, Address(result, Structure::globalObjectOffset()), scratchIfShouldCheckMasqueradesAsUndefined));
 
@@ -929,7 +914,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
         JumpList isNotMasqueradesAsUndefined;
         isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
-        emitLoadStructure(vm, value.payloadGPR(), scratch, scratchIfShouldCheckMasqueradesAsUndefined);
+        emitLoadStructure(vm, value.payloadGPR(), scratch);
         if (std::holds_alternative<JSGlobalObject*>(globalObject))
             move(TrustedImmPtr(std::get<JSGlobalObject*>(globalObject)), scratchIfShouldCheckMasqueradesAsUndefined);
         else

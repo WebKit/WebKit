@@ -256,7 +256,7 @@ void JIT::emit_op_typeof_is_undefined(const Instruction* currentInstruction)
     Jump notMasqueradesAsUndefined = jump();
 
     isMasqueradesAsUndefined.link(this);
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT1, regT2);
+    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT1);
     loadGlobalObject(regT0);
     loadPtr(Address(regT1, Structure::globalObjectOffset()), regT1);
     comparePtr(Equal, regT0, regT1, regT0);
@@ -514,7 +514,7 @@ void JIT::emit_op_jeq_null(const Instruction* currentInstruction)
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
     Jump isNotMasqueradesAsUndefined = branchTest8(Zero, Address(jsRegT10.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2, regT1);
+    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2);
     loadGlobalObject(regT0);
     addJump(branchPtr(Equal, Address(regT2, Structure::globalObjectOffset()), regT0), target);
     Jump masqueradesGlobalObjectIsForeign = jump();
@@ -539,7 +539,7 @@ void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
 
     // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
     addJump(branchTest8(Zero, Address(jsRegT10.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)), target);
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2, regT1);
+    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2);
     loadGlobalObject(regT0);
     addJump(branchPtr(NotEqual, Address(regT2, Structure::globalObjectOffset()), regT0), target);
     Jump wasNotImmediate = jump();
@@ -1195,7 +1195,7 @@ void JIT::emit_op_eq_null(const Instruction* currentInstruction)
     Jump wasNotMasqueradesAsUndefined = jump();
 
     isMasqueradesAsUndefined.link(this);
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2, regT1);
+    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2);
     loadGlobalObject(regT0);
     loadPtr(Address(regT2, Structure::globalObjectOffset()), regT2);
     comparePtr(Equal, regT0, regT2, regT0);
@@ -1227,7 +1227,7 @@ void JIT::emit_op_neq_null(const Instruction* currentInstruction)
     Jump wasNotMasqueradesAsUndefined = jump();
 
     isMasqueradesAsUndefined.link(this);
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2, regT1);
+    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2);
     loadGlobalObject(regT0);
     loadPtr(Address(regT2, Structure::globalObjectOffset()), regT2);
     comparePtr(NotEqual, regT0, regT2, regT0);
@@ -1925,7 +1925,7 @@ void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
     slowCases.append(branchIfNotCell(jsRegT10));
     slowCases.append(branchIfNotObject(jsRegT10.payloadGPR()));
 
-    emitLoadPrototype(vm(), jsRegT10.payloadGPR(), jsRegT32, regT4, slowCases);
+    emitLoadPrototype(vm(), jsRegT10.payloadGPR(), jsRegT32, slowCases);
     addSlowCase(slowCases);
 
     emitValueProfilingSite(bytecode, jsRegT32);

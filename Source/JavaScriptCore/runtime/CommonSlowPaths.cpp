@@ -355,11 +355,11 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
             if (otherStructureID)
                 metadata.m_toThisStatus = ToThisConflicted;
             metadata.m_cachedStructureID = myStructureID;
-            vm.writeBarrier(codeBlock, vm.getStructure(myStructureID));
+            vm.writeBarrier(codeBlock, myStructureID.decode());
         }
     } else {
         metadata.m_toThisStatus = ToThisConflicted;
-        metadata.m_cachedStructureID = 0;
+        metadata.m_cachedStructureID = StructureID();
     }
     // Note: We only need to do this value profiling here on the slow path. The fast path
     // just returns the input to to_this if the structure check succeeds. If the structure

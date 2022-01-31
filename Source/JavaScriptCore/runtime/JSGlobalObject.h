@@ -379,20 +379,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_strictEvalActivationStructure;
-    WriteBarrier<Structure> m_lexicalEnvironmentStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleEnvironmentStructure;
-    WriteBarrier<Structure> m_directArgumentsStructure;
-    WriteBarrier<Structure> m_scopedArgumentsStructure;
-    WriteBarrier<Structure> m_clonedArgumentsStructure;
-
-    WriteBarrier<Structure> m_objectStructureForObjectConstructor;
-        
-    // Lists the actual structures used for having these particular indexing shapes.
-    WriteBarrier<Structure> m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
-    // Lists the structures we should use during allocation for these particular indexing shapes.
-    // These structures will differ from the originals list above when we are having a bad time.
-    WriteBarrier<Structure> m_arrayStructureForIndexingShapeDuringAllocation[NumberOfArrayIndexingModes];
-
     LazyProperty<JSGlobalObject, Structure> m_callbackConstructorStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackObjectStructure;
@@ -404,42 +391,57 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_glibCallbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_glibWrapperObjectStructure;
 #endif
-    WriteBarrier<Structure> m_nullPrototypeObjectStructure;
-    WriteBarrier<Structure> m_calleeStructure;
 
-    WriteBarrier<Structure> m_hostFunctionStructure;
+    WriteBarrierStructureID m_lexicalEnvironmentStructure;
+    WriteBarrierStructureID m_directArgumentsStructure;
+    WriteBarrierStructureID m_scopedArgumentsStructure;
+    WriteBarrierStructureID m_clonedArgumentsStructure;
+
+    WriteBarrierStructureID m_objectStructureForObjectConstructor;
+
+    // Lists the actual structures used for having these particular indexing shapes.
+    WriteBarrierStructureID m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
+    // Lists the structures we should use during allocation for these particular indexing shapes.
+    // These structures will differ from the originals list above when we are having a bad time.
+    WriteBarrierStructureID m_arrayStructureForIndexingShapeDuringAllocation[NumberOfArrayIndexingModes];
+
+    WriteBarrierStructureID m_nullPrototypeObjectStructure;
+    WriteBarrierStructureID m_calleeStructure;
+
+    WriteBarrierStructureID m_hostFunctionStructure;
 
     struct FunctionStructures {
-        WriteBarrier<Structure> arrowFunctionStructure;
-        WriteBarrier<Structure> sloppyFunctionStructure;
-        WriteBarrier<Structure> strictFunctionStructure;
+        WriteBarrierStructureID arrowFunctionStructure;
+        WriteBarrierStructureID sloppyFunctionStructure;
+        WriteBarrierStructureID strictFunctionStructure;
     };
     FunctionStructures m_builtinFunctions;
     FunctionStructures m_ordinaryFunctions;
+
+    PropertyOffset m_functionNameOffset;
+    WriteBarrierStructureID m_shadowRealmObjectStructure;
+    WriteBarrierStructureID m_regExpStructure;
+    WriteBarrierStructureID m_asyncFunctionStructure;
+    WriteBarrierStructureID m_asyncGeneratorFunctionStructure;
+    WriteBarrierStructureID m_generatorFunctionStructure;
+    WriteBarrierStructureID m_generatorStructure;
+    WriteBarrierStructureID m_asyncGeneratorStructure;
+    WriteBarrierStructureID m_arrayIteratorStructure;
+    WriteBarrierStructureID m_mapIteratorStructure;
+    WriteBarrierStructureID m_setIteratorStructure;
+    WriteBarrierStructureID m_regExpMatchesArrayStructure;
+    WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
+    WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
-    PropertyOffset m_functionNameOffset;
-    WriteBarrier<Structure> m_shadowRealmObjectStructure;
-    WriteBarrier<Structure> m_regExpStructure;
     WriteBarrier<AsyncFunctionPrototype> m_asyncFunctionPrototype;
     WriteBarrier<AsyncGeneratorFunctionPrototype> m_asyncGeneratorFunctionPrototype;
-    WriteBarrier<Structure> m_asyncFunctionStructure;
-    WriteBarrier<Structure> m_asyncGeneratorFunctionStructure;
-    WriteBarrier<Structure> m_generatorFunctionStructure;
-    WriteBarrier<Structure> m_generatorStructure;
-    WriteBarrier<Structure> m_asyncGeneratorStructure;
-    WriteBarrier<Structure> m_arrayIteratorStructure;
-    WriteBarrier<Structure> m_mapIteratorStructure;
-    WriteBarrier<Structure> m_setIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_iteratorResultObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_dataPropertyDescriptorObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_accessorPropertyDescriptorObjectStructure;
-    WriteBarrier<Structure> m_regExpMatchesArrayStructure;
-    WriteBarrier<Structure> m_regExpMatchesArrayWithIndicesStructure;
-    WriteBarrier<Structure> m_regExpMatchesIndicesArrayStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleNamespaceObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
@@ -447,15 +449,19 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_proxyRevokeStructure;
     LazyClassStructure m_sharedArrayBufferStructure;
 
-#define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
-    WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
-    WriteBarrier<Structure> m_ ## properName ## Structure;
+#define DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
+    WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype;
+
+#define DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
+    WriteBarrierStructureID m_ ## properName ## Structure;
 
 #define DEFINE_STORAGE_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     LazyClassStructure m_ ## properName ## Structure;
 
-    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
+    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE)
+    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
     
 #if ENABLE(WEBASSEMBLY)
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
@@ -467,7 +473,8 @@ public:
 
     FOR_EACH_LAZY_BUILTIN_TYPE(DEFINE_STORAGE_FOR_LAZY_TYPE)
 
-#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE
+#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE
+#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE
 #undef DEFINE_STORAGE_FOR_LAZY_TYPE
 
     WriteBarrier<GetterSetter> m_speciesGetterSetter;
@@ -577,6 +584,7 @@ public:
 
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
+    bool m_needsSiteSpecificQuirks { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
     String m_evalDisabledErrorMessage;
     String m_webAssemblyDisabledErrorMessage;
@@ -1203,7 +1211,6 @@ private:
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 
-    bool m_needsSiteSpecificQuirks { false };
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
 #endif

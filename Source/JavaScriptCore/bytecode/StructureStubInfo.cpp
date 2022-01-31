@@ -47,8 +47,7 @@ void StructureStubInfo::initGetByIdSelf(const ConcurrentJSLockerBase& locker, Co
     ASSERT(hasConstantIdentifier);
     setCacheType(locker, CacheType::GetByIdSelf);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().writeBarrier(codeBlock);
+    m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
     byIdSelfOffset = offset;
 }
 
@@ -69,8 +68,7 @@ void StructureStubInfo::initPutByIdReplace(const ConcurrentJSLockerBase& locker,
     ASSERT(m_cacheType == CacheType::Unset);
     setCacheType(locker, CacheType::PutByIdReplace);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().writeBarrier(codeBlock);
+    m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
     byIdSelfOffset = offset;
 }
 
@@ -79,8 +77,7 @@ void StructureStubInfo::initInByIdSelf(const ConcurrentJSLockerBase& locker, Cod
     ASSERT(m_cacheType == CacheType::Unset);
     setCacheType(locker, CacheType::InByIdSelf);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
-    codeBlock->vm().writeBarrier(codeBlock);
+    m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
     byIdSelfOffset = offset;
 }
 
@@ -214,11 +211,11 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // access code. That's because when we first transition to becoming a Stub, we may
         // be buffered, and we have not yet generated any code. Once the Stub finally generates
         // code, we're no longer running the inline access code, so we can then clear out
-        // m_inlineAccessBaseStructure. The reason we don't clear m_inlineAccessBaseStructure while
-        // we're buffered is because we rely on it to reset during GC if m_inlineAccessBaseStructure
+        // m_inlineAccessBaseStructureID. The reason we don't clear m_inlineAccessBaseStructureID while
+        // we're buffered is because we rely on it to reset during GC if m_inlineAccessBaseStructureID
         // is collected.
         m_identifier = nullptr;
-        m_inlineAccessBaseStructure = 0;
+        m_inlineAccessBaseStructureID.clear();
         
         // If we generated some code then we don't want to attempt to repatch in the future until we
         // gather enough cases.
@@ -233,7 +230,7 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
 {
     clearBufferedStructures();
     m_identifier = nullptr;
-    m_inlineAccessBaseStructure = 0;
+    m_inlineAccessBaseStructureID.clear();
 
     if (m_cacheType == CacheType::Unset)
         return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,43 @@
 
 #pragma once
 
-#include "ECMAMode.h"
+#include "AlignedMemoryAllocator.h"
+#include <wtf/BitVector.h>
+#include <wtf/DebugHeap.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+
 
 namespace JSC {
 
-class PutByIdFlags {
+class IsoMemoryAllocatorBase : public AlignedMemoryAllocator {
 public:
-    constexpr static PutByIdFlags create(ECMAMode ecmaMode)
-    {
-        return PutByIdFlags(false, ecmaMode);
-    }
+    IsoMemoryAllocatorBase(CString);
+    ~IsoMemoryAllocatorBase() override;
 
-    // A direct put_by_id means that we store the property without checking if the
-    // prototype chain has a setter.
-    constexpr static PutByIdFlags createDirect(ECMAMode ecmaMode)
-    {
-        return PutByIdFlags(true, ecmaMode);
-    }
+    void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void freeAlignedMemory(void*) final;
 
-    bool isDirect() const { return m_isDirect; }
-    ECMAMode ecmaMode() const { return m_ecmaMode; }
+protected:
+    void releaseMemoryFromSubclassDestructor();
+    virtual void* tryMallocBlock() = 0;
+    virtual void freeBlock(void* block) = 0;
+    virtual void commitBlock(void* block) = 0;
+    virtual void decommitBlock(void* block) = 0;
 
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+protected:
+    // If breakdown is enabled, we do not ensure Iso-feature. This is totally OK since breakdown is memory bloat debugging feature.
+    WTF::DebugHeap m_debugHeap;
+#else
 private:
-    constexpr PutByIdFlags(bool isDirect, ECMAMode ecmaMode)
-        : m_isDirect(isDirect)
-        , m_ecmaMode(ecmaMode)
-    {
-    }
-
-    bool m_isDirect;
-    ECMAMode m_ecmaMode;
+    Vector<void*> m_blocks;
+    HashMap<void*, unsigned> m_blockIndices;
+    BitVector m_committed;
+    unsigned m_firstUncommitted { 0 };
+    Lock m_lock;
+#endif
 };
 
 } // namespace JSC
 
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::PutByIdFlags);
-
-} // namespace WTF

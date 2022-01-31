@@ -320,7 +320,7 @@ void JSValue::dumpInContextAssumingStructure(
             out.print(" (", inContext(*structure, context), ")");
         }
 #if USE(JSVALUE64)
-        out.print(", StructureID: ", asCell()->structureID());
+        out.print(", StructureID: ", asCell()->structureID().bits());
 #endif
     } else if (isTrue())
         out.print("True");
@@ -357,15 +357,9 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
                 out.print("(unresolved string)");
         } else if (asCell()->inherits<Structure>(vm)) {
             out.print("Structure[ ", asCell()->structure()->classInfo()->className);
-#if USE(JSVALUE64)
-            out.print(" ID: ", asCell()->structureID());
-#endif
             out.print("]: ", RawPointer(asCell()));
         } else {
             out.print("Cell[", asCell()->structure()->classInfo()->className);
-#if USE(JSVALUE64)
-            out.print(" ID: ", asCell()->structureID());
-#endif
             out.print("]: ", RawPointer(asCell()));
         }
     } else if (isTrue())

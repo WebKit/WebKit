@@ -154,7 +154,7 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     JSValue messageValue;
     auto messagePropertName = vm.propertyNames->message;
@@ -172,7 +172,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;
@@ -203,7 +203,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     String nameString = sanitizedNameString(globalObject);
     RETURN_IF_EXCEPTION(scope, String());

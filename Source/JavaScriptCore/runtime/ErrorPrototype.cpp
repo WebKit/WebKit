@@ -79,7 +79,7 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope);
     JSObject* thisObj = asObject(thisValue);
-    Integrity::auditStructureID(vm, thisObj->structureID());
+    Integrity::auditStructureID(thisObj->structureID());
 
     // Guard against recursion!
     StringRecursionChecker checker(globalObject, thisObj);

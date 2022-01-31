@@ -2731,7 +2731,7 @@ void JIT::emit_op_get_property_enumerator(const Instruction* currentInstruction)
     and32(TrustedImm32(IndexingTypeMask), regT1);
     genericCases.append(branch32(Above, regT1, TrustedImm32(ArrayWithUndecided)));
 
-    emitLoadStructure(vm(), regT0, regT1, regT2);
+    emitLoadStructure(vm(), regT0, regT1);
     loadPtr(Address(regT1, Structure::previousOrRareDataOffset()), regT1);
     genericCases.append(branchTestPtr(Zero, regT1));
     genericCases.append(branchIfStructure(regT1));

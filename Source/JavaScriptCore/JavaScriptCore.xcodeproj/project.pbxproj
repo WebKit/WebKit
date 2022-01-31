@@ -849,7 +849,6 @@
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
-		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33111B8B2397256500AA34CE /* Scribble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33111B8A2397256500AA34CE /* Scribble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */; };
@@ -930,6 +929,7 @@
 		5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */; };
 		5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */; };
 		5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */; };
+		533699B327A3079200C9561D /* IsoMemoryAllocatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 533699B127A3078600C9561D /* IsoMemoryAllocatorBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5338E2A72396EFFB00C61BAD /* CheckpointOSRExitSideState.h in Headers */ = {isa = PBXBuildFile; fileRef = 5338E2A62396EFEC00C61BAD /* CheckpointOSRExitSideState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5338EBA323AB04B800382662 /* FTLSelectPredictability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5338EBA223AB04A300382662 /* FTLSelectPredictability.h */; };
 		533D074422C2D797004D2FE2 /* FinalizationRegistryConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 533D074322C2D797004D2FE2 /* FinalizationRegistryConstructor.h */; };
@@ -1090,6 +1090,8 @@
 		536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680C714BBB16900BFE272 /* LowLevelInterpreter.cpp */; };
 		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
+		537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEEC82742BDA300C9EFEE /* StructureID.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */; };
 		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */; };
 		538F15E8268FBBB600D601C4 /* UnifiedSource151.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DE268FBBB300D601C4 /* UnifiedSource151.cpp */; };
@@ -3715,8 +3717,6 @@
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
-		2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDTable.cpp; sourceTree = "<group>"; };
-		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignatureInlines.h; sourceTree = "<group>"; };
 		33111B8A2397256500AA34CE /* Scribble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scribble.h; sourceTree = "<group>"; };
@@ -3839,6 +3839,8 @@
 		531EE7B922DE6BBB0030DA81 /* FinalizationRegistryPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FinalizationRegistryPrototype.h; sourceTree = "<group>"; };
 		531EE7BC22DE6EC60030DA81 /* FinalizationRegistryPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FinalizationRegistryPrototype.cpp; sourceTree = "<group>"; };
 		532631B3218777A5007B8191 /* JavaScriptCore.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = JavaScriptCore.modulemap; sourceTree = "<group>"; };
+		533699B127A3078600C9561D /* IsoMemoryAllocatorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsoMemoryAllocatorBase.h; sourceTree = "<group>"; };
+		533699B227A3078700C9561D /* IsoMemoryAllocatorBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IsoMemoryAllocatorBase.cpp; sourceTree = "<group>"; };
 		5338E2A62396EFEC00C61BAD /* CheckpointOSRExitSideState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckpointOSRExitSideState.h; sourceTree = "<group>"; };
 		5338EBA223AB04A300382662 /* FTLSelectPredictability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSelectPredictability.h; path = ftl/FTLSelectPredictability.h; sourceTree = "<group>"; };
 		533B15DE1DC7F463004D500A /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
@@ -4017,6 +4019,9 @@
 		5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveInferredPropertyValueWatchpointBase.h; sourceTree = "<group>"; };
 		5373B4D322AD8BF700803572 /* WeakObjectRefPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeakObjectRefPrototype.cpp; sourceTree = "<group>"; };
 		5373B4D422ADB31400803572 /* WeakObjectRefConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeakObjectRefConstructor.cpp; sourceTree = "<group>"; };
+		537FEEC82742BDA300C9EFEE /* StructureID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureID.h; sourceTree = "<group>"; };
+		537FEECB2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureAlignedMemoryAllocator.cpp; sourceTree = "<group>"; };
+		537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureAlignedMemoryAllocator.h; sourceTree = "<group>"; };
 		5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFaultSignalHandler.cpp; sourceTree = "<group>"; };
 		5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFaultSignalHandler.h; sourceTree = "<group>"; };
 		538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource148.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource148.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5828,8 +5833,8 @@
 				A731B25A130093880040A7FA /* Foundation.framework in Frameworks */,
 				932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */,
 				932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */,
-				A5098B041C16AA0200087797 /* Security.framework in Frameworks */,
 				DDB04F42278E56A2008D3678 /* libWTF.a in Frameworks */,
+				A5098B041C16AA0200087797 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5924,6 +5929,7 @@
 				8603CEF014C753EF00AE59E3 /* tools */,
 				7B98D1331B60CD1E0023B1A4 /* wasm */,
 				86EAC48C0F93E8B9008EC948 /* yarr */,
+				533699AF27A306F600C9561D /* Recovered References */,
 			);
 			name = JavaScriptCore;
 			sourceTree = "<group>";
@@ -6737,6 +6743,8 @@
 				E3BF1BAD238AAED1003A1C2B /* IsoHeapCellType.h */,
 				E3C8ED4223A1DBC500131958 /* IsoInlinedHeapCellType.h */,
 				FE65B1502748601F00DB5B16 /* IsoInlinedHeapCellTypeInlines.h */,
+				533699B227A3078700C9561D /* IsoMemoryAllocatorBase.cpp */,
+				533699B127A3078600C9561D /* IsoMemoryAllocatorBase.h */,
 				0FDCE12C1FAFB4DE006F3901 /* IsoSubspace.cpp */,
 				0FDCE12B1FAFB4DE006F3901 /* IsoSubspace.h */,
 				0FD2FD9220B52BDC00F09441 /* IsoSubspaceInlines.h */,
@@ -6796,6 +6804,8 @@
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
+				537FEECB2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.cpp */,
+				537FEECC2742BDE000C9EFEE /* StructureAlignedMemoryAllocator.h */,
 				0F7DF1311E2970D50095951B /* Subspace.cpp */,
 				0F7DF1321E2970D50095951B /* Subspace.h */,
 				0F7DF1331E2970D50095951B /* SubspaceInlines.h */,
@@ -7357,11 +7367,11 @@
 				E38350092390D9370036316D /* WasmGlobal.h */,
 				148521D526EAEBDF00CC1D1A /* WasmHandlerInfo.cpp */,
 				148521D726EAEBFE00CC1D1A /* WasmHandlerInfo.h */,
-				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
 				AD8FF3961EB5BD850087FF82 /* WasmIndexOrName.cpp */,
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
 				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
 				AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */,
+				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
 				AD00659D1ECAC7FE000CA926 /* WasmLimits.h */,
 				14C5AD6822F33FBF00F1FB83 /* WasmLLIntGenerator.cpp */,
 				14C5AD6922F33FBF00F1FB83 /* WasmLLIntGenerator.h */,
@@ -8200,9 +8210,8 @@
 				7986943A1F8C0AC8009232AE /* StructureCache.h */,
 				7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */,
 				7E4EE7080EBB7963005934AA /* StructureChain.h */,
+				537FEEC82742BDA300C9EFEE /* StructureID.h */,
 				2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */,
-				2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */,
-				2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */,
 				0FD2C92316D01EE900C7803F /* StructureInlines.h */,
 				C2F0F2D016BAEEE900187C19 /* StructureRareData.cpp */,
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
@@ -10032,7 +10041,6 @@
 				0FBE0F7316C1DB050082C5E8 /* DFGCPSRethreadingPhase.h in Headers */,
 				A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */,
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
-				52CAEC752790B8FB00DDBAAF /* SecureARM64EHashPins.h in Headers */,
 				0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */,
 				E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */,
 				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
@@ -10485,6 +10493,7 @@
 				E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */,
 				E3C8ED4323A1DBCB00131958 /* IsoInlinedHeapCellType.h in Headers */,
 				FE65B1512748601F00DB5B16 /* IsoInlinedHeapCellTypeInlines.h in Headers */,
+				533699B327A3079200C9561D /* IsoMemoryAllocatorBase.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
 				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
 				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
@@ -10977,6 +10986,8 @@
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
 				A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */,
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
+				52CAEC752790B8FB00DDBAAF /* SecureARM64EHashPins.h in Headers */,
+				52CAEC762790B90100DDBAAF /* SecureARM64EHashPinsInlines.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
 				865DA0C825B8960C00875772 /* SetPrivateBrandStatus.h in Headers */,
@@ -11033,10 +11044,11 @@
 				CD1F9B4B270CFE0F00617EB6 /* StrongForward.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
+				537FEED02742BDE100C9EFEE /* StructureAlignedMemoryAllocator.h in Headers */,
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
+				537FEEC92742BDA300C9EFEE /* StructureID.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
-				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
 				C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */,
 				C20BA92D16BB1C1500B3AEA2 /* StructureRareDataInlines.h in Headers */,
@@ -11167,6 +11179,7 @@
 				148521D826EAEBFE00CC1D1A /* WasmHandlerInfo.h in Headers */,
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
 				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
+				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
 				1450FA1F2357BEC90093CD4D /* WasmLLIntTierUpCounter.h in Headers */,
 				53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */,
@@ -11194,7 +11207,6 @@
 				E33BBE0925BFA0410053690F /* WasmStreamingCompiler.h in Headers */,
 				E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */,
 				E3C73A9125BFA73B00EFE303 /* WasmStreamingPlan.h in Headers */,
-				52CAEC762790B90100DDBAAF /* SecureARM64EHashPinsInlines.h in Headers */,
 				AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */,
 				14D01BF526DEEF5300CAE0D0 /* WasmTag.h in Headers */,
 				5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */,
@@ -11218,7 +11230,6 @@
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
-				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
 				539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */,
 				539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */,
 				14E84FA114EE1ACC00D6D5D4 /* WeakSet.h in Headers */,

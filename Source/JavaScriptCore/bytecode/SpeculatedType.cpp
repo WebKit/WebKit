@@ -596,13 +596,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
         }
         return SpecString;
     }
-    // FIXME: rdar://69036888: undo this when no longer needed.
-    auto* structure = cell->vm().tryGetStructure(cell->structureID());
-    if (UNLIKELY(!isSanePointer(structure))) {
-        ASSERT_NOT_REACHED();
-        return SpecNone;
-    }
-    return speculationFromStructure(structure);
+    return speculationFromStructure(cell->structure());
 }
 
 SpeculatedType speculationFromValue(JSValue value)

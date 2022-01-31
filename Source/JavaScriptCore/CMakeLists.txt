@@ -747,11 +747,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/HeapSnapshotBuilder.h
     heap/HeapSubspaceTypes.h
     heap/IncrementalSweeper.h
-    heap/IsoAlignedMemoryAllocator.h
     heap/IsoCellSet.h
     heap/IsoHeapCellType.h
     heap/IsoInlinedHeapCellType.h
     heap/IsoInlinedHeapCellTypeInlines.h
+    heap/IsoMemoryAllocatorBase.h
     heap/IsoSubspace.h
     heap/IsoSubspaceInlines.h
     heap/IsoSubspacePerVM.h
@@ -778,6 +778,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/Strong.h
     heap/StrongForward.h
     heap/StrongInlines.h
+    heap/StructureAlignedMemoryAllocator.h
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
@@ -1169,8 +1170,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Structure.h
     runtime/StructureCache.h
     runtime/StructureChain.h
+    runtime/StructureID.h
     runtime/StructureIDBlob.h
-    runtime/StructureIDTable.h
     runtime/StructureInlines.h
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h

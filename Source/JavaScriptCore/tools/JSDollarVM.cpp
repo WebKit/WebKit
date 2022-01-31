@@ -3582,7 +3582,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* gl
 
     for (size_t i = 0; i < structures.size(); ++i) {
         auto* structure = structures[structures.size() - i - 1];
-        result->push(globalObject, JSValue(structure->id()));
+        result->push(globalObject, JSValue(structure->id().bits()));
         RETURN_IF_EXCEPTION(scope, { });
         result->push(globalObject, JSValue(structure->transitionOffset()));
         RETURN_IF_EXCEPTION(scope, { });
@@ -4009,7 +4009,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "ensureArrayStorage", functionEnsureArrayStorage, 1);
 
-    m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
+    m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
@@ -4031,7 +4031,7 @@ void JSDollarVM::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSDollarVM* thisObject = jsCast<JSDollarVM*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure);
+    visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID);
 }
 
 DEFINE_VISIT_CHILDREN(JSDollarVM);

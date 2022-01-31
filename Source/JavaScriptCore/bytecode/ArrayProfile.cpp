@@ -123,9 +123,9 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, Co
     if (!m_lastSeenStructureID)
         return;
     
-    Structure* lastSeenStructure = codeBlock->heap()->structureIDTable().get(m_lastSeenStructureID);
+    Structure* lastSeenStructure = m_lastSeenStructureID.decode();
     computeUpdatedPrediction(locker, codeBlock, lastSeenStructure);
-    m_lastSeenStructureID = 0;
+    m_lastSeenStructureID = StructureID();
 }
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)

@@ -724,20 +724,16 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
         end)
 end
 
-macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scratch2)
-    loadp CodeBlock[cfr], scratch
-    move structureIDThenStructure, scratch2
-    loadp CodeBlock::m_vm[scratch], scratch
-    rshifti NumberOfStructureIDEntropyBits, scratch2
-    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadp [scratch, scratch2, PtrSize], scratch2
-    lshiftp StructureEntropyBitsShift, structureIDThenStructure
-    xorp scratch2, structureIDThenStructure
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
+    andq constexpr structureIDMask, structureIDThenStructure
+    leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
+    loadp [scratch], scratch
+    addp scratch, structureIDThenStructure
 end
 
-macro loadStructureWithScratch(cell, structure, scratch, scratch2)
+macro loadStructureWithScratch(cell, structure, scratch)
     loadi JSCell::m_structureID[cell], structure
-    structureIDToStructureWithScratch(structure, scratch, scratch2)
+    structureIDToStructureWithScratch(structure, scratch)
 end
 
 # Entrypoints into the interpreter.
@@ -960,7 +956,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         move 0, t0
         jmp .done
     .masqueradesAsUndefined:
-        loadStructureWithScratch(t0, t2, t1, t3)
+        loadStructureWithScratch(t0, t2, t1)
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
         cpeq Structure::m_globalObject[t2], t0, t0
@@ -1501,7 +1497,7 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     move ValueFalse, t1
     return(t1)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1, t2)
+    loadStructureWithScratch(t0, t3, t1)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
@@ -1713,7 +1709,7 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
     btqnz t0, notCellMask, .opGetPrototypeOfSlow
     bbb JSCell::m_type[t0], ObjectType, .opGetPrototypeOfSlow
 
-    loadStructureWithScratch(t0, t2, t1, t3)
+    loadStructureWithScratch(t0, t2, t1)
     loadh Structure::m_outOfLineTypeFlags[t2], t3
     btinz t3, OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
 
@@ -1753,19 +1749,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp OpPutById::Metadata::m_structureChain[t5], t3
     btpz t3, .opPutByIdTransitionDirect
 
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
-    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[t1], t1
-
-    macro structureIDToStructureWithScratchAndTable(structureIDThenStructure, table, scratch)
-        move structureIDThenStructure, scratch
-        rshifti NumberOfStructureIDEntropyBits, scratch
-        loadp [table, scratch, PtrSize], scratch
-        lshiftp StructureEntropyBitsShift, structureIDThenStructure
-        xorp scratch, structureIDThenStructure
-    end
-
-    structureIDToStructureWithScratchAndTable(t2, t1, t0)
+    structureIDToStructureWithScratch(t2, t1)
 
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
@@ -1776,7 +1760,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadi JSCell::m_structureID[t2], t2
     bineq t2, [t3], .opPutByIdSlow
     addp 4, t3
-    structureIDToStructureWithScratchAndTable(t2, t1, t0)
+    structureIDToStructureWithScratch(t2, t1)
     loadq Structure::m_prototype[t2], t2
     bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
 
@@ -2151,7 +2135,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         assertNotConstant(size, t0)
         loadq [cfr, t0, 8], t0
         btqnz t0, notCellMask, .immediate
-        loadStructureWithScratch(t0, t2, t1, t3)
+        loadStructureWithScratch(t0, t2, t1)
         cellHandler(t2, JSCell::m_flags[t0], .target)
         dispatch()
 
@@ -2872,7 +2856,7 @@ end)
 macro loadWithStructureCheck(opcodeStruct, get, slowPath)
     get(m_scope, t0)
     loadq [cfr, t0, 8], t0
-    loadStructureWithScratch(t0, t2, t1, t3)
+    loadStructureWithScratch(t0, t2, t1)
     loadp %opcodeStruct%::Metadata::m_structure[t5], t1
     bpneq t2, t1, slowPath
 end
@@ -3323,7 +3307,7 @@ llintOpWithReturn(op_get_property_enumerator, OpGetPropertyEnumerator, macro (si
     andi IndexingTypeMask, t1
     bia t1, ArrayWithUndecided, .slowPath
 
-    loadStructureWithScratch(t0, t1, t2, t3)
+    loadStructureWithScratch(t0, t1, t2)
     loadp Structure::m_previousOrRareData[t1], t1
     btpz t1, .slowPath
     bbeq JSCell::m_type[t1], StructureType, .slowPath

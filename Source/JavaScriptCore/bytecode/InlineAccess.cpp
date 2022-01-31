@@ -447,7 +447,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
         }
 
         stubInfo.m_codePtr = target;
-        stubInfo.m_inlineAccessBaseStructure = 0; // Clear out the inline access code.
+        stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
         return;
     }
 
@@ -464,7 +464,7 @@ void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubIn
 {
     if (codeBlock->useDataIC() && codeBlock->jitType() == JITType::BaselineJIT) {
         stubInfo.m_codePtr = stubInfo.slowPathStartLocation;
-        stubInfo.m_inlineAccessBaseStructure = 0; // Clear out the inline access code.
+        stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
         return;
     }
 

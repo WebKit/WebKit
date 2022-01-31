@@ -184,15 +184,15 @@ public:
     Structure* structure() const
     {
         if (m_type == Transition || m_type == Delete || m_type == SetPrivateBrand)
-            return m_structure->previousID();
-        return m_structure.get();
+            return m_structureID->previousID();
+        return m_structureID.get();
     }
     bool guardedByStructureCheck(const StructureStubInfo&) const;
 
     Structure* newStructure() const
     {
         ASSERT(m_type == Transition || m_type == Delete || m_type == SetPrivateBrand);
-        return m_structure.get();
+        return m_structureID.get();
     }
 
     ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
@@ -272,7 +272,7 @@ public:
 
     unsigned hash() const
     {
-        return computeHash(m_conditionSet.hash(), static_cast<unsigned>(m_type), m_viaProxy, m_structure.unvalidatedGet(), m_offset);
+        return computeHash(m_conditionSet.hash(), static_cast<unsigned>(m_type), m_viaProxy, m_structureID.unvalidatedGet(), m_offset);
     }
 
     static bool canBeShared(const AccessCase&, const AccessCase&);
@@ -284,7 +284,7 @@ protected:
         , m_state(WTFMove(other.m_state))
         , m_viaProxy(WTFMove(other.m_viaProxy))
         , m_offset(WTFMove(other.m_offset))
-        , m_structure(WTFMove(other.m_structure))
+        , m_structureID(WTFMove(other.m_structureID))
         , m_conditionSet(WTFMove(other.m_conditionSet))
         , m_polyProtoAccessChain(WTFMove(other.m_polyProtoAccessChain))
         , m_identifier(WTFMove(other.m_identifier))
@@ -295,7 +295,7 @@ protected:
         , m_state(other.m_state)
         , m_viaProxy(other.m_viaProxy)
         , m_offset(other.m_offset)
-        , m_structure(other.m_structure)
+        , m_structureID(other.m_structureID)
         , m_conditionSet(other.m_conditionSet)
         , m_polyProtoAccessChain(other.m_polyProtoAccessChain)
         , m_identifier(other.m_identifier)
@@ -348,7 +348,7 @@ private:
     // Usually this is the structure that we expect the base object to have. But, this is the *new*
     // structure for a transition and we rely on the fact that it has a strong reference to the old
     // structure. For proxies, this is the structure of the object behind the proxy.
-    WriteBarrier<Structure> m_structure;
+    WriteBarrierStructureID m_structureID;
 
     ObjectPropertyConditionSet m_conditionSet;
 
