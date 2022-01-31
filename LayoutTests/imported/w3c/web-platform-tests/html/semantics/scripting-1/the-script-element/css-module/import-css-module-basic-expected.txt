@@ -5,6 +5,6 @@ I am a test div.
 I am a test div.
 I am a test div.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: unreachable
+Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
 

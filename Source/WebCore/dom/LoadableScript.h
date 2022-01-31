@@ -27,6 +27,7 @@
 
 #include "ScriptElementCachedScriptFetcher.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,6 +55,7 @@ public:
     struct Error {
         ErrorType type;
         std::optional<ConsoleMessage> consoleMessage;
+        std::optional<JSC::JSValue> errorValue;
     };
 
     virtual ~LoadableScript() = default;

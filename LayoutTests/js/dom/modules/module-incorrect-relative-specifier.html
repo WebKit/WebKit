@@ -10,30 +10,31 @@ description('Test script.onerror will be fired when the incorrect relative speci
 window.jsTestIsAsync = true;
 debug('Module is not executed yet.');
 var count = 0;
-var scripts = new Set();
-function errorHandler(script) {
+var errors = [];
+window.addEventListener("error", ev => {
     var current = count++;
     debug(`${current}`);
-    scripts.add(script);
+    errors.push(ev.message);
     if (count === 3) {
-        shouldBeTrue(`scripts.has(document.getElementById("s0"))`);
-        shouldBeTrue(`scripts.has(document.getElementById("s1"))`);
-        shouldBeTrue(`scripts.has(document.getElementById("s2"))`);
+        shouldBeTrue(`errors.some(e => e.match(/incorrect/))`);
+        shouldBeTrue(`errors.some(e => e.match(/hello/))`);
+        shouldBeTrue(`errors.some(e => e.match(/test/))`);
+        shouldHaveHadError("TypeError");
         finishJSTest();
     }
-}
+});
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 
-<script type="module" id="s0" onerror="errorHandler(this)">
+<script type="module" id="s0">
 import Incorrect from "incorrect"
 </script>
 
-<script type="module" id="s1" onerror="errorHandler(this)">
+<script type="module" id="s1">
 import Incorrect from "$hello"
 </script>
 
-<script type="module" id="s2" onerror="errorHandler(this)">
+<script type="module" id="s2">
 import Incorrect from ".../test"
 </script>
 

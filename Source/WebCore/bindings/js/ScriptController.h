@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "JSWindowProxy.h"
+#include "LoadableScript.h"
 #include "SerializedScriptValue.h"
 #include "WindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
@@ -167,6 +168,8 @@ public:
     void initScriptForWindowProxy(JSWindowProxy&);
 
     bool willReplaceWithResultOfExecutingJavascriptURL() const { return m_willReplaceWithResultOfExecutingJavascriptURL; }
+
+    void reportExceptionFromScriptError(LoadableScript::Error, bool);
 
 private:
     ValueOrException executeUserAgentScriptInWorldInternal(DOMWrapperWorld&, RunJavaScriptParameters&&);

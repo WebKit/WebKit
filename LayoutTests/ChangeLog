@@ -1,3 +1,19 @@
+2022-01-31  Asumu Takikawa  <asumu@igalia.com>
+
+        Fix handling of module script errors in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=218284
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjust tests expectations to match fixed script loading behvior.
+        Also add DumpJSConsoleLogInStdErr for flaky test (see bug 182177).
+        Changed a JS DOM test to match spec behavior.
+
+        * TestExpectations:
+        * js/dom/modules/module-incorrect-relative-specifier-expected.txt:
+        * js/dom/modules/module-incorrect-relative-specifier.html:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-expected.txt: Removed.
+
 2022-01-31  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Check for query containers when matching rules

@@ -444,9 +444,21 @@ void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
     if (std::optional<LoadableScript::Error> error = loadableScript.error()) {
-        if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
-            m_element.document().addConsoleMessage(message->source, message->level, message->message);
-        dispatchErrorEvent();
+        if (error->errorValue) {
+            // https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception
+            // An error value is present when there is a load failure that was
+            // not triggered during fetching. In this case, we need to report
+            // the exception to the global object.
+            if (auto* frame = m_element.document().frame())
+                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+        } else {
+            // https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
+            // When the script is "null" due to a fetch error, an error event
+            // should be dispatched for the script element.
+            if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
+                m_element.document().addConsoleMessage(message->source, message->level, message->message);
+            dispatchErrorEvent();
+        }
     } else if (!loadableScript.wasCanceled()) {
         ASSERT(!loadableScript.error());
         loadableScript.execute(*this);

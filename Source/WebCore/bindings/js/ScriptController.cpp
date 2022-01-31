@@ -148,7 +148,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     std::optional<ExceptionDetails> optionalDetails;
     if (evaluationException) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
         optionalDetails = WTFMove(details);
     }
 
@@ -309,14 +309,30 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
     auto& rejectHandler = *JSNativeStdFunction::create(lexicalGlobalObject.vm(), proxy.window(), 1, String(), [moduleScript](JSGlobalObject* globalObject, CallFrame* callFrame) {
         VM& vm = globalObject->vm();
         JSValue errorValue = callFrame->argument(0);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         if (errorValue.isObject()) {
             auto* object = JSC::asObject(errorValue);
             if (JSValue failureKindValue = object->getDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName())) {
                 // This is host propagated error in the module loader pipeline.
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
-                case ModuleFetchFailureKind::WasErrored:
+                case ModuleFetchFailureKind::WasPropagatedError:
                     moduleScript->notifyLoadFailed(LoadableScript::Error {
                         LoadableScript::ErrorType::CachedScript,
+                        std::nullopt,
+                        std::nullopt
+                    });
+                    break;
+                // For a fetch error that was not propagated from further in the
+                // pipeline, we include the console error message but do not
+                // include an error value as it should not be reported.
+                case ModuleFetchFailureKind::WasFetchError:
+                    moduleScript->notifyLoadFailed(LoadableScript::Error {
+                        LoadableScript::ErrorType::CachedScript,
+                        LoadableScript::ConsoleMessage {
+                            MessageSource::JS,
+                            MessageLevel::Error,
+                            retrieveErrorMessage(*globalObject, vm, errorValue, scope),
+                        },
                         std::nullopt
                     });
                     break;
@@ -328,14 +344,16 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
             }
         }
 
-        auto scope = DECLARE_CATCH_SCOPE(vm);
         moduleScript->notifyLoadFailed(LoadableScript::Error {
             LoadableScript::ErrorType::CachedScript,
             LoadableScript::ConsoleMessage {
                 MessageSource::JS,
                 MessageLevel::Error,
                 retrieveErrorMessage(*globalObject, vm, errorValue, scope),
-            }
+            },
+            // The error value is included so that it can be reported to the
+            // appropriate global object.
+            errorValue
         });
         return JSValue::encode(jsUndefined());
     });
@@ -650,7 +668,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     if (evaluationException && !optionalDetails) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
         optionalDetails = WTFMove(details);
     }
 
@@ -829,6 +847,18 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
         if (RefPtr<DocumentLoader> loader = m_frame.document()->loader())
             loader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
     }
+}
+
+void ScriptController::reportExceptionFromScriptError(LoadableScript::Error error, bool isModule)
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+
+    auto& proxy = jsWindowProxy(world);
+    auto& lexicalGlobalObject = *proxy.window();
+
+    reportException(&lexicalGlobalObject, error.errorValue.value(), nullptr, isModule);
 }
 
 } // namespace WebCore

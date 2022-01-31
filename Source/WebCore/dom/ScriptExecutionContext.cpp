@@ -382,9 +382,12 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> ScriptExecutionContext::createRTCD
 }
 
 // FIXME: Should this function be in SecurityContext or SecurityOrigin instead?
-bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const String& sourceURL)
+bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const String& sourceURL, bool fromModule)
 {
     ASSERT(securityOrigin());
+    // Errors from module scripts are never muted.
+    if (fromModule)
+        return true;
     if (script) {
         ASSERT(script->origin());
         ASSERT(securityOrigin()->toString() == script->origin()->toString());
@@ -393,7 +396,7 @@ bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const 
     return securityOrigin()->canRequest(completeURL(sourceURL));
 }
 
-void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript)
+void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript, bool fromModule)
 {
     if (m_inDispatchErrorEvent) {
         if (!m_pendingExceptions)
@@ -403,7 +406,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     }
 
     // First report the original exception and only then all the nested ones.
-    if (!dispatchErrorEvent(errorMessage, lineNumber, columnNumber, sourceURL, exception, cachedScript))
+    if (!dispatchErrorEvent(errorMessage, lineNumber, columnNumber, sourceURL, exception, cachedScript, fromModule))
         logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
 
     if (!m_pendingExceptions)
@@ -459,14 +462,14 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLeve
     addMessage(source, level, message, sourceURL, lineNumber, columnNumber, nullptr, state, requestIdentifier);
 }
 
-bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript)
+bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
 {
     auto* target = errorEventTarget();
     if (!target)
         return false;
 
     RefPtr<ErrorEvent> errorEvent;
-    if (canIncludeErrorDetails(cachedScript, sourceURL))
+    if (canIncludeErrorDetails(cachedScript, sourceURL, fromModule))
         errorEvent = ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
     else
         errorEvent = ErrorEvent::create("Script error."_s, { }, 0, 0, { });

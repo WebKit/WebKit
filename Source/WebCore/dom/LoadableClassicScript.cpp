@@ -60,7 +60,7 @@ std::optional<LoadableScript::Error> LoadableClassicScript::error() const
         return m_error;
 
     if (m_cachedScript->errorOccurred())
-        return Error { ErrorType::CachedScript, std::nullopt };
+        return Error { ErrorType::CachedScript, std::nullopt, std::nullopt };
 
     return std::nullopt;
 }
@@ -82,7 +82,8 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::JS,
                 MessageLevel::Error,
                 consoleMessage
-            }
+            },
+            std::nullopt
         };
     }
 
@@ -93,7 +94,8 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::Security,
                 MessageLevel::Error,
                 makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type.")
-            }
+            },
+            std::nullopt
         };
     }
 
@@ -104,14 +106,16 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::Security,
                 MessageLevel::Error,
                 makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because ", m_cachedScript->response().mimeType(), " is not a script MIME type.")
-            }
+            },
+            std::nullopt
         };
     }
 
     if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
         m_error = Error {
             ErrorType::FailedIntegrityCheck,
-            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(resource, m_integrity)) }
+            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(resource, m_integrity)) },
+            std::nullopt
         };
     }
 
