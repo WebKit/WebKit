@@ -311,8 +311,7 @@ void HTMLLinkElement::process()
         if (!isActive)
             priority = DefaultResourceLoadPriority::inactiveStyleSheet;
 
-        if (document().settings().subresourceIntegrityEnabled())
-            m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);
+        m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);
 
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.nonce = attributeWithoutSynchronization(HTMLNames::nonceAttr);

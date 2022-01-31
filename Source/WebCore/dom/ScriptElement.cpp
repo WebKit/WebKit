@@ -290,7 +290,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
         auto script = LoadableClassicScript::create(
             m_element.nonce(),
-            m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
+            m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string(),
             referrerPolicy(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
             scriptCharset(),
@@ -347,7 +347,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         m_isExternalScript = true;
         auto script = LoadableModuleScript::create(
             nonce,
-            m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
+            m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string(),
             referrerPolicy(),
             crossOriginMode,
             scriptCharset(),

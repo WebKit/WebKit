@@ -1,3 +1,15 @@
+2022-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime flag for subresource integrity
+        https://bugs.webkit.org/show_bug.cgi?id=235876
+
+        Reviewed by Darin Adler.
+
+        Deleted the test which was testing the behavior of WebKit when subresource integrity is disabled.
+
+        * http/tests/subresource-integrity/sri-disabled-with-setting-expected.txt: Removed.
+        * http/tests/subresource-integrity/sri-disabled-with-setting.html: Removed.
+
 2022-01-31  Takeshi Sone  <takeshi.sone@gmail.com>
 
         Added a test to verify that setting undefined to video.playbackRate
