@@ -113,6 +113,7 @@ private:
 #if ENABLE(DEVELOPER_MODE)
     void notifyStateChanged(AccessibilityObjectAtspi&, const char*, bool) const;
     void notifySelectionChanged(AccessibilityObjectAtspi&) const;
+    void notifyMenuSelectionChanged(AccessibilityObjectAtspi&) const;
     void notifyTextChanged(AccessibilityObjectAtspi&) const;
     void notifyTextCaretMoved(AccessibilityObjectAtspi&, unsigned) const;
     void notifyChildrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged) const;

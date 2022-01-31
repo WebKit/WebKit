@@ -22,6 +22,7 @@
 #include "AccessibilityAtspi.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
 #include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
@@ -537,7 +538,10 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
 void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
 #if ENABLE(DEVELOPER_MODE)
-    notifySelectionChanged(atspiObject);
+    if (atspiObject.role() == Atspi::Role::Menu)
+        notifyMenuSelectionChanged(atspiObject);
+    else
+        notifySelectionChanged(atspiObject);
 #endif
 
     if (!m_connection)
@@ -869,6 +873,12 @@ void AccessibilityAtspi::notifySelectionChanged(AccessibilityObjectAtspi& atspiO
 {
     for (const auto& observer : m_notificationObservers.values())
         observer(atspiObject, "AXSelectedChildrenChanged", nullptr);
+}
+
+void AccessibilityAtspi::notifyMenuSelectionChanged(AccessibilityObjectAtspi& atspiObject) const
+{
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, "AXMenuItemSelected", nullptr);
 }
 
 void AccessibilityAtspi::notifyTextChanged(AccessibilityObjectAtspi& atspiObject) const
