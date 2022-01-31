@@ -1,3 +1,24 @@
+2022-01-31  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Crash in WebKit::WebInspectorUIProxy::attachmentViewDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=235842
+
+        Reviewed by Timothy Hatcher.
+
+        Speculatively fix an occasional crash in WebKit::WebInspectorUIProxy::attachmentViewDidChange by ensuring that
+        the WebInspectorUIProxy still exists before calling `attachmentViewDidChange`.
+
+        Currently we are sometimes crashing while attempting to `m_objCAdapter.get()`, which is the first use of a
+        member variable in `WebInspectorUIProxy::attachmentViewDidChange`. This retain pointer should never be able to
+        not exists, since it storing `nil` is a valid state. This points to the WebInspectorUIProxy itself no longer
+        existing. The fix is to check that we actually have a `WebInspectorUIProxy` before calling
+        `attachmentViewDidChange`. This is also just good practice since `WebPageProxy::inspector()` is also able to
+        return `nullptr` under certain circumstances, and all other calls to it are guarded to check if the
+        WebInspectorUIProxy is still around first.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setInspectorAttachmentView):
+
 2022-01-31  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Remove the resource use counters from the remote resource cache

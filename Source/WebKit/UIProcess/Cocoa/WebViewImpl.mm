@@ -4029,7 +4029,9 @@ void WebViewImpl::setInspectorAttachmentView(NSView *newView)
         return;
 
     m_inspectorAttachmentView = newView;
-    m_page->inspector()->attachmentViewDidChange(oldView ? oldView : m_view.getAutoreleased(), newView ? newView : m_view.getAutoreleased());
+    
+    if (auto* inspector = m_page->inspector())
+        inspector->attachmentViewDidChange(oldView ? oldView : m_view.getAutoreleased(), newView ? newView : m_view.getAutoreleased());
 }
 
 NSView *WebViewImpl::inspectorAttachmentView()
