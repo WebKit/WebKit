@@ -414,7 +414,10 @@ void LineLayout::adjustForPagination()
 
 void LineLayout::collectOverflow()
 {
-    for (auto& line : inlineContent()->lines) {
+    if (!m_inlineContent)
+        return;
+
+    for (auto& line : m_inlineContent->lines) {
         flow().addLayoutOverflow(Layout::toLayoutRect(line.scrollableOverflow()));
         if (!flow().hasNonVisibleOverflow())
             flow().addVisualOverflow(Layout::toLayoutRect(line.inkOverflow()));
