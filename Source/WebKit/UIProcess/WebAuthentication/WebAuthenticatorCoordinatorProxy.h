@@ -80,7 +80,7 @@ private:
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
     void performRequest(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
-#endif
+#endif // HAVE(UNIFIED_ASC_AUTH_UI)
 };
 
 } // namespace WebKit
