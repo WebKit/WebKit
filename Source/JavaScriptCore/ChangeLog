@@ -1,3 +1,37 @@
+2022-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add GenericHashKey
+        https://bugs.webkit.org/show_bug.cgi?id=235872
+
+        Reviewed by Darin Adler.
+
+        Use GenericHashKey and WTF::HashSet / WTF::HashMap.
+
+        * dfg/DFGCommonData.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::Hash::hash):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::Hash::equal):
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * runtime/DeferredWorkTimer.cpp:
+        * runtime/FunctionHasExecutedCache.cpp:
+        (JSC::FunctionHasExecutedCache::hasExecutedAtOffset):
+        (JSC::FunctionHasExecutedCache::insertUnexecutedRange):
+        (JSC::FunctionHasExecutedCache::removeUnexecutedRange):
+        (JSC::FunctionHasExecutedCache::getFunctionRanges):
+        * runtime/FunctionHasExecutedCache.h:
+        (JSC::FunctionHasExecutedCache::FunctionRange::Hash::hash):
+        (JSC::FunctionHasExecutedCache::FunctionRange::Hash::equal):
+        * runtime/TypeLocationCache.cpp:
+        (JSC::TypeLocationCache::getTypeLocation):
+        * runtime/TypeLocationCache.h:
+        (JSC::TypeLocationCache::LocationKey::Hash::hash):
+        (JSC::TypeLocationCache::LocationKey::Hash::equal):
+
 2022-01-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix non-unified build after r288758

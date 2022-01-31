@@ -101,8 +101,8 @@
 #include "YarrJITRegisters.h"
 #include <atomic>
 #include <wtf/Box.h>
+#include <wtf/GenericHashKey.h>
 #include <wtf/RecursableLambda.h>
-#include <wtf/StdUnorderedSet.h>
 
 #undef RELEASE_ASSERT
 #define RELEASE_ASSERT(assertion) do { \
@@ -17846,7 +17846,7 @@ IGNORE_CLANG_WARNINGS_END
         
         Vector<SwitchCase> cases;
         // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
-        StdUnorderedSet<int32_t> alreadyHandled;
+        HashSet<GenericHashKey<int32_t>> alreadyHandled;
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             // FIXME: The fact that we're using the bytecode's switch table means that the
             // following DFG IR transformation would be invalid.
@@ -17884,7 +17884,7 @@ IGNORE_CLANG_WARNINGS_END
             DFG_ASSERT(m_graph, m_node, iter != unlinkedTable.m_offsetTable.end());
             
             // Use m_indexInTable instead of m_branchOffset to make Switch table dense.
-            if (!alreadyHandled.insert(iter->value.m_indexInTable).second)
+            if (!alreadyHandled.add(iter->value.m_indexInTable).isNewEntry)
                 continue;
 
             cases.append(SwitchCase(

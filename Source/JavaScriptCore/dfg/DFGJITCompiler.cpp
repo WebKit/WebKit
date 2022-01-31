@@ -531,17 +531,11 @@ void* JITCompiler::addressOfDoubleConstant(Node* node)
 {
     double value = node->asNumber();
     int64_t valueBits = bitwise_cast<int64_t>(value);
-    auto it = m_graph.m_doubleConstantsMap.find(valueBits);
-    if (it != m_graph.m_doubleConstantsMap.end())
-        return it->second;
-
-    if (!m_graph.m_doubleConstants)
-        m_graph.m_doubleConstants = makeUnique<Bag<double>>();
-
-    double* addressInConstantPool = m_graph.m_doubleConstants->add();
-    *addressInConstantPool = value;
-    m_graph.m_doubleConstantsMap[valueBits] = addressInConstantPool;
-    return addressInConstantPool;
+    return m_graph.m_doubleConstantsMap.ensure(valueBits, [&]{
+        double* addressInConstantPool = m_graph.m_doubleConstants.add();
+        *addressInConstantPool = value;
+        return addressInConstantPool;
+    }).iterator->value;
 }
 #endif
 

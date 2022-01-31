@@ -33,6 +33,7 @@
 #include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StdMap.h>
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS AVPlayer;
@@ -67,7 +68,7 @@ public:
     using CurrentImageChangedObserver = Observer<void()>;
     void addCurrentImageChangedObserver(const CurrentImageChangedObserver&);
 
-    using ImageMap = std::map<MediaTime, RetainPtr<CVPixelBufferRef>>;
+    using ImageMap = StdMap<MediaTime, RetainPtr<CVPixelBufferRef>>;
 
     void rateChanged(float);
 

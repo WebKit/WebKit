@@ -800,6 +800,7 @@
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
 		E3E8162F2764799300BAA45B /* RefCountedFixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedFixedVector.h; sourceTree = "<group>"; };
+		E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericHashKey.h; sourceTree = "<group>"; };
 		E419F2E623AB9E2300B26129 /* VectorHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorHash.h; sourceTree = "<group>"; };
 		E431CC4A21187ADB000C8A07 /* DispatchSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchSPI.h; sourceTree = "<group>"; };
 		E4A0AD371A96245500536DF6 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
@@ -1115,6 +1116,7 @@
 				1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */,
 				1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */,
 				53F1D98620477B9800EBC6BF /* FunctionTraits.h */,
+				E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */,
 				E3831F922703101A00EF5EB3 /* GenericTimeMixin.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
 				0F5BF1741F23D49A0029D91D /* Gigacage.cpp */,
@@ -1149,9 +1151,9 @@
 				E33667492722550900259122 /* Int128.cpp */,
 				F6D67D3226F90142006E0349 /* Int128.h */,
 				33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */,
-				5295B00427920C54006D746A /* IterationStatus.h */,
 				0F7EB85B1FA8FF4100F1ABCB /* IsoMalloc.h */,
 				0F7EB85C1FA8FF4200F1ABCB /* IsoMallocInlines.h */,
+				5295B00427920C54006D746A /* IterationStatus.h */,
 				7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */,
 				7CDD7FF9186D2A54007433CD /* IteratorRange.h */,
 				7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */,

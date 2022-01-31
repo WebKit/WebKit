@@ -26,8 +26,7 @@
 #pragma once
 
 #include "SourceID.h"
-#include <wtf/HashMethod.h>
-#include <wtf/StdUnorderedMap.h>
+#include <wtf/GenericHashKey.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -35,6 +34,12 @@ namespace JSC {
 class FunctionHasExecutedCache {
 public:
     struct FunctionRange {
+        struct Hash {
+            static unsigned hash(const FunctionRange& key) { return key.hash(); }
+            static bool equal(const FunctionRange& a, const FunctionRange& b) { return a == b; }
+            static constexpr bool safeToCompareToEmptyOrDeleted = false;
+        };
+
         FunctionRange() {}
         bool operator==(const FunctionRange& other) const 
         {
@@ -55,8 +60,8 @@ public:
     Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(SourceID);
 
 private:
-    using RangeMap = StdUnorderedMap<FunctionRange, bool, HashMethod<FunctionRange>>;
-    using SourceIDToRangeMap = StdUnorderedMap<intptr_t, RangeMap>;
+    using RangeMap = HashMap<GenericHashKey<FunctionRange, FunctionRange::Hash>, bool>;
+    using SourceIDToRangeMap = HashMap<GenericHashKey<intptr_t>, RangeMap>;
     SourceIDToRangeMap m_rangeMap;
 };
 

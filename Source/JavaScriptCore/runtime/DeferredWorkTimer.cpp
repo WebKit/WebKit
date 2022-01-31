@@ -34,7 +34,7 @@
 namespace JSC {
 
 namespace DeferredWorkTimerInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 inline DeferredWorkTimer::TicketData::TicketData(VM& vm, JSObject* scriptExecutionOwner, Vector<Strong<JSCell>>&& dependencies)

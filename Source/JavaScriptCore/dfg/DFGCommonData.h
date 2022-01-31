@@ -140,7 +140,7 @@ public:
     bool hasVMTrapsBreakpointsInstalled { false };
     
 #if USE(JSVALUE32_64)
-    std::unique_ptr<Bag<double>> doubleConstants;
+    Bag<double> doubleConstants;
 #endif
     
     unsigned frameRegisterCount { std::numeric_limits<unsigned>::max() };

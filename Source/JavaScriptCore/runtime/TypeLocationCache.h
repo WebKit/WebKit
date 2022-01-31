@@ -28,8 +28,7 @@
 #include "SourceID.h"
 #include "TypeLocation.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMethod.h>
-#include <wtf/StdUnorderedMap.h>
+#include <wtf/GenericHashKey.h>
 
 namespace JSC {
 
@@ -38,6 +37,12 @@ class VM;
 class TypeLocationCache {
 public:
     struct LocationKey {
+        struct Hash {
+            static unsigned hash(const LocationKey& key) { return key.hash(); }
+            static bool equal(const LocationKey& a, const LocationKey& b) { return a == b; }
+            static constexpr bool safeToCompareToEmptyOrDeleted = false;
+        };
+
         LocationKey() {}
         bool operator==(const LocationKey& other) const 
         {
@@ -60,7 +65,7 @@ public:
 
     std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, SourceID, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
 private:
-    using LocationMap = StdUnorderedMap<LocationKey, TypeLocation*, HashMethod<LocationKey>>;
+    using LocationMap = HashMap<GenericHashKey<LocationKey, LocationKey::Hash>, TypeLocation*>;
     LocationMap m_locationMap;
 };
 

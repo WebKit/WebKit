@@ -81,6 +81,7 @@ set(WTF_PUBLIC_HEADERS
     Function.h
     FunctionDispatcher.h
     FunctionTraits.h
+    GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
     Gigacage.h

@@ -1,3 +1,21 @@
+2022-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add GenericHashKey
+        https://bugs.webkit.org/show_bug.cgi?id=235872
+
+        Reviewed by Darin Adler.
+
+        This patch adds GenericHashKey<T>, which can represent any HashTable's key
+        even if Key does not have Empty / Deleted values. Previously we were using
+        StdUnorderedSet / StdUnorderedMap instead. But, (1) they are doing similar
+        thing to GenericHashKey to keep empty or deleted values, and (2) by using
+        GenericHashKey we can consistently use WTF::HashMap etc. for all possible
+        cases.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/GenericHashKey.h: Added.
+
 2022-01-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [WinCairo] 'fileSystemRepresentation' identifier not found in URL.cpp
