@@ -1,3 +1,15 @@
+2022-02-01  Michael Saboff  <msaboff@apple.com>
+
+        Catalyst builds of WebKit with system content path put XPCServices and Daemons in the normal location
+        https://bugs.webkit.org/show_bug.cgi?id=235976
+
+        Reviewed by Mark Lam.
+
+        The production of WEBKIT_FRAMEWORKS_DIR_USE_SYSTEM_CONTENT_PATH_YES used the system framework path
+        instead of using the computed value of NORMAL_WEBKIT_FRAMEWORKS_DIR which includes the Catalyst prefix.
+
+        * Configurations/BaseTarget.xcconfig:
+
 2022-02-01  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required syscall
