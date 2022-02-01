@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<style>
+
+@keyframes explicit {
+    from { transform: scale(0) }
+    to   { transform: scale(1) }
+}
+
+@keyframes implicit {
+    from { transform: scale(0) }
+}
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(0, 1, 0, 1);
+}
+
+div.explicit {
+    width: 50px;
+    height: 50px;
+    background: black;
+    animation-name: explicit;
+}
+
+div.implicit {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(white, white);
+    animation-name: implicit;
+}
+
+</style>
+<div class="explicit"></div>
+<div class="implicit"></div>
+
+<script>
+
+(async function () {
+    window.testRunner?.waitUntilDone();
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    window.testRunner?.notifyDone();
+})();
+
+</script>

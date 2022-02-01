@@ -1,3 +1,26 @@
+2022-02-01  Antoine Quint  <graouts@webkit.org>
+
+        Animation from scale(0) has missing backing store
+        https://bugs.webkit.org/show_bug.cgi?id=227733
+        <rdar://problem/80246192>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test which animates two squares, one on top of each other. The bottom square uses an animation
+        that has an explicit "from" value of scale(0) and an explicit "to" value of scale(1) and is black. The top
+        square uses an animation that has an explicit "from" value of scale(0) but no explicit "to" value, thus
+        animating to scale(1) as well, and is white, matching the background color.
+
+        The bug we are fixing is that the square with an implicit "to" value would not yield a visible animation
+        since we wouldn't account for the scale(1) target value and assuming we're never animating to a non-0
+        value.
+
+        This test assumes that both animations run at the same time and thus the white square will always cover
+        the black square (which is smaller to ensure no issues at the edges) and yield a completely white page.
+
+        * webanimations/accelerated-transform-animation-from-scale-zero-and-implicit-to-kefyrame-expected.html: Added.
+        * webanimations/accelerated-transform-animation-from-scale-zero-and-implicit-to-kefyrame.html: Added.
+
 2022-02-01  Youenn Fablet  <youenn@apple.com>
 
         [BigSur+ wk2 Debug] webrtc/video-mute-vp8.html is a flaky failure
