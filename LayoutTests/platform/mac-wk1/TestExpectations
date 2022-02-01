@@ -1578,4 +1578,6 @@ webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-e
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
-webkit.org/b/235733 [ BigSur+ arm64 Release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
+# webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.  
+[ BigSur+ arm64 ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
+[ BigSur+ arm64 ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]

@@ -1,5 +1,14 @@
 2022-01-31  Robert Jenner  <Jenner@apple.com>
 
+        REGRESSION(288052?): editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html makes subsequent test fail, as DumpRenderTree compares to wrong expected result        
+        https://bugs.webkit.org/show_bug.cgi?id=235733
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Disabling test to verify cause of test failures.
+
+2022-01-31  Robert Jenner  <Jenner@apple.com>
+
         WindowServer returned not alive with context:,unresponsive work processor(s)
         rdar://problem/86037417
 
