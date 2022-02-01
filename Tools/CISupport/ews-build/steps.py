@@ -2040,27 +2040,41 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             compile_without_patch_step = CompileJSCWithoutPatch.name
         compile_without_patch_result = self.getStepResult(compile_without_patch_step)
 
+        patch_id = self.getProperty('patch_id', '')
+        pr_number = self.getProperty('github.number')
+
         if compile_without_patch_result == FAILURE:
-            message = 'Unable to build WebKit without patch, retrying build'
+            if pr_number:
+                message = 'Unable to build WebKit without PR, please rebase the PR against {}'.format(self.getProperty('basename', 'ToT'))
+            else:
+                message = 'Unable to build WebKit without patch, retrying build'
+
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()
             self.finished(FAILURE)
-            self.build.buildFinished([message], RETRY)
+            # Do not retry PRs, we end up in an infinite retry loop because we don't automatically rebase against ToT
+            self.build.buildFinished([message], FAILURE if pr_number else RETRY)
             return defer.succeed(None)
 
         self.build.results = FAILURE
-        patch_id = self.getProperty('patch_id', '')
-        message = 'Patch {} does not build'.format(patch_id)
+        sha = self.getProperty('github.head.sha')
+        if sha and pr_number:
+            message = 'Hash {} for PR {} does not build'.format(sha[:HASH_LENGTH_TO_DISPLAY], pr_number)
+        else:
+            message = 'Patch {} does not build'.format(patch_id)
         self.send_email_for_new_build_failure()
 
         self.descriptionDone = message
         self.finished(FAILURE)
         self.setProperty('build_finish_summary', message)
-        if self.getProperty('buildername', '').lower() == 'commit-queue':
-            self.setProperty('bugzilla_comment_text', message)
-            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
-        else:
-            self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
+
+        # FIXME: Need a cq- equivalent for GitHub
+        if patch_id:
+            if self.getProperty('buildername', '').lower() == 'commit-queue':
+                self.setProperty('bugzilla_comment_text', message)
+                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            else:
+                self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
 
     @defer.inlineCallbacks
     def getResults(self, name):
@@ -2103,7 +2117,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
     def send_email_for_new_build_failure(self):
         try:
             patch_id = self.getProperty('patch_id', '')
-            if not self.should_send_email(patch_id):
+            # FIXME: Support pull requests
+            if not patch_id or not self.should_send_email(patch_id):
                 return
             builder_name = self.getProperty('buildername', '')
             bug_id = self.getProperty('bug_id', '')

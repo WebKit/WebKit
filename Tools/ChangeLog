@@ -1,3 +1,18 @@
+2022-02-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Fix infinate retry on PR with red ToT 
+        https://bugs.webkit.org/show_bug.cgi?id=235971
+        <rdar://problem/88344438>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.analyzeResults): Update message for PRs,
+        do not retry if base commit has failed to build.
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Only send
+        emails for patch failures.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Expose screen and window capture state to WKWebView
