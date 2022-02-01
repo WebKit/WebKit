@@ -195,8 +195,9 @@ void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styl
 // This is a simplified style setting function for keyframe styles
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
-    AtomString s(rule->name());
-    m_keyframesRuleMap.set(s.impl(), WTFMove(rule));
+    AtomString animationName(rule->name());
+    m_keyframesRuleMap.set(animationName.impl(), WTFMove(rule));
+    m_document.keyframesRuleDidChange(animationName);
 }
 
 Resolver::~Resolver()

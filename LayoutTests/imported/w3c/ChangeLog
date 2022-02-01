@@ -1,3 +1,24 @@
+2022-02-01  Antoine Quint  <graouts@webkit.org>
+
+        Redefining @keyframes does not work
+        https://bugs.webkit.org/show_bug.cgi?id=229437
+        <rdar://problem/82563372>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that reproduces the test content submitted with the bug report where
+        a <style> element containing a @keyframes rule with a given name is replaced with
+        another <style> element containing another @keyframes rule with the same name
+        but different keyframes. The test checks that the animation correctly uses the new
+        keyframes when querying the computed style.
+
+        We also get a fair few new PASS results on a ::marker animation test since that test
+        sets the `textContent` for a shared `<style>` element with generated @keyframes rules.
+
+        * web-platform-tests/css/css-animations/animation-style-element-replaced-with-keyframes-rule-of-same-name-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-style-element-replaced-with-keyframes-rule-of-same-name.html: Added.
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
 2022-02-01  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Fix removal of not yet loaded CSS @import
