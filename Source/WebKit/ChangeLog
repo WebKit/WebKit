@@ -1,3 +1,15 @@
+2022-02-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Add required syscall
+        https://bugs.webkit.org/show_bug.cgi?id=235828
+        <rdar://88177392>
+
+        Reviewed by Brent Fulgham.
+
+        Follow-up fix after r288750. Only allow syscall on older OS versions.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-01  Ben Nham  <nham@apple.com>
 
         Import APSConnection-related SPI

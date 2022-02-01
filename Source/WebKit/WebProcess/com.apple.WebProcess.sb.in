@@ -2025,7 +2025,9 @@
         SYS_necp_open
         SYS_openat_nocancel
         SYS_proc_rlimit_control
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
+#endif
         SYS_shm_open
         SYS_sigaction
         SYS_sysctl
