@@ -1,3 +1,54 @@
+2022-02-01  Ben Nham  <nham@apple.com>
+
+        Import APSConnection-related SPI
+        https://bugs.webkit.org/show_bug.cgi?id=235856
+
+        Reviewed Youenn Fablet.
+
+        This imports the SPI declarations necessary to build against ApplePushService in WebKit. It
+        also includes a PushServiceConnection interface that can sit in front of APSConnection, and
+        a fake interface that will be fleshed out for testing purposes.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/Cocoa/ApplePushServiceSPI.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/ApplePushServiceConnection.h: Added.
+        * webpushd/ApplePushServiceConnection.mm: Added.
+        (-[_WKAPSConnectionDelegate initWithConnection:]):
+        (-[_WKAPSConnectionDelegate connection:didReceivePublicToken:]):
+        (-[_WKAPSConnectionDelegate connection:didReceiveIncomingMessage:]):
+        (WebPushD::ApplePushServiceConnection::ApplePushServiceConnection):
+        (WebPushD::makeTokenInfo):
+        (WebPushD::ApplePushServiceConnection::subscribe):
+        (WebPushD::ApplePushServiceConnection::unsubscribe):
+        (WebPushD::ApplePushServiceConnection::enabledTopics):
+        (WebPushD::ApplePushServiceConnection::ignoredTopics):
+        (WebPushD::ApplePushServiceConnection::opportunisticTopics):
+        (WebPushD::ApplePushServiceConnection::nonWakingTopics):
+        (WebPushD::ApplePushServiceConnection::setEnabledTopics):
+        (WebPushD::ApplePushServiceConnection::setIgnoredTopics):
+        (WebPushD::ApplePushServiceConnection::setOpportunisticTopics):
+        (WebPushD::ApplePushServiceConnection::setNonWakingTopics):
+        (WebPushD::ApplePushServiceConnection::setTopicLists):
+        * webpushd/MockPushServiceConnection.h: Added.
+        * webpushd/MockPushServiceConnection.mm: Added.
+        (WebPushD::MockPushServiceConnection::MockPushServiceConnection):
+        (WebPushD::MockPushServiceConnection::subscribe):
+        (WebPushD::MockPushServiceConnection::unsubscribe):
+        (WebPushD::MockPushServiceConnection::enabledTopics):
+        (WebPushD::MockPushServiceConnection::ignoredTopics):
+        (WebPushD::MockPushServiceConnection::opportunisticTopics):
+        (WebPushD::MockPushServiceConnection::nonWakingTopics):
+        (WebPushD::MockPushServiceConnection::setEnabledTopics):
+        (WebPushD::MockPushServiceConnection::setIgnoredTopics):
+        (WebPushD::MockPushServiceConnection::setOpportunisticTopics):
+        (WebPushD::MockPushServiceConnection::setNonWakingTopics):
+        (WebPushD::MockPushServiceConnection::setTopicLists):
+        * webpushd/PushServiceConnection.h: Added.
+        * webpushd/PushServiceConnection.mm: Added.
+        (WebPushD::PushServiceConnection::startListeningForPushMessages):
+        (WebPushD::PushServiceConnection::didReceivePushMessage):
+
 2022-02-01  Youenn Fablet  <youenn@apple.com>
 
         Protect NetworkConnectionToWebProcess::createFetchTask from a null service worker connection

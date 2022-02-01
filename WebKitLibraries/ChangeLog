@@ -1,3 +1,14 @@
+2022-02-01  Ben Nham  <nham@apple.com>
+
+        Import APSConnection-related SPI
+        https://bugs.webkit.org/show_bug.cgi?id=235856
+
+        Reviewed Youenn Fablet.
+
+        Add an ApplePushService stub so we can build against it with public SDKs.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/ApplePushService.framework/ApplePushService.tbd: Added.
+
 2022-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2022
