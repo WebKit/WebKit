@@ -1,3 +1,17 @@
+2022-02-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Using thin archives with ld.bfd results in linker errors
+        https://bugs.webkit.org/show_bug.cgi?id=235975
+
+        Reviewed by Michael Catanzaro.
+
+        Import the two upstream that fix handling of thin archives to apply atop binutils 2.37.
+        The patches were found from https://sourceware.org/bugzilla/show_bug.cgi?id=28138 and
+        cherry-picked from the upstream binutils repository.
+
+        * elements/freedesktop-sdk.bst: List patch in the sources section.
+        * patches/0001-binutils-import-upstream-patches-for-thin-archive-su.patch: Added.
+
 2022-01-16  ChangSeok Oh  <changseok@webkit.org>
 
         [Flatpak SDK] local build is broken
