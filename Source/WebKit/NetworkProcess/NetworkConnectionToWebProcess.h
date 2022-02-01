@@ -182,7 +182,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void serverToContextConnectionNoLongerNeeded();
-    WebSWServerConnection& swConnection();
+    WebSWServerConnection* swConnection();
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
 #endif
 

@@ -1,3 +1,22 @@
+2022-02-01  Youenn Fablet  <youenn@apple.com>
+
+        Protect NetworkConnectionToWebProcess::createFetchTask from a null service worker connection
+        https://bugs.webkit.org/show_bug.cgi?id=235878
+        <rdar://87785042>
+
+        Reviewed by Chris Dumez.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=234179, there is no guarantee that we have a SWServer/SWServerConnection per session ID.
+        This is only guaranteed if there is a corresponding network session.
+        We add null pointer checks to NetworkConnectionToWebProcess::swConnection() which now returns a pointer.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createFetchTask):
+        (WebKit::NetworkConnectionToWebProcess::swConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::softUpdateIfNeeded):
+
 2022-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Expose screen and window capture state to WKWebView
