@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+enum class AXLoggingOptions : uint8_t {
+    MainThread = 1 << 0, // Logs messages on the main thread.
+    OffMainThread = 1 << 1, // Logs messages off the main thread.
+};
+
 class AXLogger {
 public:
     AXLogger() = default;
