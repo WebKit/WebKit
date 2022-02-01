@@ -195,8 +195,8 @@ void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styl
 // This is a simplified style setting function for keyframe styles
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
-    AtomString animationName(rule->name());
-    m_keyframesRuleMap.set(animationName.impl(), WTFMove(rule));
+    auto& animationName = rule->name();
+    m_keyframesRuleMap.set(animationName, WTFMove(rule));
     m_document.keyframesRuleDidChange(animationName);
 }
 
@@ -307,7 +307,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
 
 bool Resolver::isAnimationNameValid(const String& name)
 {
-    return m_keyframesRuleMap.find(AtomString(name).impl()) != m_keyframesRuleMap.end();
+    return m_keyframesRuleMap.find(AtomString(name)) != m_keyframesRuleMap.end();
 }
 
 Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName) const
@@ -317,7 +317,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     m_keyframesRuleMap.checkConsistency();
 
-    auto it = m_keyframesRuleMap.find(animationName.impl());
+    auto it = m_keyframesRuleMap.find(animationName);
     if (it == m_keyframesRuleMap.end())
         return { };
 
