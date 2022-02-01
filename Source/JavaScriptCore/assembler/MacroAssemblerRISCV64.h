@@ -2159,17 +2159,262 @@ public:
         return branch32(cond, address, imm);
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAdd32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAdd64, Jump);
+    Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchAdd32(cond, dest, src, dest);
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchSub32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchSub64, Jump);
+    Jump branchAdd32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Addition>(op1, op2, dest);
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchMul32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchMul64, Jump);
+        auto temp = temps<Data>();
+        m_assembler.addwInsn(temp.data(), op1, op2);
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchNeg32, Jump);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchNeg64, Jump);
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchAdd32(cond, dest, imm, dest);
+    }
+
+    Jump branchAdd32(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Addition>(op1, imm, dest);
+
+        auto temp = temps<Data>();
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.data());
+            m_assembler.addwInsn(temp.data(), op1, temp.data());
+        } else
+            m_assembler.addiwInsn(temp.data(), op1, Imm::I(imm.m_value));
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchAdd32(ResultCondition cond, Address address, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Addition>(dest, temp.memory(), dest);
+
+        m_assembler.addwInsn(temp.data(), dest, temp.memory());
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress address)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lwInsn(temp.data(), temp.memory(), Imm::I<0>());
+
+        if (cond == Overflow) {
+            auto branch = branchForArithmeticOverflow<32, ArithmeticOperation::Addition>(temp.data(), imm, temp.data());
+            loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+            m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+            return branch;
+        }
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.memory());
+            m_assembler.addwInsn(temp.data(), temp.data(), temp.memory());
+        } else
+            m_assembler.addiwInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+
+        if (cond == Overflow) {
+            auto branch = branchForArithmeticOverflow<32, ArithmeticOperation::Addition>(temp.data(), imm, temp.data());
+            resolution = resolveAddress(address, temp.memory());
+            m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return branch;
+        }
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            loadImmediate(imm, temp.memory());
+            m_assembler.addwInsn(temp.data(), temp.data(), temp.memory());
+        } else
+            m_assembler.addiwInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchAdd64(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchAdd64(cond, dest, src, dest);
+    }
+
+    Jump branchAdd64(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<64, ArithmeticOperation::Addition>(op1, op2, dest);
+
+        m_assembler.addInsn(dest, op1, op2);
+        return branchTestFinalize(cond, dest);
+    }
+
+    Jump branchAdd64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchAdd64(cond, dest, imm, dest);
+    }
+
+    Jump branchAdd64(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<64, ArithmeticOperation::Addition>(op1, imm, dest);
+
+        if (!Imm::isValid<Imm::IType>(imm.m_value)) {
+            auto temp = temps<Data>();
+            loadImmediate(imm, temp.data());
+            m_assembler.addInsn(dest, op1, temp.data());
+        } else
+            m_assembler.addiInsn(dest, op1, Imm::I(imm.m_value));
+        return branchTestFinalize(cond, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchSub32(cond, dest, src, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Subtraction>(op1, op2, dest);
+
+        auto temp = temps<Data>();
+        m_assembler.subwInsn(temp.data(), op1, op2);
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchSub32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchSub32(cond, dest, imm, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchAdd32(cond, op1, TrustedImm32(-imm.m_value), dest);
+    }
+
+    Jump branchSub64(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchSub64(cond, dest, src, dest);
+    }
+
+    Jump branchSub64(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<64, ArithmeticOperation::Subtraction>(op1, op2, dest);
+
+        m_assembler.subInsn(dest, op1, op2);
+        return branchTestFinalize(cond, dest);
+    }
+
+    Jump branchSub64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchSub64(cond, dest, imm, dest);
+    }
+
+    Jump branchSub64(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchAdd64(cond, op1, TrustedImm32(-imm.m_value), dest);
+    }
+
+    Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchMul32(cond, dest, src, dest);
+    }
+
+    Jump branchMul32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Multiplication>(op1, op2, dest);
+
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.memory(), op1);
+        m_assembler.signExtend<32>(temp.data(), op2);
+        m_assembler.mulInsn(temp.data(), temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchMul32(cond, dest, imm, dest);
+    }
+
+    Jump branchMul32(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<32, ArithmeticOperation::Multiplication>(op1, imm, dest);
+
+        auto temp = temps<Data, Memory>();
+        m_assembler.signExtend<32>(temp.memory(), op1);
+        loadImmediate(imm, temp.data());
+        m_assembler.mulInsn(temp.data(), temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest, temp.data());
+        return branchTestFinalize(cond, temp.data());
+    }
+
+    Jump branchMul64(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchMul64(cond, dest, src, dest);
+    }
+
+    Jump branchMul64(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<64, ArithmeticOperation::Multiplication>(op1, op2, dest);
+
+        m_assembler.mulInsn(dest, op1, op2);
+        return branchTestFinalize(cond, dest);
+    }
+
+    Jump branchMul64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        return branchMul64(cond, dest, imm, dest);
+    }
+
+    Jump branchMul64(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
+    {
+        if (cond == Overflow)
+            return branchForArithmeticOverflow<64, ArithmeticOperation::Multiplication>(op1, imm, dest);
+
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        m_assembler.mulInsn(dest, op1, temp.data());
+        return branchTestFinalize(cond, dest);
+    }
+
+    Jump branchNeg32(ResultCondition cond, RegisterID reg)
+    {
+        return branchSub32(cond, RISCV64Registers::zero, reg, reg);
+    }
+
+    Jump branchNeg64(ResultCondition cond, RegisterID reg)
+    {
+        return branchSub64(cond, RISCV64Registers::zero, reg, reg);
+    }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 imm = TrustedImm32(-1))
     {
@@ -3025,6 +3270,12 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveDoubleConditionallyTest64);
 
 private:
+    enum class ArithmeticOperation {
+        Addition,
+        Subtraction,
+        Multiplication,
+    };
+
     struct Imm {
         template<typename T>
         using EnableIfInteger = std::enable_if_t<(std::is_same_v<T, int32_t> || std::is_same_v<T, int64_t>)>;
@@ -3203,6 +3454,105 @@ private:
 
         RELEASE_ASSERT_NOT_REACHED();
         return { };
+    }
+
+    template<unsigned bitSize, ArithmeticOperation arithmeticOperation, typename Op2Type>
+    Jump branchForArithmeticOverflow(RegisterID op1, Op2Type op2, RegisterID dest)
+    {
+        static_assert(bitSize == 32 || bitSize == 64);
+        static_assert(std::is_same_v<Op2Type, RegisterID> || std::is_same_v<Op2Type, TrustedImm32>);
+        auto temp = temps<Data, Memory>();
+
+        if constexpr (bitSize == 32) {
+            RELEASE_ASSERT(op1 == temp.data() || op1 != temp.memory());
+            m_assembler.signExtend<32>(temp.data(), op1);
+
+            if constexpr (!std::is_same_v<Op2Type, TrustedImm32>) {
+                RELEASE_ASSERT(op2 == temp.memory() || op1 != temp.data());
+                m_assembler.signExtend<32>(temp.memory(), op2);
+            } else
+                loadImmediate(op2, temp.memory());
+
+            void (RISCV64Assembler::*op)(RegisterID, RegisterID, RegisterID) =
+                [] {
+                    switch (arithmeticOperation) {
+                    case ArithmeticOperation::Addition:
+                        return &RISCV64Assembler::addInsn;
+                    case ArithmeticOperation::Subtraction:
+                        return &RISCV64Assembler::subInsn;
+                    case ArithmeticOperation::Multiplication:
+                        return &RISCV64Assembler::mulInsn;
+                    }
+                }();
+
+            if (dest == temp.data() || dest == temp.memory()) {
+                RegisterID otherTemp = (dest == temp.data()) ? temp.memory() : temp.data();
+                (m_assembler.*op)(dest, temp.data(), temp.memory());
+                m_assembler.signExtend<32>(otherTemp, dest);
+                m_assembler.xorInsn(otherTemp, dest, otherTemp);
+                m_assembler.maskRegister<32>(dest, dest);
+                return makeBranch(NotEqual, otherTemp, RISCV64Registers::zero);
+            }
+
+            (m_assembler.*op)(temp.data(), temp.data(), temp.memory());
+            m_assembler.maskRegister<32>(dest, temp.data()),
+            m_assembler.signExtend<32>(temp.memory(), temp.data());
+            return makeBranch(NotEqual, temp.data(), temp.memory());
+        }
+
+        RELEASE_ASSERT(op1 != temp.data() && op1 != temp.memory());
+        RELEASE_ASSERT(dest != temp.data() && dest != temp.memory());
+
+        RegisterID rop2;
+        if constexpr (std::is_same_v<Op2Type, TrustedImm32>) {
+            loadImmediate(op2, temp.memory());
+            rop2 = temp.memory();
+        } else {
+            RELEASE_ASSERT(op2 != temp.data() && op2 != temp.memory());
+            rop2 = op2;
+        }
+
+        switch (arithmeticOperation) {
+        case ArithmeticOperation::Addition:
+        {
+            if (op1 == dest && rop2 == dest) {
+                m_assembler.slliInsn<1>(temp.memory(), dest);
+                m_assembler.xorInsn(temp.data(), temp.memory(), dest);
+                move(temp.memory(), dest);
+            } else {
+                m_assembler.xorInsn(temp.data(), op1, rop2);
+                m_assembler.xoriInsn(temp.data(), temp.data(), Imm::I<-1>());
+
+                m_assembler.addInsn(dest, op1, rop2);
+                m_assembler.xorInsn(temp.memory(), (op1 == dest) ? rop2 : op1, dest);
+                m_assembler.andInsn(temp.data(), temp.data(), temp.memory());
+            }
+            return makeBranch(LessThan, temp.data(), RISCV64Registers::zero);
+        }
+        case ArithmeticOperation::Subtraction:
+        {
+            if (op1 == dest && rop2 == dest) {
+                move(RISCV64Registers::zero, dest);
+                move(RISCV64Registers::zero, temp.data());
+            } else {
+                m_assembler.xorInsn(temp.data(), op1, rop2);
+
+                m_assembler.subInsn(dest, op1, rop2);
+                if (op1 == dest) {
+                    m_assembler.xorInsn(temp.memory(), rop2, dest);
+                    m_assembler.xoriInsn(temp.memory(), temp.memory(), Imm::I<-1>());
+                } else
+                    m_assembler.xorInsn(temp.memory(), op1, dest);
+                m_assembler.andInsn(temp.data(), temp.data(), temp.memory());
+            }
+            return makeBranch(LessThan, temp.data(), RISCV64Registers::zero);
+        }
+        case ArithmeticOperation::Multiplication:
+            m_assembler.mulhInsn(temp.data(), op1, rop2);
+            m_assembler.mulInsn(dest, op1, rop2);
+            m_assembler.sraiInsn<0x3f>(temp.memory(), dest);
+            return makeBranch(NotEqual, temp.data(), temp.memory());
+        }
     }
 
     void compareFinalize(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID dest)

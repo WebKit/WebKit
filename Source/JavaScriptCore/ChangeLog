@@ -1,3 +1,27 @@
+2022-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Add remaining MacroAssemblerRISCV64 branching operations
+        https://bugs.webkit.org/show_bug.cgi?id=235886
+
+        Reviewed by Yusuke Suzuki.
+
+        Provide MacroAssemblerRISCV64 implementations for the remaining
+        branching operations. When branching on non-overlow conditions, the
+        implementations remain pretty trivial. For the overflow condition,
+        a helper method is provided to cover different-sized operations as well
+        as operation-specific instruction sequences.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::branchAdd32):
+        (JSC::MacroAssemblerRISCV64::branchAdd64):
+        (JSC::MacroAssemblerRISCV64::branchSub32):
+        (JSC::MacroAssemblerRISCV64::branchSub64):
+        (JSC::MacroAssemblerRISCV64::branchMul32):
+        (JSC::MacroAssemblerRISCV64::branchMul64):
+        (JSC::MacroAssemblerRISCV64::branchNeg32):
+        (JSC::MacroAssemblerRISCV64::branchNeg64):
+        (JSC::MacroAssemblerRISCV64::branchForArithmeticOverflow):
+
 2022-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Try-reserving Structure heap after reserving all the other heaps including JIT heap
