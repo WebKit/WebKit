@@ -1325,6 +1325,11 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (is<RenderText>(*m_renderer)) {
         // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
         AXCoreObject* parent = parentObjectUnignored();
+
+        // Walking up the parent chain might reset the m_renderer.
+        if (!m_renderer)
+            return true;
+
         if (parent && (parent->isMenuItem() || parent->ariaRoleAttribute() == AccessibilityRole::MenuButton))
             return true;
         auto& renderText = downcast<RenderText>(*m_renderer);
