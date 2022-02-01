@@ -1047,6 +1047,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
+        host.filesystem.clear_written_files()
         details, err, _ = logging_run(
             ['--pixel-tests', '--reset-results', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
@@ -1060,6 +1061,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
+        host.filesystem.clear_written_files()
         details, err, _ = logging_run(['--no-show-results',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/missing_image.html',
@@ -1077,6 +1079,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update the platform expectations in the version-specific directories
         # for both existing and new baselines.
         host = MockHost()
+        host.filesystem.clear_written_files()
         details, err, _ = logging_run(
             ['--pixel-tests', '--new-baseline', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)

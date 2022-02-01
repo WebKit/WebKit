@@ -28,7 +28,10 @@ import unittest
 
 from collections import OrderedDict
 
+from pyfakefs.fake_filesystem_unittest import TestCaseMixin
+
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     LayoutTestFinder,
@@ -44,14 +47,16 @@ class MockLayoutTestFinder(LayoutTestFinder):
         return [path for path in paths if path.endswith('.html')]
 
 
-class LayoutTestFinderTests(unittest.TestCase):
+class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
     def __init__(self, *args, **kwargs):
         super(LayoutTestFinderTests, self).__init__(*args, **kwargs)
         self.port = None
         self.finder = None
 
     def setUp(self):
-        host = MockHost(create_stub_repository_files=True)
+        self.setUpPyfakefs()
+        self.fs.is_windows_fs = False
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
         add_unit_tests_to_mock_filesystem(host.filesystem)
         self.port = TestPort(host)
         self.finder = LayoutTestFinder(self.port, None)
@@ -182,16 +187,15 @@ class LayoutTestFinderTests(unittest.TestCase):
             tests, ['failures/expected/image.html', 'failures/expected/image_checksum.html']
         )
 
-    # these are commented out as MockFileSystem doesn't support anything but *
-    # def test_find_glob_b(self):
-    #     finder = self.finder
-    #     tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/i?age.html'])]
-    #     self.assertEqual(tests, ['failures/expected/image.html'])
+    def test_find_glob_b(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/i?age.html'])]
+        self.assertEqual(tests, ['failures/expected/image.html'])
 
-    # def test_find_glob_c(self):
-    #     finder = self.finder
-    #     tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/i[m]age.html'])]
-    #     self.assertEqual(tests, ['failures/expected/image.html'])
+    def test_find_glob_c(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/i[m]age.html'])]
+        self.assertEqual(tests, ['failures/expected/image.html'])
 
     def test_find_glob_mixed_file_type_sorted(self):
         finder = self.finder
@@ -386,7 +390,10 @@ class LayoutTestFinderTests(unittest.TestCase):
     def test_is_w3c_resource_file(self):
         finder = self.finder
 
-        finder._filesystem.write_text_file(finder._port.layout_tests_dir() + "/imported/w3c/resources/resource-files.json", """
+        path = finder._port.layout_tests_dir() + "/imported/w3c/resources/resource-files.json"
+
+        finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
+        finder._filesystem.write_text_file(path, """
 {"directories": [
 "web-platform-tests/common",
 "web-platform-tests/dom/nodes/Document-createElement-namespace-tests",

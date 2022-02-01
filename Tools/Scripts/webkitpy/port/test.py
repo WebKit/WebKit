@@ -322,7 +322,13 @@ Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
         dirname = filesystem.join(LAYOUT_TEST_DIR, test.name[0:test.name.rfind('/')])
         base = test.base
         filesystem.maybe_make_directory(dirname)
-        filesystem.write_binary_file(filesystem.join(dirname, base + suffix), contents)
+
+        path = filesystem.join(dirname, base + suffix)
+        if contents is None:
+            if filesystem.exists(path):
+                filesystem.remove(path)
+        else:
+            filesystem.write_binary_file(path, contents)
 
     # Add each test and the expected output, if any.
     test_list = unit_test_list()
@@ -335,9 +341,6 @@ Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
             continue
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
-
-    # Clear the list of written files so that we can watch what happens during testing.
-    filesystem.clear_written_files()
 
 
 def add_checkout_information_json_to_mock_filesystem(filesystem):

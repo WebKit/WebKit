@@ -1,3 +1,38 @@
+2022-02-01  Sam Sneddon  <gsnedders@apple.com>
+
+        Migrate LayoutTestFinder tests from FileSystemMock to pyfakefs
+        https://bugs.webkit.org/show_bug.cgi?id=235370
+        <rdar://problem/87785236>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/__init__.py:
+        Register pyfakefs (last Python 2 supporting version).
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+        Pass **kwargs through to MockSystemHost.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy_unittest.py:
+        (LayoutTestFinderTests):
+        (LayoutTestFinderTests.setUp):
+        Setup the MockHost with pyfakefs.
+        (LayoutTestFinderTests.test_find_glob_b):
+        Uncomment now we don't need to mitigate FileSystemMock bugs.
+        (LayoutTestFinderTests.test_find_glob_c):
+        Uncomment now we don't need to mitigate FileSystemMock bugs.
+        (LayoutTestFinderTests.test_is_w3c_resource_file):
+        Ensure the directory exists before writing.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RebaselineTest.test_reset_results):
+        Call fs.clear_written_files before test.
+        (RebaselineTest.test_missing_results):
+        Call fs.clear_written_files before test.
+        (RebaselineTest.test_new_baseline):
+        Call fs.clear_written_files before test.
+        * Scripts/webkitpy/port/test.py:
+        (add_unit_tests_to_mock_filesystem):
+        Fix this with the real FileSystem class, conditionally deleting files. Remove mock-only
+        fs.clear_written_files call.
+
 2022-01-28  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Trigger embedded builders on pull-requests
