@@ -1,3 +1,15 @@
+2022-01-31  David Kilzer  <ddkilzer@apple.com>
+
+        [libpas] get_num_free_bytes_for_each_heap_callback() is called with `arg` pointing to uninitialized stack memory
+        <https://webkit.org/b/235931>
+        <rdar://problem/88303899>
+
+        Reviewed by Yusuke Suzuki.
+
+        * libpas/src/libpas/pas_all_heaps.c:
+        (pas_all_heaps_get_num_free_bytes):
+        - Initialize `result` stack variable to zero.
+
 2022-01-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r288400.
