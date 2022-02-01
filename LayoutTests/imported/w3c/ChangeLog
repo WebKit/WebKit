@@ -1,3 +1,15 @@
+2022-02-01  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Fix removal of not yet loaded CSS @import
+        https://bugs.webkit.org/show_bug.cgi?id=235930
+
+        Reviewed by Antti Koivisto.
+
+        Add new test.
+
+        * web-platform-tests/css/css-cascade/import-removal-expected.html: Added.
+        * web-platform-tests/css/css-cascade/import-removal.html: Added.
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Entirely remove support for -apple-trailing-word

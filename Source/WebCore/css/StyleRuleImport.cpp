@@ -52,6 +52,16 @@ StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media,
         m_mediaQueries = MediaQuerySet::create(String(), MediaQueryParserContext());
 }
 
+void StyleRuleImport::cancelLoad()
+{
+    if (!isLoading())
+        return;
+
+    m_loading = false;
+    if (m_parentStyleSheet)
+        m_parentStyleSheet->checkLoaded();
+}
+
 StyleRuleImport::~StyleRuleImport()
 {
     if (m_styleSheet)

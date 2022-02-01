@@ -325,6 +325,7 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
     childVectorIndex -= m_layerRulesBeforeImportRules.size();
 
     if (childVectorIndex < m_importRules.size()) {
+        m_importRules[childVectorIndex]->cancelLoad();
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.remove(childVectorIndex);
         return;
