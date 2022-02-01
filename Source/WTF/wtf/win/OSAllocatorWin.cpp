@@ -44,11 +44,15 @@ static inline DWORD protection(bool writable, bool executable)
         (writable ? PAGE_READWRITE : PAGE_READONLY);
 }
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
-    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
-    if (!result)
-        CRASH();
+    return VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
+}
+
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveUncommitted(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
     return result;
 }
 
@@ -70,11 +74,15 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool 
     return aligned;
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
-    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
-    if (!result)
-        CRASH();
+    return VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
+}
+
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
     return result;
 }
 

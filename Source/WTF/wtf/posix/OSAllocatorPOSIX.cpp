@@ -50,7 +50,7 @@
 
 namespace WTF {
 
-static void* tryReserveAndCommit(size_t bytes, OSAllocator::Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
     // All POSIX reservations start out logically committed.
     int protection = PROT_READ;
@@ -113,7 +113,7 @@ static void* tryReserveAndCommit(size_t bytes, OSAllocator::Usage usage, bool wr
     return result;
 }
 
-static void* tryReserveUncommitted(size_t bytes, OSAllocator::Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
 #if OS(LINUX)
     UNUSED_PARAM(usage);
@@ -123,7 +123,9 @@ static void* tryReserveUncommitted(size_t bytes, OSAllocator::Usage usage, bool 
     UNUSED_PARAM(includesGuardPages);
 
     void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (result != MAP_FAILED)
+    if (result == MAP_FAILED)
+        result = nullptr;
+    if (result)
         madvise(result, bytes, MADV_DONTNEED);
 #else
     void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
@@ -199,7 +201,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
     void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
-    RELEASE_ASSERT(result || executable);
+    RELEASE_ASSERT(result);
     return result;
 }
 
