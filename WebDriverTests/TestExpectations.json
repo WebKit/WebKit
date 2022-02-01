@@ -1589,6 +1589,9 @@
     "imported/w3c/webdriver/tests/bidi/new_session/connect.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     },
+    "imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
+    },
     "imported/w3c/webdriver/tests/new_session/websocket_url.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}
     }

@@ -1,3 +1,22 @@
+2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/bidi/client.py:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox_android.py:
+        * imported/w3c/webdriver/tests/conftest.py:
+        * imported/w3c/webdriver/tests/find_element_from_shadow_root/find.py:
+        * imported/w3c/webdriver/tests/find_element_from_shadow_root/user_prompts.py:
+        * imported/w3c/webdriver/tests/find_elements_from_shadow_root/find.py:
+        * imported/w3c/webdriver/tests/find_elements_from_shadow_root/user_prompts.py:
+        * imported/w3c/webdriver/tests/print/printcmd.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/fixtures_bidi.py: Added.
+        * imported/w3c/webdriver/tests/support/fixtures_http.py: Added.
+
 2021-11-19  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB][WebDriver] Gardening COOP-related timeouts
