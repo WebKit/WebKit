@@ -44,6 +44,7 @@ public:
     // the memory must all currently be in a decommitted state. reserveUncommitted(Aligned) returns to
     // you memory that is zeroed.
     WTF_EXPORT_PRIVATE static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     // This guarantees the memory will be aligned to a multiple of the requested size. The requested
     // size must be a power of two and greater than the system page size.
     WTF_EXPORT_PRIVATE static void* tryReserveUncommittedAligned(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
@@ -59,6 +60,7 @@ public:
     // decommitAndRelease should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a committed state.
     WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     static void decommitAndRelease(void* base, size_t size);
 
     // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than

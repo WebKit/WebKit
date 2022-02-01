@@ -1,3 +1,64 @@
+2022-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Revert OSAllocator behavior to pre-Structure-Allocator change one
+        https://bugs.webkit.org/show_bug.cgi?id=235940
+
+        Reviewed by Mark Lam.
+
+        Before r288815, OSAllocator::reserveAndCommit can fail only for executable memory.
+
+            if (result == MAP_FAILED) {
+                if (executable)
+                    result = 0;
+                else
+                    CRASH();
+            }
+
+        However, after r288815, this behavior was changed.
+
+        Before r288815,
+
+            1. ExecutableAllocator uses PageReservation::reserveWithGuardPages / PageReservation::reserve / PageReservation::reserveAndCommitWithGuardPages
+               to reserve memory.
+            2. In ARM64 macOS, we use PageReservation::reserveWithGuardPages.
+            3. PageReservation::reserveWithGuardPages uses OSAllocator::reserveUncommitted.
+            4. OSAllocator::reserveUncommitted used OSAllocator::reserveAndCommit internally before r288815.
+            5. OSAllocator::reserveAndCommit can fail for executable memory.
+
+        But after r288815,
+
+            1. PageReservation::reserveWithGuardPages uses OSAllocator::reserveUncommitted
+            2. OSAllocator::reserveUncommitted now uses OSAllocator::tryReserveUncommitted and crash if it fails.
+
+        Thus, r288815 changed the behavior of OSAllocator::reserveUncommitted for executable memory. This is causing a crash when we failed to
+        allocate JIT memory. And probably, it is happening in SIP-enabled root-installing environment.
+
+        In this patch,
+
+        1. Accepting failure only for executable memory is ugly hack. We should add PageReservation::tryReserveWithGuardPages.
+        2. In PageReservation::tryReserveWithGuardPages we should use OSAllocator::tryReserveUncommitted.
+
+        So, this patch reverts the behavior back to pre-r288815 state.
+        We also fix a bug in tryReserveUncommitted where it handles MAP_FAILED incorrectly. We should not return MAP_FAILED from OSAllocator, instead,
+        we should return nullptr.
+
+        * wtf/OSAllocator.h:
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::tryReserve):
+        (WTF::PageReservation::tryReserveWithGuardPages):
+        (WTF::PageReservation::tryReserveAndCommitWithGuardPages):
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::tryReserveAndCommit):
+        (WTF::OSAllocator::tryReserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::tryReserveAndCommit): Deleted.
+        (WTF::tryReserveUncommitted): Deleted.
+        * wtf/win/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::tryReserveUncommitted):
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::tryReserveAndCommit):
+        (WTF::OSAllocator::reserveAndCommit):
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Entirely remove support for -apple-trailing-word
