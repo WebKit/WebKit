@@ -56,7 +56,7 @@ public:
     bool load(Document&, const URL&);
 
 private:
-    LoadableClassicScript(const String& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
+    LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
