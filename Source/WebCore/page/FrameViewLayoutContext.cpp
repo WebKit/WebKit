@@ -204,11 +204,14 @@ void FrameViewLayoutContext::layout()
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
 
-        // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
-        if (!isLayoutNested() && m_asynchronousTasksTimer.isActive() && !view().isInChildFrameWithFrameFlattening())
-            runAsynchronousTasks();
+        if (!frame().document()->isResolvingContainerQueries()) {
+            // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
+            if (!isLayoutNested() && m_asynchronousTasksTimer.isActive() && !view().isInChildFrameWithFrameFlattening())
+                runAsynchronousTasks();
 
-        updateStyleForLayout();
+            updateStyleForLayout();
+        }
+
         if (view().hasOneRef())
             return;
 
@@ -267,6 +270,12 @@ void FrameViewLayoutContext::runOrScheduleAsynchronousTasks()
 {
     if (m_asynchronousTasksTimer.isActive())
         return;
+
+    if (frame().document()->isResolvingContainerQueries()) {
+        // We are doing layout from style resolution to resolve container queries.
+        m_asynchronousTasksTimer.startOneShot(0_s);
+        return;
+    }
 
     if (view().isInChildFrameWithFrameFlattening()) {
         // While flattening frames, we defer post layout tasks to avoid getting stuck in a cycle,

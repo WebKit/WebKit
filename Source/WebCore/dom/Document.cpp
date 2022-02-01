@@ -2055,6 +2055,17 @@ void Document::resolveStyle(ResolveStyleType type)
         Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeTextUpdate));
         auto styleUpdate = resolver.resolve();
 
+        while (resolver.hasUnresolvedQueryContainers() && styleUpdate) {
+            SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, true);
+
+            updateRenderTree(WTFMove(styleUpdate));
+
+            if (frameView.layoutContext().needsLayout())
+                frameView.layoutContext().layout();
+
+            styleUpdate = resolver.resolve();
+        }
+
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
 
         setHasValidStyle();

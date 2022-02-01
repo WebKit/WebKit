@@ -598,8 +598,10 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
-        if (shouldIterateChildren)
-            updateQueryContainer(element, *style);
+        if (shouldIterateChildren) {
+            if (updateQueryContainer(element, *style) == QueryContainerAction::Layout)
+                shouldIterateChildren = false;
+        }
 
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
@@ -619,14 +621,26 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
-void TreeResolver::updateQueryContainer(const Element& element, const RenderStyle& style)
+auto TreeResolver::updateQueryContainer(Element& element, const RenderStyle& style) -> QueryContainerAction
 {
     if (style.containerType() == ContainerType::None)
-        return;
+        return QueryContainerAction::None;
 
     scope().selectorMatchingState.queryContainers.append(element);
 
-    // FIXME: Skip the subtree and ensure the container is resolved by doing a layout if needed.
+    if (m_unresolvedQueryContainers.remove(&element)) {
+        m_resolvedQueryContainers.add(&element);
+        return QueryContainerAction::Continue;
+    }
+
+    if (m_update->isEmpty()) {
+        m_resolvedQueryContainers.add(&element);
+        return QueryContainerAction::Continue;
+    }
+
+    m_unresolvedQueryContainers.add(&element);
+
+    return QueryContainerAction::Layout;
 }
 
 std::unique_ptr<Update> TreeResolver::resolve()
@@ -638,6 +652,11 @@ std::unique_ptr<Update> TreeResolver::resolve()
         m_document.styleScope().resolver();
         return nullptr;
     }
+
+    // FIXME: Just need to restore the ancestor marking.
+    for (auto& queryContainer : m_unresolvedQueryContainers)
+        queryContainer->invalidateStyleForSubtreeInternal();
+
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return WTFMove(m_update);
 

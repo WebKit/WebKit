@@ -1,3 +1,12 @@
+2022-02-01  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Ensure query containers have valid layout before resolving the subtree
+        https://bugs.webkit.org/show_bug.cgi?id=235896
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation-expected.txt:
+
 2022-02-01  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Handle changes in XRSession's visibility state

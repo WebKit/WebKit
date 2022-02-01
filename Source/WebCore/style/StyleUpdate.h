@@ -80,6 +80,7 @@ public:
 
     const Document& document() const { return m_document; }
 
+    bool isEmpty() const { return !size(); }
     unsigned size() const { return m_elements.size() + m_texts.size(); }
 
     void addElement(Element&, Element* parent, ElementUpdates&&);

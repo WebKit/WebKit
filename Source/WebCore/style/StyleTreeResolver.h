@@ -55,11 +55,15 @@ public:
 
     std::unique_ptr<Update> resolve();
 
+    bool hasUnresolvedQueryContainers() const { return !m_unresolvedQueryContainers.isEmpty(); }
+
 private:
     std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const ResolutionContext&);
 
     void resolveComposedTree();
-    void updateQueryContainer(const Element&, const RenderStyle&);
+
+    enum class QueryContainerAction : uint8_t { None, Continue, Layout };
+    QueryContainerAction updateQueryContainer(Element&, const RenderStyle&);
 
     ElementUpdates resolveElement(Element&);
 
@@ -112,6 +116,9 @@ private:
     Vector<Ref<Scope>, 4> m_scopeStack;
     Vector<Parent, 32> m_parentStack;
     bool m_didSeePendingStylesheet { false };
+
+    HashSet<RefPtr<Element>> m_unresolvedQueryContainers;
+    HashSet<RefPtr<Element>> m_resolvedQueryContainers;
 
     std::unique_ptr<Update> m_update;
 };
