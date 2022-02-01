@@ -203,6 +203,9 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     ASSERT(priv->destination);
     ASSERT(priv->sampleRate);
 
+    GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(src), GST_ELEMENT_FLAG_SOURCE);
+    gst_bin_set_suppressed_flags(GST_BIN_CAST(src), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
+
     gst_element_add_pad(GST_ELEMENT(src), priv->sourcePad);
 
     priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcRenderIteration), src, nullptr));

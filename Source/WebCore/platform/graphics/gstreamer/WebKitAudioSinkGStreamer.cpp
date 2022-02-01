@@ -293,11 +293,20 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
     return result;
 }
 
+static void webKitAudioSinkConstructed(GObject* object)
+{
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+
+    GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(object), GST_ELEMENT_FLAG_SINK);
+    gst_bin_set_suppressed_flags(GST_BIN_CAST(object), static_cast<GstElementFlags>(GST_ELEMENT_FLAG_SOURCE | GST_ELEMENT_FLAG_SINK));
+}
+
 static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
 {
     GObjectClass* oklass = G_OBJECT_CLASS(klass);
     oklass->set_property = webKitAudioSinkSetProperty;
     oklass->get_property = webKitAudioSinkGetProperty;
+    oklass->constructed = webKitAudioSinkConstructed;
 
     g_object_class_install_property(oklass, PROP_VOLUME,
         g_param_spec_double("volume", "Volume", "The audio volume, 1.0=100%", 0, 10, 1,
