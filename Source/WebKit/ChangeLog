@@ -1,3 +1,27 @@
+2022-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        RemoteRenderingBackendProxy should not be a IPC::MessageSender
+        https://bugs.webkit.org/show_bug.cgi?id=235935
+
+        Reviewed by Wenson Hsieh.
+
+        Calling send() in RemoteRenderingBackendProxy fails to send a message to the GPU process,
+        because it has no connection(), only a StreamClientConnection or the GPUProcessConnection.
+        
+        So make it not inherit from IPC::MessageSender. Code using send() now explicitly uses
+        ensureGPUProcessConnection().connection().
+
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::streamConnection):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderConnection const): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::messageSenderDestinationID const): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2022-01-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename FontCascade::fontMetrics() and RenderStyle::fontMetrics() to fontMetricsOfPrimaryFont()

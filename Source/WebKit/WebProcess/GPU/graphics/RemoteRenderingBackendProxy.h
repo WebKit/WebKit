@@ -61,8 +61,7 @@ namespace WebKit {
 class WebPage;
 
 class RemoteRenderingBackendProxy
-    : public IPC::MessageSender
-    , private IPC::MessageReceiver
+    : private IPC::MessageReceiver
     , public GPUProcessConnection::Client {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
@@ -80,10 +79,6 @@ public:
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
     bool isCached(const WebCore::ImageBuffer&) const;
-        
-    // IPC::MessageSender.
-    IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -146,6 +141,7 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     GPUProcessConnection& ensureGPUProcessConnection();
+    IPC::Connection& gpuProcessConnection();
 
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
