@@ -406,7 +406,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
 
 /*! @abstract Set microphone capture state of a WKWebView.
  @param state state to apply for capture.
- @param completionHandler A block to invoke after the camera state has been changed.
+ @param completionHandler A block to invoke after the microphone state has been changed.
  @discussion
  If value is WKMediaCaptureStateNone, this will stop any microphone capture.
  If value is WKMediaCaptureStateMuted, any active microphone capture will become muted.

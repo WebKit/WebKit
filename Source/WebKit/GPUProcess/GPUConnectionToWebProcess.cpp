@@ -173,6 +173,7 @@ private:
     bool willStartCapture(CaptureDevice::DeviceType type) const final
     {
         switch (type) {
+        case CaptureDevice::DeviceType::SystemAudio:
         case CaptureDevice::DeviceType::Unknown:
         case CaptureDevice::DeviceType::Speaker:
             return false;

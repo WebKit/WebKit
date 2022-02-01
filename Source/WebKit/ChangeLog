@@ -1,3 +1,81 @@
+2022-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Expose screen and window capture state to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=235838
+        <rdar://problem/88207924>
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetMediaState): Rename *DisplayCaptureDevice to *ScreenCaptureDevice. Add enums
+        for window capture.
+
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h: Drive by: fix typo in header doc.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setMicrophoneCaptureState:completionHandler:]): MediaProducerMediaCaptureKind::Audio 
+        was renamed to MediaProducerMediaCaptureKind::Microphone.
+        (-[WKWebView setCameraCaptureState:completionHandler:]): MediaProducerMediaCaptureKind::Video 
+        was renamed to MediaProducerMediaCaptureKind::Camera.
+        (-[WKWebView _stopMediaCapture]): stopMediaCapture takes an optionSet.
+        (-[WKWebView _displayCaptureSurfaces]): Expose the type(s) of displays surfaces
+        being captured.
+        (-[WKWebView _displayCaptureState]): Expose the display capture state.
+        (-[WKWebView _systemAudioCaptureState]): Expose the system audio capture state.
+        (-[WKWebView _setDisplayCaptureState:completionHandler:]): Change the display
+        capture state.
+        (-[WKWebView _setSystemAudioCaptureState:completionHandler:]): Change the system 
+        audio capture state.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewMediaCaptureStateDidChange): MediaProducer::AudioCaptureMask -> 
+        MediaProducer::MicrophoneCaptureMask.
+        (webkitWebViewConfigureMediaCapture): Update for MediaProducerMediaCaptureKind changes.
+        (webkit_web_view_set_microphone_capture_state): Ditto.
+        (webkit_web_view_set_camera_capture_state): MediaProducerMediaCaptureKind::Video -> 
+        MediaProducerMediaCaptureKind::Camera
+        (webkit_web_view_set_display_capture_state): Ditto.
+        (webkit_web_view_get_display_capture_state): MediaState::HasActiveDisplayCaptureDevice ->
+        MediaState::HasActiveScreenCaptureDevice. MediaState::HasMutedDisplayCaptureDevice ->
+        MediaState::HasMutedScreenCaptureDevice
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::displayCaptureWillChange): KVO support.
+        (WebKit::PageClientImplCocoa::displayCaptureSurfacesWillChange): Ditto.
+        (WebKit::PageClientImplCocoa::systemAudioCaptureWillChange): Ditto.
+        (WebKit::PageClientImplCocoa::displayCaptureChanged): Ditto.
+        (WebKit::PageClientImplCocoa::displayCaptureSurfacesChanged): Ditto.
+        (WebKit::PageClientImplCocoa::systemAudioCaptureChanged): Ditto.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy): Support new types.
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy): Ditto.
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints): Ditto.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::displayCaptureWillChange):
+        (WebKit::PageClient::displayCaptureSurfacesWillChange):
+        (WebKit::PageClient::systemAudioCaptureWillChange):
+        (WebKit::PageClient::displayCaptureChanged):
+        (WebKit::PageClient::displayCaptureSurfacesChanged):
+        (WebKit::PageClient::systemAudioCaptureChanged):
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        MediaProducerMediaCaptureKind::AudioVideo -> MediaProducerMediaCaptureKind::EveryKind.
+        (WebKit::UserMediaPermissionRequestManagerProxy::stopCapture): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState): Deal with new types.
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::checkDocumentsCaptureStateConsistency):
+
 2022-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         Minor cleanup in RemoteLayerBackingStoreCollection

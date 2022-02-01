@@ -565,8 +565,14 @@ public:
 
     virtual void microphoneCaptureWillChange() { }
     virtual void cameraCaptureWillChange() { }
+    virtual void displayCaptureWillChange() { }
+    virtual void displayCaptureSurfacesWillChange() { }
+    virtual void systemAudioCaptureWillChange() { }
     virtual void microphoneCaptureChanged() { }
     virtual void cameraCaptureChanged() { }
+    virtual void displayCaptureChanged() { }
+    virtual void displayCaptureSurfacesChanged() { }
+    virtual void systemAudioCaptureChanged() { }
 
     virtual void videoControlsManagerDidChange() { }
 

@@ -50,7 +50,10 @@
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205266"}}
             },
             "/webkit/WebKitWebView/geolocation-permission-requests": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/213786"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/235955"}}
+            },
+            "/webkit/WebKitWebView/display-usermedia-permission-request": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": "webkit.org/b/235955"}}
             }
         }
     },

@@ -115,7 +115,7 @@ public:
 
     const String& persistentID() const { return m_persistentID; }
 
-    enum class Type { None, Audio, Video };
+    enum class Type { None, Audio, Video, Screen, Window, SystemAudio };
     Type type() const { return m_type; }
 
     virtual void whenReady(CompletionHandler<void(String)>&&);

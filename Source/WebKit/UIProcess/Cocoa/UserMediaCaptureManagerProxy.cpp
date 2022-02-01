@@ -66,9 +66,12 @@ public:
         m_source->addObserver(*this);
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
+        case RealtimeMediaSource::Type::SystemAudio:
             m_source->addAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
+        case RealtimeMediaSource::Type::Screen:
+        case RealtimeMediaSource::Type::Window:
             m_source->addVideoSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
@@ -83,9 +86,12 @@ public:
 
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
+        case RealtimeMediaSource::Type::SystemAudio:
             m_source->removeAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
+        case RealtimeMediaSource::Type::Screen:
+        case RealtimeMediaSource::Type::Window:
             m_source->removeVideoSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
@@ -288,6 +294,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     case WebCore::CaptureDevice::DeviceType::Window:
         sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, WTFMove(hashSalt), constraints);
         break;
+    case WebCore::CaptureDevice::DeviceType::SystemAudio:
     case WebCore::CaptureDevice::DeviceType::Speaker:
     case WebCore::CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();

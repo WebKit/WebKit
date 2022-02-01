@@ -114,7 +114,7 @@
             shouldBeFalse("microphoneCaptureTrack.muted");
             shouldBeFalse("cameraCaptureTrack.muted");
 
-            await checkPageState("HasMutedDisplayCaptureDevice", "HasActiveDisplayCaptureDevice");
+            await checkPageState("HasMutedScreenCaptureDevice", "HasActiveScreenCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
         }
@@ -133,7 +133,7 @@
             shouldBeTrue("microphoneCaptureTrack.muted");
             shouldBeTrue("cameraCaptureTrack.muted");
 
-            await checkPageState("HasMutedDisplayCaptureDevice", "HasActiveDisplayCaptureDevice");
+            await checkPageState("HasMutedScreenCaptureDevice", "HasActiveScreenCaptureDevice");
             await checkPageState("HasMutedAudioCaptureDevice", "HasActiveAudioCaptureDevice");
             await checkPageState("HasMutedVideoCaptureDevice", "HasActiveVideoCaptureDevice");
         }
@@ -152,7 +152,7 @@
             shouldBeFalse("microphoneCaptureTrack.muted");
             shouldBeFalse("cameraCaptureTrack.muted");
 
-            await checkPageState("HasMutedDisplayCaptureDevice", "HasActiveDisplayCaptureDevice");
+            await checkPageState("HasMutedScreenCaptureDevice", "HasActiveScreenCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
         }
@@ -170,7 +170,7 @@
             shouldBeFalse("microphoneCaptureTrack.muted");
             shouldBeFalse("cameraCaptureTrack.muted");
 
-            await checkPageState("HasActiveDisplayCaptureDevice", "HasMutedDisplayCaptureDevice");
+            await checkPageState("HasActiveScreenCaptureDevice", "HasMutedScreenCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
             await checkPageState("HasActiveAudioCaptureDevice", "HasMutedAudioCaptureDevice");
         }

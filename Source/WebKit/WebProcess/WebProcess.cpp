@@ -1976,7 +1976,7 @@ static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& e
 {
 #if ASSERT_ENABLED
     bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
-        return document->mediaState() & MediaProducer::AudioCaptureMask;
+        return document->mediaState() & MediaProducer::MicrophoneCaptureMask;
     });
     bool isCapturingVideo = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
         return document->mediaState() & MediaProducer::VideoCaptureMask;

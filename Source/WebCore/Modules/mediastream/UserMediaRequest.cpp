@@ -271,6 +271,15 @@ void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
     case RealtimeMediaSource::Type::Video:
         typeDescription = "video";
         break;
+    case RealtimeMediaSource::Type::Screen:
+        typeDescription = "screen";
+        break;
+    case RealtimeMediaSource::Type::Window:
+        typeDescription = "window";
+        break;
+    case RealtimeMediaSource::Type::SystemAudio:
+        typeDescription = "system audio";
+        break;
     case RealtimeMediaSource::Type::None:
         typeDescription = "unknown";
         break;

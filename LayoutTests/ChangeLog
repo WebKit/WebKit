@@ -1,3 +1,15 @@
+2022-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Expose screen and window capture state to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=235838
+        <rdar://problem/88207924>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/get-display-media-muted.html: Update for new and renamed states.
+        * fast/mediastream/media-stream-page-muted-expected.txt: Ditto.
+        * fast/mediastream/media-stream-page-muted.html: Ditto.
+
 2022-02-01  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         null ptr deref in LayoutIntegrationLineLayout LineLayout::adjustForPagination and LineLayout::visualOverflowBoundingBoxRectFor

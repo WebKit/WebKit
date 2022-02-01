@@ -146,8 +146,12 @@ enum {
     kWKMediaHasActiveVideoCaptureDevice = 1 << 3,
     kWKMediaHasMutedAudioCaptureDevice = 1 << 4,
     kWKMediaHasMutedVideoCaptureDevice = 1 << 5,
-    kWKMediaHasActiveDisplayCaptureDevice = 1 << 6,
-    kWKMediaHasMutedDisplayCaptureDevice = 1 << 7,
+    kWKMediaHasActiveScreenCaptureDevice = 1 << 6,
+    kWKMediaHasActiveDisplayCaptureDevice = kWKMediaHasActiveScreenCaptureDevice,
+    kWKMediaHasMutedScreenCaptureDevice = 1 << 7,
+    kWKMediaHasMutedDisplayCaptureDevice = kWKMediaHasMutedScreenCaptureDevice,
+    kWKMediaHasActiveWindowCaptureDevice = 1 << 8,
+    kWKMediaHasMutedWindowCaptureDevice = 1 << 9,
 };
 typedef uint32_t WKMediaState;
 

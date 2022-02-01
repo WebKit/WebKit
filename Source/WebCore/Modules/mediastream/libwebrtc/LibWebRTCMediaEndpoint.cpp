@@ -204,6 +204,9 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
         source = WTFMove(videoSource);
         break;
     }
+    case RealtimeMediaSource::Type::Screen:
+    case RealtimeMediaSource::Type::Window:
+    case RealtimeMediaSource::Type::SystemAudio:
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
         return false;
@@ -416,12 +419,15 @@ std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStr
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
         break;
+    case RealtimeMediaSource::Type::SystemAudio:
     case RealtimeMediaSource::Type::Audio: {
         auto audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
         rtcTrack = m_peerConnectionFactory->CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
         source = WTFMove(audioSource);
         break;
     }
+    case RealtimeMediaSource::Type::Screen:
+    case RealtimeMediaSource::Type::Window:
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
         rtcTrack = m_peerConnectionFactory->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());

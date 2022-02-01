@@ -55,10 +55,6 @@ typedef NS_ENUM(NSInteger, WKSCFrameStatus) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
-@interface SCStream (SCStream_Deprecated)
-- (void)startCaptureWithCFrameHandler:(SCStreamBufferFrameAvailableHandler)frameHandler completionHandler:(void (^)(NSError *error))completionHandler;
-@end
-
 using namespace WebCore;
 @interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate> {
     WeakPtr<ScreenCaptureKitCaptureSource> _callback;

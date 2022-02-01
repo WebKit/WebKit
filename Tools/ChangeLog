@@ -1,3 +1,20 @@
+2022-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Expose screen and window capture state to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=235838
+        <rdar://problem/88207924>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm:
+        (-[DisplayCaptureObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[DisplayCaptureObserver waitForDisplayCaptureState:]):
+        (-[DisplayCaptureObserver waitForDisplayCaptureSurfaces:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/glib/TestExpectations.json: Skip /webkit/WebKitWebView/display-usermedia-permission-request
+        until someone has a chance to figure out why it times out.
+
 2022-02-01  Sam Sneddon  <gsnedders@apple.com>
 
         Migrate LayoutTestFinder tests from FileSystemMock to pyfakefs

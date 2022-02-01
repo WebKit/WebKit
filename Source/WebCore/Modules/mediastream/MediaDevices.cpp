@@ -281,6 +281,7 @@ static inline MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceT
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
         return MediaDeviceInfo::Kind::Videoinput;
+    case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
     }

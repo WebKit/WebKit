@@ -427,6 +427,65 @@ for this property.
 
 - (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+typedef NS_ENUM(NSInteger, WKDisplayCaptureState) {
+    WKDisplayCaptureStateNone,
+    WKDisplayCaptureStateActive,
+    WKDisplayCaptureStateMuted,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ENUM(NSInteger, WKSystemAudioCaptureState) {
+    WKSystemAudioCaptureStateNone,
+    WKSystemAudioCaptureStateActive,
+    WKSystemAudioCaptureStateMuted,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
+    WKDisplayCaptureSurfaceNone = 0,
+    WKDisplayCaptureSurfaceScreen = 0x1,
+    WKDisplayCaptureSurfaceWindow = 0x2,
+};
+
+/*! @abstract The type(s) of displays being captured on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) WKDisplayCaptureSurfaces _displayCaptureSurfaces WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract The state of display capture on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) WKDisplayCaptureState _displayCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract The state of system audio capture on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) WKSystemAudioCaptureState _systemAudioCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Set display capture state of a WKWebView.
+ @param state State to apply for capture.
+ @param completionHandler A block to invoke after the screen state has been changed.
+ @discussion
+ If value is WKDisplayCaptureStateNone, this will stop all display capture.
+ If value is WKDisplayCaptureStateMuted, all active display captures will become muted.
+ If value is WKDisplayCaptureStateActive, all muted display captures will become active.
+ */
+- (void)_setDisplayCaptureState:(WKDisplayCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Set system audio capture state of a WKWebView.
+ @param state State to apply for system audio capture.
+ @param completionHandler A block to invoke after the system audio state has been changed.
+ @discussion
+ If value is WKSystemAudioCaptureStateNone, this will stop any system audio capture.
+ If value is WKSystemAudioCaptureStateMuted, any active system audio capture will become muted.
+ If value is WKSystemAudioCaptureStateActive, any muted system audio capture will become active.
+ @note When system audio capture is active, if screenCaptureState is active, all system audio will be captured.
+ Otherwise, if windowCaptureState is active, only the application whose window being is captured will have its audio captured.
+ If both screenCaptureState and windowCaptureState are None or Muted, no system audio will be captured.
+ */
+- (void)_setSystemAudioCaptureState:(WKSystemAudioCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

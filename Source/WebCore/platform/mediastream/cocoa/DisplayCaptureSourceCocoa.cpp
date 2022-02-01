@@ -78,6 +78,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
             return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalt), constraints);
 #endif
         break;
+    case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Camera:

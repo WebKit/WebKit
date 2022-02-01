@@ -84,8 +84,15 @@ public:
 
     void microphoneCaptureWillChange() final;
     void cameraCaptureWillChange() final;
+    void displayCaptureWillChange() final;
+    void displayCaptureSurfacesWillChange() final;
+    void systemAudioCaptureWillChange() final;
+
     void microphoneCaptureChanged() final;
     void cameraCaptureChanged() final;
+    void displayCaptureChanged() final;
+    void displayCaptureSurfacesChanged() final;
+    void systemAudioCaptureChanged() final;
 
     WindowKind windowKind() final;
 
