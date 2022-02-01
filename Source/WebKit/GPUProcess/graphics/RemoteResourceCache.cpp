@@ -58,6 +58,11 @@ NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceId
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
 }
 
+std::optional<WebCore::SourceImage> RemoteResourceCache::cachedSourceImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getSourceImage(renderingResourceIdentifier);
+}
+
 void RemoteResourceCache::cacheFont(Ref<Font>&& font, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(renderingResourceIdentifier.object() == font->renderingResourceIdentifier());

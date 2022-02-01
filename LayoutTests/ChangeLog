@@ -1,3 +1,15 @@
+2022-01-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Pattern should hold SourceImage which can be converted to a NativeImage only when needed
+        https://bugs.webkit.org/show_bug.cgi?id=232411
+        <rdar://problem/84998738>
+
+        Reviewed by Darin Adler.
+
+        Unskip layout tests for gpu process because they are fixed by this change.
+
+        * gpu-process/TestExpectations:
+
 2022-01-31  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(288052?): editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html makes subsequent test fail, as DumpRenderTree compares to wrong expected result        

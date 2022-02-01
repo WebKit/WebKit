@@ -29,6 +29,7 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "RenderingResourceIdentifier.h"
+#include "SourceImage.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -41,6 +42,7 @@ public:
 
     virtual ImageBuffer* getImageBuffer(RenderingResourceIdentifier) const = 0;
     virtual NativeImage* getNativeImage(RenderingResourceIdentifier) const = 0;
+    virtual std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier) const = 0;
     virtual Font* getFont(RenderingResourceIdentifier) const = 0;
 };
 
@@ -69,6 +71,20 @@ public:
     NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
         return get<NativeImage>(renderingResourceIdentifier);
+    }
+
+    std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        if (!renderingResourceIdentifier)
+            return std::nullopt;
+
+        if (auto nativeImage = getNativeImage(renderingResourceIdentifier))
+            return { { *nativeImage } };
+
+        if (auto imageBuffer = getImageBuffer(renderingResourceIdentifier))
+            return { { *imageBuffer } };
+
+        return std::nullopt;
     }
 
     Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const final

@@ -1,3 +1,27 @@
+2022-01-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Pattern should hold SourceImage which can be converted to a NativeImage only when needed
+        https://bugs.webkit.org/show_bug.cgi?id=232411
+        <rdar://problem/84998738>
+
+        Reviewed by Darin Adler.
+
+        Add the helpers QualifiedResourceHeap::getSourceImage() and 
+        RemoteResourceCache::cachedSourceImage() which will be used by
+        RemoteDisplayListRecorder::setState() to replace the 
+        RenderingResourceIdentifier of the pattern's tileImage by an actual
+        SourceImage.
+
+        * GPUProcess/graphics/QualifiedResourceHeap.h:
+        (WebKit::QualifiedResourceHeap::getSourceImage const):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::setState):
+        (WebKit::RemoteDisplayListRecorder::drawFilteredImageBuffer):
+        (WebKit::RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers): Deleted.
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cachedSourceImage const):
+        * GPUProcess/graphics/RemoteResourceCache.h:
+
 2022-01-31  Matt Gilligan  <matthew_gilligan@apple.com>
 
         [iOS] Don't register undo actions in undoManager overridden by WKWebView client

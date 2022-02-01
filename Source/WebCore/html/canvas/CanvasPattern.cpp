@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-Ref<CanvasPattern> CanvasPattern::create(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
+Ref<CanvasPattern> CanvasPattern::create(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
 {
     return adoptRef(*new CanvasPattern(WTFMove(image), repeatX, repeatY, originClean));
 }
 
-CanvasPattern::CanvasPattern(Ref<NativeImage>&& image, bool repeatX, bool repeatY, bool originClean)
+CanvasPattern::CanvasPattern(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
     : m_pattern(Pattern::create(WTFMove(image), { repeatX, repeatY }))
     , m_originClean(originClean)
 {

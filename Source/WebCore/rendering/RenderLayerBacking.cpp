@@ -3335,13 +3335,11 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
         imageContext.drawText(font, textRun, { textGap, yOffset }, 0);
     }
 
-    auto tileImage = ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
-
     AffineTransform patternOffsetTransform;
     patternOffsetTransform.translate(contentOffset + description.phase);
     patternOffsetTransform.scale(1 / destContext.scaleFactor());
 
-    return Pattern::create(tileImage.releaseNonNull(), { true, true, patternOffsetTransform});
+    return Pattern::create({ imageBuffer.releaseNonNull() }, { true, true, patternOffsetTransform });
 };
 #endif
 

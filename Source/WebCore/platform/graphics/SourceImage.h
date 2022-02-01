@@ -42,12 +42,13 @@ public:
     SourceImage(ImageVariant&&);
 
     NativeImage* nativeImageIfExists() const;
-    NativeImage* nativeImage();
+    RefPtr<NativeImage> nativeImage() const;
 
     ImageBuffer* imageBufferIfExists() const;
-    ImageBuffer* imageBuffer();
+    RefPtr<ImageBuffer> imageBuffer() const;
 
     RenderingResourceIdentifier imageIdentifier() const;
+    IntSize size() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<SourceImage> decode(Decoder&);

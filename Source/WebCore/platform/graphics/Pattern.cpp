@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-Ref<Pattern> Pattern::create(Ref<NativeImage>&& tileImage, const Parameters& parameters)
+Ref<Pattern> Pattern::create(SourceImage&& tileImage, const Parameters& parameters)
 {
     return adoptRef(*new Pattern(WTFMove(tileImage), parameters));
 }
 
-Pattern::Pattern(Ref<NativeImage>&& image, const Parameters& parameters)
-    : m_tileImage(WTFMove(image))
+Pattern::Pattern(SourceImage&& tileImage, const Parameters& parameters)
+    : m_tileImage(WTFMove(tileImage))
     , m_parameters(parameters)
 {
 }

@@ -245,8 +245,6 @@ imported/blink/svg/as-image/svg-as-image-object-fit-contain.html
 imported/blink/svg/as-image/svg-as-image-object-fit-cover.html
 imported/blink/svg/as-image/svgview-references.html
 imported/blink/svg/custom/fill-fallback-currentcolor-1.svg
-imported/blink/svg/custom/transformed-text-pattern.html [ Crash ]
-imported/blink/svg/custom/viewport-resource-inval.svg [ Crash ]
 imported/blink/svg/text/obb-paintserver.html
 imported/mozilla/svg/as-image/background-resize-3.html
 imported/mozilla/svg/as-image/background-resize-4.html
@@ -261,39 +259,19 @@ imported/mozilla/svg/blend-overlay.svg
 imported/mozilla/svg/blend-saturation.svg
 imported/mozilla/svg/conditions-08.svg [ Crash ]
 imported/mozilla/svg/dynamic-pattern-01.svg [ Crash ]
-imported/mozilla/svg/dynamic-pattern-02.svg [ Crash ]
-imported/mozilla/svg/dynamic-pattern-contents-01.svg [ Crash ]
-imported/mozilla/svg/dynamic-pattern-contents-02.svg [ Crash ]
 imported/mozilla/svg/filters/feComposite-2.svg
 imported/mozilla/svg/filters/feFlood-1.svg
 imported/mozilla/svg/filters/feFlood-2.svg
 imported/mozilla/svg/filters/feImage-1.svg
 imported/mozilla/svg/linearGradient-basic-03.svg
 imported/mozilla/svg/mask-type-01.svg
-imported/mozilla/svg/objectBoundingBox-and-pattern-01a.svg [ Crash ]
-imported/mozilla/svg/objectBoundingBox-and-pattern-01b.svg [ Crash ]
-imported/mozilla/svg/objectBoundingBox-and-pattern-01c.svg [ Crash ]
-imported/mozilla/svg/objectBoundingBox-and-pattern-02.svg [ Crash ]
-imported/mozilla/svg/objectBoundingBox-and-pattern-03.svg [ Crash ]
 imported/mozilla/svg/opacity-and-gradient-02.svg
 imported/mozilla/svg/paint-order-01.svg
 imported/mozilla/svg/path-02.svg
-imported/mozilla/svg/pattern-basic-01.svg [ Crash ]
-imported/mozilla/svg/pattern-live-01a.svg [ Crash ]
-imported/mozilla/svg/pattern-live-01b.svg [ Crash ]
-imported/mozilla/svg/pattern-scale-01a.svg [ Crash ]
-imported/mozilla/svg/pattern-scale-01b.svg [ Crash ]
-imported/mozilla/svg/pattern-scale-01c.svg [ Crash ]
-imported/mozilla/svg/pattern-transform-presence-01.svg [ Crash ]
 imported/mozilla/svg/pattern-transformed-01.svg
 imported/mozilla/svg/text-gradient-01.svg
 imported/mozilla/svg/text-scale-02.svg
-imported/mozilla/svg/text/mask-content-2.svg [ Crash ]
 imported/mozilla/svg/text/simple-fill-gradient.svg
-imported/mozilla/svg/userSpaceOnUse-and-pattern-01.svg [ Crash ]
-imported/mozilla/svg/viewBox-and-pattern-01.svg [ Crash ]
-imported/mozilla/svg/viewBox-and-pattern-02.svg [ Crash ]
-imported/mozilla/svg/viewBox-and-pattern-03.svg [ Crash ]
 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ]
 imported/w3c/web-platform-tests/compat/webkit-background-origin-text.html
 imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-bottom.html
@@ -910,24 +888,7 @@ imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection
 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html
 imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass ]
-imported/w3c/web-platform-tests/svg/animations/animateTransform-pattern-transform.html [ Crash ]
-imported/w3c/web-platform-tests/svg/animations/svgenum-animation-1.html [ Crash ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html
-imported/w3c/web-platform-tests/svg/import/coords-units-01-b-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-grad-03-b-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-01-b-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-04-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-05-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-08-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-09-f-manual.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/linking/reftests/href-pattern-element.html [ Crash ]
-imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative.svg [ Crash ]
-imported/w3c/web-platform-tests/svg/render/reftests/filter-effects-on-pattern.html [ Crash ]
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html
 imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass ]
@@ -952,28 +913,11 @@ svg/batik/paints/patternPreserveAspectRatioA.svg [ Crash ]
 svg/batik/paints/patternRegionA.svg [ Crash ]
 svg/batik/paints/patternRegions-positioned-objects.svg [ Crash ]
 svg/batik/paints/patternRegions.svg [ Crash ]
-svg/batik/text/textEffect2.svg [ Crash ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]
 svg/clip-path/webkit-clip-path-after.svg
 svg/clip-path/webkit-clip-path-before.svg
-svg/custom/hidpi-masking-clipping.svg [ Crash ]
-svg/custom/href-svg-namespace-static.svg [ Crash ]
-svg/custom/js-late-pattern-creation.svg [ Crash ]
-svg/custom/js-update-pattern.svg [ Crash ]
-svg/custom/large-image-pattern-crash.html [ Crash ]
-svg/custom/local-url-reference-pattern.html [ Crash ]
-svg/custom/new-image-is-html-element.svg [ Crash ]
 svg/custom/subpaths-moveto-only-rendering.svg [ Pass ]
 svg/custom/svg-fonts-skip-ink.html
-svg/dom/viewport-container-crash.svg [ Crash ]
-svg/dynamic-updates/SVGPatternElement-dom-height-attr.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-dom-width-attr.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-dom-y-attr.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-svgdom-width-prop.html [ Crash ]
-svg/dynamic-updates/SVGPatternElement-svgdom-y-prop.html [ Crash ]
 svg/gradients/gradient-flipped-start-end-points.svg
 svg/gradients/spreadMethod.svg
 svg/gradients/spreadMethodAlpha.svg
@@ -987,11 +931,6 @@ svg/gradients/spreadMethodReversed.svg
 svg/gradients/stopAlpha.svg
 svg/transforms/transformed-text-fill-gradient.html
 svg/transforms/transformed-text-fill-pattern.html
-svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg [ Crash ]
-svg/W3C-SVG-1.1/coords-units-01-b.svg [ Crash ]
-svg/W3C-SVG-1.1/pservers-grad-04-b.svg [ Crash ]
-svg/W3C-SVG-1.1/pservers-grad-07-b.svg [ Crash ]
-svg/W3C-SVG-1.1/render-elems-01-t.svg [ Crash ]
 system-preview/badge.html
 webanimations/opacity-animation.html
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html

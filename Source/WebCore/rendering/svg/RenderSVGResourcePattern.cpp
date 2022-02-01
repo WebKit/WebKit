@@ -113,10 +113,6 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
 
     auto tileImageSize = tileImage->logicalSize();
 
-    auto copiedImage = ImageBuffer::sinkIntoNativeImage(WTFMove(tileImage));
-    if (!copiedImage)
-        return nullptr;
-
     // Compute pattern space transformation.
     auto patternData = makeUnique<PatternData>();
     patternData->transform.translate(tileBoundaries.location());
@@ -134,7 +130,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
     }
 
     // Build pattern.
-    patternData->pattern = Pattern::create(copiedImage.releaseNonNull(), { true, true, patternData->transform });
+    patternData->pattern = Pattern::create({ tileImage.releaseNonNull() }, { true, true, patternData->transform });
 
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by

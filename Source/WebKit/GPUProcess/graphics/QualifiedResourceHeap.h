@@ -69,6 +69,11 @@ public:
         return get<WebCore::NativeImage>({ renderingResourceIdentifier, m_webProcessIdentifier });
     }
 
+    std::optional<WebCore::SourceImage> getSourceImage(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        return getSourceImage({ renderingResourceIdentifier, m_webProcessIdentifier });
+    }
+
     WebCore::Font* getFont(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
         return get<WebCore::Font>({ renderingResourceIdentifier, m_webProcessIdentifier });
@@ -82,6 +87,20 @@ public:
     WebCore::NativeImage* getNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<WebCore::NativeImage>(renderingResourceIdentifier);
+    }
+    
+    std::optional<WebCore::SourceImage> getSourceImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+    {
+        if (!renderingResourceIdentifier)
+            return std::nullopt;
+
+        if (auto nativeImage = getNativeImage(renderingResourceIdentifier))
+            return { { *nativeImage } };
+
+        if (auto imageBuffer = getImageBuffer(renderingResourceIdentifier))
+            return { { *imageBuffer } };
+
+        return std::nullopt;
     }
 
     WebCore::Font* getFont(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const

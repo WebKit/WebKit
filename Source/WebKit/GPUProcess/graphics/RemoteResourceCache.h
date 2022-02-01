@@ -48,6 +48,7 @@ public:
     WebCore::ImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
     void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
     WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
+    std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     void deleteAllFonts();

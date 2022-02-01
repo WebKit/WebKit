@@ -42,7 +42,7 @@ NativeImage* SourceImage::nativeImageIfExists() const
     return nullptr;
 }
 
-NativeImage* SourceImage::nativeImage()
+RefPtr<NativeImage> SourceImage::nativeImage() const
 {
     if (!std::holds_alternative<Ref<ImageBuffer>>(m_imageVariant))
         return nativeImageIfExists();
@@ -52,8 +52,7 @@ NativeImage* SourceImage::nativeImage()
     if (!nativeImage)
         return nullptr;
 
-    m_imageVariant = nativeImage.releaseNonNull();
-    return nativeImageIfExists();
+    return nativeImage;
 }
 
 ImageBuffer* SourceImage::imageBufferIfExists() const
@@ -63,7 +62,7 @@ ImageBuffer* SourceImage::imageBufferIfExists() const
     return nullptr;
 }
 
-ImageBuffer* SourceImage::imageBuffer()
+RefPtr<ImageBuffer> SourceImage::imageBuffer() const
 {
     if (!std::holds_alternative<Ref<NativeImage>>(m_imageVariant))
         return imageBufferIfExists();
@@ -77,8 +76,7 @@ ImageBuffer* SourceImage::imageBuffer()
 
     imageBuffer->context().drawNativeImage(nativeImage, rect.size(), rect, rect);
 
-    m_imageVariant = imageBuffer.releaseNonNull();
-    return imageBufferIfExists();
+    return imageBuffer;
 }
 
 RenderingResourceIdentifier SourceImage::imageIdentifier() const
@@ -92,6 +90,22 @@ RenderingResourceIdentifier SourceImage::imageIdentifier() const
         },
         [&] (RenderingResourceIdentifier renderingResourceIdentifier) {
             return renderingResourceIdentifier;
+        }
+    );
+}
+
+IntSize SourceImage::size() const
+{
+    return WTF::switchOn(m_imageVariant,
+        [&] (const Ref<NativeImage>& nativeImage) {
+            return nativeImage->size();
+        },
+        [&] (const Ref<ImageBuffer>& imageBuffer) {
+            return imageBuffer->backendSize();
+        },
+        [&] (RenderingResourceIdentifier) -> IntSize {
+            ASSERT_NOT_REACHED();
+            return { };
         }
     );
 }

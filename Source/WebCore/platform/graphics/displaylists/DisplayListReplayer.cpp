@@ -83,34 +83,37 @@ inline static std::optional<RenderingResourceIdentifier> applyNativeImageItem(Gr
 
 inline static std::optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ItemHandle item, Replayer::Delegate* delegate)
 {
+    RenderingResourceIdentifier strokePatternImageIdentifier;
+    RenderingResourceIdentifier fillPatternImageIdentifier;
     auto& setStateItem = item.get<SetState>();
 
-    RenderingResourceIdentifier strokePatternRenderingResourceIdentifier;
-    NativeImage* strokePatternImage = nullptr;
-    RenderingResourceIdentifier fillPatternRenderingResourceIdentifier;
-    NativeImage* fillPatternImage = nullptr;
-
-    if ((strokePatternRenderingResourceIdentifier = setStateItem.strokePatternImageIdentifier())) {
-        strokePatternImage = resourceHeap.getNativeImage(strokePatternRenderingResourceIdentifier);
+    if (auto& strokePattern = setStateItem.stateChange().m_state.strokePattern) {
+        strokePatternImageIdentifier = strokePattern->tileImage().imageIdentifier();
+        auto strokePatternImage = resourceHeap.getSourceImage(strokePatternImageIdentifier);
         if (!strokePatternImage)
-            return strokePatternRenderingResourceIdentifier;
+            return strokePatternImageIdentifier;
+
+        strokePattern->setTileImage(WTFMove(*strokePatternImage));
     }
 
-    if ((fillPatternRenderingResourceIdentifier = setStateItem.fillPatternImageIdentifier())) {
-        fillPatternImage = resourceHeap.getNativeImage(fillPatternRenderingResourceIdentifier);
+    if (auto& fillPattern = setStateItem.stateChange().m_state.fillPattern) {
+        fillPatternImageIdentifier = fillPattern->tileImage().imageIdentifier();
+        auto fillPatternImage = resourceHeap.getSourceImage(fillPatternImageIdentifier);
         if (!fillPatternImage)
-            return fillPatternRenderingResourceIdentifier;
+            return fillPatternImageIdentifier;
+
+        fillPattern->setTileImage(WTFMove(*fillPatternImage));
     }
 
-    setStateItem.apply(context, strokePatternImage, fillPatternImage);
+    setStateItem.apply(context);
 
     if (!delegate)
         return std::nullopt;
 
-    if (strokePatternRenderingResourceIdentifier)
-        delegate->recordResourceUse(strokePatternRenderingResourceIdentifier);
-    if (fillPatternRenderingResourceIdentifier)
-        delegate->recordResourceUse(fillPatternRenderingResourceIdentifier);
+    if (strokePatternImageIdentifier)
+        delegate->recordResourceUse(strokePatternImageIdentifier);
+    if (fillPatternImageIdentifier)
+        delegate->recordResourceUse(fillPatternImageIdentifier);
     return std::nullopt;
 }
 

@@ -153,19 +153,13 @@ SetState::SetState(const GraphicsContextState& state, GraphicsContextState::Stat
 {
 }
 
-SetState::SetState(const GraphicsContextStateChange& stateChange, const PatternData& strokePattern, const PatternData& fillPattern)
+SetState::SetState(const GraphicsContextStateChange& stateChange)
     : m_stateChange(stateChange)
-    , m_strokePattern(strokePattern)
-    , m_fillPattern(fillPattern)
 {
 }
 
-void SetState::apply(GraphicsContext& context, NativeImage* strokePatternImage, NativeImage* fillPatternImage)
+void SetState::apply(GraphicsContext& context)
 {
-    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange) && strokePatternImage)
-        m_stateChange.m_state.strokePattern = Pattern::create(*strokePatternImage, m_strokePattern.parameters);
-    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange) && fillPatternImage)
-        m_stateChange.m_state.fillPattern = Pattern::create(*fillPatternImage, m_fillPattern.parameters);
     m_stateChange.apply(context);
 }
 
