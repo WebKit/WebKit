@@ -122,8 +122,9 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(Remo
 
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, MonotonicTime now)
 {
-    if (now - backingStore.lastDisplayTime() < volatileBackingStoreAgeThreshold) {
-        if (now - backingStore.lastDisplayTime() >= volatileSecondaryBackingStoreAgeThreshold)
+    auto timeSinceLastDisplay = now - backingStore.lastDisplayTime();
+    if (timeSinceLastDisplay < volatileBackingStoreAgeThreshold) {
+        if (timeSinceLastDisplay >= volatileSecondaryBackingStoreAgeThreshold)
             backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
 
         return false;
@@ -139,6 +140,7 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
     auto backingStoreIter = m_liveBackingStore.find(&backingStore);
     if (backingStoreIter == m_liveBackingStore.end())
         return;
+
     m_unparentedBackingStore.add(&backingStore);
     m_liveBackingStore.remove(backingStoreIter);
 

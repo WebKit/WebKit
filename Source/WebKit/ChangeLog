@@ -1,5 +1,18 @@
 2022-02-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor cleanup in RemoteLayerBackingStoreCollection
+        https://bugs.webkit.org/show_bug.cgi?id=235936
+
+        Reviewed by Tim Horton.
+
+        Do time math once. Insert a blank line for clarity.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable):
+
+2022-02-01  Simon Fraser  <simon.fraser@apple.com>
+
         RemoteRenderingBackendProxy should not be a IPC::MessageSender
         https://bugs.webkit.org/show_bug.cgi?id=235935
 
