@@ -1,6 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires. - webgl Test timed out
-NOTRUN Ensures that the XRSession's visibilityState is correctly reported and that the associated visibilitychange event fires. - webgl2
-

@@ -4863,7 +4863,6 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_ends.https.html [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html [ Skip ]
-webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https.html [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Skip ]
 
 # WebXR - Currently failing and needs more investigation.

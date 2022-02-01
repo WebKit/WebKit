@@ -1,3 +1,14 @@
+2022-02-01  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Handle changes in XRSession's visibility state
+        https://bugs.webkit.org/show_bug.cgi?id=235898
+
+        Reviewed by Sergio Villar Senin.
+
+        Update expectation with passing results.
+
+        * web-platform-tests/webxr/xrSession_visibilityState.https-expected.txt:
+
 2022-02-01  Antoine Quint  <graouts@webkit.org>
 
         Redefining @keyframes does not work

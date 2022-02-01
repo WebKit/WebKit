@@ -114,6 +114,7 @@ private:
     // PlatformXR::TrackingAndRenderingClient
     void sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&&) final;
     void sessionDidEnd() final;
+    void updateSessionVisibilityState(PlatformXR::VisibilityState) final;
 
     enum class InitiatedBySystem : bool { No, Yes };
     void shutdown(InitiatedBySystem);

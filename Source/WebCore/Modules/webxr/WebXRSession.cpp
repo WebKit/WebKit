@@ -446,6 +446,25 @@ void WebXRSession::sessionDidEnd()
     shutdown(InitiatedBySystem::Yes);
 }
 
+void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
+{
+    if (m_visibilityState == visibilityState)
+        return;
+
+    bool wasHidden = m_visibilityState == XRVisibilityState::Hidden;
+
+    m_visibilityState = visibilityState;
+
+    if (wasHidden && !m_ended && !m_callbacks.isEmpty())
+        requestFrame();
+
+    // From https://immersive-web.github.io/webxr/#event-types
+    // A user agent MUST dispatch a visibilitychange event on an XRSession each time the
+    // visibility state of the XRSession has changed. The event MUST be of type XRSessionEvent.
+    auto event = XRSessionEvent::create(eventNames().visibilitychangeEvent, { RefPtr { this } });
+    queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
+}
+
 void WebXRSession::applyPendingRenderState()
 {
     // https: //immersive-web.github.io/webxr/#apply-the-pending-render-state
@@ -518,9 +537,16 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
     if (m_ended)
         return;
 
+    // From https://immersive-web.github.io/webxr/#xrsession-visibility-state
+    // A state of hidden indicates that imagery rendered by the XRSession cannot be seen by the user.
+    // requestAnimationFrame() callbacks will not be processed until the visibility state changes.
+    // Input is not processed by the XRSession.
+    if (m_visibilityState == XRVisibilityState::Hidden)
+        return;
+
     // Queue a task to perform the following steps.
     queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() mutable {
-        if (m_ended)
+        if (m_ended || m_visibilityState == XRVisibilityState::Hidden)
             return;
 
         m_frameData = WTFMove(frameData);

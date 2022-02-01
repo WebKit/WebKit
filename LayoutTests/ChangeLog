@@ -1,3 +1,14 @@
+2022-02-01  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Handle changes in XRSession's visibility state
+        https://bugs.webkit.org/show_bug.cgi?id=235898
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations:
+        Unskip xrSession_visibilityState.https.html
+        * platform/mac/imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https-expected.txt: Removed.
+
 2022-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Expose screen and window capture state to WKWebView

@@ -78,6 +78,7 @@ public:
     void setFloorOrigin(std::optional<FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
     void setEmulatedPosition(bool emulated) { m_frameData.isPositionEmulated = emulated; }
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
+    void setVisibilityState(XRVisibilityState);
     void simulateShutdownCompleted();
     void scheduleOnNextFrame(Function<void()>&&);
     void addInputConnection(Ref<WebFakeXRInputController>&& input) { m_inputConnections.append(WTFMove(input)); };
