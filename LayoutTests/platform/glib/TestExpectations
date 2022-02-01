@@ -2092,7 +2092,6 @@ webkit.org/b/160243 fast/text/complex-small-caps-non-bmp-capitalize.html [ Image
 webkit.org/b/160246 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
 webkit.org/b/160248 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 webkit.org/b/160248 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
-webkit.org/b/160248 fast/text/trailing-word-detection.html [ Failure ]
 webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/161583 accessibility/auto-fill-types.html [ Timeout ]
 webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]

@@ -1432,11 +1432,6 @@ each-line
 // -webkit-column-fill
 balance
 
-#if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
-// -apple-trailing-word
--webkit-partially-balanced
-#endif
-
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 // -apple-pay-button-style
 white-outline

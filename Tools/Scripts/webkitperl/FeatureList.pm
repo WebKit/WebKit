@@ -259,9 +259,6 @@ my @features = (
     { option => "css-selectors-level4", desc => "Toggle CSS Selectors Level 4 support",
       define => "ENABLE_CSS_SELECTORS_LEVEL4", value => \$cssSelectorsLevel4Support },
 
-    { option => "css-trailing-word", desc => "Toggle css trailing word",
-      define => "ENABLE_CSS_TRAILING_WORD", value => \$cssTrailingWordSupport },
-
     { option => "css-typed-om", desc => "Toggle CSS Typed OM support",
       define => "ENABLE_CSS_TYPED_OM", value => \$cssTypedOMSupport },
 

@@ -1,3 +1,13 @@
+2022-02-01  Tim Nguyen  <ntim@apple.com>
+
+        Entirely remove support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=234672
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2022-01-28  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Small corrections to build-webkit and Makefile for workspace builds
