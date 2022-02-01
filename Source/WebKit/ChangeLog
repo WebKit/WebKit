@@ -1,3 +1,28 @@
+2022-02-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288844. rdar://problem/88241768
+
+    [macOS][WP] Add required syscall
+    https://bugs.webkit.org/show_bug.cgi?id=235901
+    <rdar://88241768>
+    
+    Reviewed by Brent Fulgham.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288844 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS][WP] Add required syscall
+            https://bugs.webkit.org/show_bug.cgi?id=235901
+            <rdar://88241768>
+
+            Reviewed by Brent Fulgham.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-01-31  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288652. rdar://problem/87169406
