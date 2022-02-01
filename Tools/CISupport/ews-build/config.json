@@ -349,8 +349,9 @@
     {
       "type": "AnyBranchScheduler", "name": "pullrequest",
       "builderNames": [
-            "Services-EWS", "Style-EWS", "Style-EWS",
-            "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"
+            "Bindings-Tests-EWS", "iOS-15-Build-EWS",
+            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
+            "watchOS-8-Simulator-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"
       ]
     },
     {

@@ -1,3 +1,13 @@
+2022-01-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Trigger embedded builders on pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=235913
+        <rdar://problem/88290964>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json: Pull-requests should trigger embedded builders.
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Entirely remove support for -apple-trailing-word
