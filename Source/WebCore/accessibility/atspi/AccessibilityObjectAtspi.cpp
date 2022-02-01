@@ -363,6 +363,7 @@ static unsigned atspiRole(AccessibilityRole role)
     case AccessibilityRole::Ignored:
     case AccessibilityRole::Incrementor:
     case AccessibilityRole::Matte:
+    case AccessibilityRole::Model:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::RowGroup:
     case AccessibilityRole::RubyBase:
