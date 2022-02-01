@@ -11,21 +11,19 @@ String with range: ello
 worl
 Attributed string with range:
 	Default text attributes:
-		bg-color:0,0,0
-		editable:true
-		family-name:standard
-		fg-color:0,0,0
 		indent:0
-		invisible:false
-		rise:0
-		size:16
+		family-name:-webkit-standard
+		editable:true
 		strikethrough:false
 		style:normal
-		underline:none
+		fg-color:0,0,0
+		size:12pt
 		weight:400
-	Range attributes for 'hello':
-		
-	Range attributes for '<\n>worl':
+		invisible:false
+		underline:none
+		direction:ltr
+	Range attributes for 'ello<\n>':
+	Range attributes for 'worl':
 		weight:700
 Line for index(0): 0
 Line for index(7): 1

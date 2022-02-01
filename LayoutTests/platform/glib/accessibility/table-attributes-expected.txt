@@ -126,14 +126,14 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
-AXRole: AXRowHeader
+AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 227.000, 93.0000 }
-AXSize: { 90.0000, 60.0000 }
+AXPosition: { 317.000, 123.000 }
+AXSize: { 53.0000, 30.0000 }
 AXTitle:
 AXDescription:
-AXValue: All Regions
+AXValue: South
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -143,7 +143,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th
+AXPlatformAttributes: computed-role:cell, tag:th
 ------------
 
 
@@ -153,29 +153,82 @@ AXPlatformAttributes: computed-role:rowheader, tag:th
 
 --------------------------
 
-
-
---------------------------
-
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
 AXPosition: { 227.000, 27.0000 }
-AXSize: { 143.000, 66.0000 }
+AXSize: { 331.000, 30.0000 }
 AXTitle:
 AXDescription:
-AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 0
+AXSelectable: 1
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th
+AXPlatformAttributes: computed-role:row, tag:tr
 ------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 2
+AXPosition: { 227.000, 57.0000 }
+AXSize: { 331.000, 36.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 5
+AXPosition: { 227.000, 93.0000 }
+AXSize: { 331.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 4
+AXPosition: { 227.000, 123.000 }
+AXSize: { 331.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+
+
+--------------------------
+
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
@@ -222,82 +275,6 @@ AXSize: { 119.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: By Gender
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 439.000, 27.0000 }
-AXSize: { 119.000, 30.0000 }
-AXTitle:
-AXDescription:
-AXValue: By Gender
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 227.000, 27.0000 }
-AXSize: { 143.000, 66.0000 }
-AXTitle:
-AXDescription:
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 227.000, 27.0000 }
-AXSize: { 143.000, 66.0000 }
-AXTitle:
-AXDescription:
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 370.000, 27.0000 }
-AXSize: { 69.0000, 66.0000 }
-AXTitle:
-AXDescription:
-AXValue: All<\n>Genders
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -441,25 +418,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:cell, tag:td
-------------
-AXRole: AXRowHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 227.000, 93.0000 }
-AXSize: { 90.0000, 60.0000 }
-AXTitle:
-AXDescription:
-AXValue: All Regions
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 1
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:rowheader, tag:th
 ------------
 AXRole: AXCell
 AXParent: AXRow

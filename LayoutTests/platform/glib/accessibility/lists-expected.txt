@@ -82,18 +82,18 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: grabbed:true
+AXPlatformAttributes:
 ------------
 
 
 AXRole: AXListItem
 AXParent: AXList
-AXChildren: 0
+AXChildren: 1
 AXPosition: { 48.0000, 16.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 1
 AXDescription:
-AXValue: • test 1
+AXValue: <obj>test 1
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -107,12 +107,12 @@ AXPlatformAttributes: computed-role:listitem, tag:li
 ------------
 AXRole: AXListItem
 AXParent: AXList
-AXChildren: 0
+AXChildren: 1
 AXPosition: { 48.0000, 34.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 2
 AXDescription:
-AXValue: • test 2
+AXValue: <obj>test 2
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -128,12 +128,12 @@ AXPlatformAttributes: computed-role:listitem, tag:li
 
 AXRole: AXListItem
 AXParent: AXList
-AXChildren: 0
+AXChildren: 1
 AXPosition: { 48.0000, 68.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 1
 AXDescription:
-AXValue: 1. test 1
+AXValue: <obj>test 1
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -147,12 +147,12 @@ AXPlatformAttributes: computed-role:listitem, tag:li
 ------------
 AXRole: AXListItem
 AXParent: AXList
-AXChildren: 0
+AXChildren: 1
 AXPosition: { 48.0000, 86.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 2
 AXDescription:
-AXValue: 2. test 2
+AXValue: <obj>test 2
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

@@ -143,6 +143,78 @@ AXPlatformAttributes: computed-role:rowheader, tag:th
 
 --------------------------
 
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 63.0000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 93.0000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 123.000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 153.000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
 
 
 --------------------------
@@ -513,6 +585,78 @@ AXPlatformAttributes: computed-role:rowheader, tag:th
 
 --------------------------
 
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 63.0000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 93.0000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 123.000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition: { 355.000, 153.000 }
+AXSize: { 75.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
 
 
 --------------------------

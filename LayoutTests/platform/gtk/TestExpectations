@@ -134,6 +134,15 @@ webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure 
 webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
 accessibility/model-element-attributes.html [ Skip ]
 
+# Tests failing with ATSPI implementation.
+webkit.org/b/235941 accessibility/gtk/nested-block-element-children.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/no-notification-for-unrendered-iframe-children.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/spans.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/text-at-offset-special-chars.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/xml-roles-exposed.html [ Failure ]
+webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
+
 # canvas
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
@@ -1652,7 +1661,6 @@ webkit.org/b/182103 editing/input/reveal-edit-on-paste-vertically.html [ Failure
 webkit.org/b/182223 fast/forms/listbox-selection.html [ Failure ]
 
 webkit.org/b/182763 accessibility/gtk/aria-activedescendant-changed-notification.html [ Failure ]
-webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Failure ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 

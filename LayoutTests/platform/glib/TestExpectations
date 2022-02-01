@@ -352,7 +352,6 @@ webkit.org/b/220719 accessibility/braille-label-role.html [ Failure ]
 # Key events for AX actions seems to not be not being emitted
 webkit.org/b/221022 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Timeout ]
 
-webkit.org/b/221447 accessibility/aria-current.html [ Failure ]
 webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [ Timeout ]
 
 webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
@@ -373,6 +372,11 @@ webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
+
+# Tests failing with ATSPI implementation.
+webkit.org/b/235941 accessibility/children-changed-sends-notification.html [ Failure ]
+webkit.org/b/235941 accessibility/generated-content-with-display-table-crash.html [ Failure ]
+webkit.org/b/235941 accessibility/select-element-at-index.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs

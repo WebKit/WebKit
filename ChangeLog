@@ -1,3 +1,15 @@
+2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Switch to use ATSPI instead of ATK
+        https://bugs.webkit.org/show_bug.cgi?id=235942
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use ATSPI by default.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Entirely remove support for -apple-trailing-word

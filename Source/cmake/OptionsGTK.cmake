@@ -76,7 +76,7 @@ WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC O
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
-WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the Atspi a11y implementation instead of ATK." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the ATSPI a11y implementation instead of ATK." PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)

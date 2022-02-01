@@ -1,3 +1,39 @@
+2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Switch to use ATSPI instead of ATK
+        https://bugs.webkit.org/show_bug.cgi?id=235942
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update test expectations.
+
+        * accessibility/aria-table-attributes.html:
+        * accessibility/combo-box-collapsed-selection-changed.html:
+        * accessibility/gtk/caret-browsing-select-focus-expected.txt:
+        * accessibility/gtk/caret-browsing-select-focus.html:
+        * accessibility/gtk/caret-browsing-text-focus-expected.txt: Removed.
+        * accessibility/gtk/caret-browsing-text-focus.html: Removed.
+        * accessibility/gtk/combobox-descendants-orientation-crash-expected.txt: Removed.
+        * accessibility/gtk/combobox-descendants-orientation-crash.html: Removed.
+        * accessibility/gtk/object-attributes-expected.txt:
+        * accessibility/gtk/spans-paragraphs-and-divs-tree-expected.txt:
+        * accessibility/menu-list-sends-change-notification.html:
+        * platform/glib/TestExpectations:
+        * platform/glib/accessibility/aria-combobox-expected.txt: Added.
+        * platform/glib/accessibility/aria-combobox-hierarchy-expected.txt:
+        * platform/glib/accessibility/aria-table-attributes-expected.txt: Removed.
+        * platform/glib/accessibility/combo-box-collapsed-selection-changed-expected.txt: Added.
+        * platform/glib/accessibility/content-editable-as-textarea-expected.txt:
+        * platform/glib/accessibility/lists-expected.txt:
+        * platform/glib/accessibility/menu-list-sends-change-notification-expected.txt: Removed.
+        * platform/glib/accessibility/multiselect-list-reports-active-option-expected.txt: Added.
+        * platform/glib/accessibility/svg-remote-element-expected.txt:
+        * platform/glib/accessibility/table-attributes-expected.txt:
+        * platform/glib/accessibility/table-one-cell-expected.txt:
+        * platform/glib/accessibility/table-sections-expected.txt:
+        * platform/glib/accessibility/transformed-element-expected.txt:
+        * platform/gtk/TestExpectations:
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Entirely remove support for -apple-trailing-word

@@ -10,13 +10,14 @@
         var menulist = document.getElementById("menulist");
         menulist.focus();
         var accessibleMenulist = accessibilityController.focusedElement;
+        var eventTarget = accessibilityController.platformName == "atk" ? accessibleMenulist.childAtIndex(0) : accessibleMenulist;
 
         function listener(notification) {
             debug("MenuList received notification: " + notification);
-            accessibleMenulist.removeNotificationListener(listener);
+            eventTarget.removeNotificationListener(listener);
             finishJSTest();
         }
-        accessibleMenulist.addNotificationListener(listener);
+        eventTarget.addNotificationListener(listener);
 
         // Change the selected index.
         menulist.selectedIndex = 1;

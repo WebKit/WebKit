@@ -150,7 +150,7 @@ AXPosition:  { 8.00000, 274.000 }
 AXSize: { 784.000, 19.0000 }
 AXTitle:
 AXDescription:
-AXValue: Link
+AXValue:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -160,7 +160,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: grabbed:true
+AXPlatformAttributes:
 ------------
 AXRole: AXSection
 AXParent: AXWebArea
@@ -283,7 +283,7 @@ AXSize: { 784.000, 53.0000 }
 AXTitle:
 AXDescription:
 AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
-AXFocusable: 1
+AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
 AXSelected: 0

@@ -8,8 +8,8 @@ AXPosition: { 11.0000, 11.0000 }
 AXSize: { 132.000, 90.0000 }
 AXTitle:
 AXDescription:
-AXValue: Pick Your Location!<\n>Get specific content for your area. <\n>http://web.apple.com<\n>
-AXFocusable: 1
+AXValue: Pick Your Location!<\n>Get specific content for your area. <\n><obj><\n>
+AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
 AXSelected: 0
