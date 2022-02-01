@@ -89,7 +89,7 @@ protected:
 
     String computeInheritedCSSPropertyValue(SVGElement& targetElement) const
     {
-        auto* parent = targetElement.parentElement();
+        RefPtr<Element> parent = targetElement.parentElement();
         if (!parent || !parent->isSVGElement())
             return emptyString();
         
