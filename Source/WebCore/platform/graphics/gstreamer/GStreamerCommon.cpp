@@ -56,6 +56,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
+#include "GStreamerVideoEncoder.h"
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -317,6 +318,7 @@ void registerWebKitGStreamerElements()
 
 #if ENABLE(MEDIA_STREAM)
         gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
+        gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
