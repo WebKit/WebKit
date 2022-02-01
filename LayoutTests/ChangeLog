@@ -1,3 +1,15 @@
+2022-02-01  Youenn Fablet  <youenn@apple.com>
+
+        [BigSur+ wk2 Debug] webrtc/video-mute-vp8.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230359
+        <rdar://problem/83203317>
+
+        Unreviewed.
+
+        Test is no longer flaky on bots.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Switch to use ATSPI instead of ATK
