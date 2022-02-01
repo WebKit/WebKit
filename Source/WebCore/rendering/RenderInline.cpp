@@ -210,7 +210,7 @@ bool RenderInline::mayAffectLayout() const
         || (parentRenderInline && parentStyle->verticalAlign() != VerticalAlign::Baseline)
         || style().verticalAlign() != VerticalAlign::Baseline
         || style().textEmphasisMark() != TextEmphasisMark::None
-        || (checkFonts && (!parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().fontCascade().fontMetrics())
+        || (checkFonts && (!parentStyle->fontCascade().fontMetricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(style().fontCascade().fontMetricsOfPrimaryFont())
         || parentStyle->lineHeight() != style().lineHeight()))
         || hasHardLineBreakChildOnly;
 
@@ -218,7 +218,7 @@ bool RenderInline::mayAffectLayout() const
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
         auto& childStyle = firstLineStyle();
-        mayAffectLayout = !parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+        mayAffectLayout = !parentStyle->fontCascade().fontMetricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetricsOfPrimaryFont())
             || childStyle.verticalAlign() != VerticalAlign::Baseline
             || parentStyle->lineHeight() != childStyle.lineHeight();
     }
@@ -855,7 +855,7 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
 LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
-    const FontMetrics& fontMetrics = style.fontMetrics();
+    const FontMetrics& fontMetrics = style.fontMetricsOfPrimaryFont();
     return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
 }
 

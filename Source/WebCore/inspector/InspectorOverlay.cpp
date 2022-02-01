@@ -869,7 +869,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun(String::number(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.fontMetrics().height() - 1.0f });
+                context.drawText(font, TextRun(String::number(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.fontMetricsOfPrimaryFont().height() - 1.0f });
             }
         }
 
@@ -928,7 +928,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         const float padding = 2;
         const float radius = 4;
         float fontWidth = font.width(viewportTextRun);
-        float fontHeight = font.fontMetrics().floatHeight();
+        float fontHeight = font.fontMetricsOfPrimaryFont().floatHeight();
         FloatRect viewportTextRect(margin, margin, (padding * 2.0f) + fontWidth, (padding * 2.0f) + fontHeight);
         const auto viewportTextRectCenter = viewportTextRect.center();
 
@@ -966,7 +966,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         context.fillRoundedRect(FloatRoundedRect(viewportTextRect, FloatRoundedRect::Radii(radius)), rulerBackgroundColor);
 
         context.setFillColor(Color::black);
-        context.drawText(font, viewportTextRun, {margin +  padding, margin + padding + fontHeight - font.fontMetrics().descent() });
+        context.drawText(font, viewportTextRun, { margin +  padding, margin + padding + fontHeight - font.fontMetricsOfPrimaryFont().descent() });
     }
 }
 
@@ -1040,7 +1040,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
 
-    int fontHeight = font.fontMetrics().height();
+    int fontHeight = font.fontMetricsOfPrimaryFont().height();
 
     float elementDataWidth;
     float elementDataHeight = fontHeight;
@@ -1348,7 +1348,7 @@ static FloatSize expectedSizeForLayoutLabel(String label, InspectorOverlay::Labe
 {
     auto font = fontForLayoutLabel();
 
-    float textHeight = font.fontMetrics().floatHeight();
+    float textHeight = font.fontMetricsOfPrimaryFont().floatHeight();
     float textWidth = font.width(TextRun(label));
     if (maximumWidth && textWidth + (layoutLabelPadding * 2) > maximumWidth)
         textWidth = maximumWidth;
@@ -1376,8 +1376,8 @@ static void drawLayoutLabel(GraphicsContext& context, String label, FloatPoint p
     context.translate(point);
 
     auto font = fontForLayoutLabel();
-    float textHeight = font.fontMetrics().floatHeight();
-    float textDescent = font.fontMetrics().floatDescent();
+    float textHeight = font.fontMetricsOfPrimaryFont().floatHeight();
+    float textDescent = font.fontMetricsOfPrimaryFont().floatDescent();
     
     float textWidth = font.width(TextRun(label));
     if (maximumWidth && textWidth + (layoutLabelPadding * 2) > maximumWidth) {

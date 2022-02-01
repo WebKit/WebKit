@@ -234,7 +234,7 @@ public:
 
         bool realized() const { return m_font.fontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
-        const FontMetrics& fontMetrics() const;
+        const FontMetrics& fontMetricsOfPrimaryFont() const;
         const FontCascadeDescription& fontDescription() const;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;

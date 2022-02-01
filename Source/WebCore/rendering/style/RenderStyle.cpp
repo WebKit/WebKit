@@ -1815,9 +1815,9 @@ const FontCascade& RenderStyle::fontCascade() const
     return m_inheritedData->fontCascade;
 }
 
-const FontMetrics& RenderStyle::fontMetrics() const
+const FontMetrics& RenderStyle::fontMetricsOfPrimaryFont() const
 {
-    return m_inheritedData->fontCascade.fontMetrics();
+    return m_inheritedData->fontCascade.fontMetricsOfPrimaryFont();
 }
 
 const FontCascadeDescription& RenderStyle::fontDescription() const
@@ -1896,7 +1896,7 @@ int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
 {
     // Negative value means the line height is not set. Use the font's built-in spacing.
     if (lineHeightLength.isNegative())
-        return fontMetrics().lineSpacing();
+        return fontMetricsOfPrimaryFont().lineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())
         return minimumValueForLength(lineHeightLength, computedFontPixelSize());

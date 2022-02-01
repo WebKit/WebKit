@@ -404,9 +404,9 @@ void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelec
     m_font.fontSelector()->registerForInvalidationCallbacks(*this);
 }
 
-const FontMetrics& CanvasRenderingContext2DBase::FontProxy::fontMetrics() const
+const FontMetrics& CanvasRenderingContext2DBase::FontProxy::fontMetricsOfPrimaryFont() const
 {
-    return m_font.fontMetrics();
+    return m_font.fontMetricsOfPrimaryFont();
 }
 
 const FontCascadeDescription& CanvasRenderingContext2DBase::FontProxy::fontDescription() const
@@ -2407,7 +2407,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
 {
     auto* c = drawingContext();
     auto& fontProxy = *this->fontProxy();
-    const auto& fontMetrics = fontProxy.fontMetrics();
+    const auto& fontMetrics = fontProxy.fontMetricsOfPrimaryFont();
 
     // FIXME: Need to turn off font smoothing.
 
@@ -2530,7 +2530,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     Ref<TextMetrics> metrics = TextMetrics::create();
 
     auto& font = *fontProxy();
-    auto& fontMetrics = font.fontMetrics();
+    auto& fontMetrics = font.fontMetricsOfPrimaryFont();
 
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
@@ -2557,7 +2557,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
 {
-    auto& fontMetrics = fontProxy()->fontMetrics();
+    auto& fontMetrics = fontProxy()->fontMetricsOfPrimaryFont();
     FloatPoint offset;
 
     switch (state().textBaseline) {

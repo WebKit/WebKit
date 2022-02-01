@@ -48,7 +48,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
     data.m_clientPaddingRight = m_popupClient->clientPaddingRight();
     data.m_clientInsetLeft = m_popupClient->clientInsetLeft();
     data.m_clientInsetRight = m_popupClient->clientInsetRight();
-    data.m_itemHeight = font.fontMetrics().height() + 1;
+    data.m_itemHeight = font.fontMetricsOfPrimaryFont().height() + 1;
 
     int popupWidth = 0;
     for (size_t i = 0; i < itemCount; ++i) {
@@ -137,7 +137,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
                 if (RenderTheme::singleton().popupOptionSupportsTextIndent())
                     textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             }
-            int textY = itemRect.y() + itemFontCascade.fontMetrics().ascent() + (itemRect.height() - itemFontCascade.fontMetrics().height()) / 2;
+            int textY = itemRect.y() + itemFontCascade.fontMetricsOfPrimaryFont().ascent() + (itemRect.height() - itemFontCascade.fontMetricsOfPrimaryFont().height()) / 2;
 
             notSelectedBackingStoreContext->drawBidiText(itemFontCascade, textRun, IntPoint(textX, textY));
             selectedBackingStoreContext->drawBidiText(itemFontCascade, textRun, IntPoint(textX, textY));

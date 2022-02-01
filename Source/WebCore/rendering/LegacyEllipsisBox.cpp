@@ -70,7 +70,7 @@ void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context.drawText(font, RenderBlock::constructTextRun(m_str, lineStyle, AllowRightExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
+    context.drawText(font, RenderBlock::constructTextRun(m_str, lineStyle, AllowRightExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetricsOfPrimaryFont().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context.fillColor())
@@ -108,7 +108,7 @@ void LegacyEllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& 
 
     LayoutPoint adjustedPaintOffset = paintOffset;
     adjustedPaintOffset.move(x() + logicalWidth() - markupBox->x(),
-        y() + style.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
+        y() + style.fontMetricsOfPrimaryFont().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetricsOfPrimaryFont().ascent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
@@ -153,7 +153,7 @@ bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult
     if (LegacyInlineBox* markupBox = this->markupBox()) {
         const RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx { adjustedLocation.x() + logicalWidth() - markupBox->x() };
-        LayoutUnit mty { adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()) };
+        LayoutUnit mty { adjustedLocation.y() + lineStyle.fontMetricsOfPrimaryFont().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetricsOfPrimaryFont().ascent()) };
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
             blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;

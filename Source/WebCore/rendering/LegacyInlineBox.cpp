@@ -136,13 +136,13 @@ float LegacyInlineBox::logicalHeight() const
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isTextOrLineBreak())
-        return lineStyle.fontMetrics().height();
+        return lineStyle.fontMetricsOfPrimaryFont().height();
     if (is<RenderBox>(renderer()) && parent())
         return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
-    const FontMetrics& fontMetrics = lineStyle.fontMetrics();
+    const FontMetrics& fontMetrics = lineStyle.fontMetricsOfPrimaryFont();
     float result = fontMetrics.height();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();

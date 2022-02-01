@@ -128,7 +128,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
-                if (!parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+                if (!parentStyle.fontCascade().fontMetricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetricsOfPrimaryFont())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
@@ -146,7 +146,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
                 auto& childFlowBox = downcast<LegacyInlineFlowBox>(*child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
                 if (!childFlowBox.descendantsHaveSameLineHeightAndBaseline()
-                    || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+                    || !parentStyle.fontCascade().fontMetricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetricsOfPrimaryFont())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline
                     || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
@@ -689,7 +689,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
 
         const RenderStyle& childLineStyle = child->lineStyle();
         if (child->behavesLikeText() || is<LegacyInlineFlowBox>(*child)) {
-            const FontMetrics& fontMetrics = childLineStyle.fontMetrics();
+            const FontMetrics& fontMetrics = childLineStyle.fontMetricsOfPrimaryFont();
             newLogicalTop += child->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (is<LegacyInlineFlowBox>(*child)) {
                 RenderBoxModelObject& boxObject = downcast<LegacyInlineFlowBox>(*child).renderer();
@@ -763,7 +763,7 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
 {
     bool isRootBox = isRootInlineBox();
     if (isRootBox)
-        setLogicalTop(top + maxAscent - lineStyle().fontMetrics().ascent(baselineType));
+        setLogicalTop(top + maxAscent - lineStyle().fontMetricsOfPrimaryFont().ascent(baselineType));
 
     placeChildInlineBoxesInBlockDirection(*this, top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 

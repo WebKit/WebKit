@@ -87,7 +87,7 @@ public:
     bool participatesInZOrderSorting() const { return isPositioned() || isStackingContext(); }
 
     const FontCascade& fontCascade() const { return m_fontCascade; }
-    const FontMetrics& fontMetrics() const { return m_fontCascade.fontMetrics(); }
+    const FontMetrics& fontMetricsOfPrimaryFont() const { return m_fontCascade.fontMetricsOfPrimaryFont(); }
     
     float opacity() const { return m_opacity; }
 

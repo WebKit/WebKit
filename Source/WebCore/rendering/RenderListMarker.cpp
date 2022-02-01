@@ -1648,7 +1648,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().fontMetrics().ascent());
+    FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().fontMetricsOfPrimaryFont().ascent());
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
     context.drawText(style().fontCascade(), textRun(), textOrigin);
 }
@@ -1780,7 +1780,7 @@ void RenderListMarker::layout()
         setHeight(m_image->imageSize(this, style().effectiveZoom()).height());
     } else {
         setLogicalWidth(minPreferredLogicalWidth());
-        setLogicalHeight(style().fontMetrics().height());
+        setLogicalHeight(style().fontMetricsOfPrimaryFont().height());
     }
 
     setMarginStart(0);
@@ -1820,7 +1820,7 @@ void RenderListMarker::updateContent()
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        LayoutUnit bulletWidth = style().fontMetrics().ascent() / 2_lu;
+        LayoutUnit bulletWidth = style().fontMetricsOfPrimaryFont().ascent() / 2_lu;
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
         LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, DoNotScaleByEffectiveZoom);
         m_image->setContainerContextForRenderer(*this, imageSize, style().effectiveZoom());
@@ -1867,7 +1867,7 @@ void RenderListMarker::computePreferredLogicalWidths()
     case ListStyleType::Circle:
     case ListStyleType::Disc:
     case ListStyleType::Square:
-        logicalWidth = (font.fontMetrics().ascent() * 2 / 3 + 1) / 2 + 2;
+        logicalWidth = (font.fontMetricsOfPrimaryFont().ascent() * 2 / 3 + 1) / 2 + 2;
         break;
     default:
         if (!m_textWithSuffix.isEmpty())
@@ -1885,7 +1885,7 @@ void RenderListMarker::computePreferredLogicalWidths()
 
 void RenderListMarker::updateMargins()
 {
-    const FontMetrics& fontMetrics = style().fontMetrics();
+    const FontMetrics& fontMetrics = style().fontMetricsOfPrimaryFont();
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
@@ -1961,7 +1961,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
     case ListStyleType::Circle:
     case ListStyleType::Square: {
         // FIXME: Are these particular rounding rules necessary?
-        const FontMetrics& fontMetrics = style().fontMetrics();
+        const FontMetrics& fontMetrics = style().fontMetricsOfPrimaryFont();
         int ascent = fontMetrics.ascent();
         int bulletWidth = (ascent * 2 / 3 + 1) / 2;
         relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
@@ -1971,7 +1971,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
         if (m_textWithSuffix.isEmpty())
             return FloatRect();
         auto& font = style().fontCascade();
-        relativeRect = FloatRect(0, 0, font.width(textRun()), font.fontMetrics().height());
+        relativeRect = FloatRect(0, 0, font.width(textRun()), font.fontMetricsOfPrimaryFont().height());
         break;
     }
 

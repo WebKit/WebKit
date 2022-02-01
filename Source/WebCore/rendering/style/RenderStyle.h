@@ -356,7 +356,7 @@ public:
     TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
-    WEBCORE_EXPORT const FontMetrics& fontMetrics() const;
+    WEBCORE_EXPORT const FontMetrics& fontMetricsOfPrimaryFont() const;
     WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     float specifiedFontSize() const;
     float computedFontSize() const;

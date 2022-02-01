@@ -242,14 +242,14 @@ auto RenderMathMLScripts::verticalParameters() const -> VerticalParameters
         parameters.superscriptBottomMaxWithSubscript = mathData->getMathConstant(primaryFont, OpenTypeMathData::SuperscriptBottomMaxWithSubscript);
     } else {
         // Default heuristic values when you do not have a font.
-        parameters.subscriptShiftDown = style().fontMetrics().xHeight() / 3;
-        parameters.superscriptShiftUp = style().fontMetrics().xHeight();
-        parameters.subscriptBaselineDropMin = style().fontMetrics().xHeight() / 2;
-        parameters.superScriptBaselineDropMax = style().fontMetrics().xHeight() / 2;
+        parameters.subscriptShiftDown = style().fontMetricsOfPrimaryFont().xHeight() / 3;
+        parameters.superscriptShiftUp = style().fontMetricsOfPrimaryFont().xHeight();
+        parameters.subscriptBaselineDropMin = style().fontMetricsOfPrimaryFont().xHeight() / 2;
+        parameters.superScriptBaselineDropMax = style().fontMetricsOfPrimaryFont().xHeight() / 2;
         parameters.subSuperscriptGapMin = style().fontCascade().size() / 5;
-        parameters.superscriptBottomMin = style().fontMetrics().xHeight() / 4;
-        parameters.subscriptTopMax = 4 * style().fontMetrics().xHeight() / 5;
-        parameters.superscriptBottomMaxWithSubscript = 4 * style().fontMetrics().xHeight() / 5;
+        parameters.superscriptBottomMin = style().fontMetricsOfPrimaryFont().xHeight() / 4;
+        parameters.subscriptTopMax = 4 * style().fontMetricsOfPrimaryFont().xHeight() / 5;
+        parameters.superscriptBottomMaxWithSubscript = 4 * style().fontMetricsOfPrimaryFont().xHeight() / 5;
     }
     return parameters;
 }

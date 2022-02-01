@@ -1,3 +1,13 @@
+2022-01-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename FontCascade::fontMetrics() and RenderStyle::fontMetrics() to fontMetricsOfPrimaryFont()
+        https://bugs.webkit.org/show_bug.cgi?id=235938
+
+        Reviewed by Alan Bujtas.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+
 2022-01-31  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Pattern should hold SourceImage which can be converted to a NativeImage only when needed

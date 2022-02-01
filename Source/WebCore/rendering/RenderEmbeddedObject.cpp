@@ -256,7 +256,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     context.setStrokeThickness(2);
     context.strokePath(strokePath);
 
-    const FontMetrics& fontMetrics = font.fontMetrics();
+    const FontMetrics& fontMetrics = font.fontMetricsOfPrimaryFont();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
     float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
     context.setFillColor(replacementTextColor);

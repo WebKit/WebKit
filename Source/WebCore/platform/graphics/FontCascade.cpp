@@ -1413,8 +1413,8 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     it.finalize(glyphBuffer);
 
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetricsOfPrimaryFont().ascent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetricsOfPrimaryFont().descent()));
         glyphOverflow->left = ceilf(it.firstGlyphOverflow());
         glyphOverflow->right = ceilf(it.lastGlyphOverflow());
     }
@@ -1426,8 +1426,8 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetricsOfPrimaryFont().ascent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetricsOfPrimaryFont().descent()));
         glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
         glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalAdvance().width()));
     }

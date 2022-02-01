@@ -2178,7 +2178,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     }
 
     // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle.fontMetrics().lineSpacing() > style.computedLineHeight())
+    if (textBlockStyle.fontMetricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
         textBlockStyle.setLineHeight(RenderStyle::initialLineHeight());
 
     return textBlockStyle;
