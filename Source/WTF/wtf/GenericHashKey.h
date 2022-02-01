@@ -27,6 +27,7 @@
 
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/HashTraits.h>
 
 namespace WTF {
 

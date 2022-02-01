@@ -159,7 +159,7 @@ static void rejectWithFetchError(DeferredPromise& deferred, ExceptionCode ec, co
     // Used to signal to the promise client that the failure was from a fetch, but not one that was propagated from another context.
     deferred.rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
         JSC::VM& vm = jsGlobalObject.vm();
-        JSC::JSObject* error = jsCast<JSObject*>(createDOMException(&jsGlobalObject, ec, message));
+        JSC::JSObject* error = jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
         ASSERT(error);
         error->putDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
         return error;
