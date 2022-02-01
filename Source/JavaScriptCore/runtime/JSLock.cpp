@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -138,8 +138,7 @@ void JSLock::didAcquireLock()
     m_entryAtomStringTable = thread.setCurrentAtomStringTable(m_vm->atomStringTable());
     ASSERT(m_entryAtomStringTable);
 
-    m_vm->setLastStackTop(thread.savedLastStackTop());
-    ASSERT(thread.stack().contains(m_vm->lastStackTop()));
+    m_vm->setLastStackTop(thread);
 
     if (m_vm->heap.hasAccess())
         m_shouldReleaseHeapAccess = false;
@@ -277,7 +276,7 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 
     Thread& thread = Thread::current();
     m_vm->setStackPointerAtVMEntry(thread.savedStackPointerAtVMEntry());
-    m_vm->setLastStackTop(thread.savedLastStackTop());
+    m_vm->setLastStackTop(thread);
 }
 
 JSLock::DropAllLocks::DropAllLocks(VM* vm)

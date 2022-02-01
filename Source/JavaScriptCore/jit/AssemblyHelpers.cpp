@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1111,19 +1111,6 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 #else
     UNUSED_PARAM(calleeSavesBuffer);
 #endif
-}
-
-void AssemblyHelpers::sanitizeStackInline(VM& vm, GPRReg scratch)
-{
-    loadPtr(vm.addressOfLastStackTop(), scratch);
-    Jump done = branchPtr(BelowOrEqual, stackPointerRegister, scratch);
-    Label loop = label();
-    storePtr(TrustedImmPtr(nullptr), Address(scratch));
-    addPtr(TrustedImmPtr(sizeof(void*)), scratch);
-    branchPtr(Above, stackPointerRegister, scratch).linkTo(loop, this);
-    done.link(this);
-    move(stackPointerRegister, scratch);
-    storePtr(scratch, vm.addressOfLastStackTop());
 }
 
 void AssemblyHelpers::cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)

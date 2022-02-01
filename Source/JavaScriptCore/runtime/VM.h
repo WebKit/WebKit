@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -774,7 +774,7 @@ public:
 
     void** addressOfLastStackTop() { return &m_lastStackTop; }
     void* lastStackTop() { return m_lastStackTop; }
-    void setLastStackTop(void*);
+    void setLastStackTop(const Thread&);
     
     void firePrimitiveGigacageEnabledIfNecessary()
     {
@@ -1162,6 +1162,5 @@ extern "C" void sanitizeStackForVMImpl(VM*);
 #endif
 
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);
-void logSanitizeStack(VM&);
 
 } // namespace JSC

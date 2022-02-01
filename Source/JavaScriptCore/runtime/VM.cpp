@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -242,9 +242,8 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
 
     interpreter = new Interpreter(*this);
-    StackBounds stack = Thread::current().stack();
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
-    setLastStackTop(stack.origin());
+    setLastStackTop(Thread::current());
 
     JSRunLoopTimer::Manager::shared().registerVM(*this);
 
@@ -503,9 +502,11 @@ void VM::primitiveGigacageDisabled()
     m_needToFirePrimitiveGigacageEnabled = true;
 }
 
-void VM::setLastStackTop(void* lastStackTop)
-{ 
-    m_lastStackTop = lastStackTop;
+void VM::setLastStackTop(const Thread& thread)
+{
+    m_lastStackTop = thread.savedLastStackTop();
+    auto& stack = thread.stack();
+    RELEASE_ASSERT(stack.contains(m_lastStackTop), 0x5510, m_lastStackTop, stack.origin(), stack.end());
 }
 
 Ref<VM> VM::createContextGroup(HeapType heapType)
@@ -1050,16 +1051,11 @@ void VM::popAllCheckpointOSRSideStateUntil(CallFrame* target)
     m_checkpointSideState.shrinkToFit();
 }
 
-void logSanitizeStack(VM& vm)
+static void logSanitizeStack(VM& vm)
 {
-    if (Options::verboseSanitizeStack() && vm.topCallFrame) {
-        int dummy;
+    if (UNLIKELY(Options::verboseSanitizeStack())) {
         auto& stackBounds = Thread::current().stack();
-        dataLog(
-            "Sanitizing stack for VM = ", RawPointer(&vm), " with top call frame at ", RawPointer(vm.topCallFrame),
-            ", current stack pointer at ", RawPointer(&dummy), ", in ",
-            pointerDump(vm.topCallFrame->codeBlock()), ", last code origin = ",
-            vm.topCallFrame->codeOrigin(), ", last stack top = ", RawPointer(vm.lastStackTop()), ", in stack range [", RawPointer(stackBounds.origin()), ", ", RawPointer(stackBounds.end()), "]\n");
+        dataLogLn("Sanitizing stack for VM = ", RawPointer(&vm), ", current stack pointer at ", RawPointer(currentStackPointer()), ", last stack top = ", RawPointer(vm.lastStackTop()), ", in stack range (", RawPointer(stackBounds.end()), ", ", RawPointer(stackBounds.origin()), "]");
     }
 }
 
@@ -1270,17 +1266,20 @@ void QueuedTask::run()
 
 void sanitizeStackForVM(VM& vm)
 {
+    auto& thread = Thread::current();
+    auto& stack = thread.stack();
+    if (!vm.currentThreadIsHoldingAPILock())
+        return; // vm.lastStackTop() may not be set up correctly if JSLock is not held.
+
     logSanitizeStack(vm);
-    if (vm.topCallFrame) {
-        auto& stackBounds = Thread::current().stack();
-        ASSERT(vm.currentThreadIsHoldingAPILock());
-        ASSERT_UNUSED(stackBounds, stackBounds.contains(vm.lastStackTop()));
-    }
+
+    RELEASE_ASSERT(stack.contains(vm.lastStackTop()), 0xaa10, vm.lastStackTop(), stack.origin(), stack.end());
 #if ENABLE(C_LOOP)
     vm.interpreter->cloopStack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(&vm);
 #endif
+    RELEASE_ASSERT(stack.contains(vm.lastStackTop()), 0xaa20, vm.lastStackTop(), stack.origin(), stack.end());
 }
 
 size_t VM::committedStackByteCount()
