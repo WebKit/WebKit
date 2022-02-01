@@ -538,7 +538,7 @@ bool canUseWebAssemblyFastMemory();
     /* Feature Flags */\
     \
     v(Bool, useArrayFindLastMethod, true, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
-    v(Bool, useArrayGroupByMethod, true, Normal, "Expose the groupBy() and groupByToMap() methods on Array.") \
+    v(Bool, useArrayGroupByMethod, false, Normal, "Expose the groupBy() and groupByToMap() methods on Array.") \
     v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
     v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
     v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \

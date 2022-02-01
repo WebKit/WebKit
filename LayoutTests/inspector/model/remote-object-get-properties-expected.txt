@@ -74,8 +74,6 @@ ALL PROPERTIES:
     indexOf
     lastIndexOf
     filter
-    groupBy
-    groupByToMap
     flat
     flatMap
     reduce
@@ -132,8 +130,6 @@ OWN PROPERTIES:
     indexOf
     lastIndexOf
     filter
-    groupBy
-    groupByToMap
     flat
     flatMap
     reduce
@@ -175,8 +171,6 @@ DISPLAYABLE PROPERTIES:
     indexOf
     lastIndexOf
     filter
-    groupBy
-    groupByToMap
     flat
     flatMap
     reduce
@@ -218,8 +212,6 @@ ALL PROPERTIES:
     indexOf
     lastIndexOf
     filter
-    groupBy
-    groupByToMap
     flat
     flatMap
     reduce
