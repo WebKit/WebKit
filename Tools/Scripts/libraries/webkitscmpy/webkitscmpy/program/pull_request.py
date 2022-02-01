@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -94,6 +94,11 @@ class PullRequest(Command):
         return 0
 
     @classmethod
+    def move_production_ref_to_brach_point(cls, args, repository):
+        # FIXME: Make sure all changes are on the eng branch
+        return True
+
+    @classmethod
     def title_for(cls, commits):
         title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits])
         if not title:
@@ -118,6 +123,10 @@ class PullRequest(Command):
         result = cls.create_commit(args, repository, **kwargs)
         if result:
             return result
+
+        if not cls.move_production_ref_to_brach_point(args, repository):
+            sys.stderr.write("'{}' does not diverge from '{},' cannot create a pull request\n".format(args.issue, repository.branch))
+            return 1
 
         branch_point = Branch.branch_point(repository)
         if args.rebase or (args.rebase is None and repository.config().get('pull.rebase')):

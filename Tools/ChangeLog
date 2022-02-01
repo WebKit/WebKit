@@ -1,5 +1,19 @@
 2022-02-01  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Handle local commit on production branch
+        https://bugs.webkit.org/show_bug.cgi?id=235974
+        <rdar://problem/88346615>
+
+        Reviewed by NOBODY (OOPS!).
+
+        WIP
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.move_production_ref_to_brach_point): Move production branch ref back to branch point.
+        (PullRequest.main): Exit out of script if our PR branch does not differ from it's source branch.
+
+2022-02-01  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Fix infinate retry on PR with red ToT 
         https://bugs.webkit.org/show_bug.cgi?id=235971
         <rdar://problem/88344438>
