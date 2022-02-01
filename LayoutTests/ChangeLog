@@ -1,3 +1,13 @@
+2022-02-01  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in LayoutIntegrationLineLayout LineLayout::adjustForPagination and LineLayout::visualOverflowBoundingBoxRectFor
+        https://bugs.webkit.org/show_bug.cgi?id=235907
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/visual-overflow-bounding-box-rect-crash-expected.txt: Added.
+        * fast/layoutformattingcontext/visual-overflow-bounding-box-rect-crash.html: Added.
+
 2022-02-01  Antoine Quint  <graouts@webkit.org>
 
         Animation from scale(0) has missing backing store

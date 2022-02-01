@@ -403,6 +403,9 @@ LayoutUnit LineLayout::lastLineBaseline() const
 
 void LineLayout::adjustForPagination()
 {
+    if (!m_inlineContent)
+        return;
+
     auto paginedInlineContent = adjustLinePositionsForPagination(*m_inlineContent, flow());
     if (paginedInlineContent.ptr() == m_inlineContent) {
         m_isPaginatedContent = false;
@@ -518,6 +521,9 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
 {
+    if (!m_inlineContent)
+        return { };
+
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
 
     LayoutRect result;
