@@ -25,7 +25,7 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-(import "system.sb")
+(import "util.sb")
 
 (define (allow-read-write-directory-contents path)
     (if path
@@ -43,17 +43,35 @@
             (allow file-read* (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
 
-;; Utility functions for home directory relative path filters
-(define (home-regex home-relative-regex)
-    (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+(define (system-network)
+    (allow file-read*
+         (literal "/Library/Preferences/com.apple.networkd.plist")
+         (literal "/private/var/db/nsurlstoraged/dafsaData.bin"))
+    (deny mach-lookup (with telemetry)
+         (global-name "com.apple.SystemConfiguration.PPPController")
+         (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+         (global-name "com.apple.networkd")
+         (global-name "com.apple.nsurlstorage-cache")
+         (global-name "com.apple.symptomsd"))
+    (allow mach-lookup
+         (global-name "com.apple.dnssd.service")
+         (global-name "com.apple.nehelper")
+         (global-name "com.apple.nesessionmanager")
+         (global-name "com.apple.usymptomsd"))
+    (allow network-outbound
+         (control-name "com.apple.netsrc"))
+    (deny system-socket (with telemetry)
+          (socket-domain AF_ROUTE))
+    (allow system-socket
+         (require-all (socket-domain AF_SYSTEM)
+                      (socket-protocol 2))) ; SYSPROTO_CONTROL
+    (allow mach-lookup
+         (global-name "com.apple.AppSSO.service-xpc"))
+    (deny ipc-posix-shm-read-data (with telemetry)
+         (ipc-posix-name "/com.apple.AppSSO.version")))
 
-(define (home-subpath home-relative-subpath)
-    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
-
-(define (home-literal home-relative-literal)
-    (literal (string-append (param "HOME_DIR") home-relative-literal)))
-
-(allow file-read* file-write* (home-subpath "/var/mobile/Library/com.apple.webkit.addattributiond/Version1"))
+(allow file-read* file-write*
+    (subpath "/var/mobile/Library/com.apple.webkit.addattributiond"))
 
 (allow-read-write-directory-contents (param "DARWIN_USER_CACHE_DIR"))
 (allow-read-write-directory-contents (param "DARWIN_USER_TEMP_DIR"))
