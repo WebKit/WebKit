@@ -303,17 +303,18 @@ static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
     return nil;
 }
 
-static CMFormatDescriptionRef formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
+static RetainPtr<CMFormatDescriptionRef> formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
 {
     auto assetTrack = assetTrackFor(impl);
-    if (!assetTrack || [assetTrack statusOfValueForKey:@"formatDescriptions" error:nil] != AVKeyValueStatusLoaded || !assetTrack.formatDescriptions.count)
+    if (!assetTrack || [assetTrack statusOfValueForKey:@"formatDescriptions" error:nil] != AVKeyValueStatusLoaded)
         return nullptr;
-    return static_cast<CMFormatDescriptionRef>(assetTrack.formatDescriptions[0]);
+
+    return static_cast<CMFormatDescriptionRef>(assetTrack.formatDescriptions.firstObject);
 }
 
 String AVTrackPrivateAVFObjCImpl::codec() const
 {
-    return codecFromFormatDescription(formatDescriptionFor(*this));
+    return codecFromFormatDescription(formatDescriptionFor(*this).get());
 }
 
 uint32_t AVTrackPrivateAVFObjCImpl::width() const
@@ -334,7 +335,7 @@ uint32_t AVTrackPrivateAVFObjCImpl::height() const
 
 PlatformVideoColorSpace AVTrackPrivateAVFObjCImpl::colorSpace() const
 {
-    if (auto colorSpace = colorSpaceFromFormatDescription(formatDescriptionFor(*this)))
+    if (auto colorSpace = colorSpaceFromFormatDescription(formatDescriptionFor(*this).get()))
         return *colorSpace;
     return { };
 }
@@ -355,7 +356,7 @@ uint32_t AVTrackPrivateAVFObjCImpl::sampleRate() const
     if (!formatDescription)
         return 0;
 
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
     if (!asbd)
         return 0;
 
@@ -368,7 +369,7 @@ uint32_t AVTrackPrivateAVFObjCImpl::numberOfChannels() const
     if (!formatDescription)
         return 0;
 
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
     if (!asbd)
         return 0;
 
