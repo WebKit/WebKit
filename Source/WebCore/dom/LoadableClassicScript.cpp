@@ -36,9 +36,16 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
 {
     return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, isAsync));
+}
+
+LoadableClassicScript::LoadableClassicScript(const String& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
+    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+    , m_integrity(integrity)
+    , m_isAsync(isAsync)
+{
 }
 
 LoadableClassicScript::~LoadableClassicScript()

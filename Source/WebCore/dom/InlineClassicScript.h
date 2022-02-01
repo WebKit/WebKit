@@ -39,10 +39,7 @@ public:
     bool isModuleScript() const final { return false; }
 
 private:
-    InlineClassicScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
-        : ScriptElementCachedScriptFetcher(nonce, ReferrerPolicy::EmptyString, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
-    {
-    }
+    InlineClassicScript(const AtomString& nonce, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);
 };
 
 }

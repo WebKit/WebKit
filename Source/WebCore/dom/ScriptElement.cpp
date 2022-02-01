@@ -81,8 +81,11 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_creationTime(MonotonicTime::now())
     , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
-    if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
-        m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
+    if (parserInserted) {
+        Ref document = m_element.document();
+        if (RefPtr parser = document->scriptableDocumentParser(); parser && !document->isInDocumentWrite())
+            m_startLineNumber = parser->textPosition().m_line;
+    }
 }
 
 void ScriptElement::didFinishInsertingNode()
@@ -288,15 +291,8 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
-        auto script = LoadableClassicScript::create(
-            m_element.nonce(),
-            m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string(),
-            referrerPolicy(),
-            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
-            scriptCharset(),
-            m_element.localName(),
-            m_element.isInUserAgentShadowTree(),
-            hasAsyncAttribute());
+        auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
+            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
         auto scriptURL = m_element.document().completeURL(sourceURL);
         m_element.document().willLoadScriptElement(scriptURL);
@@ -345,14 +341,8 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         }
 
         m_isExternalScript = true;
-        auto script = LoadableModuleScript::create(
-            nonce,
-            m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string(),
-            referrerPolicy(),
-            crossOriginMode,
-            scriptCharset(),
-            m_element.localName(),
-            m_element.isInUserAgentShadowTree());
+        auto script = LoadableModuleScript::create(nonce, m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), crossOriginMode,
+            scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
         m_loadableScript = WTFMove(script);
         if (auto* frame = m_element.document().frame()) {
             auto& script = downcast<LoadableModuleScript>(*m_loadableScript.get());
