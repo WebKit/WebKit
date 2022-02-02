@@ -22,8 +22,10 @@
 #include "AccessibilityAtspi.h"
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AXObjectCache.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
+#include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
