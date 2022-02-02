@@ -111,6 +111,7 @@ extern "C" {
     M(WebGL) \
     M(WebRTC) \
     M(WheelEvents) \
+    M(Worker) \
     M(XR) \
 
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)

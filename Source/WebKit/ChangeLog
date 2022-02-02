@@ -1,3 +1,32 @@
+2022-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Move and rename ServiceWorkerFrameLoaderClient & ServiceWorkerLibWebRTCProvider
+        https://bugs.webkit.org/show_bug.cgi?id=236016
+
+        Reviewed by Youenn Fablet.
+
+        Move and rename ServiceWorkerFrameLoaderClient & ServiceWorkerLibWebRTCProvider so that they can be reused by Shared Workers.
+
+        * Platform/Logging.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Storage/RemoteWorkerFrameLoaderClient.cpp: Added.
+        (WebKit::RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient):
+        (WebKit::RemoteWorkerFrameLoaderClient::createDocumentLoader):
+        * WebProcess/Storage/RemoteWorkerFrameLoaderClient.h: Added.
+        (isType):
+        * WebProcess/Storage/RemoteWorkerLibWebRTCProvider.h: Added.
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        (WebKit::WebSWContextManagerConnection::continueDidReceiveFetchResponse):
+        (): Deleted.
+        (WebKit::ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient): Deleted.
+        (WebKit::ServiceWorkerFrameLoaderClient::createDocumentLoader): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        (isType): Deleted.
+
 2022-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macOS build after r288956

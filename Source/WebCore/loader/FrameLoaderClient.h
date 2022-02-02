@@ -351,7 +351,7 @@ public:
 
     // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
     virtual bool isEmptyFrameLoaderClient() const { return false; }
-    virtual bool isServiceWorkerFrameLoaderClient() const { return false; }
+    virtual bool isRemoteWorkerFrameLoaderClient() const { return false; }
 
 #if USE(QUICK_LOOK)
     virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;

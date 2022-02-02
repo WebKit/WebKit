@@ -777,6 +777,7 @@ WebProcess/Plugins/WebPluginInfoProvider.cpp @no-unify
 
 WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
 
+WebProcess/Storage/RemoteWorkerFrameLoaderClient.cpp
 WebProcess/Storage/WebSWClientConnection.cpp
 WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/Storage/WebSWOriginTable.cpp
