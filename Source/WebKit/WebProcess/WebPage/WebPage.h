@@ -1588,7 +1588,10 @@ private:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
+
     bool markLayersVolatileImmediatelyIfPossible();
+    enum class MarkLayersVolatileDontRetryReason : uint8_t { None, SuspendedUnderLock, TimedOut };
+    void markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason, Seconds timerInterval);
     void layerVolatilityTimerFired();
     void callVolatilityCompletionHandlers(bool succeeded);
 

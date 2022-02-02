@@ -2819,6 +2819,11 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
     m_drawingArea->setLayerTreeStateIsFrozen(!!m_layerTreeFreezeReasons);
 }
 
+bool WebPage::markLayersVolatileImmediatelyIfPossible()
+{
+    return !drawingArea() || drawingArea()->markLayersVolatileImmediatelyIfPossible();
+}
+
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
 {
     auto completionHandlers = std::exchange(m_markLayersAsVolatileCompletionHandlers, { });
@@ -2829,24 +2834,7 @@ void WebPage::callVolatilityCompletionHandlers(bool succeeded)
 void WebPage::layerVolatilityTimerFired()
 {
     Seconds newInterval = m_layerVolatilityTimer.repeatInterval() * 2.;
-    bool didSucceed = markLayersVolatileImmediatelyIfPossible();
-    if (didSucceed || newInterval > maximumLayerVolatilityTimerInterval) {
-        m_layerVolatilityTimer.stop();
-        if (didSucceed)
-            WEBPAGE_RELEASE_LOG(Layers, "layerVolatilityTimerFired: Succeeded in marking layers as volatile");
-        else
-            WEBPAGE_RELEASE_LOG(Layers, "layerVolatilityTimerFired: Failed to mark layers as volatile within %gms", maximumLayerVolatilityTimerInterval.milliseconds());
-        callVolatilityCompletionHandlers(didSucceed);
-        return;
-    }
-
-    WEBPAGE_RELEASE_LOG_ERROR(Layers, "layerVolatilityTimerFired: Failed to mark all layers as volatile, will retry in %g ms", newInterval.milliseconds());
-    m_layerVolatilityTimer.startRepeating(newInterval);
-}
-
-bool WebPage::markLayersVolatileImmediatelyIfPossible()
-{
-    return !drawingArea() || drawingArea()->markLayersVolatileImmediatelyIfPossible();
+    markLayersVolatileOrRetry(newInterval > maximumLayerVolatilityTimerInterval ? MarkLayersVolatileDontRetryReason::TimedOut : MarkLayersVolatileDontRetryReason::None, newInterval);
 }
 
 void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
@@ -2859,20 +2847,34 @@ void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandl
     if (completionHandler)
         m_markLayersAsVolatileCompletionHandlers.append(WTFMove(completionHandler));
 
+    markLayersVolatileOrRetry(m_isSuspendedUnderLock ? MarkLayersVolatileDontRetryReason::SuspendedUnderLock : MarkLayersVolatileDontRetryReason::None, initialLayerVolatilityTimerInterval);
+}
+
+void WebPage::markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason dontRetryReason, Seconds timerInterval)
+{
     bool didSucceed = markLayersVolatileImmediatelyIfPossible();
-    if (didSucceed || m_isSuspendedUnderLock) {
+    if (didSucceed || dontRetryReason != MarkLayersVolatileDontRetryReason::None) {
+        m_layerVolatilityTimer.stop();
         if (didSucceed)
-            WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Successfully marked layers as volatile");
+            WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Succeeded in marking layers as volatile");
         else {
-            // If we get suspended when locking the screen, it is expected that some IOSurfaces cannot be marked as purgeable so we do not keep retrying.
-            WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Did what we could to mark IOSurfaces as purgeable after locking the screen");
+            switch (dontRetryReason) {
+            case MarkLayersVolatileDontRetryReason::None:
+                break;
+            case MarkLayersVolatileDontRetryReason::SuspendedUnderLock:
+                WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Did what we could to mark IOSurfaces as purgeable after locking the screen");
+                break;
+            case MarkLayersVolatileDontRetryReason::TimedOut:
+                WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Failed to mark layers as volatile within %gms", maximumLayerVolatilityTimerInterval.milliseconds());
+                break;
+            }
         }
         callVolatilityCompletionHandlers(didSucceed);
         return;
     }
 
-    WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", initialLayerVolatilityTimerInterval.milliseconds());
-    m_layerVolatilityTimer.startRepeating(initialLayerVolatilityTimerInterval);
+    WEBPAGE_RELEASE_LOG(Layers, "markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", timerInterval.milliseconds());
+    m_layerVolatilityTimer.startRepeating(timerInterval);
 }
 
 void WebPage::cancelMarkLayersVolatile()

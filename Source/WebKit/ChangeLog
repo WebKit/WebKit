@@ -1,3 +1,22 @@
+2022-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Share more WebPage code related to marking layers volatile
+        https://bugs.webkit.org/show_bug.cgi?id=235985
+
+        Reviewed by Chris Dumez.
+
+        Factor code common between WebPage::layerVolatilityTimerFired() and WebPage::markLayersVolatile()
+        into a helper function, using an enum for the "stop reason" to allow for descriptive logging.
+
+        No behavior change.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::markLayersVolatileImmediatelyIfPossible):
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::markLayersVolatileOrRetry):
+        * WebProcess/WebPage/WebPage.h:
+
 2022-02-01  Chris Dumez  <cdumez@apple.com>
 
         Rename ServiceWorkerFetchResult to WorkerFetchResult and make it more generic
