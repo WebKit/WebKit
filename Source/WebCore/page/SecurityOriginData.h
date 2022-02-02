@@ -87,6 +87,8 @@ struct SecurityOriginData {
     
     WEBCORE_EXPORT String toString() const;
 
+    URL toURL() const;
+
 #if !LOG_DISABLED
     String debugString() const { return toString(); }
 #endif

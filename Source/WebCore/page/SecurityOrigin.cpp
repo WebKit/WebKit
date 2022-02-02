@@ -546,6 +546,11 @@ String SecurityOrigin::toRawString() const
     return m_data.toString();
 }
 
+URL SecurityOrigin::toURL() const
+{
+    return m_data.toURL();
+}
+
 static inline bool areOriginsMatching(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
 {
     ASSERT(&origin1 != &origin2);

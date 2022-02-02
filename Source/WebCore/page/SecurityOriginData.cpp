@@ -49,6 +49,11 @@ String SecurityOriginData::toString() const
     return makeString(protocol, "://", host, ':', static_cast<uint32_t>(*port));
 }
 
+URL SecurityOriginData::toURL() const
+{
+    return URL { URL(), toString() };
+}
+
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
 {
     if (!frame)

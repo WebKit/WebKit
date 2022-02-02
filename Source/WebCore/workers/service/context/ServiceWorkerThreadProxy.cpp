@@ -51,11 +51,6 @@
 
 namespace WebCore {
 
-static URL topOriginURL(const SecurityOrigin& origin)
-{
-    return URL { URL { }, origin.toRawString() };
-}
-
 void ServiceWorkerThreadProxy::setupPageForServiceWorker(Page& page, const ServiceWorkerContextData& data)
 {
     auto& mainFrame = page.mainFrame();
@@ -68,8 +63,9 @@ void ServiceWorkerThreadProxy::setupPageForServiceWorker(Page& page, const Servi
     auto origin = data.registration.key.topOrigin().securityOrigin();
     origin->setStorageBlockingPolicy(page.settings().storageBlockingPolicy());
 
-    document->setSiteForCookies(topOriginURL(origin));
-    document->setFirstPartyForCookies(topOriginURL(origin));
+    auto originURL = origin->toURL();
+    document->setSiteForCookies(originURL);
+    document->setFirstPartyForCookies(originURL);
     document->setDomainForCachePartition(origin->domainForCachePartition());
 
     if (auto policy = parseReferrerPolicy(data.referrerPolicy, ReferrerPolicySource::HTTPHeader))
