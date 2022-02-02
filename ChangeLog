@@ -1,3 +1,26 @@
+2022-02-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Stop defaulting to ld.gold
+        https://bugs.webkit.org/show_bug.cgi?id=235476
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the USE_LD_GOLD option, and let the build use by default the system linker.
+
+        The output from running the linker with -Wl,--version is matched to determine which linker
+        is currently in use, and set variables LD_SUPPORTS_<feature> accordingly. This is needed
+        because not all of them support certain features and after a few attempts at doing feature
+        checks it was becoming clear that on one hand the checks were getting gnarly, and on the
+        other hand vetting certain linkers provides a stronger guarantee of sucessful builds.
+
+        Similarly, extend the check used to determine whether the static library archiver supports
+        thin archivers to cover the one included with LLVM (llvm-ar), and enable usage of think
+        archivers if they can be both created by the archiver and consumed by the linker. Previously
+        the build system was enabling thin archives without knowing whether the linker would succeed
+        using them.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Switch to use ATSPI instead of ATK
