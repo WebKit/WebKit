@@ -21,5 +21,5 @@ PASS Files in a text/plain form show up as File objects in the "formData" IDL at
 PASS "formData" IDL attribute should have entries for form-associated elements in the first event handler, and the second handler can read entries set by the first handler.
 PASS Entries added to "formData" IDL attribute should be submitted.
 PASS Entries added to the "formdata" IDL attribute shouldn't be newline normalized in the resulting FormData
-PASS The constructed FormData object should not contain an entry for the submit button that was used to submit the form.
+FAIL The constructed FormData object should not contain an entry for the submit button that was used to submit the form. assert_false: expected false got true
 
