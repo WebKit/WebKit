@@ -561,6 +561,11 @@ static void runJITThreadLimitTests()
 static void testObjectiveCAPIMain()
 {
     @autoreleasepool {
+        JSValue *value = [JSValue valueWithJSValueRef:nil inContext:nil];
+        checkResult(@"nil JSValue creation", !value);
+    }
+
+    @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
         [context evaluateScript:@"bad"];

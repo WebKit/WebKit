@@ -1,3 +1,19 @@
+2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Crash on several pages after r287986
+        https://bugs.webkit.org/show_bug.cgi?id=236033
+
+        Reviewed by Tim Horton.
+
+        I noticed that Safari crashes when opening https://linux.die.net/man/3/localtime.
+        This is happening after r287986: we are calling [self release], but the [JSValue dealloc]
+        cannot work if _context is nil. We should add a guard.
+
+        * API/JSValue.mm:
+        (-[JSValue dealloc]):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+
 2022-02-02  Patrick Angle  <pangle@apple.com>
 
         No breakpoints hit on github.com, and some are invalid

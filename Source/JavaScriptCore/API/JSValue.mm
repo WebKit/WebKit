@@ -71,9 +71,11 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (void)dealloc
 {
-    JSValueUnprotect([_context JSGlobalContextRef], m_value);
-    [_context release];
-    _context = nil;
+    if (_context) {
+        JSValueUnprotect([_context JSGlobalContextRef], m_value);
+        [_context release];
+        _context = nil;
+    }
     [super dealloc];
 }
 
