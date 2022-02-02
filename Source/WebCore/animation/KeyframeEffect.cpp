@@ -1878,14 +1878,16 @@ OptionSet<AcceleratedActionApplicationResult> KeyframeEffect::applyPendingAccele
 
         ASSERT(m_target);
 
-        auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoId);
-        ASSERT(lastStyleChangeEventStyle);
-
         // We need to resolve all animations up to this point to ensure any forward-filling
         // effect is accounted for when computing the "from" value for the accelerated animation.
-        auto underlyingStyle = RenderStyle::clonePtr(*lastStyleChangeEventStyle);
         auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
         ASSERT(effectStack);
+
+        auto underlyingStyle = [&]() {
+            if (auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoId))
+                return RenderStyle::clonePtr(*lastStyleChangeEventStyle);
+            return RenderStyle::clonePtr(renderer->style());
+        }();
 
         for (const auto& effect : effectStack->sortedEffects()) {
             if (this == effect.get())
