@@ -1,3 +1,19 @@
+2022-02-02  Mark Lam  <mark.lam@apple.com>
+
+        Update computation of FAST_TLS base.
+        https://bugs.webkit.org/show_bug.cgi?id=235934
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadFromTLS32):
+        (JSC::MacroAssemblerARM64::loadFromTLS64):
+        (JSC::MacroAssemblerARM64::storeToTLS32):
+        (JSC::MacroAssemblerARM64::storeToTLS64):
+        * assembler/SecureARM64EHashPinsInlines.h:
+        (JSC::SecureARM64EHashPins::keyForCurrentThread):
+        * offlineasm/arm64.rb:
+
 2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] wasm atomic opcodes should be rejected if alignment is not equal to natural width
