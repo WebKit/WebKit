@@ -469,7 +469,7 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItems& inlineItems)
         auto width = [&]() -> std::optional<InlineLayoutUnit> {
             auto singleWhiteSpace = inlineTextItem.isWhitespace() && (!TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox) || (length == 1 && inlineTextBox.canUseSimplifiedContentMeasuring()));
             if (singleWhiteSpace)
-                return inlineTextItem.style().fontCascade().spaceWidth();
+                return TextUtil::spaceWidth(inlineTextItem.style().fontCascade());
             if (length && !inlineTextItem.isZeroWidthSpaceSeparator())
                 return TextUtil::width(inlineTextBox, inlineTextItem.style().fontCascade(), start, start + length, { });
             return { };

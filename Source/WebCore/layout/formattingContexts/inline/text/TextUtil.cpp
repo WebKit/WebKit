@@ -52,7 +52,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
     if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox())) {
-        auto spaceWidth = fontCascade.spaceWidth();
+        auto spaceWidth = TextUtil::spaceWidth(fontCascade);
         return std::isnan(spaceWidth) ? 0.0f : std::isinf(spaceWidth) ? maxInlineLayoutUnit() : spaceWidth;
     }
     return TextUtil::width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
@@ -84,9 +84,14 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     }
 
     if (extendedMeasuring)
-        width -= (fontCascade.spaceWidth() + fontCascade.wordSpacing());
+        width -= (spaceWidth(fontCascade) + fontCascade.wordSpacing());
 
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
+}
+
+InlineLayoutUnit TextUtil::spaceWidth(const FontCascade& fontCascade)
+{
+    return fontCascade.width(TextRun { String { &space, 1 } });
 }
 
 InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)
