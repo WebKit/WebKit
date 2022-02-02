@@ -1,5 +1,20 @@
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Improve user prompts (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=235655
+        <rdar://problem/88082697>
+
+        Reviewed by Aakash Jain and Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py:
+        (Terminal.input): Gracefully handle keyboard interrupt
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/terminal_unittest.py:
+        (TerminalTests.test_interrupt):
+
+2022-01-26  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Improve user prompts (Part 1)
         https://bugs.webkit.org/show_bug.cgi?id=235655
         <rdar://problem/88082697>

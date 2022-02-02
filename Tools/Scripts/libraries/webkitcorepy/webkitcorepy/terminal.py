@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,7 +36,11 @@ class Terminal(object):
 
     @classmethod
     def input(cls, *args, **kwargs):
-        return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+        try:
+            return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+        except KeyboardInterrupt:
+            sys.stderr.write('\nUser interrupted program\n')
+            sys.exit(1)
 
     @classmethod
     def choose(cls, prompt, options=None, default=None, strict=False, numbered=False):

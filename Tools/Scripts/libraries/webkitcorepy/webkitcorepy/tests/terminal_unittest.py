@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from mock import patch
@@ -91,3 +92,22 @@ class TerminalTests(unittest.TestCase):
         with mocks.Terminal.input('2'), OutputCapture() as captured:
             self.assertEqual('Beta', Terminal.choose('Pick', options=('Alpha', 'Beta', 'Charlie', 'Delta'), numbered=True))
         self.assertEqual(captured.stdout.getvalue(), 'Pick:\n    1) Alpha\n    2) Beta\n    3) Charlie\n    4) Delta\n: \n')
+
+    def test_interrupt(self):
+        from mock import patch
+
+        def do_interrupt(output):
+            print(output)
+            raise KeyboardInterrupt
+
+        if sys.version_info > (3, 0):
+            mocked = patch('builtins.input', new=do_interrupt)
+        else:
+            import __builtin__
+            mocked = patch.object(__builtin__, 'raw_input', new=do_interrupt)
+
+        with OutputCapture() as captured, self.assertRaises(SystemExit) as caught, mocked:
+            Terminal.choose('Continue')
+
+        self.assertEqual(caught.exception.code, 1)
+        self.assertEqual(captured.stderr.getvalue(), '\nUser interrupted program\n')
