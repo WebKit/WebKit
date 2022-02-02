@@ -1,3 +1,25 @@
+2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Fix returned WebAssembly error type when blocked
+        https://bugs.webkit.org/show_bug.cgi?id=235319
+
+        Reviewed by Kate Cheney.
+
+        Update expectations with more passes.
+
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.worker-expected.txt:
+
 2022-02-02  Asumu Takikawa  <asumu@igalia.com>
 
         Unmute link errors for ES module scripts

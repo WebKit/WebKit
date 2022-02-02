@@ -1,6 +1,3 @@
 
-FAIL default-src-blocks-wasm promise_rejects_js: function "function () { throw e }" threw object "EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "default-src 'self' 'unsafe-inline'".
-" ("EvalError") expected instance of function "function CompileError() {
-    [native code]
-}" ("CompileError")
+PASS default-src-blocks-wasm
 

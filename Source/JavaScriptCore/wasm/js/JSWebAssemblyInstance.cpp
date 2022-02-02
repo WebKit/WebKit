@@ -31,6 +31,7 @@
 #include "AbstractModuleRecord.h"
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
@@ -168,8 +169,9 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
         return nullptr;
     };
 
+    // Disabled by CSP: https://w3c.github.io/webappsec-csp/#can-compile-wasm-bytes
     if (!globalObject->webAssemblyEnabled())
-        return exception(createEvalError(globalObject, globalObject->webAssemblyDisabledErrorMessage()));
+        return exception(createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage()));
 
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
