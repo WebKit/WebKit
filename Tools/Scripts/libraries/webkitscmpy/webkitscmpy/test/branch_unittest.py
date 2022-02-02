@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -56,14 +56,14 @@ class TestBranch(testing.PathTestCase):
             ))
             self.assertEqual(local.Git(self.path).branch, 'eng/1234')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/1234'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/1234'!\n")
+        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/1234'\n")
 
     def test_prompt_git(self):
         with MockTerminal.input('eng/example'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/example')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/example'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Branch name: \nCreated the local development branch 'eng/example'!\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch: \nCreated the local development branch 'eng/example'\n")
 
     def test_invalid_branch(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:

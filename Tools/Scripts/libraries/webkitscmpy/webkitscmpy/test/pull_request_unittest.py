@@ -291,7 +291,7 @@ Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
-        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/pr-branch'!\n")
+        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/pr-branch'\n")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
     def test_modified(self):
@@ -328,7 +328,7 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Created the local development branch 'eng/pr-branch'!\n"
+            "Created the local development branch 'eng/pr-branch'\n"
             "Created 'PR 1 | [Testing] Creating commits'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
@@ -437,7 +437,7 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Created the local development branch 'eng/pr-branch'!\n"
+            "Created the local development branch 'eng/pr-branch'\n"
             "Created 'PR 1 | [Testing] Creating commits'!\n"
             "https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n",
         )

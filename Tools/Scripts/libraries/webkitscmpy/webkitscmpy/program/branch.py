@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,13 +70,13 @@ class Branch(Command):
         return commit
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args, repository, why=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1
 
         if not args.issue:
-            args.issue = Terminal.input('Branch name: ')
+            args.issue = Terminal.input('{}nter name of new branch: '.format('{}, e'.format(why) if why else 'E'))
         args.issue = cls.normalize_branch_name(args.issue)
 
         if run([repository.executable(), 'check-ref-format', args.issue], capture_output=True).returncode:
@@ -94,5 +94,5 @@ class Branch(Command):
             sys.stderr.write("Failed to create '{}'\n".format(args.issue))
             return 1
         repository._branch = args.issue  # Assign the cache because of repository.branch's caching
-        print("Created the local development branch '{}'!".format(args.issue))
+        print("Created the local development branch '{}'".format(args.issue))
         return 0

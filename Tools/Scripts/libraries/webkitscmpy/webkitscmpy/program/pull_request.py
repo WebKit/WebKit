@@ -108,7 +108,7 @@ class PullRequest(Command):
             return 1
 
         if not repository.DEV_BRANCHES.match(repository.branch):
-            if Branch.main(args, repository, **kwargs):
+            if Branch.main(args, repository, why="'{}' is not a pull request branch".format(repository.branch), **kwargs):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return 1
         elif args.issue and repository.branch != args.issue:
