@@ -27,6 +27,7 @@
 
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
@@ -120,7 +121,7 @@ public:
         
 #if ENABLE(INSPECTOR_EXTENSIONS)
     bool supportsWebExtensions() override;
-    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier) override;
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
     void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&) override;
     void inspectedPageDidNavigate(const URL&) override;

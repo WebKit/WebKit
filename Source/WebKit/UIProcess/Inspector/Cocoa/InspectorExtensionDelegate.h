@@ -54,7 +54,7 @@ private:
 
     private:
         // API::InspectorExtensionClient
-        void didShowExtensionTab(const Inspector::ExtensionTabID&) override;
+        void didShowExtensionTab(const Inspector::ExtensionTabID&, WebCore::FrameIdentifier) override;
         void didHideExtensionTab(const Inspector::ExtensionTabID&) override;
         void didNavigateExtensionTab(const Inspector::ExtensionTabID&, const URL&) override;
         void inspectedPageDidNavigate(const URL&) override;

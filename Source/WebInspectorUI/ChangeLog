@@ -1,3 +1,15 @@
+2022-02-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: didShowExtensionTab needs to pass the frameID of the tab
+        https://bugs.webkit.org/show_bug.cgi?id=236023
+        rdar://problem/88383984
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.prototype._maybeDispatchDidShowExtensionTab):
+        (WI.WebInspectorExtensionTabContentView):
+
 2022-02-02  Don Olmstead  <don.olmstead@sony.com>
 
         WebInspector: Add additional image MIME types to frontend

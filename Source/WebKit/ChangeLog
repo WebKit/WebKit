@@ -1,3 +1,32 @@
+2022-02-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: didShowExtensionTab needs to pass the frameID of the tab
+        https://bugs.webkit.org/show_bug.cgi?id=236023
+        rdar://problem/88383984
+
+        Reviewed by BJ Burg.
+
+        * UIProcess/API/APIInspectorExtensionClient.h:
+        (API::InspectorExtensionClient::didShowExtensionTab):
+        * UIProcess/API/Cocoa/_WKInspectorExtensionDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm:
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionDelegate):
+        (WebKit::InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::didShowExtensionTab):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::didShowExtensionTab):
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::didShowExtensionTab):
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::didShowExtensionTab):
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+
 2022-02-02  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Remove DisplayList::Replayer::Delegate and DisplayList::RecorderImpl::Delegate

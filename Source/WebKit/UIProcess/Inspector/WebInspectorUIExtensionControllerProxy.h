@@ -29,6 +29,7 @@
 
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
@@ -66,7 +67,7 @@ public:
     void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, const String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&&);
 
     // WebInspectorUIExtensionControllerProxy IPC messages.
-    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier);
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
     void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&);
     void inspectedPageDidNavigate(const URL&);

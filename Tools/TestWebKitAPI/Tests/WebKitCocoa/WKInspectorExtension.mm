@@ -73,7 +73,7 @@ static RetainPtr<NSObject> evaluationResult;
 @implementation InspectorExtensionDelegateForTestingInspectorExtension {
 }
 
-- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier
+- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier withFrameHandle:(_WKFrameHandle *)frameHandle
 {
     didShowExtensionTabWasCalled = true;
 }

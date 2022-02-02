@@ -290,12 +290,12 @@ bool RemoteWebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
+void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     if (!m_extensionController)
         return;
-    
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
+
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)

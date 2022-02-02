@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "InspectorExtensionTypes.h"
 #include "MessageReceiver.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
@@ -74,7 +75,7 @@ public:
     void evaluateScriptInExtensionTab(const Inspector::ExtensionTabID&, const String& scriptSource, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&&);
 
     // Callbacks from the frontend.
-    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, WebCore::FrameIdentifier);
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&);
     void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&);
     void inspectedPageDidNavigate(const URL&);

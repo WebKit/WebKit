@@ -692,12 +692,16 @@ bool InspectorFrontendHost::supportsWebExtensions()
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID, HTMLIFrameElement& extensionFrameElement)
 {
     if (!m_client)
         return;
-    
-    m_client->didShowExtensionTab(extensionID, extensionTabID);
+
+    Frame* frame = extensionFrameElement.contentFrame();
+    if (!frame)
+        return;
+
+    m_client->didShowExtensionTab(extensionID, extensionTabID, valueOrDefault(frame->frameID()));
 }
 
 void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const String& extensionTabID)

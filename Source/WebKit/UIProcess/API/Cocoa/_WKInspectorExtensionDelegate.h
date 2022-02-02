@@ -33,6 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _WKFrameHandle;
 @class _WKInspectorExtension;
 
 @protocol _WKInspectorExtensionDelegate <NSObject>
@@ -43,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param extension The extension that created the shown tab.
  * @param tabIdentifier Identifier for the tab that was shown.
  */
-- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier;
+- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier withFrameHandle:(_WKFrameHandle *)frameHandle;
 
 /**
  * @abstract Called when a tab associated with this extension has been hidden.

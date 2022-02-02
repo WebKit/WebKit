@@ -1,3 +1,18 @@
+2022-02-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: didShowExtensionTab needs to pass the frameID of the tab
+        https://bugs.webkit.org/show_bug.cgi?id=236023
+        rdar://problem/88383984
+
+        Reviewed by BJ Burg.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtension.mm:
+        (-[InspectorExtensionDelegateForTestingInspectorExtension inspectorExtension:didShowTabWithIdentifier:withFrameHandle:]):
+        (-[InspectorExtensionDelegateForTestingInspectorExtension inspectorExtension:didShowTabWithIdentifier:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm:
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:didShowTabWithIdentifier:withFrameHandle:]):
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:didShowTabWithIdentifier:]): Deleted.
+
 2022-02-02  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Remove DisplayList::Replayer::Delegate and DisplayList::RecorderImpl::Delegate

@@ -364,12 +364,12 @@ bool WebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     if (!m_extensionController)
         return;
-    
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
+
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String& extensionTabID)

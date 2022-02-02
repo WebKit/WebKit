@@ -151,7 +151,7 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
             return;
 
         if (InspectorFrontendHost.supportsWebExtensions)
-            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID);
+            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID, this._iframeElement);
     }
 };
 

@@ -75,7 +75,7 @@ static bool extensionTabDidNavigateWasCalled;
 @implementation InspectorExtensionDelegateForTesting {
 }
 
-- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier
+- (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier withFrameHandle:(_WKFrameHandle *)frameHandle
 {
     didShowExtensionTabWasCalled = true;
 }

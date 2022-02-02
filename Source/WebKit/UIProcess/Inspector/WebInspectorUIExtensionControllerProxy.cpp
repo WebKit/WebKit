@@ -240,7 +240,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
 
 // WebInspectorUIExtensionControllerProxy IPC messages.
 
-void WebInspectorUIExtensionControllerProxy::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
+void WebInspectorUIExtensionControllerProxy::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     auto it = m_extensionAPIObjectMap.find(extensionID);
     if (it == m_extensionAPIObjectMap.end())
@@ -251,7 +251,7 @@ void WebInspectorUIExtensionControllerProxy::didShowExtensionTab(const Inspector
     if (!extensionClient)
         return;
 
-    extensionClient->didShowExtensionTab(extensionTabID);
+    extensionClient->didShowExtensionTab(extensionTabID, frameID);
 }
 
 void WebInspectorUIExtensionControllerProxy::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
