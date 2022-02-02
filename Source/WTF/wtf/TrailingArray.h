@@ -66,7 +66,7 @@ public:
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
-        ASSERT(std::distance(first, last) == size);
+        ASSERT(static_cast<size_t>(std::distance(first, last)) == size);
         std::uninitialized_copy(first, last, begin());
     }
 

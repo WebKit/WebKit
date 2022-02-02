@@ -1,3 +1,15 @@
+2022-02-02  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Remove compiler warning in TrailingArray.h
+        https://bugs.webkit.org/show_bug.cgi?id=236014
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/TrailingArray.h:
+        (WTF::TrailingArray::TrailingArray): cast the std::distance result
+        to size_t, we want to compare the absolute value of the distance
+        with the 'unsigned int' size.
+
 2022-02-02  Rob Buis  <rbuis@igalia.com>
 
         Enable overflow:clip feature
