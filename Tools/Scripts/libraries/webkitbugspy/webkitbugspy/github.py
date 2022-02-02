@@ -89,7 +89,7 @@ class Tracker(GenericTracker):
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
             prompt='''GitHub's API
-Please go to https://{host}/settings/tokens and generate a new 'Personal access token' via 'Developer settings'
+Please go to https://{host}/settings/tokens/new and generate a new 'Personal access token' via 'Developer settings'
 with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
             key_name='token',
         )
