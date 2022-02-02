@@ -1077,6 +1077,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _textCheckingController = makeUnique<WebKit::TextCheckingController>(*_page);
 #endif
 
+    _autocorrectionContextNeedsUpdate = YES;
+
     _page->process().updateTextCheckerState();
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
@@ -1112,6 +1114,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _additionalContextForStrongPasswordAssistance = nil;
     _waitingForEditDragSnapshot = NO;
 
+    _autocorrectionContextNeedsUpdate = YES;
     _lastAutocorrectionContext = { };
 
     _candidateViewNeedsUpdate = NO;
@@ -3574,11 +3577,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)replaceText:(NSString *)text withText:(NSString *)word
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _page->replaceSelectedText(text, word);
 }
 
 - (void)selectWordBackward
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _page->selectWordBackward();
 }
 
@@ -4036,11 +4041,13 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForGesture])
         return;
 
+    _autocorrectionContextNeedsUpdate = YES;
     _page->executeEditCommand("paste"_s);
 }
 
 - (void)_pasteAsQuotationForWebView:(id)sender
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _page->executeEditCommand("PasteAsQuotation"_s);
 }
 
@@ -4049,6 +4056,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (!_page->preferences().textInteractionEnabled())
         return;
 
+    _autocorrectionContextNeedsUpdate = YES;
     [_textInteractionAssistant selectWord];
     // We cannot use selectWord command, because we want to be able to select the word even when it is the last in the paragraph.
     _page->extendSelection(WebCore::TextGranularity::WordGranularity);
@@ -4059,6 +4067,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (!_page->preferences().textInteractionEnabled())
         return;
 
+    _autocorrectionContextNeedsUpdate = YES;
     [_textInteractionAssistant selectAll:sender];
     _page->selectAll();
 }
@@ -4428,6 +4437,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags);
@@ -4438,6 +4448,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags) {
         selectionChangedWithTouch(self, point, touch, toSelectionFlags(flags) | innerFlags);
@@ -4448,6 +4459,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, flags);
@@ -4545,11 +4557,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     [self _selectPositionAtPoint:point stayingWithinFocusedElement:self._hasFocusedElement completionHandler:completionHandler];
 }
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
 
     _page->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
@@ -4560,6 +4574,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
@@ -4569,6 +4584,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)moveSelectionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction completionHandler:(void (^)(void))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
@@ -4578,6 +4594,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
@@ -4589,6 +4606,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)beginSelectionInDirection:(UITextDirection)direction completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler = makeBlockPtr(completionHandler)] (bool endIsMoving) {
         selectionHandler(endIsMoving);
     });
@@ -4596,6 +4614,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
     _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
         selectionHandler(endIsMoving);
@@ -4604,6 +4623,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
+    _autocorrectionContextNeedsUpdate = YES;
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
         completionHandler(endIsMoving);
@@ -4657,6 +4677,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _page->replaceDictatedText(oldText, newText);
 }
 
@@ -4729,7 +4750,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         if (_isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext)
             return true;
 
-        return false;
+        return !_autocorrectionContextNeedsUpdate;
     })();
 
     if (respondWithLastKnownAutocorrectionContext) {
@@ -4748,15 +4769,24 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _pendingAutocorrectionContextHandler = completionHandler;
     _page->requestAutocorrectionContext();
 
-    if (useSyncRequest) {
-        _page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting);
-        [self _cancelPendingAutocorrectionContextHandler];
-    }
+    if (!useSyncRequest)
+        return;
+
+    callOnMainRunLoop([weakSelf = WeakObjCPtr<WKContentView>(self)]() {
+        if (auto strongSelf = weakSelf.get())
+            strongSelf->_autocorrectionContextNeedsUpdate = YES;
+    });
+
+    if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting))
+        RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
+
+    [self _cancelPendingAutocorrectionContextHandler];
 }
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
     _lastAutocorrectionContext = context;
+    _autocorrectionContextNeedsUpdate = NO;
     [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
 }
@@ -4993,6 +5023,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)beginSelectionChange
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _selectionChangeNestingLevel++;
 
     [self.inputDelegate selectionWillChange:self];
@@ -5030,6 +5061,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
 {
+    _autocorrectionContextNeedsUpdate = YES;
     // FIXME: Replace NSClassFromString with actual class as soon as UIKit submitted the new class into the iOS SDK.
     if ([textSuggestion isKindOfClass:[UITextAutofillSuggestion class]]) {
         _page->autofillLoginCredentials([(UITextAutofillSuggestion *)textSuggestion username], [(UITextAutofillSuggestion *)textSuggestion password]);
@@ -5230,6 +5262,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (void)_setMarkedText:(NSString *)markedText highlights:(const Vector<WebCore::CompositionHighlight>&)highlights selectedRange:(NSRange)selectedRange
 {
+    _autocorrectionContextNeedsUpdate = YES;
     _candidateViewNeedsUpdate = !self.hasMarkedText;
     _markedText = markedText;
     _page->setCompositionAsync(markedText, { }, highlights, selectedRange, { });
@@ -5390,21 +5423,26 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         _lastInsertedCharacterToOverrideCharacterBeforeSelection = [aStringValue characterAtIndex:aStringValue.length - 1];
         _page->scheduleFullEditorStateUpdate();
     }
+
+    _autocorrectionContextNeedsUpdate = YES;
 }
 
 - (void)insertText:(NSString *)aStringValue alternatives:(NSArray<NSString *> *)alternatives style:(UITextAlternativeStyle)style
 {
-    if (!alternatives.count)
+    if (!alternatives.count) {
         [self insertText:aStringValue];
-    else {
-        BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
-        auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
-        WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
-
-        WebKit::InsertTextOptions options;
-        options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
-        _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, WTFMove(options));
+        return;
     }
+
+    BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
+    auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
+    WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
+
+    WebKit::InsertTextOptions options;
+    options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
+    _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, WTFMove(options));
+
+    _autocorrectionContextNeedsUpdate = YES;
 }
 
 - (BOOL)hasText
@@ -5744,6 +5782,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         completionHandler(_focusedElementInformation.isReadOnly ? nil : self);
         return;
     }
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
     auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = adoptNS([context copy]), completionHandler = makeBlockPtr(completionHandler)] (bool success) {
         auto strongSelf = weakSelf.get();
@@ -5794,6 +5833,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     _textInteractionDidChangeFocusedElement = NO;
     _page->setShouldRevealCurrentSelectionAfterInsertion(false);
+    _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
 }
 
@@ -6034,6 +6074,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName
 {
+    _autocorrectionContextNeedsUpdate = YES;
     // FIXME: Editing commands are not considered by WebKit as user initiated even if they are the result
     // of keydown or keyup. We need to query the keyboard to determine if this was called from the keyboard
     // or not to know whether to tell WebKit to treat this command as user initiated or not.
@@ -6391,6 +6432,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
+    _autocorrectionContextNeedsUpdate = YES;
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
@@ -6582,6 +6624,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusedElementInformation.isFocusingWithValidationMessage = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
+    _autocorrectionContextNeedsUpdate = YES;
     _additionalContextForStrongPasswordAssistance = nil;
 
     [self resetShouldZoomToFocusRectAfterShowingKeyboard];
@@ -7197,6 +7240,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)_selectionChanged
 {
+    _autocorrectionContextNeedsUpdate = YES;
 #if ENABLE(APP_HIGHLIGHTS)
     [self setUpAppHighlightMenusIfNeeded];
 #endif

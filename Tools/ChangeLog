@@ -1,3 +1,19 @@
+2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Mitigate hangs underneath -requestAutocorrectionContextWithCompletionHandler: when focusing text fields
+        https://bugs.webkit.org/show_bug.cgi?id=235963
+        rdar://70152487
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise a scenario that currently isn't covered by existing tests: if the text input
+        client (i.e. UIKit) calls `-requestAutocorrectionContextWithCompletionHandler:`, then invokes an asynchronous
+        API that performs an editing action or changes the selection, and then requests another autocorrection context,
+        the second autocorrection context should reflect the changes that occurred as a result of the async editing
+        action.
+
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+
 2022-02-01  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Fix infinate retry on PR with red ToT 

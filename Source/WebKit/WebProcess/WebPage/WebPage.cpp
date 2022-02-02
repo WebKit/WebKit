@@ -7233,7 +7233,7 @@ WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(WebCore::DOMPaste
     // requests on iOS are currently synchronous in the web process. This allows us to immediately fulfill pending
     // autocorrection context requests in the UI process on iOS before handling the DOM paste request. This workaround
     // should be removed once <rdar://problem/16207002> is resolved.
-    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+    preemptivelySendAutocorrectionContext();
 #endif
     sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(pasteAccessCategory, rectForElementAtInteractionLocation(), originIdentifier), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(response));
     return response;

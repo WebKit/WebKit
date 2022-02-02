@@ -437,6 +437,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _textInteractionDidChangeFocusedElement;
     BOOL _treatAsContentEditableUntilNextEditorStateUpdate;
     bool _isWaitingOnPositionInformation;
+    BOOL _autocorrectionContextNeedsUpdate;
 
     WebCore::PointerID _commitPotentialTapPointerId;
 

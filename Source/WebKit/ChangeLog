@@ -1,3 +1,104 @@
+2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Mitigate hangs underneath -requestAutocorrectionContextWithCompletionHandler: when focusing text fields
+        https://bugs.webkit.org/show_bug.cgi?id=235963
+        rdar://70152487
+
+        Reviewed by Tim Horton.
+
+        After focusing an input field, UIKit attempts to invoke `-requestAutocorrectionContextWithCompletionHandler:` on
+        WKContentView up to 5 times, back to back. In WebKit, we handle this like sync IPC by waiting up to 1 second for
+        a response (this is done because UIKit would otherwise lock the main thread altogether after calling this
+        method, which results in a permanent deadlock in the UI process).
+
+        In the case where the web process is also sending a sync message to the UI process at the same time (for
+        instance, when spinning up the GPU or web authn process), this results in back-to-back 1 second deadlocks, for a
+        total UI process hang time of up to 5 seconds (as observed on an iPad with hardware keyboard attached).
+
+        This patch attempts to reduce hangs in `-[WKContentView requestAutocorrectionContextWithCompletionHandler:]` by
+        introducing a mechanism that throttles redundant `-requestAutocorrectionContextWithCompletionHandler:` requests
+        during the same runloop by immediately returning the last received autocorrection context instead of repeatedly
+        waiting on synchronous IPC message responses. Combined with another mechanism that preemptively sends an
+        autocorrection context when an input view is shown, this means that we will (mostly) no longer hang when
+        focusing an input field, or hang for at most 1 second (instead of 5) in the case where we happen to deadlock.
+
+        See comments below for more details.
+
+        Test: AutocorrectionTests.AutocorrectionContextBeforeAndAfterEditing
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add a new flag, `_autocorrectionContextNeedsUpdate`, that tracks whether or not it's safe to reply to
+        `-requestAutocorrectionContextWithCompletionHandler:` using the last-received WebAutocorrectionContext data that
+        was cached in the UI process.
+
+        This flag is unset after receiving a WebAutocorrectionContext, and set when any asynchronous text input methods
+        on WKContentView have been invoked, which may cause the autocorrection context to change. This is important in
+        order to preserve the existing behavior that a call to `-requestAutocorrectionContextWithCompletionHandler:`
+        immediately after calling a method like `-insertText:` or `-selectAll:` will not immediately return with a stale
+        autocorrection context.
+
+        The flag is also unset after the current runloop finishes, ensuring that this hack is limited to back-to-back
+        autocorrection contexts where editing actions are not dispatched in between each request. In the future, we may
+        be able to make this caching policy more aggressive, by removing this invalidation, which would allow us to keep
+        using the same autocorrection context data until we either learn about a programmatic selection change in the UI
+        process, or the WebKit client (in the UI process) has triggered editing or selection.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView replaceText:withText:]):
+        (-[WKContentView selectWordBackward]):
+        (-[WKContentView pasteForWebView:]):
+        (-[WKContentView _pasteAsQuotationForWebView:]):
+        (-[WKContentView selectForWebView:]):
+        (-[WKContentView selectAllForWebView:]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView selectPositionAtPoint:completionHandler:]):
+        (-[WKContentView _selectPositionAtPoint:stayingWithinFocusedElement:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView moveSelectionAtBoundary:inDirection:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView beginSelectionInDirection:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        (-[WKContentView replaceDictatedText:withText:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKContentView _handleAutocorrectionContext:]):
+        (-[WKContentView beginSelectionChange]):
+        (-[WKContentView insertTextSuggestion:]):
+        (-[WKContentView _setMarkedText:highlights:selectedRange:]):
+        (-[WKContentView insertText:]):
+        (-[WKContentView insertText:alternatives:style:]):
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]):
+        (-[WKContentView _willBeginTextInteractionInTextInputContext:]):
+        (-[WKContentView executeEditCommandWithCallback:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _selectionChanged]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestDOMPasteAccess):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setIsShowingInputViewForFocusedElement):
+        (WebKit::WebPage::preemptivelySendAutocorrectionContext):
+
+        Pull out logic that preemptively computes and sends WebAutocorrectionContexts to the UI process (in anticipation
+        of synchronous IPC) into an appropriately-named helper method; additionally, call this new helper method when
+        the keyboard has been shown, following element focus in the UI process.
+
+        (WebKit::WebPage::handleAutocorrectionContextRequest):
+        (WebKit::WebPage::prepareToRunModalJavaScriptDialog):
+        (WebKit::WebPage::requestAutocorrectionContext): Deleted.
+
+        Drive-by: rename this to `handleAutocorrectionContextRequest` for clarity, since the purpose of this method is
+        to service a request for autocorrection context that was sent by the UI process.
+
 2022-02-01  Sihui Liu  <sihui_liu@apple.com>
 
         Write origin file when OriginStorageManager is destroyed

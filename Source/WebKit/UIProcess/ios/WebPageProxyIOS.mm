@@ -527,7 +527,7 @@ void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&,
 
 void WebPageProxy::requestAutocorrectionContext()
 {
-    m_process->send(Messages::WebPage::RequestAutocorrectionContext(), m_webPageID);
+    m_process->send(Messages::WebPage::HandleAutocorrectionContextRequest(), m_webPageID);
 }
 
 void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
