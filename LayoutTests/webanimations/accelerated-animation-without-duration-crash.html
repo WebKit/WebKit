@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+
+html {
+    animation-name: anim;
+    rotate: 0 0 0 0deg;
+}
+
+@keyframes anim {
+    from { filter: invert() }
+}
+
+</style>
+
+<div>PASS if this doesn't crash</div>
+
+<script>
+
+window.testRunner?.dumpAsText();
+
+</script>
