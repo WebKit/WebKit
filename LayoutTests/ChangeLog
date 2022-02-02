@@ -1,3 +1,13 @@
+2022-02-02  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION(r288865): SourceImage should never sink its ImageBuffer to a NativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=236005
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/pattern-multiple-referencing-expected.txt: Added.
+        * svg/custom/pattern-multiple-referencing.html: Added.
+
 2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
 
         WPT: Import WebAssembly CSP tests
