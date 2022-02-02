@@ -298,8 +298,8 @@ private:
 };
 
 
-void connectSimpleBusMessageCallback(GstElement* pipeline);
-void disconnectSimpleBusMessageCallback(GstElement* pipeline);
+void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
+void disconnectSimpleBusMessageCallback(GstElement*);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 

@@ -87,11 +87,6 @@ static unsigned long maximumNumberOfOutputChannels()
     return count;
 }
 
-gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
-{
-    return destination->handleMessage(message);
-}
-
 Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     initializeDebugCategory();
@@ -121,10 +116,9 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 {
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("audio-destination-", pipelineId.exchangeAdd(1)).ascii().data());
-    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-    ASSERT(bus);
-    gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
-    g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
+    connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
+        this->handleMessage(message);
+    });
 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
         "bus", m_renderBus.get(), "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
@@ -169,11 +163,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
-    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-    ASSERT(bus);
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
-    gst_bus_remove_signal_watch(bus.get());
-
+    disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
     notifyStopResult(true);
 }
@@ -183,41 +173,16 @@ unsigned AudioDestinationGStreamer::framesPerBuffer() const
     return AudioUtilities::renderQuantumSize;
 }
 
-gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
+bool AudioDestinationGStreamer::handleMessage(GstMessage* message)
 {
-    GUniqueOutPtr<GError> error;
-    GUniqueOutPtr<gchar> debug;
-
     switch (GST_MESSAGE_TYPE(message)) {
-    case GST_MESSAGE_WARNING:
-        gst_message_parse_warning(message, &error.outPtr(), &debug.outPtr());
-        g_warning("Warning: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
-        break;
     case GST_MESSAGE_ERROR:
-        gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
-        g_warning("Error: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
         notifyIsPlaying(false);
         break;
-    case GST_MESSAGE_STATE_CHANGED:
-        if (GST_MESSAGE_SRC(message) == GST_OBJECT(m_pipeline.get())) {
-            GstState oldState, newState, pending;
-            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
-
-            GST_INFO_OBJECT(m_pipeline.get(), "State changed (old: %s, new: %s, pending: %s)",
-                gst_element_state_get_name(oldState), gst_element_state_get_name(newState), gst_element_state_get_name(pending));
-
-            String dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_',
-                gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
-
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
-        }
-        break;
     default:
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Unhandled message: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
     }
-    return TRUE;
+    return true;
 }
 
 void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)

@@ -374,51 +374,67 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
-static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipeline)
-{
-    switch (GST_MESSAGE_TYPE(message)) {
-    case GST_MESSAGE_ERROR:
-        GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
-        {
-            String dotFileName = makeString(GST_OBJECT_NAME(pipeline), "_error");
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
-        }
-        break;
-    case GST_MESSAGE_STATE_CHANGED:
-        if (GST_MESSAGE_SRC(message) == GST_OBJECT(pipeline)) {
-            GstState oldState, newState, pending;
-            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
-
-            GST_INFO_OBJECT(pipeline, "State changed (old: %s, new: %s, pending: %s)",
-                gst_element_state_get_name(oldState),
-                gst_element_state_get_name(newState),
-                gst_element_state_get_name(pending));
-
-            String dotFileName = makeString(
-                GST_OBJECT_NAME(pipeline), '_',
-                gst_element_state_get_name(oldState), '_',
-                gst_element_state_get_name(newState));
-
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
-        }
-        break;
-    default:
-        break;
-    }
-}
-
 void disconnectSimpleBusMessageCallback(GstElement* pipeline)
 {
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(simpleBusMessageCallback), pipeline);
+    g_signal_handlers_disconnect_by_data(bus.get(), pipeline);
     gst_bus_remove_signal_watch(bus.get());
 }
 
-void connectSimpleBusMessageCallback(GstElement* pipeline)
+struct CustomMessageHandlerHolder {
+    explicit CustomMessageHandlerHolder(Function<void(GstMessage*)>&& handler)
+    {
+        this->handler = WTFMove(handler);
+    }
+    Function<void(GstMessage*)> handler;
+};
+
+void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMessage*)>&& customHandler)
 {
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
-    g_signal_connect(bus.get(), "message", G_CALLBACK(simpleBusMessageCallback), pipeline);
+
+    auto* holder = new CustomMessageHandlerHolder(WTFMove(customHandler));
+    GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
+    g_object_set_qdata_full(G_OBJECT(pipeline), quark, holder, [](gpointer data) {
+        delete reinterpret_cast<CustomMessageHandlerHolder*>(data);
+    });
+
+    g_signal_connect(bus.get(), "message", G_CALLBACK(+[](GstBus*, GstMessage* message, GstElement* pipeline) {
+        switch (GST_MESSAGE_TYPE(message)) {
+        case GST_MESSAGE_ERROR: {
+            GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
+            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline), "_error");
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+            break;
+        }
+        case GST_MESSAGE_STATE_CHANGED: {
+            if (GST_MESSAGE_SRC(message) != GST_OBJECT_CAST(pipeline))
+                break;
+
+            GstState oldState;
+            GstState newState;
+            GstState pending;
+            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
+
+            GST_INFO_OBJECT(pipeline, "State changed (old: %s, new: %s, pending: %s)", gst_element_state_get_name(oldState),
+                gst_element_state_get_name(newState), gst_element_state_get_name(pending));
+
+            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline), '_', gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+            break;
+        }
+        default:
+            break;
+        }
+
+        GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
+        auto* holder = reinterpret_cast<CustomMessageHandlerHolder*>(g_object_get_qdata(G_OBJECT(pipeline), quark));
+        if (!holder)
+            return;
+
+        holder->handler(message);
+    }), pipeline);
 }
 
 Vector<uint8_t> GstMappedBuffer::createVector() const
