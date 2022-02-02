@@ -403,7 +403,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     uint32_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer");
 
@@ -425,7 +425,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds store's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer");
@@ -447,7 +447,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     TypedExpression pointer;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
@@ -472,7 +472,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     TypedExpression expected;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected");
@@ -499,7 +499,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     TypedExpression value;
     TypedExpression timeout;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value");
@@ -525,7 +525,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     TypedExpression pointer;
     TypedExpression count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count");
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer");
@@ -1951,7 +1951,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             uint32_t alignment;
             uint32_t unused;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment");
-            WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " exceeds load's natural alignment ", 1ull << memoryLog2Alignment(op));
+            WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment ", 1ull << alignment, " does not match against atomic op's natural alignment ", 1ull << memoryLog2Alignment(op));
             WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for atomic ", static_cast<unsigned>(op), " in unreachable context");
             break;
         }

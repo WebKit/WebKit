@@ -1,3 +1,24 @@
+2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] wasm atomic opcodes should be rejected if alignment is not equal to natural width
+        https://bugs.webkit.org/show_bug.cgi?id=235990
+
+        Reviewed by Saam Barati.
+
+        While normal load and store can accept larger alignment than an access width,
+        wasm module validator rejects if atomic ops' alignment is not equal to an access width.
+        This patch applies this restriction.
+        No runtime semantics change since atomic ops are always checked against an access width alignment.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::atomicLoad):
+        (JSC::Wasm::FunctionParser<Context>::atomicStore):
+        (JSC::Wasm::FunctionParser<Context>::atomicBinaryRMW):
+        (JSC::Wasm::FunctionParser<Context>::atomicCompareExchange):
+        (JSC::Wasm::FunctionParser<Context>::atomicWait):
+        (JSC::Wasm::FunctionParser<Context>::atomicNotify):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+
 2022-02-01  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Fixes for non-unified builds after r288807 and r288820
