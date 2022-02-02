@@ -1,3 +1,24 @@
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerNavigationPreloader should only be used once
+        https://bugs.webkit.org/show_bug.cgi?id=235882
+        <rdar://88226432>
+
+        Reviewed by Chris Dumez.
+
+        In case service worker preload is being used and related service worker context crashes (or service worker context sends bad messages),
+        We can end up in a bad state where we will ask the preload twice for the same response (once for good, and the next one as we go to didNotHandle case).
+        To prevent this, we add checks in loadResponseFromPreloader and loadBodyFromPreloader.
+        As part of this investigation, I found out that ServiceWorkerNavigationPreloader is not correctly handling the case of preload responses coming from cache.
+        In particular, no body will be given since we return early in waitForBody in case the preload network load is null.
+        Prevent this by making sure waitForBody calls the response completion handler if available, even if the preload network load is null.
+        And update the response body callback before executing the response completion handler to make sure data received synchronously from the preload is given to the service worker fetch task.
+
+        Test: http/wpt/service-workers/fetch-service-worker-preload-cache.https.html
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+
 2022-02-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename FontCascade::fontMetrics() and RenderStyle::fontMetrics() to fontMetricsOfPrimaryFont()
