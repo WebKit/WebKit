@@ -669,8 +669,6 @@ override;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 
-    LayoutRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const override;
-
     bool shouldComputeLogicalHeightFromAspectRatio() const;
 
 protected:

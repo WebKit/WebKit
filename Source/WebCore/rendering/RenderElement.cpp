@@ -1734,7 +1734,22 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
 
 LayoutRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
 {
-    return absoluteAnchorRect(insideFixed);
+    LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
+    const LengthBox& scrollMargin = style().scrollMargin();
+    if (scrollMargin.isZero())
+        return anchorRect;
+
+    // The scroll snap specification says that the scroll-margin should be applied in the
+    // coordinate system of the scroll container and applied to the rectangular bounding
+    // box of the transformed border box of the target element.
+    // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
+    const LayoutBoxExtent margin(
+        valueForLength(scrollMargin.top(), anchorRect.height()),
+        valueForLength(scrollMargin.right(), anchorRect.width()),
+        valueForLength(scrollMargin.bottom(), anchorRect.height()),
+        valueForLength(scrollMargin.left(), anchorRect.width()));
+    anchorRect.expand(margin);
+    return anchorRect;
 }
 
 void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const FloatRect& rect, BoxSide side, Color color, BorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias) const

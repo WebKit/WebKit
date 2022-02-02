@@ -1,3 +1,14 @@
+2022-02-02  Martin Robinson  <mrobinson@webkit.org>
+
+        scroll-margin-top doesn't work on inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=235933
+        <rdar://87983307>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-006-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-target-margin-006.html: Added.
+
 2022-02-01  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Ensure query containers have valid layout before resolving the subtree

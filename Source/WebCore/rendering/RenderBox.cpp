@@ -5472,28 +5472,6 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
 }
 
-LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
-{
-    LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
-    const LengthBox& scrollMargin = style().scrollMargin();
-    if (scrollMargin.isZero())
-        return anchorRect;
-
-    // The scroll snap specification says that the scroll-margin should be applied in the
-    // coordinate system of the scroll container and applied to the rectangular bounding
-    // box of the transformed border box of the target element.
-    // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
-    const LayoutSize boxSize = size();
-    const LayoutBoxExtent margin(
-        valueForLength(scrollMargin.top(), boxSize.height()),
-        valueForLength(scrollMargin.right(), boxSize.width()),
-        valueForLength(scrollMargin.bottom(), boxSize.height()),
-        valueForLength(scrollMargin.left(), boxSize.width()));
-    anchorRect.expand(margin);
-
-    return anchorRect;
-}
-
 LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)
 {
     // We are using minimumValueForLength here, because scroll-padding values might be "auto". WebKit currently
