@@ -102,8 +102,9 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
     if (fragment && shouldInsertFragment(*fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote );
-
-    client()->setInsertionPasteboard(String());
+    
+    if (auto* client = this->client())
+        client->setInsertionPasteboard(String());
 }
 
 void Editor::platformCopyFont()
