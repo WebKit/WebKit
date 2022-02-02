@@ -85,7 +85,7 @@ static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPi
 #endif
 }
 
-std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample)
+std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample, ShouldCheckForIOSurface shouldCheckForIOSurface)
 {
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 
@@ -97,7 +97,7 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample
 
     std::unique_ptr<IOSurface> ioSurface;
     auto surface = CVPixelBufferGetIOSurface(imageBuffer.get());
-    if (!surface) {
+    if (!surface && shouldCheckForIOSurface == ShouldCheckForIOSurface::Yes) {
         // Special case for canvas data that is RGBA, not IOSurface backed.
         auto pixelFormatType = CVPixelBufferGetPixelFormatType(imageBuffer.get());
         if (pixelFormatType != kCVPixelFormatType_32BGRA) {
@@ -115,10 +115,10 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample
     return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, WTFMove(imageBuffer), DestinationColorSpace::SRGB(), sample.presentationTime(), sample.videoRotation(), sample.videoMirrored()));
 }
 
-std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(RetainPtr<CVPixelBufferRef>&& imageBuffer, MediaTime&& presentationTime, MediaSample::VideoRotation rotation)
+std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(RetainPtr<CVPixelBufferRef>&& imageBuffer, MediaTime&& presentationTime, MediaSample::VideoRotation rotation, ShouldCheckForIOSurface shouldCheckForIOSurface)
 {
     auto surface = CVPixelBufferGetIOSurface(imageBuffer.get());
-    if (!surface) {
+    if (!surface && shouldCheckForIOSurface == ShouldCheckForIOSurface::Yes) {
         RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: CVPixelBufferGetIOSurface returned nullptr");
         return nullptr;
     }

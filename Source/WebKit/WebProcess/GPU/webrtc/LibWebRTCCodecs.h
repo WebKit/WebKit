@@ -30,9 +30,11 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "GPUProcessConnection.h"
+#include "IPCSemaphore.h"
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
@@ -101,6 +103,7 @@ public:
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
+        SharedVideoFrameWriter sharedVideoFrameWriter;
     };
 
     Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
@@ -134,6 +137,9 @@ private:
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);
+
+    bool copySharedVideoFrame(Encoder&, CVPixelBufferRef);
+    bool copySharedVideoFrame(Encoder&, const webrtc::VideoFrame&);
 
 private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;

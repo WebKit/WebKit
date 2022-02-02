@@ -31,11 +31,14 @@
 #include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
+#include "SharedMemory.h"
+#include "SharedVideoFrame.h"
 #include <wtf/Lock.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
+class Semaphore;
 }
 
 namespace WebCore {
@@ -50,6 +53,7 @@ using LocalEncoder = void*;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class SharedVideoFrameReader;
 
 class LibWebRTCCodecsProxy : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
@@ -81,16 +85,21 @@ private:
     void initializeEncoder(RTCEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void encodeFrame(RTCEncoderIdentifier, WebCore::RemoteVideoSample&&, uint32_t timeStamp, bool shouldEncodeAsKeyFrame);
     void setEncodeRates(RTCEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
+    void setSharedVideoFrameSemaphore(RTCEncoderIdentifier, IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(RTCEncoderIdentifier, const SharedMemory::IPCHandle&);
     void setRTCLoggingLevel(WTFLogLevel);
-
-    CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 
+    struct Encoder {
+        webrtc::LocalEncoder webrtcEncoder { nullptr };
+        std::unique_ptr<SharedVideoFrameReader> frameReader;
+    };
+    Encoder* findEncoderWithoutLock(RTCEncoderIdentifier);
+
     mutable Lock m_lock;
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
-    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
-
+    HashMap<RTCEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
     Ref<WorkQueue> m_queue;
 };
 

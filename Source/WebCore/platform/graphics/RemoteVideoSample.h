@@ -46,9 +46,12 @@ public:
     RemoteVideoSample& operator=(RemoteVideoSample&&) = default;
     ~RemoteVideoSample() = default;
 
-    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&);
-    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(RetainPtr<CVPixelBufferRef>&&, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
+    enum class ShouldCheckForIOSurface { No, Yes };
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&, ShouldCheckForIOSurface = ShouldCheckForIOSurface::Yes);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(RetainPtr<CVPixelBufferRef>&&, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None, ShouldCheckForIOSurface = ShouldCheckForIOSurface::Yes);
+
     WEBCORE_EXPORT IOSurfaceRef surface() const;
+    CVPixelBufferRef imageBuffer() const { return m_imageBuffer.get(); }
 
     void setOwnershipIdentity(const ProcessIdentity&);
 

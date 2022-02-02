@@ -1,5 +1,36 @@
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
+        LibWebRTCCodecs should not need to create IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=235951
+        <rdar://problem/88326654>
+
+        Reviewed by Eric Carlson.
+
+        Introduce SharedVideoFrameWriter and SharedVideoFrameReader to support shared memory sending of CVPixelBuffers that are non IOSurface backed.
+        To do so, we make use of SharedVideoFrameInfo from WebCore.
+        What we do is:
+        - When getting a frame, allocate a shared memory that is big enough to copy its data and info in it. Create a semaphore to sync reader and writer.
+        - If we allocate shared memory/semphore, send them over IPC to the SharedVideoFrameReader.
+        - Wait for semaphore to tell us reader is fine for writing.
+        - Write SharedVideoFrameInfo into the shared memory, then copy the raw bytes into the shared memory.
+        - Send through IPC the video frame, no MacSendRight means to read the shared memory.
+        On reader side, for every frame that does not have an IOSurface, we read the shared memory, create an IOSurface from it and notify WebProcess that it can write the next frame.
+
+        In memory buffers are used for black frames at least.
+        webrtc/video-mute.html covers the patch.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp: Added.
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h: Added.
+
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
         Clarify that some UUID routines are dedicated to UUID v4
         https://bugs.webkit.org/show_bug.cgi?id=235430
 

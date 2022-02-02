@@ -187,7 +187,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
 
     if (m_loggingLevel)
-        m_connection->send(Messages::LibWebRTCCodecsProxy::SetRTCLoggingLevel(*m_loggingLevel), 0);
+        m_connection->send(Messages::LibWebRTCCodecsProxy::SetRTCLoggingLevel { *m_loggingLevel }, 0);
 }
 
 // May be called on any thread.
@@ -418,6 +418,22 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     return 0;
 }
 
+bool LibWebRTCCodecs::copySharedVideoFrame(Encoder& encoder, CVPixelBufferRef pixelBuffer)
+{
+    return encoder.sharedVideoFrameWriter.write(pixelBuffer,
+        [&encoder](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
+        [&encoder](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
+    );
+}
+
+bool LibWebRTCCodecs::copySharedVideoFrame(Encoder& encoder, const webrtc::VideoFrame& frame)
+{
+    return encoder.sharedVideoFrameWriter.write(frame,
+        [&encoder](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
+        [&encoder](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
+    );
+}
+
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
     Locker locker { m_connectionLock };
@@ -425,33 +441,17 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!encoder.connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromFrame(frame, [](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
-        OSType poolBufferType;
-        switch (bufferType) {
-        case webrtc::BufferType::I420:
-            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-            break;
-        case webrtc::BufferType::I010:
-            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
-        }
-        auto pixelBufferPool = WebProcess::singleton().libWebRTCCodecs().pixelBufferPool(width, height, poolBufferType);
-        if (!pixelBufferPool)
-            return nullptr;
-
-        return WebCore::createCVPixelBufferFromPool(pixelBufferPool).value_or(nullptr).leakRef();
-    }));
-
-    if (!pixelBuffer)
-        return WEBRTC_VIDEO_CODEC_ERROR;
-
-    auto sample = RemoteVideoSample::create(pixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
-    if (!sample) {
-        // FIXME: Optimize this code path, currently we have non BGRA for muted frames at least.
-        sample = RemoteVideoSample::create(convertToBGRA(pixelBuffer.get()), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
-        if (!sample) {
-            RELEASE_LOG_ERROR(WebRTC, "Unable to convert remote video sample");
+    auto buffer = adoptCF(webrtc::pixelBufferFromFrame(frame));
+    if (!buffer) {
+        // buffer is not native, we need to copy to shared video frame.
+        if (!copySharedVideoFrame(encoder, frame))
             return WEBRTC_VIDEO_CODEC_ERROR;
-        }
+    }
+    auto sample = RemoteVideoSample::create(buffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()), RemoteVideoSample::ShouldCheckForIOSurface::No);
+    if (!sample->surface()) {
+        // buffer is not IOSurface, we need to copy to shared video frame.
+        if (!copySharedVideoFrame(encoder, buffer.get()))
+            return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
@@ -535,6 +535,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
             m_connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromWebRTCCodecType(encoder->codecType), encoder->parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
             if (encoder->initializationData)
                 m_connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
+            encoder->sharedVideoFrameWriter = { };
             encoder->connection = m_connection.get();
         }
         for (auto& decoder : m_decoders.values()) {
