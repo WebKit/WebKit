@@ -1,3 +1,17 @@
+2022-02-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r286988.
+        https://bugs.webkit.org/show_bug.cgi?id=236006
+
+        Broke form submission for multiple <input type='image'>
+
+        Reverted changeset:
+
+        "A FormData constructed in the form's submit event listener
+        shouldn't include the submitter"
+        https://bugs.webkit.org/show_bug.cgi?id=234069
+        https://commits.webkit.org/r286988
+
 2022-02-02  Martin Robinson  <mrobinson@webkit.org>
 
         scroll-margin-top doesn't work on inline elements

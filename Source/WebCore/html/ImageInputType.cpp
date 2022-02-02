@@ -87,6 +87,8 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
 
     Ref<HTMLFormElement> protectedForm(*protectedElement->form());
 
+    protectedElement->setActivatedSubmit(true);
+
     m_clickLocation = IntPoint();
     if (event.underlyingEvent()) {
         Event& underlyingEvent = *event.underlyingEvent();
@@ -104,6 +106,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     if (auto currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event); // Event handlers can run.
 
+    protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
 
