@@ -741,7 +741,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    PlatformImageAnalyzer *ensureImageAnalyzer();
+    CocoaImageAnalyzer *ensureImageAnalyzer();
 #endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
@@ -886,7 +886,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<WorkQueue> m_imageAnalyzerQueue;
-    RetainPtr<PlatformImageAnalyzer> m_imageAnalyzer;
+    RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
