@@ -704,7 +704,7 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
 
 const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)
 {
-    static constexpr SortedArrayMap roleNamesMap { roleNames };
+    static const SortedArrayMap roleNamesMap { roleNames };
     if (auto entry = roleNamesMap.tryGet(role))
         return entry->localizedName;
 
