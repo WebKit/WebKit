@@ -50,7 +50,7 @@ def additional_setup(args, repository):
     if not isinstance(repository, local.Git):
         return 0
 
-    log.warning('Setting merging behavior for changelogs...')
+    log.info('Setting merging behavior for changelogs...')
     if run([
         repository.executable(),
         'config', 'merge.changelog.driver',
@@ -61,7 +61,7 @@ def additional_setup(args, repository):
     ], capture_output=True, cwd=repository.root_path).returncode:
         sys.stderr.write('Failed to set the git merging behaivor for changelogs...\n')
         return 1
-    log.warning('Set merging behavior for changelogs!')
+    log.info('Set merging behavior for changelogs!')
     return 0
 
 

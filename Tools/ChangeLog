@@ -1,5 +1,15 @@
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Improve user prompts (Part 5)
+        https://bugs.webkit.org/show_bug.cgi?id=235655
+        <rdar://problem/88082697>
+
+        Reviewed by Aakash Jain and Dewei Zhu.
+
+        * Scripts/git-webkit: Log to 'info' not 'warning.'
+
+2022-01-26  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Improve user prompts (Part 4)
         https://bugs.webkit.org/show_bug.cgi?id=235655
         <rdar://problem/88082697>
