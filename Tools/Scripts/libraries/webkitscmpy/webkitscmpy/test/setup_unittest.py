@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -85,18 +85,19 @@ Created a private fork of 'WebKit' belonging to 'username'!
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
-Set git user email to 'tapple@webkit.org'
+Set git user email to 'tapple@webkit.org' for this repository
 Setting git user name for {repository}...
-Set git user name to 'Tim Apple'
-Setting better Objective-C diffing behavior...
-Set better Objective-C diffing behavior!
-Using a rebase merge strategy
+Set git user name to 'Tim Apple' for this repository
+Setting better Objective-C diffing behavior for this repository...
+Set better Objective-C diffing behavior for this repository!
+Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
-Using the default git editor
+Using the default git editor for this repository
 '''.format(repository=self.path),
         )
 
     def test_github_checkout(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
@@ -118,12 +119,12 @@ Using the default git editor
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Set 'tapple@webkit.org' as the git user email ([Yes]/No): 
-Git user email: 
-Set 'Tim Apple' as the git user name ([Yes]/No): 
-Git user name: 
-Auto-color status, diff, and branch? ([Yes]/No): 
-Pick a commit message editor:
+            '''Set 'tapple@webkit.org' as the git user email for this repository ([Yes]/No): 
+Enter git user email for this repository: 
+Set 'Tim Apple' as the git user name for this repository ([Yes]/No): 
+Enter git user name for this repository: 
+Auto-color status, diff, and branch for this repository? ([Yes]/No): 
+Pick a commit message editor for this repository:
     {}
 : 
 http(s) based remotes will prompt for your password every time when pushing,
@@ -139,14 +140,14 @@ Setup succeeded!
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
-Set git user email to 'committer@webkit.org'
+Set git user email to 'committer@webkit.org' for this repository
 Setting git user name for {repository}...
-Set git user name to 'Committer'
-Setting better Objective-C diffing behavior...
-Set better Objective-C diffing behavior!
-Using a rebase merge strategy
+Set git user name to 'Committer' for this repository
+Setting better Objective-C diffing behavior for this repository...
+Set better Objective-C diffing behavior for this repository!
+Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
-Using the default git editor
+Using the default git editor for this repository
 Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
 Verifying user owned fork...

@@ -1,5 +1,20 @@
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Improve user prompts (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=235655
+        <rdar://problem/88082697>
+
+        Reviewed by Aakash Jain and Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Make it clear to users that configurations are being set only
+        on the local repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
+2022-01-26  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Improve user prompts (Part 2)
         https://bugs.webkit.org/show_bug.cgi?id=235655
         <rdar://problem/88082697>

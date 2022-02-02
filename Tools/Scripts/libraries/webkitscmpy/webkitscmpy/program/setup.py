@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -86,18 +86,18 @@ class Setup(Command):
         email = os.environ.get('EMAIL_ADDRESS') or global_config.get('user.email')
         log.info('Setting git user email for {}...'.format(repository.root_path))
         if not email or args.defaults is False or (not args.defaults and Terminal.choose(
-            "Set '{}' as the git user email".format(email),
+            "Set '{}' as the git user email for this repository".format(email),
             default='Yes',
         ) == 'No'):
-            email = Terminal.input('Git user email: ')
+            email = Terminal.input('Enter git user email for this repository: ')
 
         if run(
             [local.Git.executable(), 'config', 'user.email', email], capture_output=True, cwd=repository.root_path,
         ).returncode:
-            sys.stderr.write('Failed to set the git user email to {}\n'.format(email))
+            sys.stderr.write('Failed to set the git user email to {} for this repository\n'.format(email))
             result += 1
         else:
-            log.info("Set git user email to '{}'".format(email))
+            log.info("Set git user email to '{}' for this repository".format(email))
 
         name = repository.contributors.get(email)
         if name:
@@ -106,19 +106,19 @@ class Setup(Command):
             name = global_config.get('user.name')
         log.info('Setting git user name for {}...'.format(repository.root_path))
         if not name or args.defaults is False or (not args.defaults and Terminal.choose(
-            "Set '{}' as the git user name".format(name),
+            "Set '{}' as the git user name for this repository".format(name),
             default='Yes',
         ) == 'No'):
-            name = Terminal.input('Git user name: ')
+            name = Terminal.input('Enter git user name for this repository: ')
         if run(
             [local.Git.executable(), 'config', 'user.name', name], capture_output=True, cwd=repository.root_path,
         ).returncode:
-            sys.stderr.write('Failed to set the git user name to {}\n'.format(name))
+            sys.stderr.write('Failed to set the git user name to {} for this repository\n'.format(name))
             result += 1
         else:
-            log.info("Set git user name to '{}'".format(name))
+            log.info("Set git user name to '{}' for this repository".format(name))
 
-        log.info('Setting better Objective-C diffing behavior...')
+        log.info('Setting better Objective-C diffing behavior for this repository...')
         result += run(
             [local.Git.executable(), 'config', 'diff.objcpp.xfuncname', '^[-+@a-zA-Z_].*$'],
             capture_output=True, cwd=repository.root_path,
@@ -127,10 +127,10 @@ class Setup(Command):
             [local.Git.executable(), 'config', 'diff.objcppheader.xfuncname', '^[@a-zA-Z_].*$'],
             capture_output=True, cwd=repository.root_path,
         ).returncode
-        log.info('Set better Objective-C diffing behavior!')
+        log.info('Set better Objective-C diffing behavior for this repository!')
 
         if args.defaults or Terminal.choose(
-            'Auto-color status, diff, and branch?',
+            'Auto-color status, diff, and branch for this repository?',
             default='Yes',
         ) == 'Yes':
             for command in ('status', 'diff', 'branch'):
@@ -139,12 +139,12 @@ class Setup(Command):
                     capture_output=True, cwd=repository.root_path,
                 ).returncode
 
-        log.info('Using {} merge strategy'.format('merge commits as a' if args.merge else 'a rebase'))
+        log.info('Using {} merge strategy for this repository'.format('merge commits as a' if args.merge else 'a rebase'))
         if run(
             [local.Git.executable(), 'config', 'pull.rebase', 'false' if args.merge else 'true'],
             capture_output=True, cwd=repository.root_path,
         ).returncode:
-            sys.stderr.write('Failed to use {} as the merge strategy\n'.format('merge commits' if args.merge else 'rebase'))
+            sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
 
         if hooks:
@@ -152,7 +152,7 @@ class Setup(Command):
                 source_path = os.path.join(hooks, hook)
                 if not os.path.isfile(source_path):
                     continue
-                log.info('Configuring and copying hook {}'.format(source_path))
+                log.info('Configuring and copying hook {} for this repository'.format(source_path))
                 with open(source_path, 'r') as f:
                     from jinja2 import Template
                     contents = Template(f.read()).render(
@@ -171,22 +171,22 @@ class Setup(Command):
 
         log.info('Setting git editor for {}...'.format(repository.root_path))
         editor_name = 'default' if args.defaults else Terminal.choose(
-            'Pick a commit message editor',
+            'Pick a commit message editor for this repository',
             options=['default'] + [program.name for program in Editor.programs()],
             default='default',
             numbered=True,
         )
         if editor_name == 'default':
-            log.info('Using the default git editor')
+            log.info('Using the default git editor for this repository')
         elif run(
             [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
             capture_output=True,
             cwd=repository.root_path,
         ).returncode:
-            sys.stderr.write('Failed to set the git editor to {}\n'.format(editor_name))
+            sys.stderr.write('Failed to set the git editor to {} for this repository\n'.format(editor_name))
             result += 1
         else:
-            log.info("Set git editor to '{}'".format(editor_name))
+            log.info("Set git editor to '{}' for this repository".format(editor_name))
 
         # Pushing to http repositories is difficult, offer to change http checkouts to ssh
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
