@@ -1912,7 +1912,7 @@ void RenderStyle::setWordSpacing(Length&& value)
         fontWordSpacing = 0;
         break;
     case LengthType::Percent:
-        fontWordSpacing = value.percent() * fontCascade().spaceWidth() / 100;
+        fontWordSpacing = value.percent() * fontCascade().widthOfSpaceString() / 100;
         break;
     case LengthType::Fixed:
         fontWordSpacing = value.value();

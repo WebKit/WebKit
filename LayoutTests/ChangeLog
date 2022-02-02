@@ -1,3 +1,13 @@
+2022-02-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Percentage word spacing doesn't incorporate synthetic bold expansion
+        https://bugs.webkit.org/show_bug.cgi?id=236007
+
+        Reviewed by Alan Bujtas.
+
+        * fast/text/synthetic-bold-percentage-word-spacing-expected.html: Added.
+        * fast/text/synthetic-bold-percentage-word-spacing.html: Added.
+
 2022-02-02  Patrick Angle  <pangle@apple.com>
 
         No breakpoints hit on github.com, and some are invalid

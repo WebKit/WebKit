@@ -91,7 +91,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
 
 InlineLayoutUnit TextUtil::spaceWidth(const FontCascade& fontCascade)
 {
-    return fontCascade.width(TextRun { String { &space, 1 } });
+    return fontCascade.widthOfSpaceString();
 }
 
 InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)

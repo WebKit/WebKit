@@ -135,6 +135,10 @@ public:
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
     static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);
+    float widthOfSpaceString() const
+    {
+        return width(TextRun { String { &space, 1 } });
+    }
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
@@ -164,7 +168,6 @@ public:
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
     const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
-    float spaceWidth() const { return primaryFont().spaceWidth() + m_letterSpacing; }
     float tabWidth(const Font&, const TabSize&, float) const;
     float tabWidth(const TabSize& tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }
     bool hasValidAverageCharWidth() const;
