@@ -53,7 +53,6 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
-#import "TextRecognitionUtilities.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "UIGamepadProvider.h"
 #import "UndoOrRedo.h"
@@ -186,7 +185,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 namespace WebKit {
 
-VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
+CocoaImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
 {
     if (!m_imageAnalyzer) {
         m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
@@ -196,7 +195,7 @@ VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
     return m_imageAnalyzer.get();
 }
 
-static RetainPtr<VKImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
+static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
 {
     auto request = createImageAnalyzerRequest(image, types);
     [request setImageURL:imageURL];
@@ -228,7 +227,7 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
 
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
     auto startTime = MonotonicTime::now();
-    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (VKImageAnalysis *analysis, NSError *) mutable {
+    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
         callOnMainRunLoop([completion = WTFMove(completion), result = makeTextRecognitionResult(analysis), startTime] () mutable {
             RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
             completion(WTFMove(result));
@@ -247,7 +246,7 @@ void WebViewImpl::computeHasImageAnalysisResults(const URL& imageURL, ShareableB
     auto analysisType = type == ImageAnalysisType::VisualSearch ? VKAnalysisTypeVisualSearch : VKAnalysisTypeText;
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], analysisType);
     auto startTime = MonotonicTime::now();
-    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime, analysisType] (VKImageAnalysis *analysis, NSError *) mutable {
+    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime, analysisType] (CocoaImageAnalysis *analysis, NSError *) mutable {
         BOOL result = [analysis hasResultsForAnalysisTypes:analysisType];
         CFRunLoopPerformBlock(CFRunLoopGetMain(), (__bridge CFStringRef)NSEventTrackingRunLoopMode, makeBlockPtr([completion = WTFMove(completion), result, analysisType, startTime] () mutable {
             RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found %s? %d)", (MonotonicTime::now() - startTime).milliseconds(), analysisType == VKAnalysisTypeVisualSearch ? "visual search results" : "text", result);

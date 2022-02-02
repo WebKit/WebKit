@@ -29,6 +29,7 @@
 
 #include "PDFPluginIdentifier.h"
 #include "ShareableBitmap.h"
+#include "TextRecognitionUtilities.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
@@ -55,7 +56,6 @@ OBJC_CLASS NSPopover;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
-OBJC_CLASS VKImageAnalyzer;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
@@ -741,7 +741,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    VKImageAnalyzer *ensureImageAnalyzer();
+    PlatformImageAnalyzer *ensureImageAnalyzer();
 #endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
@@ -886,7 +886,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<WorkQueue> m_imageAnalyzerQueue;
-    RetainPtr<VKImageAnalyzer> m_imageAnalyzer;
+    RetainPtr<PlatformImageAnalyzer> m_imageAnalyzer;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

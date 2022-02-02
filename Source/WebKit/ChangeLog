@@ -1,3 +1,43 @@
+2022-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust some Live Text code to only use VKC-prefixed VisionKit classes if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        https://bugs.webkit.org/show_bug.cgi?id=235991
+
+        Reviewed by Megan Gardner.
+
+        Rather than creating VKCImageAnalysis/VKCImageAnalyzer/VKCImageAnalyzerRequest and statically casting to
+        VKImageAnalysis/VKImageAnalyzer/VKImageAnalyzerRequest respectively, add a typedef that abstracts away the
+        differing VK/VKC prefixes behind CocoaImage(Analysis|Analyzer|AnalyzerRequest), and use this typedef everywhere
+        we currently use the VK-prefixed types.
+
+        Since the VK-prefixed classes are being entirely removed and replaced with VKC-prefixed classes at some point,
+        this allows us to be consistent (at least, within a given OS version) about the VisionKit object types we're
+        creating and passing around in Live Text code.
+
+        No change in behavior.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::createImageAnalyzer):
+        (WebKit::createImageAnalyzerRequest):
+        (WebKit::makeTextRecognitionResult):
+        (WebKit::hasVisionKitCorePrefixedClasses): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::ensureImageAnalyzer):
+        (WebKit::createImageAnalyzerRequest):
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (WebKit::WebViewImpl::computeHasImageAnalysisResults):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalyzer]):
+        (-[WKContentView createImageAnalyzerRequest:image:imageURL:]):
+        (-[WKContentView createImageAnalyzerRequest:image:]):
+        (-[WKContentView _updateContextMenuForMachineReadableCodeForImageAnalysis:]):
+        (-[WKContentView requestTextRecognition:imageData:identifier:completionHandler:]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+        (-[WKContentView _completeImageAnalysisRequestForContextMenu:requestIdentifier:hasTextResults:]):
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
         RealtimeVideoSource::adaptVideoSample should not create IOSurfaces when running in WebProcess
