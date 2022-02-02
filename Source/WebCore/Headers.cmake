@@ -738,6 +738,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/messageports/MessagePortChannelProvider.h
     dom/messageports/MessagePortChannelRegistry.h
     dom/messageports/MessageWithMessagePorts.h
+    dom/messageports/TransferredMessagePort.h
 
     editing/CharacterRange.h
     editing/ClipboardAccessPolicy.h

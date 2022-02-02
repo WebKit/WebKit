@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MessageWithMessagePorts.h"
+#pragma once
+
+#include "MessagePortIdentifier.h"
 
 namespace WebCore {
+
+// When a message port is transferred, it is represented by a pair of identifiers.
+// The first identifier is the port being transferred and the second is its remote port.
+using TransferredMessagePort = std::pair<MessagePortIdentifier, MessagePortIdentifier>;
 
 } // namespace WebCore

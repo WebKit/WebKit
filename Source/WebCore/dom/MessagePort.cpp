@@ -149,7 +149,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
         return { };
     ASSERT(scriptExecutionContext());
 
-    TransferredMessagePortArray transferredPorts;
+    Vector<TransferredMessagePort> transferredPorts;
     // Make sure we aren't connected to any of the passed-in ports.
     if (!ports.isEmpty()) {
         for (auto& port : ports) {
@@ -373,10 +373,10 @@ MessagePort* MessagePort::locallyEntangledPort() const
     return nullptr;
 }
 
-ExceptionOr<TransferredMessagePortArray> MessagePort::disentanglePorts(Vector<RefPtr<MessagePort>>&& ports)
+ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector<RefPtr<MessagePort>>&& ports)
 {
     if (ports.isEmpty())
-        return TransferredMessagePortArray { };
+        return Vector<TransferredMessagePort> { };
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
     HashSet<MessagePort*> portSet;
@@ -386,26 +386,21 @@ ExceptionOr<TransferredMessagePortArray> MessagePort::disentanglePorts(Vector<Re
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.
-    TransferredMessagePortArray portArray;
-    portArray.reserveInitialCapacity(ports.size());
-    for (auto& port : ports)
-        portArray.uncheckedAppend(port->disentangle());
-
-    return portArray;
+    return WTF::map(ports, [](auto& port) {
+        return port->disentangle();
+    });
 }
 
-Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& context, TransferredMessagePortArray&& transferredPorts)
+Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& context, Vector<TransferredMessagePort>&& transferredPorts)
 {
     LOG(MessagePorts, "Entangling %zu transferred ports to ScriptExecutionContext %s (%p)", transferredPorts.size(), context.url().string().utf8().data(), &context);
 
     if (transferredPorts.isEmpty())
         return { };
 
-    Vector<RefPtr<MessagePort>> ports;
-    ports.reserveInitialCapacity(transferredPorts.size());
-    for (auto& transferredPort : transferredPorts)
-        ports.uncheckedAppend(MessagePort::entangle(context, WTFMove(transferredPort)));
-    return ports;
+    return WTF::map(transferredPorts, [&](auto& port) -> RefPtr<MessagePort> {
+        return MessagePort::entangle(context, WTFMove(port));
+    });
 }
 
 Ref<MessagePort> MessagePort::entangle(ScriptExecutionContext& context, TransferredMessagePort&& transferredPort)

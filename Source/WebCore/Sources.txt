@@ -1077,7 +1077,6 @@ dom/messageports/MessagePortChannel.cpp
 dom/messageports/MessagePortChannelProvider.cpp
 dom/messageports/MessagePortChannelProviderImpl.cpp
 dom/messageports/MessagePortChannelRegistry.cpp
-dom/messageports/MessageWithMessagePorts.cpp
 dom/messageports/WorkerMessagePortChannelProvider.cpp
 domjit/DOMJITHelpers.cpp
 domjit/JSDocumentDOMJIT.cpp
