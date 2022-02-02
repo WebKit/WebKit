@@ -1266,7 +1266,6 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     
 bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 {
-    AXTRACE("AccessibilityRenderObject::computeAccessibilityIsIgnored");
 #ifndef NDEBUG
     ASSERT(m_initialized);
 #endif

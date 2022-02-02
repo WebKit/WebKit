@@ -354,7 +354,6 @@ public:
     void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
     void updateNode(AXCoreObject&);
     void updateNodeProperty(const AXCoreObject&, AXPropertyName);
-    void updateSubtree(AXCoreObject&);
     void updateChildren(AXCoreObject&);
 
     double loadingProgress() { return m_loadingProgress; }
@@ -363,7 +362,7 @@ public:
     // Removes the given node leaving all descendants alone.
     void removeNode(AXID);
     // Removes the given node and all its descendants.
-    void removeSubtree(AXID);
+    void removeSubtreeFromNodeMap(AXID);
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
@@ -386,11 +385,11 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
     // Called on main thread.
-    NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, bool attachWrapper);
-    void queueChanges(const NodeChange&, Vector<AXID>&& childrenIDs);
-    Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
-    // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
-    void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs) WTF_REQUIRES_LOCK(m_changeLogLock);
+    NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, bool attachWrapper = true, bool updateNodeMap = true);
+    void collectNodeChangesForSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&);
+    void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
+    void queueChangesAndRemovals(const Vector<NodeChange>&, const Vector<AXID>& = { });
+    Vector<NodeChange> nodeAncestryChanges(AXCoreObject&);
 
     AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };

@@ -517,13 +517,16 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
 {
     TextStream::GroupScope groupScope(stream);
     stream << "objectID " << object.objectID();
-    stream.dumpProperty("identifierAttribute", object.identifierAttribute());
     auto role = object.roleValue();
     stream.dumpProperty("roleValue", role);
 
+    auto* parent = object.parentObjectUnignored();
+    stream.dumpProperty("parentObject", parent ? parent->objectID() : AXID());
+
+    stream.dumpProperty("identifierAttribute", object.identifierAttribute());
+
     auto* objectWithInterestingHTML = role == AccessibilityRole::Button ? // Add here other roles of interest.
         &object : nullptr;
-    auto* parent = object.parentObject();
     if (role == AccessibilityRole::StaticText && parent)
         objectWithInterestingHTML = parent;
     if (objectWithInterestingHTML)
@@ -531,8 +534,6 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
 
     stream.dumpProperty("address", &object);
     stream.dumpProperty("wrapper", object.wrapper());
-
-    stream.dumpProperty("parentObject", parent ? parent->objectID() : AXID());
 
     return stream;
 }
