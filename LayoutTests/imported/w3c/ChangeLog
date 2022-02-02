@@ -1,3 +1,22 @@
+2022-02-02  Asumu Takikawa  <asumu@igalia.com>
+
+        Unmute link errors for ES module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=235925
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjust test expectations for error handling changes.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-2-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-3-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-3-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7-expected.txt:
+
 2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
 
         WPT: Import WebAssembly CSP tests

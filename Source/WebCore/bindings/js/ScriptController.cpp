@@ -212,7 +212,8 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
     if (evaluationException) {
         // FIXME: Give a chance to dump the stack trace if the "crossorigin" attribute allows.
         // https://bugs.webkit.org/show_bug.cgi?id=164539
-        reportException(&lexicalGlobalObject, evaluationException, nullptr);
+        constexpr bool fromModule = true;
+        reportException(&lexicalGlobalObject, evaluationException, nullptr, fromModule);
         return jsUndefined();
     }
     return returnValue;
