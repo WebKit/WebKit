@@ -1,3 +1,17 @@
+2022-02-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r288914.
+        https://bugs.webkit.org/show_bug.cgi?id=235998
+
+        Broke some layout tests
+
+        Reverted changeset:
+
+        "[LFC][IFC] Using Fontcascade::spaceWidth to subtract the
+        trailing space width may result in incorrect layout"
+        https://bugs.webkit.org/show_bug.cgi?id=235937
+        https://commits.webkit.org/r288914
+
 2022-02-01  Ben Nham  <nham@apple.com>
 
         Forward messages from NetworkProcess to webpushd
