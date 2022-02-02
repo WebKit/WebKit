@@ -27,9 +27,6 @@
 
 namespace WebCore {
 
-enum class WorkerType : uint8_t {
-    Classic,
-    Module,
-};
+enum class WorkerType : bool { Classic, Module };
 
 } // namespace WebCore

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
-enum class WorkerType : uint8_t;
+enum class WorkerType : bool;
 
 struct ServiceWorkerRegistrationOptions {
     String scope;

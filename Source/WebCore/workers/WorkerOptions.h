@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,36 @@ struct WorkerOptions {
     WorkerType type { WorkerType::Classic };
     FetchRequestCredentials credentials { FetchRequestCredentials::SameOrigin };
     String name;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<WorkerOptions> decode(Decoder&);
 };
+
+template<class Encoder>
+void WorkerOptions::encode(Encoder& encoder) const
+{
+    encoder << type << credentials << name;
+}
+
+template<class Decoder>
+std::optional<WorkerOptions> WorkerOptions::decode(Decoder& decoder)
+{
+    std::optional<WorkerType> workerType;
+    decoder >> workerType;
+    if (!workerType)
+        return std::nullopt;
+
+    std::optional<FetchRequestCredentials> credentials;
+    decoder >> credentials;
+    if (!credentials)
+        return std::nullopt;
+
+    std::optional<String> name;
+    decoder >> name;
+    if (!name)
+        return std::nullopt;
+
+    return { { *workerType, *credentials, WTFMove(*name) } };
+}
 
 } // namespace WebCore

@@ -53,7 +53,7 @@ struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
-enum class WorkerType : uint8_t;
+enum class WorkerType : bool;
 
 class SWServerWorker : public RefCounted<SWServerWorker> {
 public:
