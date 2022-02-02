@@ -478,10 +478,10 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
         // will keep us from computing glyph bounds in nearly all cases.
         bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
         int baselineShift = lineBox->verticalPositionForBox(run->box(), verticalPositionCache);
-        int rootDescent = includeRootLine ? font.fontMetricsOfPrimaryFont().descent() : 0;
-        int rootAscent = includeRootLine ? font.fontMetricsOfPrimaryFont().ascent() : 0;
-        int boxAscent = font.fontMetricsOfPrimaryFont().ascent() - baselineShift;
-        int boxDescent = font.fontMetricsOfPrimaryFont().descent() + baselineShift;
+        int rootDescent = includeRootLine ? font.metricsOfPrimaryFont().descent() : 0;
+        int rootAscent = includeRootLine ? font.metricsOfPrimaryFont().ascent() : 0;
+        int boxAscent = font.metricsOfPrimaryFont().ascent() - baselineShift;
+        int boxDescent = font.metricsOfPrimaryFont().descent() + baselineShift;
         if (boxAscent > rootDescent ||  boxDescent > rootAscent)
             glyphOverflow.computeBounds = true; 
     }

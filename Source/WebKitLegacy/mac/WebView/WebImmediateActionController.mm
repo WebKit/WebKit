@@ -523,7 +523,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     }
 
     auto style = range.start.container->renderStyle();
-    float scaledDescent = style ? style->fontMetricsOfPrimaryFont().descent() * frame->page()->pageScaleFactor() : 0;
+    float scaledDescent = style ? style->metricsOfPrimaryFont().descent() * frame->page()->pageScaleFactor() : 0;
 
     auto quads = WebCore::RenderObject::absoluteTextQuads(range);
     if (quads.isEmpty()) {

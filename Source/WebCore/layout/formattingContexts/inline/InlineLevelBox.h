@@ -70,7 +70,7 @@ public:
     VerticalAlignment verticalAlign() const;
     InlineLayoutUnit preferredLineHeight() const;
     bool isPreferredLineHeightFontMetricsBased() const;
-    const FontMetrics& primaryfontMetricsOfPrimaryFont() const;
+    const FontMetrics& primarymetricsOfPrimaryFont() const;
     InlineLayoutUnit fontSize() const;
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
@@ -154,7 +154,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().fontMetricsOfPrimaryFont(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
@@ -172,7 +172,7 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
     // FIXME: Remove integral flooring when legacy line layout stops using it.
     if (isPreferredLineHeightFontMetricsBased())
-        return primaryfontMetricsOfPrimaryFont().lineSpacing();
+        return primarymetricsOfPrimaryFont().lineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
         return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
@@ -195,7 +195,7 @@ inline bool InlineLevelBox::isPreferredLineHeightFontMetricsBased() const
     return m_style.lineHeight.isNegative();
 }
 
-inline const FontMetrics& InlineLevelBox::primaryfontMetricsOfPrimaryFont() const
+inline const FontMetrics& InlineLevelBox::primarymetricsOfPrimaryFont() const
 {
     return m_style.primaryFontMetrics;
 }

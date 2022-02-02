@@ -2496,7 +2496,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
     }
 
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
-    const FontMetrics& fontMetrics = style.fontMetricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
     return LayoutUnit { fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2 }.toInt();
 }
 
@@ -2548,7 +2548,7 @@ std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lin
     }
 
     if (!haveNormalFlowChild && hasLineIfEmpty()) {
-        auto& fontMetrics = firstLineStyle().fontMetricsOfPrimaryFont();
+        auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
         return LayoutUnit { LayoutUnit(fontMetrics.ascent()
             + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
             + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };

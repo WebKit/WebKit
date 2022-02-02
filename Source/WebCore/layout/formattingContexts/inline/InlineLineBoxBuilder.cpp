@@ -179,7 +179,7 @@ void LineBoxBuilder::setVerticalGeometryForLineBreakBox(InlineLevelBox& lineBrea
     ASSERT(lineBreakBox.isLineBreakBox());
     ASSERT(parentInlineBox.isInlineBox());
 
-    auto& fontMetrics = parentInlineBox.primaryfontMetricsOfPrimaryFont();
+    auto& fontMetrics = parentInlineBox.primarymetricsOfPrimaryFont();
     auto preferredLineHeight = parentInlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(parentInlineBox.preferredLineHeight());
     auto heightAndLayoutBounds = computedHeightAndLayoutBounds(fontMetrics, preferredLineHeight);
 
@@ -194,7 +194,7 @@ void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inli
     // We need floor/ceil to match legacy layout integral positioning.
     ASSERT(inlineBox.isInlineBox());
 
-    auto& fontMetrics = inlineBox.primaryfontMetricsOfPrimaryFont();
+    auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
     auto preferredLineHeight = inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight());
     auto heightAndLayoutBounds = computedHeightAndLayoutBounds(fontMetrics, preferredLineHeight);
 

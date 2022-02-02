@@ -74,7 +74,7 @@ static int baselinePositionForRenderObject(RenderObject* renderObject)
     // FIXME: This implementation of baselinePosition originates from RenderObject.cpp and was
     // removed in r70072. The implementation looks incorrect though, because this is not the
     // baseline of the underlying RenderObject, but of the AccessibilityRenderObject.
-    const FontMetrics& fontMetrics = renderObject->firstLineStyle().fontMetricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = renderObject->firstLineStyle().metricsOfPrimaryFont();
     return fontMetrics.ascent() + (renderObject->firstLineStyle().computedLineHeight() - fontMetrics.height()) / 2;
 }
 

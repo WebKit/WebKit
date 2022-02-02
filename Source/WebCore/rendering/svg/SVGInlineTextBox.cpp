@@ -104,7 +104,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     ASSERT(scalingFactor);
 
     const FontCascade& scaledFont = renderer().scaledFont();
-    const FontMetrics& scaledFontMetrics = scaledFont.fontMetricsOfPrimaryFont();
+    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
     FloatPoint textOrigin(fragment.x, fragment.y);
     if (scalingFactor != 1)
         textOrigin.scale(scalingFactor);
@@ -511,7 +511,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
 
     FloatPoint decorationOrigin(fragment.x, fragment.y);
     float width = fragment.width;
-    const FontMetrics& scaledFontMetrics = scaledFont.fontMetricsOfPrimaryFont();
+    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
 
     GraphicsContextStateSaver stateSaver(context);
     if (scalingFactor != 1) {
@@ -546,7 +546,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
         textSize.scale(scalingFactor);
     }
 
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.fontMetricsOfPrimaryFont().floatAscent()), textSize);
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().floatAscent()), textSize);
 
     GraphicsContext* usedContext = &context;
     do {
@@ -613,7 +613,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
 
-    float baseline = renderer().scaledFont().fontMetricsOfPrimaryFont().floatAscent() / scalingFactor;
+    float baseline = renderer().scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor;
 
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
@@ -648,7 +648,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
                 float scalingFactor = renderer().scalingFactor();
                 ASSERT(scalingFactor);
                 
-                float baseline = renderer().scaledFont().fontMetricsOfPrimaryFont().floatAscent() / scalingFactor;
+                float baseline = renderer().scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor;
 
                 AffineTransform fragmentTransform;
                 for (auto& fragment : m_textFragments) {

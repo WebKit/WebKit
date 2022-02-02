@@ -204,7 +204,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 // Paint text-shadow, underline, overline
 void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
-    const auto& fontMetrics = m_lineStyle.fontMetricsOfPrimaryFont();
+    const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
     float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics);
     FloatPoint localOrigin = boxOrigin;
 
@@ -279,7 +279,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         if (m_decorations.contains(TextDecorationLine::Underline)) {
             float textDecorationBaseFontSize = 16;
             auto defaultGap = m_lineStyle.computedFontSize() / textDecorationBaseFontSize;
-            float offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.textUnderlineOffset(), m_lineStyle.fontMetricsOfPrimaryFont(), m_textBox, defaultGap);
+            float offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.textUnderlineOffset(), m_lineStyle.metricsOfPrimaryFont(), m_textBox, defaultGap);
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
             rect.move(0, offset + wavyOffset);
@@ -310,13 +310,13 @@ void TextDecorationPainter::paintForegroundDecorations(const FloatPoint& boxOrig
     if (!m_decorations.contains(TextDecorationLine::LineThrough))
         return;
 
-    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.fontMetricsOfPrimaryFont());
+    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.metricsOfPrimaryFont());
     paintLineThrough(m_styles.linethroughColor, textDecorationThickness, boxOrigin);
 }
 
 void TextDecorationPainter::paintLineThrough(const Color& color, float thickness, const FloatPoint& localOrigin)
 {
-    const auto& fontMetrics = m_lineStyle.fontMetricsOfPrimaryFont();
+    const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
     FloatRect rect(localOrigin, FloatSize(m_width, thickness));
     float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
     auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;

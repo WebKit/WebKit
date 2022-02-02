@@ -378,7 +378,7 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle* ite
     if (actualAlignment == TextAlignMode::Start || actualAlignment == TextAlignMode::Justify)
         actualAlignment = itemStyle->isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
 
-    LayoutSize offset = LayoutSize(0, itemFont.fontMetricsOfPrimaryFont().ascent());
+    LayoutSize offset = LayoutSize(0, itemFont.metricsOfPrimaryFont().ascent());
     if (actualAlignment == TextAlignMode::Right || actualAlignment == TextAlignMode::WebKitRight) {
         float textWidth = itemFont.width(textRun);
         offset.setWidth(itemBoudingBox.width() - textWidth - optionsSpacingHorizontal);
@@ -704,7 +704,7 @@ void RenderListBox::scrollTo(int newOffset)
 
 LayoutUnit RenderListBox::itemHeight() const
 {
-    return style().fontMetricsOfPrimaryFont().height() + rowSpacing;
+    return style().metricsOfPrimaryFont().height() + rowSpacing;
 }
 
 int RenderListBox::verticalScrollbarWidth() const

@@ -210,7 +210,7 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const FontCascade& font = style().fontCascade();
-        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.fontMetricsOfPrimaryFont().height(), maxAltTextHeight));
+        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -532,7 +532,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 String text = document().displayStringModifiedByEncoding(m_altText);
                 context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
                 const FontCascade& font = style().fontCascade();
-                const FontMetrics& fontMetrics = font.fontMetricsOfPrimaryFont();
+                const FontMetrics& fontMetrics = font.metricsOfPrimaryFont();
                 LayoutUnit ascent = fontMetrics.ascent();
                 LayoutPoint altTextOffset = paintOffset;
                 altTextOffset.move(leftBorder + leftPad + (paddingWidth / 2) - missingImageBorderWidth, topBorder + topPad + ascent + (paddingHeight / 2) - missingImageBorderWidth);

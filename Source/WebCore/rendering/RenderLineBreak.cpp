@@ -80,7 +80,7 @@ LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direc
 LayoutUnit RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
-    const FontMetrics& fontMetrics = style.fontMetricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
     return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
 }
 

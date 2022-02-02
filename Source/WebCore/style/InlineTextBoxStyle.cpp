@@ -173,12 +173,12 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     if (decoration.isEmpty())
         return GlyphOverflow();
 
-    float strokeThickness = lineStyle.textDecorationThickness().resolve(lineStyle.computedFontSize(), lineStyle.fontMetricsOfPrimaryFont());
+    float strokeThickness = lineStyle.textDecorationThickness().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
     WavyStrokeParameters wavyStrokeParameters;
     float wavyOffset = 0;
         
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
-    float height = lineStyle.fontCascade().fontMetricsOfPrimaryFont().floatHeight();
+    float height = lineStyle.fontCascade().metricsOfPrimaryFont().floatHeight();
     GlyphOverflow overflowResult;
     
     if (decorationStyle == TextDecorationStyle::Wavy) {
@@ -195,7 +195,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         int underlineOffset = 1;
         float textDecorationBaseFontSize = 16;
         auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
-        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.textUnderlineOffset(), lineStyle.fontMetricsOfPrimaryFont(), textRun, defaultGap);
+        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.textUnderlineOffset(), lineStyle.metricsOfPrimaryFont(), textRun, defaultGap);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             overflowResult.extendBottom(underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
             overflowResult.extendTop(-(underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));
@@ -206,7 +206,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
     if (decoration & TextDecorationLine::Overline) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
-        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetricsOfPrimaryFont());
+        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
         rect.move(0, autoTextDecorationThickness - strokeThickness - wavyOffset);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             FloatBoxExtent wavyExpansion;
@@ -219,8 +219,8 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
     if (decoration & TextDecorationLine::LineThrough) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
-        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetricsOfPrimaryFont());
-        auto center = 2 * lineStyle.fontMetricsOfPrimaryFont().floatAscent() / 3 + autoTextDecorationThickness / 2;
+        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
+        auto center = 2 * lineStyle.metricsOfPrimaryFont().floatAscent() / 3 + autoTextDecorationThickness / 2;
         rect.move(0, center - strokeThickness / 2);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             FloatBoxExtent wavyExpansion;

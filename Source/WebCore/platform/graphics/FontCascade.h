@@ -163,7 +163,7 @@ public:
 
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
-    const FontMetrics& fontMetricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
+    const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
     float spaceWidth() const { return primaryFont().spaceWidth() + m_letterSpacing; }
     float tabWidth(const Font&, const TabSize&, float) const;
     float tabWidth(const TabSize& tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }

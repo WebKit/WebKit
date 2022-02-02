@@ -463,7 +463,7 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
     float scalingFactor = queryData->textRenderer->scalingFactor();
     ASSERT(scalingFactor);
 
-    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->scaledFont().fontMetricsOfPrimaryFont().floatAscent() / scalingFactor));
+    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor));
 
     if (startPosition) {
         SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, startPosition);

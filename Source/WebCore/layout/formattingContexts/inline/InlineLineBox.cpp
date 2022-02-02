@@ -54,7 +54,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     ASSERT(run.isText() || run.isSoftLineBreak());
     auto* parentInlineBox = &inlineLevelBoxForLayoutBox(run.layoutBox().parent());
     ASSERT(parentInlineBox->isInlineBox());
-    auto& fontMetrics = parentInlineBox->primaryfontMetricsOfPrimaryFont();
+    auto& fontMetrics = parentInlineBox->primarymetricsOfPrimaryFont();
     auto runlogicalTop = parentInlineBox->logicalTop() + parentInlineBox->baseline() - fontMetrics.ascent();
 
     while (parentInlineBox != &m_rootInlineBox && !parentInlineBox->hasLineBoxRelativeAlignment()) {

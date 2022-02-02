@@ -324,7 +324,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     float emphasisMarkOffset = 0;
     const AtomString& emphasisMark = m_emphasisMarkExistsAndIsAbove ? m_style.textEmphasisMarkString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.fontMetricsOfPrimaryFont().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter { context };
     textPainter.setFont(font);
@@ -480,7 +480,7 @@ void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& under
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = m_style.fontMetricsOfPrimaryFont().ascent();
+    int baseline = m_style.metricsOfPrimaryFont().ascent();
     if (underline.thick && textBox().logicalHeight() - baseline >= 2)
         lineThickness = 2;
 
@@ -590,7 +590,7 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
 FloatRect TextBoxPainter::calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
 {
     auto& font = textBox->fontCascade();
-    auto ascent = font.fontMetricsOfPrimaryFont().ascent();
+    auto ascent = font.metricsOfPrimaryFont().ascent();
     auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
     auto y = ascent + 0.11035 * fontSize;
     auto height = 0.13247 * fontSize;
@@ -621,7 +621,7 @@ const FontCascade& TextBoxPainter::fontCascade() const
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().fontMetricsOfPrimaryFont().ascent() };
+    FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().metricsOfPrimaryFont().ascent() };
     if (textBox().isCombinedText()) {
         if (auto newOrigin = downcast<RenderCombineText>(m_renderer).computeTextOrigin(paintRect))
             textOrigin = newOrigin.value();
