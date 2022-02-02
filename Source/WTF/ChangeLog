@@ -1,3 +1,15 @@
+2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The default values for a couple of Live Text-related features should respect system feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=235980
+        rdar://88349726
+
+        Reviewed by Tim Horton.
+
+        Add a new feature flag, and add default values for both features. See WebKit/ChangeLog for more details.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Add setting to toggle PDF.js viewer

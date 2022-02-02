@@ -28,8 +28,8 @@
 
 #if PLATFORM(COCOA)
 
+#import "TextRecognitionUtilities.h"
 #import <Foundation/NSBundle.h>
-
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -72,6 +72,20 @@ bool defaultScrollAnimatorEnabled()
 }
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS)
+
+bool defaultTextRecognitionEnhancementsEnabled()
+{
+    return textRecognitionEnhancementsSystemFeatureEnabled();
+}
+
+bool defaultImageAnalysisQueueEnabled()
+{
+    return imageAnalysisQueueSystemFeatureEnabled();
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
 } // namespace WebKit
 
-#endif
+#endif // PLATFORM(COCOA)

@@ -139,25 +139,29 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
 #include <WebKitAdditions/TextRecognitionUtilitiesAdditions.mm>
 #else
 
-static bool isLiveTextEnabled()
+bool textRecognitionEnhancementsSystemFeatureEnabled()
 {
-    return true;
-}
-
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void requestImageAnalysisWithIdentifier(VKImageAnalyzer *, const String&, CGImageRef, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
-{
-    completion({ });
+    return true;
+#else
+    return false;
+#endif
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+bool imageAnalysisQueueSystemFeatureEnabled()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return true;
+#else
+    return false;
+#endif
+}
 
 #endif
 
 bool isLiveTextAvailableAndEnabled()
 {
-    return PAL::isVisionKitCoreFrameworkAvailable() && isLiveTextEnabled();
+    return PAL::isVisionKitCoreFrameworkAvailable();
 }
 
 } // namespace WebKit

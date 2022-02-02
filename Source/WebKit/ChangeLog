@@ -1,3 +1,28 @@
+2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The default values for a couple of Live Text-related features should respect system feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=235980
+        rdar://88349726
+
+        Reviewed by Tim Horton.
+
+        Split the extant `TextRecognitionEnhancements` feature flag into two flags: one to control enablement of the
+        "image analysis queue", and another to control Live Text behaviors (still referred to as "text recognition
+        enhancements"). Add WebKitAdditions integration points to allow the default values for these two flags to read
+        from system feature flags.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::textRecognitionEnhancementsSystemFeatureEnabled):
+        (WebKit::imageAnalysisQueueSystemFeatureEnabled):
+        (WebKit::isLiveTextAvailableAndEnabled):
+        (WebKit::isLiveTextEnabled): Deleted.
+        (WebKit::requestImageAnalysisWithIdentifier): Deleted.
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        (WebKit::defaultTextRecognitionEnhancementsEnabled):
+        (WebKit::defaultImageAnalysisQueueEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2022-02-01  Tim Nguyen  <ntim@apple.com>
 
         Add setting to toggle PDF.js viewer

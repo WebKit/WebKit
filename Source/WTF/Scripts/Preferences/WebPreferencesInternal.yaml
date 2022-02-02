@@ -358,6 +358,20 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
+ImageAnalysisQueueEnabled:
+  type: bool
+  humanReadableName: "Image analysis queue"
+  humanReadableDescription: "Enable image analysis queue"
+  condition: ENABLE(IMAGE_ANALYSIS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultImageAnalysisQueueEnabled()
+
 InputTypeColorEnabled:
   type: bool
   humanReadableName: "Color Inputs"
@@ -837,7 +851,7 @@ TextRecognitionEnhancementsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: defaultTextRecognitionEnhancementsEnabled()
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:

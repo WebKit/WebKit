@@ -38,6 +38,9 @@ struct TextRecognitionResult;
 namespace WebKit {
 
 bool isLiveTextAvailableAndEnabled();
+bool textRecognitionEnhancementsSystemFeatureEnabled();
+bool imageAnalysisQueueSystemFeatureEnabled();
+
 WebCore::TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *);
 
 // FIXME: Replace the return types of these helper functions with VKCImageAnalyzer and VKCImageAnalyzerRequest, respectively.

@@ -115,4 +115,9 @@ bool defaultMediaSessionCoordinatorEnabled();
 bool defaultScreenCaptureKitEnabled();
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS)
+bool defaultTextRecognitionEnhancementsEnabled();
+bool defaultImageAnalysisQueueEnabled();
+#endif
+
 } // namespace WebKit
