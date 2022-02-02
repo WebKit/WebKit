@@ -32,9 +32,9 @@
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
-#include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJob.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerScriptLoader.h>
 
 namespace WebKit {
@@ -44,7 +44,7 @@ using namespace WebCore;
 void ServiceWorkerSoftUpdateLoader::start(NetworkSession* session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
 {
     if (!session)
-        return completionHandler(serviceWorkerFetchError(jobData.identifier(), ServiceWorkerRegistrationKey { jobData.registrationKey() }, ResourceError { ResourceError::Type::Cancellation }));
+        return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }));
     auto loader = std::unique_ptr<ServiceWorkerSoftUpdateLoader>(new ServiceWorkerSoftUpdateLoader(*session, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
     session->addSoftUpdateLoader(WTFMove(loader));
 }
@@ -94,7 +94,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
 ServiceWorkerSoftUpdateLoader::~ServiceWorkerSoftUpdateLoader()
 {
     if (m_completionHandler)
-        m_completionHandler(serviceWorkerFetchError(m_jobData.identifier(), ServiceWorkerRegistrationKey { m_jobData.registrationKey() }, ResourceError { ResourceError::Type::Cancellation }));
+        m_completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }));
 }
 
 void ServiceWorkerSoftUpdateLoader::fail(ResourceError&& error)
@@ -102,7 +102,7 @@ void ServiceWorkerSoftUpdateLoader::fail(ResourceError&& error)
     if (!m_completionHandler)
         return;
 
-    m_completionHandler(serviceWorkerFetchError(m_jobData.identifier(), ServiceWorkerRegistrationKey { m_jobData.registrationKey() }, WTFMove(error)));
+    m_completionHandler(workerFetchError(WTFMove(error)));
     didComplete();
 }
 
@@ -196,7 +196,7 @@ void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadM
 {
     if (m_decoder)
         m_script.append(m_decoder->flush());
-    m_completionHandler({ m_jobData.identifier(), m_jobData.registrationKey(), ScriptBuffer { m_script.toString() }, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
+    m_completionHandler({ ScriptBuffer { m_script.toString() }, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
     didComplete();
 }
 

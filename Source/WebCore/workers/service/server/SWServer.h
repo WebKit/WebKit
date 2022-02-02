@@ -57,15 +57,15 @@ class SWOriginStore;
 class SWServerJobQueue;
 class SWServerRegistration;
 class SWServerToContextConnection;
+class Timer;
 enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 struct ExceptionData;
 struct MessageWithMessagePorts;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
-struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
-class Timer;
+struct WorkerFetchResult;
 
 class SWServer : public CanMakeWeakPtr<SWServer> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -100,7 +100,7 @@ public:
     protected:
         WEBCORE_EXPORT Connection(SWServer&, Identifier);
 
-        WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
+        WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const WorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
@@ -125,7 +125,7 @@ public:
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
-    using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(const ServiceWorkerFetchResult&)>&&)>;
+    using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(const WorkerFetchResult&)>&&)>;
     using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&, std::optional<ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&)>;
     using AppBoundDomainsCallback = Function<void(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&)>;
     WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, SoftUpdateCallback&&, CreateContextConnectionCallback&&, AppBoundDomainsCallback&&);
@@ -231,7 +231,7 @@ public:
 private:
     void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, CompletionHandler<void(bool)>&&);
 
-    void scriptFetchFinished(const ServiceWorkerFetchResult&);
+    void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const WorkerFetchResult&);
 
     void didResolveRegistrationPromise(Connection*, const ServiceWorkerRegistrationKey&);
 

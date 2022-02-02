@@ -33,10 +33,10 @@
 #include "MessageEvent.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerContainer.h"
-#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
+#include "WorkerFetchResult.h"
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
@@ -115,7 +115,7 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
         job.startScriptFetch(cachePolicy);
     });
     if (!isPosted)
-        finishFetchingScriptInServer(serviceWorkerFetchError({ serverConnectionIdentifier(), jobIdentifier }, ServiceWorkerRegistrationKey { registrationKey}, ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
+        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, registrationKey, workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
 }
 
 

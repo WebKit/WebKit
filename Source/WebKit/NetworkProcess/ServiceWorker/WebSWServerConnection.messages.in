@@ -27,7 +27,7 @@ messages -> WebSWServerConnection NotRefCounted {
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
     ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
 
-    FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
+    FinishFetchingScriptInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, struct WebCore::WorkerFetchResult result)
     AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
     RemoveServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 

@@ -46,7 +46,6 @@ enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 struct ExceptionData;
 struct ServiceWorkerContextData;
-struct ServiceWorkerFetchResult;
 
 enum class IsAppInitiated : bool { No, Yes };
 

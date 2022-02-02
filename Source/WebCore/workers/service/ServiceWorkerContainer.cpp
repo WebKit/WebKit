@@ -52,12 +52,12 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
-#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerThread.h"
+#include "WorkerFetchResult.h"
 #include "WorkerSWClientConnection.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
@@ -497,7 +497,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
     CONTAINER_RELEASE_LOG("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
-    ensureSWClientConnection().finishFetchingScriptInServer(ServiceWorkerFetchResult { job.data().identifier(), job.data().registrationKey(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, { } });
+    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), job.data().registrationKey(), WorkerFetchResult { script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, { } });
 }
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)
@@ -522,7 +522,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
 {
-    ensureSWClientConnection().finishFetchingScriptInServer(serviceWorkerFetchError(job.data().identifier(), ServiceWorkerRegistrationKey { job.data().registrationKey() }, ResourceError { error }));
+    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), job.data().registrationKey(), workerFetchError(ResourceError { error }));
 }
 
 void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)

@@ -30,10 +30,10 @@
 
 #include "SecurityOrigin.h"
 #include "ServiceWorkerClientData.h"
-#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"
+#include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 
@@ -192,11 +192,11 @@ void WorkerSWClientConnection::unregisterServiceWorkerClient(ScriptExecutionCont
     ASSERT_NOT_REACHED();
 }
 
-void WorkerSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
+void WorkerSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
 {
-    callOnMainThread([result = crossThreadCopy(result)]() mutable {
+    callOnMainThread([jobDataIdentifier, registrationKey = crossThreadCopy(registrationKey), result = crossThreadCopy(result)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        connection.finishFetchingScriptInServer(result);
+        connection.finishFetchingScriptInServer(jobDataIdentifier, registrationKey, result);
     });
 }
 

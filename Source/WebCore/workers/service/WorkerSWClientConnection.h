@@ -53,7 +53,7 @@ private:
     bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
     void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) final;
     void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
-    void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) final;
+    void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const WorkerFetchResult&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&) final;
     void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, ServiceWorkerOrClientIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;

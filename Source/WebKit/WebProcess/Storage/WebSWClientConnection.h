@@ -71,7 +71,7 @@ private:
     WebSWClientConnection();
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
-    void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, const WebCore::ServiceWorkerRegistrationKey&, const WebCore::WorkerFetchResult&) final;
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
     void registerServiceWorkerClient(const WebCore::SecurityOrigin& topOrigin, const WebCore::ServiceWorkerClientData&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, const String& userAgent) final;
     void unregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier) final;

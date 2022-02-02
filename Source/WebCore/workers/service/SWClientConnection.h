@@ -52,8 +52,8 @@ struct ExceptionData;
 struct MessageWithMessagePorts;
 struct ServiceWorkerClientData;
 struct ServiceWorkerData;
-struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
+struct WorkerFetchResult;
 
 class SWClientConnection : public RefCounted<SWClientConnection> {
 public:
@@ -84,7 +84,7 @@ public:
     virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) = 0;
     virtual void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) = 0;
 
-    virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
+    virtual void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const WorkerFetchResult&) = 0;
 
     virtual void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback) { callback(); }
     virtual void whenServiceWorkerIsTerminatedForTesting(ServiceWorkerIdentifier, CompletionHandler<void()>&& callback) { callback(); }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,60 +25,42 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
+#include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "ResourceError.h"
 #include "ScriptBuffer.h"
-#include "ServiceWorkerJobDataIdentifier.h"
-#include "ServiceWorkerRegistrationKey.h"
-#include "ServiceWorkerTypes.h"
 
 namespace WebCore {
 
-struct ServiceWorkerFetchResult {
-    ServiceWorkerJobDataIdentifier jobDataIdentifier;
-    ServiceWorkerRegistrationKey registrationKey;
+struct WorkerFetchResult {
     ScriptBuffer script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     String referrerPolicy;
-    ResourceError scriptError;
+    ResourceError error;
 
-    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
+    WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), error.isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ServiceWorkerFetchResult&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, WorkerFetchResult&);
 };
 
-inline ServiceWorkerFetchResult serviceWorkerFetchError(ServiceWorkerJobDataIdentifier jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, ResourceError&& error)
+inline WorkerFetchResult workerFetchError(const ResourceError& error)
 {
-    return { jobDataIdentifier, WTFMove(registrationKey), { }, { }, { }, { }, { }, WTFMove(error) };
+    return { { }, { }, { }, { }, { }, error };
 }
 
 template<class Encoder>
-void ServiceWorkerFetchResult::encode(Encoder& encoder) const
+void WorkerFetchResult::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registrationKey << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << scriptError;
-    encoder << certificateInfo;
+    encoder << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << error << certificateInfo;
 }
 
 template<class Decoder>
-bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult& result)
+bool WorkerFetchResult::decode(Decoder& decoder, WorkerFetchResult& result)
 {
-    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
-    decoder >> jobDataIdentifier;
-    if (!jobDataIdentifier)
-        return false;
-    result.jobDataIdentifier = WTFMove(*jobDataIdentifier);
-    
-    auto registrationKey = ServiceWorkerRegistrationKey::decode(decoder);
-    if (!registrationKey)
-        return false;
-    std::swap(*registrationKey, result.registrationKey);
-
     if (!decoder.decode(result.script))
         return false;
     if (!decoder.decode(result.contentSecurityPolicy))
@@ -87,9 +69,9 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
         return false;
     if (!decoder.decode(result.referrerPolicy))
         return false;
-    if (!decoder.decode(result.scriptError))
+    if (!decoder.decode(result.error))
         return false;
-    
+
     std::optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)
@@ -100,5 +82,3 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

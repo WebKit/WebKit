@@ -1951,6 +1951,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/ScriptBuffer.h
     workers/WorkerAnimationController.h
     workers/WorkerDebuggerProxy.h
+    workers/WorkerFetchResult.h
     workers/WorkerFontLoadRequest.h
     workers/WorkerGlobalScope.h
     workers/WorkerLoaderProxy.h
@@ -1972,7 +1973,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/ServiceWorkerClientType.h
     workers/service/ServiceWorkerContextData.h
     workers/service/ServiceWorkerData.h
-    workers/service/ServiceWorkerFetchResult.h
     workers/service/ServiceWorkerIdentifier.h
     workers/service/ServiceWorkerJob.h
     workers/service/ServiceWorkerJobClient.h

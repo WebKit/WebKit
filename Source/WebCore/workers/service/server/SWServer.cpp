@@ -40,8 +40,8 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerClientType.h"
 #include "ServiceWorkerContextData.h"
-#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
+#include "WorkerFetchResult.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -327,9 +327,9 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
         m_registrationStore->flushChanges(WTFMove(completionHandler));
 }
 
-void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
+void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
 {
-    m_server.scriptFetchFinished(result);
+    m_server.scriptFetchFinished(jobDataIdentifier, registrationKey, result);
 }
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
@@ -503,27 +503,26 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
         request.setPriority(ResourceLoadPriority::Low);
         request.setIsAppInitiated(registration.isAppInitiated());
 
-        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [this, weakThis = WeakPtr { *this }](auto& result) {
-            if (!weakThis)
-                return;
-            scriptFetchFinished(result);
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto& result) {
+            if (weakThis)
+                weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, result);
         });
         return;
     }
     ASSERT_WITH_MESSAGE(connection, "If the connection was lost, this job should have been cancelled");
 }
 
-void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
+void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
 {
-    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", result.jobDataIdentifier.loggingString().utf8().data());
+    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", jobDataIdentifier.loggingString().utf8().data());
 
-    ASSERT(m_connections.contains(result.jobDataIdentifier.connectionIdentifier) || result.jobDataIdentifier.connectionIdentifier == Process::identifier());
+    ASSERT(m_connections.contains(jobDataIdentifier.connectionIdentifier) || jobDataIdentifier.connectionIdentifier == Process::identifier());
 
-    auto jobQueue = m_jobQueues.get(result.registrationKey);
+    auto jobQueue = m_jobQueues.get(registrationKey);
     if (!jobQueue)
         return;
 
-    jobQueue->scriptFetchFinished(result);
+    jobQueue->scriptFetchFinished(jobDataIdentifier, result);
 }
 
 void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, const String& message)

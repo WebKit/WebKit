@@ -45,10 +45,10 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
-#include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerRegistrationData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
+#include <WebCore/WorkerFetchResult.h>
 
 namespace WebKit {
 using namespace PAL;
@@ -78,9 +78,9 @@ void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobD
     });
 }
 
-void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
+void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
 {
-    send(Messages::WebSWServerConnection::FinishFetchingScriptInServer { result });
+    send(Messages::WebSWServerConnection::FinishFetchingScriptInServer { jobDataIdentifier, registrationKey, result });
 }
 
 void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
