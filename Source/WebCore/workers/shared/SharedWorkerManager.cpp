@@ -33,9 +33,9 @@
 #include "PlatformStrategies.h"
 #include "SharedWorker.h"
 #include "SharedWorkerGlobalScope.h"
-#include "SharedWorkerProxy.h"
 #include "SharedWorkerScriptLoader.h"
 #include "SharedWorkerThread.h"
+#include "SharedWorkerThreadProxy.h"
 #include "WorkerRunLoop.h"
 #include "WorkerScriptLoader.h"
 #include <wtf/NeverDestroyed.h>

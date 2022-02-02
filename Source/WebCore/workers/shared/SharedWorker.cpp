@@ -32,7 +32,7 @@
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "SharedWorkerManager.h"
-#include "SharedWorkerProxy.h"
+#include "SharedWorkerThreadProxy.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/IsoMallocInlines.h>
@@ -80,7 +80,7 @@ SharedWorker::SharedWorker(Document& document, Ref<MessagePort>&& port, JSC::Run
     , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_runtimeFlags(runtimeFlags)
     , m_creationTime(MonotonicTime::now())
-    , m_proxy(SharedWorkerProxy::create(*this))
+    , m_proxy(SharedWorkerThreadProxy::create(*this))
 {
 }
 

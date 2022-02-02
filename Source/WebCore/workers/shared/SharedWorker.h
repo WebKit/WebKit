@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class MessagePort;
-class SharedWorkerProxy;
+class SharedWorkerThreadProxy;
 
 struct WorkerOptions;
 
@@ -49,7 +49,7 @@ public:
     const String& identifierForInspector() const { return m_identifierForInspector; }
     MonotonicTime creationTime() const { return m_creationTime; }
 
-    SharedWorkerProxy& proxy() { return m_proxy; }
+    SharedWorkerThreadProxy& proxy() { return m_proxy; }
 
     void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
 
@@ -74,7 +74,7 @@ private:
     String m_identifierForInspector;
     JSC::RuntimeFlags m_runtimeFlags;
     MonotonicTime m_creationTime;
-    SharedWorkerProxy& m_proxy; // The proxy outlives the worker to perform thread shutdown.
+    SharedWorkerThreadProxy& m_proxy; // The proxy outlives the worker to perform thread shutdown.
     bool m_isLoading { false };
 };
 

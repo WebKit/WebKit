@@ -37,18 +37,24 @@ namespace WebCore {
 class SharedWorker;
 class SharedWorkerThread;
 
-class SharedWorkerProxy : public ThreadSafeRefCounted<SharedWorkerProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
+class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
-    template<typename... Args> static SharedWorkerProxy& create(Args&&... args) { return *new SharedWorkerProxy(std::forward<Args>(args)...); }
+    template<typename... Args> static SharedWorkerThreadProxy& create(Args&&... args) { return *new SharedWorkerThreadProxy(std::forward<Args>(args)...); }
 
     SharedWorkerThread* thread() { return m_workerThread.get(); }
 
     void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
+    void workerObjectDestroyed() final;
+    bool hasPendingActivity() const final;
     void terminateWorkerGlobalScope() final;
+
+private:
+    explicit SharedWorkerThreadProxy(SharedWorker&);
+
+    void workerGlobalScopeDestroyedInternal();
+
     void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) final;
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) final;
-    bool hasPendingActivity() const final;
-    void workerObjectDestroyed() final;
     void notifyNetworkStateChange(bool isOnline) final;
     void suspendForBackForwardCache() final;
     void resumeForBackForwardCache() final;
@@ -63,11 +69,6 @@ public:
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     void postMessageToDebugger(const String&) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
-
-private:
-    SharedWorkerProxy(SharedWorker&);
-
-    void workerGlobalScopeDestroyedInternal();
 
     WeakPtr<SharedWorker> m_sharedWorker;
     RefPtr<SharedWorkerThread> m_workerThread;

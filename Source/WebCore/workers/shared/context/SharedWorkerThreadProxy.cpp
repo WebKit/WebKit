@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SharedWorkerProxy.h"
+#include "SharedWorkerThreadProxy.h"
 
 #include "CacheStorageProvider.h"
 #include "ErrorEvent.h"
@@ -40,14 +40,14 @@
 
 namespace WebCore {
 
-SharedWorkerProxy::SharedWorkerProxy(SharedWorker& sharedWorker)
+SharedWorkerThreadProxy::SharedWorkerThreadProxy(SharedWorker& sharedWorker)
     : m_sharedWorker(sharedWorker)
     , m_scriptExecutionContext(sharedWorker.scriptExecutionContext())
     , m_identifierForInspector(sharedWorker.identifierForInspector())
 {
 }
 
-void SharedWorkerProxy::startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& scriptBuffer, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
+void SharedWorkerThreadProxy::startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& scriptBuffer, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
 {
     if (m_askedToTerminate)
         return;
@@ -74,7 +74,7 @@ void SharedWorkerProxy::startWorkerGlobalScope(const URL& scriptURL, const Strin
     }
 }
 
-void SharedWorkerProxy::terminateWorkerGlobalScope()
+void SharedWorkerThreadProxy::terminateWorkerGlobalScope()
 {
     if (m_askedToTerminate)
         return;
@@ -84,7 +84,7 @@ void SharedWorkerProxy::terminateWorkerGlobalScope()
         m_workerThread->stop(nullptr);
 }
 
-void SharedWorkerProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
+void SharedWorkerThreadProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
 {
     // FIXME: SharedWorker doesn't have postMessage, so this might not be necessary.
     postTaskToWorkerGlobalScope([message = WTFMove(message)](auto& scriptContext) mutable {
@@ -94,22 +94,22 @@ void SharedWorkerProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&&
     });
 }
 
-void SharedWorkerProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&& task)
+void SharedWorkerThreadProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&& task)
 {
     if (m_askedToTerminate)
         return;
     m_workerThread->runLoop().postTask(WTFMove(task));
 }
 
-bool SharedWorkerProxy::hasPendingActivity() const
+bool SharedWorkerThreadProxy::hasPendingActivity() const
 {
     return m_hasPendingActivity && !m_askedToTerminate;
 }
 
-void SharedWorkerProxy::workerObjectDestroyed()
+void SharedWorkerThreadProxy::workerObjectDestroyed()
 {
     m_sharedWorker = nullptr;
-    m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
+    m_scriptExecutionContext->postTask([this] (auto&) {
         m_mayBeDestroyed = true;
         if (m_workerThread)
             terminateWorkerGlobalScope();
@@ -118,7 +118,7 @@ void SharedWorkerProxy::workerObjectDestroyed()
     });
 }
 
-void SharedWorkerProxy::notifyNetworkStateChange(bool isOnline)
+void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
 {
     if (m_askedToTerminate)
         return;
@@ -133,17 +133,17 @@ void SharedWorkerProxy::notifyNetworkStateChange(bool isOnline)
     });
 }
 
-void SharedWorkerProxy::suspendForBackForwardCache()
+void SharedWorkerThreadProxy::suspendForBackForwardCache()
 {
 
 }
 
-void SharedWorkerProxy::resumeForBackForwardCache()
+void SharedWorkerThreadProxy::resumeForBackForwardCache()
 {
 
 }
 
-void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
+void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext&) {
         if (!m_sharedWorker)
@@ -155,37 +155,37 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
     });
 }
 
-void SharedWorkerProxy::workerGlobalScopeDestroyed()
+void SharedWorkerThreadProxy::workerGlobalScopeDestroyed()
 {
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         workerGlobalScopeDestroyedInternal();
     });
 }
 
-void SharedWorkerProxy::postMessageToWorkerObject(MessageWithMessagePorts&&)
+void SharedWorkerThreadProxy::postMessageToWorkerObject(MessageWithMessagePorts&&)
 {
 
 }
 
-void SharedWorkerProxy::confirmMessageFromWorkerObject(bool)
+void SharedWorkerThreadProxy::confirmMessageFromWorkerObject(bool)
 {
 }
 
-void SharedWorkerProxy::reportPendingActivity(bool hasPendingActivity)
+void SharedWorkerThreadProxy::reportPendingActivity(bool hasPendingActivity)
 {
     m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         m_hasPendingActivity = hasPendingActivity;
     });
 }
 
-RefPtr<CacheStorageConnection> SharedWorkerProxy::createCacheStorageConnection()
+RefPtr<CacheStorageConnection> SharedWorkerThreadProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     return document.page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
-RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerProxy::createRTCDataChannelRemoteHandlerConnection()
+RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
     auto& document = downcast<Document>(*m_scriptExecutionContext);
@@ -194,12 +194,12 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerProxy::createRTCDataCh
     return document.page()->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
-void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
+void SharedWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     m_scriptExecutionContext->postTask(WTFMove(task));
 }
 
-bool SharedWorkerProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool SharedWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     if (m_askedToTerminate)
         return false;
@@ -208,17 +208,17 @@ bool SharedWorkerProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecut
     return true;
 }
 
-void SharedWorkerProxy::postMessageToDebugger(const String&)
+void SharedWorkerThreadProxy::postMessageToDebugger(const String&)
 {
 
 }
 
-void SharedWorkerProxy::setResourceCachingDisabledByWebInspector(bool)
+void SharedWorkerThreadProxy::setResourceCachingDisabledByWebInspector(bool)
 {
 
 }
 
-void SharedWorkerProxy::workerGlobalScopeDestroyedInternal()
+void SharedWorkerThreadProxy::workerGlobalScopeDestroyedInternal()
 {
     // This is always the last task to be performed, so the proxy is not needed for communication
     // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.

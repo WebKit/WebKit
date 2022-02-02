@@ -2787,9 +2787,9 @@ workers/service/server/SWServerWorker.cpp
 workers/shared/SharedWorker.cpp
 workers/shared/SharedWorkerGlobalScope.cpp
 workers/shared/SharedWorkerManager.cpp
-workers/shared/SharedWorkerProxy.cpp
 workers/shared/SharedWorkerScriptLoader.cpp
-workers/shared/SharedWorkerThread.cpp
+workers/shared/context/SharedWorkerThread.cpp
+workers/shared/context/SharedWorkerThreadProxy.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/Worklet.cpp
 worklets/WorkletGlobalScope.cpp

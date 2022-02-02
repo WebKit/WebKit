@@ -2000,6 +2000,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/server/SWServerToContextConnection.h
     workers/service/server/SWServerWorker.h
 
+    workers/shared/context/SharedWorkerThread.h
+    workers/shared/context/SharedWorkerThreadProxy.h
+
     xml/CustomXPathNSResolver.h
     xml/XPathExpression.h
     xml/XPathNSResolver.h
