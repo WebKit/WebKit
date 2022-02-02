@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum VideoColorPrimaries {
+[Conditional=VIDEO] enum VideoColorPrimaries {
   "bt709",
   "bt470bg",
   "smpte170m"

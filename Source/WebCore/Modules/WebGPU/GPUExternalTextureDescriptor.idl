@@ -29,6 +29,8 @@
     EnabledBySetting=WebGPU
 ]
 dictionary GPUExternalTextureDescriptor : GPUObjectDescriptorBase {
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     required HTMLVideoElement source;
+#endif
     GPUPredefinedColorSpace colorSpace = "srgb";
 };
