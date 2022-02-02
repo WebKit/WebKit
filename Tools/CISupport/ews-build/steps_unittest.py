@@ -4931,8 +4931,13 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             )
         )
 
+    @classmethod
+    def mock_sleep(cls):
+        return patch('time.sleep', lambda _: None)
+
+
     def test_success(self):
-        with self.mock_commits_webkit_org(identifier='220797@main'):
+        with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
             self.setupStep(PushCommitToWebKitRepo())
             self.setProperty('patch_id', '1234')
             self.expectRemoteCommands(
@@ -4952,7 +4957,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             return rc
 
     def test_success_no_identifier(self):
-        with self.mock_commits_webkit_org():
+        with self.mock_commits_webkit_org(), self.mock_sleep():
             self.setupStep(PushCommitToWebKitRepo())
             self.setProperty('patch_id', '1234')
             self.expectRemoteCommands(
@@ -4972,42 +4977,44 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             return rc
 
     def test_failure_retry(self):
-        self.setupStep(PushCommitToWebKitRepo())
-        self.setProperty('patch_id', '2345')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        logEnviron=False,
-                        command=['git', 'svn', 'dcommit', '--rmdir']) +
-            ExpectShell.log('stdio', stdout='Unexpected failure') +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
-        self.assertEqual(self.getProperty('retry_count'), 1)
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
-        return rc
+        with self.mock_sleep():
+            self.setupStep(PushCommitToWebKitRepo())
+            self.setProperty('patch_id', '2345')
+            self.expectRemoteCommands(
+                ExpectShell(workdir='wkdir',
+                            timeout=300,
+                            logEnviron=False,
+                            command=['git', 'svn', 'dcommit', '--rmdir']) +
+                ExpectShell.log('stdio', stdout='Unexpected failure') +
+                2,
+            )
+            self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+            self.assertEqual(self.getProperty('retry_count'), 1)
+            self.assertEqual(self.getProperty('build_finish_summary'), None)
+            self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+            return rc
 
     def test_failure(self):
-        self.setupStep(PushCommitToWebKitRepo())
-        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
-        self.setProperty('patch_id', '2345')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        logEnviron=False,
-                        command=['git', 'svn', 'dcommit', '--rmdir']) +
-            ExpectShell.log('stdio', stdout='Unexpected failure') +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
-        return rc
+        with self.mock_sleep():
+            self.setupStep(PushCommitToWebKitRepo())
+            self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
+            self.setProperty('patch_id', '2345')
+            self.expectRemoteCommands(
+                ExpectShell(workdir='wkdir',
+                            timeout=300,
+                            logEnviron=False,
+                            command=['git', 'svn', 'dcommit', '--rmdir']) +
+                ExpectShell.log('stdio', stdout='Unexpected failure') +
+                2,
+            )
+            self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+            self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
+            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
+            return rc
 
 
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
