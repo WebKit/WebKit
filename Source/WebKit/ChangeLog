@@ -1,3 +1,15 @@
+2022-02-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][WP] Add access in sandbox to Mach message
+        https://bugs.webkit.org/show_bug.cgi?id=236021
+        <rdar://88300200>
+
+        Reviewed by Brent Fulgham.
+
+        Add access in sandbox to required Mach message in the WebContent process on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2022-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust some Live Text code to only use VKC-prefixed VisionKit classes if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

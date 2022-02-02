@@ -1576,6 +1576,7 @@
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
         host_get_io_master
         io_connect_async_method
+        io_connect_map_memory_into_task ;; <rdar://88300200>
         io_connect_method
         io_connect_set_notification_port_64
         io_iterator_next
