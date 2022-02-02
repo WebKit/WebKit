@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,23 +63,9 @@ public:
     unsigned imagesCount() const { return m_nativeImages.size(); }
 
 private:
-    struct ImageBufferState {
-        WeakPtr<WebCore::ImageBuffer> imageBuffer;
-        uint64_t useCount;
-    };
-    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, ImageBufferState>;
-
-    struct NativeImageState {
-        WeakPtr<WebCore::NativeImage> image;
-        uint64_t useCount;
-    };
-    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, NativeImageState>;
-
-    struct FontState {
-        RenderingUpdateID lastRenderingUpdateVersionUsedWithin;
-        uint64_t useCount;
-    };
-    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, FontState>;
+    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
+    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
+    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, RenderingUpdateID>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
     void clearNativeImageMap();

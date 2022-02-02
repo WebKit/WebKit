@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -390,17 +390,17 @@ void RemoteRenderingBackend::deleteAllFonts()
     m_remoteResourceCache.deleteAllFonts();
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    releaseRemoteResourceWithQualifiedIdentifier({ renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, useCount);
+    releaseRemoteResourceWithQualifiedIdentifier({ renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
-void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
-    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier, useCount);
+    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
 

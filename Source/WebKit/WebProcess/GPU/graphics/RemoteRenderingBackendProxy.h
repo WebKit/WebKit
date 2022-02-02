@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ public:
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&);
     void deleteAllFonts();
-    void releaseRemoteResource(WebCore::RenderingResourceIdentifier, uint64_t useCount);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
     void finalizeRenderingUpdate();
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
@@ -130,10 +130,6 @@ public:
     {
         sendToStream(WTFMove(message), renderingBackendIdentifier());
     }
-
-    void recordNativeImageUse(WebCore::NativeImage&);
-    void recordFontUse(WebCore::Font&);
-    void recordImageBufferUse(WebCore::ImageBuffer&);
 
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);

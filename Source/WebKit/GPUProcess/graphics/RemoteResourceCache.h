@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@ class RemoteRenderingBackend;
 class RemoteResourceCache {
 public:
     RemoteResourceCache(WebCore::ProcessIdentifier webProcessIdentifier);
-    RemoteResourceCache(RemoteResourceCache&&);
 
     void cacheImageBuffer(Ref<WebCore::ImageBuffer>&&, QualifiedRenderingResourceIdentifier);
     WebCore::ImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
@@ -52,45 +51,14 @@ public:
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     void deleteAllFonts();
-    bool releaseRemoteResource(QualifiedRenderingResourceIdentifier, uint64_t useCount);
-    void recordResourceUse(QualifiedRenderingResourceIdentifier);
+    bool releaseRemoteResource(QualifiedRenderingResourceIdentifier);
 
     const WebCore::DisplayList::ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
-    bool hasActiveDrawables() const { return m_hasActiveDrawables; }
+    bool hasActiveDrawables() const { return m_resourceHeap.hasImageBuffer() || m_resourceHeap.hasNativeImage(); }
 
 private:
-    // Because the cache/release messages are sent asynchronously from the display list items which
-    // reference the resources, it's totally possible that we see a release message before we've
-    // executed all the display list items which reference the resource. The web process tells us
-    // how many display list items will reference this resource, and we defer deletion of the resource
-    // until we execute that many display list items. It's actually a bit worse than this, though,
-    // because we may actually see a *new* cache message during the time when deletion is deferred.
-    //
-    // We can only safely delete a resource when:
-    // 1. All the cache messages have an accompanying release message, and
-    // 2. We've processed as many display list items that reference a particular resource as the web
-    // process has encoded.
-    enum class ResourceState {
-        Alive,
-        ToBeDeleted
-    };
-    struct ResourceUseCounter {
-        ResourceState state { ResourceState::Alive };
-        int64_t useOrPendingCount { 0 };
-    };
-    using ResourceUseCountersMap = HashMap<QualifiedRenderingResourceIdentifier, ResourceUseCounter>;
-
-    bool maybeRemoveResource(QualifiedRenderingResourceIdentifier, ResourceUseCountersMap::iterator&);
-    void ensureResourceUseCounter(QualifiedRenderingResourceIdentifier);
-
-    void updateHasActiveDrawables();
-
     QualifiedResourceHeap m_resourceHeap;
-
-    ResourceUseCountersMap m_resourceUseCounters;
-
-    std::atomic<bool> m_hasActiveDrawables { false };
 };
 
 } // namespace WebKit
