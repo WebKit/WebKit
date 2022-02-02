@@ -649,6 +649,18 @@ OffscreenCanvasInWorkersEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+PdfJSViewerEnabled:
+  type: bool
+  humanReadableName: "Enable PDF.js viewer"
+  humanReadableDescription: "Enable PDF.js viewer"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   humanReadableName: "Fast clicks beat DTTZ"

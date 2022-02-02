@@ -4107,6 +4107,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(MATHML)
         settings.setMathMLEnabled(false);
 #endif
+        settings.setPdfJSViewerEnabled(true);
     }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

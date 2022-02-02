@@ -1,3 +1,15 @@
+2022-02-01  Tim Nguyen  <ntim@apple.com>
+
+        Add setting to toggle PDF.js viewer
+        https://bugs.webkit.org/show_bug.cgi?id=235972
+
+        Reviewed by Tim Horton.
+
+        This setting is enabled only in CaptivePortalMode.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2022-02-01  Ben Nham  <nham@apple.com>
 
         Forward messages from NetworkProcess to webpushd
