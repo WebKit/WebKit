@@ -47,8 +47,6 @@ public:
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
     static int getNumProperties();
 
-    static HashSet<CSSPropertyID> animatableShorthandsAffectingProperty(CSSPropertyID);
-
     static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation);
 };
 
