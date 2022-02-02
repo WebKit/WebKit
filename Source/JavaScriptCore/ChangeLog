@@ -1,3 +1,29 @@
+2022-02-02  Patrick Angle  <pangle@apple.com>
+
+        No breakpoints hit on github.com, and some are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=235607
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test case in: inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html
+
+        Previously not all line terminations resulted in setting the `m_lineStart` to the current m_code, which meant
+        that the location for pause-able locations and stack traces were inaccurate when they were on a line that
+        terminated multi-line comments, strings, or template strings. We now always update m_lineStart when shifting for
+        a line terminator, instead of only when the terminator appears outside a string or comment.
+
+        * debugger/Breakpoint.cpp:
+        (JSC::Breakpoint::resolve):
+        - The existing assertions were somewhat in conflict with each other. If we permit the line number to increase,
+        there is no guarantee that the column number will remain the same or increase, which can now more easily occur
+        with multi-line strings. Instead, we should make sure that the overall offset has increase.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::shiftLineTerminator):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        (JSC::Lexer<T>::scanTemplateString):
+        - Make sure the token start offset and start line offset are correctly set for strings.
+
 2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] YarrJIT m_checkedOffset should be pre-computed and stored to Yarr op

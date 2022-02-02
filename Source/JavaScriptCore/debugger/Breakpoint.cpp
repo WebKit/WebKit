@@ -65,7 +65,7 @@ bool Breakpoint::resolve(unsigned lineNumber, unsigned columnNumber)
     ASSERT(isLinked());
     ASSERT(!isResolved());
     ASSERT(lineNumber >= m_lineNumber);
-    ASSERT(columnNumber >= m_columnNumber);
+    ASSERT(columnNumber >= m_columnNumber || lineNumber > m_lineNumber);
 
     m_lineNumber = lineNumber;
     m_columnNumber = columnNumber;
