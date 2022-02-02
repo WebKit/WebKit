@@ -328,9 +328,15 @@ TextStream& operator<<(TextStream& stream, AccessibilitySearchKey searchKey)
 TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& criteria)
 {
     TextStream::GroupScope groupScope(stream);
+    auto streamCriteriaObject = [&stream] (String objectLabel, auto* axObject) {
+        stream.startGroup();
+        stream << objectLabel << " " << axObject << ", ID " << (axObject ? axObject->objectID() : AXID());
+        stream.endGroup();
+    };
+
     stream << "SearchCriteria " << &criteria;
-    stream.dumpProperty("anchorObject", criteria.anchorObject);
-    stream.dumpProperty("startObject", criteria.startObject);
+    streamCriteriaObject("anchorObject", criteria.anchorObject);
+    streamCriteriaObject("startObject", criteria.startObject);
     stream.dumpProperty("searchDirection", criteria.searchDirection);
 
     stream.nextLine();
