@@ -1,3 +1,14 @@
+2022-02-02  Rob Buis  <rbuis@igalia.com>
+
+        Enable overflow:clip feature
+        https://bugs.webkit.org/show_bug.cgi?id=236008
+
+        Reviewed by Simon Fraser.
+
+        Enable overflow:clip feature.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-02  Mark Lam  <mark.lam@apple.com>
 
         Update computation of FAST_TLS base.

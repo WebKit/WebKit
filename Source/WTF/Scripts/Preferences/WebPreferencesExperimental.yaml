@@ -962,11 +962,11 @@ OverflowClipEnabled:
   humanReadableDescription: "Enable CSS overflow: clip support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 OverscrollBehaviorEnabled:
   type: bool
