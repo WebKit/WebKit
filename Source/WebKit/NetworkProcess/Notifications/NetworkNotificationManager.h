@@ -30,7 +30,9 @@
 #include "NotificationManagerMessageHandler.h"
 #include "WebPushDaemonConnection.h"
 #include "WebPushMessage.h"
+#include <WebCore/ExceptionData.h>
 #include <WebCore/NotificationDirection.h>
+#include <WebCore/PushSubscriptionData.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,6 +56,11 @@ public:
     void deletePushAndNotificationRegistration(const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
     void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
+
+    void subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
+    void unsubscribeFromPushService(URL&& scopeURL, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&&);
+    void getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
+    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
 private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);

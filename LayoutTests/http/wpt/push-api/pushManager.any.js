@@ -99,7 +99,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     // TODO: change this to make sure that subscription is valid once we fully implement subscribe.
-    return promise_rejects_dom(test, "NotAllowedError", pushManager.subscribe({
+    return promise_rejects_dom(test, "AbortError", pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: VALID_SERVER_KEY
     }));
@@ -107,7 +107,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     // TODO: change this to make sure that subscription is valid once we fully implement subscribe.
-    return promise_rejects_dom(test, "NotAllowedError", pushManager.subscribe({
+    return promise_rejects_dom(test, "AbortError", pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: VALID_BASE64_SERVER_KEY
     }));

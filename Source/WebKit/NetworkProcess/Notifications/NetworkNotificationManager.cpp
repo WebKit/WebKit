@@ -30,6 +30,7 @@
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
+#include "Logging.h"
 #include "NetworkSession.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
@@ -132,6 +133,46 @@ void NetworkNotificationManager::didDestroyNotification(const UUID&)
         return;
 }
 
+void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::SubscribeToPushService>(WTFMove(completionHandler), WTFMove(scopeURL), WTFMove(applicationServerKey));
+}
+
+void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, PushSubscriptionIdentifier pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::UnsubscribeFromPushService>(WTFMove(completionHandler), WTFMove(scopeURL), pushSubscriptionIdentifier);
+}
+
+void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::GetPushSubscription>(WTFMove(completionHandler), WTFMove(scopeURL));
+}
+
+void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::GetPushPermissionState>(WTFMove(completionHandler), WTFMove(scopeURL));
+}
+
 template<WebPushD::MessageType messageType, typename... Args>
 void NetworkNotificationManager::sendMessage(Args&&... args) const
 {
@@ -204,6 +245,58 @@ template<> struct ReplyCaller<Vector<WebPushMessage>&&> {
         if (!messages)
             return completionHandler({ });
         completionHandler(WTFMove(*messages));
+    }
+};
+
+template<> struct ReplyCaller<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
+    {
+        std::optional<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>> data;
+        decoder >> data;
+
+        if (!data)
+            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
+        else
+            completionHandler(WTFMove(*data));
+    }
+};
+
+template<> struct ReplyCaller<Expected<bool, WebCore::ExceptionData>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
+    {
+        std::optional<Expected<bool, WebCore::ExceptionData>> data;
+        decoder >> data;
+
+        if (!data)
+            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
+        else
+            completionHandler(WTFMove(*data));
+    }
+};
+
+template<> struct ReplyCaller<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
+    {
+        std::optional<Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>> data;
+        decoder >> data;
+
+        if (!data)
+            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
+        else
+            completionHandler(WTFMove(*data));
+    }
+};
+
+template<> struct ReplyCaller<Expected<uint8_t, WebCore::ExceptionData>&&> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
+    {
+        std::optional<Expected<uint8_t, WebCore::ExceptionData>> data;
+        decoder >> data;
+
+        if (!data)
+            completionHandler(makeUnexpected(ExceptionData { AbortError, "Couldn't decode message"_s }));
+        else
+            completionHandler(WTFMove(*data));
     }
 };
 

@@ -33,11 +33,13 @@
 #import "HandleMessage.h"
 #import "MockAppBundleRegistry.h"
 
+#import <WebCore/PushPermissionState.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Span.h>
+#import <wtf/URL.h>
 
 using namespace WebKit::WebPushD;
 
@@ -89,6 +91,26 @@ ARGUMENTS(PushMessageForTesting)
 REPLY(bool)
 END
 
+FUNCTION(subscribeToPushService)
+ARGUMENTS(URL, Vector<uint8_t>)
+REPLY(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)
+END
+
+FUNCTION(unsubscribeFromPushService)
+ARGUMENTS(URL, WebCore::PushSubscriptionIdentifier)
+REPLY(const Expected<bool, WebCore::ExceptionData>&)
+END
+
+FUNCTION(getPushSubscription)
+ARGUMENTS(URL)
+REPLY(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)
+END
+
+FUNCTION(getPushPermissionState)
+ARGUMENTS(URL)
+REPLY(const Expected<uint8_t, WebCore::ExceptionData>&)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
@@ -130,6 +152,34 @@ WebPushD::EncodedMessage injectPushMessageForTesting::encodeReply(bool reply)
 }
 
 WebPushD::EncodedMessage getPendingPushMessages::encodeReply(const Vector<WebKit::WebPushMessage>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage subscribeToPushService::encodeReply(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage unsubscribeFromPushService::encodeReply(const Expected<bool, WebCore::ExceptionData>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage getPushSubscription::encodeReply(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage getPushPermissionState::encodeReply(const Expected<uint8_t, WebCore::ExceptionData>& reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -278,6 +328,18 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::GetPendingPushMessages:
         handleWebPushDMessageWithReply<MessageInfo::getPendingPushMessages>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::SubscribeToPushService:
+        handleWebPushDMessageWithReply<MessageInfo::subscribeToPushService>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::UnsubscribeFromPushService:
+        handleWebPushDMessageWithReply<MessageInfo::unsubscribeFromPushService>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::GetPushSubscription:
+        handleWebPushDMessageWithReply<MessageInfo::getPushSubscription>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::GetPushPermissionState:
+        handleWebPushDMessageWithReply<MessageInfo::getPushPermissionState>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
     }
 }
 
@@ -412,6 +474,27 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
     connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
 
     replySender(WTFMove(resultMessages));
+}
+
+void Daemon::subscribeToPushService(ClientConnection* connection, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
+{
+    UNUSED_PARAM(applicationServerKey);
+    replySender(makeUnexpected(WebCore::ExceptionData { WebCore::NotAllowedError, "Lack permission"_s }));
+}
+
+void Daemon::unsubscribeFromPushService(ClientConnection* connection, const URL& scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
+{
+    replySender(false);
+}
+
+void Daemon::getPushSubscription(ClientConnection* connection, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
+{
+    replySender(std::optional<WebCore::PushSubscriptionData> { });
+}
+
+void Daemon::getPushPermissionState(ClientConnection* connection, const URL& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
+{
+    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
 }
 
 ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)

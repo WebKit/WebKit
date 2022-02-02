@@ -1,3 +1,39 @@
+2022-02-01  Ben Nham  <nham@apple.com>
+
+        Forward messages from NetworkProcess to webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=235855
+
+        Reviewed by Brent Fulgham.
+
+        This forwards PushManager and PushSubscription-related IPC from NetworkProcess to webpushd.
+        The implementations in webpushd are stubs in this patch, and as a result there are no new
+        tests. The implementations and tests will be filled out in a future patch.
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::subscribeToPushService):
+        (WebKit::NetworkNotificationManager::unsubscribeFromPushService):
+        (WebKit::NetworkNotificationManager::getPushSubscription):
+        (WebKit::NetworkNotificationManager::getPushPermissionState):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::subscribeToPushService):
+        (WebKit::WebSWServerConnection::unsubscribeFromPushService):
+        (WebKit::WebSWServerConnection::getPushSubscription):
+        (WebKit::WebSWServerConnection::getPushPermissionState):
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::subscribeToPushService::encodeReply):
+        (WebPushD::MessageInfo::unsubscribeFromPushService::encodeReply):
+        (WebPushD::MessageInfo::getPushSubscription::encodeReply):
+        (WebPushD::MessageInfo::getPushPermissionState::encodeReply):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::subscribeToPushService):
+        (WebPushD::Daemon::unsubscribeFromPushService):
+        (WebPushD::Daemon::getPushSubscription):
+        (WebPushD::Daemon::getPushPermissionState):
+
 2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Mitigate hangs underneath -requestAutocorrectionContextWithCompletionHandler: when focusing text fields

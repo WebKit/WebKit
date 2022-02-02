@@ -32,6 +32,7 @@
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkNotificationManager.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
@@ -448,24 +449,93 @@ void WebSWServerConnection::updateThrottleState()
     }
 }
 
-void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier, Vector<uint8_t>&&, CompletionHandler<void(Expected<PushSubscriptionData, ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<PushSubscriptionData, ExceptionData>&&)>&& completionHandler)
 {
-    completionHandler(makeUnexpected(ExceptionData { NotAllowedError, "Push permission was denied"_s }));
+#if !ENABLE(BUILT_IN_NOTIFICATIONS)
+    UNUSED_PARAM(registrationIdentifier);
+    UNUSED_PARAM(applicationServerKey);
+    completionHandler(makeUnexpected(ExceptionData { AbortError, "Push service not implemented"_s }));
+#else
+    auto registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Subscribing for push requires an active service worker"_s }));
+        return;
+    }
+
+    if (!session()) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session()->notificationManager().subscribeToPushService(registration->scopeURLWithoutFragment(), WTFMove(applicationServerKey), WTFMove(completionHandler));
+#endif
 }
 
-void WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::unsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, CompletionHandler<void(Expected<bool, ExceptionData>&&)>&& completionHandler)
 {
+#if !ENABLE(BUILT_IN_NOTIFICATIONS)
+    UNUSED_PARAM(registrationIdentifier);
+    UNUSED_PARAM(subscriptionIdentifier);
+
     completionHandler(false);
+#else
+    auto registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Unsubscribing from push requires a service worker"_s }));
+        return;
+    }
+
+    if (!session()) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session()->notificationManager().unsubscribeFromPushService(registration->scopeURLWithoutFragment(), subscriptionIdentifier, WTFMove(completionHandler));
+#endif
 }
 
-void WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(Expected<std::optional<PushSubscriptionData>, ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<std::optional<PushSubscriptionData>, ExceptionData>&&)>&& completionHandler)
 {
+#if !ENABLE(BUILT_IN_NOTIFICATIONS)
+    UNUSED_PARAM(registrationIdentifier);
+
     completionHandler(std::optional<PushSubscriptionData>(std::nullopt));
+#else
+    auto registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Getting push subscription requires a service worker"_s }));
+        return;
+    }
+
+    if (!session()) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session()->notificationManager().getPushSubscription(registration->scopeURLWithoutFragment(), WTFMove(completionHandler));
+#endif
 }
 
-void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(Expected<uint8_t, ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, CompletionHandler<void(Expected<uint8_t, ExceptionData>&&)>&& completionHandler)
 {
+#if !ENABLE(BUILT_IN_NOTIFICATIONS)
+    UNUSED_PARAM(registrationIdentifier);
+
     completionHandler(static_cast<uint8_t>(PushPermissionState::Denied));
+#else
+    auto registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "Getting push permission state requires a service worker"_s }));
+        return;
+    }
+
+    if (!session()) {
+        completionHandler(makeUnexpected(ExceptionData { InvalidStateError, "No active network session"_s }));
+        return;
+    }
+
+    session()->notificationManager().getPushPermissionState(registration->scopeURLWithoutFragment(), WTFMove(completionHandler));
+#endif
 }
 
 void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection& contextConnection)

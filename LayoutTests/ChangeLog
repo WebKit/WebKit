@@ -1,3 +1,16 @@
+2022-02-01  Ben Nham  <nham@apple.com>
+
+        Forward messages from NetworkProcess to webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=235855
+
+        Reviewed by Brent Fulgham.
+
+        Update existing tests to test for AbortError, since that's the exception type specified in
+        the spec.
+
+        * http/wpt/push-api/pushManager.any.js:
+        (promise_test.async test):
+
 2022-02-01  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Using Fontcascade::spaceWidth to subtract the trailing space width may result in incorrect layout
