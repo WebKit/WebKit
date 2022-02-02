@@ -1,3 +1,19 @@
+2022-02-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [WP] Remove PostScript conversion code
+        https://bugs.webkit.org/show_bug.cgi?id=235892
+        <rdar://88172449>
+
+        Reviewed by Tim Horton.
+
+        The WebContent process no longer has access to the PostScript conversion service, so there is no need to keep this code.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pluginInfo):
+        (WebKit::PDFPlugin::streamDidReceiveResponse):
+        (WebKit::PDFPlugin::manualStreamDidReceiveResponse):
+
 2022-02-01  Michael Saboff  <msaboff@apple.com>
 
         Catalyst builds of WebKit with system content path put XPCServices and Daemons in the normal location
