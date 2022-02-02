@@ -48,13 +48,11 @@ UUID::UUID()
     static_assert(sizeof(m_data) == 16);
     auto* data = reinterpret_cast<unsigned char*>(&m_data);
 
-    do {
-        cryptographicallyRandomValues(data, 16);
-    } while (m_data == emptyValue || m_data == deletedValue);
+    cryptographicallyRandomValues(data, 16);
 
-    // We sanitize the value to not loose any information when serializing as Version 4 UUID.
-    auto high = static_cast<uint64_t>((m_data >> 64) & 0xffffffffffff0fff);
-    auto low = static_cast<uint64_t>(m_data & 0x3fffffffffffffff);
+    // By default, we generate a v4 UUID value, as per https://datatracker.ietf.org/doc/html/rfc4122#section-4.4.
+    auto high = static_cast<uint64_t>((m_data >> 64) & 0xffffffffffff0fff) | 0x4000;
+    auto low = static_cast<uint64_t>(m_data & 0x3fffffffffffffff) | 0x8000000000000000;
 
     m_data = (static_cast<UInt128>(high) << 64) | low;
 }
@@ -67,17 +65,17 @@ unsigned UUID::hash() const
 String UUID::toString() const
 {
     auto high = static_cast<uint64_t>(m_data >> 64);
-    auto low = static_cast<uint64_t>(m_data & 0x3fffffffffffffff);
+    auto low = static_cast<uint64_t>(m_data & 0xffffffffffffffff);
 
     // Format as Version 4 UUID.
     return makeString(
         hex(high >> 32, 8, Lowercase),
         '-',
         hex((high >> 16) & 0xffff, 4, Lowercase),
-        "-4",
-        hex(high & 0xfff, 3, Lowercase),
         '-',
-        hex((low >> 48) | 0x8000, 4, Lowercase),
+        hex(high & 0xffff, 4, Lowercase),
+        '-',
+        hex(low >> 48, 4, Lowercase),
         '-',
         hex(low & 0xffffffffffff, 12, Lowercase)
     );
@@ -85,11 +83,11 @@ String UUID::toString() const
 
 std::optional<UUID> UUID::parse(StringView value)
 {
-    // Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8, 9, A, or B for y.
+    // UUIDs have the form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx with hexadecimal digits for x.
     if (value.length() != 36)
         return { };
 
-    if (value[8] != '-' || value[13] != '-'  || value[14] != '4' || value[18] != '-' || value[23] != '-')
+    if (value[8] != '-' || value[13] != '-'  || value[18] != '-' || value[23] != '-')
         return { };
 
     // parseInteger may accept integers starting with +, let's check this beforehand.
@@ -104,18 +102,13 @@ std::optional<UUID> UUID::parse(StringView value)
     if (!secondValue)
         return { };
 
-    auto thirdValue = parseInteger<uint64_t>(value.substring(15, 3), 16);
+    auto thirdValue = parseInteger<uint64_t>(value.substring(14, 4), 16);
     if (!thirdValue)
         return { };
 
     auto fourthValue = parseInteger<uint64_t>(value.substring(19, 4), 16);
     if (!fourthValue)
         return { };
-
-    // Fourth value starts with 'y', it must be above 0x8000 and below 0xBFFFF.
-    if ((*fourthValue & 0xc000) != 0x8000)
-        return { };
-    fourthValue = *fourthValue & 0x3fff;
 
     auto fifthValue = parseInteger<uint64_t>(value.substring(24, 12), 16);
     if (!fifthValue)
@@ -125,15 +118,33 @@ std::optional<UUID> UUID::parse(StringView value)
     uint64_t low = (*fourthValue << 48) | *fifthValue;
 
     auto result = (static_cast<UInt128>(high) << 64) | low;
-    if (result == emptyValue || result == deletedValue)
+    if (result == deletedValue)
         return { };
 
     return UUID(result);
 }
 
-String createCanonicalUUIDString()
+std::optional<UUID> UUID::parseVersion4(StringView value)
 {
-    return UUID::create().toString();
+    auto uuid = parse(value);
+    if (!uuid)
+        return { };
+
+    // Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8, 9, A, or B for y.
+    auto high = static_cast<uint64_t>(uuid->m_data >> 64);
+    if ((high & 0xf000) != 0x4000)
+        return { };
+
+    auto low = static_cast<uint64_t>(uuid->m_data & 0xffffffffffffffff);
+    if ((low >> 62) != 2)
+        return { };
+
+    return uuid;
+}
+
+String createVersion4UUIDString()
+{
+    return UUID::createVersion4().toString();
 }
 
 String bootSessionUUIDString()
@@ -157,7 +168,7 @@ String bootSessionUUIDString()
 
 bool isVersion4UUID(StringView value)
 {
-    return !!UUID::parse(value);
+    return !!UUID::parseVersion4(value);
 }
 
 } // namespace WTF

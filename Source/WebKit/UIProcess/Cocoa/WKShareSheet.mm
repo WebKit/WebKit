@@ -331,7 +331,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 + (NSURL *)createRandomSharingDirectoryForFile:(NSURL *)temporaryDirectory
 {
-    NSString *randomDirectory = createCanonicalUUIDString();
+    NSString *randomDirectory = createVersion4UUIDString();
     if (![randomDirectory length] || !temporaryDirectory)
         return nil;
     NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory isDirectory:YES];

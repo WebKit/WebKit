@@ -577,7 +577,7 @@ static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc* self)
         return;
     }
 
-    auto upstreamId = priv->stream ? priv->stream->id() : createCanonicalUUIDString();
+    auto upstreamId = priv->stream ? priv->stream->id() : createVersion4UUIDString();
     priv->streamCollection = adoptGRef(gst_stream_collection_new(upstreamId.ascii().data()));
     for (auto& track : priv->tracks) {
         if (!track->isActive())

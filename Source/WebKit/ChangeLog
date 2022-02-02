@@ -1,5 +1,44 @@
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
+        Clarify that some UUID routines are dedicated to UUID v4
+        https://bugs.webkit.org/show_bug.cgi?id=235430
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::ensureSession):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::toRecordInformation):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::open):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::handleForWebPageProxy):
+        (WebKit::WebAutomationSession::handleForWebFrameID):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (+[WKShareSheet createRandomSharingDirectoryForFile:]):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp:
+        (WebKit::VirtualAuthenticatorManager::createAuthenticator):
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::WaylandCompositor):
+        * UIProcess/ios/WKModelView.mm:
+        (-[WKModelView createFileForModel:]):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::createUUID):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::createFile):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::openWithPreview):
+        (WebKit::PDFPlugin::openWithNativeApplication):
+
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
         ServiceWorkerNavigationPreloader should only be used once
         https://bugs.webkit.org/show_bug.cgi?id=235882
         <rdar://88226432>

@@ -2572,7 +2572,7 @@ void PDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoD
     FrameInfoData frameInfo;
     if (m_frame)
         frameInfo = m_frame->info();
-    completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createCanonicalUUIDString());
+    completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createVersion4UUIDString());
 }
 
 #else // ENABLE(UI_PROCESS_PDF_HUD)
@@ -2603,7 +2603,7 @@ void PDFPlugin::openWithNativeApplication()
 
         NSData *data = liveData();
 
-        m_temporaryPDFUUID = createCanonicalUUIDString();
+        m_temporaryPDFUUID = createVersion4UUIDString();
         ASSERT(m_temporaryPDFUUID);
 
         m_frame->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(m_suggestedFilename, m_frame->info(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);

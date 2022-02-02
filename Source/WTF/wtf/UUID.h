@@ -44,12 +44,13 @@ public:
     static constexpr UInt128 emptyValue = 0;
     static constexpr UInt128 deletedValue = 1;
 
-    static UUID create()
+    static UUID createVersion4()
     {
         return UUID { };
     }
 
-    WTF_EXPORT_PRIVATE static std::optional<UUID> parse(StringView);
+    static std::optional<UUID> parse(StringView);
+    WTF_EXPORT_PRIVATE static std::optional<UUID> parseVersion4(StringView);
 
     explicit UUID(Span<const uint8_t, 16> span)
     {
@@ -141,7 +142,7 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
 // data source. Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8,
 // 9, A, or B for y.
 
-WTF_EXPORT_PRIVATE String createCanonicalUUIDString();
+WTF_EXPORT_PRIVATE String createVersion4UUIDString();
 
 WTF_EXPORT_PRIVATE String bootSessionUUIDString();
 WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
@@ -149,5 +150,5 @@ WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 }
 
 using WTF::UUID;
-using WTF::createCanonicalUUIDString;
+using WTF::createVersion4UUIDString;
 using WTF::bootSessionUUIDString;

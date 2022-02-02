@@ -34,7 +34,7 @@ namespace WebCore {
 template <>
 class ProcessQualified<UUID> {
 public:
-    static ProcessQualified generate() { return { UUID::create(), Process::identifier() }; }
+    static ProcessQualified generate() { return { UUID::createVersion4(), Process::identifier() }; }
 
     ProcessQualified()
         : m_object(UUID::emptyValue)

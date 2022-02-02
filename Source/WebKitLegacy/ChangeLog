@@ -1,3 +1,13 @@
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Clarify that some UUID routines are dedicated to UUID v4
+        https://bugs.webkit.org/show_bug.cgi?id=235430
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::ensureSession):
+
 2022-01-27  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add missing task dependencies on generate-unified-source-bundles.rb

@@ -190,7 +190,7 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     if (iter != m_webPageHandleMap.end())
         return iter->value;
 
-    String handle = "page-" + createCanonicalUUIDString().convertToASCIIUppercase();
+    String handle = "page-" + createVersion4UUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webPageHandleMap.add(webPageProxy.identifier(), handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
@@ -239,7 +239,7 @@ String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> 
     if (iter != m_webFrameHandleMap.end())
         return iter->value;
 
-    String handle = "frame-" + createCanonicalUUIDString().convertToASCIIUppercase();
+    String handle = "frame-" + createVersion4UUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webFrameHandleMap.add(*frameID, handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);

@@ -2486,13 +2486,13 @@ String TestController::saltForOrigin(WKFrameRef frame, String originHash)
             return frameSalt;
 
         if (!settings.persistentSalt().length())
-            settings.setPersistentSalt(createCanonicalUUIDString());
+            settings.setPersistentSalt(createVersion4UUIDString());
 
         return settings.persistentSalt();
     }
 
     if (!frameSalt.length()) {
-        frameSalt = createCanonicalUUIDString();
+        frameSalt = createVersion4UUIDString();
         ephemeralSalts.add(frameIdentifier, frameSalt);
     }
 

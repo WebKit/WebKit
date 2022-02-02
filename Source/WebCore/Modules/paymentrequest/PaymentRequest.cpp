@@ -301,7 +301,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         return canCreateSession.releaseException();
 
     if (details.id.isNull())
-        details.id = createCanonicalUUIDString();
+        details.id = createVersion4UUIDString();
 
     if (methodData.isEmpty())
         return Exception { TypeError, "At least one payment method is required."_s };

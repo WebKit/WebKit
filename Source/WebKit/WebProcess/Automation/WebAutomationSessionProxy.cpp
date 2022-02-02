@@ -182,7 +182,7 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
 
 static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    return toJSValue(context, createCanonicalUUIDString().convertToASCIIUppercase());
+    return toJSValue(context, createVersion4UUIDString().convertToASCIIUppercase());
 }
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

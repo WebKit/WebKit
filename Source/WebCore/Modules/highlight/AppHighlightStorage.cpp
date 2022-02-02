@@ -205,7 +205,7 @@ static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& rang
 {
     auto text = plainText(range);
     text.truncate(textPreviewLength);
-    auto identifier = createCanonicalUUIDString();
+    auto identifier = createVersion4UUIDString();
 
     return {
         identifier,

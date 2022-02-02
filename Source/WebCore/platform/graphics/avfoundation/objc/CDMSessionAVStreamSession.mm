@@ -238,7 +238,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
         ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (![protectedSourceBuffer->streamDataParser() respondsToSelector:@selector(contentProtectionSessionIdentifier)])
-            m_sessionId = createCanonicalUUIDString();
+            m_sessionId = createVersion4UUIDString();
 
         if (error) {
             LOG(Media, "CDMSessionAVStreamSession::update(%p) - error:%@", this, [error description]);

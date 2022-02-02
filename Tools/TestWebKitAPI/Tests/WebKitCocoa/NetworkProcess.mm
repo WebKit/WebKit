@@ -225,7 +225,7 @@ static void waitUntilNetworkProcessIsResponsive(WKWebView *webView1, WKWebView *
     // we don't want the test to go on with the WebProcesses using stale NetworkProcessConnections, we use the following
     // trick to wait until both WebProcesses are able to communicate with the new NetworkProcess:
     // The first WebProcess tries setting a cookie until the second Webview is able to see it.
-    auto expectedCookieString = makeString("TEST=", createCanonicalUUIDString());
+    auto expectedCookieString = makeString("TEST=", createVersion4UUIDString());
     auto setTestCookieString = makeString("setInterval(() => { document.cookie='", expectedCookieString, "'; }, 100);");
     [webView1 evaluateJavaScript:(NSString *)setTestCookieString completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);

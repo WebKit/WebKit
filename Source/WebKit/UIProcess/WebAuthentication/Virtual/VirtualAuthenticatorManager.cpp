@@ -42,7 +42,7 @@ String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticat
 {
     if (config.transport != WebCore::AuthenticatorTransport::Internal)
         UNIMPLEMENTED();
-    auto id = createCanonicalUUIDString();
+    auto id = createVersion4UUIDString();
     m_virtualAuthenticators.set(id, makeUniqueRef<VirtualAuthenticatorConfiguration>(config));
 
     return id;

@@ -6197,7 +6197,7 @@ String Document::originIdentifierForPasteboard() const
     if (origin != "null")
         return origin;
     if (!m_uniqueIdentifier)
-        m_uniqueIdentifier = "null:" + createCanonicalUUIDString();
+        m_uniqueIdentifier = "null:" + createVersion4UUIDString();
     return m_uniqueIdentifier;
 }
 
@@ -8577,7 +8577,7 @@ void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
     bool previousIdentifierIsNotUnique = !previousIdentifier.isEmpty() && m_attachmentIdentifierToElementMap.contains(previousIdentifier);
     if (identifier.isEmpty() || previousIdentifierIsNotUnique) {
         previousIdentifier = identifier;
-        identifier = createCanonicalUUIDString();
+        identifier = createVersion4UUIDString();
         attachment.setUniqueIdentifier(identifier);
     }
 

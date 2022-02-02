@@ -317,7 +317,7 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, const AtomS
         return;
     }
 
-    String sessionID = createCanonicalUUIDString();
+    String sessionID = createVersion4UUIDString();
     factory->addKeysToSessionWithID(sessionID, WTFMove(keyIDs.value()));
 
     CString license { "license" };

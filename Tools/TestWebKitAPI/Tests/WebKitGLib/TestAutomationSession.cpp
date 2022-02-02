@@ -300,7 +300,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
-    String sessionID = createCanonicalUUIDString();
+    String sessionID = createVersion4UUIDString();
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
     auto* session = test->requestSession(sessionID.utf8().data());

@@ -323,7 +323,7 @@ void Caches::open(const String& name, CacheIdentifierCallback&& callback)
     makeDirty();
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
-    m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name }, createCanonicalUUIDString() });
+    m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name }, createVersion4UUIDString() });
 
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
         callback(CacheIdentifierOperationResult { cacheIdentifier, !!error });

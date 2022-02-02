@@ -1,3 +1,35 @@
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Clarify that some UUID routines are dedicated to UUID v4
+        https://bugs.webkit.org/show_bug.cgi?id=235430
+
+        Reviewed by Darin Adler.
+
+        Rename UUID::create to UUID::createVersion4.
+        Add a UUID::parseVersion4 that validates the parsed UUID is a v4.
+        Rename createCanonicalUUIDString to createVersion4UUIDString for consistency.
+
+        Update UUID constructor to generate a UUID v4 as per spec.
+        Update UUID::toString to generate a string representation of any UUID, and not specifically to v4.
+
+        * wtf/Identified.h:
+        (WTF::UUIDIdentified::UUIDIdentified):
+        * wtf/URL.cpp:
+        (WTF::URL::fakeURLWithRelativePart):
+        * wtf/UUID.cpp:
+        (WTF::UUID::UUID):
+        (WTF::UUID::toString const):
+        (WTF::UUID::parse):
+        (WTF::UUID::parseVersion4):
+        (WTF::createVersion4UUIDString):
+        (WTF::isVersion4UUID):
+        (WTF::createCanonicalUUIDString): Deleted.
+        * wtf/UUID.h:
+        (WTF::UUID::createVersion4):
+        (WTF::UUID::create): Deleted.
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+
 2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The default values for a couple of Live Text-related features should respect system feature flags

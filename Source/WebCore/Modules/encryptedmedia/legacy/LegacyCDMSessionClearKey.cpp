@@ -51,7 +51,7 @@ static VM& clearKeyVM()
 
 CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient* client)
     : m_client(client)
-    , m_sessionId(createCanonicalUUIDString())
+    , m_sessionId(createVersion4UUIDString())
 {
 }
 

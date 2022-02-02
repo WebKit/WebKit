@@ -53,7 +53,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 {
     m_devices.clear();
 
-    CaptureDevice screenCaptureDevice(createCanonicalUUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
+    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
     screenCaptureDevice.setEnabled(true);
     m_devices.append(WTFMove(screenCaptureDevice));
     callback();

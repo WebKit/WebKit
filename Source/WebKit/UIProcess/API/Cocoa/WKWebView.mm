@@ -2740,7 +2740,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    auto identifier = createCanonicalUUIDString();
+    auto identifier = createVersion4UUIDString();
     auto attachment = API::Attachment::create(identifier, *_page);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
     _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] {

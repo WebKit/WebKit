@@ -346,7 +346,7 @@ void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 
 String MediaControlsHost::generateUUID()
 {
-    return createCanonicalUUIDString();
+    return createVersion4UUIDString();
 }
 
 #if ENABLE(MODERN_MEDIA_CONTROLS)

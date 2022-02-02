@@ -57,7 +57,7 @@ inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
-    , m_groupIdHashSalt(createCanonicalUUIDString())
+    , m_groupIdHashSalt(createVersion4UUIDString())
 {
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Monitor) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor), "MediaDevices::DisplayCaptureSurfaceType::Monitor is not equal to RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Window) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window), "MediaDevices::DisplayCaptureSurfaceType::Window is not RealtimeMediaSourceSettings::DisplaySurfaceType::Window as expected");

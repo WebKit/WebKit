@@ -1277,9 +1277,9 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedB
     String fullPath;
     
     do {
-        path = FileSystem::encodeForFileName(createCanonicalUUIDString()) + fileExtension;
+        path = FileSystem::encodeForFileName(createVersion4UUIDString()) + fileExtension;
         // Guard against the above function being called on a platform which does not implement
-        // createCanonicalUUIDString().
+        // createVersion4UUIDString().
         ASSERT(!path.isEmpty());
         if (path.isEmpty())
             return false;

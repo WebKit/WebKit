@@ -473,7 +473,7 @@ void NetworkProcess::ensureSession(PAL::SessionID sessionID, bool shouldUseTesti
     
 #if PLATFORM(COCOA)
     RetainPtr<CFURLStorageSessionRef> storageSession;
-    RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
+    RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createVersion4UUIDString()).createCFString();
     if (sessionID.isEphemeral())
         storageSession = createPrivateStorageSession(cfIdentifier.get(), std::nullopt, WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
     else if (sessionID != PAL::SessionID::defaultSessionID())

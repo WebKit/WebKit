@@ -148,7 +148,7 @@ void HTMLAttachmentElement::removedFromAncestor(RemovalType type, ContainerNode&
 const String& HTMLAttachmentElement::ensureUniqueIdentifier()
 {
     if (m_uniqueIdentifier.isEmpty())
-        m_uniqueIdentifier = createCanonicalUUIDString();
+        m_uniqueIdentifier = createVersion4UUIDString();
     return m_uniqueIdentifier;
 }
 

@@ -48,7 +48,7 @@ namespace WebCore {
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source)
 {
-    return create(WTFMove(logger), WTFMove(source), createCanonicalUUIDString());
+    return create(WTFMove(logger), WTFMove(source), createVersion4UUIDString());
 }
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)

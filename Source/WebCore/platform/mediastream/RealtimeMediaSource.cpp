@@ -55,7 +55,7 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& devi
     , m_name(WTFMove(name))
 {
     if (m_persistentID.isEmpty())
-        m_persistentID = createCanonicalUUIDString();
+        m_persistentID = createVersion4UUIDString();
 
     m_hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt);
 }

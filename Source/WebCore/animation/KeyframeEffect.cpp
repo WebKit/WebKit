@@ -576,7 +576,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setIterationDuration(source->iterationDuration());
     updateStaticTimingProperties();
 
-    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    KeyframeList keyframeList("keyframe-effect-" + createVersion4UUIDString());
     keyframeList.copyKeyframes(source->m_blendingKeyframes);
     setBlendingKeyframes(keyframeList);
 }
@@ -822,7 +822,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     if (!m_blendingKeyframes.isEmpty() || !m_target)
         return;
 
-    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    KeyframeList keyframeList("keyframe-effect-" + createVersion4UUIDString());
     auto& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
@@ -1073,7 +1073,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
     if (m_target)
         Style::loadPendingResources(*toStyle, *document(), m_target.get());
 
-    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    KeyframeList keyframeList("keyframe-effect-" + createVersion4UUIDString());
     keyframeList.addProperty(property);
 
     KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));

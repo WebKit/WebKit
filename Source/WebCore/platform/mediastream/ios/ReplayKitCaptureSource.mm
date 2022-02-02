@@ -245,7 +245,7 @@ void ReplayKitCaptureSource::startCaptureWatchdogTimer()
 
 static String screenDeviceUUID()
 {
-    static NeverDestroyed<String> screenID = createCanonicalUUIDString();
+    static NeverDestroyed<String> screenID = createVersion4UUIDString();
     return screenID;
 }
 

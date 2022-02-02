@@ -106,7 +106,7 @@ static void registerMDNSNameCallback(DNSServiceRef, DNSRecordRef record, DNSServ
 
 void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress)
 {
-    auto name = makeString(createCanonicalUUIDString(), ".local");
+    auto name = makeString(createVersion4UUIDString(), ".local");
 
     DNSServiceRef service;
     auto iterator = m_services.find(documentIdentifier);
@@ -172,7 +172,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIde
 void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress)
 {
     MDNS_RELEASE_LOG("registerMDNSName not implemented");
-    auto name = makeString(createCanonicalUUIDString(), ".local");
+    auto name = makeString(createVersion4UUIDString(), ".local");
 
     m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, name, WebCore::MDNSRegisterError::NotImplemented }, 0);
 }
