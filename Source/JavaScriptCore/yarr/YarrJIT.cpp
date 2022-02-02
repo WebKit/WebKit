@@ -888,6 +888,14 @@ class YarrGenerator final : public YarrJITInfo {
         // recalculating it.
         Checked<unsigned> m_checkAdjust;
 
+        // This records the current input offset being applied due to the current
+        // set of alternatives we are nested within. E.g. when matching the
+        // character 'b' within the regular expression /abc/, we will know that
+        // the minimum size for the alternative is 3, checked upon entry to the
+        // alternative, and that 'b' is at offset 1 from the start, and as such
+        // when matching 'b' we need to apply an offset of -2 to the load.
+        Checked<unsigned> m_checkedOffset { };
+
         // Used by YarrOpCode::NestedAlternativeNext/End to hold the pointer to the
         // value that will be pushed into the pattern's frame to return to,
         // upon backtracking back into the disjunction.
@@ -1052,9 +1060,9 @@ class YarrGenerator final : public YarrJITInfo {
 
             MacroAssembler::JumpList matchDest;
             if (!term->inputPosition)
-                matchDest.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, MacroAssembler::Imm32(m_checkedOffset)));
+                matchDest.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, MacroAssembler::Imm32(op.m_checkedOffset)));
 
-            readCharacter(m_checkedOffset - term->inputPosition + 1, character);
+            readCharacter(op.m_checkedOffset - term->inputPosition + 1, character);
             matchCharacterClass(character, matchDest, m_pattern.newlineCharacterClass());
             op.m_jumps.append(m_jit.jump());
 
@@ -1064,7 +1072,7 @@ class YarrGenerator final : public YarrJITInfo {
             if (term->inputPosition)
                 op.m_jumps.append(m_jit.jump());
             else
-                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, MacroAssembler::Imm32(m_checkedOffset)));
+                op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.index, MacroAssembler::Imm32(op.m_checkedOffset)));
         }
     }
     void backtrackAssertionBOL(size_t opIndex)
@@ -1081,16 +1089,16 @@ class YarrGenerator final : public YarrJITInfo {
             const MacroAssembler::RegisterID character = m_regs.regT0;
 
             MacroAssembler::JumpList matchDest;
-            if (term->inputPosition == m_checkedOffset)
+            if (term->inputPosition == op.m_checkedOffset)
                 matchDest.append(atEndOfInput());
 
-            readCharacter(m_checkedOffset - term->inputPosition, character);
+            readCharacter(op.m_checkedOffset - term->inputPosition, character);
             matchCharacterClass(character, matchDest, m_pattern.newlineCharacterClass());
             op.m_jumps.append(m_jit.jump());
 
             matchDest.link(&m_jit);
         } else {
-            if (term->inputPosition == m_checkedOffset)
+            if (term->inputPosition == op.m_checkedOffset)
                 op.m_jumps.append(notAtEndOfInput());
             // Erk, really should poison out these alternatives early. :-/
             else
@@ -1110,10 +1118,10 @@ class YarrGenerator final : public YarrJITInfo {
 
         const MacroAssembler::RegisterID character = m_regs.regT0;
 
-        if (term->inputPosition == m_checkedOffset)
+        if (term->inputPosition == op.m_checkedOffset)
             nextIsNotWordChar.append(atEndOfInput());
 
-        readCharacter(m_checkedOffset - term->inputPosition, character);
+        readCharacter(op.m_checkedOffset - term->inputPosition, character);
 
         CharacterClass* wordcharCharacterClass;
 
@@ -1135,8 +1143,8 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::Jump atBegin;
         MacroAssembler::JumpList matchDest;
         if (!term->inputPosition)
-            atBegin = m_jit.branch32(MacroAssembler::Equal, m_regs.index, MacroAssembler::Imm32(m_checkedOffset));
-        readCharacter(m_checkedOffset - term->inputPosition + 1, character);
+            atBegin = m_jit.branch32(MacroAssembler::Equal, m_regs.index, MacroAssembler::Imm32(op.m_checkedOffset));
+        readCharacter(op.m_checkedOffset - term->inputPosition + 1, character);
 
         CharacterClass* wordcharCharacterClass;
 
@@ -1193,7 +1201,7 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::Label loop(&m_jit);
 
         readCharacter(0, patternCharacter, patternIndex);
-        readCharacter(m_checkedOffset - term->inputPosition, character);
+        readCharacter(op.m_checkedOffset - term->inputPosition, character);
     
         if (!m_pattern.ignoreCase())
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
@@ -1525,40 +1533,40 @@ class YarrGenerator final : public YarrJITInfo {
             switch (numberCharacters) {
             case 1:
                 // Use 32bit width of allCharacters since Yarr counts surrogate pairs as one character with unicode flag.
-                check1(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
+                check1(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
                 return;
             case 2: {
-                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
+                check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
                 return;
             }
             case 3: {
-                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
-                check1(m_checkedOffset - startTermPosition - 2, (allCharacters >> 16) & 0xff);
+                check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
+                check1(op.m_checkedOffset - startTermPosition - 2, (allCharacters >> 16) & 0xff);
                 return;
             }
             case 4: {
-                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 return;
             }
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
             case 5: {
-                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
-                check1(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xff);
+                check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check1(op.m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xff);
                 return;
             }
             case 6: {
-                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
-                check2(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
+                check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check2(op.m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
                 return;
             }
             case 7: {
-                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
-                check2(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
-                check1(m_checkedOffset - startTermPosition - 6, (allCharacters >> 48) & 0xff);
+                check4(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check2(op.m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
+                check1(op.m_checkedOffset - startTermPosition - 6, (allCharacters >> 48) & 0xff);
                 return;
             }
             case 8: {
-                check8(m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
+                check8(op.m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
                 return;
             }
 #endif
@@ -1591,18 +1599,18 @@ class YarrGenerator final : public YarrJITInfo {
             switch (numberCharacters) {
             case 1:
                 // Use 32bit width of allCharacters since Yarr counts surrogate pairs as one character with unicode flag.
-                check1(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
+                check1(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
                 return;
             case 2:
-                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
                 return;
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
             case 3:
-                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
-                check1(m_checkedOffset - startTermPosition - 2, (allCharacters >> 32) & 0xffff);
+                check2(op.m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check1(op.m_checkedOffset - startTermPosition - 2, (allCharacters >> 32) & 0xffff);
                 return;
             case 4:
-                check4(m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
+                check4(op.m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
                 return;
 #endif
             }
@@ -1630,7 +1638,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.sub32(m_regs.index, MacroAssembler::Imm32(scaledMaxCount), countRegister);
 
         MacroAssembler::Label loop(&m_jit);
-        readCharacter(m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
+        readCharacter(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
         // For case-insesitive compares, non-ascii characters that have different
         // upper & lower case representations are converted to a character class.
         ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(ch) || isCanonicallyUnique(ch, m_canonicalMode));
@@ -1669,7 +1677,7 @@ class YarrGenerator final : public YarrJITInfo {
             MacroAssembler::JumpList failures;
             MacroAssembler::Label loop(&m_jit);
             failures.append(atEndOfInput());
-            failures.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
+            failures.append(jumpIfCharNotEquals(ch, op.m_checkedOffset - term->inputPosition, character));
 
             m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
@@ -1743,7 +1751,7 @@ class YarrGenerator final : public YarrJITInfo {
             nonGreedyFailures.append(atEndOfInput());
             if (term->quantityMaxCount != quantifyInfinite)
                 nonGreedyFailures.append(m_jit.branch32(MacroAssembler::Equal, countRegister, MacroAssembler::Imm32(term->quantityMaxCount)));
-            nonGreedyFailures.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
+            nonGreedyFailures.append(jumpIfCharNotEquals(ch, op.m_checkedOffset - term->inputPosition, character));
 
             m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
@@ -1783,7 +1791,7 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         MacroAssembler::JumpList matchDest;
-        readCharacter(m_checkedOffset - term->inputPosition, character);
+        readCharacter(op.m_checkedOffset - term->inputPosition, character);
         // If we are matching the "any character" builtin class we only need to read the
         // character and don't need to match as it will always succeed.
         if (term->invert() || !term->characterClass->m_anyCharacter) {
@@ -1840,7 +1848,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         MacroAssembler::Label loop(&m_jit);
         MacroAssembler::JumpList matchDest;
-        readCharacter(m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
+        readCharacter(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
         // If we are matching the "any character" builtin class we only need to read the
         // character and don't need to match as it will always succeed.
         if (term->invert() || !term->characterClass->m_anyCharacter) {
@@ -1900,11 +1908,11 @@ class YarrGenerator final : public YarrJITInfo {
             failures.append(atEndOfInput());
 
         if (term->invert()) {
-            readCharacter(m_checkedOffset - term->inputPosition, character);
+            readCharacter(op.m_checkedOffset - term->inputPosition, character);
             matchCharacterClass(character, failures, term->characterClass);
         } else {
             MacroAssembler::JumpList matchDest;
-            readCharacter(m_checkedOffset - term->inputPosition, character);
+            readCharacter(op.m_checkedOffset - term->inputPosition, character);
             // If we are matching the "any character" builtin class for non-unicode patterns,
             // we only need to read the character and don't need to match as it will always succeed.
             if (!term->characterClass->m_anyCharacter) {
@@ -1965,7 +1973,7 @@ class YarrGenerator final : public YarrJITInfo {
             MacroAssembler::Label rematchLoop(&m_jit);
             MacroAssembler::Jump doneRematching = m_jit.branchTest32(MacroAssembler::Zero, countRegister);
 
-            readCharacter(m_checkedOffset - term->inputPosition, character);
+            readCharacter(op.m_checkedOffset - term->inputPosition, character);
 
             m_jit.sub32(MacroAssembler::TrustedImm32(1), countRegister);
             m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
@@ -2030,7 +2038,7 @@ class YarrGenerator final : public YarrJITInfo {
         nonGreedyFailures.append(m_jit.branch32(MacroAssembler::Equal, countRegister, MacroAssembler::Imm32(term->quantityMaxCount)));
 
         MacroAssembler::JumpList matchDest;
-        readCharacter(m_checkedOffset - term->inputPosition, character);
+        readCharacter(op.m_checkedOffset - term->inputPosition, character);
         // If we are matching the "any character" builtin class for non-unicode patterns,
         // we only need to read the character and don't need to match as it will always succeed.
         if (term->invert() || !term->characterClass->m_anyCharacter) {
@@ -2325,7 +2333,6 @@ class YarrGenerator final : public YarrJITInfo {
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
-                m_checkedOffset += alternative->m_minimumSize;
 
                 // We will reenter after the check, and assume the input position to have been
                 // set as appropriate to this alternative.
@@ -2351,7 +2358,7 @@ class YarrGenerator final : public YarrJITInfo {
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found characters fastpath lookahead ", charactersFastPath, " range:[", beginIndex, ", ", endIndex, ")");
 
                             auto loopHead = m_jit.label();
-                            readCharacter(m_checkedOffset - endIndex + 1, m_regs.regT0);
+                            readCharacter(op.m_checkedOffset - endIndex + 1, m_regs.regT0);
                             matched.append(m_jit.branch32(MacroAssembler::Equal, m_regs.regT0, MacroAssembler::TrustedImm32(charactersFastPath.at(0))));
                             if (charactersFastPath.size() > 1)
                                 matched.append(m_jit.branch32(MacroAssembler::Equal, m_regs.regT0, MacroAssembler::TrustedImm32(charactersFastPath.at(1))));
@@ -2362,7 +2369,7 @@ class YarrGenerator final : public YarrJITInfo {
 
                             m_jit.move(MacroAssembler::TrustedImmPtr(pointer), m_regs.regT1);
                             auto loopHead = m_jit.label();
-                            readCharacter(m_checkedOffset - endIndex + 1, m_regs.regT0);
+                            readCharacter(op.m_checkedOffset - endIndex + 1, m_regs.regT0);
 #if CPU(ARM64) || CPU(RISCV64)
                             static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint64_t));
                             static_assert(1 << 6 == 64);
@@ -2471,10 +2478,6 @@ class YarrGenerator final : public YarrJITInfo {
                     op.m_reentry = m_jit.label();
                     m_jit.sub32(MacroAssembler::Imm32(priorAlternative->m_minimumSize), m_regs.index);
                 }
-
-                if (op.m_op == YarrOpCode::BodyAlternativeNext)
-                    m_checkedOffset += alternative->m_minimumSize;
-                m_checkedOffset -= priorAlternative->m_minimumSize;
                 break;
             }
 
@@ -2506,8 +2509,6 @@ class YarrGenerator final : public YarrJITInfo {
                     op.m_checkAdjust -= disjunction->m_minimumSize;
                 if (op.m_checkAdjust)
                     op.m_jumps.append(jumpIfNoAvailableInput(op.m_checkAdjust));
-
-                m_checkedOffset += op.m_checkAdjust;
                 break;
             }
             case YarrOpCode::SimpleNestedAlternativeNext:
@@ -2553,10 +2554,6 @@ class YarrGenerator final : public YarrJITInfo {
                     op.m_checkAdjust -= disjunction->m_minimumSize;
                 if (op.m_checkAdjust)
                     op.m_jumps.append(jumpIfNoAvailableInput(op.m_checkAdjust));
-
-                YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset -= lastOp.m_checkAdjust;
-                m_checkedOffset += op.m_checkAdjust;
                 break;
             }
             case YarrOpCode::SimpleNestedAlternativeEnd:
@@ -2580,9 +2577,6 @@ class YarrGenerator final : public YarrJITInfo {
                 // them to this node's m_jumps list.
                 op.m_jumps.link(&m_jit);
                 op.m_jumps.clear();
-
-                YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset -= lastOp.m_checkAdjust;
                 break;
             }
 
@@ -2626,7 +2620,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // offsets only afterwards, at the point the results array is
                 // being accessed.
                 if (term->capture() && m_compileMode == JITCompileMode::IncludeSubpatterns) {
-                    unsigned inputOffset = m_checkedOffset - term->inputPosition;
+                    unsigned inputOffset = op.m_checkedOffset - term->inputPosition;
                     if (term->quantityType == QuantifierType::FixedCount)
                         inputOffset += term->parentheses.disjunction->m_minimumSize;
                     if (inputOffset) {
@@ -2655,7 +2649,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // offsets only afterwards, at the point the results array is
                 // being accessed.
                 if (term->capture() && m_compileMode == JITCompileMode::IncludeSubpatterns) {
-                    unsigned inputOffset = m_checkedOffset - term->inputPosition;
+                    unsigned inputOffset = op.m_checkedOffset - term->inputPosition;
                     if (inputOffset) {
                         m_jit.sub32(m_regs.index, MacroAssembler::Imm32(inputOffset), indexTemporary);
                         setSubpatternEnd(indexTemporary, term->parentheses.subpatternId);
@@ -2761,7 +2755,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // being accessed.
                 if (term->capture() && m_compileMode == JITCompileMode::IncludeSubpatterns) {
                     const MacroAssembler::RegisterID indexTemporary = m_regs.regT0;
-                    unsigned inputOffset = m_checkedOffset - term->inputPosition;
+                    unsigned inputOffset = op.m_checkedOffset - term->inputPosition;
                     if (term->quantityType == QuantifierType::FixedCount)
                         inputOffset += term->parentheses.disjunction->m_minimumSize;
                     if (inputOffset) {
@@ -2802,7 +2796,7 @@ class YarrGenerator final : public YarrJITInfo {
                 if (term->capture() && m_compileMode == JITCompileMode::IncludeSubpatterns) {
                     const MacroAssembler::RegisterID indexTemporary = m_regs.regT0;
                     
-                    unsigned inputOffset = m_checkedOffset - term->inputPosition;
+                    unsigned inputOffset = op.m_checkedOffset - term->inputPosition;
                     if (inputOffset) {
                         m_jit.sub32(m_regs.index, MacroAssembler::Imm32(inputOffset), indexTemporary);
                         setSubpatternEnd(indexTemporary, term->parentheses.subpatternId);
@@ -2840,12 +2834,8 @@ class YarrGenerator final : public YarrJITInfo {
                 unsigned parenthesesFrameLocation = term->frameLocation;
                 storeToFrame(m_regs.index, parenthesesFrameLocation + BackTrackInfoParentheticalAssertion::beginIndex());
 
-                // Check 
-                op.m_checkAdjust = m_checkedOffset - term->inputPosition;
                 if (op.m_checkAdjust)
                     m_jit.sub32(MacroAssembler::Imm32(op.m_checkAdjust), m_regs.index);
-
-                m_checkedOffset -= op.m_checkAdjust;
                 break;
             }
             case YarrOpCode::ParentheticalAssertionEnd: {
@@ -2861,9 +2851,6 @@ class YarrGenerator final : public YarrJITInfo {
                     op.m_jumps.append(m_jit.jump());
                     op.m_reentry = m_jit.label();
                 }
-
-                YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset += lastOp.m_checkAdjust;
                 break;
             }
 
@@ -2922,12 +2909,6 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::BodyAlternativeBegin:
             case YarrOpCode::BodyAlternativeNext: {
                 PatternAlternative* alternative = op.m_alternative;
-
-                m_checkedOffset -= alternative->m_minimumSize;
-                if (op.m_op == YarrOpCode::BodyAlternativeNext) {
-                    PatternAlternative* priorAlternative = m_ops[op.m_previousOp].m_alternative;
-                    m_checkedOffset += priorAlternative->m_minimumSize;
-                }
 
                 // Is this the last alternative? If not, then if we backtrack to this point we just
                 // need to jump to try to match the next alternative.
@@ -3127,9 +3108,6 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::BodyAlternativeEnd: {
                 // We should never backtrack back into a body disjunction.
                 ASSERT(m_backtrackingState.isEmpty());
-
-                PatternAlternative* priorAlternative = m_ops[op.m_previousOp].m_alternative;
-                m_checkedOffset += priorAlternative->m_minimumSize;
                 break;
             }
 
@@ -3160,7 +3138,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // Set the backtracks to jump to the appropriate place. We may need
                 // to link the backtracks in one of three different way depending on
                 // the type of alternative we are dealing with:
-                //  - A single alternative, with no simplings.
+                //  - A single alternative, with no siblings.
                 //  - The last alternative of a set of two or more.
                 //  - An alternative other than the last of a set of two or more.
                 //
@@ -3227,12 +3205,6 @@ class YarrGenerator final : public YarrJITInfo {
                     ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeEnd || endOp->m_op == YarrOpCode::NestedAlternativeEnd);
                     m_backtrackingState.append(endOp->m_jumps);
                 }
-
-                m_checkedOffset -= op.m_checkAdjust;
-                if (!isBegin) {
-                    YarrOp& lastOp = m_ops[op.m_previousOp];
-                    m_checkedOffset += lastOp.m_checkAdjust;
-                }
                 break;
             }
             case YarrOpCode::SimpleNestedAlternativeEnd:
@@ -3258,9 +3230,6 @@ class YarrGenerator final : public YarrJITInfo {
                     // alternative to this point.
                     m_backtrackingState.append(op.m_returnAddress);
                 }
-
-                YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset += lastOp.m_checkAdjust;
                 break;
             }
 
@@ -3509,8 +3478,6 @@ class YarrGenerator final : public YarrJITInfo {
                 // the end of the assertion. Also, if inverted, we will have
                 // added the failure caused by a successful match to this.
                 m_backtrackingState.append(endOp.m_jumps);
-
-                m_checkedOffset += op.m_checkAdjust;
                 break;
             }
             case YarrOpCode::ParentheticalAssertionEnd: {
@@ -3520,16 +3487,12 @@ class YarrGenerator final : public YarrJITInfo {
 
                 // Never backtrack into an assertion; later failures bail to before the begin.
                 m_backtrackingState.takeBacktracksToJumpList(op.m_jumps, &m_jit);
-
-                YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset -= lastOp.m_checkAdjust;
                 break;
             }
 
             case YarrOpCode::MatchFailed:
                 break;
             }
-
         } while (opIndex);
     }
 
@@ -3546,7 +3509,7 @@ class YarrGenerator final : public YarrJITInfo {
     // Alternatives will use the 'Simple' set of ops if either the
     // subpattern is terminal (in which case we will never need to
     // backtrack), or if the subpattern only contains one alternative.
-    void opCompileParenthesesSubpattern(PatternTerm* term)
+    void opCompileParenthesesSubpattern(Checked<unsigned> checkedOffset, PatternTerm* term)
     {
         YarrOpCode parenthesesBeginOpCode;
         YarrOpCode parenthesesEndOpCode;
@@ -3620,12 +3583,22 @@ class YarrGenerator final : public YarrJITInfo {
         m_ops.append(alternativeBeginOpCode);
         m_ops.last().m_previousOp = notFound;
         m_ops.last().m_term = term;
-        Vector<std::unique_ptr<PatternAlternative>>& alternatives = term->parentheses.disjunction->m_alternatives;
+        PatternDisjunction* disjunction = term->parentheses.disjunction;
+        auto& alternatives = disjunction->m_alternatives;
+        auto originalCheckedOffset = checkedOffset;
         for (unsigned i = 0; i < alternatives.size(); ++i) {
             size_t lastOpIndex = m_ops.size() - 1;
 
             PatternAlternative* nestedAlternative = alternatives[i].get();
-            opCompileAlternative(nestedAlternative);
+            {
+                // Calculate how much input we need to check for, and if non-zero check.
+                YarrOp& lastOp = m_ops[lastOpIndex];
+                lastOp.m_checkAdjust = nestedAlternative->m_minimumSize;
+                if ((term->quantityType == QuantifierType::FixedCount) && (term->type != PatternTerm::Type::ParentheticalAssertion))
+                    lastOp.m_checkAdjust -= disjunction->m_minimumSize;
+                lastOp.m_checkedOffset = checkedOffset + lastOp.m_checkAdjust;
+            }
+            opCompileAlternative(m_ops[lastOpIndex].m_checkedOffset, nestedAlternative);
 
             size_t thisOpIndex = m_ops.size();
             m_ops.append(YarrOp(alternativeNextOpCode));
@@ -3643,6 +3616,7 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_op = alternativeEndOpCode;
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
+        lastOp.m_checkedOffset = checkedOffset;
 
         size_t parenEnd = m_ops.size();
         m_ops.append(parenthesesEndOpCode);
@@ -3650,9 +3624,11 @@ class YarrGenerator final : public YarrJITInfo {
         m_ops[parenBegin].m_term = term;
         m_ops[parenBegin].m_previousOp = notFound;
         m_ops[parenBegin].m_nextOp = parenEnd;
+        m_ops[parenBegin].m_checkedOffset = checkedOffset;
         m_ops[parenEnd].m_term = term;
         m_ops[parenEnd].m_previousOp = parenBegin;
         m_ops[parenEnd].m_nextOp = notFound;
+        m_ops[parenEnd].m_checkedOffset = checkedOffset;
     }
 
     // opCompileParentheticalAssertion
@@ -3663,25 +3639,38 @@ class YarrGenerator final : public YarrJITInfo {
     // We can always use the OpSimpleNestedAlternative nodes in the
     // case of parenthetical assertions since these only ever match
     // once, and will never backtrack back into the assertion.
-    void opCompileParentheticalAssertion(PatternTerm* term)
+    void opCompileParentheticalAssertion(Checked<unsigned> checkedOffset, PatternTerm* term)
     {
         if (UNLIKELY(!isSafeToRecurse())) {
             m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
             return;
         }
 
+        auto originalCheckedOffset = checkedOffset;
         size_t parenBegin = m_ops.size();
         m_ops.append(YarrOpCode::ParentheticalAssertionBegin);
+        m_ops.last().m_checkAdjust = checkedOffset - term->inputPosition;
+        checkedOffset -= m_ops.last().m_checkAdjust;
+        m_ops.last().m_checkedOffset = checkedOffset;
 
         m_ops.append(YarrOpCode::SimpleNestedAlternativeBegin);
         m_ops.last().m_previousOp = notFound;
         m_ops.last().m_term = term;
-        Vector<std::unique_ptr<PatternAlternative>>& alternatives =  term->parentheses.disjunction->m_alternatives;
+        PatternDisjunction* disjunction = term->parentheses.disjunction;
+        auto& alternatives = disjunction->m_alternatives;
         for (unsigned i = 0; i < alternatives.size(); ++i) {
             size_t lastOpIndex = m_ops.size() - 1;
 
             PatternAlternative* nestedAlternative = alternatives[i].get();
-            opCompileAlternative(nestedAlternative);
+            {
+                // Calculate how much input we need to check for, and if non-zero check.
+                YarrOp& lastOp = m_ops[lastOpIndex];
+                lastOp.m_checkAdjust = nestedAlternative->m_minimumSize;
+                if ((term->quantityType == QuantifierType::FixedCount) && (term->type != PatternTerm::Type::ParentheticalAssertion))
+                    lastOp.m_checkAdjust -= disjunction->m_minimumSize;
+                lastOp.m_checkedOffset = checkedOffset + lastOp.m_checkAdjust;
+            }
+            opCompileAlternative(m_ops[lastOpIndex].m_checkedOffset, nestedAlternative);
 
             size_t thisOpIndex = m_ops.size();
             m_ops.append(YarrOp(YarrOpCode::SimpleNestedAlternativeNext));
@@ -3699,6 +3688,7 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_op = YarrOpCode::SimpleNestedAlternativeEnd;
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
+        lastOp.m_checkedOffset = checkedOffset;
 
         size_t parenEnd = m_ops.size();
         m_ops.append(YarrOpCode::ParentheticalAssertionEnd);
@@ -3709,11 +3699,12 @@ class YarrGenerator final : public YarrJITInfo {
         m_ops[parenEnd].m_term = term;
         m_ops[parenEnd].m_previousOp = parenBegin;
         m_ops[parenEnd].m_nextOp = notFound;
+        m_ops[parenEnd].m_checkedOffset = originalCheckedOffset;
     }
 
     // opCompileAlternative
     // Called to emit nodes for all terms in an alternative.
-    void opCompileAlternative(PatternAlternative* alternative)
+    void opCompileAlternative(Checked<unsigned> checkedOffset, PatternAlternative* alternative)
     {
         optimizeAlternative(alternative);
 
@@ -3722,15 +3713,16 @@ class YarrGenerator final : public YarrJITInfo {
 
             switch (term->type) {
             case PatternTerm::Type::ParenthesesSubpattern:
-                opCompileParenthesesSubpattern(term);
+                opCompileParenthesesSubpattern(checkedOffset, term);
                 break;
 
             case PatternTerm::Type::ParentheticalAssertion:
-                opCompileParentheticalAssertion(term);
+                opCompileParentheticalAssertion(checkedOffset, term);
                 break;
 
             default:
                 m_ops.append(term);
+                m_ops.last().m_checkedOffset = checkedOffset;
             }
         }
     }
@@ -3755,7 +3747,7 @@ class YarrGenerator final : public YarrJITInfo {
             return;
         }
         
-        Vector<std::unique_ptr<PatternAlternative>>& alternatives = disjunction->m_alternatives;
+        auto& alternatives = disjunction->m_alternatives;
         size_t currentAlternativeIndex = 0;
 
         // Emit the 'once through' alternatives.
@@ -3765,8 +3757,10 @@ class YarrGenerator final : public YarrJITInfo {
 
             do {
                 size_t lastOpIndex = m_ops.size() - 1;
+
                 PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
-                opCompileAlternative(alternative);
+                m_ops[lastOpIndex].m_checkedOffset = alternative->m_minimumSize;
+                opCompileAlternative(alternative->m_minimumSize, alternative);
 
                 size_t thisOpIndex = m_ops.size();
                 m_ops.append(YarrOp(YarrOpCode::BodyAlternativeNext));
@@ -3787,10 +3781,12 @@ class YarrGenerator final : public YarrJITInfo {
             lastOp.m_op = YarrOpCode::BodyAlternativeEnd;
             lastOp.m_alternative = nullptr;
             lastOp.m_nextOp = notFound;
+            lastOp.m_checkedOffset = 0;
         }
 
         if (currentAlternativeIndex == alternatives.size()) {
             m_ops.append(YarrOp(YarrOpCode::MatchFailed));
+            m_ops.last().m_checkedOffset = 0;
             return;
         }
 
@@ -3815,9 +3811,11 @@ class YarrGenerator final : public YarrJITInfo {
 
         do {
             size_t lastOpIndex = m_ops.size() - 1;
+
             PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
             ASSERT(!alternative->onceThrough());
-            opCompileAlternative(alternative);
+            m_ops[lastOpIndex].m_checkedOffset = alternative->m_minimumSize;
+            opCompileAlternative(alternative->m_minimumSize, alternative);
 
             size_t thisOpIndex = m_ops.size();
             m_ops.append(YarrOp(YarrOpCode::BodyAlternativeNext));
@@ -3836,6 +3834,7 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_op = YarrOpCode::BodyAlternativeEnd;
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = repeatLoop;
+        lastOp.m_checkedOffset = 0;
     }
 
     bool collectBoyerMooreInfo(PatternDisjunction* disjunction, size_t currentAlternativeIndex, BoyerMooreInfo& bmInfo)
@@ -4477,29 +4476,29 @@ public:
             out.print("Term ");
             switch (term->type) {
             case PatternTerm::Type::AssertionBOL:
-                out.print("Assert BOL");
+                out.printf("Assert BOL checked-offset:(%u)", op.m_checkedOffset.value());
                 break;
 
             case PatternTerm::Type::AssertionEOL:
-                out.print("Assert EOL");
+                out.printf("Assert EOL checked-offset:(%u)", op.m_checkedOffset.value());
                 break;
 
             case PatternTerm::Type::BackReference:
-                out.printf("BackReference pattern #%u", term->backReferenceSubpatternId);
+                out.printf("BackReference pattern #%u checked-offset:(%u)", term->backReferenceSubpatternId, op.m_checkedOffset.value());
                 term->dumpQuantifier(out);
                 break;
 
             case PatternTerm::Type::PatternCharacter:
-                out.print("PatternCharacter ");
+                out.printf("PatternCharacter checked-offset:(%u) ", op.m_checkedOffset.value());
                 dumpUChar32(out, term->patternCharacter);
                 if (m_pattern.ignoreCase())
-                    out.print(" ignore case");
+                    out.print("ignore case ");
 
                 term->dumpQuantifier(out);
                 break;
 
             case PatternTerm::Type::CharacterClass:
-                out.print("PatternCharacterClass ");
+                out.printf("PatternCharacterClass checked-offset:(%u) ", op.m_checkedOffset.value());
                 if (term->invert())
                     out.print("not ");
                 dumpCharacterClass(out, &m_pattern, term->characterClass);
@@ -4507,15 +4506,15 @@ public:
                 break;
 
             case PatternTerm::Type::AssertionWordBoundary:
-                out.printf("%sword boundary", term->invert() ? "non-" : "");
+                out.printf("%sword boundary checked-offset:(%u)", term->invert() ? "non-" : "", op.m_checkedOffset.value());
                 break;
 
             case PatternTerm::Type::DotStarEnclosure:
-                out.print(".* enclosure");
+                out.printf(".* enclosure checked-offset:(%u)", op.m_checkedOffset.value());
                 break;
 
             case PatternTerm::Type::ForwardReference:
-                out.print("ForwardReference <not handled>");
+                out.printf("ForwardReference <not handled> checked-offset:(%u)", op.m_checkedOffset.value());
                 break;
 
             case PatternTerm::Type::ParenthesesSubpattern:
@@ -4531,67 +4530,67 @@ public:
         }
 
         case YarrOpCode::BodyAlternativeBegin:
-            out.printf("BodyAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("BodyAlternativeBegin minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::BodyAlternativeNext:
-            out.printf("BodyAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("BodyAlternativeNext minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::BodyAlternativeEnd:
-            out.print("BodyAlternativeEnd\n");
+            out.printf("BodyAlternativeEnd checked-offset:(%u)\n", op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::SimpleNestedAlternativeBegin:
-            out.printf("SimpleNestedAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("SimpleNestedAlternativeBegin minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 1;
 
         case YarrOpCode::NestedAlternativeBegin:
-            out.printf("NestedAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("NestedAlternativeBegin minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 1;
 
         case YarrOpCode::SimpleNestedAlternativeNext:
-            out.printf("SimpleNestedAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("SimpleNestedAlternativeNext minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::NestedAlternativeNext:
-            out.printf("NestedAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            out.printf("NestedAlternativeNext minimum-size:(%u),checked-offset:(%u)\n", op.m_alternative->m_minimumSize, op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::SimpleNestedAlternativeEnd:
-            out.print("SimpleNestedAlternativeEnd");
+            out.printf("SimpleNestedAlternativeEnd checked-offset:(%u) ", op.m_checkedOffset.value());
             term->dumpQuantifier(out);
             out.print("\n");
             return -1;
 
         case YarrOpCode::NestedAlternativeEnd:
-            out.print("NestedAlternativeEnd");
+            out.printf("NestedAlternativeEnd checked-offset:(%u) ", op.m_checkedOffset.value());
             term->dumpQuantifier(out);
             out.print("\n");
             return -1;
 
         case YarrOpCode::ParenthesesSubpatternOnceBegin:
-            out.print("ParenthesesSubpatternOnceBegin ");
+            out.printf("ParenthesesSubpatternOnceBegin checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
-                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u ", term->parentheses.subpatternId);
             else
-                out.print("non-capturing");
+                out.print("non-capturing ");
             term->dumpQuantifier(out);
             out.print("\n");
             return 0;
 
         case YarrOpCode::ParenthesesSubpatternOnceEnd:
-            out.print("ParenthesesSubpatternOnceEnd ");
+            out.printf("ParenthesesSubpatternOnceEnd checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
-                out.printf("capturing pattern #%u", term->parentheses.subpatternId);
+                out.printf("capturing pattern #%u ", term->parentheses.subpatternId);
             else
-                out.print("non-capturing");
+                out.print("non-capturing ");
             term->dumpQuantifier(out);
             out.print("\n");
             return 0;
 
         case YarrOpCode::ParenthesesSubpatternTerminalBegin:
-            out.print("ParenthesesSubpatternTerminalBegin ");
+            out.printf("ParenthesesSubpatternTerminalBegin checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
                 out.printf("capturing pattern #%u\n", term->parentheses.subpatternId);
             else
@@ -4599,7 +4598,7 @@ public:
             return 0;
 
         case YarrOpCode::ParenthesesSubpatternTerminalEnd:
-            out.print("ParenthesesSubpatternTerminalEnd ");
+            out.printf("ParenthesesSubpatternTerminalEnd checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
                 out.printf("capturing pattern #%u\n", term->parentheses.subpatternId);
             else
@@ -4607,7 +4606,7 @@ public:
             return 0;
 
         case YarrOpCode::ParenthesesSubpatternBegin:
-            out.print("ParenthesesSubpatternBegin ");
+            out.printf("ParenthesesSubpatternBegin checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
                 out.printf("capturing pattern #%u", term->parentheses.subpatternId);
             else
@@ -4617,7 +4616,7 @@ public:
             return 0;
 
         case YarrOpCode::ParenthesesSubpatternEnd:
-            out.print("ParenthesesSubpatternEnd ");
+            out.printf("ParenthesesSubpatternEnd checked-offset:(%u) ", op.m_checkedOffset.value());
             if (term->capture())
                 out.printf("capturing pattern #%u", term->parentheses.subpatternId);
             else
@@ -4627,15 +4626,15 @@ public:
             return 0;
 
         case YarrOpCode::ParentheticalAssertionBegin:
-            out.printf("ParentheticalAssertionBegin%s\n", term->invert() ? " inverted" : "");
+            out.printf("ParentheticalAssertionBegin%s checked-offset:(%u)\n", term->invert() ? " inverted" : "", op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::ParentheticalAssertionEnd:
-            out.printf("ParentheticalAssertionEnd%s\n", term->invert() ? " inverted" : "");
+            out.printf("ParentheticalAssertionEnd%s checked-offset:(%u)\n", term->invert() ? " inverted" : "", op.m_checkedOffset.value());
             return 0;
 
         case YarrOpCode::MatchFailed:
-            out.print("MatchFailed\n");
+            out.printf("MatchFailed checked-offset:(%u)\n", op.m_checkedOffset.value());
             return 0;
         }
 
@@ -4680,18 +4679,6 @@ private:
     Vector<YarrOp, 128> m_ops;
     Vector<UniqueRef<BoyerMooreInfo>, 4> m_bmInfos;
     Vector<UniqueRef<BoyerMooreBitmap::Map>> m_bmMaps;
-
-    // This records the current input offset being applied due to the current
-    // set of alternatives we are nested within. E.g. when matching the
-    // character 'b' within the regular expression /abc/, we will know that
-    // the minimum size for the alternative is 3, checked upon entry to the
-    // alternative, and that 'b' is at offset 1 from the start, and as such
-    // when matching 'b' we need to apply an offset of -2 to the load.
-    //
-    // FIXME: This should go away. Rather than tracking this value throughout
-    // code generation, we should gather this information up front & store it
-    // on the YarrOp structure.
-    Checked<unsigned> m_checkedOffset;
 
     // This class records state whilst generating the backtracking path of code.
     BacktrackingState m_backtrackingState;

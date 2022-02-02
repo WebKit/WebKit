@@ -1,3 +1,17 @@
+2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] YarrJIT m_checkedOffset should be pre-computed and stored to Yarr op
+        https://bugs.webkit.org/show_bug.cgi?id=235932
+
+        Reviewed by Keith Miller.
+
+        Instead of adhocly calculating m_checkedOffset while generating the machine code,
+        let's just pre-compute it and store it to Yarr JIT IR so that we can simplify
+        m_checkedOffset handling. This paves the way to also pre-compute safe-length
+        so that we can skip some of length check in parenthesized-assertions.
+
+        * yarr/YarrJIT.cpp:
+
 2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Fix returned WebAssembly error type when blocked
