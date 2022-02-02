@@ -1,3 +1,15 @@
+2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
+
+        WPT: Import WebAssembly CSP tests
+        https://bugs.webkit.org/show_bug.cgi?id=235319
+
+        Reviewed by Kate Cheney.
+
+        Skip CSP tests that time out.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerNavigationPreloader should only be used once

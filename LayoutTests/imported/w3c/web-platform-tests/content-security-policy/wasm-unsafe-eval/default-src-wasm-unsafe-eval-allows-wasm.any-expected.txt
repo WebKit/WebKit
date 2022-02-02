@@ -1,0 +1,4 @@
+
+FAIL default-src-wasm-unsafe-eval-allows-wasm promise_test: Unhandled rejection with value: object "EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "default-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'".
+"
+
