@@ -1,3 +1,15 @@
+2022-02-02  Sam Sneddon  <gsnedders@apple.com>
+
+        REGRESSION (r288869): webkitpy.w3c.test_converter_unittest.W3CTestConverterTest.test_convert_prefixed_properties is failing
+        https://bugs.webkit.org/show_bug.cgi?id=235961
+        <rdar://problem/88332029>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (test_convert_prefixed_properties): Correct magic constant for number of tests.
+        (generate_test_content): Simplify, add clear assertion to catch in future.
+
 2022-02-02  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] unit tests have become slower

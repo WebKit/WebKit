@@ -264,7 +264,7 @@ CONTENT OF TEST
 </html>
 """
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
-        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 20, test_html)
+        test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 19, test_html)
 
         with OutputCapture():
             converter.feed(test_content[2])
@@ -403,11 +403,8 @@ CONTENT OF TEST
         return (test_content_properties[0], test_content_property_values[0], test_content_property_values[1])
 
     def generate_test_content(self, full_list, num_test, suffix, html):
-        test_list = []
-        count = 0
-        while count < num_test:
-            test_list.append(full_list[count])
-            count += 1
+        assert num_test <= len(full_list), "can't generate more tests than we have input data for"
+        test_list = full_list[:num_test]
 
         # Replace the tokens in the testhtml with the test properties or values.
         # Walk backward through the list to replace the double-digit tokens first.
