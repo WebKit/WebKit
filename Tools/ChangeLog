@@ -1,3 +1,13 @@
+2022-02-02  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Remove DisplayList::Replayer::Delegate and DisplayList::RecorderImpl::Delegate
+        https://bugs.webkit.org/show_bug.cgi?id=235939
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bring up additional test queues on Big Sur

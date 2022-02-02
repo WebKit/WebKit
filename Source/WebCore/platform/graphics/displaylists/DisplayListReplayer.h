@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-enum class AlphaPremultiplication : uint8_t;
 class FloatRect;
 class GraphicsContext;
 
@@ -42,7 +41,6 @@ class ResourceHeap;
 enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
-    ChangeDestinationImageBuffer,
     InvalidItemOrExtent,
     OutOfMemory
 };
@@ -50,7 +48,6 @@ enum class StopReplayReason : uint8_t {
 struct ReplayResult {
     std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
-    std::optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
     std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
@@ -58,30 +55,19 @@ struct ReplayResult {
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    class Delegate;
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr, WebCore::ImageBuffer* maskImageBuffer = nullptr, Delegate* = nullptr);
-    WEBCORE_EXPORT ~Replayer();
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr);
+    ~Replayer() = default;
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
-    class Delegate {
-    public:
-        virtual ~Delegate() { }
-        virtual bool apply(ItemHandle, GraphicsContext&) { return false; }
-        virtual void didCreateMaskImageBuffer(WebCore::ImageBuffer&) { }
-        virtual void didResetMaskImageBuffer() { }
-        virtual void recordResourceUse(RenderingResourceIdentifier) { }
-    };
-    
 private:
     GraphicsContext& context() const;
     std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
-    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
     const DisplayList& m_displayList;
     const ResourceHeap& m_resourceHeap;
-    Delegate* m_delegate;
+    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
 };
 
 }

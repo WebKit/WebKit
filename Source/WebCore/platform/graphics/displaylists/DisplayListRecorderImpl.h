@@ -35,24 +35,12 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
-    class Delegate;
-    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
+    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
     RecorderImpl(RecorderImpl& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
 
     WEBCORE_EXPORT virtual ~RecorderImpl();
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
-
-    class Delegate {
-    public:
-        virtual ~Delegate() { }
-        virtual bool canAppendItemOfType(ItemType) { return false; }
-        virtual void recordNativeImageUse(NativeImage&) { }
-        virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
-        virtual void recordFontUse(Font&) { }
-        virtual void recordImageBufferUse(ImageBuffer&) { }
-        virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
-    };
 
     void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
@@ -61,10 +49,6 @@ public:
     void flushContext(GraphicsContextFlushIdentifier identifier) final { append<FlushContext>(identifier); }
 
 private:
-    // FIXME: Maybe remove this?
-    bool canDrawImageBuffer(const ImageBuffer&) const final;
-    RenderingMode renderingMode() const final;
-
     void recordSave() final;
     void recordRestore() final;
     void recordTranslate(float x, float y) final;
@@ -146,9 +130,6 @@ private:
     template<typename T, class... Args>
     void append(Args&&... args)
     {
-        if (UNLIKELY(!canAppendItemOfType(T::itemType)))
-            return;
-
         m_displayList.append<T>(std::forward<Args>(args)...);
 
         if constexpr (T::isDrawingItem) {
@@ -166,10 +147,8 @@ private:
     }
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;
-    WEBCORE_EXPORT bool canAppendItemOfType(ItemType) const;
 
     DisplayList& m_displayList;
-    Delegate* m_delegate { nullptr };
     bool m_isNested { false };
 };
 

@@ -66,7 +66,6 @@ private:
 
     friend class WebCore::DrawGlyphsRecorder;
 
-    bool canDrawImageBuffer(const WebCore::ImageBuffer&) const final;
     WebCore::RenderingMode renderingMode() const final;
 
     void recordSave() final;

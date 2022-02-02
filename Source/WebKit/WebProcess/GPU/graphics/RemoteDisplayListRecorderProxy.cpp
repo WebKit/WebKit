@@ -80,11 +80,6 @@ void RemoteDisplayListRecorderProxy::transformToColorSpace(const WebCore::Destin
     send(Messages::RemoteDisplayListRecorder::TransformToColorSpace(colorSpace));
 }
 
-bool RemoteDisplayListRecorderProxy::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
-{
-    return m_renderingBackend && m_renderingBackend->isCached(imageBuffer);
-}
-
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
 {
     return m_imageBuffer ? m_imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
@@ -430,7 +425,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
         return false;
     }
 
-    if (!canDrawImageBuffer(imageBuffer))
+    if (!m_renderingBackend->isCached(imageBuffer))
         return false;
 
     m_renderingBackend->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);

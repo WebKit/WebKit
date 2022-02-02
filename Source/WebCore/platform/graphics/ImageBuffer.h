@@ -95,9 +95,6 @@ public:
     virtual void flushDrawingContextAsync() { }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
 
-    virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
-    virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }
-
     virtual FloatSize logicalSize() const = 0;
     virtual IntSize truncatedLogicalSize() const = 0; // This truncates the real size. You probably should be calling logicalSize() instead.
     virtual float resolutionScale() const = 0;

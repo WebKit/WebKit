@@ -33,8 +33,8 @@
 namespace WebCore {
 namespace DisplayList {
 
-DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, RecorderImpl::Delegate* delegate)
-    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, delegate)
+DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM)
+    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM)
 {
 }
 

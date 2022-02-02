@@ -60,9 +60,9 @@ public:
         m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
     }
 
-    ImageBuffer(const ImageBufferBackend::Parameters& parameters, RecorderImpl::Delegate* delegate = nullptr)
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters)
         : BaseConcreteImageBuffer(parameters)
-        , m_drawingContext(logicalSize(), baseTransform(), delegate)
+        , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {

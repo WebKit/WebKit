@@ -144,10 +144,6 @@ protected:
     virtual bool recordResourceUse(const SourceImage&) = 0;
     virtual bool recordResourceUse(Font&) = 0;
 
-    // FIXME: Maybe remove this?
-    virtual bool canDrawImageBuffer(const ImageBuffer&) const = 0;
-    virtual RenderingMode renderingMode() const = 0;
-
     virtual std::unique_ptr<GraphicsContext> createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM) = 0;
 
     struct ContextState {

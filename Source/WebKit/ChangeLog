@@ -1,3 +1,15 @@
+2022-02-02  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Remove DisplayList::Replayer::Delegate and DisplayList::RecorderImpl::Delegate
+        https://bugs.webkit.org/show_bug.cgi?id=235939
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::recordResourceUse):
+        (WebKit::RemoteDisplayListRecorderProxy::canDrawImageBuffer const): Deleted.
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-02-02  Chris Dumez  <cdumez@apple.com>
 
         Move and rename ServiceWorkerFrameLoaderClient & ServiceWorkerLibWebRTCProvider

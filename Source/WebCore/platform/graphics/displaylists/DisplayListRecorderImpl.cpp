@@ -42,10 +42,9 @@
 namespace WebCore {
 namespace DisplayList {
 
-RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
     : Recorder(state, initialClip, initialCTM, deconstructDrawGlyphs)
     , m_displayList(displayList)
-    , m_delegate(delegate)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
 }
@@ -53,7 +52,6 @@ RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState&
 RecorderImpl::RecorderImpl(RecorderImpl& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
     : Recorder(parent, state, initialClip, initialCTM)
     , m_displayList(parent.m_displayList)
-    , m_delegate(parent.m_delegate)
     , m_isNested(true)
 {
 }
@@ -73,21 +71,6 @@ void RecorderImpl::getPixelBuffer(const PixelBufferFormat& outputFormat, const I
 void RecorderImpl::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
-}
-
-bool RecorderImpl::canAppendItemOfType(ItemType type) const
-{
-    return !m_delegate || m_delegate->canAppendItemOfType(type);
-}
-
-bool RecorderImpl::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
-{
-    return !m_delegate || m_delegate->isCachedImageBuffer(imageBuffer);
-}
-
-RenderingMode RecorderImpl::renderingMode() const
-{
-    return m_delegate ? m_delegate->renderingMode() : RenderingMode::Unaccelerated;
 }
 
 std::unique_ptr<GraphicsContext> RecorderImpl::createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM)
@@ -421,18 +404,12 @@ void RecorderImpl::recordApplyDeviceScaleFactor(float scaleFactor)
 
 bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
-    if (m_delegate)
-        m_delegate->recordNativeImageUse(nativeImage);
     m_displayList.cacheNativeImage(nativeImage);
     return true;
 }
 
 bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 {
-    if (!canDrawImageBuffer(imageBuffer))
-        return false;
-    if (m_delegate)
-        m_delegate->recordImageBufferUse(imageBuffer);
     m_displayList.cacheImageBuffer(imageBuffer);
     return true;
 }
@@ -450,8 +427,6 @@ bool RecorderImpl::recordResourceUse(const SourceImage& image)
 
 bool RecorderImpl::recordResourceUse(Font& font)
 {
-    if (m_delegate)
-        m_delegate->recordFontUse(font);
     m_displayList.cacheFont(font);
     return true;
 }

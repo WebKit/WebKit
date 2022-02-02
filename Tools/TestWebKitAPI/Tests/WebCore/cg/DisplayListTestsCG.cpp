@@ -136,7 +136,6 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
     Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
     EXPECT_GT(result.numberOfBytesRead, 0U);
-    EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
     EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
@@ -160,7 +159,6 @@ TEST(DisplayListTests, InlineItemValidationFailure)
         Replayer replayer { context, list };
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, 0U);
-        EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };

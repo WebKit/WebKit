@@ -37,7 +37,7 @@ class InMemoryDisplayList;
 class DrawingContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM = { }, RecorderImpl::Delegate* = nullptr);
+    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM = { });
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
     RecorderImpl& recorder() { return m_context; };
