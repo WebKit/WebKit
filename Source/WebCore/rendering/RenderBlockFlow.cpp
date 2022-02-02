@@ -35,6 +35,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineIteratorBox.h"
+#include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLine.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
