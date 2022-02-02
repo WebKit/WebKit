@@ -34,10 +34,14 @@
 
 namespace WebCore {
 
-RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source)
+RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
     : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() })
     , m_source(WTFMove(source))
+#if PLATFORM(COCOA)
+    , m_shouldUseIOSurface(shouldUseIOSurface)
+#endif
 {
+    UNUSED_PARAM(shouldUseIOSurface);
     m_source->addObserver(*this);
     m_currentSettings = m_source->settings();
     setSize(m_source->size());
@@ -166,7 +170,7 @@ void RealtimeVideoSource::sourceStopped()
 RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 {
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
+        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat(), m_shouldUseIOSurface);
 
     ASSERT(m_imageTransferSession);
     if (!m_imageTransferSession)

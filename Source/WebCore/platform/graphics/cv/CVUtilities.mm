@@ -34,18 +34,8 @@
 
 namespace WebCore {
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount)
+static Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsigned minimumBufferCount, NSDictionary *pixelAttributes)
 {
-    auto pixelAttributes = @{
-        (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
-        (__bridge NSString *)kCVPixelBufferHeightKey : @(height),
-        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(format),
-        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : @NO,
-#if PLATFORM(MAC)
-        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
-#endif
-        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
-    };
     NSDictionary *poolOptions = nullptr;
     if (minimumBufferCount) {
         poolOptions = @{
@@ -57,6 +47,33 @@ Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBuffer
     if (status != kCVReturnSuccess || !pool)
         return makeUnexpected(status);
     return adoptCF(pool);
+}
+
+Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount)
+{
+    return createBufferPool(minimumBufferCount, @{
+        (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
+        (__bridge NSString *)kCVPixelBufferHeightKey : @(height),
+        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(format),
+        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : @NO,
+#if PLATFORM(MAC)
+        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
+#endif
+        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+    });
+}
+
+Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount)
+{
+    return createBufferPool(minimumBufferCount, @{
+        (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
+        (__bridge NSString *)kCVPixelBufferHeightKey : @(height),
+        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(format),
+        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : @NO,
+#if PLATFORM(MAC)
+        (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
+#endif
+    });
 }
 
 Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef pixelBufferPool)

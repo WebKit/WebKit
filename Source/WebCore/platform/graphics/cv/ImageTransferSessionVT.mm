@@ -44,7 +44,8 @@
 
 namespace WebCore {
 
-ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat)
+ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface)
+    : m_shouldUseIOSurface(shouldUseIOSurface)
 {
     VTPixelTransferSessionRef transferSession;
     VTPixelTransferSessionCreate(kCFAllocatorDefault, &transferSession);
@@ -76,7 +77,7 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
 {
     if (m_size == size && m_outputBufferPool)
         return true;
-    auto bufferPool = createIOSurfaceCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6).value_or(nullptr);
+    auto bufferPool = m_shouldUseIOSurface ? createIOSurfaceCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6).value_or(nullptr) : createInMemoryCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6).value_or(nullptr);
     if (!bufferPool)
         return false;
     m_outputBufferPool = WTFMove(bufferPool);

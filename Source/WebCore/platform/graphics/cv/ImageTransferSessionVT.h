@@ -42,9 +42,9 @@ class RemoteVideoSample;
 
 class ImageTransferSessionVT {
 public:
-    static std::unique_ptr<ImageTransferSessionVT> create(uint32_t pixelFormat)
+    static std::unique_ptr<ImageTransferSessionVT> create(uint32_t pixelFormat, bool shouldUseIOSurface = true)
     {
-        return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat));
+        return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat, shouldUseIOSurface));
     }
 
     RefPtr<MediaSample> convertMediaSample(MediaSample&, const IntSize&);
@@ -61,7 +61,7 @@ public:
     uint32_t pixelFormat() const { return m_pixelFormat; }
 
 private:
-    WEBCORE_EXPORT explicit ImageTransferSessionVT(uint32_t pixelFormat);
+    WEBCORE_EXPORT ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface);
 
 #if !PLATFORM(MACCATALYST)
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
@@ -79,7 +79,7 @@ private:
 
     RetainPtr<VTPixelTransferSessionRef> m_transferSession;
     RetainPtr<CVPixelBufferPoolRef> m_outputBufferPool;
-    RetainPtr<CFDictionaryRef> m_ioSurfaceBufferAttributes;
+    bool m_shouldUseIOSurface { true };
     uint32_t m_pixelFormat;
     IntSize m_size;
 };

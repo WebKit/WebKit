@@ -237,12 +237,13 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
+    bool shouldUseIOSurface = false;
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess), shouldUseIOSurface));
 }
 
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    return CaptureSourceOrError(RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, false));
+    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, false);
 }
 
 }
