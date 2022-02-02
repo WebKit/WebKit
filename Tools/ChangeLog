@@ -1,3 +1,13 @@
+2022-02-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Bring up additional test queues on Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=235446
+
+        Unreviewed infrastructure fix.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Move the performance queue to the Big Sur section of the dashboard.
+
 2022-01-26  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Improve user prompts (Part 5)
