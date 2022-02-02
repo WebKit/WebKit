@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -409,7 +409,7 @@ void RemoteDisplayListRecorderProxy::recordResourceUse(NativeImage& image)
         return;
     }
 
-    m_renderingBackend->recordNativeImageUse(image);
+    m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image);
 }
 
 void RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)
@@ -419,7 +419,7 @@ void RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)
         return;
     }
 
-    m_renderingBackend->recordFontUse(font);
+    m_renderingBackend->remoteResourceCacheProxy().recordFontUse(font);
 }
 
 void RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
@@ -429,7 +429,7 @@ void RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
         return;
     }
 
-    m_renderingBackend->recordImageBufferUse(imageBuffer);
+    m_renderingBackend->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);
 }
 
 void RemoteDisplayListRecorderProxy::flushContext(GraphicsContextFlushIdentifier identifier)
