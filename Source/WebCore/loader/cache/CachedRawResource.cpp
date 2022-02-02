@@ -62,19 +62,24 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
     if (m_inIncrementalDataNotify)
         return;
 
+    // We need to keep a strong reference to both the SharedBuffer and the current CachedRawResource instance
+    // as notifyClientsDataWasReceived call may delete both.
     CachedResourceHandle<CachedRawResource> protectedThis(this);
+    auto protectedData = Ref { data };
+
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     m_data = data.makeContiguous();
 
+    // Notify clients only of the newly appended content since the last run.
     auto previousDataSize = encodedSize();
-    while (m_data->size() > previousDataSize) {
-        auto incrementalData = m_data->getSomeData(previousDataSize);
+    while (data.size() > previousDataSize) {
+        auto incrementalData = data.getSomeData(previousDataSize);
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
         notifyClientsDataWasReceived(incrementalData.createSharedBuffer());
     }
-    setEncodedSize(m_data->size());
+    setEncodedSize(data.size());
 
     if (dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData) {
         if (m_loader)
