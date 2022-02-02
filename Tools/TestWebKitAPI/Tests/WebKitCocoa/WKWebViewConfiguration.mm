@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -148,4 +149,26 @@ TEST(WebKit, ConfigurationHTTPSUpgrade)
     EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"https://www.opengl.org/"]]);
     EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"custom-scheme://www.opengl.org/"]]);
     EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"http://example.com/"]]);
+}
+
+TEST(WebKit, ConfigurationDisableJavaScript)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body onload=\"document.write('FAIL');\">PASS</body>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"PASS");
+}
+
+TEST(WebKit, ConfigurationDisableJavaScriptNestedBody)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<table><body onload=\"document.write('FAIL');\"></table>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"<table></table>");
 }
