@@ -1,3 +1,36 @@
+2022-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename some service worker functions that have names that are too generic
+        https://bugs.webkit.org/show_bug.cgi?id=235988
+
+        Reviewed by Darin Adler.
+
+        Rename some service worker functions that have names that are too generic and will cause
+        confusion with shared workers.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::ensureSWServer):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::serviceWorkerContextConnectionNoLongerNeeded):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess): Deleted.
+        (WebKit::NetworkProcessProxy::workerContextConnectionNoLongerNeeded): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishServiceWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The default values for a couple of Live Text-related features should respect system feature flags

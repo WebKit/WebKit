@@ -327,8 +327,8 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
-    void workerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier);
+    void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    void serviceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier);
     void registerServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void unregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);

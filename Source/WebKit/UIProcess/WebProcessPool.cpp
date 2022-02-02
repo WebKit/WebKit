@@ -529,7 +529,7 @@ void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessPro
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     auto* websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -571,7 +571,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
                 ASSERT(!serviceWorkerProcessProxy->isInProcessCache());
             }
 
-            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishServiceWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
             break;
         }
     }
@@ -580,7 +580,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         auto newProcessProxy = WebProcessProxy::createForServiceWorkers(*processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
         serviceWorkerProcessProxy = newProcessProxy.ptr();
 
-        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess creating a new service worker process (proces=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishServiceWorkerContextConnectionToNetworkProcess creating a new service worker process (proces=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
 
         processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore);
         processPool->m_processes.append(WTFMove(newProcessProxy));

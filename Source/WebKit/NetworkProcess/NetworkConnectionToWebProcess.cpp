@@ -1226,7 +1226,7 @@ void NetworkConnectionToWebProcess::closeSWContextConnection()
 void NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
 {
     CONNECTION_RELEASE_LOG(ServiceWorker, "serverToContextConnectionNoLongerNeeded: WebProcess no longer useful for running service workers");
-    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::WorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::ServiceWorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
 
     m_swContextConnection = nullptr;
 }

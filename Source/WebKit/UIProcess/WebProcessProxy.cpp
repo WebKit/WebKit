@@ -1866,7 +1866,7 @@ void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& s
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Started");
     markProcessAsRecentlyUsed();
-    sendWithAsyncReply(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, m_serviceWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::WebProcess::EstablishServiceWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, m_serviceWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         if (weakThis)
             WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Finished");
         completionHandler();

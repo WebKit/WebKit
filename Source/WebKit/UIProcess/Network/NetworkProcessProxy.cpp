@@ -1416,12 +1416,12 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcessPool::establishWorkerContextConnectionToNetworkProcess(*this, WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
+    WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(*this, WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::workerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+void NetworkProcessProxy::serviceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
 {
     if (auto* process = WebProcessProxy::processForIdentifier(identifier))
         process->disableServiceWorkers();

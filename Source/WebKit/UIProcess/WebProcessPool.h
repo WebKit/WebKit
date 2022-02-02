@@ -375,7 +375,7 @@ public:
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 #if ENABLE(SERVICE_WORKER)
-    static void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    static void establishServiceWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void removeFromServiceWorkerProcesses(WebProcessProxy&);
     size_t serviceWorkerProxiesCount() const { return serviceWorkerProcesses().computeSize(); }
     void updateServiceWorkerUserAgent(const String& userAgent);

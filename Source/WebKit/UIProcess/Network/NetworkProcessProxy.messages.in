@@ -53,8 +53,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> () Async
-    WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+    EstablishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> () Async
+    ServiceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
     RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)

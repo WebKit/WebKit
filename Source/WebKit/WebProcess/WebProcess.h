@@ -470,7 +470,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, ServiceWorkerInitializationData&&, CompletionHandler<void()>&&);
+    void establishServiceWorkerContextConnectionToNetworkProcess(PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, ServiceWorkerInitializationData&&, CompletionHandler<void()>&&);
 #endif
 
     void fetchWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData&&)>&&);

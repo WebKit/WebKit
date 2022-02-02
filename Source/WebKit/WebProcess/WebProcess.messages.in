@@ -101,7 +101,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::ServiceWorkerInitializationData initializationData) -> () Async
+    EstablishServiceWorkerContextConnectionToNetworkProcess(WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::ServiceWorkerInitializationData initializationData) -> () Async
 #endif
 
     SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);

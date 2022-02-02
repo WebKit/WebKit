@@ -1918,7 +1918,7 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::establishWorkerContextConnectionToNetworkProcess(PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, ServiceWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
+void WebProcess::establishServiceWorkerContextConnectionToNetworkProcess(PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, ServiceWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
 {
     // We are in the Service Worker context process and the call below establishes our connection to the Network Process
     // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
