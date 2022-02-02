@@ -1,3 +1,17 @@
+2022-02-02  Don Olmstead  <don.olmstead@sony.com>
+
+        WebInspector: Add additional image MIME types to frontend
+        https://bugs.webkit.org/show_bug.cgi?id=235977
+
+        Reviewed by Patrick Angle.
+
+        Add MIME types around JPEG 2000, JPEG XL and AVIF. Sort the listings based on the file
+        extension to make it easier to spot missing image formats.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.mimeTypeForFileExtension):
+        (WI.fileExtensionForMIMEType):
+
 2022-01-28  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Add another Protocol Version (iOS 15.4)
