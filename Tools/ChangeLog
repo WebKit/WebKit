@@ -1,3 +1,13 @@
+2022-02-01  Robert Jenner  <Jenner@apple.com>
+
+        Update watchOS simulators to run on the newer 44mm display
+        https://bugs.webkit.org/show_bug.cgi?id=235986
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort):
+
 2022-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Mitigate hangs underneath -requestAutocorrectionContextWithCompletionHandler: when focusing text fields
