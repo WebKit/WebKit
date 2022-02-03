@@ -31,6 +31,8 @@ messages -> RemoteMediaRecorder NotRefCounted {
     StopRecording() -> () Async
     Pause() -> () Async
     Resume() -> () Async
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
 }
 
 #endif

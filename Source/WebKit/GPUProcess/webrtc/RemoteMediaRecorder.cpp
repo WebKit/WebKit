@@ -33,6 +33,7 @@
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageTransferSessionVT.h>
+#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
@@ -87,21 +88,30 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
 
 void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remoteSample)
 {
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
+    RefPtr<MediaSample> sample;
+    if (!remoteSample.surface()) {
+        auto pixelBuffer = m_sharedVideoFrameReader.read();
+        if (!pixelBuffer)
+            return;
 
-    if (!m_imageTransferSession) {
-        ASSERT_NOT_REACHED();
-        return;
+        sample = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored());
+        sample->setTimestamps(remoteSample.time(), MediaTime { });
+    } else {
+        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
+            m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
+
+        if (!m_imageTransferSession) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        sample = m_imageTransferSession->createMediaSample(remoteSample);
+        if (!sample) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
     }
-
-    auto sampleBuffer = m_imageTransferSession->createMediaSample(remoteSample);
-    if (!sampleBuffer) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_writer->appendVideoSampleBuffer(*sampleBuffer);
+    m_writer->appendVideoSampleBuffer(*sample);
 }
 
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&& completionHandler)
@@ -129,6 +139,20 @@ void RemoteMediaRecorder::resume(CompletionHandler<void()>&& completionHandler)
 {
     m_writer->resume();
     completionHandler();
+}
+
+void RemoteMediaRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
+{
+    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+}
+
+void RemoteMediaRecorder::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
+{
+    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!memory)
+        return;
+
+    m_sharedVideoFrameReader.setSharedMemory(memory.releaseNonNull());
 }
 
 }

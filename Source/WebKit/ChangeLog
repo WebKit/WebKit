@@ -1,5 +1,29 @@
 2022-02-03  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorderPrivate should not need to create IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=235953
+
+        Reviewed by Eric Carlson.
+
+        Make use of SharedVideoFrameReader and SharedVideoFrameWriter between SampleBufferDisplayLayer and RemoteSampleBufferDisplayLayer.
+        Covered by existing MediaRecorder tests.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::videoSampleAvailable):
+        (WebKit::RemoteMediaRecorder::setSharedVideoFrameSemaphore):
+        (WebKit::RemoteMediaRecorder::setSharedVideoFrameMemory):
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::videoSampleAvailable):
+        (WebKit::MediaRecorderPrivate::copySharedVideoFrame):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.mm: Removed.
+
+2022-02-03  Youenn Fablet  <youenn@apple.com>
+
         SampleBufferDiplayLayer should not need to create IOSurfaces
         https://bugs.webkit.org/show_bug.cgi?id=235954
 

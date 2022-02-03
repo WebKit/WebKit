@@ -96,24 +96,32 @@ void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoSample
         if (!m_blackFrame) {
             auto blackFrameDescription = CMSampleBufferGetFormatDescription(sample.platformSample().sample.cmSampleBuffer);
             auto dimensions = CMVideoFormatDescriptionGetDimensions(blackFrameDescription);
-            auto blackFrame = createBlackPixelBuffer(dimensions.width, dimensions.height);
-            // FIXME: We convert to get an IOSurface. We could optimize this.
-            m_blackFrame = convertToBGRA(blackFrame.get());
+            m_blackFrame = createBlackPixelBuffer(dimensions.width, dimensions.height);
         }
-        remoteSample = RemoteVideoSample::create(m_blackFrame.get(), sample.presentationTime(), sample.videoRotation());
+        remoteSample = RemoteVideoSample::create(m_blackFrame.get(), sample.presentationTime(), sample.videoRotation(), RemoteVideoSample::ShouldCheckForIOSurface::No);
     } else {
         m_blackFrame = nullptr;
-        remoteSample = RemoteVideoSample::create(sample);
-        if (!remoteSample) {
-            // FIXME: Optimize this code path.
-            auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
-            auto newPixelBuffer = convertToBGRA(pixelBuffer);
-            remoteSample = RemoteVideoSample::create(newPixelBuffer.get(), sample.presentationTime(), sample.videoRotation());
-        }
+        remoteSample = RemoteVideoSample::create(sample, RemoteVideoSample::ShouldCheckForIOSurface::No);
     }
 
-    if (remoteSample)
-        m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample) }, m_identifier);
+    if (!remoteSample->surface()) {
+        // buffer is not IOSurface, we need to copy to shared video frame.
+        if (!copySharedVideoFrame(remoteSample->imageBuffer()))
+            return;
+    }
+
+    m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample) }, m_identifier);
+}
+
+
+bool MediaRecorderPrivate::copySharedVideoFrame(CVPixelBufferRef pixelBuffer)
+{
+    if (!pixelBuffer)
+        return false;
+    return m_sharedVideoFrameWriter.write(pixelBuffer,
+        [this](auto& semaphore) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
+        [this](auto& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { handle }, m_identifier); }
+    );
 }
 
 void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)

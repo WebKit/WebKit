@@ -29,9 +29,9 @@
 
 #include "MediaRecorderIdentifier.h"
 #include "SharedRingBufferStorage.h"
+#include "SharedVideoFrame.h"
 
 #include <WebCore/MediaRecorderPrivate.h>
-#include <WebCore/PixelBufferConformerCV.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,7 +66,7 @@ private:
     void resumeRecording(CompletionHandler<void()>&&) final;
 
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
-    RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
+    bool copySharedVideoFrame(CVPixelBufferRef);
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
@@ -81,7 +81,7 @@ private:
     bool m_hasVideo { false };
     bool m_isStopped { false };
 
-    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };
 
 }

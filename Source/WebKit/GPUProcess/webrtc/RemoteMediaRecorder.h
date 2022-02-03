@@ -31,6 +31,7 @@
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
@@ -76,6 +77,8 @@ private:
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
@@ -85,6 +88,8 @@ private:
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+
+    SharedVideoFrameReader m_sharedVideoFrameReader;
 };
 
 }
