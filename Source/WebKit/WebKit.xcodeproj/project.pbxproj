@@ -4889,8 +4889,8 @@
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieJar.cpp; sourceTree = "<group>"; };
 		5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieJar.h; sourceTree = "<group>"; };
-		5C80B3DB23690D8D0086E6DE /* ServiceWorkerInitializationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerInitializationData.h; sourceTree = "<group>"; };
-		5C80B3DD23690F100086E6DE /* ServiceWorkerInitializationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerInitializationData.cpp; sourceTree = "<group>"; };
+		5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerInitializationData.h; sourceTree = "<group>"; };
+		5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWorkerInitializationData.cpp; sourceTree = "<group>"; };
 		5C826D6726D46B43008AEC91 /* PrivateClickMeasurementStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementStore.cpp; sourceTree = "<group>"; };
 		5C826D6826D46B44008AEC91 /* PrivateClickMeasurementStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementStore.h; sourceTree = "<group>"; };
 		5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDatabase.h; sourceTree = "<group>"; };
@@ -7236,6 +7236,8 @@
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
 				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
+				5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */,
+				5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */,
 				7203449B26A6C476000A5F54 /* RenderingUpdateID.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
@@ -7248,8 +7250,6 @@
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
 				2D65D196274B8E84009C4101 /* ScrollingAccelerationCurve.cpp */,
 				2D65D195274B8E84009C4101 /* ScrollingAccelerationCurve.h */,
-				5C80B3DD23690F100086E6DE /* ServiceWorkerInitializationData.cpp */,
-				5C80B3DB23690D8D0086E6DE /* ServiceWorkerInitializationData.h */,
 				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,

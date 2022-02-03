@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ServiceWorkerInitializationData.h"
+#include "RemoteWorkerInitializationData.h"
 
 #include "ArgumentCoders.h"
 #include "Decoder.h"
@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void ServiceWorkerInitializationData::encode(IPC::Encoder& encoder) const
+void RemoteWorkerInitializationData::encode(IPC::Encoder& encoder) const
 {
     encoder << userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -42,7 +42,7 @@ void ServiceWorkerInitializationData::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-std::optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::decode(IPC::Decoder& decoder)
+std::optional<RemoteWorkerInitializationData> RemoteWorkerInitializationData::decode(IPC::Decoder& decoder)
 {
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
@@ -56,12 +56,12 @@ std::optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::
         return std::nullopt;
 #endif
     
-    return {{
+    return { {
         WTFMove(*userContentControllerIdentifier),
 #if ENABLE(CONTENT_EXTENSIONS)
         WTFMove(*contentRuleLists),
 #endif
-    }};
+    } };
 }
 
 }

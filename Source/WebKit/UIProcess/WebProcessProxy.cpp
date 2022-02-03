@@ -1866,7 +1866,7 @@ void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& s
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Started");
     markProcessAsRecentlyUsed();
-    sendWithAsyncReply(Messages::WebProcess::EstablishServiceWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, m_serviceWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::WebProcess::EstablishServiceWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->remoteWorkerPageProxyID, m_serviceWorkerInformation->remoteWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, m_serviceWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         if (weakThis)
             WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Finished");
         completionHandler();
@@ -2008,10 +2008,10 @@ void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier
 {
     ASSERT(!m_serviceWorkerInformation);
     WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "enableServiceWorkers:");
-    m_serviceWorkerInformation = ServiceWorkerInformation {
+    m_serviceWorkerInformation = RemoteWorkerInformation {
         WebPageProxyIdentifier::generate(),
         PageIdentifier::generate(),
-        ServiceWorkerInitializationData {
+        RemoteWorkerInitializationData {
             userContentControllerIdentifier,
 #if ENABLE(CONTENT_EXTENSIONS)
             contentRuleListsFromIdentifier(userContentControllerIdentifier),

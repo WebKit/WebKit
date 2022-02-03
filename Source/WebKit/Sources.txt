@@ -230,8 +230,8 @@ Shared/PlatformPopupMenuData.cpp
 Shared/PrintInfo.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
+Shared/RemoteWorkerInitializationData.cpp
 Shared/ScrollingAccelerationCurve.cpp
-Shared/ServiceWorkerInitializationData.cpp
 Shared/SessionState.cpp
 Shared/ShareableBitmap.cpp
 Shared/ShareableResource.cpp

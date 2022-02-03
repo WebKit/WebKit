@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,10 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData;
 
-struct ServiceWorkerInitializationData {
+struct RemoteWorkerInitializationData {
 
     void encode(IPC::Encoder&) const;
-    static std::optional<ServiceWorkerInitializationData> decode(IPC::Decoder&);
+    static std::optional<RemoteWorkerInitializationData> decode(IPC::Decoder&);
 
     UserContentControllerIdentifier userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)

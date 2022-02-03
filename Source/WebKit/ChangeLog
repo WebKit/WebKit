@@ -1,3 +1,28 @@
+2022-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Rename ServiceWorkerInitializationData / ServiceWorkerInformation so they can be reused by shared workers
+        https://bugs.webkit.org/show_bug.cgi?id=236089
+
+        Reviewed by Alex Christensen.
+
+        * Shared/RemoteWorkerInitializationData.cpp: Renamed from Source/WebKit/Shared/ServiceWorkerInitializationData.cpp.
+        (WebKit::RemoteWorkerInitializationData::encode const):
+        (WebKit::RemoteWorkerInitializationData::decode):
+        * Shared/RemoteWorkerInitializationData.h: Renamed from Source/WebKit/Shared/ServiceWorkerInitializationData.h.
+        * Sources.txt:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::hasServiceWorkerPageProxy):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishServiceWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2022-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash at com.apple.WebKit: WebKit::RemoteLayerBackingStore::display

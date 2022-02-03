@@ -35,8 +35,8 @@
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
+#include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
-#include "ServiceWorkerInitializationData.h"
 #include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
@@ -363,7 +363,7 @@ public:
     void establishServiceWorkerContext(const WebPreferencesStore&, const WebCore::RegistrableDomain&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void setServiceWorkerUserAgent(const String&);
     void updateServiceWorkerPreferencesStore(const WebPreferencesStore&);
-    bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->serviceWorkerPageProxyID == pageProxyID; }
+    bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->remoteWorkerPageProxyID == pageProxyID; }
     void updateServiceWorkerProcessAssertion();
     void registerServiceWorkerClientProcess(WebProcessProxy&);
     void unregisterServiceWorkerClientProcess(WebProcessProxy&);
@@ -648,14 +648,14 @@ private:
 #endif
     RefPtr<Logger> m_logger;
 
-    struct ServiceWorkerInformation {
-        WebPageProxyIdentifier serviceWorkerPageProxyID;
-        WebCore::PageIdentifier serviceWorkerPageID;
-        ServiceWorkerInitializationData initializationData;
+    struct RemoteWorkerInformation {
+        WebPageProxyIdentifier remoteWorkerPageProxyID;
+        WebCore::PageIdentifier remoteWorkerPageID;
+        RemoteWorkerInitializationData initializationData;
         ProcessThrottler::ActivityVariant activity;
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
-    std::optional<ServiceWorkerInformation> m_serviceWorkerInformation;
+    std::optional<RemoteWorkerInformation> m_serviceWorkerInformation;
     bool m_hasServiceWorkerBackgroundProcessing { false };
 
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;

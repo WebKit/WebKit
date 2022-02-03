@@ -35,9 +35,9 @@
 #include "NetworkProcessMessages.h"
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerFrameLoaderClient.h"
+#include "RemoteWorkerInitializationData.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
 #include "ServiceWorkerFetchTaskMessages.h"
-#include "ServiceWorkerInitializationData.h"
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCompiledContentRuleListData.h"
@@ -76,7 +76,7 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, ServiceWorkerInitializationData&& initializationData)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_registrableDomain(WTFMove(registrableDomain))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)

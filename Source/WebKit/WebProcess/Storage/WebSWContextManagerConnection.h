@@ -57,11 +57,11 @@ namespace WebKit {
 
 class RemoteWorkerFrameLoaderClient;
 class WebUserContentController;
-struct ServiceWorkerInitializationData;
+struct RemoteWorkerInitializationData;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, ServiceWorkerInitializationData&&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
