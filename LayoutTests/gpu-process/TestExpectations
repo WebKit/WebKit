@@ -1,4 +1,3 @@
-accessibility/ios-simulator/aria-details.html [ Crash ]
 animations/steps-transform-rendering-updates.html
 animations/stop-animation-on-suspend.html [ Pass ]
 compositing/backgrounds/fixed-backgrounds.html
@@ -33,7 +32,6 @@ css3/blending/background-blend-mode-body-transparent-image.html
 css3/calc/border-radius.html
 css3/color-filters/color-filter-color-property-list-item.html
 css3/color-filters/color-filter-color-text-decorations.html
-css3/color-filters/svg/color-filter-inline-svg.html [ Crash ]
 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html
 css3/filters/backdrop/dynamic-with-clip-path.html
 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ]
@@ -204,7 +202,6 @@ http/tests/misc/slow-loading-image-in-pattern.html [ Crash ]
 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html
-http/tests/security/canvas-remote-read-remote-video-hls.html [ Crash ]
 http/tests/security/css-mask-image-credentials.html
 http/tests/security/css-mask-image.html
 http/tests/security/svg-image-with-cached-remote-image.html
@@ -599,77 +596,6 @@ imported/w3c/web-platform-tests/css/css-transforms/inline-styles/svg-inline-styl
 imported/w3c/web-platform-tests/css/css-transforms/inline-styles/svg-inline-styles-011.html
 imported/w3c/web-platform-tests/css/css-transforms/inline-styles/svg-inline-styles-012.html
 imported/w3c/web-platform-tests/css/css-transforms/inline-styles/svg-inline-styles-013.html
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-001.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-002.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-003.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-004.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-005.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-006.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-007.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-008.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-009.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-010.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-011.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-012.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-013.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-014.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-015.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-016.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-017.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-018.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-019.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-020.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-021.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-022.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-023.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-024.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-025.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-026.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-027.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-028.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-029.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-030.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-031.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-032.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-033.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-034.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-035.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-036.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-037.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-038.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-039.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-041.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-042.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-043.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-044.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-045.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-046.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-047.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-048.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-049.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-050.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-051.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-052.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-053.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-054.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-055.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-056.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-057.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-058.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-059.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-060.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-061.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-062.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-063.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-064.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-065.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-066.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-067.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-068.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-069.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/patternTransform/svg-patternTransform-001.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-transforms/patternTransform/svg-patternTransform-combination-001.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-input-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-list-separation/svg-transform-list-separations-001.html
 imported/w3c/web-platform-tests/css/css-transforms/transform-list-separation/svg-transform-list-separations-002.html
@@ -851,7 +777,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/coep-
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-same-site.https.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html [ Crash Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Crash Pass ]
@@ -876,7 +801,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html [ Pass ]
-imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ Pass ]
@@ -943,5 +867,4 @@ webgl/max-active-contexts-gc.html
 webgl/max-active-contexts-oldest-context-lost.html
 webgl/max-active-contexts-webglcontextlost-prevent-default.html
 webrtc/datachannel/multiple-connections.html
-webrtc/vp9-profile2.html [ Timeout ]
 webxr/high-performance.html
