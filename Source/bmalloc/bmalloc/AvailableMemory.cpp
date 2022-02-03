@@ -44,10 +44,10 @@
 #import <mach/mach_error.h>
 #import <math.h>
 #elif BOS(UNIX)
+#include <sys/sysinfo.h>
 #if BOS(LINUX)
 #include <algorithm>
 #include <fcntl.h>
-#include <sys/sysinfo.h>
 #elif BOS(FREEBSD)
 #include "VMAllocate.h"
 #include <sys/sysctl.h>

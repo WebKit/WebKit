@@ -1,5 +1,18 @@
 2022-02-03  Mikhail R. Gadelha  <mikhail@igalia.com>
 
+        Fix BSD compilation after r289056
+        https://bugs.webkit.org/show_bug.cgi?id=236086
+
+        Unreviewed, fixes missing header in BSD systems.
+
+        The include is moved up so it is included in both UNIX and BSD systems,
+        as adding the include in both #if triggers a code style warning (header
+        included twice), even though the includes are guarded.
+
+        * bmalloc/AvailableMemory.cpp:
+
+2022-02-03  Mikhail R. Gadelha  <mikhail@igalia.com>
+
         Fix undefined behavior when querying linux memory size
         https://bugs.webkit.org/show_bug.cgi?id=228280
 
