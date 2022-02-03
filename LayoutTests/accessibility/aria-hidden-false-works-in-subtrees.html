@@ -100,7 +100,7 @@ text3
 
         // Text inside aria-hidden=false inherits from parent.
         var object;
-        if (accessibilityController.platformName == "atk") {
+        if (accessibilityController.platformName == "atspi") {
             object = accessibilityController.accessibleElementById("group3");
             shouldBe("object.role", "'AXRole: AXSection'");
         } else {
@@ -111,7 +111,7 @@ text3
         shouldBe("stringValue", "'AXValue: text3'");
 
         // Text inside nested aria-hidden=false inherits from parent.
-        if (accessibilityController.platformName == "atk") {
+        if (accessibilityController.platformName == "atspi") {
             object = accessibilityController.accessibleElementById("group4").childAtIndex(0);
             shouldBe("object.role", "'AXRole: AXGroup'");
         } else {
@@ -119,7 +119,7 @@ text3
             shouldBe("object.role", "'AXRole: AXStaticText'");
         }
         stringValue = object.stringValue.replace(/\n/g, '');
-        if (accessibilityController.platformName == "atk")
+        if (accessibilityController.platformName == "atspi")
             shouldBe("stringValue", "'AXValue: text4'");
         else
             shouldBe("stringValue", "'AXValue:     text4  '");
@@ -130,7 +130,7 @@ text3
 
         // Objects that don't have aria-hidden=false are not visible when the parents have that attribute.
         object = accessibilityController.accessibleElementById("group6").childAtIndex(0);
-        if (accessibilityController.platformName == "atk")
+        if (accessibilityController.platformName == "atspi")
             shouldBe("object.role", "'AXRole: AXSection'");
         else
             shouldBe("object.role", "'AXRole: AXGroup'");
@@ -138,7 +138,7 @@ text3
 
         // When all objects have aria-hidden=false, then the elements are visible.
         object = accessibilityController.accessibleElementById("group7").childAtIndex(0);
-        if (accessibilityController.platformName == "atk")
+        if (accessibilityController.platformName == "atspi")
             shouldBe("object.role", "'AXRole: AXSection'");
         else
             shouldBe("object.role", "'AXRole: AXGroup'");

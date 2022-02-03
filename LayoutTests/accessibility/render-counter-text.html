@@ -26,7 +26,7 @@ description("This tests that the text for RenderCounter is exposed correctly.")
 if (window.testRunner && window.accessibilityController) {
     
     var line1 = accessibilityController.accessibleElementById("line1");
-    if (accessibilityController.platformName != "atk") {
+    if (accessibilityController.platformName != "atspi") {
         shouldBe("line1.childAtIndex(0).stringValue", "'AXValue: 1'");
         shouldBe("line1.childAtIndex(1).stringValue", "'AXValue: :'");
         shouldBe("line1.childAtIndex(2).stringValue", "'AXValue: line1'");
@@ -35,7 +35,7 @@ if (window.testRunner && window.accessibilityController) {
         shouldBe("line1.stringValue", "'AXValue: 1 : line1'");
 
     var line2 = accessibilityController.accessibleElementById("line2");
-    if (accessibilityController.platformName != "atk") {
+    if (accessibilityController.platformName != "atspi") {
         shouldBe("line2.childAtIndex(0).stringValue", "'AXValue: 2'");
         shouldBe("line2.childAtIndex(1).stringValue", "'AXValue: :'");
         shouldBe("line2.childAtIndex(2).stringValue", "'AXValue: line2'");

@@ -74,7 +74,7 @@ if (window.testRunner && window.accessibilityController) {
     // Text varies by about 1 - 2 pixels depending on the platform,
     // so just print the text coordinates divided by 10.
     var text = container.childAtIndex(5);
-    if (accessibilityController.platformName != "atk")
+    if (accessibilityController.platformName != "atspi")
         text = text.childAtIndex(0);
     debug('Text role: ' + text.role);
     debug('TextX/10: ' + Math.floor((pageX(text) - x) / 10));

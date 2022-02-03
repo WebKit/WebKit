@@ -55,10 +55,10 @@ if (window.testRunner && window.accessibilityController) {
     var ids = ["text1", "text2", "number1", "number2", "textarea1", "textarea2", "slider1", "slider2", "checkbox1", "checkbox2", "radio1", "radio2", "submit1", "submit2", "combobox1", "combobox2", "listbox1", "listbox2"];
     // All text-like form controls and slider should have a writable AXValue.
     // Other controls whose contents or state can be user modified should have a read-only
-    // AXValue for non-ATK-based platforms, unless those controls are inside contentEditable,
+    // AXValue for non-ATSPI-based platforms, unless those controls are inside contentEditable,
     // then everything should have a writable AXValue.
     var expect;
-    if (accessibilityController.platformName != "atk")
+    if (accessibilityController.platformName != "atspi")
         expect = [true, true, true, true, true, true, true, true, false, true, false, true, false, true, false, true, false, true];
     else
         expect = [true, true, true, true, true, true, true, true, true, true, true, true, false, true, true, true, true, true];

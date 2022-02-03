@@ -53,7 +53,7 @@ function touchAccessibilityTree(accessibilityObject) {
 
 function platformValueForW3CName(accessibilityObject, includeSource=false) {
     var result;
-    if (accessibilityController.platformName == "atk")
+    if (accessibilityController.platformName == "atspi")
         result = accessibilityObject.title
     else
         result = accessibilityObject.description
@@ -68,7 +68,7 @@ function platformValueForW3CName(accessibilityObject, includeSource=false) {
 
 function platformValueForW3CDescription(accessibilityObject, includeSource=false) {
     var result;
-    if (accessibilityController.platformName == "atk")
+    if (accessibilityController.platformName == "atspi")
         result = accessibilityObject.description
     else
         result = accessibilityObject.helpText;
@@ -94,15 +94,15 @@ function platformTextAlternatives(accessibilityObject, includeTitleUIElement=fal
 }
 
 function platformRoleForComboBox() {
-    return accessibilityController.platformName == "atk" ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
+    return accessibilityController.platformName == "atspi" ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
 }
 
 function platformRoleForStaticText() {
-    return accessibilityController.platformName == "atk" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
+    return accessibilityController.platformName == "atspi" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
 }
 
 function spinnerForTextInput(accessibilityObject) {
-    var index = accessibilityController.platformName == "atk" ? 0 : 1;
+    var index = accessibilityController.platformName == "atspi" ? 0 : 1;
     return accessibilityObject.childAtIndex(index);
 }
 

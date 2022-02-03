@@ -10,7 +10,7 @@
         var menulist = document.getElementById("menulist");
         menulist.focus();
         var accessibleMenulist = accessibilityController.focusedElement;
-        var eventTarget = accessibilityController.platformName == "atk" ? accessibleMenulist.childAtIndex(0) : accessibleMenulist;
+        var eventTarget = accessibilityController.platformName == "atspi" ? accessibleMenulist.childAtIndex(0) : accessibleMenulist;
 
         function listener(notification) {
             debug("MenuList received notification: " + notification);

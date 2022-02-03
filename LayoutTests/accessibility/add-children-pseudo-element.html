@@ -50,7 +50,7 @@
         var element;
         setTimeout(async function() {
             element = accessibilityController.accessibleElementById("float");
-            if (accessibilityController.platformName != "atk")
+            if (accessibilityController.platformName != "atspi")
                 shouldBe("element.childrenCount", "3");
             else
                 shouldBe("element.childrenCount", "2");
@@ -59,7 +59,7 @@
             eventSender.keyDown('\t');
 
             // Asynchronously wait for and verify the result of the onkeyup hidePseudo() invocation.
-            if (accessibilityController.platformName != "atk")
+            if (accessibilityController.platformName != "atspi")
                 await expectAsyncExpression("element.childrenCount", "2");
             else
                 await expectAsyncExpression("element.childrenCount", "1");

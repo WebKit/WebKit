@@ -75,10 +75,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    // FIXME: Use atk as platform name for now, because the expected behavior is the same.
-    // Once we replace the atk implementation with the atspi one we can use atspi and
-    // update the tests helper scripts. https://bugs.webkit.org/show_bug.cgi?id=232227.
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atk"));
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atspi"));
     return platformName;
 }
 

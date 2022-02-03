@@ -33,7 +33,7 @@ if (window.testRunner && window.accessibilityController) {
     document.getElementById("combo").focus();
 
     axCombo = accessibilityController.focusedElement;
-    var eventTarget = accessibilityController.platformName == "atk" ? axCombo.childAtIndex(0) : axCombo;
+    var eventTarget = accessibilityController.platformName == "atspi" ? axCombo.childAtIndex(0) : axCombo;
     eventTarget.addNotificationListener(function (notification) {
         if (notification == "AXSelectedChildrenChanged" || notification == "AXMenuItemSelected")
             selectionChangedNotifications++;
@@ -49,7 +49,7 @@ if (window.testRunner && window.accessibilityController) {
             eventTarget.removeNotificationListener();
 
         // ATSPI sends one selection change notification per run loop iteration.
-        if (accessibilityController.platformName == "atk")
+        if (accessibilityController.platformName == "atspi")
             shouldBe("selectionChangedNotifications", "1");
         else
             shouldBe("selectionChangedNotifications", "4");
