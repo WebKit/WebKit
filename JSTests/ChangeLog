@@ -1,3 +1,15 @@
+2022-02-02  Alexey Shvayka  <ashvayka@apple.com>
+
+        Speed-up JSON.stringify() by avoiding "toJSON" property lookups
+        https://bugs.webkit.org/show_bug.cgi?id=235996
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/json-stringify-many-objects-to-json.js:
+        Make this test a little more realistic by moving "toJSON" onto prototype.
+
+        * microbenchmarks/vanilla-todomvc-json-stringify.js: Added.
+
 2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] wasm atomic opcodes should be rejected if alignment is not equal to natural width

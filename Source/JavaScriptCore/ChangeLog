@@ -1,3 +1,34 @@
+2022-02-02  Alexey Shvayka  <ashvayka@apple.com>
+
+        Speed-up JSON.stringify() by avoiding "toJSON" property lookups
+        https://bugs.webkit.org/show_bug.cgi?id=235996
+
+        Reviewed by Saam Barati.
+
+        Speedometer2/Vanilla* subtests are highly reliant on JSON.stringify() for "storage":
+        it accounts for 10-15% of running time. EmberJS* subtests rely on JSON.stringify() as
+        well, although they are significantly slower overall, and also encounter only a few
+        different structures.
+
+        This patch caches "toJSON" properties on Structure's rare data; it's the same technique
+        we are using in toPrimitive() to avoid "toString" / "valueOf" lookups. The microbenchmark,
+        which was carefully extracted from Speedometer2/Vanilla* subtests, progressed by 3.7%.
+
+        While we could come up with a solution that doesn't involve creating StructureRareData
+        for all structures we stringify, like keeping a list of StructureIDs w/o "toJSON" method,
+        which will be correct as long as `m_hasFastObjectProperties || m_isJSArray` is true for all
+        seen objects, that would probably miss some edge case, won't persist between JSON.stringify()
+        calls, and won't speed-up structures with "toJSON" methods like Dates.
+
+        * runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp:
+        (JSC::CachedSpecialPropertyAdaptiveStructureWatchpoint::fireInternal):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::cacheSpecialPropertySlow):
+        (JSC::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire):
+        * runtime/StructureRareData.h:
+
 2022-02-02  Elliott Williams  <emw@apple.com>
 
         [Xcode] Fix redundant execution of "Check VTables..." script

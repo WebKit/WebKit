@@ -52,8 +52,9 @@ enum class CachedSpecialPropertyKey : uint8_t {
     ToString,
     ValueOf,
     ToPrimitive,
+    ToJSON,
 };
-static constexpr unsigned numberOfCachedSpecialPropertyKeys = 4;
+static constexpr unsigned numberOfCachedSpecialPropertyKeys = 5;
 
 class StructureRareData;
 class StructureChainInvalidationWatchpoint;
