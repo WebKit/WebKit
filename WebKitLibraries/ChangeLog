@@ -1,3 +1,15 @@
+2022-02-03  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r288902.
+
+        Broke compile-webkit for iOS-15-Simulator
+
+        Reverted changeset:
+
+        "Import APSConnection-related SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=235856
+        https://commits.webkit.org/r288902
+
 2022-02-01  Ben Nham  <nham@apple.com>
 
         Import APSConnection-related SPI
