@@ -1,3 +1,9 @@
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing file after r288871.
+
+        * imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py: Added.
+
 2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
