@@ -602,8 +602,8 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::Definition, { "definition", N_("definition") } },
     { AccessibilityRole::Deletion, { "content deletion", N_("content deletion") } },
     { AccessibilityRole::DescriptionList, { "description list", N_("description list") } },
-    { AccessibilityRole::DescriptionListTerm, { "description term", N_("description term") } },
     { AccessibilityRole::DescriptionListDetail, { "description value", N_("description value") } },
+    { AccessibilityRole::DescriptionListTerm, { "description term", N_("description term") } },
     { AccessibilityRole::Directory, { "directory pane", N_("directory pane") } },
     { AccessibilityRole::Div, { "section", N_("section") } },
     { AccessibilityRole::Document, { "document frame", N_("document frame") } },
@@ -704,7 +704,7 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
 
 const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)
 {
-    static const SortedArrayMap roleNamesMap { roleNames };
+    static constexpr SortedArrayMap roleNamesMap { roleNames };
     if (auto entry = roleNamesMap.tryGet(role))
         return entry->localizedName;
 
