@@ -1,3 +1,9 @@
+2022-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Apply the same cmake changes of r289029 to GTK port
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2022-02-02  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE] Fix for non-unified builds with ACCESSIBILITY=OFF
