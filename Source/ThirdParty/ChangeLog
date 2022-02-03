@@ -1,3 +1,19 @@
+2022-02-02  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Users of libgtest.a depend on headers from gtest.framework
+        https://bugs.webkit.org/show_bug.cgi?id=236045
+
+        Reviewed by Alexey Proskuryakov.
+
+        In Make-based sequential builds, gtest's dynamic target builds, even though we don't use
+        it. Downstream projects were relying on that target to build and produce a gtest.framework
+        with headers in it.
+
+        Instead, configure gtest's static target to copy the project's `include` directory into
+        build products. Headers are copied to $BUILT_PRODUCTS_DIR/usr/lib/include/gtest.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Added folder reference to `include`.
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Use c++2a instead of gnu++2a for Cocoa builds
