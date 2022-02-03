@@ -38,6 +38,7 @@
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKProtectionSpaceCurl.h>
+#include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <filesystem>
@@ -88,6 +89,11 @@ WKRetainPtr<WKStringRef> createWKString(const std::wstring& str)
 {
     auto utf8 = createUTF8String(str.c_str(), str.length());
     return adoptWK(WKStringCreateWithUTF8CString(utf8.data()));
+}
+
+WKRetainPtr<WKStringRef> createWKString(const wchar_t* str)
+{
+    return createWKString(std::wstring(str));
 }
 
 WKRetainPtr<WKURLRef> createWKURL(_bstr_t str)
@@ -163,6 +169,9 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
     uiClient.base.clientInfo = this;
     uiClient.createNewPage = createNewPage;
     uiClient.didNotHandleKeyEvent = didNotHandleKeyEvent;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
     WKPageSetPageUIClient(page, &uiClient.base);
 
     WKPageStateClientV0 stateClient = { };
@@ -447,3 +456,35 @@ void WebKitBrowserWindow::didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr event
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     PostMessage(thisWindow.m_hMainWnd, event->message, event->wParam, event->lParam);
 }
+
+void WebKitBrowserWindow::runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    std::wstring title = L"Alert: ";
+    title += createString(adoptWK(WKSecurityOriginCopyToString(securityOrigin)).get());
+    auto text = createString(alertText);
+    MessageBox(thisWindow.m_hMainWnd, text.c_str(), title.c_str(), MB_OK);
+    WKPageRunJavaScriptAlertResultListenerCall(listener);
+}
+
+void WebKitBrowserWindow::runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void *clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    std::wstring title = L"Confirm: ";
+    title += createString(adoptWK(WKSecurityOriginCopyToString(securityOrigin)).get());
+    auto text = createString(message);
+    bool result = MessageBox(thisWindow.m_hMainWnd, text.c_str(), title.c_str(), MB_OKCANCEL) == IDOK;
+    WKPageRunJavaScriptConfirmResultListenerCall(listener, result);
+}
+
+void WebKitBrowserWindow::runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void *clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    std::wstring title = L"Prompt: ";
+    title += createString(adoptWK(WKSecurityOriginCopyToString(securityOrigin)).get());
+    auto text = createString(message);
+    text += L"\nDefault Value: " + createString(defaultValue);
+    MessageBox(thisWindow.m_hMainWnd, text.c_str(), title.c_str(), MB_OK);
+    WKPageRunJavaScriptPromptResultListenerCall(listener, defaultValue);
+}
+

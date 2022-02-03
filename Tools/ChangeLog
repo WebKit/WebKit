@@ -1,3 +1,18 @@
+2022-02-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MiniBrowser][Win][WK2] Show MessageBox for alert, confirm and prompt
+        https://bugs.webkit.org/show_bug.cgi?id=236047
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (createWKString):
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        (WebKitBrowserWindow::runJavaScriptAlert):
+        (WebKitBrowserWindow::runJavaScriptConfirm):
+        (WebKitBrowserWindow::runJavaScriptPrompt):
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+
 2022-02-01  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Rename CompileWebKitWithoutPatch to CompileWebKitWithoutChange
