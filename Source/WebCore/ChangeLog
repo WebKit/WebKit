@@ -1,3 +1,31 @@
+2021-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Report the initiating url instead of the redirected one
+        https://bugs.webkit.org/show_bug.cgi?id=233037
+
+        Reviewed by Brent Fulgham.
+
+        As per the spec, blockedURI should use the requested URL of original request instead of redirected location.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection const):
+        (WebCore::CachedResourceLoader::updateRequestAfterRedirection):
+        * loader/cache/CachedResourceLoader.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource const):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+        (WebCore::ContentSecurityPolicy::allowImageFromSource const):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+        (WebCore::ContentSecurityPolicy::allowFontFromSource const):
+        (WebCore::ContentSecurityPolicy::allowManifestFromSource const):
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource const):
+        * page/csp/ContentSecurityPolicy.h:
+
 2021-11-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Form action with a redirect should report correct blocked URI

@@ -487,7 +487,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     return true;
 }
 
-bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived) const
+bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
 {
     if (options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::SkipPolicyCheck)
         return true;
@@ -500,29 +500,29 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
     case CachedResource::Type::XSLStyleSheet:
 #endif
     case CachedResource::Type::Script:
-        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
     case CachedResource::Type::CSSStyleSheet:
-        if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
     case CachedResource::Type::SVGDocumentResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::ImageResource:
-        if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
     case CachedResource::Type::SVGFontResource:
     case CachedResource::Type::FontResource:
-        if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowFontFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
     case CachedResource::Type::MediaResource:
 #if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
 #endif
-        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
     case CachedResource::Type::Beacon:
@@ -534,7 +534,7 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
         return true;
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
-        if (!m_document->contentSecurityPolicy()->allowManifestFromSource(url, redirectResponseReceived))
+        if (!m_document->contentSecurityPolicy()->allowManifestFromSource(url, redirectResponseReceived, preRedirectURL))
             return false;
         break;
 #endif
@@ -592,7 +592,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 }
 
 // FIXME: Should we find a way to know whether the redirection is for a preload request like we do for CachedResourceLoader::canRequest?
-bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options) const
+bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, const URL& preRedirectURL) const
 {
     if (document() && !document()->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
@@ -610,7 +610,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
         return false;
     }
 
-    if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+    if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::Yes, preRedirectURL)) {
         CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed by content policy");
         return false;
     }
@@ -625,7 +625,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
     return true;
 }
 
-bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options)
+bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, const URL& preRedirectURL)
 {
     ASSERT(m_documentLoader);
     if (auto* document = m_documentLoader->cachedResourceLoader().document())
@@ -633,7 +633,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
 
-    return canRequestAfterRedirection(type, request.url(), options);
+    return canRequestAfterRedirection(type, request.url(), options, preRedirectURL);
 }
 
 bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(CachedResource::Type type, const URL& url) const
