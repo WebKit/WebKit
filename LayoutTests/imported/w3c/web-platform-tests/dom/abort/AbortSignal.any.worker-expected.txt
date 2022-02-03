@@ -1,4 +1,7 @@
 
 PASS the AbortSignal.abort() static returns an already aborted signal
 PASS signal returned by AbortSignal.abort() should not fire abort event
+PASS AbortSignal.timeout() returns a non-aborted signal
+PASS Signal returned by AbortSignal.timeout() times out
+PASS AbortSignal timeouts fire in order
 

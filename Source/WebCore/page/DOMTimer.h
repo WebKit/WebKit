@@ -55,6 +55,7 @@ public:
     // Creates a new timer owned by specified ScriptExecutionContext, starts it
     // and returns its Id.
     static int install(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, Seconds timeout, bool singleShot);
+    static int install(ScriptExecutionContext&, Function<void(ScriptExecutionContext&)>&&, Seconds timeout, bool singleShot);
     static void removeById(ScriptExecutionContext&, int timeoutId);
 
     // Notify that the interval may need updating (e.g. because the minimum interval
@@ -64,7 +65,7 @@ public:
     static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
 
 private:
-    DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, Seconds interval, bool singleShot);
+    DOMTimer(ScriptExecutionContext&, Function<void(ScriptExecutionContext&)>&&, Seconds interval, bool singleShot);
     friend class Internals;
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
@@ -88,7 +89,7 @@ private:
 
     int m_timeoutId;
     int m_nestingLevel;
-    std::unique_ptr<ScheduledAction> m_action;
+    Function<void(ScriptExecutionContext&)> m_action;
     Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
     Seconds m_currentTimerInterval;
