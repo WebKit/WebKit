@@ -51,29 +51,6 @@
 
 namespace WebCore {
 
-void ServiceWorkerThreadProxy::setupPageForServiceWorker(Page& page, const ServiceWorkerContextData& data)
-{
-    auto& mainFrame = page.mainFrame();
-    mainFrame.loader().initForSynthesizedDocument({ });
-    auto document = Document::createNonRenderedPlaceholder(mainFrame, data.scriptURL);
-    document->createDOMWindow();
-
-    document->storageBlockingStateDidChange();
-
-    auto origin = data.registration.key.topOrigin().securityOrigin();
-    origin->setStorageBlockingPolicy(page.settings().storageBlockingPolicy());
-
-    auto originURL = origin->toURL();
-    document->setSiteForCookies(originURL);
-    document->setFirstPartyForCookies(originURL);
-    document->setDomainForCachePartition(origin->domainForCachePartition());
-
-    if (auto policy = parseReferrerPolicy(data.referrerPolicy, ReferrerPolicySource::HTTPHeader))
-        document->setReferrerPolicy(*policy);
-
-    mainFrame.setDocument(WTFMove(document));
-}
-
 static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)
 {
     return document.idbConnectionProxy();

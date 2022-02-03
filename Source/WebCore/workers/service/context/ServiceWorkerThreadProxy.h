@@ -54,8 +54,6 @@ enum class WorkerThreadMode : bool;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
-    WEBCORE_EXPORT static void setupPageForServiceWorker(Page&, const ServiceWorkerContextData&);
-
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
     {
         return adoptRef(*new ServiceWorkerThreadProxy(std::forward<Args>(args)...));

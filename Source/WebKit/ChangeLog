@@ -1,3 +1,15 @@
+2022-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Move and rename ServiceWorkerThreadProxy::setupPageForServiceWorker()
+        https://bugs.webkit.org/show_bug.cgi?id=236085
+
+        Reviewed by Darin Adler.
+
+        Move and rename ServiceWorkerThreadProxy::setupPageForServiceWorker() so that it can be reused for shared workers.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2022-02-03  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Allow use of hardware-fixed credentials while using alternate store
