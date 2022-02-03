@@ -1,3 +1,16 @@
+2022-02-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [GPUP] Add read access to sysctl properties
+        https://bugs.webkit.org/show_bug.cgi?id=236018
+        <rdar://problem/88382949>
+
+        Reviewed by Darin Adler.
+
+        Add read access to sysctl properties based on telemetry.
+        
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2022-02-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorderPrivate should not need to create IOSurfaces

@@ -152,17 +152,24 @@
         "hw.l2cachesize"
         "hw.logicalcpu"
         "hw.logicalcpu_max"
+        "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
         "hw.physicalcpu"
         "hw.physicalcpu_max"
+        "hw.product"
+        "hw.target"
         "hw.vectorunit"
         "kern.hostname"
         "kern.hv_vmm_present"
+        "kern.iossupportversion"
         "kern.maxfilesperproc"
         "kern.osproductversion"
-        "kern.osrelease")
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osversion"
+        "kern.version")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
