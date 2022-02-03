@@ -213,12 +213,16 @@ OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const Web
 
     return *m_localOriginStorageManagers.ensure(origin, [&] {
         auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
-        // We write origin file at when OriginStorageManager is destroyed to avoid delay
-        // in replying sync messages for Web Storage API.
-        auto writeOriginFileFunction = [originFile = originFilePath(originDirectory), origin]() {
-            writeOriginToFileIfNecessary(originFile, origin);
-        };
-        return makeUnique<OriginStorageManager>(WTFMove(writeOriginFileFunction), WTFMove(originDirectory), LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin));
+        // Write origin file asynchronously to avoid delay in replying sync messages for Web Storage API.
+        if (!originDirectory.isEmpty()) {
+            m_queue->dispatch([this, protectedThis = Ref { *this }, origin, originDirectory]() mutable {
+                if (!m_localOriginStorageManagers.contains(origin))
+                    return;
+
+                writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
+            });
+        }
+        return makeUnique<OriginStorageManager>(WTFMove(originDirectory), LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin));
     }).iterator->value;
 }
 

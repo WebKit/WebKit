@@ -1,3 +1,23 @@
+2022-02-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Delay writing origin file in NetworkStorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=235897
+        rdar://87163253
+
+        Reviewed by Geoffrey Garen.
+
+        Revert r288924 that delays writing origin file to when OriginStorageManager is destroyed, and take a different
+        approach that schedules a async task to write origin file. PLT results show that the new approach can also make 
+        up for PLT regresion caused by r286936, where network process started to write origin file before replying sync 
+        storage message from web process.
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::~OriginStorageManager): Deleted.
+        * NetworkProcess/storage/OriginStorageManager.h:
+
 2022-02-03  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r288902.

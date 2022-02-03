@@ -44,7 +44,7 @@ enum class WebsiteDataType : uint32_t;
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OriginStorageManager(Function<void()>&&, String&& path, String&& localStoragePath);
+    OriginStorageManager(String&& path, String&& localStoragePath);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -69,7 +69,6 @@ private:
     void createOriginFileIfNecessary(const WebCore::ClientOrigin&);
     void deleteOriginFileIfNecessary();
 
-    Function<void()> m_writeOriginFileFunction;
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;
     bool m_persisted { false };
