@@ -1,3 +1,9 @@
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.2 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2022-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Apply the same cmake changes of r289029 to GTK port

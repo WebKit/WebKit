@@ -1,3 +1,9 @@
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.2 release
+
+        * gtk/NEWS: Add release notes for 2.35.2.
+
 2022-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove debug log accidentally added with r289018
