@@ -2468,8 +2468,8 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
         return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
 
     // FIXME: We don't look at the timeout parameter because we don't have a schedule work later API.
-    vm.deferredWorkTimer->addPendingWork(vm, callback, { });
-    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) {
+    auto ticket = vm.deferredWorkTimer->addPendingWork(vm, callback, { });
+    vm.deferredWorkTimer->scheduleWorkSoon(ticket, [callback](DeferredWorkTimer::Ticket) {
         JSGlobalObject* globalObject = callback->globalObject();
         MarkedArgumentBuffer args;
         call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");

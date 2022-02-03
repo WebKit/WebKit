@@ -1,3 +1,97 @@
+2021-12-23  Mark Lam  <mark.lam@apple.com>
+
+        Make DeferredWorkTimer::addPendingWork() return a Ticket.
+        https://bugs.webkit.org/show_bug.cgi?id=234628
+        rdar://84260429
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Make Ticket a unique token instead of the JSObject* target object.
+           The Ticket is now a pointer to the TicketData in the pending work list.
+
+        2. Instead of taking a Ticket argument, DeferredWorkTimer::addPendingWork() now
+           takes a JSObject* `target` argument explicitly, and returns the Ticket for the
+           added TicketData instead.
+
+           All the relevant DeferredWorkTimer APIS already take a Ticket as an argument.
+           This ensures that addPendingWork() is called before we start doing work with
+           these APIs (especially scheduleWorkSoon()).
+
+        3. Previously, addPendingWork() will only save one instance of TicketData for
+           a given JSObject* key.  With this patch, we'll register a new TicketData
+           instance for every call to addPendingWork(), and return a unique Ticket for it.
+
+           This is needed because it may be possible for 2 different clients to call
+           addPendingWork() and scheduleWorkSoon() with the same target JSObject* but with
+           different sets of dependencies.
+
+           Secondly, even is the both sets of dependencies are identical, a client may
+           call addPendingWork() and scheduleWorkSoon() with the same JSObject* target
+           more than once because it intended to schedule more than 1 task to run.
+
+           Note that DeferredWorkTimer::doWork() consumes the corresponding TicketData
+           (i.e. removes it from the m_pendingTickets list) for each task as it is run.
+           To ensure that the dependencies for each task is protected, we'll either need
+           to ref count the TicketData for the same target object (and hold off on removing
+           it from the list), or we'll need to register a different TicketData instance
+           for each task.  Ref counting can solve the second issue above, but does not
+           solve the first.  So, this patch goes with the more generic solution to allow
+           each task to have its own TicketData instance (and, its own unique Ticket).
+
+        4. Previously, if the client cancels pending work, we would remove the TicketData
+           immediately from the m_pendingTickets list.  This opens up an opportunity for
+           the same TicketData memory to be re-allocated by another client.  This, in turn,
+           would make the Ticket token not unique and potentially allow a cancelled ticket
+           to be reused before DeferredWorkTimer::doWork() is called.
+
+           This patch changes DeferredWorkTimer::cancelPendingWork() to only clear the
+           contents of the TicketData instead.  TicketData::scriptExecutionOwner being
+           null is used as an indication that the ticket has been cancelled.  Since the
+           TicketData itself is not "freed" yet, all TicketData will remain unique until
+           DeferredWorkTimer::doWork().
+
+           Consequently, DeferredWorkTimer::doWork() will now check for cancelled tickets
+           and remove them from the m_pendingTickets list.
+
+        5. JSFinalizationRegistry was previously calling DeferredWorkTimer::hasPendingWork()
+           to check if it has already scheduled a task, so as not to reschedule again until
+           after the previously scheduled task has been run.  This does not play nice
+           with the new Ticket API, because this hasPendingWork() check needs to be done
+           before calling addPendingWork(), and hence, the Ticket is not available yet.
+
+           Fortunately, JSFinalizationRegistry should know if it has already scheduled
+           a task itself.  This patch adds a m_hasAlreadyScheduledWork flag to 
+           JSFinalizationRegistry that can be used for this check instead.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::TicketData::TicketData):
+        (JSC::DeferredWorkTimer::TicketData::vm):
+        (JSC::DeferredWorkTimer::TicketData::cancel):
+        (JSC::DeferredWorkTimer::doWork):
+        (JSC::DeferredWorkTimer::addPendingWork):
+        (JSC::DeferredWorkTimer::hasPendingWork):
+        (JSC::DeferredWorkTimer::hasDependancyInPendingWork):
+        (JSC::DeferredWorkTimer::cancelPendingWork):
+        * runtime/DeferredWorkTimer.h:
+        (JSC::DeferredWorkTimer::TicketData::target):
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        * runtime/JSFinalizationRegistry.h:
+        * wasm/WasmStreamingCompiler.cpp:
+        (JSC::Wasm::StreamingCompiler::StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::~StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::didComplete):
+        (JSC::Wasm::StreamingCompiler::fail):
+        (JSC::Wasm::StreamingCompiler::cancel):
+        * wasm/WasmStreamingCompiler.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::webAssemblyModuleValidateAsync):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync):
+
 2022-01-21  Mike Gorse  <mgorse@suse.com>
 
         Build failure with g++ 12: std::exchange undefined
