@@ -44,7 +44,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
-                   CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
+                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
@@ -1164,7 +1164,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
+class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -1173,7 +1173,7 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(CompileWebKitWithoutPatch())
+        self.setupStep(CompileWebKitWithoutChange())
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1187,7 +1187,7 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(CompileWebKitWithoutPatch())
+        self.setupStep(CompileWebKitWithoutChange())
         self.setProperty('fullPlatform', 'mac-sierra')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
@@ -1214,7 +1214,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
     def test_patch_with_build_failure(self):
         previous_steps = [
             mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutPatch(), results=SUCCESS),
+            mock_step(CompileWebKitWithoutChange(), results=SUCCESS),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.setProperty('patch_id', '1234')
@@ -1227,7 +1227,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
     def test_pull_request_with_build_failure(self):
         previous_steps = [
             mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutPatch(), results=SUCCESS),
+            mock_step(CompileWebKitWithoutChange(), results=SUCCESS),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.setProperty('github.number', '1234')
@@ -1240,7 +1240,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
     def test_patch_with_build_failure_on_commit_queue(self):
         previous_steps = [
             mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutPatch(), results=SUCCESS),
+            mock_step(CompileWebKitWithoutChange(), results=SUCCESS),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.setProperty('patch_id', '1234')
@@ -1254,7 +1254,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
     def test_patch_with_trunk_failure(self):
         previous_steps = [
             mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutPatch(), results=FAILURE),
+            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')

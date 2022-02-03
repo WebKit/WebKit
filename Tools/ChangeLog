@@ -1,3 +1,24 @@
+2022-02-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Rename CompileWebKitWithoutPatch to CompileWebKitWithoutChange
+        https://bugs.webkit.org/show_bug.cgi?id=235949
+        <rdar://problem/88325688>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Rename CompileWebKitWithoutPatch
+        to CompileWebKitWithoutChange.
+        (CompileWebKitWithoutChange): Ditto.
+        (AnalyzeCompileWebKitResults.analyzeResults): Ditto.
+        (ReRunWebKitTests.evaluateCommand): Rename CompileWebKitWithoutPatch
+        to CompileWebKitWithoutChange, only retry if build is for a patch.
+        (RunWebKitTestsRedTree.evaluateCommand): Ditto.
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand): Ditto.
+        (ReRunAPITests.evaluateCommand): Ditto.
+        (CompileWebKitWithoutPatch): Renamed to CompileWebKitWithoutChange.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-02  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: didShowExtensionTab needs to pass the frameID of the tab

@@ -1961,7 +1961,7 @@ class CompileWebKit(shell.Compile):
             if self.getProperty('group') == 'jsc':
                 steps_to_add.append(CompileJSCWithoutPatch())
             else:
-                steps_to_add.append(CompileWebKitWithoutPatch())
+                steps_to_add.append(CompileWebKitWithoutChange())
             steps_to_add.append(AnalyzeCompileWebKitResults())
             # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
             self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -1989,18 +1989,18 @@ class CompileWebKit(shell.Compile):
         return shell.Compile.getResultSummary(self)
 
 
-class CompileWebKitWithoutPatch(CompileWebKit):
-    name = 'compile-webkit-without-patch'
+class CompileWebKitWithoutChange(CompileWebKit):
+    name = 'compile-webkit-without-change'
     haltOnFailure = False
 
     def __init__(self, retry_build_on_failure=False, **kwargs):
         self.retry_build_on_failure = retry_build_on_failure
-        super(CompileWebKitWithoutPatch, self).__init__(**kwargs)
+        super(CompileWebKitWithoutChange, self).__init__(**kwargs)
 
     def evaluateCommand(self, cmd):
         rc = shell.Compile.evaluateCommand(self, cmd)
         if rc == FAILURE and self.retry_build_on_failure:
-            message = 'Unable to build WebKit without patch, retrying build'
+            message = 'Unable to build WebKit without change, retrying build'
             self.descriptionDone = message
             self.send_email_for_unexpected_build_failure()
             self.build.buildFinished([message], RETRY)
@@ -2035,7 +2035,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
         return defer.succeed(None)
 
     def analyzeResults(self):
-        compile_without_patch_step = CompileWebKitWithoutPatch.name
+        compile_without_patch_step = CompileWebKitWithoutChange.name
         if self.getProperty('group') == 'jsc':
             compile_without_patch_step = CompileJSCWithoutPatch.name
         compile_without_patch_result = self.getStepResult(compile_without_patch_step)
@@ -2766,7 +2766,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 UnApplyPatch(),
                                                 RevertPullRequestChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                                                CompileWebKitWithoutPatch(retry_build_on_failure=True),
+                                                CompileWebKitWithoutChange(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunWebKitTestsWithoutPatch()])
@@ -3113,7 +3113,13 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             if retry_count < AnalyzeLayoutTestsResultsRedTree.MAX_RETRY:
                 next_steps.append(AnalyzeLayoutTestsResultsRedTree())
             else:
-                next_steps.extend([UnApplyPatch(), RevertPullRequestChanges(), CompileWebKitWithoutPatch(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsWithoutPatchRedTree()])
+                next_steps.extend([
+                    UnApplyPatch(),
+                    RevertPullRequestChanges(),
+                    CompileWebKitWithoutChange(retry_build_on_failure=True),
+                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    RunWebKitTestsWithoutPatchRedTree(),
+                ])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
@@ -3142,8 +3148,15 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         self.setProperty('with_patch_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
-            next_steps.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), UnApplyPatch(), RevertPullRequestChanges(), CompileWebKitWithoutPatch(retry_build_on_failure=True),
-                               ValidateChange(verifyBugClosed=False, addURLs=False), RunWebKitTestsRepeatFailuresWithoutPatchRedTree()])
+            next_steps.extend([
+                ValidateChange(verifyBugClosed=False, addURLs=False),
+                KillOldProcesses(),
+                UnApplyPatch(),
+                RevertPullRequestChanges(),
+                CompileWebKitWithoutChange(retry_build_on_failure=True),
+                ValidateChange(verifyBugClosed=False, addURLs=False),
+                RunWebKitTestsRepeatFailuresWithoutPatchRedTree(),
+            ])
         else:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
         if next_steps:
@@ -3567,7 +3580,7 @@ class ReRunAPITests(RunAPITests):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitWithoutPatch(retry_build_on_failure=True))
+            steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
             steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
             steps_to_add.append(RunAPITestsWithoutPatch())
