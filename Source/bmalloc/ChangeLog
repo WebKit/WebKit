@@ -1,3 +1,23 @@
+2022-02-03  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix undefined behavior when querying linux memory size
+        https://bugs.webkit.org/show_bug.cgi?id=228280
+
+        Reviewed by Mark Lam.
+
+        When running JSC compiled with the undefined behavior sanitizer enabled in a 32 bits machine:
+
+        ../../Source/bmalloc/bmalloc/AvailableMemory.cpp:115:60: runtime error:
+        signed integer overflow: 32839056 * 4096 cannot be represented in type 'long int'
+
+        This patch slighly rewrites how the available memory is calculated to
+        use sysinfo (like it's done for FREEBSD).
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::LinuxMemory::singleton):
+        (bmalloc::computeAvailableMemory):
+        (bmalloc::memoryStatus):
+
 2022-01-31  David Kilzer  <ddkilzer@apple.com>
 
         [libpas] get_num_free_bytes_for_each_heap_callback() is called with `arg` pointing to uninitialized stack memory
