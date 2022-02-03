@@ -1,3 +1,16 @@
+2022-02-02  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Fix for non-unified builds with ACCESSIBILITY=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=236024
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityControllerAtspi.cpp:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityNotificationHandler.cpp:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityNotificationHandler.h:
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+
 2022-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Set platform name to atspi in WTR

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 
 #include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
@@ -93,4 +93,4 @@ bool AccessibilityObjectAtspi::doAction() const
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

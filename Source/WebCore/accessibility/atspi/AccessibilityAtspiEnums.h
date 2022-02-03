@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 namespace WebCore {
 namespace Atspi {
 
@@ -279,4 +279,4 @@ enum TextGranularityType {
 } // namespace Atspi
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

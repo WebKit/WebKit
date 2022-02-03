@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AccessibilityAtspi.h"
 #include "AccessibilityObjectInterface.h"
 #include "IntRect.h"
@@ -252,4 +252,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

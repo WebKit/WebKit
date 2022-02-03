@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -144,4 +144,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

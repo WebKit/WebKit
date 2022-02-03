@@ -237,7 +237,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
     m_isSelected = selected;
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
     if (auto* cache = document().existingAXObjectCache())
         cache->postNotification(this, AXObjectCache::AXSelectedStateChanged);
 #endif

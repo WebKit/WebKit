@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -140,4 +140,4 @@ String AccessibilityObjectAtspi::documentLocale() const
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

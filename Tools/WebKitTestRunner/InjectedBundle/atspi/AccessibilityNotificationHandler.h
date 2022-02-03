@@ -27,7 +27,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 
 #include "AccessibilityUIElement.h"
 #include <JavaScriptCore/JSObjectRef.h>
@@ -48,4 +48,4 @@ private:
 
 } // namespace WTR
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

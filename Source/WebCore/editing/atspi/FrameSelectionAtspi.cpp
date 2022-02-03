@@ -20,7 +20,7 @@
 #include "config.h"
 #include "FrameSelection.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
@@ -41,4 +41,4 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

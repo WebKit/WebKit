@@ -21,7 +21,7 @@
 #include "config.h"
 #include "AccessibilityAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AXObjectCache.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
@@ -921,4 +921,4 @@ void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, 
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

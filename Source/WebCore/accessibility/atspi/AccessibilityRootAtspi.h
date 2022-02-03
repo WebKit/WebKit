@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "IntRect.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
@@ -70,4 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObjectInterface.h"
@@ -211,4 +211,4 @@ void AccessibilityObjectAtspi::scrollToPoint(const IntPoint& point, uint32_t coo
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

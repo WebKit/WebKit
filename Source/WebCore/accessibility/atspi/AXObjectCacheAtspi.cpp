@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
@@ -331,4 +331,4 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

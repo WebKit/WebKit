@@ -927,7 +927,7 @@ public:
 
     ModelPlayerProvider& modelPlayerProvider();
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
     AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
     void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
 #endif
@@ -1288,7 +1288,7 @@ private:
     WeakHashMap<HTMLElement, CachedTextRecognitionResult> m_textRecognitionResults;
 #endif
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
     AccessibilityRootAtspi* m_accessibilityRootObject { nullptr };
 #endif
 };

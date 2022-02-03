@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityRootAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AXObjectCache.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityAtspiInterfaces.h"
@@ -318,4 +318,4 @@ IntRect AccessibilityRootAtspi::frameRect(uint32_t coordinateType) const
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

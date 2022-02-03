@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 
 #include "AccessibilityAtspi.h"
 #include "AccessibilityObject.h" // NOLINT: check-webkit-style has problems with files that do not have primary header
@@ -363,4 +363,4 @@ Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::columnHeaders
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

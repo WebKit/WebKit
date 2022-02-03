@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#if USE(ATSPI)
 #include "AccessibilityNotificationHandler.h"
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
@@ -122,4 +122,4 @@ bool AccessibilityController::removeNotificationListener()
 
 } // namespace WTR
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#endif // USE(ATSPI)

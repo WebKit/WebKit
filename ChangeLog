@@ -1,3 +1,12 @@
+2022-02-02  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Fix for non-unified builds with ACCESSIBILITY=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=236024
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-02-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Stop defaulting to ld.gold
