@@ -52,7 +52,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hypertextFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 unsigned AccessibilityObjectAtspi::hyperlinkCount() const

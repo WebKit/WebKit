@@ -64,7 +64,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 URL AccessibilityObjectAtspi::url() const

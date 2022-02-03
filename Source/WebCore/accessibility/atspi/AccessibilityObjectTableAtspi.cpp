@@ -132,7 +132,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 unsigned AccessibilityObjectAtspi::rowCount() const

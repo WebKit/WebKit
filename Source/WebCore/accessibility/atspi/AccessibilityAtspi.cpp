@@ -753,7 +753,7 @@ GDBusInterfaceVTable AccessibilityAtspi::s_cacheFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 void AccessibilityAtspi::ensureCache()

@@ -65,7 +65,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 String AccessibilityObjectAtspi::imageDescription() const

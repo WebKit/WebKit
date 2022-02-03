@@ -74,7 +74,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_selectionFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 unsigned AccessibilityObjectAtspi::selectionCount() const

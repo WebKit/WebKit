@@ -68,7 +68,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_actionFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 String AccessibilityObjectAtspi::actionName() const

@@ -87,7 +87,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 AccessibilityObjectAtspi* AccessibilityObjectAtspi::hitTest(const IntPoint& point, uint32_t coordinateType) const

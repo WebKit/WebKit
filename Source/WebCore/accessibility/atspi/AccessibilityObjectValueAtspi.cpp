@@ -60,7 +60,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
         return FALSE;
     },
     // padding
-    nullptr
+    { nullptr }
 };
 
 double AccessibilityObjectAtspi::currentValue() const

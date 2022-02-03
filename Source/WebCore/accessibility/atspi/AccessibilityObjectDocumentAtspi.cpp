@@ -68,7 +68,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 String AccessibilityObjectAtspi::documentAttribute(const String& name) const

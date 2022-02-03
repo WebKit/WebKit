@@ -225,7 +225,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
     // set_property,
     nullptr,
     // padding
-    nullptr
+    { nullptr }
 };
 
 static Vector<unsigned, 128> offsetMapping(const String& text)
