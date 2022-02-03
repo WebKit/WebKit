@@ -1,3 +1,19 @@
+2022-02-03  Youenn Fablet  <youenn@apple.com>
+
+        SampleBufferDiplayLayer should not need to create IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=235954
+
+        Reviewed by Eric Carlson.
+
+        Make use of SharedVideoFrameReader and SharedVideoFrameWriter between SampleBufferDisplayLayer and RemoteSampleBufferDisplayLayer.
+        Manually tested.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
 2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.2 release

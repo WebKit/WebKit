@@ -36,6 +36,8 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     ClearEnqueuedSamples()
     Play()
     Pause()
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
 }
 
 #endif

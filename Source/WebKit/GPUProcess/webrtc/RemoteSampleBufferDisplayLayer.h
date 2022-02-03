@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
 
@@ -74,6 +75,8 @@ private:
     void pause();
     void enqueueSample(WebCore::RemoteVideoSample&&);
     void clearEnqueuedSamples();
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
@@ -87,6 +90,7 @@ private:
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    SharedVideoFrameReader m_sharedVideoFrameReader;
 };
 
 }

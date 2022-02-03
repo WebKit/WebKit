@@ -113,16 +113,26 @@ void RemoteSampleBufferDisplayLayer::pause()
     m_sampleBufferDisplayLayer->pause();
 }
 
-void RemoteSampleBufferDisplayLayer::enqueueSample(WebCore::RemoteVideoSample&& remoteSample)
+void RemoteSampleBufferDisplayLayer::enqueueSample(RemoteVideoSample&& remoteSample)
 {
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
+    RefPtr<MediaSample> sample;
+    if (!remoteSample.surface()) {
+        auto pixelBuffer = m_sharedVideoFrameReader.read();
+        if (!pixelBuffer)
+            return;
 
-    ASSERT(m_imageTransferSession);
-    if (!m_imageTransferSession)
-        return;
+        sample = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored());
+        sample->setTimestamps(remoteSample.time(), MediaTime { });
+    } else {
+        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
+            m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
 
-    auto sample = m_imageTransferSession->createMediaSample(remoteSample);
+        ASSERT(m_imageTransferSession);
+        if (!m_imageTransferSession)
+            return;
+
+        sample = m_imageTransferSession->createMediaSample(remoteSample);
+    }
 
     ASSERT(sample);
     if (!sample)
@@ -145,6 +155,20 @@ IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
 void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidFail()
 {
     send(Messages::SampleBufferDisplayLayer::SetDidFail { m_sampleBufferDisplayLayer->didFail() });
+}
+
+void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
+{
+    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+}
+
+void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
+{
+    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!memory)
+        return;
+
+    m_sharedVideoFrameReader.setSharedMemory(memory.releaseNonNull());
 }
 
 }
