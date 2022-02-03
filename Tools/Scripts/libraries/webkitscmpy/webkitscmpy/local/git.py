@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -300,6 +300,13 @@ class Git(Scm):
     HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
     REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
     USER_REMOTE = re.compile(r'(?P<username>[^:/]+):(?P<branch>.+)')
+    PROJECT_CONFIG_PATH = os.path.join('metadata', 'project_config')
+    PROJECT_CONFIG_OPTIONS = {
+        'pull.rebase': ['true', 'false'],
+        'webkitscmpy.pull-request': ['overwrite', 'append'],
+        'webkitscmpy.history': ['when-user-owned', 'disabled', 'always', 'never'],
+    }
+    CONFIG_LOCATIONS = ['global', 'repository', 'project']
 
     @classmethod
     @decorators.Memoize()
@@ -311,14 +318,25 @@ class Git(Scm):
         return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
     @decorators.hybridmethod
-    def config(context):
+    @decorators.Memoize()
+    def config(context, location=None):
         args = [context.executable(), 'config', '-l']
         kwargs = dict(capture_output=True, encoding='utf-8')
+        if location and location not in context.CONFIG_LOCATIONS:
+            raise TypeError("'{}' is not a valid git config location".format(location))
 
-        if isinstance(context, type):
+        if isinstance(context, type) and location in ['repository', 'project']:
+            raise TypeError("Cannot find '{}' git config without local checkout".format(location))
+
+        if isinstance(context, type) or location == 'global':
             args += ['--global']
         else:
             kwargs['cwd'] = context.root_path
+            if location == 'project':
+                # Without a project config, use the library defaults
+                if not os.path.isfile(os.path.join(context.root_path, context.PROJECT_CONFIG_PATH)):
+                    return {key: values[0] for key, values in context.PROJECT_CONFIG_OPTIONS.items()}
+                args += ['--file', context.PROJECT_CONFIG_PATH]
 
         command = run(args, **kwargs)
         if command.returncode:
@@ -332,6 +350,22 @@ class Git(Scm):
         for line in command.stdout.splitlines():
             parts = line.split('=')
             result[parts[0]] = '='.join(parts[1:])
+
+        # When no location argument is provided, combine the project config and the repository config
+        if not isinstance(context, type) and not location:
+            default_config_values = context.config(location='project')
+        else:
+            default_config_values = {key: values[0] for key, values in Git.PROJECT_CONFIG_OPTIONS.items()}
+
+        for key, value in default_config_values.items():
+            if not result.get(key):
+                result[key] = value
+            elif not Git.PROJECT_CONFIG_OPTIONS.get(key):
+                continue
+            elif result.get(key) not in Git.PROJECT_CONFIG_OPTIONS[key]:
+                sys.stderr.write("'{}' is not a valid value for '{}', using '{}' instead\n".format(result[key], key, value))
+                result[key] = value
+
         return result
 
     def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=sys.version_info > (3, 0)):
@@ -422,9 +456,8 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
         return tags.stdout.splitlines()
 
-    @decorators.Memoize()
-    def url(self, name=None):
-        return self.config().get('remote.{}.url'.format(name or 'origin'))
+    def url(self, name=None, cached=None):
+        return self.config(cached=cached).get('remote.{}.url'.format(name or 'origin'))
 
     @decorators.Memoize()
     def remote(self, name=None):
@@ -840,7 +873,7 @@ class Git(Scm):
                 ).returncode:
                     sys.stderr.write("Failed to add remote '{}' as '{}'\n".format(rmt, username))
                     return None
-                self.url.clear()
+                self.config.clear()
             branch = match.group('branch')
             rc = run(
                 [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(username, branch)] + log_arg,

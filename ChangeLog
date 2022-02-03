@@ -1,3 +1,13 @@
+2022-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Configure default branch management 
+        https://bugs.webkit.org/show_bug.cgi?id=235378
+        <rdar://problem/87989533>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/project_config: Added.
+
 2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.2 release

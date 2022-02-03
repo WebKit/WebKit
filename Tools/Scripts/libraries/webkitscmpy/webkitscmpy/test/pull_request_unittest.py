@@ -382,6 +382,43 @@ Rebased 'eng/pr-branch' on 'main!'
             ],
         )
 
+    def test_github_append(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['modified.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history', '--append'),
+                    path=self.path,
+                ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | [Testing] Creating commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating commit...",
+                '    Found 1 commit...',
+                '    Found 2 commits...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                '    Found 1 commit...',
+                '    Found 2 commits...',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
     def test_github_reopen(self):
         with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
             with OutputCapture():
@@ -488,6 +525,45 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'origin'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
+    def test_bitbucket_append(self):
+        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['modified.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--append'),
+                    path=self.path,
+                ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | [Testing] Creating commits'!\n"
+            "https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n"
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating commit...",
+                '    Found 1 commit...',
+                '    Found 2 commits...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                '    Found 1 commit...',
+                '    Found 2 commits...',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
