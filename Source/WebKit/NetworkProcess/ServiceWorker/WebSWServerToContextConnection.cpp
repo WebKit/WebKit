@@ -162,7 +162,7 @@ void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifie
 
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 {
-    m_connection.serverToContextConnectionNoLongerNeeded();
+    m_connection.serviceWorkerServerToContextConnectionNoLongerNeeded();
 }
 
 void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)

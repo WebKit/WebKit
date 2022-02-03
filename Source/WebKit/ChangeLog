@@ -1,5 +1,22 @@
 2022-02-03  Chris Dumez  <cdumez@apple.com>
 
+        Rename NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=236088
+
+        Reviewed by Darin Adler.
+
+        Rename NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded() to make it clear it is for the
+        service worker connection, to avoid confusing with the shared workers.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLongerNeeded):
+        (WebKit::NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::connectionIsNoLongerNeeded):
+
+2022-02-03  Chris Dumez  <cdumez@apple.com>
+
         Rename ServiceWorkerInitializationData / ServiceWorkerInformation so they can be reused by shared workers
         https://bugs.webkit.org/show_bug.cgi?id=236089
 

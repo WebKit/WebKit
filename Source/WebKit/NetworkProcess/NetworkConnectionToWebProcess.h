@@ -181,7 +181,7 @@ public:
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>&&);
 
 #if ENABLE(SERVICE_WORKER)
-    void serverToContextConnectionNoLongerNeeded();
+    void serviceWorkerServerToContextConnectionNoLongerNeeded();
     WebSWServerConnection* swConnection();
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
 #endif
