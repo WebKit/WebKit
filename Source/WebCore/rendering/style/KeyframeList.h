@@ -100,7 +100,7 @@ public:
 
     void copyKeyframes(KeyframeList&);
     bool hasImplicitKeyframes() const;
-    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle);
+    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle& elementStyle, const RenderStyle* parentElementStyle);
 
     auto begin() const { return m_keyframes.begin(); }
     auto end() const { return m_keyframes.end(); }
