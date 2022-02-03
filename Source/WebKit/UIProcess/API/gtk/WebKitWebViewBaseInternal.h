@@ -45,3 +45,5 @@ WK_EXPORT void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventT
 
 enum class WheelEventPhase { NoPhase, Began, Changed, Ended, Cancelled, MayBegin };
 WK_EXPORT void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase);
+WK_EXPORT void webkitWebViewBaseSetWheelHasPreciseDeltas(WebKitWebViewBase*, bool);
+

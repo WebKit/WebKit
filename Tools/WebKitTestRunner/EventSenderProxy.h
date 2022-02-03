@@ -62,6 +62,9 @@ public:
     void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum);
+#if PLATFORM(GTK)
+    void setWheelHasPreciseDeltas(bool);
+#endif
     void continuousMouseScrollBy(int x, int y, bool paged);
 
     void leapForward(int milliseconds);

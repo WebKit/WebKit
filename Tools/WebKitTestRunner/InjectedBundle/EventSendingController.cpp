@@ -377,6 +377,14 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
     postPageMessage("EventSender", body);
 }
 
+void EventSendingController::setWheelHasPreciseDeltas(bool hasPreciseDeltas)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SetWheelHasPreciseDeltas");
+    setValue(body, "HasPreciseDeltas", hasPreciseDeltas);
+    postPageMessage("EventSender", body);
+}
+
 void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)
 {
     auto body = adoptWK(WKMutableDictionaryCreate());

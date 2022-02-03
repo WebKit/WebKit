@@ -38,6 +38,7 @@ interface EventSendingController {
     undefined mouseForceChanged(double force);
     undefined mouseScrollBy(long x, long y);
     undefined mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
+    undefined setWheelHasPreciseDeltas(boolean hasPreciseDeltas);
     undefined continuousMouseScrollBy(long x, long y, optional boolean paged);
     object contextClick();
     undefined scheduleAsynchronousClick();
