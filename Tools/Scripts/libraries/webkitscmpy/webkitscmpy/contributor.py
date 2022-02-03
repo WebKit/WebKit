@@ -93,13 +93,13 @@ class Contributor(object):
         def save(self, file):
             alias_to_name = defaultdict(list)
             for alias, contributor in self.items():
-                if alias in contributor.emails or alias == contributor.name:
+                if not contributor or alias in contributor.emails or alias == contributor.name:
                     continue
                 alias_to_name[contributor.name].append(alias)
 
             contributors = []
             for alias, contributor in self.items():
-                if alias != contributor.name:
+                if not contributor or alias != contributor.name:
                     continue
                 contributors.append(Contributor.Encoder().default(contributor))
                 contributors[-1]['aliases'] = alias_to_name[contributor.name]

@@ -399,6 +399,16 @@ nothing to commit, working tree clean
                         stdout='\n'.join(['{}={}'.format(key, value) for key, value in self.config().items()])
                     ),
             ), mocks.Subprocess.Route(
+                self.executable, 'config', '-l', '--file', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='\n'.join([
+                            '{}={}'.format(key, value) for key, value in self.config(path=os.path.join(self.path, args[4])).items()
+                        ])
+                    ),
+            ), mocks.Subprocess.Route(
                 self.executable, 'config', '-l', '--global',
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
@@ -533,7 +543,8 @@ nothing to commit, working tree clean
                 found = self.find(split[0])
                 difference = int(split[1])
                 if difference < found.identifier:
-                    return self.commits[found.branch][found.identifier - difference - 1]
+                    difference += self.commits[found.branch][0].identifier
+                    return self.commits[found.branch][found.identifier - difference]
                 difference -= found.identifier
                 if found.branch_point and difference < found.branch_point:
                     return self.commits[self.default_branch][found.branch_point - difference - 1]
@@ -763,7 +774,7 @@ nothing to commit, working tree clean
                     end = commit.hash
 
     @decorators.hybridmethod
-    def config(context):
+    def config(context, path=None):
         if isinstance(context, type):
             return {
                 'user.name': 'Tim Apple',
@@ -773,7 +784,10 @@ nothing to commit, working tree clean
 
         top = None
         result = Git.config()
-        with open(os.path.join(context.path, '.git', 'config'), 'r') as configfile:
+        path = path or os.path.join(context.path, '.git', 'config')
+        if not os.path.isfile(path):
+            return result
+        with open(path, 'r') as configfile:
             for line in configfile.readlines():
                 match = context.RE_MULTI_TOP.match(line)
                 if match:

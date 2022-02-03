@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -402,11 +402,25 @@ CommitDate: {time_b}
             self.assertEqual(repo.config()['remote.origin.url'], 'git@example.org:/mock/repository')
             self.assertEqual(repo.config()['svn-remote.svn.url'], 'https://svn.example.org/repository/webkit')
             self.assertEqual(repo.config()['svn-remote.svn.fetch'], 'trunk:refs/remotes/origin/main')
+            self.assertEqual(repo.config()['webkitscmpy.history'], 'when-user-owned')
 
     def test_global_config(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
             self.assertEqual(local.Git.config()['user.name'], 'Tim Apple')
             self.assertEqual(local.Git.config()['sendemail.transferencoding'], 'base64')
+
+    def test_project_config(self):
+        with mocks.local.Git(self.path, git_svn=True):
+            project_config = os.path.join(self.path, local.Git.PROJECT_CONFIG_PATH)
+            os.mkdir(os.path.dirname(project_config))
+            with open(project_config, 'w') as f:
+                f.write('[webkitscmpy]\n')
+                f.write('    history = never\n')
+                f.write('    test = example\n')
+
+            repo = local.Git(self.path)
+            self.assertEqual(repo.config()['webkitscmpy.history'], 'never')
+            self.assertEqual(repo.config()['webkitscmpy.test'], 'example')
 
     def test_modified(self):
         with mocks.local.Git(self.path) as mrepo, OutputCapture():

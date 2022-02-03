@@ -118,6 +118,16 @@ class Setup(Command):
         else:
             log.info("Set git user name to '{}' for this repository".format(name))
 
+        if os.path.isfile(os.path.join(repository.path, local.Git.PROJECT_CONFIG_PATH)):
+            log.info('Adding project git config to repository config...')
+            result += run(
+                [local.Git.executable(), 'config', 'include.path', os.path.join('..', local.Git.PROJECT_CONFIG_PATH)],
+                capture_output=True, cwd=repository.root_path,
+            ).returncode
+            log.info('Added project git config to repository config!')
+        else:
+            log.info('No project git config found, continuing')
+
         log.info('Setting better Objective-C diffing behavior for this repository...')
         result += run(
             [local.Git.executable(), 'config', 'diff.objcpp.xfuncname', '^[-+@a-zA-Z_].*$'],
@@ -139,12 +149,33 @@ class Setup(Command):
                     capture_output=True, cwd=repository.root_path,
                 ).returncode
 
+        if args.merge is None:
+            args.merge = repository.config(location='project')['pull.rebase'] == 'false'
         log.info('Using {} merge strategy for this repository'.format('merge commits as a' if args.merge else 'a rebase'))
         if run(
             [local.Git.executable(), 'config', 'pull.rebase', 'false' if args.merge else 'true'],
             capture_output=True, cwd=repository.root_path,
         ).returncode:
             sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
+            result += 1
+
+        if repository.config(location='project')['webkitscmpy.history'] == 'never':
+            pr_history = 'never'
+        elif repository.config(location='project')['webkitscmpy.pull-request'] != 'overwrite':
+            pr_history = None
+        elif args.defaults:
+            pr_history = repository.config(location='project')['webkitscmpy.history']
+        else:
+            pr_history = Terminal.choose(
+                'Would you like to create new branches to retain history when you overwrite\na pull request branch?',
+                default=repository.config(location='project')['webkitscmpy.history'],
+                options=repository.PROJECT_CONFIG_OPTIONS['webkitscmpy.history'],
+            )
+        if pr_history and run(
+            [local.Git.executable(), 'config', 'webkitscmpy.history', pr_history],
+            capture_output=True, cwd=repository.root_path,
+        ).returncode:
+            sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
             result += 1
 
         if hooks:
@@ -264,7 +295,7 @@ class Setup(Command):
             help='Do not prompt the user for defaults, always use (or do not use) them',
         )
         parser.add_argument(
-            '--merge', '--no-merge', action=arguments.NoAction, default=False,
+            '--merge', '--no-merge', action=arguments.NoAction, default=None,
             help='Use a merge-commit workflow instead of a rebase workflow',
         )
 
