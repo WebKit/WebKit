@@ -1,3 +1,19 @@
+2022-02-02  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Fix redundant execution of "Check VTables..." script
+        https://bugs.webkit.org/show_bug.cgi?id=236032
+
+        Reviewed by Jonathan Bedard.
+
+        Tools/Scripts/check-for-weak-vtables-and-externals already touches a timestamp file after
+        every execution. Add it as an output file to all "Check For Weak VTables and Externals"
+        script phases.
+
+        These script phases already list their respective executables as inputs. This change shaves
+        a few seconds off the null build time.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add timestamp file to script phase.
+
 2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Crash on several pages after r287986

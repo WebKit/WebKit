@@ -17506,10 +17506,11 @@
 			);
 			name = "Check for Weak VTables and Externals";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-weak-vtables-and-externals.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
 		};
 		659A86EA279796F800AC37B6 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

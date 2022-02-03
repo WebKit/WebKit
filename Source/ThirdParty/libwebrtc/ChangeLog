@@ -1,3 +1,12 @@
+2022-02-02  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Fix redundant execution of "Check VTables..." script
+        https://bugs.webkit.org/show_bug.cgi?id=236032
+
+        Reviewed by Jonathan Bedard.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Add timestamp file to script phase.
+
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCCodecs should not need to create IOSurfaces

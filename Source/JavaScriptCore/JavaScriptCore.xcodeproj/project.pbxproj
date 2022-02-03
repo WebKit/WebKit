@@ -11860,6 +11860,7 @@
 			);
 			name = "Check For Weak VTables and Externals";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-weak-vtables-and-externals.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
