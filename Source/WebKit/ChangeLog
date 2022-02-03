@@ -1,5 +1,13 @@
 2022-02-02  Alex Christensen  <achristensen@webkit.org>
 
+        Remove debug log accidentally added with r289018
+        https://bugs.webkit.org/show_bug.cgi?id=236000
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
+2022-02-02  Alex Christensen  <achristensen@webkit.org>
+
         Use private relay for all subresources if the main document main resource was loaded using private relay
         https://bugs.webkit.org/show_bug.cgi?id=236000
 
