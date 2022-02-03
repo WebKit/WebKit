@@ -1,3 +1,18 @@
+2022-02-02  Saam Barati  <sbarati@apple.com>
+
+        SecureARM64EHashPins should check g_jscConfig.useFastJITPermissions
+        https://bugs.webkit.org/show_bug.cgi?id=236055
+        <rdar://88222677>
+
+        Reviewed by Mark Lam.
+
+        * assembler/SecureARM64EHashPins.cpp:
+        (JSC::SecureARM64EHashPins::initializeAtStartup):
+        (JSC::SecureARM64EHashPins::allocatePinForCurrentThread):
+        (JSC::SecureARM64EHashPins::deallocatePinForCurrentThread):
+        * assembler/SecureARM64EHashPinsInlines.h:
+        (JSC::SecureARM64EHashPins::pinForCurrentThread):
+
 2022-02-02  Alexey Shvayka  <ashvayka@apple.com>
 
         Speed-up JSON.stringify() by avoiding "toJSON" property lookups
