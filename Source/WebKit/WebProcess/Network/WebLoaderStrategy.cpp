@@ -276,6 +276,11 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
     if (!frame)
         return;
 
+    if (auto* mainFrameDocument = frame->mainFrame().document()) {
+        if (auto* mainDocumentLoader = mainFrameDocument->loader())
+            parameters.mainResourceWasPrivateRelayed = mainDocumentLoader->mainResourceWasPrivateRelayed();
+    }
+    
     if (auto* document = frame->document())
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
 

@@ -298,6 +298,9 @@ public:
     void setDefersLoading(bool);
     void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
+    void setMainResourceWasPrivateRelayed(bool privateRelayed) { m_mainResourceWasPrivateRelayed = privateRelayed; }
+    bool mainResourceWasPrivateRelayed() const { return m_mainResourceWasPrivateRelayed; }
+
     void startLoadingMainResource();
     WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&);
     void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
@@ -700,6 +703,7 @@ private:
     bool m_allowsDataURLsForMainFrame { false };
 
     bool m_lastNavigationWasAppInitiated { true };
+    bool m_mainResourceWasPrivateRelayed { false };
 };
 
 inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)
