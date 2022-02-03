@@ -99,13 +99,21 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
             break;
         case webrtc::BufferType::I010:
             poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+            break;
+        default:
+            return nullptr;
         }
-        if (auto pool = createIOSurfaceCVPixelBufferPool(width, height, poolBufferType)) {
-            m_pixelBufferPool = WTFMove(*pool);
-            m_pixelBufferPoolWidth = width;
-            m_pixelBufferPoolHeight = height;
-            m_pixelBufferPoolBufferType = bufferType;
+
+        auto result = createInMemoryCVPixelBufferPool(width, height, poolBufferType);
+        if (!result) {
+            RELEASE_LOG_ERROR(WebRTC, "RealtimeIncomingVideoSourceCocoa failed creating buffer pool with error %d", result.error());
+            return nullptr;
         }
+
+        m_pixelBufferPool = WTFMove(*result);
+        m_pixelBufferPoolWidth = width;
+        m_pixelBufferPoolHeight = height;
+        m_pixelBufferPoolBufferType = bufferType;
     }
     return m_pixelBufferPool.get();
 }
@@ -121,6 +129,8 @@ RetainPtr<CVPixelBufferRef> RealtimeIncomingVideoSourceCocoa::pixelBufferFromVid
         return m_blackFrame.get();
     }
 
+    // In case of in memory samples, we have non interleaved YUV data while CVPixelBuffers prefer interleaved YUV data.
+    // Maybe we should introduce a MediaSample that would represent non interleaved YUV data as an optimization.
     return adoptCF(webrtc::createPixelBufferFromFrame(frame, [this](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
         auto pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
         if (!pixelBufferPool)
