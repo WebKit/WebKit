@@ -534,6 +534,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
         Model = 1 << 8,
 #endif
+        PDF = 1 << 9,
     };
 
     using DocumentClasses = OptionSet<DocumentClass>;
@@ -549,6 +550,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     bool isModelDocument() const { return m_documentClasses.contains(DocumentClass::Model); }
 #endif
+    bool isPDFDocument() const { return m_documentClasses.contains(DocumentClass::PDF); }
     bool hasSVGRootNode() const;
     virtual bool isFrameSet() const { return false; }
 

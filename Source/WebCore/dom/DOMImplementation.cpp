@@ -42,6 +42,7 @@
 #include "MediaDocument.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
+#include "PDFDocument.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -151,6 +152,10 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
         return XMLDocument::createXHTML(frame, settings, url);
     if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
         return TextDocument::create(frame, settings, url, documentIdentifier);
+
+    if (frame && settings.pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(contentType))
+        return PDFDocument::create(*frame, url);
+
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
     if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))
         return ImageDocument::create(*frame, url);

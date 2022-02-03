@@ -902,6 +902,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/MediaDocument.h
     html/MediaElementSession.h
     html/MediaError.h
+    html/PDFDocument.h
     html/PluginDocument.h
     html/StepRange.h
     html/TimeRanges.h
