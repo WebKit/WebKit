@@ -362,7 +362,7 @@ static void checkFrameInfo(WKFrameInfo *frame, bool isMainFrame, NSString *url, 
 
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
-bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const String& userHandleBase64)
+bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const String& userHandleBase64, bool synchronizable = false)
 {
     NSDictionary* options = @{
         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
@@ -378,15 +378,19 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
     if (errorRef)
         return false;
 
-    NSDictionary* addQuery = @{
+    auto addQuery = adoptNS([[NSMutableDictionary alloc] init]);
+    [addQuery setDictionary:@{
         (id)kSecValueRef: (id)key.get(),
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: rpId,
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:userHandleBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
         (id)kSecUseDataProtectionKeychain: @YES
-    };
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
+    }];
+    if (synchronizable)
+        [addQuery.get() setObject:@YES forKey:(__bridge id)kSecAttrSynchronizable];
+
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery.get(), NULL);
     if (status)
         return false;
 
@@ -398,6 +402,7 @@ void cleanUpKeychain(const String& rpId)
     NSDictionary* deleteQuery = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: rpId,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
         (id)kSecUseDataProtectionKeychain: @YES
     };
@@ -1507,6 +1512,33 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
+    cleanUpKeychain("");
+}
+
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:NO forExperimentalFeature:webAuthenticationModernExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView focus];
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserEntityBundleBase64));
+    ASSERT_TRUE(addKeyToKeychain("BBRoi2JbR0IXTeJmvXUp1YIuM4sph/Lu3eGf75F7n+HojHKG70a4R0rB2PQce5/SJle6T7OO5Cqet/LJZVM6NQ8yDDxWvayf71GTDp2yUtuIbqJLFVbpWymlj9WRizgX3A==", "", "omJpZEoAAQIDBAUGBwgJZG5hbWVkSmFuZQ=="/* { "id": h'00010203040506070809', "name": "Jane" } */, true /* synchronizable */));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+    EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "John");
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+    EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
+
     cleanUpKeychain("");
 }
 

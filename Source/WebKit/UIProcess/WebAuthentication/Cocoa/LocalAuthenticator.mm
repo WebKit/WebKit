@@ -120,19 +120,18 @@ static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
 static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
 {
     // Search Keychain for existing credential matched the RP ID.
-    auto query = adoptNS([[NSMutableDictionary alloc] init]);
-    [query setDictionary:@{
+    NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrLabel: rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
         (id)kSecUseDataProtectionKeychain: @YES
-    }];
-    updateQueryIfNecessary(query.get());
+    };
 
     CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return std::nullopt;
     auto retainAttributesArray = adoptCF(attributesArrayRef);
@@ -599,6 +598,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         NSMutableDictionary *queryDictionary = [@{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+            (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
             (id)kSecAttrApplicationLabel: nsCredentialId.get(),
             (id)kSecReturnRef: @YES,
             (id)kSecUseDataProtectionKeychain: @YES
@@ -608,7 +608,6 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
             queryDictionary[(id)kSecUseAuthenticationContext] = context;
 
         auto query = adoptNS(queryDictionary);
-        updateQueryIfNecessary(query.get());
 
         CFTypeRef privateKeyRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
@@ -633,19 +632,18 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
     // Extra step: update the Keychain item with the same value to update its modification date such that LRU can be used
     // for selectAssertionResponse
-    auto query = adoptNS([[NSMutableDictionary alloc] init]);
-    [query setDictionary:@{
+    NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrApplicationLabel: nsCredentialId.get(),
         (id)kSecUseDataProtectionKeychain: @YES
-    }];
-    updateQueryIfNecessary(query.get());
+    };
 
     NSDictionary *updateParams = @{
         (id)kSecAttrLabel: requestOptions.rpId,
     };
-    auto status = SecItemUpdate((__bridge CFDictionaryRef)query.get(), (__bridge CFDictionaryRef)updateParams);
+    auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
     if (status)
         LOG_ERROR("Couldn't update the Keychain item: %d", status);
 
