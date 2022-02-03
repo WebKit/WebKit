@@ -1,5 +1,38 @@
 2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
 
+        [GTK3] Pinch zooming from a link activates it
+        https://bugs.webkit.org/show_bug.cgi?id=235639
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turns out gestures behave differently between GTK3 and 4. On GTK4 it works
+        fine, but on GTK3 starting a pinch zoom triggers the multipress gesture
+        when one finger is down, and completes it when the second finger is down.
+
+        This results in a bogus click, with no way to prevent it as it happens
+        before any of the zoom callbacks are called. Since we can't know if there
+        will be a zoom afterwards or not, we can't do anything about it.
+
+        However, what we can do is reorder these gestures. In GTK3 the order the
+        gestures are processed in depends on which order they were created in.
+
+        At that point, there's a problem with the fact the gestures are grouped.
+        Grouping means that these 2 gestures are triggered at the same time. While
+        somehow the press gesture is still triggered without grouping with the
+        original order, they become properly decoupled in reverse order and
+        ungrouped.
+
+        At that point, we can safely cancel the press gesture when the zoom gesture
+        starts, and fix the issue.
+
+        This seems to still work fine for GTK4.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseZoomBegin):
+        (webkitWebViewBaseConstructed):
+
+2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
+
         [GTK] REGRESSION: Touch scrolling is broken
         https://bugs.webkit.org/show_bug.cgi?id=235436
 
