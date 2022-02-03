@@ -398,10 +398,10 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         // property in cssPropertiesAndValues, so just set this on the previous keyframe.
         // In case an invalid or null value was originally provided, then the property
         // was not set and the property count is 0, in which case there is nothing to merge.
-        if (keyframe.style->propertyCount()) {
-            auto property = keyframe.style->propertyAt(0);
-            previousKeyframe.style->setProperty(property.id(), property.value());
-            previousKeyframe.styleStrings.set(property.id(), keyframe.styleStrings.get(property.id()));
+        if (keyframe.styleStrings.size()) {
+            previousKeyframe.style->mergeAndOverrideOnConflict(keyframe.style);
+            for (auto& [property, value] : keyframe.styleStrings)
+                previousKeyframe.styleStrings.set(property, value);
         }
         // Since we've processed this keyframe, we can remove it and keep i the same
         // so that we process the next keyframe in the next loop iteration.

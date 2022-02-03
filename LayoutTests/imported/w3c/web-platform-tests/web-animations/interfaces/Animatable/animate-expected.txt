@@ -9,7 +9,7 @@ PASS Element.animate() accepts empty keyframe lists (input: undefined)
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification
 PASS Element.animate() accepts a one shorthand property two value property-indexed keyframes specification
 PASS Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification
-FAIL Element.animate() accepts a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "border,borderColor,composite,computedOffset,easing,offset" but got "border,borderTopColor,composite,computedOffset,easing,offset"
+PASS Element.animate() accepts a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification
 PASS Element.animate() accepts a two property two value property-indexed keyframes specification
 PASS Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values
 PASS Element.animate() accepts a property-indexed keyframes specification with an invalid value

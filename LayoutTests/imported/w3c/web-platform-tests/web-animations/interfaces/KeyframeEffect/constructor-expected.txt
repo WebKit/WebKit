@@ -11,7 +11,7 @@ PASS A KeyframeEffect can be constructed with a one shorthand property two value
 PASS A KeyframeEffect constructed with a one shorthand property two value property-indexed keyframes specification roundtrips
 PASS A KeyframeEffect can be constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification
 PASS A KeyframeEffect constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification roundtrips
-FAIL A KeyframeEffect can be constructed with a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "border,borderColor,composite,computedOffset,easing,offset" but got "border,borderTopColor,composite,computedOffset,easing,offset"
+PASS A KeyframeEffect can be constructed with a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification
 PASS A KeyframeEffect constructed with a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification roundtrips
 PASS A KeyframeEffect can be constructed with a two property two value property-indexed keyframes specification
 PASS A KeyframeEffect constructed with a two property two value property-indexed keyframes specification roundtrips
