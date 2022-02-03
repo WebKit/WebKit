@@ -1,5 +1,17 @@
 2022-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] MultiDeleteByOffset should not define value
+        https://bugs.webkit.org/show_bug.cgi?id=236103
+
+        Reviewed by Saam Barati.
+
+        MultiDeleteByOffset should not define any values in clobberizing.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+2022-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, remove UnlinkedMetadataTable::offsetInMetadataTable since it is no longer used
         https://bugs.webkit.org/show_bug.cgi?id=236063
 
