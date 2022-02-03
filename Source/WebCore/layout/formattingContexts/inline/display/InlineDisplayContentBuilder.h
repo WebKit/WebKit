@@ -67,6 +67,8 @@ private:
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ContainerBox&, DisplayBoxTree&, AncestorStack&, DisplayBoxes&);
 
+    InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
+
     const ContainerBox& root() const { return m_formattingContextRoot; }
     InlineFormattingState& formattingState() const { return m_formattingState; } 
 

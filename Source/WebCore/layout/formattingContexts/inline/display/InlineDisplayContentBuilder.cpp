@@ -327,14 +327,14 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
     ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
-    auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
+    auto contentStartInVisualOrder = movePointHorizontallyForWritingMode(displayLine.topLeft(), displayLine.contentLeft(), writingMode);
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
             auto visualRect = flipLogicalRectToVisualForWritingMode(logicalRect, writingMode);
-            visualRect.moveBy({ contentStartInVisualOrder, displayLine.top() });
+            visualRect.moveBy(contentStartInVisualOrder);
             return visualRect;
         };
 
@@ -789,13 +789,32 @@ InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(co
     case WritingMode::LeftToRight:
     case WritingMode::RightToLeft: {
         // See InlineFormattingGeometry for more info.
-        return InlineRect { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
+        return { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
     }
     default:
         ASSERT_NOT_REACHED();
         break;
     }
     return logicalRect;
+}
+
+InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMode(const InlineLayoutPoint& logicalPoint, InlineLayoutUnit horizontalOffset, WritingMode writingMode) const
+{
+    auto visualPoint = logicalPoint;
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        visualPoint.moveBy(FloatPoint { horizontalOffset, { } });
+        break;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft: {
+        visualPoint.moveBy(FloatPoint { { }, horizontalOffset });
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return visualPoint;
 }
 
 }
