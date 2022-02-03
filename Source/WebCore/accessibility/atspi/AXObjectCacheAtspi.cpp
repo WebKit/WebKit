@@ -143,6 +143,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     case AXAutocorrectionOccured:
         break;
     case AXChildrenChanged:
+        coreObject->updateChildrenIfNecessary();
         break;
     case AXFocusedUIElementChanged:
         break;
