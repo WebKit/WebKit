@@ -24,12 +24,12 @@ Step=any
 PASS stepUp("20:13", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 PASS stepDown("20:13", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 Overflow/underflow
-PASS stepUp("20:13", "3.40282346e+38", null) threw exception InvalidStateError: The object is in an invalid state..
-PASS stepDown("20:13", "3.40282346e+38", null) threw exception InvalidStateError: The object is in an invalid state..
-PASS stepUp("20:13", "1", "20:13") threw exception InvalidStateError: The object is in an invalid state..
-PASS stepDown("20:13", "1", "20:13") threw exception InvalidStateError: The object is in an invalid state..
-PASS stepUp("23:59", null, null) threw exception InvalidStateError: The object is in an invalid state..
-PASS stepDown("00:00", null, null) threw exception InvalidStateError: The object is in an invalid state..
+PASS stepUp("20:13", "3.40282346e+38", null) is "20:13"
+PASS stepDown("20:13", "3.40282346e+38", null) is "20:13"
+PASS stepUp("20:13", "1", "20:13") is "20:13"
+PASS stepDown("20:13", "1", "20:13") is "20:13"
+PASS stepUp("23:59", null, null) is "23:59"
+PASS stepDown("00:00", null, null) is "00:00"
 
 PASS successfullyParsed is true
 

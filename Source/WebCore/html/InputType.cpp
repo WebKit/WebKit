@@ -935,7 +935,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
 
     const Decimal acceptableErrorValue = stepRange.acceptableError();
     if (newValue - stepRange.minimum() < -acceptableErrorValue)
-        return Exception { InvalidStateError };
+        return { };
     if (newValue < stepRange.minimum())
         newValue = stepRange.minimum();
 
@@ -943,7 +943,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
         newValue = stepRange.alignValueForStep(current, newValue);
 
     if (newValue - stepRange.maximum() > acceptableErrorValue)
-        return Exception { InvalidStateError };
+        return { };
     if (newValue > stepRange.maximum())
         newValue = stepRange.maximum();
 

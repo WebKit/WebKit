@@ -58,10 +58,10 @@ debug('Step=any');
 shouldThrowErrorName('stepUp("2010-02", "any", null)', "InvalidStateError");
 shouldThrowErrorName('stepDown("2010-02", "any", null)', "InvalidStateError");
 debug('Overflow/underflow');
-shouldThrowErrorName('stepUp("2010-02", "3.40282346e+38", null)', "InvalidStateError");
-shouldThrowErrorName('stepDown("2010-02", "3.40282346e+38", null)', "InvalidStateError");
-shouldThrowErrorName('stepUp("2010-02", "1", "2010-02")', "InvalidStateError");
-shouldThrowErrorName('stepDown("2010-02", "1", "2010-02")', "InvalidStateError");
+shouldBe('stepUp("2010-02", "3.40282346e+38", null)', '"2010-02"');
+shouldBe('stepDown("2010-02", "3.40282346e+38", null)', '"2010-02"');
+shouldBe('stepUp("2010-02", "1", "2010-02")', '"2010-02"');
+shouldBe('stepDown("2010-02", "1", "2010-02")', '"2010-02"');
 
 debug('');
 </script>

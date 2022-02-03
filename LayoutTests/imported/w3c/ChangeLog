@@ -1,3 +1,14 @@
+2022-02-03  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Value doesn't change for stepUp()/stepDown() with out of range values
+        https://bugs.webkit.org/show_bug.cgi?id=235509
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-stepup-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/range-expected.txt:
+
 2022-02-03  Chris Dumez  <cdumez@apple.com>
 
         Implement AbortSignal.timeout()

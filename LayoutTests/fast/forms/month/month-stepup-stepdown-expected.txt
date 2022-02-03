@@ -24,10 +24,10 @@ Step=any
 PASS stepUp("2010-02", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 PASS stepDown("2010-02", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 Overflow/underflow
-PASS stepUp("2010-02", "3.40282346e+38", null) threw exception InvalidStateError: The object is in an invalid state..
-PASS stepDown("2010-02", "3.40282346e+38", null) threw exception InvalidStateError: The object is in an invalid state..
-PASS stepUp("2010-02", "1", "2010-02") threw exception InvalidStateError: The object is in an invalid state..
-PASS stepDown("2010-02", "1", "2010-02") threw exception InvalidStateError: The object is in an invalid state..
+PASS stepUp("2010-02", "3.40282346e+38", null) is "2010-02"
+PASS stepDown("2010-02", "3.40282346e+38", null) is "2010-02"
+PASS stepUp("2010-02", "1", "2010-02") is "2010-02"
+PASS stepDown("2010-02", "1", "2010-02") is "2010-02"
 
 PASS successfullyParsed is true
 

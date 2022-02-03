@@ -229,21 +229,21 @@ shouldThrowErrorName('stepDownExplicitBounds(null, null, "any", "1")', "InvalidS
 debug('');
 debug('Overflow/underflow');
 shouldBe('stepUpExplicitBounds(null, "100", "1", "99")', '"100"');
-shouldThrowErrorName('stepUpExplicitBounds(null, "100", "1", "100")', "InvalidStateError");
+shouldBe('stepUpExplicitBounds(null, "100", "1", "100")', '"100"');
 shouldBe('input.value', '"100"');
-shouldThrowErrorName('stepUpExplicitBounds(null, "100", "1", "99", "2")', "InvalidStateError");
+shouldBe('stepUpExplicitBounds(null, "100", "1", "99", "2")', '"99"');
 shouldBe('input.value', '"99"');
 shouldBe('stepDownExplicitBounds("0", null, "1", "1")', '"0"');
-shouldThrowErrorName('stepDownExplicitBounds("0", null, "1", "0")', "InvalidStateError");
+shouldBe('stepDownExplicitBounds("0", null, "1", "0")', '"0"');
 shouldBe('input.value', '"0"');
-shouldThrowErrorName('stepDownExplicitBounds("0", null, "1", "1", "2")', "InvalidStateError");
+shouldBe('stepDownExplicitBounds("0", null, "1", "1", "2")', '"1"');
 shouldBe('input.value', '"1"');
-shouldThrowErrorName('stepDownExplicitBounds(null, null, "3.40282346e+38", "1", "2")', "InvalidStateError");
+shouldBe('stepDownExplicitBounds(null, null, "3.40282346e+38", "1", "2")', '"0"');
 shouldBe('stepUpExplicitBounds(-100, 0, 1, -1)', '"0"');
-shouldThrowErrorName('stepUpExplicitBounds(null, 0, 1, 0)', "InvalidStateError");
-shouldThrowErrorName('stepUpExplicitBounds(-100, 0, 1, -1, 2)', "InvalidStateError");
+shouldBe('stepUpExplicitBounds(null, 0, 1, 0)', '"0"');
+shouldBe('stepUpExplicitBounds(-100, 0, 1, -1, 2)', '"-1"');
 shouldBe('input.value', '"-1"');
-shouldThrowErrorName('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', "InvalidStateError");
+shouldBe('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', '"0"');
 
 debug('');
 debug('stepDown()/stepUp() for stepMismatch values');
@@ -254,7 +254,7 @@ shouldBe('stepDownExplicitBounds(0, null, 10, 19)', '"10"');
 
 debug('');
 debug('value + step is <= max, but rounded result would be > max.');
-shouldThrowErrorName('stepUpExplicitBounds(null, 99, 10, 89)', "InvalidStateError");
+shouldBe('stepUpExplicitBounds(null, 99, 10, 89)', '"90"');
 
 debug('');
 debug('Huge value and small step');

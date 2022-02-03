@@ -27,10 +27,10 @@ PASS stepUp on step value with fractional seconds
 PASS stepDown on step value with fractional seconds
 PASS stepUp argument 2 times
 PASS stepDown argument 2 times
-FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
-FAIL stepDown stop so lower than the minimum value The object is in an invalid state.
-FAIL stop at border on stepUp The object is in an invalid state.
-FAIL stop at border on stepDown The object is in an invalid state.
+PASS stepUp stop because it exceeds the maximum value
+PASS stepDown stop so lower than the minimum value
+FAIL stop at border on stepUp assert_in_array: a valid time string representing 1 minute after 3pm value "15:00" not in array ["15:01", "15:01:00", "15:01:00.0", "15:01:00.00", "15:01:00.000"]
+FAIL stop at border on stepDown assert_in_array: a valid time string representing 1 minute before 2pm value "13:00" not in array ["12:59", "12:59:00", "12:59:00.0", "12:59:00.00", "12:59:00.000"]
 FAIL  empty value of stepUp The object is in an invalid state.
 PASS set value on not time format value
 

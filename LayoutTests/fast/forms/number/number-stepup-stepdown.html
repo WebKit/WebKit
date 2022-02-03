@@ -220,15 +220,15 @@ shouldThrowErrorName('stepDownExplicitBounds("0", "100", "any", "1.5", "1")', "I
 debug('');
 debug('Overflow/underflow');
 shouldBe('stepDown("1", "1", "0")', '"0"');
-shouldThrowErrorName('stepDown("0", "1", "0")', "InvalidStateError");
-shouldThrowErrorName('stepDown("1", "1", "0", 2)', "InvalidStateError");
+shouldBe('stepDown("0", "1", "0")', '"0"');
+shouldBe('stepDown("1", "1", "0", 2)', '"1"');
 shouldBe('input.value', '"1"');
-shouldThrowErrorName('stepDown("1", "3.40282346e+38", "", 2)', "InvalidStateError");
+shouldBe('stepDown("1", "3.40282346e+38", "", 2)', '"1"'); 
 shouldBe('stepUp("-1", "1", "0")', '"0"');
-shouldThrowErrorName('stepUp("0", "1", "0")', "InvalidStateError");
-shouldThrowErrorName('stepUp("-1", "1", "0", 2)', "InvalidStateError");
+shouldBe('stepUp("0", "1", "0")', '"0"');
+shouldBe('stepUp("-1", "1", "0", 2)', '"-1"');
 shouldBe('input.value', '"-1"');
-shouldThrowErrorName('stepUp("1", "3.40282346e+38", "", 2)', "InvalidStateError");
+shouldBe('stepUp("1", "3.40282346e+38", "", 2)', '"1"');
 
 debug('');
 debug('stepDown()/stepUp() for stepMismatch values');

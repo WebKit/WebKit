@@ -1,3 +1,32 @@
+2022-02-03  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Value doesn't change for stepUp()/stepDown() with out of range values
+        https://bugs.webkit.org/show_bug.cgi?id=235509
+
+        Reviewed by Chris Dumez.
+
+        Update expectation files.        
+
+        * fast/forms/date/date-stepup-stepdown-expected.txt:
+        * fast/forms/date/date-stepup-stepdown.html:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-expected.txt:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html:
+        * fast/forms/month/month-stepup-stepdown-expected.txt:
+        * fast/forms/month/month-stepup-stepdown.html:
+        * fast/forms/number/number-stepup-stepdown-expected.txt:
+        * fast/forms/number/number-stepup-stepdown.html:
+        * fast/forms/range/range-stepup-stepdown-expected.txt:
+        * fast/forms/range/range-stepup-stepdown.html:
+        * fast/forms/time/time-stepup-stepdown-expected.txt:
+        * fast/forms/time/time-stepup-stepdown.html:
+        * fast/forms/week/week-stepup-stepdown-expected.txt:
+        * fast/forms/week/week-stepup-stepdown.html:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepdown-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-stepup-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+
 2022-02-03  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement CSS overscroll-behavior for synchronous scroll
