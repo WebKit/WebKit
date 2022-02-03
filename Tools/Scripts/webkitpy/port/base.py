@@ -718,8 +718,7 @@ class Port(object):
     def relative_test_filename(self, filename):
         """Returns a test_name a relative unix-style path for a filename under the LayoutTests
         directory. Ports may legitimately return abspaths here if no relpath makes sense."""
-        # Ports that run on windows need to override this method to deal with
-        # filenames with backslashes in them.
+        filename = filename.replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
         if filename.startswith(self.layout_tests_dir()):
             return self.host.filesystem.relpath(filename, self.layout_tests_dir()).replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
         else:
