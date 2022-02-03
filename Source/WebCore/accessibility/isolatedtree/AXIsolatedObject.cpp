@@ -438,14 +438,8 @@ AXCoreObject* AXIsolatedObject::associatedAXObject() const
     if (!m_id.isValid())
         return nullptr;
 
-    if (auto* axObjectCache = this->axObjectCache()) {
-        if (auto* axObject = axObjectCache->objectFromAXID(m_id)) {
-            axObject->updateBackingStore();
-            return axObject;
-        }
-    }
-
-    return nullptr;
+    auto* axObjectCache = this->axObjectCache();
+    return axObjectCache ? axObjectCache->objectFromAXID(m_id) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
