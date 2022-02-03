@@ -1,3 +1,21 @@
+2022-01-26  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] REGRESSION: Touch scrolling is broken
+        https://bugs.webkit.org/show_bug.cgi?id=235436
+
+        Reviewed by Chris Lord.
+
+        Stop using webkitWebViewBaseSetWheelHasPreciseDeltas(), instead pass the correct parameter into
+        webkitWebViewBaseSynthesizeWheelEvent().
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::~EventSenderProxy):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSenderProxy::setWheelHasPreciseDeltas):
+
 2021-09-23  Chris Lord  <clord@igalia.com>
 
         [GTK] Allow sending precise mouse wheel events in LayoutTests
