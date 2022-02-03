@@ -1072,7 +1072,6 @@ dom/VisitedLinkState.cpp
 dom/WheelEvent.cpp
 dom/WindowEventLoop.cpp
 dom/XMLDocument.cpp
-dom/mac/ImageControlsMac.cpp
 dom/messageports/MessagePortChannel.cpp
 dom/messageports/MessagePortChannelProvider.cpp
 dom/messageports/MessagePortChannelProviderImpl.cpp

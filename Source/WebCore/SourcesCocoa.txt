@@ -155,6 +155,7 @@ dom/DataTransferMac.mm
 dom/ios/MouseEventIOS.cpp
 dom/ios/PointerEventIOS.cpp
 dom/ios/TouchEvents.cpp
+dom/mac/ImageControlsMac.cpp
 editing/SelectionGeometryGatherer.cpp
 editing/SmartReplaceCF.cpp
 editing/cocoa/AlternativeTextContextController.mm
