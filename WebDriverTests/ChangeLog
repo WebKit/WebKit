@@ -1,5 +1,13 @@
 2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add missing files after r283798.
+
+        * imported/selenium/py/selenium/webdriver/common/bidi/__init__.py: Added.
+        * imported/selenium/py/selenium/webdriver/common/bidi/cdp.py: Added.
+        * imported/selenium/py/selenium/webdriver/remote/script_key.py: Added.
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add missing file after r288871.
 
         * imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py: Added.
