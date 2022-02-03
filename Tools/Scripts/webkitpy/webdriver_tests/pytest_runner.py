@@ -70,7 +70,7 @@ class CollectRecorder(object):
         self.tests = {}
 
     def pytest_collectreport(self, report):
-        if report.nodeid:
+        if report.nodeid and report.result:
             self.tests.setdefault(report.nodeid, [])
             for subtest in report.result:
                 self.tests[report.nodeid].append(get_item_name(subtest, self._ignore_param))

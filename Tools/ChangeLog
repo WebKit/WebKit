@@ -1,3 +1,17 @@
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: selenium tests are executed more than once
+        https://bugs.webkit.org/show_bug.cgi?id=236075
+
+        Reviewed by Darin Adler.
+
+        I think this happens since we updated the pytest version. Pytest is now collecting test files that don't
+        contain any test like __init__.py files. When that's given to the runner all the tests under the directory are
+        executed.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (CollectRecorder.pytest_collectreport): Do not include files with no tests.
+
 2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow using STIX Two in layout tests
