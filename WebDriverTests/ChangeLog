@@ -1,5 +1,11 @@
 2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add another missing file after r288871.
+
+        * imported/w3c/tools/webdriver/webdriver/bidi/error.py: Added.
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add missing files after r283798.
 
         * imported/selenium/py/selenium/webdriver/common/bidi/__init__.py: Added.
