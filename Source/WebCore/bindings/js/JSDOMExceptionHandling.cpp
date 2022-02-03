@@ -91,11 +91,14 @@ String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue
 void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule, ExceptionDetails* exceptionDetails)
 {
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isTerminationException(exception))
         return;
+
+    // We can declare a CatchScope here because we will clear the exception below if it's
+    // not a TerminationException. If it's a TerminationException, it'll remain sticky in
+    // the VM, but we have the check above to ensure that we do not re-enter this scope.
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ErrorHandlingScope errorScope(lexicalGlobalObject->vm());
 

@@ -120,7 +120,13 @@ JSC::JSValue ScriptController::evaluateInWorldIgnoringException(const ScriptSour
 
 ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
-    JSLockHolder lock(world.vm());
+    auto& vm = world.vm();
+    JSLockHolder lock(vm);
+
+    if (vm.hasPendingTerminationException()) {
+        ExceptionDetails details;
+        return makeUnexpected(details);
+    }
 
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();

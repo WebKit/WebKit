@@ -280,10 +280,13 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     auto& globalObject = *m_globalScopeWrapper.get();
     VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     Ref protector { scriptFetcher };
     {
         auto& promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(vm, { &scriptFetcher }));
+        scope.assertNoExceptionExceptTermination();
+        RETURN_IF_EXCEPTION(scope, false);
 
         auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [protector](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
             VM& vm = globalObject->vm();
