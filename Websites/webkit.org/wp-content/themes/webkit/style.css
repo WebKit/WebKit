@@ -209,29 +209,29 @@ Version: 1.0
         --table-rule-color: hsl(0, 0%, 87.8%);
         --figure-mattewhite-background-color: hsl(0, 0%, 0%);
 
-        --syntax-color-keyword: hsl(299.2, 58.7%, 51.6%);
-        --syntax-color-keyword-operator: hsl(6.8, 69.4%, 57.6%);
-        --syntax-color-builtin: hsl(279.2, 84.3%, 57.6%);
-        --syntax-color-keyword-type: hsl(28.1, 72.2%, 46.5%);
+        --syntax-color-keyword: hsl(299.17, 70.59%, 80%);
+        --syntax-color-keyword-operator: hsl(299.17, 70.59%, 80%);
+        --syntax-color-builtin: hsl(299.17, 70.59%, 80%);
+        --syntax-color-keyword-type: hsl(299.17, 70.59%, 80%);
         --syntax-color-preprocessor: hsl(43.9, 51.4%, 58.8%);
-        --syntax-color-comment: hsl(0, 0%, 51%);
-        --syntax-color-comment-doc: hsl(186.3, 8.3%, 55.1%);
-        --syntax-color-identifier: hsl(210.2, 70.7%, 46.9%);
-        --syntax-color-string: hsl(119.2, 34.3%, 57.6%);
+        --syntax-color-comment: hsl(118.95, 39.86%, 71.96%);
+        --syntax-color-comment-doc: hsl(118.95, 39.86%, 71.96%);
+        --syntax-color-identifier: hsl(240, 1.3%, 84.5%);
+        --syntax-color-string: hsl(28.3, 84.13%, 62.94%);
         --syntax-color-escaped: hsl(0, 0%, 44%);
-        --syntax-color-number: hsl(200, 100%, 40%);
-        --syntax-color-attribute: hsl(43.9, 51.4%, 58.8%);
+        --syntax-color-number: hsl(299.17, 70.59%, 80%);
+        --syntax-color-attribute: hsl(27.06, 100%, 80%);
         --syntax-color-attribute-value: hsl(28.1, 72.2%, 46.5%);
         --syntax-color-operator: hsl(180, 6.9%, 60.4%);
         --syntax-color-whitespace-background-color: hsl(0, 0%, 20%);
         --syntax-color-doctype: hsl(0, 0%, 42%);
         --syntax-color-error-border: hsl(0, 100%, 20%);
         --syntax-color-property: hsl(299.2, 58.7%, 51.6%);
-        --syntax-color-xml-comment: hsl(119.2, 34.3%, 57.6%);
+        --syntax-color-xml-comment: hsl(118.95, 39.86%, 71.96%);
         --syntax-color-xml-meta: hsl(180, 50%, 40%);
-        --syntax-color-css-property: hsl(309.6, 85.8%, 35.9%);
+        --syntax-color-css-property: hsl(299.17, 70.59%, 80%);
         --syntax-color-css-selector: hsl(240, 1.3%, 84.5%);
-        --syntax-color-css-number: hsl(200, 100%, 40%);
+        --syntax-color-css-number: hsl(275.53, 100%, 85.1%)
 
         --code-selection-background-color: hsl(214.2, 42.9%, 32.9%);
     }

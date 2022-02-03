@@ -1,3 +1,13 @@
+2022-02-02  Jon Davis  <jond@apple.com>
+
+        Improve color contrast of dark mode syntax highlighting
+        https://bugs.webkit.org/show_bug.cgi?id=236041
+
+        Reviewed by Simon Fraser.
+
+        * wp-content/themes/webkit/style.css:
+        (@media(prefers-color-scheme:dark) :root):
+
 2021-12-07  Cameron McCormack  <heycam@apple.com>
 
         Puzzle feature detection followup
