@@ -209,50 +209,50 @@ PASS Web Animations: property <transform> from [rotateZ(0deg)] to [rotateZ(900de
 PASS Web Animations: property <transform> from [rotateZ(0deg)] to [rotateZ(900deg)] at (2) should be [rotateZ(1800deg)]
 PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (-1) should be [rotateY(-900deg)]
 PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0) should be [rotateY(0deg)]
-FAIL CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)]
+PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)]
 PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (1) should be [rotateY(900deg)]
 PASS CSS Transitions: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (2) should be [rotateY(1800deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (-1) should be [rotateY(-900deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0) should be [rotateY(0deg)]
-FAIL CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)]
+PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (1) should be [rotateY(900deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (2) should be [rotateY(1800deg)]
 PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (-1) should be [rotateY(-900deg)]
 PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0) should be [rotateY(0deg)]
-FAIL CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)]
+PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)]
 PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (1) should be [rotateY(900deg)]
 PASS CSS Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (2) should be [rotateY(1800deg)]
 PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (-1) should be [rotateY(-900deg)]
 PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0) should be [rotateY(0deg)]
-FAIL Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.25) should be [rotateY(225deg)]
+PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (0.75) should be [rotateY(675deg)]
 PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (1) should be [rotateY(900deg)]
 PASS Web Animations: property <transform> from [rotateX(0deg)] to [rotateY(900deg)] at (2) should be [rotateY(1800deg)]
 PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (-1) should be [rotateY(1800deg)]
 PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0) should be [rotateY(900deg)]
-FAIL CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)]
+PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)]
 PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (1) should be [rotateY(0deg)]
 PASS CSS Transitions: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (2) should be [rotateY(-900deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (-1) should be [rotateY(1800deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0) should be [rotateY(900deg)]
-FAIL CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)]
+PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (1) should be [rotateY(0deg)]
 PASS CSS Transitions with transition: all: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (2) should be [rotateY(-900deg)]
 PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (-1) should be [rotateY(1800deg)]
 PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0) should be [rotateY(900deg)]
-FAIL CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)]
+PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)]
 PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (1) should be [rotateY(0deg)]
 PASS CSS Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (2) should be [rotateY(-900deg)]
 PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (-1) should be [rotateY(1800deg)]
 PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0) should be [rotateY(900deg)]
-FAIL Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)] assert_equals: expected "matrix3d ( 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( - 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) "
-FAIL Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)] assert_equals: expected "matrix3d ( - 0.71 , 0 , 0.71 , 0 , 0 , 1 , 0 , 0 , - 0.71 , 0 , - 0.71 , 0 , 0 , 0 , 0 , 1 ) " but got "matrix3d ( 0.71 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0.71 , 0 , 0 , 0 , 0 , 1 ) "
+PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.25) should be [rotateY(675deg)]
+PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (0.75) should be [rotateY(225deg)]
 PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (1) should be [rotateY(0deg)]
 PASS Web Animations: property <transform> from [rotateY(900deg)] to [rotateZ(0deg)] at (2) should be [rotateY(-900deg)]
 PASS CSS Transitions: property <transform> from [rotate3d(7, 8, 9, 100deg)] to [rotate3d(7, 8, 9, 260deg)] at (-1) should be [rotate3d(7, 8, 9, -60deg)]

@@ -58,6 +58,8 @@ public:
     Length y() const { return m_y; }
     Length z() const { return m_z; }
 
+    OperationType primitiveType() const final { return isRepresentableIn2D() ? TRANSLATE : TRANSLATE_3D; }
+
     bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const final
     {
         transform.translate3d(xAsFloat(borderBoxSize), yAsFloat(borderBoxSize), zAsFloat());

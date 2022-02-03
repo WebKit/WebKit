@@ -530,7 +530,7 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const Vector<TransformOperation::OperationType>& operations, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {

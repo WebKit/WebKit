@@ -3458,9 +3458,10 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperations* operations, const Animation* animation, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const Vector<TransformOperation::OperationType>& operations, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations->operations().at(animationIndex)->type();
+    // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
+    auto transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations[animationIndex];
 
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
@@ -3486,18 +3487,13 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 {
     ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
 
-    bool hasBigRotation;
-    int listIndex = validateTransformOperations(valueList, hasBigRotation);
-    const TransformOperations* operations = (listIndex >= 0) ? &static_cast<const TransformAnimationValue&>(valueList.at(listIndex)).value() : 0;
+    Vector<TransformOperation::OperationType> sharedPrimitives;
+    bool isMatrixAnimation = !getSharedPrimitivesForTransformKeyframes(valueList, sharedPrimitives);
+    unsigned numOperations = !isMatrixAnimation ? sharedPrimitives.size() : 1;
 
     bool validMatrices = true;
-
-    // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
-    bool isMatrixAnimation = valueList.property() == AnimatedPropertyTransform ? listIndex < 0 : true;
-    int numAnimations = isMatrixAnimation ? 1 : operations->size();
-
-    for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation, keyframesShouldUseAnimationWideTimingFunction)) {
+    for (unsigned animationIndex = 0; animationIndex < numOperations; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, sharedPrimitives, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation, keyframesShouldUseAnimationWideTimingFunction)) {
             validMatrices = false;
             break;
         }

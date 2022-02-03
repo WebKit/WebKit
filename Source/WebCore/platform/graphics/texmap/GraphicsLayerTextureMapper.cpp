@@ -24,6 +24,7 @@
 #include "GraphicsLayerFactory.h"
 #include "ImageBuffer.h"
 #include "NicosiaAnimation.h"
+#include "TransformOperation.h"
 
 #if !USE(COORDINATED_GRAPHICS)
 
@@ -611,10 +612,10 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     }
 
     bool listsMatch = false;
-    bool hasBigRotation;
-
-    if (valueList.property() == AnimatedPropertyTransform)
-        listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
+    if (valueList.property() == AnimatedPropertyTransform) {
+        Vector<TransformOperation::OperationType> unusedOperations;
+        listsMatch = !!getSharedPrimitivesForTransformKeyframes(valueList, unusedOperations);
+    }
 
     const MonotonicTime currentTime = MonotonicTime::now();
     m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, listsMatch, currentTime - Seconds(timeOffset), 0_s, Nicosia::Animation::AnimationState::Playing));

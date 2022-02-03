@@ -52,21 +52,18 @@ static double blendScaleComponent(double from, double to, const BlendingContext&
 
 Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !is<ScaleTransformOperation>(from))
+    if (blendToIdentity)
+        return ScaleTransformOperation::create(blendScaleComponent(m_x, 1.0, context), blendScaleComponent(m_y, 1.0, context), blendScaleComponent(m_z, 1.0, context), type());
+
+    auto outputType = sharedPrimitiveType(from);
+    if (!outputType)
         return *this;
 
-    if (blendToIdentity)
-        return ScaleTransformOperation::create(blendScaleComponent(m_x, 1.0, context),
-                                               blendScaleComponent(m_y, 1.0, context),
-                                               blendScaleComponent(m_z, 1.0, context), type());
-    
     const ScaleTransformOperation* fromOp = downcast<ScaleTransformOperation>(from);
     double fromX = fromOp ? fromOp->m_x : 1.0;
     double fromY = fromOp ? fromOp->m_y : 1.0;
     double fromZ = fromOp ? fromOp->m_z : 1.0;
-    return ScaleTransformOperation::create(blendScaleComponent(fromX, m_x, context),
-                                           blendScaleComponent(fromY, m_y, context),
-                                           blendScaleComponent(fromZ, m_z, context), type());
+    return ScaleTransformOperation::create(blendScaleComponent(fromX, m_x, context), blendScaleComponent(fromY, m_y, context), blendScaleComponent(fromZ, m_z, context), *outputType);
 }
 
 void ScaleTransformOperation::dump(TextStream& ts) const

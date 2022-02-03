@@ -72,4 +72,31 @@ TextStream& operator<<(TextStream& ts, const TransformOperation& operation)
     return ts;
 }
 
+std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimitiveType(OperationType other) const
+{
+    // https://drafts.csswg.org/css-transforms-2/#interpolation-of-transform-functions
+    // "If both transform functions share a primitive in the two-dimensional space, both transform
+    // functions get converted to the two-dimensional primitive. If one or both transform functions
+    // are three-dimensional transform functions, the common three-dimensional primitive is used."
+    auto type = primitiveType();
+    if (type == other)
+        return type;
+    static constexpr OperationType sharedPrimitives[][2] = {
+        { ROTATE, ROTATE_3D },
+        { SCALE, SCALE_3D },
+        { TRANSLATE, TRANSLATE_3D }
+    };
+    for (auto typePair : sharedPrimitives) {
+        if ((type == typePair[0] || type == typePair[1]) && (other == typePair[0] || other == typePair[1]))
+            return typePair[1];
+    }
+    return std::nullopt;
+}
+
+std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimitiveType(const TransformOperation* other) const
+{
+    // Blending with a null operation is always supported via blending with identity.
+    return other ? sharedPrimitiveType(other->primitiveType()) : primitiveType();
+}
+
 } // namespace WebCore

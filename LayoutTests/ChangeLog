@@ -1,3 +1,15 @@
+2022-02-03  Martin Robinson  <mrobinson@webkit.org>
+
+        Transform interpolation should blend between shared transform function primitives
+        https://bugs.webkit.org/show_bug.cgi?id=235311
+        <rdar://problem/88012700>
+
+        Reviewed by Simon Fraser.
+
+        Remove a duplicated baseline.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-inline-value-expected.txt: Removed.
+
 2022-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Set platform name to atspi in WTR

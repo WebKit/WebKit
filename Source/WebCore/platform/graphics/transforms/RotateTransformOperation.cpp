@@ -39,12 +39,13 @@ bool RotateTransformOperation::operator==(const TransformOperation& other) const
 
 Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !from->isSameType(*this))
-        return *this;
-    
     if (blendToIdentity)
         return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * context.progress, type());
-    
+
+    auto outputType = sharedPrimitiveType(from);
+    if (!outputType)
+        return *this;
+
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
     const RotateTransformOperation* toOp = this;
 
@@ -69,7 +70,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     auto toNormalizedVector = normalizedVector(*toOp);
     if (!fromAngle || !toAngle || fromNormalizedVector == toNormalizedVector) {
         auto vector = (!fromAngle && toAngle) ? toNormalizedVector : fromNormalizedVector;
-        return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), type());
+        return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), *outputType);
     }
 
     // Create the 2 rotation matrices

@@ -37,16 +37,17 @@ bool SkewTransformOperation::operator==(const TransformOperation& other) const
 
 Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !from->isSameType(*this))
-        return *this;
-    
     if (blendToIdentity)
         return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, context), WebCore::blend(m_angleY, 0.0, context), type());
-    
+
+    auto outputType = sharedPrimitiveType(from);
+    if (!outputType)
+        return *this;
+
     const SkewTransformOperation* fromOp = downcast<SkewTransformOperation>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
-    return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, context), WebCore::blend(fromAngleY, m_angleY, context), type());
+    return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, context), WebCore::blend(fromAngleY, m_angleY, context), *outputType);
 }
 
 void SkewTransformOperation::dump(TextStream& ts) const

@@ -40,6 +40,7 @@
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #include "TiledBackingStore.h"
+#include "TransformOperation.h"
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif
@@ -1414,8 +1415,8 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
         break;
     }
     case AnimatedPropertyTransform: {
-        bool ignoredHasBigRotation;
-        listsMatch = validateTransformOperations(valueList, ignoredHasBigRotation) >= 0;
+        Vector<TransformOperation::OperationType> unusedOperations;
+        listsMatch = !!getSharedPrimitivesForTransformKeyframes(valueList, unusedOperations);
         break;
     }
     case AnimatedPropertyOpacity:

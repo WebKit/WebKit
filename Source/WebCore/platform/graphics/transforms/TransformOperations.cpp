@@ -59,7 +59,7 @@ bool TransformOperations::operationsMatch(const TransformOperations& other) cons
     
     // If the types of each function are not the same, the lists don't match
     for (size_t i = 0; i < numOperations; ++i) {
-        if (!operations()[i]->isSameType(*other.operations()[i]))
+        if (!operations()[i]->sharedPrimitiveType(other.operations()[i].get()))
             return false;
     }
     return true;

@@ -43,7 +43,7 @@ Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation
         return MatrixTransformOperation::create(to);
     };
 
-    if (from && !from->isSameType(*this))
+    if (!sharedPrimitiveType(from))
         return *this;
 
     // convert the TransformOperations into matrices

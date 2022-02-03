@@ -45,7 +45,7 @@ static Ref<TransformOperation> createOperation(TransformationMatrix& to, Transfo
 
 Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !from->isSameType(*this))
+    if (!sharedPrimitiveType(from))
         return *this;
 
     // Convert the TransformOperations into matrices
