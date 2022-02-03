@@ -1,3 +1,17 @@
+2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow using STIX Two in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=236048
+
+        Reviewed by Darin Adler.
+
+        Add the fonts to the allow-list.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+
 2022-02-02  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE] Fix for non-unified builds with ACCESSIBILITY=OFF
