@@ -170,8 +170,11 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
 
     connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
     m_queue->dispatch([this, protectedThis = Ref { *this }, connection = connection.uniqueID()]() mutable {
-        for (auto& originStorageManager : m_localOriginStorageManagers.values())
-            originStorageManager->connectionClosed(connection);
+        m_localOriginStorageManagers.removeIf([&](auto& entry) {
+            auto& manager = entry.value;
+            manager->connectionClosed(connection);
+            return !manager->isActive();
+        });
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });

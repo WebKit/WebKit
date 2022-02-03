@@ -46,6 +46,11 @@ FileSystemStorageManager::~FileSystemStorageManager()
     close();
 }
 
+bool FileSystemStorageManager::isActive() const
+{
+    return !m_handles.isEmpty();
+}
+
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
 {
     ASSERT(!RunLoop::isMain());

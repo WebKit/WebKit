@@ -1,3 +1,22 @@
+2022-02-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove OriginStorageManager if it's not in use
+        https://bugs.webkit.org/show_bug.cgi?id=236029
+
+        Reviewed by Darin Adler.
+
+        We should remove OriginStorageManager if it does not contains in-memory data and its origin data is not being 
+        used by any web process.
+
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::isActive const):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::stopReceivingMessageFromConnection):
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::connectionClosed):
+        (WebKit::OriginStorageManager::StorageBucket::isActive const):
+
 2022-02-02  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: didShowExtensionTab needs to pass the frameID of the tab
