@@ -144,8 +144,7 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
         constexpr EGLNativeDisplayType nativeDisplays[] = {
             defaultDisplay,
 #if PLATFORM(COCOA)
-            lowPowerDisplay,
-            highPerformanceDisplay
+            defaultOpenGLDisplay,
 #endif
         };
         for (auto nativeDisplay : nativeDisplays) {

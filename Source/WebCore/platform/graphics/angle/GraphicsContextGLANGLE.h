@@ -357,8 +357,8 @@ public:
 
     constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
 #if PLATFORM(COCOA)
-    constexpr static EGLNativeDisplayType lowPowerDisplay = EGL_CAST(EGLNativeDisplayType, -1);
-    constexpr static EGLNativeDisplayType highPerformanceDisplay = EGL_CAST(EGLNativeDisplayType, -2);
+    constexpr static EGLNativeDisplayType defaultOpenGLDisplay = EGL_CAST(EGLNativeDisplayType, -1);
+    static_assert(defaultDisplay != defaultOpenGLDisplay);
 #endif
 
 protected:

@@ -159,13 +159,13 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_LOW_POWER_ANGLE);
-            nativeDisplay = GraphicsContextGLANGLE::lowPowerDisplay;
         } else if (powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
-            nativeDisplay = GraphicsContextGLANGLE::highPerformanceDisplay;
         }
-    }
+    } else
+        nativeDisplay = GraphicsContextGLANGLE::defaultOpenGLDisplay;
+
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(nativeDisplay), displayAttributes.data());
 

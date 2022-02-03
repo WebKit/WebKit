@@ -1,3 +1,14 @@
+2022-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal and ANGLE OpenGL cannot be initialised one after the other
+        https://bugs.webkit.org/show_bug.cgi?id=236030
+
+        Reviewed by Dean Jackson.
+
+        * webgl/pending/conformance2/misc/webgl2-after-webgl1-bug-expected.txt: Added.
+        * webgl/pending/conformance2/misc/webgl2-after-webgl1-bug.html: Added.
+        * webgl/resources/pending_webgl_test_files/conformance2/misc/webgl2-after-webgl1-bug.html: Added.
+
 2022-02-03  Patrick Griffis  <pgriffis@igalia.com>
 
         [Win] Update expectations for failing CSP test
