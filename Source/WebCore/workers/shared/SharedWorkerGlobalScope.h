@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "TransferredMessagePort.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
+class SharedWorkerThread;
 struct WorkerParameters;
 
 class SharedWorkerGlobalScope final : public WorkerGlobalScope {
@@ -39,9 +41,13 @@ public:
 
     Type type() const final { return Type::SharedWorker; }
     const String& name() const { return m_name; }
+    SharedWorkerThread& thread();
+
+    void postConnectEvent(TransferredMessagePort&&, const String& sourceOrigin);
     void close();
+
 private:
-    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     EventTargetInterface eventTargetInterface() const final { return SharedWorkerGlobalScopeEventTargetInterfaceType; }
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Sharedworker; }

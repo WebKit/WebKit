@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SharedWorkerIdentifier.h"
 #include "WorkerDebuggerProxy.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerLoaderProxy.h"
@@ -41,6 +42,7 @@ class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerTh
 public:
     template<typename... Args> static SharedWorkerThreadProxy& create(Args&&... args) { return *new SharedWorkerThreadProxy(std::forward<Args>(args)...); }
 
+    SharedWorkerIdentifier identifier() const;
     SharedWorkerThread* thread() { return m_workerThread.get(); }
 
     void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;

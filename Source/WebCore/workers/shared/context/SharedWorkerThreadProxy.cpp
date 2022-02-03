@@ -69,7 +69,7 @@ void SharedWorkerThreadProxy::startWorkerGlobalScope(const URL& scriptURL, const
     };
 
     if (!m_workerThread) {
-        m_workerThread = SharedWorkerThread::create(parameters, scriptBuffer, *this, *this, *this, WorkerThreadStartMode::Normal, m_scriptExecutionContext->topOrigin(), m_scriptExecutionContext->idbConnectionProxy(), m_scriptExecutionContext->socketProvider(), runtimeFlags);
+        m_workerThread = SharedWorkerThread::create(SharedWorkerIdentifier::generate(), parameters, scriptBuffer, *this, *this, *this, WorkerThreadStartMode::Normal, m_scriptExecutionContext->topOrigin(), m_scriptExecutionContext->idbConnectionProxy(), m_scriptExecutionContext->socketProvider(), runtimeFlags);
         m_workerThread->start();
     }
 }
@@ -116,6 +116,11 @@ void SharedWorkerThreadProxy::workerObjectDestroyed()
         else
             workerGlobalScopeDestroyedInternal();
     });
+}
+
+SharedWorkerIdentifier SharedWorkerThreadProxy::identifier() const
+{
+    return m_workerThread->identifier();
 }
 
 void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)

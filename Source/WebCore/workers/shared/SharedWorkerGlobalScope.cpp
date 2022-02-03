@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,12 @@
 #include "config.h"
 #include "SharedWorkerGlobalScope.h"
 
+#include "EventNames.h"
+#include "Logging.h"
+#include "MessageEvent.h"
+#include "SerializedScriptValue.h"
+#include "ServiceWorkerThread.h"
+#include "SharedWorkerThread.h"
 #include "WorkerThread.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -33,17 +39,44 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
-SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+#define SCOPE_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [sharedWorkerIdentifier=%" PRIu64 "] SharedWorkerGlobalScope::" fmt, this, this->thread().identifier().toUInt64(), ##__VA_ARGS__)
+
+SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider)
     , m_name(name)
 {
+    SCOPE_RELEASE_LOG("SharedWorkerGlobalScope:");
     relaxAdoptionRequirement();
     applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
 }
 
+SharedWorkerThread& SharedWorkerGlobalScope::thread()
+{
+    return static_cast<SharedWorkerThread&>(WorkerGlobalScope::thread());
+}
+
 void SharedWorkerGlobalScope::close()
 {
+    SCOPE_RELEASE_LOG("close:");
     thread().stop(nullptr);
 }
+
+// https://html.spec.whatwg.org/multipage/workers.html#dom-sharedworker step 11.5
+void SharedWorkerGlobalScope::postConnectEvent(TransferredMessagePort&& transferredPort, const String& sourceOrigin)
+{
+    SCOPE_RELEASE_LOG("postConnectEvent:");
+    auto value = SerializedScriptValue::create(emptyString());
+    ASSERT(value);
+    auto ports = MessagePort::entanglePorts(*this, { WTFMove(transferredPort) });
+    ASSERT(ports.size() == 1);
+    auto port = ports[0];
+    ASSERT(port);
+    auto event = MessageEvent::create(WTFMove(ports), value.releaseNonNull(), sourceOrigin, { }, port);
+    event->initEvent(eventNames().connectEvent, false, false);
+
+    dispatchEvent(WTFMove(event));
+}
+
+#undef SCOPE_RELEASE_LOG
 
 } // namespace WebCore

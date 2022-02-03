@@ -31,14 +31,17 @@
 
 namespace WebCore {
 
-SharedWorkerThread::SharedWorkerThread(const WorkerParameters& parameters, const ScriptBuffer& sourceCode, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerObjectProxy& objectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
+SharedWorkerThread::SharedWorkerThread(SharedWorkerIdentifier identifier, const WorkerParameters& parameters, const ScriptBuffer& sourceCode, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerObjectProxy& objectProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
     : WorkerThread(parameters, sourceCode, loaderProxy, debuggerProxy, objectProxy, startMode, topOrigin, connectionProxy, socketProvider, runtimeFlags)
+    , m_identifier(identifier)
     , m_name(parameters.name.isolatedCopy())
 {
+    RELEASE_LOG(SharedWorker, "%p - SharedWorkerThread::SharedWorkerThread: m_identifier=%" PRIu64, this, m_identifier.toUInt64());
 }
 
 Ref<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const WorkerParameters& parameters, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
+    RELEASE_LOG(SharedWorker, "%p - SharedWorkerThread::createWorkerGlobalScope: m_identifier=%" PRIu64, this, m_identifier.toUInt64());
     return SharedWorkerGlobalScope::create(std::exchange(m_name, { }), parameters, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
 }
 

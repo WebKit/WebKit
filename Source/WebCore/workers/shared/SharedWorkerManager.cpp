@@ -99,21 +99,7 @@ void SharedWorkerManager::scriptLoadedSuccessfully(SharedWorkerScriptLoader& loa
     auto sourceOrigin = downcast<Document>(scriptExecutionContext).securityOrigin().toString();
 
     proxy.thread()->runLoop().postTask([transferredPort = WTFMove(transferredPort), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& scriptExecutionContext) mutable {
-        ASSERT(!RunLoop::isMain());
-
-        // https://html.spec.whatwg.org/multipage/workers.html#dom-sharedworker step 11.5
-        auto serializedScriptValue = SerializedScriptValue::create("");
-        ASSERT(serializedScriptValue);
-        auto ports = MessagePort::entanglePorts(scriptExecutionContext, { WTFMove(transferredPort) });
-        ASSERT(ports.size() == 1);
-        auto port = ports[0];
-        ASSERT(port);
-        auto event = MessageEvent::create(WTFMove(ports), serializedScriptValue.releaseNonNull(), sourceOrigin, { }, port);
-        event->initEvent(eventNames().connectEvent, false, false);
-
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is<SharedWorkerGlobalScope>(scriptExecutionContext));
-        auto& workerGlobalScope = downcast<SharedWorkerGlobalScope>(scriptExecutionContext);
-        workerGlobalScope.dispatchEvent(WTFMove(event));
+        downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTFMove(transferredPort), sourceOrigin);
     });
 
     m_loaders.remove(loader.identifier());

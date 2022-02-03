@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SharedWorkerIdentifier.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -34,12 +35,16 @@ class WorkerObjectProxy;
 class SharedWorkerThread : public WorkerThread {
 public:
     template<typename... Args> static Ref<SharedWorkerThread> create(Args&&... args) { return adoptRef(*new SharedWorkerThread(std::forward<Args>(args)...)); }
+
+    SharedWorkerIdentifier identifier() const { return m_identifier; }
+
 private:
-    SharedWorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
+    SharedWorkerThread(SharedWorkerIdentifier, const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) final;
     ASCIILiteral threadName() const final { return "WebCore: SharedWorker"_s; }
 
+    SharedWorkerIdentifier m_identifier;
     String m_name;
 };
 
