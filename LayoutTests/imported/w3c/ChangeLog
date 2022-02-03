@@ -1,5 +1,21 @@
 2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
 
+        CSP: Implement wasm-unsafe-eval
+        https://bugs.webkit.org/show_bug.cgi?id=235408
+
+        Reviewed by Kate Cheney.
+
+        Update expectations with new passes.
+
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.serviceworker-expected.txt:
+        * web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.worker-expected.txt:
+
+2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
+
         CSP: Fix matching wildcard hosts
         https://bugs.webkit.org/show_bug.cgi?id=235992
 

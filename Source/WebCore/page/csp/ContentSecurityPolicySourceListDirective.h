@@ -45,6 +45,7 @@ public:
     bool allows(const String& nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }
     bool allowEval() const { return m_sourceList.allowEval(); }
+    bool allowWasmEval() const { return m_sourceList.allowWasmEval(); }
     bool allowNonParserInsertedScripts() const { return m_sourceList.allowNonParserInsertedScripts(); }
     bool shouldReportSample() const { return m_sourceList.shouldReportSample(); }
 
