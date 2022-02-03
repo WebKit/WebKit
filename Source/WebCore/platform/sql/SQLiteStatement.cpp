@@ -284,7 +284,7 @@ String SQLiteStatement::columnBlobAsString(int col)
         return String();
 
     ASSERT(!(size % sizeof(UChar)));
-    return String(static_cast<const UChar*>(blob), size / sizeof(UChar));
+    return StringImpl::create8BitIfPossible(static_cast<const UChar*>(blob), size / sizeof(UChar));
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
