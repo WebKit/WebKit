@@ -1,3 +1,15 @@
+2022-02-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Flexbox] Add setting to guard Flexbox Inspector feature
+        https://bugs.webkit.org/show_bug.cgi?id=236091
+        <rdar://problem/88443529>
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createEngineeringSettingsView):
+
 2022-02-02  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: didShowExtensionTab needs to pass the frameID of the tab
