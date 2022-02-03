@@ -3027,11 +3027,17 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
     if (allowScrolling)
         allowScrolling = m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, scrollableArea);
 #endif
+    auto adjustedWheelEvent = event;
+    auto filteredDelta = adjustedWheelEvent.delta();
+    filteredDelta = view->deltaForPropagation(filteredDelta);
+    if (view->shouldBlockScrollPropagation(filteredDelta))
+        return true;
 
     if (allowScrolling) {
         // FIXME: processWheelEventForScrolling() is only called for FrameView scrolling, not overflow scrolling, which is confusing.
-        handledEvent = processWheelEventForScrolling(event, scrollableArea, handling);
-        processWheelEventForScrollSnap(event, scrollableArea);
+        adjustedWheelEvent = adjustedWheelEvent.copyWithDeltaAndVelocity(filteredDelta, adjustedWheelEvent.scrollingVelocity());
+        handledEvent = processWheelEventForScrolling(adjustedWheelEvent, scrollableArea, handling);
+        processWheelEventForScrollSnap(adjustedWheelEvent, scrollableArea);
     }
 
     return handledEvent;
@@ -3050,18 +3056,19 @@ static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea
 
 static bool scrollViaNonPlatformEvent(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
 {
+    auto filteredDelta = FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY());
+    filteredDelta = scrollableArea.deltaForPropagation(filteredDelta);
     ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
     bool didHandleWheelEvent = false;
-    if (float absoluteDelta = std::abs(wheelEvent.deltaX()))
-        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
+    if (float absoluteDelta = std::abs(filteredDelta.width()))
+        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.width() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
 
-    if (float absoluteDelta = std::abs(wheelEvent.deltaY()))
-        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
-
+    if (float absoluteDelta = std::abs(filteredDelta.height()))
+        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.height() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
     return didHandleWheelEvent;
 }
 
-bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling> eventHandling)
+bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling> eventHandling)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -3091,6 +3098,12 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
     };
 
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
+#if PLATFORM(MAC)
+    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY()));
+#else
+    auto biasedDelta = FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY());
+#endif
+    
     while (currentEnclosingBox) {
         if (auto* boxScrollableArea = scrollableAreaForBox(*currentEnclosingBox)) {
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
@@ -3102,6 +3115,10 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
                 scrollingWasHandled = scrollViaNonPlatformEvent(*boxScrollableArea, wheelEvent);
 
             if (scrollingWasHandled)
+                return true;
+            
+            biasedDelta = boxScrollableArea->deltaForPropagation(biasedDelta);
+            if (boxScrollableArea->shouldBlockScrollPropagation(biasedDelta))
                 return true;
         }
 
@@ -3115,7 +3132,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 bool EventHandler::scrollableAreaCanHandleEvent(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea)
 {
 #if PLATFORM(MAC)
-    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(wheelEvent);
+    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(wheelEvent.delta());
 #else
     auto biasedDelta = wheelEvent.delta();
 #endif
@@ -3126,6 +3143,8 @@ bool EventHandler::scrollableAreaCanHandleEvent(const PlatformWheelEvent& wheelE
 
     auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-biasedDelta, ScrollEventAxis::Horizontal);
     if (horizontalSide && !scrollableArea.isPinnedOnSide(*horizontalSide))
+        return true;
+    if (scrollableArea.shouldBlockScrollPropagation(biasedDelta) && scrollableArea.overscrollBehaviorAllowsRubberBand())
         return true;
 
     return false;

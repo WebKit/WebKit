@@ -475,7 +475,7 @@ private:
     void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
     bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&);
 
-    bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent&, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling>);
+    bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent&, FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling>);
 
     bool handleWheelEventInScrollableArea(const PlatformWheelEvent&, ScrollableArea&, OptionSet<EventHandling>);
     std::optional<WheelScrollGestureState> updateWheelGestureState(const PlatformWheelEvent&, OptionSet<EventHandling>);

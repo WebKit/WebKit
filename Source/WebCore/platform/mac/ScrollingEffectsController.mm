@@ -345,9 +345,9 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
     return canStartAnimation;
 }
 
-FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent& wheelEvent)
+FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const FloatSize& wheelDelta)
 {
-    return deltaAlignedToDominantAxis(wheelEvent.delta());
+    return deltaAlignedToDominantAxis(wheelDelta);
 }
 
 void ScrollingEffectsController::updateRubberBandAnimatingState()

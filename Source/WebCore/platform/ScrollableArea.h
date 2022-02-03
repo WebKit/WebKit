@@ -373,6 +373,12 @@ public:
     }
 
     virtual void didStartScrollAnimation() { }
+    
+    bool horizontalOverscrollBehaviorPreventsPropagation() const { return horizontalOverscrollBehavior() != OverscrollBehavior::Auto; }
+    bool verticalOverscrollBehaviorPreventsPropagation() const { return verticalOverscrollBehavior() != OverscrollBehavior::Auto; }
+    bool overscrollBehaviorAllowsRubberBand() const { return horizontalOverscrollBehavior() != OverscrollBehavior::None || verticalOverscrollBehavior() != OverscrollBehavior::None; }
+    bool shouldBlockScrollPropagation(const FloatSize&) const;
+    FloatSize deltaForPropagation(const FloatSize&) const;
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

@@ -174,7 +174,7 @@ public:
     bool isUserScrollInProgress() const;
 
 #if PLATFORM(MAC)
-    static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
+    static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);

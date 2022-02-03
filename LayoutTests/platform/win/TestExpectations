@@ -765,6 +765,12 @@ pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
 fast/js-promise/js-promise-invalid-context-access.html [ Skip ]
 
+# Overscroll-behavior is not supported on Windows
+fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Skip ]
+fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
+fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-element.html [ Skip ]
+fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Skip ]
+
 # Datalist is unsupported on Windows
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]

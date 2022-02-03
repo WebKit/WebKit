@@ -815,7 +815,10 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         auto* scrollableArea = scrollableAreaForBox(*box);
         if (!scrollableArea)
             continue;
-
+        
+        if (scrollableArea->shouldBlockScrollPropagation(wheelEvent.delta()))
+            return candidate;
+        
         if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 

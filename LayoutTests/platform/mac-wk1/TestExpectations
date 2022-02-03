@@ -684,6 +684,10 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.ht
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 
+# Lack of ways to control the cross-frame scroll chaining in WK1.
+fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
+fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Skip ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 

@@ -128,7 +128,7 @@ bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& whee
     // The stateless wheel event doesn't trigger rubber-band.
     // Also rubberband when we should block scroll propagation
     // at this node, which has overscroll behavior that is not none.
-    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || (shouldBlockScrollPropagation(wheelEvent.delta()) && overscrollBehaviorAllowRubberBand()));
+    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || (shouldBlockScrollPropagation(wheelEvent.delta()) && overscrollBehaviorAllowsRubberBand()));
 }
 
 bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
@@ -404,7 +404,7 @@ PlatformWheelEvent ScrollingTreeScrollingNode::eventForPropagation(const Platfor
 {
     auto filteredDelta = wheelEvent.delta();
 #if PLATFORM(MAC)
-    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(wheelEvent);
+    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(wheelEvent.delta());
 #else
     auto biasedDelta = wheelEvent.delta();
 #endif
