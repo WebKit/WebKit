@@ -1,3 +1,11 @@
+2022-02-03  Elliott Williams  <emw@apple.com>
+
+        Add Elliott Williams to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2022-01-24  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Configure default branch management 

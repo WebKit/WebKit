@@ -2234,6 +2234,18 @@
       ]
    },
    {
+      "emails" : [
+         "emw@apple.com"
+      ],
+      "expertise" : "Xcode build system",
+      "github" : "emw-apple",
+      "name" : "Elliott Williams",
+      "nicks" : [
+         "emw"
+      ],
+      "status" : "committer"
+   },
+   {
       "aliases" : [
          "Emil Eklund"
       ],
