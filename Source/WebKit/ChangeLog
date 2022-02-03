@@ -1,3 +1,29 @@
+2022-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Start connecting SharedWorker to the WebKit2 layer
+        https://bugs.webkit.org/show_bug.cgi?id=236052
+
+        Reviewed by Darin Adler.
+
+        Start connecting SharedWorker to the WebKit2 layer with a provider / connection, similarly to what is done
+        for service workers.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::sharedWorkerConnection):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.cpp: Copied from Source/WebCore/workers/shared/SharedWorkerManager.h.
+        (WebKit::WebSharedWorkerObjectConnection::messageSenderConnection const):
+        (WebKit::WebSharedWorkerObjectConnection::requestSharedWorker):
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.h: Copied from Source/WebCore/workers/shared/SharedWorkerManager.h.
+        * WebProcess/Storage/WebSharedWorkerProvider.cpp: Copied from Source/WebCore/workers/shared/SharedWorkerManager.h.
+        (WebKit::WebSharedWorkerProvider::singleton):
+        (WebKit::WebSharedWorkerProvider::sharedWorkerConnection):
+        * WebProcess/Storage/WebSharedWorkerProvider.h: Copied from Source/WebCore/workers/shared/SharedWorkerManager.h.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2022-02-03  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][GPUP] Add access to sysctl property

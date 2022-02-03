@@ -783,6 +783,8 @@ WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/Storage/WebSWOriginTable.cpp
 WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
+WebProcess/Storage/WebSharedWorkerProvider.cpp
+WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
 
 WebProcess/UserContent/WebUserContentController.cpp
 

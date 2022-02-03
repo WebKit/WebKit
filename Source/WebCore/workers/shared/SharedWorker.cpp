@@ -32,6 +32,8 @@
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "SharedWorkerManager.h"
+#include "SharedWorkerObjectConnection.h"
+#include "SharedWorkerProvider.h"
 #include "SharedWorkerThreadProxy.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -41,8 +43,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 
+static inline SharedWorkerObjectConnection* mainThreadConnection()
+{
+    return SharedWorkerProvider::singleton().sharedWorkerConnection();
+}
+
 ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, JSC::RuntimeFlags runtimeFlags, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
 {
+    if (!mainThreadConnection())
+        return Exception { NotSupportedError, "Shared workers are not supported" };
+
     if (!document.securityOrigin().canAccessSharedWorkers(document.topOrigin()))
         return Exception { SecurityError, "This iframe doesn't have storage access"_s };
 
@@ -70,7 +80,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, JSC::Run
     auto sharedWorker = adoptRef(*new SharedWorker(document, channel->port1(), runtimeFlags));
     sharedWorker->suspendIfNeeded();
 
-    SharedWorkerManager::singleton().connect(url, sharedWorker.get(), WTFMove(transferredPort), WTFMove(options));
+    mainThreadConnection()->requestSharedWorker(url, sharedWorker.get(), WTFMove(transferredPort), WTFMove(options));
     return sharedWorker;
 }
 

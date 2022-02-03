@@ -84,6 +84,7 @@
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include "WebSharedWorkerProvider.h"
 #include "WebSocketStream.h"
 #include "WebsiteData.h"
 #include "WebsiteDataStoreParameters.h"
@@ -569,6 +570,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #if ENABLE(SERVICE_WORKER)
     ServiceWorkerProvider::setSharedProvider(WebServiceWorkerProvider::singleton());
 #endif
+    SharedWorkerProvider::setSharedProvider(WebSharedWorkerProvider::singleton());
 
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();

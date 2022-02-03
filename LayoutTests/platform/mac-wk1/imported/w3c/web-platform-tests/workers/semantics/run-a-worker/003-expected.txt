@@ -1,0 +1,4 @@
+
+PASS worker
+FAIL shared Shared workers are not supported
+

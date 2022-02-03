@@ -57,6 +57,7 @@
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include "WebSharedWorkerObjectConnection.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelMessages.h"
 #include "WebSocketStream.h"
@@ -306,6 +307,13 @@ WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
     return *m_swConnection;
 }
 #endif
+
+WebSharedWorkerObjectConnection& NetworkProcessConnection::sharedWorkerConnection()
+{
+    if (!m_sharedWorkerConnection)
+        m_sharedWorkerConnection = WebSharedWorkerObjectConnection::create();
+    return *m_sharedWorkerConnection;
+}
 
 void NetworkProcessConnection::messagesAvailableForPort(const WebCore::MessagePortIdentifier& messagePortIdentifier)
 {

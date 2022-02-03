@@ -26,19 +26,22 @@
 #pragma once
 
 #include "MessagePortIdentifier.h"
-#include "SharedWorkerScriptLoader.h"
 
 namespace WebCore {
 
+class ScriptExecutionContext;
 class SharedWorker;
+class SharedWorkerScriptLoader;
 class ScriptBuffer;
 struct WorkerOptions;
 using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 
+using SharedWorkerScriptLoaderIdentifier = ObjectIdentifier<SharedWorkerScriptLoader>;
+
 class SharedWorkerManager {
 public:
-    static SharedWorkerManager& singleton();
-    void connect(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&);
+    WEBCORE_EXPORT static SharedWorkerManager& singleton();
+    WEBCORE_EXPORT void connect(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&);
 
     void scriptLoadFailed(SharedWorkerScriptLoader&);
     void scriptLoadedSuccessfully(SharedWorkerScriptLoader&, const ScriptBuffer&, ScriptExecutionContext&, SharedWorker&, TransferredMessagePort&&);

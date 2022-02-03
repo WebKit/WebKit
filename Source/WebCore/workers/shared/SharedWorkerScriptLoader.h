@@ -40,7 +40,6 @@ class SharedWorker;
 class WorkerScriptLoader;
 
 class SharedWorkerScriptLoader;
-using SharedWorkerScriptLoaderIdentifier = ObjectIdentifier<SharedWorkerScriptLoader>;
 
 using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 

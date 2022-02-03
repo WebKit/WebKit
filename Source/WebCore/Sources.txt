@@ -2786,6 +2786,8 @@ workers/service/server/SWServerWorker.cpp
 workers/shared/SharedWorker.cpp
 workers/shared/SharedWorkerGlobalScope.cpp
 workers/shared/SharedWorkerManager.cpp
+workers/shared/SharedWorkerObjectConnection.cpp
+workers/shared/SharedWorkerProvider.cpp
 workers/shared/SharedWorkerScriptLoader.cpp
 workers/shared/context/SharedWorkerThread.cpp
 workers/shared/context/SharedWorkerThreadProxy.cpp
