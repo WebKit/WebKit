@@ -1,3 +1,35 @@
+2022-02-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Crash at com.apple.WebKit: WebKit::RemoteLayerBackingStore::display
+        https://bugs.webkit.org/show_bug.cgi?id=236003
+        <rdar://87617695>
+
+        Reviewed by Simon Fraser.
+
+        Using UI-side compositing, following chain would be the cause a crash:
+        PlatformCALayerRemote::recursiveBuildTransaction
+        RemoteLayerBackingStore::display
+        PlatformCALayer::platformCALayerLayerDisplay
+        WebProcessGraphicsContextGLCocoa.mm DisplayBufferDisplayDelegate::display
+        PlatformCALayer::setContents(nullptr)
+
+        The nullptr contents happens when the WebGL context does not have
+        display buffer yet or when the display buffer creation would fail.
+
+        Setting empty layer contents would destroy the RemoteLayerBackingStore,
+        even though the callstack is in process of displaying the layer to the
+        backing store.
+
+        When setting PlatformCALayer contents "empty", clear the backing store instead
+        of removing the backing store.
+
+        Tested by LayoutTests/webgl (under ASAN, ios simulator)
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setContents):
+
 2022-02-03  Chris Dumez  <cdumez@apple.com>
 
         Move and rename ServiceWorkerThreadProxy::setupPageForServiceWorker()

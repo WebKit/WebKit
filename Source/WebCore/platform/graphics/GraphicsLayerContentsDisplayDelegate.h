@@ -45,6 +45,7 @@ public:
 
 #if USE(CA)
     virtual void prepareToDelegateDisplay(PlatformCALayer&);
+    // Must not detach the platform layer backing store.
     virtual void display(PlatformCALayer&) = 0;
     virtual GraphicsLayer::CompositingCoordinatesOrientation orientation() const;
 #else

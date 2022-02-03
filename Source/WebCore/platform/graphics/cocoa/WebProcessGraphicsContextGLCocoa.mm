@@ -58,7 +58,7 @@ public:
         if (m_displayBuffer)
             layer.setContents(*m_displayBuffer);
         else
-            layer.setContents(nullptr);
+            layer.clearContents();
     }
 
     GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
