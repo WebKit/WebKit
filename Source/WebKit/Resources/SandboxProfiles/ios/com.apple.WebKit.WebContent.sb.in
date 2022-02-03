@@ -1645,16 +1645,15 @@
 #endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-;; FIXME: enable this when rdar://85931614 is fixed
-;;            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-;;                (allow mach-message-send
-;;                    (kernel-mig-routine-only-in-use-during-launch)))
-;;            (with-filter (state-flag "WebContentProcessLaunched")
-;;                (allow mach-message-send
-;;                    (with report)
-;;                    (with telemetry)
-;;                    (with message "kernel mig routine used after launch")
-;;                    (kernel-mig-routine-only-in-use-during-launch)))
+            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+                (allow mach-message-send
+                    (kernel-mig-routine-only-in-use-during-launch)))
+            (with-filter (state-flag "WebContentProcessLaunched")
+                (allow mach-message-send
+                    (with report)
+                    (with telemetry)
+                    (with message "kernel mig routine used after launch")
+                    (kernel-mig-routine-only-in-use-during-launch)))
 #endif
 
             (when (defined? 'mach_port_is_connection_for_service)

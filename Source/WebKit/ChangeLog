@@ -1,3 +1,15 @@
+2022-02-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][WP] Enable sandbox state rules for Mach messages
+        https://bugs.webkit.org/show_bug.cgi?id=236027
+        <rdar://problem/88387937>
+
+        Reviewed by Brent Fulgham.
+
+        After <rdar://85931614> has been fixed, we can enable sandbox state rules for Mach messages.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2022-02-03  Chris Dumez  <cdumez@apple.com>
 
         Rename NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
