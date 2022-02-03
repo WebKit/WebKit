@@ -1952,7 +1952,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     if (profiledResolveType == ModuleVar) 
         loadPtrFromMetadata(bytecode, OpResolveScope::Metadata::offsetOfLexicalEnvironment(), returnValueGPR);
     else {
-        uint32_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
+        uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
 
         constexpr GPRReg metadataGPR = regT2;
         constexpr GPRReg scopeGPR = regT0;
@@ -2199,7 +2199,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
     constexpr GPRReg scopeGPR = regT2;
     constexpr GPRReg bytecodeOffsetGPR = regT3;
 
-    uint32_t metadataOffset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode);
+    uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
 
     emitGetVirtualRegisterPayload(scope, scopeGPR);
     addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);

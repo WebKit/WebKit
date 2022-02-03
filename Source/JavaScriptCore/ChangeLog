@@ -1,3 +1,29 @@
+2022-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use MetadataTable instead of UnlinkedMetadataTable
+        https://bugs.webkit.org/show_bug.cgi?id=236063
+        rdar://88269480
+
+        Reviewed by Robin Morisset.
+
+        Use MetadataTable from profiled CodeBlock instead of UnlinkedMetadataTable in concurrent JIT compiler.
+
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::offsetInMetadataTable):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::offsetInMetadataTable):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::loadPtrFromMetadata):
+        (JSC::JIT::load32FromMetadata):
+        (JSC::JIT::load8FromMetadata):
+        (JSC::JIT::store8ToMetadata):
+        (JSC::JIT::store32ToMetadata):
+        (JSC::JIT::materializePointerIntoMetadata):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+
 2022-02-02  Saam Barati  <sbarati@apple.com>
 
         SecureARM64EHashPins should check g_jscConfig.useFastJITPermissions

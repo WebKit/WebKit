@@ -92,6 +92,14 @@ public:
         return refCount() == 1;
     }
 
+    template <typename Opcode>
+    uintptr_t offsetInMetadataTable(const Opcode& opcode)
+    {
+        uintptr_t baseTypeOffset = is32Bit() ? offsetTable32()[Opcode::opcodeID] : offsetTable16()[Opcode::opcodeID];
+        baseTypeOffset = roundUpToMultipleOf(alignof(typename Opcode::Metadata), baseTypeOffset);
+        return baseTypeOffset + sizeof(typename Opcode::Metadata) * opcode.m_metadataID;
+    }
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
