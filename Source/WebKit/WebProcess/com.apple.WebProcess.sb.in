@@ -1817,27 +1817,19 @@
 
 (when (defined? 'system-fcntl)
     (deny system-fcntl (with telemetry))
-     (allow system-fcntl
-        (fcntl-command
-            F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
     (allow system-fcntl
        (fcntl-command
+            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
             F_BARRIERFSYNC
+            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
             F_GETCONFINED
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
+            F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
             F_GETSIGSINFO
-            F_NOCACHE
-            F_RDADVISE
-            F_SETCONFINED
-            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
-            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
-            F_SPECULATIVE_READ ;; ImageLoaderMachO::mapSegments
-            F_SETFD ;; libwebrtc.dylib (no backtrace)
-            F_GETFD ;; libwebrtc.dylib (no backtrace)
-            F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
             F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
-            F_SETFL ;; CMCapture uses when camera is enabled
-            F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
+            F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+            F_SETCONFINED
+            F_SETFD)) ;; libwebrtc.dylib (no backtrace)
 
     (define (appcache-fcntl-commands)
         (fcntl-command
@@ -1855,7 +1847,12 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
+        (deny system-fcntl
+            (with telemetry)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (with telemetry-backtrace)
+#endif
+            (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif

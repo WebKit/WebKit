@@ -1,3 +1,19 @@
+2022-02-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][macOS] Adjust sandbox access to system-fcntl
+        https://bugs.webkit.org/show_bug.cgi?id=236095
+        <rdar://problem/88448068>
+
+        Reviewed by Brent Fulgham.
+
+        Adjust sandbox access in the WebContent process to system-fcntl based on telemetry.
+        This patch is blocking access to some unused fcntl commands, as well as blocking
+        access to fcntl commands that are only used when AppCache is enabled. This is
+        achieved by using sandbox state variables.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-03  Megan Gardner  <megan_gardner@apple.com>
 
         Plumb pointer type though native to web events.

@@ -1377,29 +1377,28 @@
     (deny system-fcntl (with telemetry))
     (allow system-fcntl
         (fcntl-command
-            F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
-    (allow system-fcntl
-        (fcntl-command
+            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
             F_BARRIERFSYNC
+            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
             F_GETCONFINED
+            F_GETFD ;; libwebrtc.dylib (no backtrace)
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
+            F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
             F_GETSIGSINFO
-            F_NOCACHE
             F_RDADVISE
             F_SETCONFINED
-            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
-            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
-            F_SPECULATIVE_READ ;; ImageLoaderMachO::mapSegments
             F_SETFD ;; libwebrtc.dylib (no backtrace)
-            F_GETFD ;; libwebrtc.dylib (no backtrace)
             F_SETFL ;; CMCapture uses when camera is enabled
             F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (define (appcache-fcntl-commands)
+    (allow system-fcntl (with telemetry-backtrace)
         (fcntl-command
             F_GETLK
+            F_OFD_SETLK))
+
+    (define (appcache-fcntl-commands)
+        (fcntl-command
             F_OFD_GETLK
-            F_OFD_SETLK
             F_OFD_SETLKWTIMEOUT))
             
 #if HAVE(SANDBOX_STATE_FLAGS)
@@ -1411,7 +1410,7 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
+        (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
