@@ -1,3 +1,16 @@
+2022-02-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Plumb pointer type though native to web events.
+        https://bugs.webkit.org/show_bug.cgi?id=236118
+
+        Reviewed by Tim Horton.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/ios/NativeWebMouseEventIOS.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:wasCancelled:]):
+
 2022-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Teach VideoFullscreenInterface to keep track of its corresponding MediaPlayer's MediaPlayerIdentifier

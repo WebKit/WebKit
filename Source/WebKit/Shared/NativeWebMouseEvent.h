@@ -70,7 +70,7 @@ public:
     explicit NativeWebMouseEvent(const WebCore::IntPoint&);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(::WebEvent *);
-    NativeWebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, GestureWasCancelled);
+    NativeWebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, GestureWasCancelled, const String& pointerType);
 #elif USE(LIBWPE)
     NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor);
 #elif PLATFORM(WIN)
