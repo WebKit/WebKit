@@ -1,3 +1,16 @@
+2022-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r288996.
+        https://bugs.webkit.org/show_bug.cgi?id=236141
+
+        Causing debug asserts
+
+        Reverted changeset:
+
+        "No breakpoints hit on github.com, and some are invalid"
+        https://bugs.webkit.org/show_bug.cgi?id=235607
+        https://commits.webkit.org/r288996
+
 2022-02-04  Sergio Villar Senin  <svillar@igalia.com>
 
         HTMLMediaElement should dispatch the resize event asynchronously

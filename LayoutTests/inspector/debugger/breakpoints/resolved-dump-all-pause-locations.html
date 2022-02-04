@@ -8,7 +8,6 @@
 <script src="resources/dump-general.js"></script>
 <script src="resources/dump-functions.js"></script>
 <script src="resources/dump-unicode.js"></script>
-<script src="resources/dump-multiline.js"></script>
 <script>
 function test()
 {
@@ -27,11 +26,6 @@ function test()
     window.addDumpAllPauseLocationsTestCase(suite, {
         name: "Debugger.resolvedBreakpoint.dumpAllLocations.Unicode",
         scriptRegex: /dump-unicode\.js$/,
-    });
-
-    window.addDumpAllPauseLocationsTestCase(suite, {
-        name: "Debugger.resolvedBreakpoint.dumpAllLocations.Multiline",
-        scriptRegex: /dump-multiline\.js$/,
     });
 
     suite.runTestCasesAndFinish();
