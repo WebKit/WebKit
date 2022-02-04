@@ -1,3 +1,26 @@
+2022-02-03  Jon Lee  <jonlee@apple.com>
+
+        Pull selective WPT tests in preparation of https://bugs.webkit.org/show_bug.cgi?id=235685
+
+        These remove the empty <meta name="flags">.
+        * web-platform-tests/css/css-flexbox/align-content-001.htm:
+        * web-platform-tests/css/css-flexbox/align-content-002.htm:
+        * web-platform-tests/css/css-flexbox/align-content-003.htm:
+        * web-platform-tests/css/css-flexbox/align-content-004.htm:
+        * web-platform-tests/css/css-flexbox/align-content-005.htm:
+        * web-platform-tests/css/css-flexbox/align-items-001.htm:
+        * web-platform-tests/css/css-flexbox/align-items-002.htm:
+        * web-platform-tests/css/css-flexbox/align-items-003.htm:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-017.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-018.html:
+        * web-platform-tests/css/css-values/angle-units-002.html:
+        * web-platform-tests/css/css-values/angle-units-003.html:
+        * web-platform-tests/css/css-values/angle-units-004.html:
+        * web-platform-tests/css/css-values/angle-units-005.html:
+
+        Convert tabs to spaces.
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001.html:
+
 2022-02-03  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Value doesn't change for stepUp()/stepDown() with out of range values
