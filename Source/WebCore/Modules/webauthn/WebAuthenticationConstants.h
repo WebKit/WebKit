@@ -77,6 +77,9 @@ enum class ClientDataType : bool {
     Get
 };
 
+// rdar://88104045 - Remove once staged change completed
+const char LocalAuthenticatiorAccessGroup[] = "com.apple.webkit.webauthn";
+
 constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
 
 // Credential serialization
