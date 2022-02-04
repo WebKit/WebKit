@@ -1,3 +1,15 @@
+2022-02-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        HTMLMediaElement should dispatch the resize event asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=230895
+
+        Reviewed by Darin Adler.
+
+        * media/modern-media-controls/media-controller/media-controller-resize.html: Remove the event
+        listener to avoid an extra notification.
+        * platform/mac/TestExpectations: Unskipped tests that pass now.
+        * platform/wincairo/TestExpectations: Ditto.
+
 2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font

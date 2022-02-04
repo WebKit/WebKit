@@ -4654,13 +4654,11 @@ void HTMLMediaElement::updateCaptionContainer()
 
 void HTMLMediaElement::layoutSizeChanged()
 {
-    if (RefPtr frameView = document().view()) {
-        auto task = [this, protectedThis = Ref { *this }] {
-            if (auto root = userAgentShadowRoot())
-                root->dispatchEvent(Event::create("resize", Event::CanBubble::No, Event::IsCancelable::No));
-        };
-        frameView->queuePostLayoutCallback(WTFMove(task));
-    }
+    auto task = [this] {
+        if (auto root = userAgentShadowRoot())
+            root->dispatchEvent(Event::create("resize", Event::CanBubble::No, Event::IsCancelable::No));
+    };
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
 
     if (!m_receivedLayoutSizeChanged) {
         m_receivedLayoutSizeChanged = true;
