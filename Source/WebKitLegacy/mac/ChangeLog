@@ -1,3 +1,20 @@
+2022-02-03  Michael Saboff  <msaboff@apple.com>
+
+        WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=236105
+
+        Reviewed by Saam Barati.
+
+        Refactored build variable computation so that WEBKIT_LEGACY_FRAMEWORKS_DIR doesn't have the system content path
+        prepended.  This refactoring includes:
+        - Created INSTALL_PATH_PREFIX to have the system content path when in use.
+        - Changed WEBKIT_LEGACY_FRAMEWORKS_DIR computation to eliminate the inclusion the SYSTEM_CONTENT_PATH.
+        - Reworked INSTALL_PATH to use INSTALL_PATH_PREFIX in the main productions instead of each of variants.
+        - Changed DYLIB_INSTALL_NAME_BASE computation for Catalyst builds to use WEBKIT_LEGACY_FRAMEWORKS_DIR.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+
 2022-02-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename FontCascade::fontMetrics() and RenderStyle::fontMetrics() to fontMetricsOfPrimaryFont()

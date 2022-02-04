@@ -1,3 +1,15 @@
+2022-02-03  Michael Saboff  <msaboff@apple.com>
+
+        WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=236105
+
+        Reviewed by Saam Barati.
+
+        Updated DYLIB_INSTALL_NAME_BASE for Catalyst builds to use JAVASCRIPTCORE_FRAMEWORKS_DIR, which doesn't have the
+        system content path prefix.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2022-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] MultiDeleteByOffset should not define value

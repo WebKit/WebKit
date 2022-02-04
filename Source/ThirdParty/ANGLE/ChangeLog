@@ -1,3 +1,14 @@
+2022-02-03  Michael Saboff  <msaboff@apple.com>
+
+        WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=236105
+
+        Reviewed by Saam Barati.
+
+        Updated DYLIB_INSTALL_NAME_BASE for Catalyst builds to not use the system content path prefix.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2022-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Use c++2a instead of gnu++2a for Cocoa builds

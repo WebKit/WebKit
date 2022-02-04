@@ -1,3 +1,14 @@
+2022-02-03  Michael Saboff  <msaboff@apple.com>
+
+        WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=236105
+
+        Reviewed by Saam Barati.
+
+        Updated DYLIB_INSTALL_NAME_BASE for Catalyst builds to not use the system content path prefix.
+
+        * Configurations/libwebrtc.xcconfig:
+
 2022-02-02  Elliott Williams  <emw@apple.com>
 
         [Xcode] Fix redundant execution of "Check VTables..." script
