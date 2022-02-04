@@ -1,3 +1,18 @@
+2022-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r289067.
+        https://bugs.webkit.org/show_bug.cgi?id=236149
+
+        Broke WinCairo LayoutTests
+
+        Reverted changeset:
+
+        "REGRESSION(r288878)
+        webkitpy.layout_tests.controllers.layout_test_finder_legacy_unittest.LayoutTestFinderTests
+        tests are failing with Windows Python"
+        https://bugs.webkit.org/show_bug.cgi?id=236043
+        https://commits.webkit.org/r289067
+
 2022-02-04  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Crash when starting DND on touchscreen
