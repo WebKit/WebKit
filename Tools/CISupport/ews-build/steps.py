@@ -2769,7 +2769,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 CompileWebKitWithoutChange(retry_build_on_failure=True),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
-                                                RunWebKitTestsWithoutPatch()])
+                                                RunWebKitTestsWithoutChange()])
         return rc
 
     def commandComplete(self, cmd):
@@ -2803,8 +2803,8 @@ class ReRunWebKitTests(RunWebKitTests):
             print('Error in sending email for flaky failures: {}'.format(e))
 
 
-class RunWebKitTestsWithoutPatch(RunWebKitTests):
-    name = 'run-layout-tests-without-patch'
+class RunWebKitTestsWithoutChange(RunWebKitTests):
+    name = 'run-layout-tests-without-change'
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
@@ -2828,7 +2828,7 @@ class RunWebKitTestsWithoutPatch(RunWebKitTests):
         self._parseRunWebKitTestsOutput(logText)
 
     def setLayoutTestCommand(self):
-        super(RunWebKitTestsWithoutPatch, self).setLayoutTestCommand()
+        super(RunWebKitTestsWithoutChange, self).setLayoutTestCommand()
         # In order to speed up testing, on the step that retries running the layout tests without patch
         # only run the subset of tests that failed on the previous steps.
         # But only do that if the previous steps didn't exceed the test failure limit
@@ -3118,7 +3118,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
                     RevertPullRequestChanges(),
                     CompileWebKitWithoutChange(retry_build_on_failure=True),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
-                    RunWebKitTestsWithoutPatchRedTree(),
+                    RunWebKitTestsWithoutChangeRedTree(),
                 ])
         if next_steps:
             self.build.addStepsAfterCurrentStep(next_steps)
@@ -3230,7 +3230,7 @@ class RunWebKitTestsRepeatFailuresWithoutPatchRedTree(RunWebKitTestsRedTree):
         return super().start(BufferLogObserverClass=BufferLogHeaderObserver)
 
 
-class RunWebKitTestsWithoutPatchRedTree(RunWebKitTestsWithoutPatch):
+class RunWebKitTestsWithoutChangeRedTree(RunWebKitTestsWithoutChange):
     EXIT_AFTER_FAILURES = 500
 
     def evaluateCommand(self, cmd):
