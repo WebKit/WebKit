@@ -3305,18 +3305,12 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    TextIteratorBehaviors behaviors;
-    if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
-    return selectedText(behaviors);
+    return selectedText(TextIteratorBehavior::TraversesFlatTree);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    TextIteratorBehaviors behaviors { TextIteratorBehavior::EmitsImageAltText };
-    if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
-    return selectedText(behaviors);
+    return selectedText(OptionSet { TextIteratorBehavior::EmitsImageAltText, TextIteratorBehavior::TraversesFlatTree });
 }
 
 String Editor::selectedText(TextIteratorBehaviors behaviors) const

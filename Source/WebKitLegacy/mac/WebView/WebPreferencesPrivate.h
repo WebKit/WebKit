@@ -225,7 +225,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL cacheAPIEnabled;
 @property (nonatomic) BOOL downloadAttributeEnabled;
 @property (nonatomic) BOOL directoryUploadEnabled;
-@property (nonatomic) BOOL selectionAcrossShadowBoundariesEnabled;
 @property (nonatomic, getter=cssLogicalEnabled) BOOL CSSLogicalEnabled;
 @property (nonatomic) BOOL lineHeightUnitsEnabled;
 @property (nonatomic) BOOL layoutFormattingContextIntegrationEnabled;
@@ -374,6 +373,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, getter=isHixie76WebSocketProtocolEnabled) BOOL hixie76WebSocketProtocolEnabled;
 @property (nonatomic) BOOL accelerated2dCanvasEnabled;
 @property (nonatomic) BOOL experimentalNotificationsEnabled;
+@property (nonatomic) BOOL selectionAcrossShadowBoundariesEnabled;
 @property (nonatomic, getter=isXSSAuditorEnabled) BOOL XSSAuditorEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;

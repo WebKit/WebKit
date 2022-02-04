@@ -596,8 +596,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     builder.append(documentTypeString(*document));
 
     Vector<Node*> nodeList;
-    auto serializeComposedTree = frame->settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No;
-    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, serializeComposedTree, &nodeList));
+    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, &nodeList));
 
     auto archive = create(builder.toString(), *frame, nodeList, nullptr);
     if (!archive)

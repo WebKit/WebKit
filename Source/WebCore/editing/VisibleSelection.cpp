@@ -531,11 +531,9 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     if (&startNode->treeScope() == &endNode->treeScope())
         return;
 
-    if (startNode->document().settings().selectionAcrossShadowBoundariesEnabled()) {
-        if (!isInUserAgentShadowRootOrHasEditableShadowAncestor(startNode)
-            && !isInUserAgentShadowRootOrHasEditableShadowAncestor(endNode))
-            return;
-    }
+    if (!isInUserAgentShadowRootOrHasEditableShadowAncestor(startNode)
+        && !isInUserAgentShadowRootOrHasEditableShadowAncestor(endNode))
+        return;
 
     // Correct the focus if necessary.
     if (m_anchorIsFirst) {

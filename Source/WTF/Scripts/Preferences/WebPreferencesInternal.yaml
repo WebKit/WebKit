@@ -760,18 +760,6 @@ SecureContextChecksEnabled:
     WebKit:
       default: true
 
-SelectionAcrossShadowBoundariesEnabled:
-  type: bool
-  humanReadableName: "Selection across shadow DOM"
-  humanReadableDescription: "Allow user-initiated selection across shadow DOM boundaries"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-      
 SelectionFlippingEnabled:
   type: bool
   humanReadableName: "Selection Flipping"
