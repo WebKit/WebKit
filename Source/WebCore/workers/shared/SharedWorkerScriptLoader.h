@@ -29,6 +29,7 @@
 #include "MessagePortIdentifier.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
+#include "SharedWorkerManager.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/ObjectIdentifier.h>
