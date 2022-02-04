@@ -310,19 +310,19 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
 
-    for (const auto& entry : indexKeys) {
-        auto* index = m_indexesByIdentifier.get(entry.key);
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto* index = m_indexesByIdentifier.get(indexID);
         ASSERT(index);
         if (!index) {
             error = IDBError { InvalidStateError, "Missing index metadata" };
             break;
         }
 
-        error = index->putIndexKey(key, entry.value);
+        error = index->putIndexKey(key, indexKey);
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index, entry.value));
+        changedIndexRecords.append(std::make_pair(index, indexKey));
     }
 
     // If any of the index puts failed, revert all of the ones that went through.

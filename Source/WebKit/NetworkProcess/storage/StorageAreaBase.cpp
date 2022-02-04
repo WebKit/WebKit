@@ -64,19 +64,19 @@ bool StorageAreaBase::hasListeners() const
 
 void StorageAreaBase::notifyListenersAboutClear()
 {
-    for (auto& listener : m_listeners)
-        IPC::Connection::send(listener.key, Messages::StorageAreaMap::ClearCache(StorageAreaBase::nextMessageIdentifier()), listener.value.toUInt64());
+    for (auto& [connection, identifier] : m_listeners)
+        IPC::Connection::send(connection, Messages::StorageAreaMap::ClearCache(StorageAreaBase::nextMessageIdentifier()), identifier.toUInt64());
 }
 
 void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
     ASSERT(sourceImplIdentifier);
 
-    for (auto& listener : m_listeners) {
+    for (auto& [connection, identifier] : m_listeners) {
         std::optional<StorageAreaImplIdentifier> implIdentifier;
-        if (listener.key == sourceConnection)
+        if (connection == sourceConnection)
             implIdentifier = sourceImplIdentifier;
-        IPC::Connection::send(listener.key, Messages::StorageAreaMap::DispatchStorageEvent(implIdentifier, key, oldValue, newValue, urlString, StorageAreaBase::nextMessageIdentifier()), listener.value.toUInt64());
+        IPC::Connection::send(connection, Messages::StorageAreaMap::DispatchStorageEvent(implIdentifier, key, oldValue, newValue, urlString, StorageAreaBase::nextMessageIdentifier()), identifier.toUInt64());
     }
 }
 

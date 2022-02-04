@@ -1193,10 +1193,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const 
         request.setHTTPMethod(method);
     if (headers) {
         HTTPHeaderMap explicitHeaders;
-        for (auto& header : *headers) {
-            auto headerValue = header.value->asString();
+        for (auto& [key, value] : *headers) {
+            auto headerValue = value->asString();
             if (!!headerValue)
-                explicitHeaders.add(header.key, headerValue);
+                explicitHeaders.add(key, headerValue);
         }
         request.setHTTPHeaderFields(WTFMove(explicitHeaders));
     }
