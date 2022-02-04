@@ -143,6 +143,9 @@ WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 WK_FRAMEWORK_VERSION_PREFIX =;
 WK_FRAMEWORK_VERSION_PREFIX[sdk=macosx*] = Versions/A/;
 
+WK_WHICH_BUILD_SYSTEM = not_;
+WK_WHICH_BUILD_SYSTEM = $(inherited)legacy;
+
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
 HEADER_SEARCH_PATHS_cocoatouch = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport $(SRCROOT)/../../Source/WebKit/Platform/spi/ios;

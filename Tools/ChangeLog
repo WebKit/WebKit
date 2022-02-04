@@ -1,3 +1,29 @@
+2022-02-03  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add headers-only dependencies to projects in Tools/
+        https://bugs.webkit.org/show_bug.cgi?id=235751
+
+        Reviewed by Alexey Proskuryakov.
+
+        Many projects in Tools/ depend on WebKit.framework or other products which are upstream in
+        the build graph. In Make-based sequential builds, WebKit and friends would always build
+        before Tools; in workspaces, the targets may build in any order.
+
+        Add "product dependencies" build phases to targets which do not express
+        their dependencies through linker options, in the same manner as
+        https://commits.webkit.org/246026@main.
+
+        The legacy build system doesn't understand the "Product Dependencies" phase and thinks we're
+        trying to copy our own build products, so add an EXCLUDED_SOURCE_FILE_NAMES setting as a
+        workaround.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Add product dependencies.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Add WK_WHICH_BUILD_SYSTEM.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeLibrary.xcconfig: Legacy support.
+        * TestWebKitAPI/Configurations/Base.xcconfig: Legacy support.
+        * TestWebKitAPI/Configurations/TestWTFLibrary.xcconfig: Add WK_WHICH_BUILD_SYSTEM.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add product dependencies.
+
 2022-02-03  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Rename RunJSCTestsWithoutPatch
