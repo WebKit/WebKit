@@ -56,6 +56,8 @@ public:
     WEBCORE_EXPORT SQLiteDatabase();
     WEBCORE_EXPORT ~SQLiteDatabase();
 
+    WEBCORE_EXPORT static const char* inMemoryPath();
+
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }

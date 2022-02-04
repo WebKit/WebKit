@@ -88,6 +88,11 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
+const char* SQLiteDatabase::inMemoryPath()
+{
+    return ":memory:";
+}
+
 bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
 {
     initializeSQLiteIfNecessary();
@@ -148,14 +153,16 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             LOG_ERROR("SQLite database could not set temp_store to memory");
     }
 
-    if (openMode != OpenMode::ReadOnly)
-        useWALJournalMode();
+    if (filename != inMemoryPath()) {
+        if (openMode != OpenMode::ReadOnly)
+            useWALJournalMode();
 
-    auto shmFileName = makeString(filename, "-shm"_s);
-    if (FileSystem::fileExists(shmFileName)) {
-        if (!FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
-            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.latin1().data());
-            FileSystem::makeSafeToUseMemoryMapForPath(shmFileName);
+        auto shmFileName = makeString(filename, "-shm"_s);
+        if (FileSystem::fileExists(shmFileName)) {
+            if (!FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
+                RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.latin1().data());
+                FileSystem::makeSafeToUseMemoryMapForPath(shmFileName);
+            }
         }
     }
 

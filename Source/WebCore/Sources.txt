@@ -261,6 +261,7 @@ Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
 Modules/push-api/PushCrypto.cpp
+Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushEvent.cpp
 Modules/push-api/PushMessageCrypto.cpp
 Modules/push-api/PushMessageData.cpp

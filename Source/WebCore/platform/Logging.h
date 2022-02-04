@@ -96,6 +96,7 @@ namespace WebCore {
     M(PrivateClickMeasurement) \
     M(Process) \
     M(Progress) \
+    M(Push) \
     M(RemoteInspector) \
     M(RequestAnimationFrame) \
     M(ResourceLoading) \
