@@ -198,6 +198,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(GTK)
     encoder << useSystemAppearanceForScrollbars;
+    encoder << gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -551,6 +552,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!useSystemAppearanceForScrollbars)
         return false;
     parameters.useSystemAppearanceForScrollbars = WTFMove(*useSystemAppearanceForScrollbars);
+    std::optional<GtkSettingsState> gtkSettings;
+    decoder >> gtkSettings;
+    if (!gtkSettings)
+        return false;
+    parameters.gtkSettings = WTFMove(*gtkSettings);
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)

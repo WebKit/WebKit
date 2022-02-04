@@ -1,3 +1,17 @@
+2022-02-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        REGRESSION(r280077): [GTK] It caused 155 new test failures
+        https://bugs.webkit.org/show_bug.cgi?id=228153
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations: Garden tests that no longer fail.
+        * platform/gtk/css1/font_properties/font-expected.txt:
+        * platform/gtk/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2022-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289098.

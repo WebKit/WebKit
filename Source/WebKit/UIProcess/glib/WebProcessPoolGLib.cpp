@@ -51,6 +51,10 @@
 #include <wpe/wpe.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
+#endif
+
 namespace WebKit {
 
 void WebProcessPool::platformInitialize()
@@ -117,6 +121,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if USE(ATSPI)
     static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");
     parameters.accessibilityBusAddress = accessibilityBusAddress ? String::fromUTF8(accessibilityBusAddress) : WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+#endif
+
+#if PLATFORM(GTK)
+    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
 #endif
 }
 

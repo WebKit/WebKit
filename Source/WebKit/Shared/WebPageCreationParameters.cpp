@@ -182,10 +182,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
-#if PLATFORM(GTK)
-    encoder << gtkSettings;
-#endif
-    
     encoder << httpsUpgradeEnabled;
 #if PLATFORM(IOS)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
@@ -606,11 +602,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
     if (!decoder.decode(parameters.canUseCredentialStorage))
         return std::nullopt;
-
-#if PLATFORM(GTK)
-    if (!decoder.decode(parameters.gtkSettings))
-        return std::nullopt;
-#endif
 
     if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return std::nullopt;

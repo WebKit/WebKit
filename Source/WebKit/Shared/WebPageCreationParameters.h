@@ -56,10 +56,6 @@
 #include <WebCore/ApplicationManifest.h>
 #endif
 
-#if PLATFORM(GTK)
-#include "GtkSettingsState.h"
-#endif
-
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -256,10 +252,6 @@ struct WebPageCreationParameters {
     bool canUseCredentialStorage { true };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
-
-#if PLATFORM(GTK)
-    GtkSettingsState gtkSettings;
-#endif
     
     bool httpsUpgradeEnabled { true };
 

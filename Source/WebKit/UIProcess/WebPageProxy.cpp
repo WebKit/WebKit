@@ -8454,10 +8454,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldRelaxThirdPartyCookieBlocking = m_configuration->shouldRelaxThirdPartyCookieBlocking();
     parameters.canUseCredentialStorage = m_canUseCredentialStorage;
 
-#if PLATFORM(GTK)
-    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
     if (m_preferences->attachmentElementEnabled() && !process.hasIssuedAttachmentElementRelatedSandboxExtensions()) {
         parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), std::nullopt);

@@ -63,6 +63,11 @@
 #include <WebCore/AccessibilityAtspi.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "GtkSettingsManagerProxy.h"
+#include <gtk/gtk.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -135,6 +140,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if USE(ATSPI)
     AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
 #endif
+
+#if PLATFORM(GTK)
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
+
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)

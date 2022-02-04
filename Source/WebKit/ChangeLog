@@ -1,3 +1,32 @@
+2022-02-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        REGRESSION(r280077): [GTK] It caused 155 new test failures
+        https://bugs.webkit.org/show_bug.cgi?id=228153
+
+        Reviewed by Michael Catanzaro.
+
+        Pass the GTKSettingsState in the WebProcessCreationParameters rather
+        than the WebPageCreationParameters, to ensure the correct GTK settings
+        are always applied in a new WebProcess.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289124.

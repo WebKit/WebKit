@@ -3,14 +3,14 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0) should be [italic] for <font-style>
@@ -24,42 +24,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0) should be [italic] for <font-style>
@@ -73,42 +73,42 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [caption] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0) should be [italic] for <font-style>
@@ -122,42 +122,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0) should be [italic] for <font-style>
@@ -171,42 +171,42 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [icon] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0) should be [italic] for <font-style>
@@ -220,42 +220,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0) should be [italic] for <font-style>
@@ -269,42 +269,42 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [menu] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0) should be [italic] for <font-style>
@@ -318,42 +318,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0) should be [italic] for <font-style>
@@ -367,42 +367,42 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [message-box] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0) should be [italic] for <font-style>
@@ -416,42 +416,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0) should be [italic] for <font-style>
@@ -465,42 +465,42 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [small-caption] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [274px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [268px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [italic] for <font-style>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [143.5px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [142px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0) should be [italic] for <font-style>
@@ -514,42 +514,42 @@ PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [190] for <font-weight>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [73.9px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [74.8px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [100px] for <line-height>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [280] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [47.8px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [49.6px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [400] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <font-variant>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [NaN%] for <font-stretch>
-PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [13px] for <font-size>
+PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [16px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <font-style>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [550] for <font-weight>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <font-variant>
 FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [0px] for <font-size>
 PASS CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <line-height>
-FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL CSS Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "400 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [274px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [268px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-2) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [italic] for <font-style>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [1] for <font-weight> assert_equals: expected "1 " but got "0 "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "250 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [143.5px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [142px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (-0.5) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0) should be [italic] for <font-style>
@@ -563,28 +563,28 @@ PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [190] for <font-weight>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [small-caps] for <font-variant> assert_equals: expected "small - caps " but got "normal "
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "170 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [73.9px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [74.8px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [100px] for <line-height>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.3) should be [Ahem] for <font-family> assert_equals: expected "Ahem " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [280] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "140 % "
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [47.8px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [49.6px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (0.6) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [400] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <font-variant>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [NaN%] for <font-stretch>
-PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [13px] for <font-size>
+PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [16px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <font-style>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [550] for <font-weight>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <font-variant>
 FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [NaN%] for <font-stretch> assert_equals: expected "normal " but got "ultra - condensed "
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [0px] for <font-size>
 PASS Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [normal] for <line-height>
-FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be [Sans] for <font-family> assert_equals: expected "Sans " but got "- webkit - standard "
+FAIL Web Animations: property <font> from [italic 100 small-caps ultra-expanded 100px / 100px Ahem] to [status-bar] at (1.5) should be ["Liberation Sans"] for <font-family> assert_equals: expected "\" Liberation Sans \" " but got "- webkit - standard "
 

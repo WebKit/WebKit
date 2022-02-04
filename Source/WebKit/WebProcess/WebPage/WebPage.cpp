@@ -313,7 +313,6 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "GtkSettingsManagerProxy.h"
 #include "WebPrintOperationGtk.h"
 #include <WebCore/SelectionData.h>
 #include <gtk/gtk.h>
@@ -759,10 +758,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setGapBetweenPages(parameters.gapBetweenPages);
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
-#if PLATFORM(GTK)
-    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
-#endif
-
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
     if (parameters.isEditable)
@@ -1003,10 +998,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
-#endif
-
-#if PLATFORM(GTK)
-    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);

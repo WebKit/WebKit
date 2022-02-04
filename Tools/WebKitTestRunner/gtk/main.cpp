@@ -30,12 +30,28 @@
 #include <WebKit/WKTextCheckerGLib.h>
 #include <wtf/glib/GRefPtr.h>
 
+void initializeGtkSettings()
+{
+    GtkSettings* settings = gtk_settings_get_default();
+    if (!settings)
+        return;
+    g_object_set(settings,
+        "gtk-xft-dpi", 98304,
+        "gtk-xft-antialias", 1,
+        "gtk-xft-hinting", 0,
+        "gtk-font-name", "Liberation Sans 12",
+        "gtk-xft-rgba", "none", nullptr);
+}
+
+
 int main(int argc, char** argv)
 {
     g_setenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1", FALSE);
     g_setenv("WEBKIT_A11Y_BUS_ADDRESS", "", FALSE);
 
     gtk_init(&argc, &argv);
+
+    initializeGtkSettings();
 
     GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
     g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en_US")));

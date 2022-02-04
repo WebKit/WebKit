@@ -54,6 +54,10 @@
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "GtkSettingsState.h"
+#endif
+
 namespace API {
 class Data;
 }
@@ -236,6 +240,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
+    GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
