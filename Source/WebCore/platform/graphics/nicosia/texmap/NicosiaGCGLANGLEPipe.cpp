@@ -35,7 +35,7 @@
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"
-#include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerDmabuf.h"
 #include "TextureMapperPlatformLayerProxy.h"
 
 namespace Nicosia {
@@ -57,6 +57,24 @@ void GCGLANGLEPipeSource::swapBuffersIfNeeded()
         return;
 
     m_context.prepareTexture();
+
+    if (m_context.m_compositorTextureBacking) {
+        auto size = m_context.getInternalFramebufferSize();
+        auto format = m_context.m_compositorTextureBacking->format();
+        auto stride = m_context.m_compositorTextureBacking->stride();
+        auto fd = m_context.m_compositorTextureBacking->fd();
+
+        auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(platformLayer()->impl()).proxy();
+        {
+            Locker locker { proxy.lock() };
+            proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerDmabuf>(size, format, stride, fd));
+        }
+
+        m_context.markLayerComposited();
+        return;
+    }
+
+    // Fallback path, read back texture to main memory
     RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(m_context.getInternalFramebufferSize(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;

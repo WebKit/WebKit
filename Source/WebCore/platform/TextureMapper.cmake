@@ -59,6 +59,7 @@ if (USE_COORDINATED_GRAPHICS)
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
+        platform/graphics/texmap/TextureMapperPlatformLayerDmabuf.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp

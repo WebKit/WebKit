@@ -143,6 +143,7 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glDrawBuffers, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glDrawElementsInstanced, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray, success);
+    ASSIGN_FUNCTION_TABLE_ENTRY(glEGLImageTargetTexture2DOES, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glFramebufferTexture2D, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glGenBuffers, success);

@@ -36,7 +36,11 @@
 #include "PixelBuffer.h"
 
 #if USE(NICOSIA)
+#include "GBMDevice.h"
 #include "NicosiaGCGLANGLEPipe.h"
+
+#include <fcntl.h>
+#include <gbm.h>
 #else
 #include "TextureMapperGCGLPlatformLayer.h"
 #endif
@@ -51,6 +55,13 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 #endif
 #if USE(NICOSIA)
     m_nicosiaPipe = makeUnique<Nicosia::GCGLANGLEPipe>(*this);
+
+    const auto& gbmDevice = GBMDevice::get();
+    if (auto* device = gbmDevice.device()) {
+        m_textureBacking = makeUnique<EGLImageBacking>(device, platformDisplay());
+        m_compositorTextureBacking = makeUnique<EGLImageBacking>(device, platformDisplay());
+        m_intermediateTextureBacking = makeUnique<EGLImageBacking>(device, platformDisplay());
+    }
 #else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
@@ -111,6 +122,79 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 
     GL_ClearColor(0, 0, 0, 0);
 }
+
+#if USE(NICOSIA)
+GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking(gbm_device* device, PlatformGraphicsContextGLDisplay display)
+    : m_device(device)
+    , m_display(display)
+{
+}
+
+GraphicsContextGLANGLE::EGLImageBacking::~EGLImageBacking()
+{
+    releaseResources();
+}
+
+uint32_t GraphicsContextGLANGLE::EGLImageBacking::format() const
+{
+    if (m_BO)
+        return gbm_bo_get_format(m_BO);
+    return 0;
+}
+
+uint32_t GraphicsContextGLANGLE::EGLImageBacking::stride() const
+{
+    if (m_BO)
+        return gbm_bo_get_stride(m_BO);
+    return 0;
+}
+
+void GraphicsContextGLANGLE::EGLImageBacking::releaseResources()
+{
+    if (m_BO) {
+        gbm_bo_destroy(m_BO);
+        m_BO = nullptr;
+    }
+    if (m_image) {
+        EGL_DestroyImageKHR(m_display, m_image);
+        m_image = EGL_NO_IMAGE;
+    }
+    if (m_FD >= 0) {
+        close(m_FD);
+        m_FD = -1;
+    }
+}
+
+bool GraphicsContextGLANGLE::EGLImageBacking::reset(int width, int height, bool hasAlpha)
+{
+    releaseResources();
+
+    if (!width || !height)
+        return false;
+
+    m_BO = gbm_bo_create(m_device, width, height, hasAlpha ? GBM_BO_FORMAT_ARGB8888 : GBM_BO_FORMAT_XRGB8888, GBM_BO_USE_RENDERING);
+    if (m_BO) {
+        m_FD = gbm_bo_get_fd(m_BO);
+        if (m_FD >= 0) {
+            EGLint imageAttributes[] = {
+                EGL_WIDTH, width,
+                EGL_HEIGHT, height,
+                EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(gbm_bo_get_format(m_BO)),
+                EGL_DMA_BUF_PLANE0_FD_EXT, m_FD,
+                EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLint>(gbm_bo_get_stride(m_BO)),
+                EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
+                EGL_NONE
+            };
+            m_image = EGL_CreateImageKHR(m_display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, imageAttributes);
+            if (m_image)
+                return true;
+        }
+    }
+
+    releaseResources();
+    return false;
+}
+#endif
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
@@ -189,18 +273,40 @@ bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
     GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
     GLenum textureTarget = drawingBufferTextureTarget();
     GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
+
+#if USE(COORDINATED_GRAPHICS)
+    if (m_textureBacking)
+        m_textureBacking->reset(width, height, attrs.alpha);
+    if (m_compositorTextureBacking)
+        m_compositorTextureBacking->reset(width, height, attrs.alpha);
+    if (m_intermediateTextureBacking)
+        m_intermediateTextureBacking->reset(width, height, attrs.alpha);
+#endif
+
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 #if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture) {
         GL_BindTexture(textureTarget, m_compositorTexture);
-        GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        if (m_compositorTextureBacking && m_compositorTextureBacking->image())
+            GL_EGLImageTargetTexture2DOES(textureTarget, m_compositorTextureBacking->image());
+        else
+            GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         GL_BindTexture(textureTarget, m_intermediateTexture);
-        GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        if (m_intermediateTextureBacking && m_intermediateTextureBacking->image())
+            GL_EGLImageTargetTexture2DOES(textureTarget, m_intermediateTextureBacking->image());
+        else
+            GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     }
 #endif
     GL_BindTexture(textureTarget, m_texture);
+#if USE(COORDINATED_GRAPHICS)
+    if (m_textureBacking && m_textureBacking->image())
+        GL_EGLImageTargetTexture2DOES(textureTarget, m_textureBacking->image());
+    else
+#endif
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
+
     return true;
 }
 

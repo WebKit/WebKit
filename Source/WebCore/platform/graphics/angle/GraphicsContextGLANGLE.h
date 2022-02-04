@@ -43,14 +43,19 @@
 #if USE(NICOSIA)
 namespace Nicosia {
 class GCGLANGLEPipe;
+class GCGLANGLEPipeSource;
 class GCGLLayer;
 }
+
+struct gbm_device;
+struct gbm_bo;
 #endif
 
 namespace WebCore {
 
 class ExtensionsGL;
 class ExtensionsGLANGLE;
+class GLContext;
 class HostWindow;
 class ImageBuffer;
 class MediaPlayer;
@@ -450,17 +455,42 @@ protected:
     GCGLuint m_intermediateTexture { 0 };
 #endif
 #if USE(NICOSIA)
-#if USE(ANGLE)
     std::unique_ptr<Nicosia::GCGLANGLEPipe> m_nicosiaPipe;
-#else
-    std::unique_ptr<Nicosia::GCGLLayer> m_nicosiaLayer;
-#endif
+
+    class EGLImageBacking {
+    WTF_MAKE_FAST_ALLOCATED;
+    public:
+        EGLImageBacking(gbm_device*, PlatformGraphicsContextGLDisplay);
+        ~EGLImageBacking();
+
+        bool reset(int width, int height, bool hasAlpha);
+
+        EGLImage image() const { return m_image; }
+        int fd() const { return m_FD; }
+
+        uint32_t format() const;
+        uint32_t stride() const;
+    private:
+        void releaseResources();
+
+        gbm_device* m_device;
+        PlatformGraphicsContextGLDisplay m_display;
+
+        gbm_bo* m_BO { nullptr };
+        int m_FD { -1 };
+        EGLImage m_image { EGL_NO_IMAGE };
+    };
+
+    std::unique_ptr<EGLImageBacking> m_textureBacking;
+    std::unique_ptr<EGLImageBacking> m_compositorTextureBacking;
+    std::unique_ptr<EGLImageBacking> m_intermediateTextureBacking;
 #elif USE(TEXTURE_MAPPER)
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 #endif
 
     friend class ExtensionsGLANGLE;
 #if USE(NICOSIA)
+    friend class Nicosia::GCGLANGLEPipeSource;
     friend class Nicosia::GCGLLayer;
 #elif USE(TEXTURE_MAPPER)
     friend class TextureMapperGCGLPlatformLayer;

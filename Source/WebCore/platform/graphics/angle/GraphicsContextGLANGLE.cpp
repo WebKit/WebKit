@@ -540,14 +540,15 @@ void GraphicsContextGLANGLE::prepareTextureImpl()
 #if USE(COORDINATED_GRAPHICS)
     std::swap(m_texture, m_compositorTexture);
     std::swap(m_texture, m_intermediateTexture);
+    std::swap(m_textureBacking, m_compositorTextureBacking);
+    std::swap(m_textureBacking, m_intermediateTextureBacking);
+
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
     GL_Flush();
 
     if (m_state.boundDrawFBO != m_fbo)
         GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
-    else
-        GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
 #else
     if (m_preserveDrawingBufferTexture) {
         // Blit m_preserveDrawingBufferTexture into m_texture.

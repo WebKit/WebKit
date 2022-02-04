@@ -364,6 +364,19 @@ GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurf
     ASSERT(type == Surfaceless || surface != EGL_NO_SURFACE);
     RELEASE_ASSERT(m_display.eglDisplay() != EGL_NO_DISPLAY);
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
+
+    if (display.eglCheckVersion(1, 5)) {
+        m_eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEPROC>(eglGetProcAddress("eglCreateImage"));
+        m_eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(eglGetProcAddress("eglDestroyImage"));
+        RELEASE_ASSERT(!m_eglCreateImage == !m_eglDestroyImage);
+    } else {
+        const char* extensions = eglQueryString(display.eglDisplay(), EGL_EXTENSIONS);
+        if (GLContext::isExtensionSupported(extensions, "EGL_KHR_image_base")) {
+            m_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
+            m_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
+        }
+        RELEASE_ASSERT(!m_eglCreateImageKHR == !m_eglDestroyImageKHR);
+    }
 }
 
 GLContextEGL::~GLContextEGL()
@@ -384,6 +397,31 @@ GLContextEGL::~GLContextEGL()
 #if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
+}
+
+EGLImage GLContextEGL::createImage(EGLenum target, EGLClientBuffer clientBuffer, const EGLAttrib* attribList) const
+{
+    if (m_eglCreateImage)
+        return m_eglCreateImage(m_display.eglDisplay(), attribList ? EGL_NO_CONTEXT : m_context, target, clientBuffer, attribList);
+    if (m_eglCreateImageKHR) {
+        Vector<EGLint> intAttribList;
+        for (int i = 0; attribList[i] != EGL_NONE; i += 2) {
+            intAttribList.append(attribList[i]);
+            intAttribList.append(attribList[i+1]);
+        }
+        intAttribList.append(EGL_NONE);
+        return m_eglCreateImageKHR(m_display.eglDisplay(), attribList ? EGL_NO_CONTEXT : m_context, target, clientBuffer, intAttribList.data());
+    }
+    return EGL_NO_IMAGE;
+}
+
+bool GLContextEGL::destroyImage(EGLImage image) const
+{
+    if (m_eglDestroyImage)
+        return m_eglDestroyImage(m_display.eglDisplay(), image);
+    if (m_eglDestroyImageKHR)
+        return m_eglDestroyImageKHR(m_display.eglDisplay(), image);
+    return false;
 }
 
 bool GLContextEGL::canRenderToDefaultFramebuffer()
