@@ -98,6 +98,11 @@ private:
     template<typename T> std::pair<T, T> pairAttributeValue(AXPropertyName) const;
     template<typename T> T propertyValue(AXPropertyName) const;
 
+    // The following method performs a lazy caching of the given property.
+    // If the property is already in m_propertyMap, returns the existing value.
+    // If not, retrieves the property from the main thread and cache it for later use.
+    String getOrRetrieveStringPropertyValue(AXPropertyName);
+
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
     void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
@@ -332,9 +337,9 @@ private:
 #if PLATFORM(COCOA)
     bool fileUploadButtonReturnsValueInTitle() const override { return boolAttributeValue(AXPropertyName::FileUploadButtonReturnsValueInTitle); }
     String speechHintAttributeValue() const override { return stringAttributeValue(AXPropertyName::SpeechHint); }
-    String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
+    String descriptionAttributeValue() const override;
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
-    String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::TitleAttributeValue); }
+    String titleAttributeValue() const override;
 #endif
 #if PLATFORM(MAC)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }

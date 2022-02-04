@@ -34,11 +34,9 @@ namespace WebCore {
 
 void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object, bool isRoot)
 {
-    setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object.hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
 
     if (isRoot)
@@ -98,6 +96,16 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
     performFunctionOnMainThread([&value](AXCoreObject* object) {
         object->setPreventKeyboardDOMEventDispatch(value);
     });
+}
+
+String AXIsolatedObject::descriptionAttributeValue() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::Description);
+}
+
+String AXIsolatedObject::titleAttributeValue() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::TitleAttributeValue);
 }
 
 } // WebCore
