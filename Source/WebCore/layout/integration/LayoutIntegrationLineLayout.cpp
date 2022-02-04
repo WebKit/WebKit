@@ -148,6 +148,16 @@ void LineLayout::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
     updateLayoutBoxDimensions(inlineBlock);
 }
 
+static inline LayoutUnit contentLogicalWidthForRenderer(const RenderBox& renderer)
+{
+    return renderer.parent()->style().isHorizontalWritingMode() ? renderer.contentWidth() : renderer.contentHeight();
+}
+
+static inline LayoutUnit contentLogicalHeightForRenderer(const RenderBox& renderer)
+{
+    return renderer.parent()->style().isHorizontalWritingMode() ? renderer.contentHeight() : renderer.contentWidth();
+}
+
 static inline Layout::BoxGeometry::HorizontalMargin logicalMargin(const RenderBoxModelObject& renderer, bool isLeftToRightDirection, bool retainMarginStart = true, bool retainMarginEnd = true)
 {
     auto marginStart = LayoutUnit { 0_lu };
@@ -187,9 +197,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     // Internally both replaced and inline-box content use replaced boxes.
     auto& replacedBox = downcast<Layout::ReplacedBox>(layoutBox);
 
-    // Always use the physical size here for inline level boxes (this is where the logical vs. physical coords flip happens).
     auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(replacedBox);
-
     // Scrollbars eat into the padding box area. They never stretch the border box but they may shrink the padding box.
     // In legacy render tree, RenderBox::contentWidth/contentHeight values are adjusted to accomodate the scrollbar width/height.
     // e.g. <div style="width: 10px; overflow: scroll;">content</div>, RenderBox::contentWidth() won't be returning the value of 10px but instead 0px (10px - 15px).
@@ -199,8 +207,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     auto verticalSpaceReservedForScrollbar = replacedOrInlineBlock.paddingBoxRectIncludingScrollbar().height() - replacedOrInlineBlock.paddingBoxHeight();
     replacedBoxGeometry.setVerticalSpaceForScrollbar(verticalSpaceReservedForScrollbar);
 
-    replacedBoxGeometry.setContentBoxWidth(replacedOrInlineBlock.contentWidth());
-    replacedBoxGeometry.setContentBoxHeight(replacedOrInlineBlock.contentHeight());
+    replacedBoxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(replacedOrInlineBlock));
+    replacedBoxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(replacedOrInlineBlock));
 
     replacedBoxGeometry.setVerticalMargin({ replacedOrInlineBlock.marginTop(), replacedOrInlineBlock.marginBottom() });
     auto isLeftToRightDirection = replacedOrInlineBlock.parent()->style().isLeftToRightDirection();
