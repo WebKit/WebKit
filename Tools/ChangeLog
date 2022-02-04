@@ -1,5 +1,20 @@
 2022-02-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] Rename CompileJSCWithoutPatch
+        https://bugs.webkit.org/show_bug.cgi?id=236104
+        <rdar://problem/88455463>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand):
+        (AnalyzeCompileWebKitResults.analyzeResults):
+        (CompileJSCWithoutChange): Renamed from CompileJSCWithoutPatch.
+        (CompileJSCWithoutPatch): Rename to CompileJSCWithoutChange.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-02-03  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Rename RunWebKitTestsWithoutPatch
         https://bugs.webkit.org/show_bug.cgi?id=236107
         <rdar://problem/88459194>

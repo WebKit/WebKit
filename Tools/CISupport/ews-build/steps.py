@@ -1959,7 +1959,7 @@ class CompileWebKit(shell.Compile):
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
             if self.getProperty('group') == 'jsc':
-                steps_to_add.append(CompileJSCWithoutPatch())
+                steps_to_add.append(CompileJSCWithoutChange())
             else:
                 steps_to_add.append(CompileWebKitWithoutChange())
             steps_to_add.append(AnalyzeCompileWebKitResults())
@@ -2037,7 +2037,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
     def analyzeResults(self):
         compile_without_patch_step = CompileWebKitWithoutChange.name
         if self.getProperty('group') == 'jsc':
-            compile_without_patch_step = CompileJSCWithoutPatch.name
+            compile_without_patch_step = CompileJSCWithoutChange.name
         compile_without_patch_result = self.getStepResult(compile_without_patch_step)
 
         patch_id = self.getProperty('patch_id', '')
@@ -2185,8 +2185,8 @@ class CompileJSC(CompileWebKit):
         return shell.Compile.getResultSummary(self)
 
 
-class CompileJSCWithoutPatch(CompileJSC):
-    name = 'compile-jsc-without-patch'
+class CompileJSCWithoutChange(CompileJSC):
+    name = 'compile-jsc-without-change'
 
     def evaluateCommand(self, cmd):
         return shell.Compile.evaluateCommand(self, cmd)
@@ -2246,7 +2246,7 @@ class RunJavaScriptCoreTests(shell.Test):
             self.build.addStepsAfterCurrentStep([UnApplyPatch(),
                                                 RevertPullRequestChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                                                CompileJSCWithoutPatch(),
+                                                CompileJSCWithoutChange(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunJSCTestsWithoutChange(),
