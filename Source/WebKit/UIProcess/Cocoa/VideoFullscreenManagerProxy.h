@@ -32,6 +32,7 @@
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/VideoFullscreenChangeObserver.h>
 #include <WebCore/VideoFullscreenModel.h>
@@ -180,6 +181,7 @@ private:
     void preparedToReturnToInline(PlaybackSessionContextIdentifier, bool visible, WebCore::FloatRect inlineRect);
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
 
     // Messages to VideoFullscreenManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);

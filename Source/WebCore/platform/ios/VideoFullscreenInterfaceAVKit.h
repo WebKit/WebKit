@@ -30,6 +30,7 @@
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
 #include "PlaybackSessionInterfaceAVKit.h"
 #include "VideoFullscreenModel.h"
@@ -76,6 +77,7 @@ public:
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
     WEBCORE_EXPORT void modelDestroyed() final;
+    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier) final { m_playerIdentifier = identifier; }
 
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
@@ -159,6 +161,8 @@ public:
     WebAVPlayerLayerView* playerLayerView() const { return m_playerLayerView.get(); }
     WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const;
 
+    std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
+
 protected:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
@@ -171,6 +175,7 @@ protected:
     WebAVPlayerController *playerController() const;
 
     Ref<PlaybackSessionInterfaceAVKit> m_playbackSessionInterface;
+    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
     VideoFullscreenModel* m_videoFullscreenModel { nullptr };
