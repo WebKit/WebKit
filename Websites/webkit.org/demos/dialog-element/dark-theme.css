@@ -1,0 +1,10 @@
+body {
+    color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    dialog {
+        background-color: #313231;
+        color: #d7d7d8;
+    }
+}

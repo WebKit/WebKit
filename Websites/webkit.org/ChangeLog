@@ -1,3 +1,17 @@
+2022-02-04  Tim Nguyen  <ntim@apple.com>
+
+        Add <dialog> element demos for blog post
+        https://bugs.webkit.org/show_bug.cgi?id=236143
+
+        Reviewed by Simon Fraser.
+
+        * demos/dialog-element/confirmation-dialog-basic.html: Added.
+        * demos/dialog-element/confirmation-dialog-form.html: Added.
+        * demos/dialog-element/dark-theme.css: Added.
+        (body):
+        (@media (prefers-color-scheme: dark) dialog):
+        * demos/dialog-element/styled-dialog.html: Added.
+
 2022-02-02  Jon Davis  <jond@apple.com>
 
         Improve color contrast of dark mode syntax highlighting
