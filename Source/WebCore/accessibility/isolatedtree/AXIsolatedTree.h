@@ -362,7 +362,7 @@ public:
     // Removes the given node leaving all descendants alone.
     void removeNode(AXID);
     // Removes the given node and all its descendants.
-    void removeSubtreeFromNodeMap(AXID);
+    void removeSubtreeFromNodeMap(AXID, const HashSet<AXID>& = { });
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
@@ -386,10 +386,10 @@ private:
 
     // Called on main thread.
     NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, bool attachWrapper = true, bool updateNodeMap = true);
-    void collectNodeChangesForSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&);
+    void collectNodeChangesForSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&, HashSet<AXID>* = nullptr);
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueChangesAndRemovals(const Vector<NodeChange>&, const Vector<AXID>& = { });
-    Vector<NodeChange> nodeAncestryChanges(AXCoreObject&);
+    Vector<NodeChange> nodeAncestryChanges(AXCoreObject&, HashSet<AXID>&);
 
     AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };
