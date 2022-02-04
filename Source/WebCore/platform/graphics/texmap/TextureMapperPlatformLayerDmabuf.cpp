@@ -89,7 +89,7 @@ void TextureMapperPlatformLayerDmabuf::validateTexture()
     context->makeContextCurrent();
 
     auto size = TextureMapperPlatformLayerBuffer::size();
-    EGLAttrib imageAttributes[] = {
+    Vector<EGLAttrib> imageAttributes {
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
         EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(m_format),

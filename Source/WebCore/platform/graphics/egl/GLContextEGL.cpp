@@ -399,18 +399,15 @@ GLContextEGL::~GLContextEGL()
 #endif
 }
 
-EGLImage GLContextEGL::createImage(EGLenum target, EGLClientBuffer clientBuffer, const EGLAttrib* attribList) const
+EGLImage GLContextEGL::createImage(EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attribList) const
 {
     if (m_eglCreateImage)
-        return m_eglCreateImage(m_display.eglDisplay(), attribList ? EGL_NO_CONTEXT : m_context, target, clientBuffer, attribList);
+        return m_eglCreateImage(m_display.eglDisplay(), !attribList.isEmpty() ? EGL_NO_CONTEXT : m_context, target, clientBuffer, attribList.data());
     if (m_eglCreateImageKHR) {
-        Vector<EGLint> intAttribList;
-        for (int i = 0; attribList[i] != EGL_NONE; i += 2) {
-            intAttribList.append(attribList[i]);
-            intAttribList.append(attribList[i+1]);
-        }
-        intAttribList.append(EGL_NONE);
-        return m_eglCreateImageKHR(m_display.eglDisplay(), attribList ? EGL_NO_CONTEXT : m_context, target, clientBuffer, intAttribList.data());
+        auto intAttribList = attribList.map<Vector<EGLint>>([] (EGLAttrib value) {
+            return value;
+        });
+        return m_eglCreateImageKHR(m_display.eglDisplay(), !attribList.isEmpty() ? EGL_NO_CONTEXT : m_context, target, clientBuffer, intAttribList.data());
     }
     return EGL_NO_IMAGE;
 }

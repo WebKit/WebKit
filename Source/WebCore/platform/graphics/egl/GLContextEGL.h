@@ -73,7 +73,7 @@ public:
     static const char* lastErrorString();
 
     EGLConfig config() const { return m_config; }
-    EGLImage createImage(EGLenum target, EGLClientBuffer, const EGLAttrib*) const;
+    EGLImage createImage(EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyImage(EGLImage) const;
 
     virtual ~GLContextEGL();
