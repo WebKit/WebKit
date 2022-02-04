@@ -1,5 +1,19 @@
 2022-02-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] Rename RunJSCTestsWithoutPatch
+        https://bugs.webkit.org/show_bug.cgi?id=236106
+        <rdar://problem/88457767>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/ews-build/steps.py:
+        (RunJavaScriptCoreTests.evaluateCommand):
+        (RunJSCTestsWithoutChange): Renamed from RunJSCTestsWithoutPatch.
+        (RunJSCTestsWithoutPatch): Renamed to RunJSCTestsWithoutChange.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-02-03  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Configure default branch management 
         https://bugs.webkit.org/show_bug.cgi?id=235378
         <rdar://problem/87989533>

@@ -51,7 +51,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
-                   RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                   RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    RunWebKitTestsWithoutPatch, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutPatchRedTree,
                    RunWebKitTestsWithoutPatchRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
@@ -1526,18 +1526,18 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
-class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'jsc_results.json'
-        self.command_extra = RunJSCTestsWithoutPatch.command_extra
+        self.command_extra = RunJSCTestsWithoutChange.command_extra
         return self.setUpBuildStep()
 
     def tearDown(self):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(RunJSCTestsWithoutPatch())
+        self.setupStep(RunJSCTestsWithoutChange())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
@@ -1552,7 +1552,7 @@ class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunJSCTestsWithoutPatch())
+        self.setupStep(RunJSCTestsWithoutChange())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
