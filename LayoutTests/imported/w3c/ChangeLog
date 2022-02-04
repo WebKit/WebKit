@@ -1,5 +1,11 @@
 2022-02-04  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, land missing baseline for Shared Worker test.
+
+        * web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https-expected.txt: Added.
+
+2022-02-04  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip more Shared Worker layout tests on WK2.
 
         * web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub-expected.txt: Added.
