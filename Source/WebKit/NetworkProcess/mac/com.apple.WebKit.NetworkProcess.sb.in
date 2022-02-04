@@ -161,10 +161,12 @@
 (deny sysctl* (with telemetry))
 (allow sysctl-read
     (sysctl-name
+        "hw.cputype"
         "hw.memsize"
         "hw.ncpu"
         "kern.maxfilesperproc"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
+        "kern.osrelease"
         "kern.ostype"
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.

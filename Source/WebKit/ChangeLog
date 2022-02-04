@@ -1,3 +1,17 @@
+2022-02-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][macOS] Adjust sysctl sandbox access
+        https://bugs.webkit.org/show_bug.cgi?id=236082
+        <rdar://problem/88436174>
+
+        Reviewed by Brent Fulgham.
+
+        Adjust sysctl sandbox access based on telemetry.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2022-02-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Fix App Privacy Report redirect attribution
