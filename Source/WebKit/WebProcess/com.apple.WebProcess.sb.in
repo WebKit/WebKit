@@ -1894,24 +1894,7 @@
 (disable-syscall-inference)
 #endif
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(deny user-preference-read (with enable-state-flag "WebContentProcessLaunched")
-    (preference-domain "com.apple.WebKit.WebContent.Launch"))
-#endif
-
-(define (syscall-unix-only-in-use-during-launch)
-    (syscall-number
-        SYS_csops
-        SYS_csrctl
-        SYS_fsgetpath
-        SYS_getaudit_addr
-        SYS_getfsstat64
-        SYS_getrlimit
-        SYS_kdebug_trace
-        SYS_pathconf
-        SYS_statfs64))
-
-(define (syscall-unix-in-use-after-launch)
+(define (syscall-unix-common)
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -1923,7 +1906,9 @@
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
+        SYS_csops
         SYS_csops_audittoken
+        SYS_csrctl
         SYS_exit
         SYS_faccessat ;; <rdar://problem/56690456>
         SYS_fcntl
@@ -1932,23 +1917,28 @@
         SYS_fileport_makefd
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatat64
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist
         SYS_getattrlistbulk
+        SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
+        SYS_getfsstat64
         SYS_getgid
         SYS_gethostuuid
+        SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
         SYS_getxattr
         SYS_ioctl
         SYS_issetugid
+        SYS_kdebug_trace
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
         SYS_kevent_id
@@ -1971,6 +1961,7 @@
         SYS_open
         SYS_open_nocancel
         SYS_openat
+        SYS_pathconf
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
@@ -1988,8 +1979,9 @@
         SYS_sendto
         SYS_sigaltstack
         SYS_sigprocmask
-        SYS_socket
         SYS_stat64
+        SYS_statfs64
+        SYS_socket
         SYS_sysctlbyname
         SYS_thread_selfid
 #if !PLATFORM(MAC)
@@ -2052,31 +2044,14 @@
 ))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry)(with send-signal SIGKILL))
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-        (allow syscall-unix
-            (syscall-unix-in-use-after-launch))
-        (allow syscall-unix
-            (syscall-unix-only-in-use-during-launch)))
-    (with-filter (state-flag "WebContentProcessLaunched")
-        (allow syscall-unix
-            (syscall-unix-in-use-after-launch))
-        (allow syscall-unix
-            (with report)
-            (with telemetry)
-            (with message "Unix syscall used after launch")
-            (syscall-unix-only-in-use-during-launch)))
-#else
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
-        (syscall-unix-only-in-use-during-launch)
-        (syscall-unix-in-use-after-launch))
-#endif
+        (syscall-unix-common))
 
-    (when (equal? (param "CPU") "arm64")
+    (if (equal? (param "CPU") "arm64")
+        (begin
             (allow syscall-unix
-                (syscall-unix-apple-silicon)))
+                (syscall-unix-apple-silicon))))
 
     (allow syscall-unix
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000

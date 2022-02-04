@@ -1,3 +1,16 @@
+2022-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r289124.
+        https://bugs.webkit.org/show_bug.cgi?id=236160
+
+        Introduced crash
+
+        Reverted changeset:
+
+        "[macOS][WP] Add telemetry for syscalls used during launch"
+        https://bugs.webkit.org/show_bug.cgi?id=235865
+        https://commits.webkit.org/r289124
+
 2022-02-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Block access to syscalls that are only used during launch
