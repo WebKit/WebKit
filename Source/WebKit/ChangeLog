@@ -1,3 +1,13 @@
+2022-02-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Fix App Privacy Report redirect attribution
+        https://bugs.webkit.org/show_bug.cgi?id=236111
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+
 2022-02-04  Ben Nham  <nham@apple.com>
 
         Import APSConnection-related SPI

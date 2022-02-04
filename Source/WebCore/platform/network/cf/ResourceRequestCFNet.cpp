@@ -370,6 +370,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     auto oldRequester = requester();
     auto oldInitiatorIdentifier = initiatorIdentifier();
     auto oldInspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier();
+    auto oldAppInitiatedValue = isAppInitiated();
 
     *this = delegateProvidedRequest;
 
@@ -380,6 +381,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     setInitiatorIdentifier(oldInitiatorIdentifier);
     if (oldInspectorInitiatorNodeIdentifier)
         setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
+    setIsAppInitiated(oldAppInitiatedValue);
 }
 
 bool ResourceRequest::httpPipeliningEnabled()

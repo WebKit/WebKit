@@ -1,3 +1,16 @@
+2022-02-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Fix App Privacy Report redirect attribution
+        https://bugs.webkit.org/show_bug.cgi?id=236111
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/app-privacy-report/resources/redirect.js: Added.
+        * http/tests/app-privacy-report/app-attribution-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/app-attribution-redirect.html: Added.
+        * http/tests/app-privacy-report/user-attribution-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/user-attribution-redirect.html: Added.
+
 2022-02-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip more Shared Worker layout tests on WK2.
