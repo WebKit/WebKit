@@ -1,5 +1,19 @@
 2022-02-04  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip more Shared Worker layout tests on WK2.
+
+        * web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub-expected.txt: Added.
+        * web-platform-tests/eventsource/shared-worker/eventsource-close-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-eventtarget-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-onmessage-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-onopen-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-prototype-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-url-expected.txt:
+
+2022-02-04  Chris Dumez  <cdumez@apple.com>
+
         Fix WPT test importer and resync web-platform-tests/workers from upstream
         https://bugs.webkit.org/show_bug.cgi?id=236101
 

@@ -1,0 +1,4 @@
+Blocked access to external URL http://www1.localhost:8800/content-security-policy/support/fail.asis
+
+FAIL Expecting logs: ["xhr allowed","TEST COMPLETE"] assert_unreached: unexpected log: xhr blocked Reached unreachable code
+

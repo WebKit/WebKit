@@ -302,12 +302,11 @@ media/remove-video-element-in-pip-from-document.html [ Skip ]
 # This test is only relevent on iPhone where videos always play in fullscreen.
 media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
 
-# Shared Workers are unsupported
+# Tests rely on domain names our test infrastructure doesn't support.
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
-imported/w3c/web-platform-tests/eventsource/shared-worker [ Skip ]
 
 # This test seems wrong as it call update() for a script that does not change and expected an updatefound event.
 # Per specification, if the scripts are identical, we do not install the new script and return the existing registration.
@@ -415,9 +414,6 @@ webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
-
-# Unsupported features: SharedWorker
-imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 
 # Unsupported features: PerformanceNavigationTiming
 imported/w3c/web-platform-tests/server-timing/test_server_timing.html [ Skip ]
@@ -897,24 +893,11 @@ fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 [ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
 
 # Skip workers tests that are timing out or are SharedWorker related only
-imported/w3c/web-platform-tests/workers/data-url-shared.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html [ Skip ]
 imported/w3c/web-platform-tests/workers/nested_worker.worker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/opaque-origin.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-constructor.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-detach-frame-in-error-event.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-exception-propagation.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-exception.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-script-error.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-simple.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
-imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html [ Skip ]
-
-imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
 
@@ -982,9 +965,7 @@ imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-o
 # Content Security Policy: Embedded Enforcement is not supported
 imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
 
-# Skip Content Security Policy shared workers tests as we do not support shared workers
-imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html
-imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html
+# Test is timing out.
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html
 
 # Sometimes logs a line about trying to connect to an external URL.
