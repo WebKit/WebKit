@@ -326,7 +326,7 @@ protected:
     void updateOutlineAutoAncestor(bool hasOutlineAuto);
 
     void removeFromRenderFragmentedFlowIncludingDescendants(bool shouldUpdateState);
-    void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
+    void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
 
     bool isVisibleInViewport() const;
 

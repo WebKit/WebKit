@@ -432,10 +432,11 @@ static bool borderOrPaddingLogicalWidthChanged(const RenderStyle& oldStyle, cons
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    bool hadTransform = hasTransform();
     RenderBox::styleDidChange(diff, oldStyle);
 
-    if (oldStyle)
-        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(*oldStyle, style());
+    if (hadTransform != hasTransform())
+        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
 
     propagateStyleToAnonymousChildren(PropagateToBlockChildrenOnly);
 
