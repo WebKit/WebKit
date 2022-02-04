@@ -1,3 +1,15 @@
+2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font
+        https://bugs.webkit.org/show_bug.cgi?id=235257
+        <rdar://problem/87625596>
+
+        Reviewed by Darin Adler.
+
+        Thank you so much to Bobby Tung and But Ko for reporting this bug and providing a test font for it!!!
+
+        * metadata/contributors.json:
+
 2022-02-03  Elliott Williams  <emw@apple.com>
 
         Add Elliott Williams to contributors.json

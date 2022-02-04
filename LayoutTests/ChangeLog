@@ -1,3 +1,22 @@
+2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font
+        https://bugs.webkit.org/show_bug.cgi?id=235257
+        <rdar://problem/87625596>
+
+        Reviewed by Darin Adler.
+
+        This can't be a WPT test because we only have permission to add the test font to the WebKit repository.
+
+        Thank you so much to Bobby Tung and But Ko for reporting this bug and providing a test font for it!!!
+
+        * fast/text/bopomofo-tone-marks-2-expected-mismatch.html: Added.
+        * fast/text/bopomofo-tone-marks-2.html: Added.
+        * fast/text/bopomofo-tone-marks-expected-mismatch.html: Added.
+        * fast/text/bopomofo-tone-marks.html: Added.
+        * fast/text/resources/BopomofoGposSubset-Regular/BopomofoGposSubset-Regular.ttf: Added.
+        * fast/text/resources/BopomofoGposSubset-Regular/LICENSE: Added.
+
 2022-02-03  Alan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Clean up column spanners when style change affects containing block

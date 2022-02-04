@@ -812,9 +812,11 @@ bool FontCascade::isCJKIdeographOrSymbol(UChar32 c)
 {
     // 0x2C7 Caron, Mandarin Chinese 3rd Tone
     // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
-    // 0x2CB Modifier Letter Grave Access, Mandarin Chinese 4th Tone 
-    // 0x2D9 Dot Above, Mandarin Chinese 5th Tone 
-    if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9))
+    // 0x2CB Modifier Letter Grave Access, Mandarin Chinese 4th Tone
+    // 0x2D9 Dot Above, Mandarin Chinese 5th Tone
+    // 0x2EA Modifier Letter Yin Departing Tone Mark
+    // 0x2EB Modifier Letter Yang Departing Tone Mark
+    if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9) || (c == 0x2EA) || (c == 0x2EB))
         return true;
 
     if ((c == 0x2020) || (c == 0x2021) || (c == 0x2030) || (c == 0x203B) || (c == 0x203C)

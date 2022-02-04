@@ -1117,6 +1117,13 @@
    },
    {
       "emails" : [
+         "bobbytung@me.com"
+      ],
+      "github" : "bobbytung",
+      "name" : "Bobby Tung"
+   },
+   {
+      "emails" : [
          "beidson@apple.com"
       ],
       "expertise" : "Networking, Storage, WebCore icon database, Back/forward cache, History",
@@ -1198,6 +1205,13 @@
       "nicks" : [
          "abinader"
       ]
+   },
+   {
+      "emails" : [
+         "font@but.tw"
+      ],
+      "github" : "ButTaiwan",
+      "name" : "But Ko"
    },
    {
       "emails" : [
