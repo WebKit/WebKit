@@ -49,6 +49,7 @@ public:
         CollectMultipleElements = 1 << 15,
         // When using list-based testing, continue hit testing even after a hit has been found.
         IncludeAllElementsUnderPoint = 1 << 16,
+        PenEvent = 1 << 17,
     };
 
     HitTestRequest(OptionSet<Type> type = { Type::ReadOnly, Type::Active, Type::DisallowUserAgentShadowContent })
@@ -66,7 +67,8 @@ public:
     bool ignoreClipping() const { return m_type.contains(Type::IgnoreClipping); }
     bool svgClipContent() const { return m_type.contains(Type::SVGClipContent); }
     bool touchEvent() const { return m_type.contains(Type::TouchEvent); }
-    bool mouseEvent() const { return !touchEvent(); }
+    bool mouseEvent() const { return !touchEvent() && !penEvent(); }
+    bool penEvent() const { return m_type.contains(Type::PenEvent); }
     bool disallowsUserAgentShadowContent() const { return m_type.contains(Type::DisallowUserAgentShadowContent); }
     bool disallowsUserAgentShadowContentExceptForImageOverlays() const { return m_type.contains(Type::DisallowUserAgentShadowContentExceptForImageOverlays); }
     bool allowsFrameScrollbars() const { return m_type.contains(Type::AllowFrameScrollbars); }
