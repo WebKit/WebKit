@@ -2249,7 +2249,7 @@ class RunJavaScriptCoreTests(shell.Test):
                                                 CompileJSCWithoutPatch(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
-                                                RunJSCTestsWithoutPatch(),
+                                                RunJSCTestsWithoutChange(),
                                                 AnalyzeJSCTestsResults()])
         return rc
 
@@ -2313,8 +2313,8 @@ class RunJavaScriptCoreTests(shell.Test):
         log.addStdout(message)
 
 
-class RunJSCTestsWithoutPatch(RunJavaScriptCoreTests):
-    name = 'jscore-test-without-patch'
+class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
+    name = 'jscore-test-without-change'
     prefix = 'jsc_clean_tree_'
 
     def evaluateCommand(self, cmd):
