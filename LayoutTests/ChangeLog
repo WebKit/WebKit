@@ -1,3 +1,14 @@
+2022-02-03  Alan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Clean up column spanners when style change affects containing block
+        https://bugs.webkit.org/show_bug.cgi?id=236042
+        <rdar://83975391>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/leftover-spanner-on-style-change-crash-expected.txt: Added.
+        * fast/multicol/leftover-spanner-on-style-change-crash.html: Added.
+
 2022-02-03  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
