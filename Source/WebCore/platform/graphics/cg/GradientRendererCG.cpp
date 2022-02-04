@@ -386,10 +386,24 @@ static GradientColorStops alphaTransformStopsToEmulateAlphaPremuliplication(cons
 }
 #endif
 
+static bool anyComponentIsNone(const GradientColorStops& stops)
+{
+    for (auto& stop : stops) {
+        if (stop.color.anyComponentIsNone())
+            return true;
+    }
+    
+    return false;
+}
+
 GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops) const
 {
     return WTF::switchOn(colorInterpolationMethod.colorSpace,
         [&] (const ColorInterpolationMethod::SRGB&) -> Strategy {
+            // FIXME: As an optimization we can precompute 'none' replacements and create a transformed stop list rather than falling back on CGShadingRef.
+            if (anyComponentIsNone(stops))
+                return makeShading(colorInterpolationMethod, stops);
+
             switch (colorInterpolationMethod.alphaPremultiplication) {
             case AlphaPremultiplication::Unpremultiplied:
                 return makeGradient(colorInterpolationMethod, stops);
@@ -552,7 +566,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
             return WTF::switchOn(colorInterpolationMethod.colorSpace,
                 [&] (auto& colorSpace) -> ColorComponents<float, 4> {
                     using ColorType = typename std::remove_reference_t<decltype(colorSpace)>::ColorType;
-                    return asColorComponents(color.template toColorTypeLossy<ColorType>().resolved());
+                    return asColorComponents(color.template toColorTypeLossy<ColorType>().unresolved());
                 }
             );
         };
@@ -576,6 +590,10 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
             totalNumberOfStops++;
         if (!hasOne)
             totalNumberOfStops++;
+
+        // FIXME: To avoid duplicate work in the shader function, we could precompute a few things:
+        //   - If we have a polar coordinate color space, we can pre-fixup the hues, inserting an extra stop at the same offset if both the fixup on the left and right require different results.
+        //   - If we have 'none' components, we can precompute 'none' replacements, inserting an extra stop at the same offset if the replacements on the left and right are different.
 
         Vector<ColorConvertedToInterpolationColorSpaceStop> convertedStops;
         convertedStops.reserveInitialCapacity(totalNumberOfStops);

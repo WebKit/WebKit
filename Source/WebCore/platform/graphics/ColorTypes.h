@@ -132,24 +132,17 @@ template<typename ColorType, typename T, typename Alpha> constexpr auto makeFrom
 
 #if ASSERT_ENABLED
 
-template<typename ComponentType>
-constexpr bool constexprIsNaN(ComponentType value)
-{
-    // FIXME: Replace with std::isnan() once std::isnan() is constexpr.
-    return value != value;
-}
-
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::ComponentType, float>>* = nullptr>
 constexpr void assertInRange(ColorType color)
 {
     auto components = asColorComponents(color.unresolved());
     for (unsigned i = 0; i < 3; ++i) {
-        if (constexprIsNaN(components[i]))
+        if (isNaNConstExpr(components[i]))
             continue;
         ASSERT_WITH_MESSAGE(components[i] >= ColorType::Model::componentInfo[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i,  components[i], ColorType::Model::componentInfo[i].min);
         ASSERT_WITH_MESSAGE(components[i] <= ColorType::Model::componentInfo[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i,  components[i], ColorType::Model::componentInfo[i].max);
     }
-    if (!constexprIsNaN(components[3])) {
+    if (!isNaNConstExpr(components[3])) {
         ASSERT_WITH_MESSAGE(components[3] >= AlphaTraits<typename ColorType::ComponentType>::transparent, "Alpha is %f and is less than the allowed minimum (transparent) %f", components[3], AlphaTraits<typename ColorType::ComponentType>::transparent);
         ASSERT_WITH_MESSAGE(components[3] <= AlphaTraits<typename ColorType::ComponentType>::opaque, "Alpha is %f and is greater than the allowed maximum (opaque) %f", components[3], AlphaTraits<typename ColorType::ComponentType>::opaque);
     }

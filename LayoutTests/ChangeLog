@@ -1,3 +1,15 @@
+2022-02-04  Sam Weinig  <weinig@apple.com>
+
+        Gradients don't correctly interpolate missing/none color components correctly
+        https://bugs.webkit.org/show_bug.cgi?id=236025
+
+        Reviewed by Simon Fraser.
+
+        Add tests of gradients with explicit 'none' components in some of the colors.
+
+        * fast/gradients/gradient-with-missing-components-expected.html: Added.
+        * fast/gradients/gradient-with-missing-components.html: Added.
+
 2022-02-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Fix App Privacy Report redirect attribution

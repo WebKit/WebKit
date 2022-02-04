@@ -100,6 +100,8 @@ public:
     WEBCORE_EXPORT double luminance() const;
     WEBCORE_EXPORT double lightness() const; // FIXME: Replace remaining uses with luminance.
 
+    bool anyComponentIsNone() const;
+
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
     // This will convert the underlying color into ColorType, potentially lossily if the gamut

@@ -1,3 +1,15 @@
+2022-02-04  Sam Weinig  <weinig@apple.com>
+
+        Gradients don't correctly interpolate missing/none color components correctly
+        https://bugs.webkit.org/show_bug.cgi?id=236025
+
+        Reviewed by Simon Fraser.
+
+        Move isNaNConstExpr to MathExtras.h from WebCore so it can used in multiple places.
+
+        * wtf/MathExtras.h:
+        (WTF::isNaNConstExpr):
+
 2022-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete SelectionAcrossShadowBoundariesEnabled
