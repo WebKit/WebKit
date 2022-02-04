@@ -1,3 +1,16 @@
+2022-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r289069.
+        https://bugs.webkit.org/show_bug.cgi?id=236146
+
+        Introduced sandbox violation
+
+        Reverted changeset:
+
+        "[iOS][WP] Enable sandbox state rules for Mach messages"
+        https://bugs.webkit.org/show_bug.cgi?id=236027
+        https://commits.webkit.org/r289069
+
 2022-02-04  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Crash when starting DND on touchscreen
