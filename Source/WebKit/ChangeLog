@@ -1,3 +1,34 @@
+2022-02-04  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Crash when starting DND on touchscreen
+        https://bugs.webkit.org/show_bug.cgi?id=235694
+
+        Reviewed by Adrian Perez de Castro.
+
+        Drag-n-drop on touch has never worked correctly in GTK, and is usually
+        just disabled. Do the same thing and ignore it for synthesized mouse
+        events.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode const):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebMouseEvent.h:
+        (WebKit::WebMouseEvent::isTouchEvent const):
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchRelease):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchDragEnd):
+        (webkitWebViewBaseSynthesizeMouseEvent):
+        * UIProcess/API/gtk/WebKitWebViewBaseInternal.h:
+        * UIProcess/gtk/PointerLockManager.cpp:
+        (WebKit::PointerLockManager::handleMotion):
+
 2022-02-04  Christopher Reid  <chris.reid@sony.com>
 
         Revert some structured binding workarounds with Clang
