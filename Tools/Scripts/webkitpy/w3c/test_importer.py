@@ -190,11 +190,12 @@ class TestImporter(object):
             if self._tests_options:
                 self.remove_slow_from_w3c_tests_options()
 
-        self.globalToSuffix = dict(
-            window='html',
-            worker='worker.html',
-            dedicatedworker='worker.html',
-            serviceworker='serviceworker.html')
+        self.globalToSuffixes = dict(
+            window=('html',),
+            worker=('worker.html', 'serviceworker.html', 'sharedworker.html'),
+            dedicatedworker=('worker.html',),
+            serviceworker=('serviceworker.html',),
+            sharedworker=('sharedworker.html',))
 
     def do_import(self):
         if not self.source_directory:
@@ -421,11 +422,15 @@ class TestImporter(object):
         for line in lines:
             if line.startswith('//') and 'META: global=' in line:
                 items = line.split('META: global=', 1)[1].split(',')
-                suffixes = [self.globalToSuffix.get(item.strip(), '') for item in items]
-                environments = list(filter(None, set(suffixes)))
-        if 'worker.html' in environments:
-            environments.append('serviceworker.html')
-        return set(environments) if len(environments) else ['html', 'worker.html', 'serviceworker.html']
+                suffixes = set()
+                for item in items:
+                    suffixes_for_item = self.globalToSuffixes.get(item.strip(), ())
+                    if len(suffixes_for_item) == 0:
+                        suffixes.add('')
+                    else:
+                        suffixes.update(suffixes_for_item)
+                environments = list(filter(None, suffixes))
+        return set(environments) if len(environments) else ['html', 'worker.html']
 
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         if (orig_filepath.endswith('.window.js')):

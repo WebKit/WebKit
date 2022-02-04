@@ -4,3 +4,7 @@ Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
 
 TIMEOUT importScripts uncaught exception Test timed out
 
+Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
+
+TIMEOUT importScripts uncaught exception Test timed out
+

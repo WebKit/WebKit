@@ -1,4 +1,7 @@
+CONSOLE MESSAGE: Error: assert_unreached: FAIL: onerror invoked for a script error. Reached unreachable code
 
-FAIL Test script error unhandled. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.postMessage')"
-FAIL Test script error handled. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.postMessage')"
+Harness Error (FAIL), message = Error: assert_unreached: FAIL: onerror invoked for a script error. Reached unreachable code
+
+PASS Test script error unhandled.
+PASS Test script error handled.
 

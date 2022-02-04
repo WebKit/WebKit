@@ -1,5 +1,3 @@
 
-FAIL Test unexpected properties are not in global scope null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
-    assert_equals(e.data, '');
-  })')
+PASS Test unexpected properties are not in global scope
 

@@ -1,30 +1,11 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = e => port.postMessage(e.data)')
 
-Harness Error (TIMEOUT), message = null
-
-FAIL application/javascript MIME allowed null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL text/plain MIME allowed null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL empty MIME allowed null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL communication goes both ways null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL indexedDB is present null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL indexedDB is inaccessible null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL cross-origin worker null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-FAIL worker has opaque origin null is not an object (evaluating 'w.port.onmessage = t.step_func_done(function(e) {
-      assert_equals(e.data, 'PASS');
-    })')
-TIMEOUT A data: URL shared worker should not be shared among origins. Test timed out
+PASS application/javascript MIME allowed
+PASS text/plain MIME allowed
+PASS empty MIME allowed
+PASS communication goes both ways
+PASS indexedDB is present
+PASS indexedDB is inaccessible
+PASS cross-origin worker
+PASS worker has opaque origin
+PASS A data: URL shared worker should not be shared among origins.
 

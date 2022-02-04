@@ -125,4 +125,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-options-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-parse-error-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-partitioned.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/worker-performance.worker.js

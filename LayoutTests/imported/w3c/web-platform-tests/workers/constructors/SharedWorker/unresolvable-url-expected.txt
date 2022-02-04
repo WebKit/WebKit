@@ -1,5 +1,3 @@
 
-FAIL resolving broken url assert_throws_dom: function "() => {
-    const worker = new SharedWorker('http://foo bar');
-  }" did not throw
+PASS resolving broken url
 

@@ -3930,9 +3930,11 @@
         "web-platform-tests/workers/semantics/xhr/001-1.xml",
         "web-platform-tests/workers/semantics/xhr/support/001-1.xml",
         "web-platform-tests/workers/support/WorkerLocation-origin.html",
+        "web-platform-tests/workers/support/iframe-sw-shared-name.html",
         "web-platform-tests/workers/support/iframe_sw_dataUrl.html",
         "web-platform-tests/workers/support/sandboxed-tests.html",
         "web-platform-tests/workers/support/sync_xhr_target.xml",
+        "web-platform-tests/workers/support/window-sw-shared-name.html",
         "web-platform-tests/xhr/xmlhttprequest-sync-block-defer-scripts-subframe.html",
         "web-platform-tests/xhr/xmlhttprequest-sync-not-hang-scriptloader-subframe.html"
     ]

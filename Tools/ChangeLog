@@ -1,3 +1,22 @@
+2022-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Fix WPT test importer and resync web-platform-tests/workers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236101
+
+        Reviewed by Youenn Fablet.
+
+        Fix WPT test importer because:
+        1. It wasn't creating tests with sharedworker.html suffix for .js tests with:
+            - // META: global=sharedworker
+            - // META: global=worker
+        2. It was wrongly creating tests with a serviceworker.html suffix for .js tests with:
+            - // META: global=dedicatedworker
+            - META without a global (upstream WPT only generates a .html and .worker.html in such case)
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+        (TestImporter.readEnvironmentsForTemplateTest):
+
 2022-02-03  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Rename CompileJSCWithoutPatch

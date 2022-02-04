@@ -1,3 +1,3 @@
 
-FAIL Test constructing a shared worker with 1 null is not an object (evaluating 'worker.port')
+PASS Test constructing a shared worker with 1
 

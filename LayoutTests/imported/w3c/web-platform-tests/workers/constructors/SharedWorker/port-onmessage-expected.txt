@@ -1,5 +1,3 @@
 
-FAIL Test SharedWorker.port.onmessage null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
-    assert_true(e.data);
-  })')
+PASS Test SharedWorker.port.onmessage
 

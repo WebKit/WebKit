@@ -898,25 +898,15 @@ fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 
 # Skip workers tests that are timing out or are SharedWorker related only
 imported/w3c/web-platform-tests/workers/data-url-shared.html [ Skip ]
-imported/w3c/web-platform-tests/workers/examples/onconnect.any.html [ Skip ]
-imported/w3c/web-platform-tests/workers/examples/onconnect.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html [ Skip ]
 imported/w3c/web-platform-tests/workers/nested_worker.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/opaque-origin.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.any.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.any.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
 imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-MessageEvent-source.any.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-MessageEvent-source.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-constructor.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-detach-frame-in-error-event.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-exception-propagation.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-exception.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-replace-EventHandler.any.html [ Skip ]
-imported/w3c/web-platform-tests/workers/SharedWorker-replace-EventHandler.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-script-error.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-simple.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html [ Skip ]
@@ -5156,6 +5146,9 @@ webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-dec
 
 # Test is crashing in Debug builds since import.
 webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
+
+# Test is crashing since import.
+imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html [ Skip ]
 
 # Plugins
 # FIXME: Remove these tests.

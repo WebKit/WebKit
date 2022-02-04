@@ -1,0 +1,3 @@
+
+PASS Tests that repeatedly setting 'onerror' within a shared worker doesnt crash.
+

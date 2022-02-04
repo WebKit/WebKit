@@ -1,5 +1,18 @@
 2022-02-04  Chris Dumez  <cdumez@apple.com>
 
+        Fix WPT test importer and resync web-platform-tests/workers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236101
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/workers from upstream a9f3552a2b771569201879ef1.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/workers: Updated.
+
+2022-02-04  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop badly imported test due to WPT importer bug getting fixed in Bug 236101.
 
         * web-platform-tests/css/filter-effects/idlharness.any.serviceworker-expected.txt: Removed.

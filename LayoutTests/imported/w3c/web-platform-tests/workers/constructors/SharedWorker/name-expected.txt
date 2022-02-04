@@ -1,5 +1,3 @@
 
-FAIL Test self.name in a shared worker null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
-    assert_equals(e.data, 'hello');
-  })')
+PASS Test self.name in a shared worker
 

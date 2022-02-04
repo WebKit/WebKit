@@ -1,15 +1,19 @@
-
-Harness Error (TIMEOUT), message = null
+CONSOLE MESSAGE: Cannot load unsupported:.
+CONSOLE MESSAGE: Cannot load javascript:"".
+CONSOLE MESSAGE: Cannot load about:blank.
+CONSOLE MESSAGE: Cannot load http://www.opera.com/.
+CONSOLE MESSAGE: Cannot load http://localhost:81/.
+CONSOLE MESSAGE: Cannot load https://localhost:80/.
+CONSOLE MESSAGE: Cannot load https://localhost:8000/.
+CONSOLE MESSAGE: Cannot load http://localhost:8012/.
 
 FAIL unsupported_scheme assert_throws_dom: function "() => { new SharedWorker('unsupported:', ''); }" did not throw
-FAIL data_url null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
-    assert_equals(e.data, 1);
-  })')
-TIMEOUT javascript_url Test timed out
-TIMEOUT about_blank Test timed out
-TIMEOUT opera_com Test timed out
-TIMEOUT port_81 Test timed out
-TIMEOUT https_port_80 Test timed out
-TIMEOUT https_port_8000 Test timed out
-TIMEOUT http_port_8012 Test timed out
+PASS data_url
+PASS javascript_url
+PASS about_blank
+PASS opera_com
+PASS port_81
+PASS https_port_80
+PASS https_port_8000
+PASS http_port_8012
 
