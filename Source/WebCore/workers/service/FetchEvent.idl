@@ -31,9 +31,9 @@
     Exposed=ServiceWorker,
     JSGenerateToNativeObject
 ] interface FetchEvent : ExtendableEvent {
-    [CallWith=GlobalObject] constructor(DOMString type, FetchEventInit eventInitDict);
+    [CallWith=CurrentGlobalObject] constructor(DOMString type, FetchEventInit eventInitDict);
     [SameObject] readonly attribute FetchRequest request;
-    [CallWith=ScriptExecutionContext, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute Promise<any> preloadResponse;
+    [CallWith=CurrentScriptExecutionContext, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute Promise<any> preloadResponse;
     readonly attribute DOMString clientId;
     readonly attribute DOMString resultingClientId;
     readonly attribute Promise<undefined> handled;

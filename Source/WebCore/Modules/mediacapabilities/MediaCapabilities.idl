@@ -27,6 +27,6 @@
     EnabledBySetting=MediaCapabilitiesEnabled,
     Exposed=(Window,DedicatedWorker)
 ] interface MediaCapabilities {
-    [CallWith=ScriptExecutionContext] Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
-    [CallWith=ScriptExecutionContext] Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);
+    [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
+    [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);
 };

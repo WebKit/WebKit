@@ -31,7 +31,7 @@
     JSCustomMarkFunction,
     CustomIsReachable,
 ] interface IntersectionObserver {
-    [CallWith=Document] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
+    [CallWith=CurrentDocument] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
 
     readonly attribute Node? root;
     readonly attribute DOMString rootMargin;

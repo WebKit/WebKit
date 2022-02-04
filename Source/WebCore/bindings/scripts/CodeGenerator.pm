@@ -1447,6 +1447,7 @@ sub ExtendedAttributeContains
     my $keyword = shift;
 
     my @extendedAttributeKeywords = split /\s*\&\s*/, $extendedAttribute;
+    return grep { /$keyword/ } @extendedAttributeKeywords if ref($keyword) eq "Regexp";
     return grep { $_ eq $keyword } @extendedAttributeKeywords;
 }
 

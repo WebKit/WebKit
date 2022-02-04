@@ -40,7 +40,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface Document : Node {
-    [CallWith=Document] constructor();
+    [CallWith=CurrentDocument] constructor();
 
     [SameObject] readonly attribute DOMImplementation implementation;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;

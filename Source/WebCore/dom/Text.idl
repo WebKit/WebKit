@@ -21,7 +21,7 @@
     CustomToJSObject,
     Exposed=Window
 ] interface Text : CharacterData {
-    [CallWith=Document] constructor(optional DOMString data = "");
+    [CallWith=CurrentDocument] constructor(optional DOMString data = "");
 
     Text splitText(unsigned long offset);
     readonly attribute DOMString wholeText;

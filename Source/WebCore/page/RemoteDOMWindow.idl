@@ -53,5 +53,5 @@
     [LegacyUnforgeable] readonly attribute WindowProxy? top;
     readonly attribute WindowProxy? opener;
     [Replaceable] readonly attribute WindowProxy? parent;
-    [CallWith=GlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 };

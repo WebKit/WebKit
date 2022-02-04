@@ -57,7 +57,7 @@
     [CEReactions] Attr removeAttributeNode(Attr attr);
 
     ShadowRoot attachShadow(ShadowRootInit init);
-    [ImplementedAs=shadowRootForBindings, CallWith=GlobalObject] readonly attribute ShadowRoot? shadowRoot;
+    [ImplementedAs=shadowRootForBindings, CallWith=CurrentGlobalObject] readonly attribute ShadowRoot? shadowRoot;
 
     Element? closest(DOMString selectors);
     boolean matches(DOMString selectors);

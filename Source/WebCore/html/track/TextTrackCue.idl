@@ -33,7 +33,7 @@
     LegacyFactoryFunctionEnabledBySetting=GenericCueAPIEnabled,
     Exposed=Window
 ] interface TextTrackCue : EventTarget {
-    [CallWith=Document] constructor(double startTime, double endTime, DocumentFragment cueNode);
+    [CallWith=CurrentDocument] constructor(double startTime, double endTime, DocumentFragment cueNode);
 
     readonly attribute TextTrack track;
 

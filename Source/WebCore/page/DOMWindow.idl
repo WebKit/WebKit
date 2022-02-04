@@ -87,8 +87,8 @@
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     undefined print();
 
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
 
 
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).

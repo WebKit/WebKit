@@ -27,5 +27,5 @@
     EnabledAtRuntime=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemFileEntry : FileSystemEntry {
-    [CallWith=ScriptExecutionContext] undefined file(FileCallback successCallback, optional ErrorCallback? errorCallback);
+    [CallWith=CurrentScriptExecutionContext] undefined file(FileCallback successCallback, optional ErrorCallback? errorCallback);
 };

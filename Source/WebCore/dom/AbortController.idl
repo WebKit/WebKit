@@ -27,9 +27,9 @@
     Exposed=(Window,Worker),
     GenerateAddOpaqueRoot=signal
 ] interface AbortController {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     [SameObject] readonly attribute AbortSignal signal;
 
-    [CallWith=GlobalObject] undefined abort(optional any reason);
+    [CallWith=CurrentGlobalObject] undefined abort(optional any reason);
 };

@@ -77,7 +77,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface RTCPeerConnection : EventTarget {
-    [CallWith=Document] constructor(optional RTCConfiguration configuration);
+    [CallWith=CurrentDocument] constructor(optional RTCConfiguration configuration);
 
     // 4.3.2 Interface Definition
     Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
@@ -115,7 +115,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     attribute EventHandler onicecandidateerror;
 
     // 4.11 Certificate management
-    [CallWith=GlobalObject] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);
+    [CallWith=CurrentGlobalObject] static Promise<RTCCertificate> generateCertificate(AlgorithmIdentifier keygenAlgorithm);
 
     // 5.1 RTCPeerConnection extensions
     // RTP Media API extensions

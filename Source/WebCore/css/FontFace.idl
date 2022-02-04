@@ -45,15 +45,15 @@ dictionary FontFaceDescriptors {
     ActiveDOMObject,
     Exposed=(Window,Worker)
 ] interface FontFace {
-    [CallWith=ScriptExecutionContext] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
+    [CallWith=CurrentScriptExecutionContext] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
 
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString family;
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString style;
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString weight;
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString stretch;
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString unicodeRange;
-    [SetterCallWith=ScriptExecutionContext] attribute DOMString featureSettings;
-    [CallWith=ScriptExecutionContext] attribute DOMString display;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString family;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString style;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString weight;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString stretch;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString unicodeRange;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString featureSettings;
+    [CallWith=CurrentScriptExecutionContext] attribute DOMString display;
 
     readonly attribute FontFaceLoadStatus status;
 

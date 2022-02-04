@@ -29,7 +29,7 @@
     Conditional=CHANNEL_MESSAGING,
     JSCustomMarkFunction,
 ] interface MessageChannel {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     readonly attribute MessagePort port1;
     readonly attribute MessagePort port2;

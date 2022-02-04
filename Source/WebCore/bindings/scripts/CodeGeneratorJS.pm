@@ -5289,7 +5289,8 @@ sub GenerateAttributeGetterBodyDefinition
             push(@$outputArray, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
             push(@$outputArray, "        return cachedValue;\n");
         }
-        
+
+        assert("[CallWith=Relevant*] can't be used with static attributes.") if $attribute->isStatic && $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, qr/^Relevant/);
         my @callWithArgs = GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "jsUndefined()", "thisObject");
         
         my ($baseFunctionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interface->type->name, $attribute);
@@ -5960,7 +5961,7 @@ sub GenerateCallWith
 
     my @callWithArgs;
     # Global object of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "GlobalObject")) {
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CurrentGlobalObject")) {
         push(@callWithArgs, "*${globalObject}");
     }
     my $relevantGlobalObjectPointer = "(${thisReference}).globalObject()";
@@ -5969,7 +5970,7 @@ sub GenerateCallWith
         push(@callWithArgs, "*${relevantGlobalObjectPointer}");
     }
     # Script execution context of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CurrentScriptExecutionContext")) {
         push(@$outputArray, $indent . "auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
         push(@$outputArray, $indent . "    return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
@@ -5983,7 +5984,7 @@ sub GenerateCallWith
         push(@callWithArgs, "*context");
     }
     # Document of current realm (https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything)
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "Document")) {
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CurrentDocument")) {
         AddToImplIncludes("Document.h");
         push(@$outputArray, $indent . "auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (UNLIKELY(!context))\n");
@@ -6128,6 +6129,7 @@ sub GenerateParametersCheck
     AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $operation, "impl", "*lexicalGlobalObject", "*callFrame", "*castedThis");
     
     my $callWith = $operation->extendedAttributes->{CallWith};
+    assert("[CallWith=Relevant*] can't be used with static operations.") if $operation->isStatic && $codeGenerator->ExtendedAttributeContains($callWith, qr/^Relevant/);
     my $quotedFunctionName;
     if (!$isConstructor) {
         my $name = $operation->name;

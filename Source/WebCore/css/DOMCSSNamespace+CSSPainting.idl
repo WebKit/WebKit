@@ -29,5 +29,5 @@
     Conditional=CSS_PAINTING_API,
     ImplementedBy=DOMCSSPaintWorklet
 ] partial namespace DOMCSSNamespace {
-    [ImplementedAs=ensurePaintWorklet, CallWith=Document] readonly attribute Worklet paintWorklet;
+    [ImplementedAs=ensurePaintWorklet, CallWith=CurrentDocument] readonly attribute Worklet paintWorklet;
 };

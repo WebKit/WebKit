@@ -32,8 +32,8 @@
     undefined terminate();
 
     Promise<FetchResponse> waitForFetchEventToFinish(FetchEvent event);
-    [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
-    [CallWith=ScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();
+    [CallWith=CurrentScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
+    [CallWith=CurrentScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();
 
     sequence<ByteString> fetchResponseHeaderList(FetchResponse response);
 

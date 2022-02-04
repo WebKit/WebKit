@@ -28,7 +28,7 @@
     LegacyNoInterfaceObject,
     SkipVTableValidation
 ] interface WritableStreamSink {
-    [CallWith=ScriptExecutionContext] Promise<undefined> write(any value);
+    [CallWith=CurrentScriptExecutionContext] Promise<undefined> write(any value);
     undefined close();
     undefined error(DOMString message);
 };

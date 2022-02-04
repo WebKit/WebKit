@@ -33,6 +33,6 @@
     IsImmutablePrototypeExoticObjectOnPrototype,
     Global=(Worklet,PaintWorklet),
 ] interface PaintWorkletGlobalScope : WorkletGlobalScope {
-    [CallWith=GlobalObject] undefined registerPaint(DOMString name, object paintConstructor);
+    [CallWith=CurrentGlobalObject] undefined registerPaint(DOMString name, object paintConstructor);
     readonly attribute unrestricted double devicePixelRatio;
 };

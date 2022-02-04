@@ -41,7 +41,7 @@
     readonly attribute unsigned long numberOfChannels;
 
     // Channel access
-    [CallWith=GlobalObject] any getChannelData(unsigned long channelIndex);
+    [CallWith=CurrentGlobalObject] any getChannelData(unsigned long channelIndex);
     undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
 };

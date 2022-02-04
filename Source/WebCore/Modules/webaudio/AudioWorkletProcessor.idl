@@ -32,6 +32,6 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface AudioWorkletProcessor {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
     readonly attribute MessagePort port;
 };

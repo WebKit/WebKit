@@ -29,5 +29,5 @@
     ImplementedBy=HTMLInputElementEntriesAPI
 ] partial interface HTMLInputElement {
     [Reflect] attribute boolean webkitdirectory;
-    [CachedAttribute, CallWith=ScriptExecutionContext] readonly attribute FrozenArray<FileSystemEntry> webkitEntries;
+    [CachedAttribute, CallWith=CurrentScriptExecutionContext] readonly attribute FrozenArray<FileSystemEntry> webkitEntries;
 };

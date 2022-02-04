@@ -32,7 +32,7 @@
 ] interface RTCRtpScriptTransformer {
     readonly attribute ReadableStream readable;
     readonly attribute WritableStream writable;
-    [CallWith=GlobalObject, CachedAttribute] readonly attribute any options;
+    [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any options;
 
     // FIXME: Add support for RID options.
     Promise<undefined> generateKeyFrame();

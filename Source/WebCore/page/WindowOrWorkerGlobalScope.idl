@@ -71,5 +71,5 @@ interface mixin WindowOrWorkerGlobalScope {
     [EnabledAtRuntime=ImageBitmapEnabled] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
 
     // structured cloning
-    [CallWith=GlobalObject&RelevantGlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject&RelevantGlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);
 };

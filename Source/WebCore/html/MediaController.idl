@@ -27,7 +27,7 @@
     Conditional=VIDEO,
     Exposed=Window
 ] interface MediaController : EventTarget {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     readonly attribute TimeRanges buffered;
     readonly attribute TimeRanges seekable;

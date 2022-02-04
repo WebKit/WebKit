@@ -37,7 +37,7 @@
     readonly attribute MediaStreamTrack? track;
     readonly attribute RTCDtlsTransport? transport;
 
-    [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
+    [CallWith=CurrentScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
     Promise<undefined> setParameters(RTCRtpSendParameters parameters);
     Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);

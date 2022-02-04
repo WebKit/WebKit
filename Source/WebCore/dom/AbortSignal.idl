@@ -32,12 +32,12 @@
 ] interface AbortSignal : EventTarget {
     [PrivateIdentifier] static boolean whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
 
-    [NewObject, CallWith=ScriptExecutionContext&GlobalObject] static AbortSignal abort(optional any reason);
-    [NewObject, CallWith=ScriptExecutionContext] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
+    [NewObject, CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] static AbortSignal abort(optional any reason);
+    [NewObject, CallWith=CurrentScriptExecutionContext] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
 
     readonly attribute boolean aborted;
     readonly attribute any reason;
-    [CallWith=GlobalObject] undefined throwIfAborted();
+    [CallWith=CurrentGlobalObject] undefined throwIfAborted();
 
     attribute EventHandler onabort;
 };

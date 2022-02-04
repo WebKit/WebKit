@@ -28,5 +28,5 @@
     EnabledAtRuntime=CacheAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeCaches
 ] partial interface mixin WindowOrWorkerGlobalScope {
-    [CallWith=ScriptExecutionContext, SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
+    [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
 };

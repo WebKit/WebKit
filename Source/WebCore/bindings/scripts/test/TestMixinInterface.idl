@@ -38,7 +38,7 @@
     attribute Node mixinNodeAttribute;
 
     undefined mixinOperation();
-    [CallWith=ScriptExecutionContext] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
+    [CallWith=CurrentScriptExecutionContext] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
     [Custom] undefined mixinCustomOperation();
     [Conditional=Condition11] undefined mixinConditionalOperation();
     [EnabledBySetting=TestSettingEnabled] undefined mixinSettingsConditionalOperation();

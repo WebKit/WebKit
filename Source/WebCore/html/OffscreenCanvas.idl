@@ -53,12 +53,12 @@ enum OffscreenRenderingContextType
     EnabledForContext,
     Exposed=(Window,Worker)
 ] interface OffscreenCanvas : EventTarget {
-    [CallWith=ScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);
+    [CallWith=CurrentScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);
 
     attribute [EnforceRange] unsigned long width;
     attribute [EnforceRange] unsigned long height;
 
-    [CallWith=GlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
+    [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     ImageBitmap transferToImageBitmap();
     Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
 

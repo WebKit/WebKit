@@ -42,7 +42,7 @@
     [Reflect] attribute DOMString reflectAttribute;
 
     undefined supplementalMethod1();
-    [CallWith=ScriptExecutionContext] TestObj supplementalMethod2(DOMString strArg, TestObj objArg);
+    [CallWith=CurrentScriptExecutionContext] TestObj supplementalMethod2(DOMString strArg, TestObj objArg);
     [Custom] undefined supplementalMethod3();
     static undefined supplementalMethod4();
 

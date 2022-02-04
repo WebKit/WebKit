@@ -35,7 +35,7 @@
     SkipVTableValidation
 ] interface WritableStream {
     // FIXME: Tighten parameter matching
-    [CallWith=GlobalObject] constructor(optional object underlyingSink, optional object strategy);
+    [CallWith=CurrentGlobalObject] constructor(optional object underlyingSink, optional object strategy);
 
     readonly attribute boolean locked;
 

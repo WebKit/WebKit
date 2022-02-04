@@ -848,8 +848,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setShowAllPlugins(boolean showAll);
 
-    [CallWith=GlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
-    [CallWith=GlobalObject] boolean isReadableStreamDisturbed(any stream);
+    [CallWith=CurrentGlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
+    [CallWith=CurrentGlobalObject] boolean isReadableStreamDisturbed(any stream);
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setResourceLoadStatisticsEnabled(boolean enable);
@@ -883,8 +883,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setQuickLookPassword(DOMString password);
 
-    [CallWith=Document] undefined setAsRunningUserScripts();
-    [CallWith=Document, Conditional=APPLE_PAY] undefined setApplePayIsActive();
+    [CallWith=CurrentDocument] undefined setAsRunningUserScripts();
+    [CallWith=CurrentDocument, Conditional=APPLE_PAY] undefined setApplePayIsActive();
 
     undefined disableTileSizeUpdateDelay();
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
@@ -936,7 +936,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);
-    [CallWith=Document] boolean isElementAlive(unsigned long long documentIdentifier);
+    [CallWith=CurrentDocument] boolean isElementAlive(unsigned long long documentIdentifier);
     unsigned long long frameIdentifier(Document document);
     unsigned long long pageIdentifier(Document document);
 
@@ -970,7 +970,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=SERVICE_WORKER] Promise<undefined> terminateServiceWorker(ServiceWorker worker);
     [Conditional=SERVICE_WORKER] Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
 
-    [CallWith=Document, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+    [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
@@ -984,8 +984,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean usingGStreamer();
 
     undefined postTask(VoidCallback callback);
-    [CallWith=ScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
-    [CallWith=Document] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
+    [CallWith=CurrentScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
+    [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
     DOMString windowLocationHost(DOMWindow window);
@@ -1096,7 +1096,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_SESSION] Promise<ImageData> loadArtworkImage(DOMString url);
     [Conditional=MEDIA_SESSION] sequence<DOMString> platformSupportedCommands();
 
-    [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=ScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
+    [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=CurrentScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
     [Conditional=MEDIA_SESSION_COORDINATOR] undefined setMockMediaSessionCoordinatorCommandsShouldFail(boolean shouldFail);
 
     DOMString treeOrder(Node a, Node b, optional TreeType tree = "Tree");

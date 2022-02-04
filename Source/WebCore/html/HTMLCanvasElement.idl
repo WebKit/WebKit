@@ -45,7 +45,7 @@ typedef (
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long width;
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long height;
 
-    [CallWith=GlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
+    [CallWith=CurrentGlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
 
     DOMString toDataURL(optional DOMString type, optional any quality);
     undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);

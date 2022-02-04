@@ -38,10 +38,10 @@
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window,
 ] interface Notification : EventTarget {
-    [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
+    [CallWith=CurrentDocument] constructor(DOMString title, optional NotificationOptions options);
 
-    [CallWith=Document] static readonly attribute NotificationPermission permission;
-    [CallWith=Document] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);
+    [CallWith=CurrentDocument] static readonly attribute NotificationPermission permission;
+    [CallWith=CurrentDocument] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);
 
     // static readonly attribute unsigned long maxActions;
 

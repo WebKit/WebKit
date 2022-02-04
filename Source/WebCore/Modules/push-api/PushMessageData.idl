@@ -29,7 +29,7 @@
     Exposed=ServiceWorker,
 ] interface PushMessageData {
     ArrayBuffer arrayBuffer();
-    [CallWith=ScriptExecutionContext] Blob blob();
-    [CallWith=GlobalObject] any json();
+    [CallWith=CurrentScriptExecutionContext] Blob blob();
+    [CallWith=CurrentGlobalObject] any json();
     USVString text();
 };

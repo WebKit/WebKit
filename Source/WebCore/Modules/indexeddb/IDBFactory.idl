@@ -32,7 +32,7 @@
     
     [CallWith=RelevantScriptExecutionContext] Promise<sequence<IDBDatabaseInfo>> databases();
     
-    [CallWith=GlobalObject] short cmp(any first, any second);
+    [CallWith=CurrentGlobalObject] short cmp(any first, any second);
 };
 
 [

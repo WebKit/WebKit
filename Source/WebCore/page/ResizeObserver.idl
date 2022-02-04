@@ -31,7 +31,7 @@
     JSCustomMarkFunction,
     CustomIsReachable,
 ] interface ResizeObserver {
-    [CallWith=Document] constructor(ResizeObserverCallback callback);
+    [CallWith=CurrentDocument] constructor(ResizeObserverCallback callback);
 
     undefined observe(Element target, optional ResizeObserverOptions options);
     undefined unobserve(Element target);

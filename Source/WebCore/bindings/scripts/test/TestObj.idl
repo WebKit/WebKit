@@ -49,7 +49,7 @@ enum TestConfidence { "high", "kinda-low" };
     InterfaceName=TestObject,
     Exposed=(Window,Worker)
 ] interface TestObj {
-    [CallWith=Document] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
+    [CallWith=CurrentDocument] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
 
     // Attributes
     readonly attribute long            readOnlyLongAttr;
@@ -58,7 +58,7 @@ enum TestConfidence { "high", "kinda-low" };
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
-    [CallWith=Document] static readonly attribute TestObj testStaticReadonlyObj;
+    [CallWith=CurrentDocument] static readonly attribute TestObj testStaticReadonlyObj;
     attribute TestEnumType enumAttr;
     attribute byte byteAttr;
     attribute octet octetAttr;
@@ -189,20 +189,20 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
     // 'CallWith' extended attribute
-    [CallWith=GlobalObject] undefined withGlobalObjectVoid();
+    [CallWith=CurrentGlobalObject] undefined withCurrentGlobalObjectVoid();
     [CallWith=RelevantGlobalObject] undefined withRelevantGlobalObjectVoid();
-    [CallWith=GlobalObject] TestObj withGlobalObjectObj();
-    [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
+    [CallWith=CurrentGlobalObject] TestObj withCurrentGlobalObjectObj();
+    [CallWith=CurrentScriptExecutionContext] undefined withCurrentScriptExecutionContext();
     [CallWith=RelevantScriptExecutionContext] undefined withRelevantScriptExecutionContext();
-    [CallWith=ScriptExecutionContext&GlobalObject] undefined withScriptExecutionContextAndGlobalObject();
-    [CallWith=  ScriptExecutionContext  &  GlobalObject  ] TestObj withScriptExecutionContextAndGlobalObjectWithSpaces();
-    [CallWith=Document] undefined withDocumentArgument();
+    [CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] undefined withCurrentScriptExecutionContextAndGlobalObject();
+    [CallWith=  CurrentScriptExecutionContext  &  CurrentGlobalObject  ] TestObj withCurrentScriptExecutionContextAndGlobalObjectWithSpaces();
+    [CallWith=CurrentDocument] undefined withCurrentDocumentArgument();
     [CallWith=RelevantDocument] undefined withRelevantDocumentArgument();
     [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
     [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
 
-    [CallWith=GlobalObject] attribute long withGlobalObjectAttribute;
-    [CallWith=GlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
+    [CallWith=CurrentGlobalObject] attribute long withCurrentGlobalObjectAttribute;
+    [CallWith=CurrentGlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [SetterCallWith=IncumbentWindow&FirstWindow] attribute DOMString withSetterCallWithAttribute;
 
     // Optional parameters.

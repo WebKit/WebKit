@@ -33,5 +33,5 @@
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     ImplementedBy=NavigatorEME
 ] partial interface Navigator {
-    [CallWith=Document] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfiguration);
+    [CallWith=CurrentDocument] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfiguration);
 };

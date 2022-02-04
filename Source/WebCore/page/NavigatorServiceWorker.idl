@@ -28,5 +28,5 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorkerEnabled
 ] interface mixin NavigatorServiceWorker {
-    [CallWith=ScriptExecutionContext, SecureContext, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
+    [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
 };

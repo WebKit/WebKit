@@ -35,7 +35,7 @@
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface TestInterface {
-    [CallWith=ScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");
+    [CallWith=CurrentScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");
 
     iterable<TestNode, TestObj>;
 };

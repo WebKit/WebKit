@@ -32,7 +32,7 @@ typedef (double or AutoKeyword) LineAndPositionSetting;
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface VTTCue : TextTrackCue {
-    [CallWith=Document] constructor(double startTime, double endTime, DOMString text);
+    [CallWith=CurrentDocument] constructor(double startTime, double endTime, DOMString text);
 
     attribute DOMString vertical;
     attribute boolean snapToLines;
