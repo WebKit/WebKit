@@ -205,7 +205,6 @@ private:
     WebPageProxy* m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;

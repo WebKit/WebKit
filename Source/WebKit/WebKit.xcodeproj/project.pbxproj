@@ -864,7 +864,6 @@
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4459984122833E6000E61373 /* SyntheticEditingCommandType.h */; };
-		446DC64C24A2D8E50061F390 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */; };
 		4476EF0925BFC8B7004A0587 /* _WKAppHighlightDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4476EF0825BFC8B7004A0587 /* _WKAppHighlightDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4482734724528F6000A95493 /* CocoaImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4482734624528F6000A95493 /* CocoaImage.h */; };
 		448AC24E267135A700B28921 /* SynapseSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 448AC24D267135A600B28921 /* SynapseSPI.h */; };
@@ -2024,6 +2023,7 @@
 		F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */; };
 		F4975CF22624B80A003C626E /* WKQuickLookPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4975CF12624B80A003C626E /* WKQuickLookPreviewController.h */; };
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
+		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
 		F4CF1E9D25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */; };
 		F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */; };
@@ -4199,7 +4199,6 @@
 		41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerDownloadTask.messages.in; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
-		446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		4476EF0825BFC8B7004A0587 /* _WKAppHighlightDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAppHighlightDelegate.h; sourceTree = "<group>"; };
 		4482734624528F6000A95493 /* CocoaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaImage.h; sourceTree = "<group>"; };
 		448AC24D267135A600B28921 /* SynapseSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynapseSPI.h; sourceTree = "<group>"; };
@@ -6504,6 +6503,7 @@
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
 		F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageAnalysisGestureRecognizer.h; path = ios/WKImageAnalysisGestureRecognizer.h; sourceTree = "<group>"; };
 		F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageAnalysisGestureRecognizer.mm; path = ios/WKImageAnalysisGestureRecognizer.mm; sourceTree = "<group>"; };
+		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMediaSourcePolicy.h; sourceTree = "<group>"; };
 		F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureRecognizerConsistencyEnforcer.h; path = ios/GestureRecognizerConsistencyEnforcer.h; sourceTree = "<group>"; };
 		F4CF1E9C25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GestureRecognizerConsistencyEnforcer.mm; path = ios/GestureRecognizerConsistencyEnforcer.mm; sourceTree = "<group>"; };
@@ -9032,6 +9032,7 @@
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
+				F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */,
 				7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */,
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
@@ -10234,7 +10235,6 @@
 				C1A152D624E5A29A00978C8B /* HandleXPCEndpointMessages.mm */,
 				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,
 				C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */,
-				446DC64B24A2D8AD0061F390 /* PlaybackSessionContextIdentifier.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
@@ -13197,7 +13197,7 @@
 				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */,
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
-				446DC64C24A2D8E50061F390 /* PlaybackSessionContextIdentifier.h in Headers */,
+				F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */,
 				CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */,
 				CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */,
 				CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */,

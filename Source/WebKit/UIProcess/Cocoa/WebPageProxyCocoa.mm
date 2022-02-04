@@ -461,6 +461,40 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 }
 #endif
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::didChangePlaybackRate(PlaybackSessionContextIdentifier identifier)
+{
+    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+        updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::didChangeCurrentTime(PlaybackSessionContextIdentifier identifier)
+{
+    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+        updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::updateFullscreenVideoExtraction()
+{
+    if (m_currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*m_currentFullscreenVideoSessionIdentifier)) {
+        m_fullscreenVideoExtractionTimer.startOneShot(250_ms);
+        return;
+    }
+
+    m_fullscreenVideoExtractionTimer.stop();
+}
+
+void WebPageProxy::fullscreenVideoExtractionTimerFired()
+{
+    if (!m_currentFullscreenVideoSessionIdentifier)
+        return;
+
+    // FIXME: Add logic to perform video frame extraction.
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
 static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& fittingSize)

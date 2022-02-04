@@ -516,6 +516,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
 #endif
     , m_notificationManagerMessageHandler(*this)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    , m_fullscreenVideoExtractionTimer(RunLoop::main(), this, &WebPageProxy::fullscreenVideoExtractionTimerFired)
+#endif
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "constructor:");
 
@@ -5975,6 +5978,28 @@ void WebPageProxy::didExitFullscreen()
     m_uiClient->didExitFullscreen(this);
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    didEnterFullscreen();
+
+    m_currentFullscreenVideoSessionIdentifier = identifier;
+    updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
+{
+    didExitFullscreen();
+
+    if (m_currentFullscreenVideoSessionIdentifier == identifier) {
+        m_currentFullscreenVideoSessionIdentifier = std::nullopt;
+        updateFullscreenVideoExtraction();
+    }
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
 void WebPageProxy::closePage()
 {
     if (isClosed())
@@ -8100,6 +8125,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     }
 
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    m_fullscreenVideoExtractionTimer.stop();
+    m_currentFullscreenVideoSessionIdentifier = std::nullopt;
+#endif
 
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
     m_process->processTerminated();

@@ -812,7 +812,7 @@ void VideoFullscreenManagerProxy::didExitFullscreen(PlaybackSessionContextIdenti
         return;
     }
 #endif
-    m_page->didExitFullscreen();
+    m_page->didExitFullscreen(contextId);
     callCloseCompletionHandlers();
 }
 
@@ -828,7 +828,7 @@ void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdent
     if (ensureInterface(contextId).changingStandbyOnly())
         return;
 #endif
-    m_page->didEnterFullscreen();
+    m_page->didEnterFullscreen(contextId);
 }
 
 void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier contextId)

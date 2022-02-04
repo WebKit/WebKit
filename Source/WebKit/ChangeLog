@@ -1,3 +1,54 @@
+2022-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add plumbing to inform WebPageProxy when videos play, pause, seek, and enter or exit fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=236083
+
+        Reviewed by Eric Carlson.
+
+        Add several methods on WebPageProxy which are called from both VideoFullscreenManagerProxy as well as
+        PlaybackSessionManagerProxy; in future patches, these will be used to detect when a fullscreen video has been
+        paused for at least 250 ms, and call out to the page client to perform "video frame extraction".
+
+        No change in behavior (yet).
+
+        * Shared/Cocoa/PlaybackSessionContextIdentifier.h: Renamed from Source/WebKit/WebProcess/cocoa/PlaybackSessionContextIdentifier.h.
+
+        Move this from Source/WebKit/WebProcess/cocoa to Shared/Cocoa. This enum type is passed around in media code in
+        both the UI and web processes, so it should be in the Shared folder instead of the WebProcess folder.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::currentTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::isPaused const):
+
+        Add a helper method to return whether or not the session for a given PlaybackSessionContextIdentifier is paused
+        (that is, neither playing nor stalled).
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+
+        Drive-by fix: remove an unused member variable.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::didExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::didEnterFullscreen):
+
+        Add another version of these methods that includes the session context ID as an argument.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didChangePlaybackRate):
+        (WebKit::WebPageProxy::didChangeCurrentTime):
+        (WebKit::WebPageProxy::updateFullscreenVideoExtraction):
+        (WebKit::WebPageProxy::fullscreenVideoExtractionTimerFired):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_fullscreenVideoExtractionTimer):
+        (WebKit::WebPageProxy::didEnterFullscreen):
+        (WebKit::WebPageProxy::didExitFullscreen):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::m_notificationManagerMessageHandler): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-02-03  Sihui Liu  <sihui_liu@apple.com>
 
         Delay writing origin file in NetworkStorageManager

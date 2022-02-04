@@ -92,6 +92,7 @@ public:
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
 
 private:
+    friend class PlaybackSessionManagerProxy;
     friend class VideoFullscreenModelContext;
 
     PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
@@ -186,6 +187,8 @@ public:
 
     PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
+
+    bool isPaused(PlaybackSessionContextIdentifier) const;
 
     // For testing.
     bool wirelessVideoPlaybackDisabled();
