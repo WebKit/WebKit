@@ -1,3 +1,17 @@
+2022-02-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r289125.
+        https://bugs.webkit.org/show_bug.cgi?id=236145
+
+        Introduced sandbox violation
+
+        Reverted changeset:
+
+        "[iOS][WP] Block access to syscalls that are only used during
+        launch"
+        https://bugs.webkit.org/show_bug.cgi?id=236102
+        https://commits.webkit.org/r289125
+
 2022-02-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Block access to syscalls that are only used during launch
