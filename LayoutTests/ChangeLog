@@ -1,3 +1,9 @@
+2022-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop badly imported test due to WPT importer bug getting fixed in Bug 236101.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/filter-effects/idlharness.any.serviceworker-expected.txt: Removed.
+
 2022-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r288996.
