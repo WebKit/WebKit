@@ -1,3 +1,16 @@
+2022-02-04  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Extension points for the Flatpak Sparkle-CDM extension
+        https://bugs.webkit.org/show_bug.cgi?id=235490
+
+        Reviewed by Adrian Perez de Castro.
+
+        Allow Sparkle-CDM extension in Sdk/Platform runtimes. A follow-up patch will add support for
+        the extension installation.
+
+        * elements/flatpak/platform.bst:
+        * elements/flatpak/sdk.bst:
+
 2022-02-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Using thin archives with ld.bfd results in linker errors

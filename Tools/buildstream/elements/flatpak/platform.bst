@@ -77,3 +77,10 @@ config:
       add-ld-path: extra
       autodelete: 'false'
       version: '%{freedesktop-sdk-flatpak-branch}'
+
+    Extension org.freedesktop.Platform.sparkle-cdm:
+      directory: '%{lib}/sparkle-cdm'
+      autodelete: 'false'
+      no-autodownload: 'true'
+      add-ld-path: lib
+      version: '%{freedesktop-sdk-flatpak-branch}'
