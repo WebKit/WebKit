@@ -1,5 +1,18 @@
 2022-02-04  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS][WP] Block access to syscalls that are only used during launch
+        https://bugs.webkit.org/show_bug.cgi?id=236102
+        <rdar://problem/88454893>
+
+        Reviewed by Brent Fulgham.
+
+        On iOS, block access to 12 Unix syscalls and 4 Mach syscalls after the WebContent process has finished launching.
+        These syscalls are only used during launch.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2022-02-04  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS][WP] Add telemetry for syscalls used during launch
         https://bugs.webkit.org/show_bug.cgi?id=235865
         <rdar://problem/88228583>
