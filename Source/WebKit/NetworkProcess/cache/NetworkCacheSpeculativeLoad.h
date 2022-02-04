@@ -31,6 +31,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
 #include "PolicyDecision.h"
+#include "PrivateRelayed.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -78,6 +79,7 @@ private:
     WebCore::SharedBufferBuilder m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     bool m_didComplete { false };
+    PrivateRelayed m_privateRelayed { PrivateRelayed::No };
 };
 
 bool requestsHeadersMatch(const WebCore::ResourceRequest& speculativeValidationRequest, const WebCore::ResourceRequest& actualRequest);

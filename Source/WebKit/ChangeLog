@@ -1,3 +1,49 @@
+2022-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remember whether cached main resources used private relay when considering whether to call _setPrivacyProxyFailClosed
+        https://bugs.webkit.org/show_bug.cgi?id=236125
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::makeEntry):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord const):
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        (WebKit::NetworkCache::Entry::privateRelayed const):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/PrefetchCache.cpp:
+        (WebKit::PrefetchCache::Entry::Entry):
+        (WebKit::PrefetchCache::store):
+        * NetworkProcess/cache/PrefetchCache.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::setHadMainFrameMainResourcePrivateRelayed):
+        (WebKit::WebProcess::hadMainFrameMainResourcePrivateRelayed const):
+
 2022-02-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289069.

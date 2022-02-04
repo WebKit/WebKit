@@ -33,6 +33,7 @@
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadParameters.h"
+#include "PrivateRelayed.h"
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -263,6 +264,7 @@ private:
     WebCore::ResourceResponse m_redirectResponse;
     URL m_firstResponseURL; // First URL in response's URL list (https://fetch.spec.whatwg.org/#concept-response-url-list).
     std::optional<WebCore::CrossOriginOpenerPolicyEnforcementResult> m_currentCoopEnforcementResult;
+    PrivateRelayed m_privateRelayed { PrivateRelayed::No };
 };
 
 } // namespace WebKit

@@ -401,6 +401,9 @@ public:
 
     bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
 
+    void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
+    bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
+
 private:
     WebProcess();
     ~WebProcess();
@@ -774,6 +777,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
 #endif
+    bool m_hadMainFrameMainResourcePrivateRelayed { false };
 };
 
 } // namespace WebKit

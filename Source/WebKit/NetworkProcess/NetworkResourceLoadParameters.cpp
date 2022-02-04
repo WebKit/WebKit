@@ -137,7 +137,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 #endif
     
     encoder << isNavigatingToAppBoundDomain;
-    encoder << mainResourceWasPrivateRelayed;
+    encoder << hadMainFrameMainResourcePrivateRelayed;
 }
 
 std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
@@ -389,11 +389,11 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
         return std::nullopt;
     result.isNavigatingToAppBoundDomain = *isNavigatingToAppBoundDomain;
     
-    std::optional<bool> mainResourceWasPrivateRelayed;
-    decoder >> mainResourceWasPrivateRelayed;
-    if (!mainResourceWasPrivateRelayed)
+    std::optional<bool> hadMainFrameMainResourcePrivateRelayed;
+    decoder >> hadMainFrameMainResourcePrivateRelayed;
+    if (!hadMainFrameMainResourcePrivateRelayed)
         return std::nullopt;
-    result.mainResourceWasPrivateRelayed = *mainResourceWasPrivateRelayed;
+    result.hadMainFrameMainResourcePrivateRelayed = *hadMainFrameMainResourcePrivateRelayed;
 
     return result;
 }

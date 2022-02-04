@@ -156,7 +156,7 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, Pri
     Ref<WebResourceLoader> protectedThis(*this);
 
     if (privateRelayed == PrivateRelayed::Yes && mainFrameMainResource() == MainFrameMainResource::Yes)
-        m_coreLoader->documentLoader()->setMainResourceWasPrivateRelayed(privateRelayed == PrivateRelayed::Yes);
+        WebProcess::singleton().setHadMainFrameMainResourcePrivateRelayed();
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(m_coreLoader.get(), response)) {
         WEBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: not continuing load because the content is already cached");

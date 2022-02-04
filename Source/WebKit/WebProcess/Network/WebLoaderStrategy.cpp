@@ -272,15 +272,11 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
 static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters)
 {
     parameters.crossOriginAccessControlCheckEnabled = CrossOriginAccessControlCheckDisabler::singleton().crossOriginAccessControlCheckEnabled();
+    parameters.hadMainFrameMainResourcePrivateRelayed = WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed();
 
     if (!frame)
         return;
 
-    if (auto* mainFrameDocument = frame->mainFrame().document()) {
-        if (auto* mainDocumentLoader = mainFrameDocument->loader())
-            parameters.mainResourceWasPrivateRelayed = mainDocumentLoader->mainResourceWasPrivateRelayed();
-    }
-    
     if (auto* document = frame->document())
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
 
