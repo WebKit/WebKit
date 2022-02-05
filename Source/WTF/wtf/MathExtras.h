@@ -771,7 +771,7 @@ inline uint32_t reverseBits32(uint32_t value)
 }
 
 // FIXME: Replace with std::isnan() once std::isnan() is constexpr.
-template<typename T> typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaNConstExpr(T value)
+template<typename T> constexpr typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaNConstExpr(T value)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_isnan)
     return __builtin_isnan(value);
@@ -780,7 +780,7 @@ template<typename T> typename std::enable_if_t<std::is_floating_point_v<T>, bool
 #endif
 }
 
-template<typename T> typename std::enable_if_t<std::is_integral_v<T>, bool> isNaNConstExpr(T)
+template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, bool> isNaNConstExpr(T)
 {
     return false;
 }
