@@ -70,6 +70,8 @@ struct Styleable {
 
     RenderElement* renderer() const;
 
+    std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
+
     KeyframeEffectStack* keyframeEffectStack() const
     {
         return element.keyframeEffectStack(pseudoId);

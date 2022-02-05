@@ -387,26 +387,6 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
     return false;
 }
 
-std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)
-{
-    auto styleable = Styleable::fromRenderer(renderer);
-    if (!styleable)
-        return RenderStyle::clonePtr(renderer.style());
-
-    auto* effectStack = styleable->keyframeEffectStack();
-    if (!effectStack)
-        return RenderStyle::clonePtr(renderer.style());
-
-    std::unique_ptr<RenderStyle> result;
-    for (const auto& effect : effectStack->sortedEffects())
-        effect->getAnimatedStyle(result);
-
-    if (!result)
-        result = RenderStyle::clonePtr(renderer.style());
-
-    return result;
-}
-
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);

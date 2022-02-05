@@ -84,6 +84,7 @@
 #include "ShadowRoot.h"
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
+#include "Styleable.h"
 #include "TextAutoSizing.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -2394,8 +2395,8 @@ std::unique_ptr<RenderStyle> RenderElement::animatedStyle()
 {
     std::unique_ptr<RenderStyle> result;
 
-    if (auto* timeline = documentTimeline())
-        result = timeline->animatedStyleForRenderer(*this);
+    if (auto styleable = Styleable::fromRenderer(*this))
+        result = styleable->computeAnimatedStyle();
 
     if (!result)
         result = RenderStyle::clonePtr(style());

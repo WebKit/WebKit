@@ -113,6 +113,20 @@ RenderElement* Styleable::renderer() const
     return nullptr;
 }
 
+std::unique_ptr<RenderStyle> Styleable::computeAnimatedStyle() const
+{
+    std::unique_ptr<RenderStyle> animatedStyle;
+
+    auto* effectStack = keyframeEffectStack();
+    if (!effectStack)
+        return animatedStyle;
+
+    for (const auto& effect : effectStack->sortedEffects())
+        effect->getAnimatedStyle(animatedStyle);
+
+    return animatedStyle;
+}
+
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {
     ensureAnimations().add(&animation);
