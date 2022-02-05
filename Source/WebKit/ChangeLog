@@ -1,3 +1,28 @@
+2022-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Refactor RemoteLayerBackingStoreCollection to have a single backing store traversal function
+        https://bugs.webkit.org/show_bug.cgi?id=236040
+
+        Reviewed by Tim Horton.
+
+        Instead of traversing m_liveBackingStore and m_unparentedBackingStore in two places (from the volatilityTimerFired()
+        and from tryMarkAllBackingStoreVolatile()), factor into a single function with two behavior flags.
+
+        Also make VolatilityMarkingFlags an OptionSet<> and add an option to consider last display time.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::RemoteLayerBackingStore):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable):
+        (WebKit::RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::volatilityTimerFired):
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately): Deleted.
+
 2022-02-05  Brady Eidson  <beidson@apple.com>
 
         Notification refactoring

@@ -113,8 +113,8 @@ private:
     PlatformCALayerRemote* m_layer;
 
     WebCore::FloatSize m_size;
-    float m_scale;
-    bool m_isOpaque;
+    float m_scale { 1.0f };
+    bool m_isOpaque { false };
 
     WebCore::Region m_dirtyRegion;
 

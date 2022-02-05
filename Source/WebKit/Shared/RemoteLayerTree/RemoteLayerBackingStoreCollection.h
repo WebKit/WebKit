@@ -57,13 +57,13 @@ public:
     void scheduleVolatilityTimer();
 
 private:
-    enum VolatilityMarkingFlag {
-        MarkBuffersIgnoringReachability = 1 << 0
+    enum class VolatilityMarkingBehavior : uint8_t {
+        IgnoreReachability              = 1 << 0,
+        ConsiderTimeSinceLastDisplay    = 1 << 1,
     };
-    typedef unsigned VolatilityMarkingFlags;
-    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags = 0);
-    bool markBackingStoreVolatile(RemoteLayerBackingStore&, MonotonicTime now);
+    bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
 
+    bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
     void volatilityTimerFired();
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;

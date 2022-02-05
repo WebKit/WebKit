@@ -101,9 +101,20 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
-bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(RemoteLayerBackingStore& backingStore, VolatilityMarkingFlags volatilityMarkingFlags)
+bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
 {
     ASSERT(!m_inLayerFlush);
+
+    if (markingBehavior.contains(VolatilityMarkingBehavior::ConsiderTimeSinceLastDisplay)) {
+        auto timeSinceLastDisplay = now - backingStore.lastDisplayTime();
+        if (timeSinceLastDisplay < volatileBackingStoreAgeThreshold) {
+            if (timeSinceLastDisplay >= volatileSecondaryBackingStoreAgeThreshold)
+                backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+
+            return false;
+        }
+    }
+    
     bool successfullyMadeBackingStoreVolatile = true;
 
     if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true))
@@ -112,25 +123,12 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(Remo
     if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
         successfullyMadeBackingStoreVolatile = false;
 
-    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore) || (volatilityMarkingFlags & MarkBuffersIgnoringReachability)) {
+    if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore) || markingBehavior.contains(VolatilityMarkingBehavior::IgnoreReachability)) {
         if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, true))
             successfullyMadeBackingStoreVolatile = false;
     }
 
     return successfullyMadeBackingStoreVolatile;
-}
-
-bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, MonotonicTime now)
-{
-    auto timeSinceLastDisplay = now - backingStore.lastDisplayTime();
-    if (timeSinceLastDisplay < volatileBackingStoreAgeThreshold) {
-        if (timeSinceLastDisplay >= volatileSecondaryBackingStoreAgeThreshold)
-            backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
-
-        return false;
-    }
-    
-    return markBackingStoreVolatileImmediately(backingStore);
 }
 
 void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLayerBackingStore& backingStore)
@@ -146,33 +144,32 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
 
     // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
     // made it to the UI process yet. The volatility timer will finish marking the remaining buffers later.
-    markBackingStoreVolatileImmediately(backingStore);
+    markBackingStoreVolatile(backingStore);
+}
+
+bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior)
+{
+    bool successfullyMadeBackingStoreVolatile = true;
+    auto now = MonotonicTime::now();
+
+    for (const auto& backingStore : m_liveBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, liveBackingStoreMarkingBehavior, now);
+
+    for (const auto& backingStore : m_unparentedBackingStore)
+        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, unparentedBackingStoreMarkingBehavior, now);
+
+    return successfullyMadeBackingStoreVolatile;
 }
 
 void RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
-    bool successfullyMadeBackingStoreVolatile = true;
-
-    for (const auto& backingStore : m_liveBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore, MarkBuffersIgnoringReachability);
-
-    for (const auto& backingStore : m_unparentedBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore, MarkBuffersIgnoringReachability);
-
+    bool successfullyMadeBackingStoreVolatile = markAllBackingStoreVolatile(VolatilityMarkingBehavior::IgnoreReachability, VolatilityMarkingBehavior::IgnoreReachability);
     completionHandler(successfullyMadeBackingStoreVolatile);
 }
 
 void RemoteLayerBackingStoreCollection::volatilityTimerFired()
 {
-    bool successfullyMadeBackingStoreVolatile = true;
-
-    auto now = MonotonicTime::now();
-    for (const auto& backingStore : m_liveBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, now);
-
-    for (const auto& backingStore : m_unparentedBackingStore)
-        successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore);
-
+    bool successfullyMadeBackingStoreVolatile = markAllBackingStoreVolatile(VolatilityMarkingBehavior::ConsiderTimeSinceLastDisplay, { });
     if (successfullyMadeBackingStoreVolatile)
         m_volatilityTimer.stop();
 }

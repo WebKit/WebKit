@@ -57,7 +57,6 @@ namespace WebKit {
 
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
-    , m_isOpaque(false)
     , m_lastDisplayTime(-MonotonicTime::infinity())
 {
     if (!m_layer)
