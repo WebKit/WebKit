@@ -36,6 +36,7 @@
 #import "UIKitSPI.h"
 #import "UserInterfaceSwizzler.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
@@ -824,6 +825,29 @@ TEST(KeyboardInputTests, OverrideUndoManager)
     auto undoManager = adoptNS([[NSUndoManager alloc] init]);
     [webView setCustomUndoManager:undoManager.get()];
     EXPECT_EQ(contentView.undoManager, undoManager);
+}
+
+TEST(KeyboardInputTests, DoNotRegisterActionsInOverriddenUndoManager)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setUndoManagerAPIEnabled:YES];
+
+    auto webView = adoptNS([[CustomUndoManagerWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto contentView = [webView wkContentView];
+    EXPECT_FALSE([contentView.undoManagerForWebView canUndo]);
+
+    auto overrideUndoManager = adoptNS([[NSUndoManager alloc] init]);
+    [webView setCustomUndoManager:overrideUndoManager.get()];
+
+    __block bool doneWaiting = false;
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView evaluateJavaScript:@"document.undoManager.addItem(new UndoItem({ label: '', undo: () => debug(\"Performed undo.\"), redo: () => debug(\"Performed redo.\") }))" completionHandler:^(id, NSError *) {
+        doneWaiting = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneWaiting);
+    EXPECT_TRUE([contentView.undoManagerForWebView canUndo]);
+    EXPECT_FALSE([overrideUndoManager canUndo]);
 }
 
 static UIView * nilResizableSnapshotViewFromRect(id, SEL, CGRect, BOOL, UIEdgeInsets)
