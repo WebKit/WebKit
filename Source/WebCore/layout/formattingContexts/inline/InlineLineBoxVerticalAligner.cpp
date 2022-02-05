@@ -35,36 +35,45 @@ namespace WebCore {
 namespace Layout {
 
 LineBoxVerticalAligner::LineBoxVerticalAligner(const InlineFormattingContext& inlineFormattingContext)
-    : m_inlineFormattingGeometry(inlineFormattingContext)
+    : m_inlineFormattingContext(inlineFormattingContext)
+    , m_inlineFormattingGeometry(inlineFormattingContext)
 {
 }
 
-bool LineBoxVerticalAligner::canUseSimplifiedAlignmentForInlineLevelBox(const InlineLevelBox& rootInlineBox, const InlineLevelBox& inlineLevelBox, std::optional<const BoxGeometry> inlineLevelBoxGeometry)
+InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& lineBox) const
 {
-    if (inlineLevelBox.isAtomicInlineLevelBox()) {
-        ASSERT(inlineLevelBoxGeometry);
-        // Baseline aligned, non-stretchy direct children are considered to be simple for now.
-        auto& layoutBox = inlineLevelBox.layoutBox();
-        return &layoutBox.parent() == &rootInlineBox.layoutBox()
-            && inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline
-            && !inlineLevelBoxGeometry->marginBefore()
-            && !inlineLevelBoxGeometry->marginAfter()
-            && inlineLevelBoxGeometry->marginBoxHeight() <= rootInlineBox.baseline();
-    }
-    if (inlineLevelBox.isLineBreakBox()) {
-        // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
-        return inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.baseline() <= rootInlineBox.baseline();
-    }
-    if (inlineLevelBox.isInlineBox()) {
-        // Baseline aligned, non-stretchy inline boxes e.g. <div><span></span></div> but not <div><span style="font-size: 100px;"></span></div>.
-        return inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.layoutBounds() == rootInlineBox.layoutBounds();
-    }
-    return false;
-}
+    auto canUseSimplifiedAlignment = [&] {
+        if (!lineBox.hasContent())
+            return true;
+        auto& rootInlineBox = lineBox.rootInlineBox();
+        if (!layoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
+            return false;
 
-InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& lineBox, bool useSimplifiedAlignment) const
-{
-    if (useSimplifiedAlignment)
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            auto shouldUseSimplifiedAlignment = false;
+            if (inlineLevelBox.isAtomicInlineLevelBox()) {
+                // Baseline aligned, non-stretchy direct children are considered to be simple for now.
+                auto& layoutBox = inlineLevelBox.layoutBox();
+                if (&layoutBox.parent() != &rootInlineBox.layoutBox() || inlineLevelBox.verticalAlign().type != VerticalAlign::Baseline)
+                    shouldUseSimplifiedAlignment = false;
+                else {
+                    auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
+                    shouldUseSimplifiedAlignment = !inlineLevelBoxGeometry.marginBefore() && !inlineLevelBoxGeometry.marginAfter() && inlineLevelBoxGeometry.marginBoxHeight() <= rootInlineBox.baseline();
+                }
+            } else if (inlineLevelBox.isLineBreakBox()) {
+                // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
+                shouldUseSimplifiedAlignment = inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.baseline() <= rootInlineBox.baseline();
+            } else if (inlineLevelBox.isInlineBox()) {
+                // Baseline aligned, non-stretchy inline boxes e.g. <div><span></span></div> but not <div><span style="font-size: 100px;"></span></div>.
+                shouldUseSimplifiedAlignment = inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.layoutBounds() == rootInlineBox.layoutBounds();
+            }
+            if (!shouldUseSimplifiedAlignment)
+                return false;
+        }
+        return true;
+    };
+
+    if (canUseSimplifiedAlignment())
         return simplifiedVerticalAlignment(lineBox);
     // This function (partially) implements:
     // 2.2. Layout Within Line Boxes

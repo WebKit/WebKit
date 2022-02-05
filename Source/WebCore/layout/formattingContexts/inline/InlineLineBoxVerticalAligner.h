@@ -35,9 +35,7 @@ namespace Layout {
 class LineBoxVerticalAligner {
 public:
     LineBoxVerticalAligner(const InlineFormattingContext&);
-    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&, bool useSimplifiedAlignment) const;
-
-    static bool canUseSimplifiedAlignmentForInlineLevelBox(const InlineLevelBox& rootInlineBox, const InlineLevelBox&, std::optional<const BoxGeometry> nlineLevelBoxGeometry);
+    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&) const;
 
 private:
     InlineLayoutUnit simplifiedVerticalAlignment(LineBox&) const;
@@ -47,8 +45,11 @@ private:
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
+    const InlineFormattingContext& m_inlineFormattingContext;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
 };
 
