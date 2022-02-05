@@ -55,6 +55,11 @@ void pas_assertion_failed(const char* filename, int line, const char* function, 
 }
 #endif /* PAS_ENABLE_TESTING */
 
+void pas_panic_on_out_of_memory_error()
+{
+    __builtin_trap();
+}
+
 static void (*deallocation_did_fail_callback)(const char* reason, void* begin);
 
 PAS_NO_RETURN PAS_NEVER_INLINE void pas_deallocation_did_fail(const char *reason, uintptr_t begin)

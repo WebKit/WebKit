@@ -1,3 +1,19 @@
+2022-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] allocation failure crash should be PAS_NEVER_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=236164
+
+        Reviewed by Saam Barati.
+
+        We introduce pas_allocation_result_crash_on_error function which can leave OOM crash
+        information in the crash log. To keep this non-inlined, we annotate it PAS_NEVER_INLINE.
+
+        * libpas/src/libpas/pas_allocation_result.h:
+        (pas_allocation_result_crash_on_error):
+        * libpas/src/libpas/pas_utils.c:
+        (pas_panic_on_out_of_memory_error):
+        * libpas/src/libpas/pas_utils.h:
+
 2022-02-03  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix BSD compilation after r289056
