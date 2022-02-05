@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009, 2011, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012, 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,6 +45,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class Document;
+class NotificationClient;
 class NotificationPermissionCallback;
 
 struct NotificationData;
@@ -62,7 +63,7 @@ public:
         String tag;
         String icon;
     };
-    static Ref<Notification> create(Document&, const String& title, const Options&);
+    static Ref<Notification> create(ScriptExecutionContext&, const String& title, const Options&);
     
     WEBCORE_EXPORT virtual ~Notification();
 
@@ -85,7 +86,7 @@ public:
 
     WEBCORE_EXPORT void finalize();
 
-    static Permission permission(Document&);
+    static Permission permission(ScriptExecutionContext&);
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&, Ref<DeferredPromise>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -96,9 +97,9 @@ public:
     using ThreadSafeRefCounted::deref;
 
 private:
-    Notification(Document&, const String& title, const Options&);
+    Notification(ScriptExecutionContext&, const String& title, const Options&);
 
-    Document* document() const;
+    NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
 
     void showSoon();
@@ -124,6 +125,12 @@ private:
     enum State { Idle, Showing, Closed };
     State m_state { Idle };
     bool m_hasRelevantEventListener { false };
+
+    enum class NotificationSource : bool {
+        Document,
+        ServiceWorker,
+    };
+    NotificationSource m_notificationSource;
 };
 
 } // namespace WebCore

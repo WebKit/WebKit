@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009, 2011, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012, 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,12 +35,10 @@
 
 #include "Notification.h"
 
-#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "NotificationClient.h"
-#include "NotificationController.h"
 #include "NotificationData.h"
 #include "NotificationPermissionCallback.h"
 #include "WindowEventLoop.h"
@@ -52,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
-Ref<Notification> Notification::create(Document& context, const String& title, const Options& options)
+Ref<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Options& options)
 {
     auto notification = adoptRef(*new Notification(context, title, options));
     notification->suspendIfNeeded();
@@ -60,17 +58,24 @@ Ref<Notification> Notification::create(Document& context, const String& title, c
     return notification;
 }
 
-Notification::Notification(Document& document, const String& title, const Options& options)
-    : ActiveDOMObject(document)
-    , m_title(title)
+Notification::Notification(ScriptExecutionContext& context, const String& title, const Options& options)
+    : ActiveDOMObject(&context)
+    , m_title(title.isolatedCopy())
     , m_direction(options.dir)
-    , m_lang(options.lang)
-    , m_body(options.body)
-    , m_tag(options.tag)
+    , m_lang(options.lang.isolatedCopy())
+    , m_body(options.body.isolatedCopy())
+    , m_tag(options.tag.isolatedCopy())
     , m_state(Idle)
 {
+    if (context.isDocument())
+        m_notificationSource = NotificationSource::Document;
+    else if (context.isServiceWorkerGlobalScope())
+        m_notificationSource = NotificationSource::ServiceWorker;
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
     if (!options.icon.isEmpty()) {
-        auto iconURL = document.completeURL(options.icon);
+        auto iconURL = context.completeURL(options.icon);
         if (iconURL.isValid())
             m_icon = iconURL;
     }
@@ -92,17 +97,15 @@ void Notification::show()
     if (m_state != Idle)
         return;
 
-    auto* page = document()->page();
-    if (!page)
+    auto* client = clientFromContext();
+    if (!client)
         return;
 
-    auto& client = NotificationController::from(page)->client();
-
-    if (client.checkPermission(scriptExecutionContext()) != Permission::Granted) {
+    if (client->checkPermission(scriptExecutionContext()) != Permission::Granted) {
         dispatchErrorEvent();
         return;
     }
-    if (client.show(*this))
+    if (client->show(*this))
         m_state = Showing;
 }
 
@@ -112,8 +115,8 @@ void Notification::close()
     case Idle:
         break;
     case Showing: {
-        if (auto* page = document()->page())
-            NotificationController::from(page)->client().cancel(*this);
+        if (auto* client = clientFromContext())
+            client->cancel(*this);
         break;
     }
     case Closed:
@@ -121,9 +124,11 @@ void Notification::close()
     }
 }
 
-Document* Notification::document() const
+NotificationClient* Notification::clientFromContext()
 {
-    return downcast<Document>(scriptExecutionContext());
+    if (auto* context = scriptExecutionContext())
+        return context->notificationClient();
+    return nullptr;
 }
 
 const char* Notification::activeDOMObjectName() const
@@ -135,8 +140,8 @@ void Notification::stop()
 {
     ActiveDOMObject::stop();
 
-    if (auto* page = document()->page())
-        NotificationController::from(page)->client().notificationObjectDestroyed(*this);
+    if (auto* client = clientFromContext())
+        client->notificationObjectDestroyed(*this);
 }
 
 void Notification::suspend(ReasonForSuspension)
@@ -172,19 +177,22 @@ void Notification::dispatchCloseEvent()
 
 void Notification::dispatchErrorEvent()
 {
+    ASSERT(isMainThread());
+    ASSERT(m_notificationSource == NotificationSource::Document);
+
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-auto Notification::permission(Document& document) -> Permission
+auto Notification::permission(ScriptExecutionContext& context) -> Permission
 {
-    auto* page = document.page();
-    if (!page)
+    auto* client = context.notificationClient();
+    if (!client)
         return Permission::Default;
 
-    if (!document.isSecureContext())
+    if (!context.isSecureContext())
         return Permission::Denied;
 
-    return NotificationController::from(document.page())->client().checkPermission(&document);
+    return client->checkPermission(&context);
 }
 
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback, Ref<DeferredPromise>&& promise)
@@ -197,8 +205,8 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         });
     };
 
-    auto* page = document.page();
-    if (!page)
+    auto* client = static_cast<ScriptExecutionContext&>(document).notificationClient();
+    if (!client)
         return resolvePromiseAndCallback(Permission::Denied);
 
     if (!document.isSecureContext()) {
@@ -206,7 +214,7 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
-    NotificationController::from(page)->client().requestPermission(document, WTFMove(resolvePromiseAndCallback));
+    client->requestPermission(document, WTFMove(resolvePromiseAndCallback));
 }
 
 void Notification::eventListenersDidChange()
@@ -227,15 +235,19 @@ bool Notification::virtualHasPendingActivity() const
 
 NotificationData Notification::data() const
 {
+    auto sessionID = scriptExecutionContext()->sessionID();
+    RELEASE_ASSERT(sessionID);
+
     return {
-        m_title,
-        m_body,
-        m_icon.string(),
+        m_title.isolatedCopy(),
+        m_body.isolatedCopy(),
+        m_icon.string().isolatedCopy(),
         m_tag,
         m_lang,
         m_direction,
-        scriptExecutionContext()->securityOrigin()->toString(),
+        scriptExecutionContext()->securityOrigin()->toString().isolatedCopy(),
         identifier(),
+        *sessionID,
     };
 }
 

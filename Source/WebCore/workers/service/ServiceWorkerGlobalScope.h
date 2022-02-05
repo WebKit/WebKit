@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "NotificationClient.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
@@ -46,9 +47,11 @@ class ServiceWorkerThread;
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
 
     ~ServiceWorkerGlobalScope();
+
+    bool isServiceWorkerGlobalScope() const final { return true; }
 
     ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration& registration() { return m_registration.get(); }
@@ -79,11 +82,14 @@ public:
     WEBCORE_EXPORT Page* serviceWorkerPage();
     
 private:
-    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
     void notifyServiceWorkerPageOfCreationIfNecessary();
 
     Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
+
+    NotificationClient* notificationClient() final { return m_notificationClient.get(); }
+    std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
@@ -94,6 +100,8 @@ private:
 
     uint64_t m_lastRequestIdentifier { 0 };
     HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
+    PAL::SessionID m_sessionID;
+    std::unique_ptr<NotificationClient> m_notificationClient;
 };
 
 } // namespace WebCore

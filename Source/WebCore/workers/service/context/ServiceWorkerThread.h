@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "NotificationClient.h"
 #include "PushSubscriptionData.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
@@ -85,7 +86,7 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const Settings::Values&, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const Settings::Values&, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
 
     ASCIILiteral threadName() const final { return "WebCore: ServiceWorker"_s; }
     void finishedEvaluatingScript() final;
@@ -119,6 +120,7 @@ private:
     static constexpr Seconds heartBeatTimeoutForTest { 1_s };
     Seconds m_heartBeatTimeout { heartBeatTimeout };
     Timer m_heartBeatTimer;
+    std::unique_ptr<NotificationClient> m_notificationClient;
 };
 
 } // namespace WebCore

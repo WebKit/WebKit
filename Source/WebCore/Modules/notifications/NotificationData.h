@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <pal/SessionID.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,12 +46,13 @@ struct NotificationData {
     WebCore::NotificationDirection direction;
     String originString;
     UUID notificationID;
+    PAL::SessionID sourceSession;
 };
 
 template<class Encoder>
 void NotificationData::encode(Encoder& encoder) const
 {
-    encoder << title << body << iconURL << tag << language << direction << originString << notificationID;
+    encoder << title << body << iconURL << tag << language << direction << originString << notificationID << sourceSession;
 }
 
 template<class Decoder>
@@ -96,6 +98,11 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!notificationID)
         return std::nullopt;
 
+    std::optional<PAL::SessionID> sourceSession;
+    decoder >> sourceSession;
+    if (!sourceSession)
+        return std::nullopt;
+
     return { {
         WTFMove(*title),
         WTFMove(*body),
@@ -105,6 +112,7 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
         WTFMove(*direction),
         WTFMove(*originString),
         WTFMove(*notificationID),
+        WTFMove(*sourceSession),
     } };
 }
 

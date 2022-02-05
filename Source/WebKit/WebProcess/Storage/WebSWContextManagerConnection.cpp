@@ -45,6 +45,7 @@
 #include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
 #include "WebFrameLoaderClient.h"
+#include "WebNotificationClient.h"
 #include "WebPage.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
@@ -147,7 +148,13 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         page->settings().setStorageBlockingPolicy(static_cast<StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
     }
     page->setupForRemoteWorker(contextData.scriptURL, contextData.registration.key.topOrigin(), contextData.referrerPolicy);
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider());
+
+    std::unique_ptr<WebCore::NotificationClient> notificationClient;
+#if ENABLE(NOTIFICATIONS)
+    notificationClient = makeUnique<WebNotificationClient>(nullptr);
+#endif
+
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider(), WTFMove(notificationClient));
 
     if (lastNavigationWasAppInitiated)
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);

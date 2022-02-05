@@ -68,7 +68,6 @@ public:
     // Checks the current level of permission.
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
 
-protected:
     virtual ~NotificationClient() = default;
 };
 

@@ -1,3 +1,13 @@
+2022-02-05  Brady Eidson  <beidson@apple.com>
+
+        Notification refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=236169
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2022-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Don't use adattributiond on iOS

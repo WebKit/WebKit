@@ -160,6 +160,7 @@
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
+#include "NotificationController.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -9062,6 +9063,27 @@ void Document::whenVisible(Function<void()>&& callback)
         return;
     }
     callback();
+}
+
+NotificationClient* Document::notificationClient()
+{
+#if ENABLE(NOTIFICATIONS)
+    auto* page = this->page();
+    if (!page)
+        return nullptr;
+
+    return &NotificationController::from(page)->client();
+#else
+    return nullptr;
+#endif
+}
+
+std::optional<PAL::SessionID> Document::sessionID() const
+{
+    if (auto* page = this->page())
+        return page->sessionID();
+
+    return std::nullopt;
 }
 
 } // namespace WebCore

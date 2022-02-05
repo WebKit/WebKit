@@ -33,6 +33,7 @@
 #include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
+#include <pal/SessionID.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -73,6 +74,7 @@ public:
     FetchRequestCredentials credentials;
     Settings::Values settingsValues;
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
+    std::optional<PAL::SessionID> sessionID { std::nullopt };
 
     WorkerParameters isolatedCopy() const;
 };

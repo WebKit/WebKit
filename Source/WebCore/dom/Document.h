@@ -1796,6 +1796,9 @@ private:
     void addToDocumentsMap();
     void removeFromDocumentsMap();
 
+    NotificationClient* notificationClient() final;
+    std::optional<PAL::SessionID> sessionID() const final;
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;

@@ -76,7 +76,7 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues)
+static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, PAL::SessionID sessionID)
 {
     return {
         contextData.scriptURL,
@@ -92,12 +92,13 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         contextData.workerType,
         FetchRequestCredentials::Omit,
         settingsValues,
-        workerThreadMode
+        workerThreadMode,
+        sessionID
     };
 }
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID)
+    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues, sessionID), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
     , m_jobDataIdentifier(contextData.jobDataIdentifier)
     , m_contextData(crossThreadCopy(WTFMove(contextData)))
@@ -105,6 +106,7 @@ ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData,
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
     , m_heartBeatTimeout(settingsValues.shouldUseServiceWorkerShortTimeout ? heartBeatTimeoutForTest : heartBeatTimeout)
     , m_heartBeatTimer { *this, &ServiceWorkerThread::heartBeatTimerFired }
+    , m_notificationClient(WTFMove(notificationClient))
 {
     ASSERT(isMainThread());
     AtomString::init();
@@ -115,7 +117,8 @@ ServiceWorkerThread::~ServiceWorkerThread() = default;
 Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
     RELEASE_ASSERT(m_contextData);
-    return ServiceWorkerGlobalScope::create(*std::exchange(m_contextData, std::nullopt), *std::exchange(m_workerData, std::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    RELEASE_ASSERT(params.sessionID);
+    return ServiceWorkerGlobalScope::create(*std::exchange(m_contextData, std::nullopt), *std::exchange(m_workerData, std::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider(), WTFMove(m_notificationClient), *params.sessionID);
 }
 
 void ServiceWorkerThread::runEventLoop()

@@ -61,7 +61,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         workerType,
         credentials,
         settingsValues.isolatedCopy(),
-        workerThreadMode
+        workerThreadMode,
+        sessionID,
     };
 }
 

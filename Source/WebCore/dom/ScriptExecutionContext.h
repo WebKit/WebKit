@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
+#include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -68,6 +69,7 @@ class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
 class MessagePort;
+class NotificationClient;
 class PermissionController;
 class PublicURLManager;
 class RejectedPromiseTracker;
@@ -94,6 +96,7 @@ public:
 
     virtual bool isDocument() const { return false; }
     virtual bool isWorkerGlobalScope() const { return false; }
+    virtual bool isServiceWorkerGlobalScope() const { return false; }
     virtual bool isShadowRealmGlobalScope() const { return false; }
     virtual bool isWorkletGlobalScope() const { return false; }
 
@@ -111,6 +114,9 @@ public:
     virtual ReferrerPolicy referrerPolicy() const = 0;
 
     virtual const Settings::Values& settingsValues() const = 0;
+
+    virtual NotificationClient* notificationClient() { return nullptr; }
+    virtual std::optional<PAL::SessionID> sessionID() const { return std::nullopt; }
 
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;

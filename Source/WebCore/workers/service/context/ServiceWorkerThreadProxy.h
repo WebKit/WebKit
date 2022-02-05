@@ -91,7 +91,7 @@ public:
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 
