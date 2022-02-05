@@ -321,12 +321,12 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     element.cssAnimationsDidUpdate(pseudoId);
 }
 
-static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID property)
+static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID resolvedProperty, CSSPropertyID unresolvedProperty)
 {
     if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
         auto effects = keyframeEffectStack->sortedEffects();
         for (const auto& effect : makeReversedRange(effects)) {
-            if (effect->animatesProperty(property))
+            if (effect->animatesProperty(resolvedProperty) || (resolvedProperty != unresolvedProperty && effect->animatesProperty(unresolvedProperty)))
                 return effect.get();
         }
     }
@@ -348,7 +348,7 @@ static double transitionCombinedDuration(const Animation* transition)
     return std::max(0.0, transition->duration()) + transition->delay();
 }
 
-static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID property)
+static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID property, const RenderStyle& style)
 {
     if (transition.isPropertyFilled())
         return false;
@@ -357,7 +357,7 @@ static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID
     if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
         return false;
     if (mode == Animation::TransitionMode::SingleProperty) {
-        auto transitionProperty = transition.property().id;
+        auto transitionProperty = CSSProperty::resolveDirectionAwareProperty(transition.property().id, style.direction(), style.writingMode());
         if (transitionProperty != property) {
             for (auto longhand : shorthandForProperty(transitionProperty)) {
                 if (longhand == property)
@@ -396,7 +396,10 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
 
 static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
 {
-    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
+    auto unresolvedProperty = property;
+    property = CSSProperty::resolveDirectionAwareProperty(property, newStyle.direction(), newStyle.writingMode());
+
+    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property, unresolvedProperty);
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
@@ -411,7 +414,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     const Animation* matchingBackingAnimation = nullptr;
     if (auto* transitions = newStyle.transitions()) {
         for (auto& backingAnimation : *transitions) {
-            if (transitionMatchesProperty(backingAnimation.get(), property))
+            if (transitionMatchesProperty(backingAnimation.get(), property, newStyle))
                 matchingBackingAnimation = backingAnimation.ptr();
         }
     }

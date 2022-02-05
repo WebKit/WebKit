@@ -1,3 +1,16 @@
+2022-02-05  Antoine Quint  <graouts@webkit.org>
+
+        [CSS transition] can't use CSS logical properties in transition syntax
+        https://bugs.webkit.org/show_bug.cgi?id=232361
+        <rdar://problem/84958347>
+
+        Reviewed by Dean Jackson.
+
+        Mark some WPT progressions. The new FAIL result isn't a real regression, that test
+        simply passed by virtue of not ever starting a transition for a logical property.
+
+        * web-platform-tests/css/css-logical/animation-004-expected.txt:
+
 2022-02-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, land missing baseline for Shared Worker test.
