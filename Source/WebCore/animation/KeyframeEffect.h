@@ -135,8 +135,7 @@ public:
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool isRunningAccelerated() const { return m_runningAccelerated == RunningAccelerated::Yes; }
 
-    // FIXME: These ignore the fact that some timing functions can prevent acceleration.
-    bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
+    bool isAboutToRunAccelerated() const { return canBeAccelerated() && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
 
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
