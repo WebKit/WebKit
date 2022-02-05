@@ -43,7 +43,7 @@ public:
 
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     CompletionHandler(CallableType&& callable, CompletionHandlerCallThread callThread = CompletionHandlerCallThread::ConstructionThread)
-        : m_function(WTFMove(callable))
+        : m_function(std::forward<CallableType>(callable))
 #if ASSERT_ENABLED
         , m_shouldBeCalledOnMainThread(callThread == CompletionHandlerCallThread::MainThread || isMainThread())
 #endif
@@ -85,7 +85,7 @@ class CompletionHandlerWithFinalizer<Out(In...)> {
 public:
     template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
     CompletionHandlerWithFinalizer(CallableType&& callable, Function<void(Function<Out(In...)>&)>&& finalizer)
-        : m_function(WTFMove(callable))
+        : m_function(std::forward<CallableType>(callable))
         , m_finalizer(WTFMove(finalizer))
     {
     }

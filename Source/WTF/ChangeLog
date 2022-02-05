@@ -1,3 +1,16 @@
+2022-02-05  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings in CompletionHandler.h
+        <https://webkit.org/b/236181>
+        <rdar://problem/88529996>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+        (WTF::CompletionHandlerWithFinalizer<Out):
+        - Replace WTFMove() with std::forward<>().
+
 2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Thread suspend and resume should take a global lock to avoid deadlock
