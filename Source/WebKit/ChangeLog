@@ -1,3 +1,15 @@
+2022-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Don't use adattributiond on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236157
+
+        Reviewed by John Wilander.
+
+        It is still having configuration issues such as rdar://88334217
+
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+
 2022-02-04  Per Arne  <pvollan@apple.com>
 
         [AX] Stop creating sandbox extensions for preference services
