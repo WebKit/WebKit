@@ -90,7 +90,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
         configuration.numberOfChannels = GST_AUDIO_INFO_CHANNELS(&info);
     }
 
-#if GST_CHECK_VERSION(1, 19, 0)
+#if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     configuration.codec = codec.get();
 #endif
@@ -110,6 +110,9 @@ AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
 
 void AudioTrackPrivateGStreamer::disconnect()
 {
+    if (m_stream)
+        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
 }

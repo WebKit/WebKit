@@ -1,11 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.5.tar.xz
-  ref: a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e
-# Should be shipped in GStreamer 1.20. https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2125
-- kind: patch
-  path: patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.0.tar.xz
+  ref: 015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -62,9 +59,12 @@ variables:
     -Dflite=disabled
     -Dfluidsynth=disabled
     -Dgme=disabled
+    -Dgs=disabled
     -Dgsm=disabled
     -Diqa=disabled
+    -Disac=disabled
     -Dladspa=disabled
+    -Dldac=disabled
     -Dlibde265=disabled
     -Dlibmms=disabled
     -Dlv2=disabled
@@ -80,13 +80,16 @@ variables:
     -Dnvdec=disabled
     -Dnvenc=disabled
     -Dofa=disabled
+    -Donnx=disabled
     -Dopenal=disabled
+    -Dopenaptx=disabled
     -Dopencv=disabled
     -Dopenexr=disabled
     -Dopenh264=disabled
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled
+    -Dqroverlay=disabled
     -Dresindvd=disabled
     -Drsvg=disabled
     -Drtmp=disabled

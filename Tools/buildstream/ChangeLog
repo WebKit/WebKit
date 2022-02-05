@@ -1,3 +1,24 @@
+2022-02-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 21.08.10 and GStreamer 1.20 releases
+        https://bugs.webkit.org/show_bug.cgi?id=236136
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update from GStreamer 1.18.5 to 1.20.0, along with the FDO SDK 21.08.10 release, allowing us
+        to remove 3 vendored patches, all upstreamed.
+
+        * elements/freedesktop-sdk.bst:
+        * elements/sdk/gst-libav.bst:
+        * elements/sdk/gst-plugins-bad.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gst-plugins-ugly.bst:
+        * elements/sdk/gstreamer.bst:
+        * patches/0001-binutils-import-upstream-patches-for-thin-archive-su.patch: Removed.
+        * patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch: Removed.
+        * patches/gstreamer-0001-devicemonitor-Stop-only-the-already-started-provider.patch: Removed.
+
 2022-02-04  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Extension points for the Flatpak Sparkle-CDM extension

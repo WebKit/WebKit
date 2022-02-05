@@ -153,7 +153,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
         configuration.colorSpace = WTFMove(colorSpace);
     }
 
-#if GST_CHECK_VERSION(1, 19, 0)
+#if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     configuration.codec = codec.get();
 #endif
@@ -173,6 +173,9 @@ VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 
 void VideoTrackPrivateGStreamer::disconnect()
 {
+    if (m_stream)
+        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
 }

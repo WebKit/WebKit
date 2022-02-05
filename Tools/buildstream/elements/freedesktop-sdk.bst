@@ -3,9 +3,7 @@ sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   track: 'release/21.08'
-  ref: freedesktop-sdk-21.08.9-25-gfb49cd02a3869721e08be44e068979ce98da6da6
-- kind: patch
-  path: patches/0001-binutils-import-upstream-patches-for-thin-archive-su.patch
+  ref: freedesktop-sdk-21.08.10-21-g7f2b952d70b0cd71ef9156983947b1dc713a393f
 config:
   options:
     target_arch: '%{arch}'

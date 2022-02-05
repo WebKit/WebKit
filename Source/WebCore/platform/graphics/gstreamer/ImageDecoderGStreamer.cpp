@@ -261,7 +261,7 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
             static_cast<ImageDecoderGStreamer*>(userData)->notifySample(WTFMove(sample));
             return GST_FLOW_OK;
         },
-#if GST_CHECK_VERSION(1, 19, 1)
+#if GST_CHECK_VERSION(1, 20, 0)
         // new_event
         nullptr,
 #endif

@@ -311,7 +311,7 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink, false);
         },
-#if GST_CHECK_VERSION(1, 19, 0)
+#if GST_CHECK_VERSION(1, 20, 0)
         // new_event
         nullptr,
 #endif
