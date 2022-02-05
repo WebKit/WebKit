@@ -1,3 +1,35 @@
+2022-02-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Lay the groundwork for markLayersVolatileImmediatelyIfPossible() being an asynchronous operation
+        https://bugs.webkit.org/show_bug.cgi?id=236034
+
+        Reviewed by Tim Horton.
+
+        With DOM rendering in the GPU Process, markLayersVolatileImmediatelyIfPossible() will need
+        to do IPC to mark surfaces volatile, and we want that to be async IPC. So change the plumbing from
+        WebPage to RemoteLayerBackingStoreCollection to be callback-based, with a completion handler.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIfPossible): Deleted.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::tryMarkLayersVolatile):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::markLayersVolatileImmediatelyIfPossible): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::tryMarkLayersVolatile):
+        (WebKit::RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryMarkLayersVolatile):
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::markLayersVolatileOrRetry):
+        (WebKit::WebPage::tryMarkLayersVolatileCompletionHandler):
+        (WebKit::WebPage::markLayersVolatileImmediatelyIfPossible): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2022-02-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r280077): [GTK] It caused 155 new test failures

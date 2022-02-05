@@ -1589,11 +1589,13 @@ private:
 
     void updateDrawingAreaLayerTreeFreezeState();
 
-    bool markLayersVolatileImmediatelyIfPossible();
     enum class MarkLayersVolatileDontRetryReason : uint8_t { None, SuspendedUnderLock, TimedOut };
-    void markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason, Seconds timerInterval);
+    void markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason);
     void layerVolatilityTimerFired();
     void callVolatilityCompletionHandlers(bool succeeded);
+
+    void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
+    void tryMarkLayersVolatileCompletionHandler(MarkLayersVolatileDontRetryReason, bool didSucceed);
 
     String sourceForFrame(WebFrame*);
 
@@ -2289,6 +2291,7 @@ private:
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;
+    Seconds m_layerVolatilityTimerInterval;
     Vector<CompletionHandler<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
     bool m_isSuspendedUnderLock { false };
 

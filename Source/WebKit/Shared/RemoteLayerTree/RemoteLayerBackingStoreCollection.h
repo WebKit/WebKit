@@ -52,8 +52,7 @@ public:
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     void didFlushLayers();
 
-    void volatilityTimerFired();
-    bool markAllBackingStoreVolatileImmediatelyIfPossible();
+    void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
 
     void scheduleVolatilityTimer();
 
@@ -64,6 +63,8 @@ private:
     typedef unsigned VolatilityMarkingFlags;
     bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags = 0);
     bool markBackingStoreVolatile(RemoteLayerBackingStore&, MonotonicTime now);
+
+    void volatilityTimerFired();
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;

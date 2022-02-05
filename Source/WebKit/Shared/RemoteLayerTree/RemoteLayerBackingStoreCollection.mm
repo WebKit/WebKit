@@ -149,7 +149,7 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
     markBackingStoreVolatileImmediately(backingStore);
 }
 
-bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIfPossible()
+void RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
     bool successfullyMadeBackingStoreVolatile = true;
 
@@ -159,7 +159,7 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIf
     for (const auto& backingStore : m_unparentedBackingStore)
         successfullyMadeBackingStoreVolatile &= markBackingStoreVolatileImmediately(*backingStore, MarkBuffersIgnoringReachability);
 
-    return successfullyMadeBackingStoreVolatile;
+    completionHandler(successfullyMadeBackingStoreVolatile);
 }
 
 void RemoteLayerBackingStoreCollection::volatilityTimerFired()

@@ -123,7 +123,7 @@ public:
     virtual void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler) { completionHandler(); };
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
-    virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
+    virtual void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 
