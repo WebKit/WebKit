@@ -671,6 +671,20 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             multiColumnBuilder().restoreColumnSpannersForContainer(renderer, downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow));
             return;
         }
+
+        // Style change may have moved some subtree out of the fragmented flow. Their flow states have already been updated (see adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded)
+        // and here is where we take care of the remaining, spanner tree mutation.
+        WeakHashSet<RenderElement> spannerContainingBlockSet;
+        for (auto& descendant : descendantsOfType<RenderMultiColumnSpannerPlaceholder>(renderer)) {
+            if (auto* containingBlock = descendant.containingBlock(); containingBlock && containingBlock->enclosingFragmentedFlow() != enclosingFragmentedFlow)
+                spannerContainingBlockSet.add(*containingBlock);
+        }
+        auto oldEnclosingFragmentedFlow = WeakPtr { *enclosingFragmentedFlow };
+        for (auto& containingBlock : spannerContainingBlockSet) {
+            if (!oldEnclosingFragmentedFlow)
+                break;
+            multiColumnBuilder().restoreColumnSpannersForContainer(containingBlock, downcast<RenderMultiColumnFlow>(*oldEnclosingFragmentedFlow));
+        }
     }
 }
 

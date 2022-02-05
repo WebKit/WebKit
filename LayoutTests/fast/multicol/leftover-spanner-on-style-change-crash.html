@@ -1,0 +1,31 @@
+<style>
+  html {
+    columns: 1px;
+  }
+  div::before {
+    content: url();
+  }
+  frame {
+    column-span: all;
+  }
+  :first-child {
+    position: absolute;
+    rotate: 0deg;
+  }
+  :read-only {
+    translate: 0;
+  }
+</style>
+<!-- PASS if no crash or assert. -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  internals.settings.setTextAutosizingEnabled(true);
+  onload = () => {
+    let div0 = document.createElement('div');
+    document.body.appendChild(div0);
+    div0.appendChild(document.createElement('frame'));
+    document.body.offsetTop;
+    document.designMode = 'on';
+  };
+</script>

@@ -533,10 +533,7 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     auto oldStyle = m_style.replace(WTFMove(style));
     bool detachedFromParent = !parent();
 
-    // Make sure we invalidate the containing block cache for flows when the contianing block context changes
-    // so that styleDidChange can safely use RenderBlock::locateEnclosingFragmentedFlow()
-    if (oldStyle.position() != m_style.position())
-        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
+    adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(oldStyle, m_style);
 
     styleDidChange(diff, &oldStyle);
 
@@ -2215,9 +2212,20 @@ ImageOrientation RenderElement::imageOrientation() const
     return (imageElement && !imageElement->allowsOrientationOverride()) ? ImageOrientation(ImageOrientation::FromImage) : style().imageOrientation();
 }
 
-void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded()
+void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (fragmentedFlowState() == NotInsideFragmentedFlow)
+        return;
+
+    // Make sure we invalidate the containing block cache for flows when the contianing block context changes
+    // so that styleDidChange can safely use RenderBlock::locateEnclosingFragmentedFlow()
+    // FIXME: Share some code with RenderElement::canContain*.
+    auto mayNotBeContainingBlockForDescendantsAnymore = oldStyle.position() != m_style.position()
+        || oldStyle.hasTransformRelatedProperty() != m_style.hasTransformRelatedProperty()
+        || oldStyle.willChange() != newStyle.willChange()
+        || oldStyle.containsLayout() != newStyle.containsLayout()
+        || oldStyle.containsSize() != newStyle.containsSize();
+    if (!mayNotBeContainingBlockForDescendantsAnymore)
         return;
 
     // Invalidate the containing block caches.
