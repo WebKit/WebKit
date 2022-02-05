@@ -376,7 +376,7 @@ ScreenCaptureKitCaptureSource::SCContentStreamUpdateCallback ScreenCaptureKitCap
             return;
 
         if (!sampleBuffer) {
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), sampleBuffer = retainPtr(sampleBuffer)]() mutable {
+            RunLoop::main().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
                 if (weakThis)
                     RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::frameAvailableHandler: NULL sample buffer!");
             });
@@ -405,7 +405,7 @@ ScreenCaptureKitCaptureSource::SCContentStreamUpdateCallback ScreenCaptureKitCap
             return;
         }
 
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), sampleBuffer = retainPtr(sampleBuffer)]() mutable {
+        RunLoop::main().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
             if (!weakThis)
                 return;
 
