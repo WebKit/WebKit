@@ -42,6 +42,7 @@
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
@@ -486,7 +487,10 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
             if (float pathLength = downcast<SVGGeometryElement>(element)->pathLength()) {
                 if (is<LegacyRenderSVGShape>(renderer))
                     scaleFactor = downcast<LegacyRenderSVGShape>(renderer).getTotalLength() / pathLength;
-                // FIXME: [LBSE] Upstream RenderSVGShape
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+                else if (is<RenderSVGShape>(renderer))
+                    scaleFactor = downcast<RenderSVGShape>(renderer).getTotalLength() / pathLength;
+#endif
             }
         }
         
