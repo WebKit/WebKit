@@ -190,12 +190,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << contentSizeCategory;
 #endif
 
-#if PLATFORM(COCOA)
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    encoder << preferencesExtensionHandles;
-#endif
-#endif
-
 #if PLATFORM(GTK)
     encoder << useSystemAppearanceForScrollbars;
     encoder << gtkSettings;
@@ -534,16 +528,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
     if (!decoder.decode(parameters.contentSizeCategory))
         return false;
-#endif
-
-#if PLATFORM(COCOA)
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    std::optional<std::optional<Vector<SandboxExtension::Handle>>> preferencesExtensionHandles;
-    decoder >> preferencesExtensionHandles;
-    if (!preferencesExtensionHandles)
-        return false;
-    parameters.preferencesExtensionHandles = WTFMove(*preferencesExtensionHandles);
-#endif
 #endif
 
 #if PLATFORM(GTK)

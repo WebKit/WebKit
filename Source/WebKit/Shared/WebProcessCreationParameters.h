@@ -232,12 +232,6 @@ struct WebProcessCreationParameters {
     String contentSizeCategory;
 #endif
 
-#if PLATFORM(COCOA)
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    std::optional<Vector<SandboxExtension::Handle>> preferencesExtensionHandles;
-#endif
-#endif
-
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;

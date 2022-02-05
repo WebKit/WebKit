@@ -421,11 +421,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.contentSizeCategory = RenderThemeCocoa::singleton().contentSizeCategory();
 #endif
 
-#if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)
-    if (_AXSApplicationAccessibilityEnabled())
-        parameters.preferencesExtensionHandles = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, std::nullopt);
-#endif
-
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     if (!_MGCacheValid()) {
         if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, std::nullopt))
@@ -664,12 +659,6 @@ void WebProcessPool::registerNotificationObservers()
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
-#if ENABLE(CFPREFS_DIRECT_MODE)
-        if (![[NSApp accessibilityEnhancedUserInterfaceAttribute] boolValue])
-            return;
-        for (auto& process : m_processes)
-            process->unblockPreferenceServiceIfNeeded();
-#endif
     }];
 
     m_automaticTextReplacementNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticTextReplacementNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
@@ -726,12 +715,8 @@ void WebProcessPool::registerNotificationObservers()
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         if (!_AXSApplicationAccessibilityEnabled())
             return;
-        for (auto& process : m_processes) {
-#if ENABLE(CFPREFS_DIRECT_MODE)
-            process->unblockPreferenceServiceIfNeeded();
-#endif
+        for (auto& process : m_processes)
             process->unblockAccessibilityServerIfNeeded();
-        }
     }];
 #if ENABLE(CFPREFS_DIRECT_MODE)
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"UIApplicationDidBecomeActiveNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {

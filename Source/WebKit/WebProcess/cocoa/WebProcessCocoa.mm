@@ -439,13 +439,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
 #endif
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    if (parameters.preferencesExtensionHandles) {
-        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandles);
-        _CFPrefsSetDirectModeEnabled(false);
-    }
-#endif
-        
     WebCore::sleepDisablerClient() = makeUnique<WebSleepDisablerClient>();
 
 #if HAVE(FIG_PHOTO_DECOMPRESSION_SET_HARDWARE_CUTOFF) && !ENABLE(HARDWARE_JPEG)

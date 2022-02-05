@@ -1,3 +1,26 @@
+2022-02-04  Per Arne  <pvollan@apple.com>
+
+        [AX] Stop creating sandbox extensions for preference services
+        https://bugs.webkit.org/show_bug.cgi?id=232956
+        <rdar://problem/85260698>
+
+        Reviewed by Geoffrey Garen.
+
+        Stop creating sandbox extensions for preference services when AX is enabled. There have been many code changes
+        related to updating AX preferences in the WebContent process, which is why we think this is not needed anymore.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-02  Simon Fraser  <simon.fraser@apple.com>
 
         Lay the groundwork for markLayersVolatileImmediatelyIfPossible() being an asynchronous operation

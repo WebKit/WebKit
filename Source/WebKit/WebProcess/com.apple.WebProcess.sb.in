@@ -1766,8 +1766,6 @@
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
             "com.apple.webinspector"
-            "com.apple.cfprefsd.agent"
-            "com.apple.cfprefsd.daemon"
             "com.apple.coreservices.launchservicesd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"
