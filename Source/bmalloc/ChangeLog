@@ -1,5 +1,19 @@
 2022-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [libpas] Use os_unfair_lock instead of spinlock
+        https://bugs.webkit.org/show_bug.cgi?id=236158
+
+        Reviewed by Geoffrey Garen.
+
+        os_unfair_lock is very fast while it can properly suspend threads.
+        A/B test result was neutral on Speedometer2 and JetStream2. So, to
+        reduce unnecessary CPU spins, let's replace spinlock with os_unfair_lock
+        if it is supported (if OS is Darwin).
+
+        * libpas/src/libpas/pas_config.h:
+
+2022-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [libpas] allocation failure crash should be PAS_NEVER_INLINE
         https://bugs.webkit.org/show_bug.cgi?id=236164
 
