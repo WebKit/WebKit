@@ -40,6 +40,78 @@
 
 2022-02-03  Jon Lee  <jonlee@apple.com>
 
+        Add fuzzy match data to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=235685
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/compat/webkit-background-origin-text.html:
+        * web-platform-tests/compat/webkit-linear-gradient-line-bottom.html:
+        * web-platform-tests/compat/webkit-linear-gradient-line-left.html:
+        * web-platform-tests/compat/webkit-linear-gradient-line-right.html:
+        * web-platform-tests/compat/webkit-linear-gradient-line-top.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-10.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-1a.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-1b.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-1c.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-3.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-4.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-5.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-6.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-7.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-8.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-9.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht:
+        * web-platform-tests/css/css-backgrounds/background-rounded-image-clip.html:
+        * web-platform-tests/css/css-backgrounds/background-size-027.html:
+        * web-platform-tests/css/css-backgrounds/border-image-repeat-space-1.html:
+        * web-platform-tests/css/css-backgrounds/border-image-repeat-space-3.html:
+        * web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html:
+        * web-platform-tests/css/css-backgrounds/css-box-shadow-001.html:
+        * web-platform-tests/css/css-backgrounds/linear-gradient-currentcolor-first-line.html:
+        * web-platform-tests/css/css-flexbox/align-content-001.htm:
+        * web-platform-tests/css/css-flexbox/align-content-002.htm:
+        * web-platform-tests/css/css-flexbox/align-content-003.htm:
+        * web-platform-tests/css/css-flexbox/align-content-004.htm:
+        * web-platform-tests/css/css-flexbox/align-content-005.htm:
+        * web-platform-tests/css/css-flexbox/align-items-001.htm:
+        * web-platform-tests/css/css-flexbox/align-items-002.htm:
+        * web-platform-tests/css/css-flexbox/align-items-003.htm:
+        * web-platform-tests/css/css-flexbox/align-items-004.htm:
+        * web-platform-tests/css/css-flexbox/justify-content-001.htm:
+        * web-platform-tests/css/css-flexbox/justify-content-002.htm:
+        * web-platform-tests/css/css-flexbox/justify-content-004.htm:
+        * web-platform-tests/css/css-flexbox/justify-content-005.htm:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html:
+        * web-platform-tests/css/css-images/gradients-with-border.html:
+        * web-platform-tests/css/css-images/multiple-position-color-stop-linear.html:
+        * web-platform-tests/css/css-images/repeating-conic-gradient.html:
+        * web-platform-tests/css/css-images/tiled-radial-gradients.html:
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter.html:
+        * web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html:
+        * web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-001.html:
+        * web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-017.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-018.html:
+        * web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-001.html:
+        * web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-001.html:
+        * web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-003.html:
+        * web-platform-tests/css/css-transforms/transform-origin-013.html:
+        * web-platform-tests/css/css-values/angle-units-001.html:
+        * web-platform-tests/css/css-values/angle-units-002.html:
+        * web-platform-tests/css/css-values/angle-units-003.html:
+        * web-platform-tests/css/css-values/angle-units-004.html:
+        * web-platform-tests/css/css-values/angle-units-005.html:
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001.html:
+        * web-platform-tests/css/cssom-view/add-background-attachment-fixed-during-smooth-scroll.html:
+        * web-platform-tests/svg/extensibility/foreignObject/masked.html:
+
+2022-02-03  Jon Lee  <jonlee@apple.com>
+
         Pull selective WPT tests in preparation of https://bugs.webkit.org/show_bug.cgi?id=235685
 
         These remove the empty <meta name="flags">.
