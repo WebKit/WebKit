@@ -719,7 +719,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         return ((propertyToCompute == CSSPropertyFontSize) ? rootFontDescription->specifiedSize() : rootFontDescription->computedSize()) * value;
     case CSSUnitType::CSS_CHS:
         ASSERT(fontMetrics);
-        return fontMetrics->zeroWidth() * value;
+        ASSERT(fontDescription);
+        return fontMetrics->zeroWidth().value_or(fontDescription->computedSize() / 2) * value;
     case CSSUnitType::CSS_IC:
         ASSERT(fontMetrics);
         return fontMetrics->ideogramWidth() * value;
@@ -824,7 +825,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
         ASSERT(conversionData.style());
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->metricsOfPrimaryFont());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->metricsOfPrimaryFont(), &conversionData.style()->fontDescription());
         break;
 
     case CSSUnitType::CSS_PX:

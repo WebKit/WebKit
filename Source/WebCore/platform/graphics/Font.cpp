@@ -151,7 +151,8 @@ void Font::platformGlyphInit()
     Glyph zeroGlyph = { 0 };
     if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
         zeroGlyph = page->glyphDataForCharacter('0').glyph;
-    m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
+    if (zeroGlyph)
+        m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
 
     // Use the width of the CJK water ideogram (U+6C34) as the
     // approximated width of ideograms in the font, as mentioned in
