@@ -72,7 +72,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakRefDeref, (JSGlobalObject* globalObject, C
         return JSValue::encode(jsUndefined());
 
     auto* value = ref->deref(vm);
-    return value ? JSValue::encode(value) : JSValue::encode(jsNull());
+    return value ? JSValue::encode(value) : JSValue::encode(jsUndefined());
 }
 
 }

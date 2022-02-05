@@ -1,3 +1,19 @@
+2022-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WeakRef deref can return null instead of undefined
+        https://bugs.webkit.org/show_bug.cgi?id=235880
+
+        Reviewed by Sam Weinig and Alexey Shvayka.
+
+        * js/script-tests/weakref-async-is-collected.js:
+        (async test):
+        * js/script-tests/weakref-eventually-collects-values.js:
+        (let.weakRefs.async test):
+        * js/script-tests/weakref-finalizationregistry.js:
+        (async test):
+        * js/script-tests/weakref-microtasks-dont-collect.js:
+        (async test):
+
 2022-02-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ch unit fallback size doesn't match the spec

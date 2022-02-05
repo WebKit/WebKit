@@ -40,6 +40,6 @@ setTimeout(() => {
     // Check that cleanup callback was called in a follow up task
     setTimeout(() => {
         assertTrue(cleanup_called);
-        assertTrue(weak_refs.some((weak_ref) => weak_ref.deref() === null));
+        assertTrue(weak_refs.some((weak_ref) => weak_ref.deref() === undefined));
     }, 0);
 }, 0);

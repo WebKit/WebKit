@@ -45,7 +45,7 @@ async function test() {
     await turnEventLoop();
 
     assert(finalizerCalled === true);
-    assert(weakRefs.some((weakRef) => weakRef.deref() === null) === true);
+    assert(weakRefs.some((weakRef) => weakRef.deref() === undefined) === true);
 
     asyncTestPassed();
 }
