@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -117,6 +117,8 @@ public:
 
     enum class Type { None, Audio, Video, Screen, Window, SystemAudio };
     Type type() const { return m_type; }
+    bool hasVideo() const { return m_type == Type::Video || m_type == Type::Window || m_type == Type::Screen; }
+    bool hasAudio() const { return m_type == Type::Audio || m_type == Type::SystemAudio; }
 
     virtual void whenReady(CompletionHandler<void(String)>&&);
 
@@ -251,6 +253,8 @@ protected:
     void forEachObserver(const Function<void(Observer&)>&);
 
     void end(Observer* = nullptr);
+
+    void setType(Type);
 
 private:
     virtual void startProducingData() { }

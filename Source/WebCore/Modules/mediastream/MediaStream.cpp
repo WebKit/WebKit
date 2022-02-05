@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2012, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,12 +158,16 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
 
 MediaStreamTrackVector MediaStream::getAudioTracks() const
 {
-    return trackVectorForType(RealtimeMediaSource::Type::Audio);
+    return filteredTracks([] (auto& track) mutable {
+        return track.hasAudio();
+    });
 }
 
 MediaStreamTrackVector MediaStream::getVideoTracks() const
 {
-    return trackVectorForType(RealtimeMediaSource::Type::Video);
+    return filteredTracks([] (auto& track) mutable {
+        return track.hasVideo();
+    });
 }
 
 MediaStreamTrackVector MediaStream::getTracks() const
@@ -328,11 +332,11 @@ void MediaStream::updateActiveState()
     setIsActive(active);
 }
 
-MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type filterType) const
+MediaStreamTrackVector MediaStream::filteredTracks(const Function<bool(const MediaStreamTrack&)>& filter) const
 {
     MediaStreamTrackVector tracks;
     for (auto& track : m_trackSet.values()) {
-        if (track->source().type() == filterType)
+        if (filter(*track))
             tracks.append(track);
     }
 

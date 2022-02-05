@@ -59,6 +59,30 @@
 
 namespace WebCore {
 
+static RealtimeMediaSource::Type sourceTypeForDevice(CaptureDevice::DeviceType type)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Screen:
+        return RealtimeMediaSource::Type::Screen;
+    case CaptureDevice::DeviceType::Window:
+        return RealtimeMediaSource::Type::Window;
+    case CaptureDevice::DeviceType::SystemAudio:
+        return RealtimeMediaSource::Type::SystemAudio;
+    case CaptureDevice::DeviceType::Microphone:
+        return RealtimeMediaSource::Type::Audio;
+    case CaptureDevice::DeviceType::Camera:
+        return RealtimeMediaSource::Type::Video;
+    case CaptureDevice::DeviceType::Speaker:
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        return RealtimeMediaSource::Type::None;
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RealtimeMediaSource::Type::None;
+}
+
 CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
     switch (device.type()) {
@@ -106,7 +130,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
 }
 
 DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, String&& name, String&& deviceID, String&& hashSalt)
-    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
+    : RealtimeMediaSource(sourceTypeForDevice(capturer->deviceType()), WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt))
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
 {

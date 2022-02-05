@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     allCaptureTracks().add(this);
 
-    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+    if (m_private->hasAudio())
         PlatformMediaSessionManager::sharedManager().addAudioCaptureSource(*this);
 }
 
@@ -106,7 +106,7 @@ MediaStreamTrack::~MediaStreamTrack()
 
     allCaptureTracks().remove(this);
 
-    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+    if (m_private->hasAudio())
         PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 }
 
@@ -115,7 +115,7 @@ const AtomString& MediaStreamTrack::kind() const
     static MainThreadNeverDestroyed<const AtomString> audioKind("audio", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> videoKind("video", AtomString::ConstructFromLiteral);
 
-    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+    if (m_private->hasAudio())
         return audioKind;
     return videoKind;
 }
@@ -159,7 +159,7 @@ const AtomString& MediaStreamTrack::contentHint() const
 void MediaStreamTrack::setContentHint(const String& hintValue)
 {
     MediaStreamTrackPrivate::HintValue value;
-    if (m_private->type() == RealtimeMediaSource::Type::Audio) {
+    if (m_private->hasAudio()) {
         if (hintValue == "")
             value = MediaStreamTrackPrivate::HintValue::Empty;
         else if (hintValue == "speech")
@@ -578,7 +578,7 @@ void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
-    if (m_isCaptureTrack && m_private->type() == RealtimeMediaSource::Type::Audio)
+    if (m_isCaptureTrack && m_private->hasAudio())
         PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -681,7 +681,7 @@ Document* MediaStreamTrack::document() const
 
 bool MediaStreamTrack::isCapturingAudio() const
 {
-    ASSERT(isCaptureTrack() && m_private->type() == RealtimeMediaSource::Type::Audio);
+    ASSERT(isCaptureTrack() && m_private->hasAudio());
     return !ended() && !muted();
 }
 

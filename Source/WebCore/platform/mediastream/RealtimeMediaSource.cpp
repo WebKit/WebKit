@@ -1114,6 +1114,20 @@ String RealtimeMediaSource::deviceIDHashSalt() const
     return m_idHashSalt;
 }
 
+void RealtimeMediaSource::setType(Type type)
+{
+    if (type == m_type)
+        return;
+
+    m_type = type;
+
+    scheduleDeferredTask([this] {
+        forEachObserver([](auto& observer) {
+            observer.sourceSettingsChanged();
+        });
+    });
+}
+
 RealtimeMediaSource::Observer::~Observer()
 {
 }
@@ -1138,10 +1152,16 @@ String convertEnumerationToString(RealtimeMediaSource::Type enumerationValue)
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("Audio"),
         MAKE_STATIC_STRING_IMPL("Video"),
+        MAKE_STATIC_STRING_IMPL("Screen"),
+        MAKE_STATIC_STRING_IMPL("Window"),
+        MAKE_STATIC_STRING_IMPL("SystemAudio"),
     };
     static_assert(static_cast<size_t>(RealtimeMediaSource::Type::None) == 0, "RealtimeMediaSource::Type::None is not 0 as expected");
     static_assert(static_cast<size_t>(RealtimeMediaSource::Type::Audio) == 1, "RealtimeMediaSource::Type::Audio is not 1 as expected");
     static_assert(static_cast<size_t>(RealtimeMediaSource::Type::Video) == 2, "RealtimeMediaSource::Type::Video is not 2 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSource::Type::Screen) == 3, "RealtimeMediaSource::Type::Screen is not 3 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSource::Type::Window) == 4, "RealtimeMediaSource::Type::Window is not 4 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSource::Type::SystemAudio) == 5, "RealtimeMediaSource::Type::SystemAudio is not 5 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
