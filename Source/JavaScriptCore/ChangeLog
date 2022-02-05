@@ -1,3 +1,20 @@
+2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Thread suspend and resume should take a global lock to avoid deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=236159
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * heap/MachineStackMarker.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/VMTraps.cpp:
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
 2022-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WeakRef deref can return null instead of undefined

@@ -1,3 +1,13 @@
+2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Thread suspend and resume should take a global lock to avoid deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=236159
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (runThreadMessageTest):
+
 2022-02-04  Matt Gilligan  <matthew_gilligan@apple.com>
 
         Add test for the fix in https://bugs.webkit.org/show_bug.cgi?id=235928

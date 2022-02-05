@@ -78,8 +78,6 @@
 
 namespace WTF {
 
-static Lock globalSuspendLock;
-
 Thread::~Thread()
 {
 }
@@ -403,21 +401,9 @@ bool Thread::signal(int signalNumber)
     return !errNo; // A 0 errNo means success.
 }
 
-auto Thread::suspend() -> Expected<void, PlatformSuspendError>
+auto Thread::suspend(const ThreadSuspendLocker&) -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
-    // During suspend, suspend or resume should not be executed from the other threads.
-    // We use global lock instead of per thread lock.
-    // Consider the following case, there are threads A and B.
-    // And A attempt to suspend B and B attempt to suspend A.
-    // A and B send signals. And later, signals are delivered to A and B.
-    // In that case, both will be suspended.
-    //
-    // And it is important to use a global lock to suspend and resume. Let's consider using per-thread lock.
-    // Your issuing thread (A) attempts to suspend the target thread (B). Then, you will suspend the thread (C) additionally.
-    // This case frequently happens if you stop threads to perform stack scanning. But thread (B) may hold the lock of thread (C).
-    // In that case, dead lock happens. Using global lock here avoids this dead lock.
-    Locker locker { globalSuspendLock };
 #if OS(DARWIN)
     kern_return_t result = thread_suspend(m_platformThread);
     if (result != KERN_SUCCESS)
@@ -445,10 +431,8 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 #endif
 }
 
-void Thread::resume()
+void Thread::resume(const ThreadSuspendLocker&)
 {
-    // During resume, suspend or resume should not be executed from the other threads.
-    Locker locker { globalSuspendLock };
 #if OS(DARWIN)
     thread_resume(m_platformThread);
 #else
@@ -504,9 +488,8 @@ static ThreadStateMetadata threadStateMetadata()
 }
 #endif // OS(DARWIN)
 
-size_t Thread::getRegisters(PlatformRegisters& registers)
+size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& registers)
 {
-    Locker locker { globalSuspendLock };
 #if OS(DARWIN)
     auto metadata = threadStateMetadata();
     kern_return_t result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&registers, &metadata.userCount);

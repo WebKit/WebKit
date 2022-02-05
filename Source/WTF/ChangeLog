@@ -1,3 +1,35 @@
+2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Thread suspend and resume should take a global lock to avoid deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=236159
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces a global lock which should be taken while suspending and resuming a thread.
+        It is possible that two different threads suspend and resume threads. And if threads suspend
+        each other without critical section, it can cause a dead lock.
+
+        To avoid this problem, we introduce a global lock which should be taken when suspending and resuming
+        threads. Since libpas is also using thread suspension, we expose a global pas_thread_suspend_lock
+        when libpas is used, and we use this lock in WTF's Thread suspension code.
+
+        * wtf/ThreadMessage.cpp:
+        (WTF::sendMessageScoped):
+        * wtf/ThreadMessage.h:
+        (WTF::sendMessage):
+        * wtf/Threading.cpp:
+        (WTF::ThreadSuspendLocker::ThreadSuspendLocker):
+        (WTF::ThreadSuspendLocker::~ThreadSuspendLocker):
+        * wtf/Threading.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+
 2022-02-04  Sam Weinig  <weinig@apple.com>
 
         Make isNaNConstExpr actually constexpr

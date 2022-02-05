@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (c) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WasmMachineThreads.h"
+#include "pas_config.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if LIBPAS_ENABLED
 
-#include "MachineStackMarker.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadMessage.h>
+#include "pas_thread_suspend_lock.h"
 
-namespace JSC { namespace Wasm {
+PAS_DEFINE_LOCK(pas_thread_suspend);
 
-
-inline MachineThreads& wasmThreads()
-{
-    static LazyNeverDestroyed<MachineThreads> threads;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        threads.construct();
-    });
-
-    return threads;
-}
-
-void startTrackingCurrentThread()
-{
-    wasmThreads().addCurrentThread();
-}
-
-void resetInstructionCacheOnAllThreads()
-{
-    Locker locker { wasmThreads().getLock() };
-    ThreadSuspendLocker threadSuspendLocker;
-    for (auto& thread : wasmThreads().threads(locker)) {
-        sendMessage(threadSuspendLocker, thread.get(), [] (const PlatformRegisters&) {
-            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
-            WTF::crossModifyingCodeFence();
-        });
-    }
-}
-
-    
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+#endif /* LIBPAS_ENABLED */
