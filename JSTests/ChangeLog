@@ -1,3 +1,13 @@
+2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [Wasm] ref.null check should be done first in B3 call_ref
+        https://bugs.webkit.org/show_bug.cgi?id=236206
+
+        Reviewed by Mark Lam.
+
+        * wasm.yaml:
+        * wasm/function-references-spec-tests/call-null-ref.wast.js: Added.
+
 2022-02-06  Alexey Shvayka  <ashvayka@apple.com>
 
         Object literal doesn't properly resolve name clash between an accessor and a constant property

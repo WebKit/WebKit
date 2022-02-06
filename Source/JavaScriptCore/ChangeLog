@@ -1,3 +1,15 @@
+2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [Wasm] ref.null check should be done first in B3 call_ref
+        https://bugs.webkit.org/show_bug.cgi?id=236206
+
+        Reviewed by Mark Lam.
+
+        We should first check ref.null before loading data from the reference in B3 call_ref.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+
 2022-02-06  Cameron McCormack  <heycam@apple.com>
 
         Cache the most recent AtomString produced by JSString::toIdentifier

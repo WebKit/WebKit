@@ -143,6 +143,8 @@
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 - path: wasm/function-references-spec-tests/ref_null.wast.js
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
+- path: wasm/function-references-spec-tests/call-null-ref.wast.js
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
