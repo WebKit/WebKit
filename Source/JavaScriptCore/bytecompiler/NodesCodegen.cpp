@@ -661,7 +661,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     // Were there any get/set properties?
     if (p) {
         // Build a list of getter/setter pairs to try to put them at the same time. If we encounter
-        // a computed property or a spread, just emit everything as that may override previous values.
+        // a constant property by the same name as accessor or a computed property or a spread,
+        // just emit everything as that may override previous values.
         bool canOverrideProperties = false;
 
         GetterSetterMap instanceMap;
@@ -675,12 +676,17 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 break;
             }
 
-            if (node->m_type & PropertyNode::Constant)
+            GetterSetterMap& map = node->isStaticClassProperty() ? staticMap : instanceMap;
+            if (node->m_type & PropertyNode::Constant) {
+                if (map.contains(node->name()->impl())) {
+                    canOverrideProperties = true;
+                    break;
+                }
                 continue;
+            }
 
             // Duplicates are possible.
             GetterSetterPair pair(node, static_cast<PropertyNode*>(nullptr));
-            GetterSetterMap& map = node->isStaticClassProperty() ? staticMap : instanceMap;
             GetterSetterMap::AddResult result = map.add(node->name()->impl(), pair);
             auto& resultPair = result.iterator->value;
             if (!result.isNewEntry) {

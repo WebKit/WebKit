@@ -87,8 +87,8 @@ PASS class A { get a() { return 421 } a() { return 422 } }; (new A).a() is 422
 PASS setterValue = undefined; class A { a() { return 423 } set a(x) { setterValue = x } }; (new A).a = 424; setterValue is 424
 PASS setterValue = undefined; class A { set a(x) { setterValue = x } a() { return 425 } }; (new A).a() is 425
 PASS setterValue = undefined; class A { get foo() { return 426 } set foo(x) { setterValue = x; } }; a = new A; a.foo = a.foo; setterValue is 426
-PASS class A { get foo() { } foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo') is ['value']
-PASS class A { set foo(x) { } foo() { } get foo() { } }; valueTypes((new A).__proto__, 'foo') is ['value']
+PASS class A { get foo() { } foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
+PASS class A { set foo(x) { } foo() { } get foo() { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
 PASS class A { foo() { } get foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
 PASS class A { foo() { } set foo(x) { } get foo() { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
 PASS class A { get foo() { } set foo(x) { } foo() { } }; valueTypes((new A).__proto__, 'foo') is ['value']
@@ -108,8 +108,8 @@ PASS class A { static get a() { return 521 } static a() { return 522 } }; A.a() 
 PASS setterValue = undefined; class A { static a() { return 523 } static set a(x) { setterValue = x } }; A.a = 524; setterValue is 524
 PASS setterValue = undefined; class A { static set a(x) { setterValue = x } static a() { return 525 } }; A.a() is 525
 PASS setterValue = undefined; class A { static get foo() { return 526 } static set foo(x) { setterValue = x; } }; A.foo = A.foo; setterValue is 526
-PASS class A { static get foo() { } static foo() { } static set foo(x) { } }; valueTypes(A, 'foo') is ['value']
-PASS class A { static set foo(x) { } static foo() { } static get foo() { } }; valueTypes(A, 'foo') is ['value']
+PASS class A { static get foo() { } static foo() { } static set foo(x) { } }; valueTypes(A, 'foo') is ['get', 'set']
+PASS class A { static set foo(x) { } static foo() { } static get foo() { } }; valueTypes(A, 'foo') is ['get', 'set']
 PASS class A { static foo() { } static get foo() { } static set foo(x) { } }; valueTypes(A, 'foo') is ['get', 'set']
 PASS class A { static foo() { } static set foo(x) { } static get foo() { } }; valueTypes(A, 'foo') is ['get', 'set']
 PASS class A { static get foo() { } static set foo(x) { } static foo() { } }; valueTypes(A, 'foo') is ['value']

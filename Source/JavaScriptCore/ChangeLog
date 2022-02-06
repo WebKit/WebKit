@@ -1,3 +1,32 @@
+2022-02-06  Alexey Shvayka  <ashvayka@apple.com>
+
+        Object literal doesn't properly resolve name clash between an accessor and a constant property
+        https://bugs.webkit.org/show_bug.cgi?id=220574
+
+        Reviewed by Yusuke Suzuki.
+
+        The spec [1] calls [[DefineOwnProperty]] for every property node, whether it's a
+        getter, a setter, or a value. JSC attempts to reduce emitted bytecodes by setting
+        up a getter and a setter at once.
+
+        However, there is a slower path that exactly matches the spec, which was called only
+        if a spread syntax or a computed property was encountered. With this patch, the slower
+        path is also taken in case of a constant property (including a shorthand) with the
+        same name as an accessor.
+
+        That causes an incomplete accessor descriptor to correctly overwrite the existing
+        data one, which aligns JSC with V8 and SpiderMonkey.
+
+        This bug doesn't exist for static class fields and accessors because initialization
+        of class fields is deferred [2] and they always overwrite eponymous static methods /
+        accessors, no matter the order in source code. No reproduction for private elements either.
+
+        [1]: https://tc39.es/ecma262/#sec-runtime-semantics-methoddefinitionevaluation (step 11 of "get", step 10 of "set")
+        [2]: https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation (step 31.a)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+
 2022-02-05  Alexey Shvayka  <ashvayka@apple.com>
 
         Attempting to [[Set]] JSArray's read-only "length" should throw even with current [[Value]]
