@@ -1,3 +1,13 @@
+2022-01-19  Rob Buis  <rbuis@igalia.com>
+
+        Null check player in taintsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=234257
+
+        Reviewed by Youenn Fablet.
+
+        * fast/media/createImageBitmap-from-video-crash-expected.txt: Added.
+        * fast/media/createImageBitmap-from-video-crash.html: Added.
+
 2021-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Report the initiating url instead of the redirected one

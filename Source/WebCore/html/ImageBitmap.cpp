@@ -153,7 +153,7 @@ static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
     if (!video.hasSingleSecurityOrigin())
         return true;
 
-    if (video.player()->didPassCORSAccessCheck())
+    if (!video.player() || video.player()->didPassCORSAccessCheck())
         return false;
 
     auto url = video.currentSrc();

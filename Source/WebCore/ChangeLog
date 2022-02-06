@@ -1,3 +1,17 @@
+2022-01-19  Rob Buis  <rbuis@igalia.com>
+
+        Null check player in taintsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=234257
+
+        Reviewed by Youenn Fablet.
+
+        Null check player in taintsOrigin.
+
+        Test: fast/media/createImageBitmap-from-video-crash.html
+
+        * html/ImageBitmap.cpp:
+        (WebCore::taintsOrigin):
+
 2022-02-04  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Crash when starting DND on touchscreen
