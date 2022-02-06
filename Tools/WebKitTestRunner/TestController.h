@@ -47,6 +47,7 @@
 
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
+OBJC_CLASS UIPasteboardConsistencyEnforcer;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -431,6 +432,10 @@ private:
     void decidePolicyForGeolocationPermissionRequestIfPossible();
     void decidePolicyForUserMediaPermissionRequestIfPossible();
 
+#if PLATFORM(IOS_FAMILY)
+    UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
+#endif
+
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousMessageFromInjectedBundleWithListener(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
@@ -575,6 +580,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
+    RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
 #endif

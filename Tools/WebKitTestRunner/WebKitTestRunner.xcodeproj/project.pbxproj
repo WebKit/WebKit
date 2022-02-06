@@ -160,6 +160,8 @@
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
+		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
+		F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */; };
 		F44A531721B899E200DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
 		F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */; };
@@ -436,6 +438,8 @@
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
 		F4010B7C24DA204800A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
 		F4010B7D24DA204800A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
+		F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIPasteboardConsistencyEnforcer.h; sourceTree = "<group>"; };
+		F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIPasteboardConsistencyEnforcer.mm; sourceTree = "<group>"; };
 		F44A531321B899DA00DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = ../TestRunnerShared/cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClassMethodSwizzler.mm; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A531521B899DA00DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClassMethodSwizzler.h; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.h; sourceTree = "<group>"; };
@@ -744,6 +748,8 @@
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
+				F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */,
+				F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */,
 				2D0BEE1722EAD1360092B738 /* UIScriptControllerIOS.h */,
 				0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */,
 			);
@@ -991,6 +997,7 @@
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
 				2904FA1E265CC5D900A7EBC9 /* StringFunctionsCocoa.h in Headers */,
+				F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */,
 				2D058E0922E2EE2200E4C145 /* UIScriptControllerCocoa.h in Headers */,
 				2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */,
 			);
@@ -1222,6 +1229,7 @@
 				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
 				2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */,
 				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
+				F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

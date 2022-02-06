@@ -1,3 +1,41 @@
+2022-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust `platformResetStateToConsistentValues` to avoid grabbing the general pasteboard when possible
+        https://bugs.webkit.org/show_bug.cgi?id=236196
+
+        Reviewed by Darin Adler.
+
+        For reasons that are still unknown, when running layout tests in the iOS 15.4 simulator, the iOS simulator's
+        `pasted` sometimes gets into a state where the work queue (com.apple.pasteboard.PBPasteboardModel-work-queue)
+        gets permanently stuck while attempting to save pasteboard items.
+
+        Once in this state, all subsequent layout tests will time out (regardless of whether the tests themselves
+        exercise copy and paste), since the process of resetting the harness to a consistent state always tries to clear
+        the general pasteboard by setting `items` to an empty array. This means that every layout test that tries to
+        start after getting into the above state will hang during state reset, before it even gets a chance to load the
+        layout test.
+
+        To avoid this, only clear the general pasteboard if the test actually attempted to add data to the pasteboard.
+        While this doesn't fix a large number of editing and copy/paste-related layout tests on iOS 15.4, it does allow
+        us to skip these tests for now and continue running the remaining layout tests.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::pasteboardConsistencyEnforcer):
+        * WebKitTestRunner/ios/UIPasteboardConsistencyEnforcer.h: Added.
+
+        Add a helper class that listens for notifications whenever the contents of any pasteboard changes; if the name
+        of the changed pasteboard matches, we clear out its items when `-clearPasteboard` is invoked. It's critical to
+        pass only a pasteboard name here instead of a pasteboard itself, since even calling `+generalPasteboard` causes
+        the test to hang.
+
+        * WebKitTestRunner/ios/UIPasteboardConsistencyEnforcer.mm: Added.
+        (-[UIPasteboardConsistencyEnforcer initWithPasteboardName:]):
+        (-[UIPasteboardConsistencyEnforcer clearPasteboard]):
+        (-[UIPasteboardConsistencyEnforcer pasteboardChanged:]):
+
 2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Thread suspend and resume should take a global lock to avoid deadlock
