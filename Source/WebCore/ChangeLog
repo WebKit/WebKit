@@ -1,3 +1,23 @@
+2022-01-25  Alexey Shvayka  <ashvayka@apple.com>
+
+        XPath::Step::nodesInAxis(): add null checks after Attr::ownerElement() calls
+        https://bugs.webkit.org/show_bug.cgi?id=235500
+
+        Reviewed by Darin Adler.
+
+        This patch adds null checks for results of Attr::ownerElement() to avoid crashes
+        when evaluating XPath expressions with an orphaned Attr as the context node.
+
+        Inspired by the recent Blink fix [1], yet this change covers all null pointer
+        dereferencing sites, as proven by the updated test.
+
+        [1] https://bugs.chromium.org/p/chromium/issues/detail?id=1236967
+
+        Test: imported/w3c/web-platform-tests/domxpath/xpath-evaluate-crash.html
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis const):
+
 2022-01-23  Antoine Quint  <graouts@webkit.org>
 
         m_lastStyleChangeEventStyle null ptr deref for accelerated CSS Animation with no duration and an implicit keyframe
