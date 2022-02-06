@@ -294,7 +294,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     // Add all the animating properties to the keyframe.
     unsigned propertyCount = keyframe.properties().propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        CSSPropertyID property = keyframe.properties().propertyAt(i).id();
+        auto property = CSSProperty::resolveDirectionAwareProperty(keyframe.properties().propertyAt(i).id(), elementStyle.direction(), elementStyle.writingMode());
         // The animation-composition and animation-timing-function within keyframes are special
         // because they are not animated; they just describe the composite operation and timing
         // function between this keyframe and the next.
