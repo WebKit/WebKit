@@ -1,5 +1,13 @@
 2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up after r289172
+        https://bugs.webkit.org/show_bug.cgi?id=236180
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WTF] Make Bitmap constexpr friendly
         https://bugs.webkit.org/show_bug.cgi?id=236180
 
