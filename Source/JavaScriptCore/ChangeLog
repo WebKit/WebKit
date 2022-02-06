@@ -1,3 +1,15 @@
+2022-02-06  David Kilzer  <ddkilzer@apple.com>
+
+        [WASM] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings in WasmLLIntGenerator.cpp
+        <https://webkit.org/b/236202>
+        <rdar://problem/88545940>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::ControlType):
+        - Replace WTFMove() with std::forward<>().
+
 2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r289172

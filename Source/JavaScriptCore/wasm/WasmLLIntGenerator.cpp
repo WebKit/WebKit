@@ -164,7 +164,7 @@ public:
     private:
         template<typename T>
         ControlType(BlockSignature signature, unsigned stackSize, RefPtr<Label>&& continuation, T&& t)
-            : Base(WTFMove(t))
+            : Base(std::forward<T>(t))
             , m_signature(signature)
             , m_stackSize(stackSize)
             , m_continuation(WTFMove(continuation))
