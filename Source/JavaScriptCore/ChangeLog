@@ -1,3 +1,35 @@
+2022-02-05  Alexey Shvayka  <ashvayka@apple.com>
+
+        Attempting to [[Set]] JSArray's read-only "length" should throw even with current [[Value]]
+        https://bugs.webkit.org/show_bug.cgi?id=221177
+
+        Reviewed by Saam Barati.
+
+        As per OrdinarySet algorithm [1]. To achieve that, while ensuring no error is thrown
+        if read-only "length" isn't actually changed via [[DefineOwnProperty]] [2], this patch
+        moves `newLength == oldLength` check to JSArray::defineOwnProperty().
+
+        That is guaranteed to be correct because:
+          a) it's the only caller of setLengthWithArrayStorage() that performs [[DefineOwnProperty]],
+             while others implement [[Set]];
+          b) there can't possibly be array indices that JSArray::defineOwnProperty() has to remove,
+             and even the spec a shortcut here [3].
+
+        All code paths in pop() / shift() / push() / unshift() are covered by the newly added test,
+        as well as JSArray's [[DefineOwnProperty]], while slice() / splice() / etc were vetted to
+        [[Set]] "length" according to the spec.
+
+        Aligns JSC with SpiderMonkey and partly with V8, which is correct for Object.freeze()
+        but not for `Object.defineProperty(array, "length", { writable: false })`.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor (step 2.a)
+        [2]: https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor (step 5 and 7)
+        [3]: https://tc39.es/ecma262/#sec-arraysetlength (step 11)
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::setLengthWithArrayStorage):
+
 2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Thread suspend and resume should take a global lock to avoid deadlock

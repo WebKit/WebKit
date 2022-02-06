@@ -191,8 +191,11 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
         }
 
         // setLength() clears indices >= newLength and sets correct "length" value if [[Delete]] fails (step 17.b.i)
-        bool success = array->setLength(globalObject, newLength, throwException);
-        EXCEPTION_ASSERT(!scope.exception() || !success);
+        bool success = true;
+        if (newLength != array->length()) {
+            success = array->setLength(globalObject, newLength, throwException);
+            EXCEPTION_ASSERT(!scope.exception() || !success);
+        }
         if (descriptor.writablePresent())
             array->setLengthWritable(globalObject, descriptor.writable());
         return success;
@@ -415,8 +418,6 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length = storage->length();
-    if (newLength == length)
-        return true;
     
     // If the length is read only then we enter sparse mode, so should enter the following 'if'.
     ASSERT(isLengthWritable() || storage->m_sparseMap);
