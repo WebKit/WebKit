@@ -321,12 +321,12 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     element.cssAnimationsDidUpdate(pseudoId);
 }
 
-static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID resolvedProperty, CSSPropertyID unresolvedProperty)
+static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styleable, CSSPropertyID property)
 {
     if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
         auto effects = keyframeEffectStack->sortedEffects();
         for (const auto& effect : makeReversedRange(effects)) {
-            if (effect->animatesProperty(resolvedProperty) || (resolvedProperty != unresolvedProperty && effect->animatesProperty(unresolvedProperty)))
+            if (effect->animatesProperty(property))
                 return effect.get();
         }
     }
@@ -381,7 +381,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     for (const auto& animation : *transitions) {
         auto mode = animation->property().mode;
         if (mode == Animation::TransitionMode::SingleProperty) {
-            auto property = animation->property().id;
+            auto property = CSSProperty::resolveDirectionAwareProperty(animation->property().id, style.direction(), style.writingMode());
             if (isShorthandCSSProperty(property)) {
                 for (auto longhand : shorthandForProperty(property))
                     transitionProperties.add(longhand);
@@ -396,10 +396,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
 
 static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime)
 {
-    auto unresolvedProperty = property;
-    property = CSSProperty::resolveDirectionAwareProperty(property, newStyle.direction(), newStyle.writingMode());
-
-    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property, unresolvedProperty);
+    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
