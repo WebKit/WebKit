@@ -1,3 +1,15 @@
+2022-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/dom from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236147
+
+        Reviewed by Darin Adler.
+
+        Resync web-platform-tests/dom from upstream 893e71aa9c0a97d259ff.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-02-05  Alan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Clean up column spanners when style change affects containing block

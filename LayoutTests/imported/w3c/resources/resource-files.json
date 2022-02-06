@@ -1978,6 +1978,7 @@
         "web-platform-tests/dom/slot-recalc-ref.html",
         "web-platform-tests/dom/traversal/support/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context-subframe.html",
         "web-platform-tests/dom/traversal/support/TreeWalker-acceptNode-filter-cross-realm-subframe.html",
+        "web-platform-tests/dom/traversal/support/empty-document.html",
         "web-platform-tests/dom/traversal/unfinished/001.xml",
         "web-platform-tests/dom/traversal/unfinished/002.xml",
         "web-platform-tests/dom/traversal/unfinished/003.xml",

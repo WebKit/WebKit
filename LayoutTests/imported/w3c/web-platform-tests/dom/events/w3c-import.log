@@ -60,6 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-addEventListener.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-handleEvent-cross-realm.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-handleEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html
@@ -82,7 +83,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html

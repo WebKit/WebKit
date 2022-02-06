@@ -15,5 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/support/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context-subframe.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/support/TreeWalker-acceptNode-filter-cross-realm-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/support/assert-node.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/support/empty-document.html

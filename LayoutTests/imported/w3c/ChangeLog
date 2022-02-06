@@ -1,3 +1,55 @@
+2022-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/dom from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236147
+
+        Reviewed by Darin Adler.
+
+        Resync web-platform-tests/dom from upstream 893e71aa9c0a97d259ff.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/dom/eventPathRemoved-expected.txt: Added.
+        * web-platform-tests/dom/eventPathRemoved.html: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-once-expected.txt: Removed.
+        * web-platform-tests/dom/events/AddEventListenerOptions-passive-expected.txt: Removed.
+        * web-platform-tests/dom/events/Event-constructors-expected.txt: Removed.
+        * web-platform-tests/dom/events/EventTarget-add-remove-listener-expected.txt: Removed.
+        * web-platform-tests/dom/events/EventTarget-addEventListener-expected.txt: Removed.
+        * web-platform-tests/dom/events/EventTarget-removeEventListener-expected.txt: Removed.
+        * web-platform-tests/dom/events/ProgressEvent-expected.txt: Removed.
+        * web-platform-tests/dom/events/ProgressEvent.html: Removed.
+        * web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.tentative-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default-expected.txt.
+        * web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default-expected.txt: Removed.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any-expected.txt: Removed.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.worker-expected.txt: Removed.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.window-expected.txt: Added.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.window.html: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.html.
+        * web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.js.
+        * web-platform-tests/dom/events/focus-event-document-move-expected.txt: Removed.
+        * web-platform-tests/dom/events/resources/w3c-import.log:
+        * web-platform-tests/dom/events/scrolling/overscroll-deltas-expected.txt: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/dom/idlharness-shadowrealm.window.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.worker.html.
+        * web-platform-tests/dom/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/dom/idlharness.any.serviceworker-expected.txt:
+        * web-platform-tests/dom/idlharness.any.sharedworker-expected.txt: Added.
+        * web-platform-tests/dom/idlharness.any.sharedworker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.any.html.
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Node-cloneNode-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Node-insertBefore-expected.txt:
+        * web-platform-tests/dom/nodes/Node-insertBefore.html:
+        * web-platform-tests/dom/nodes/getElementsByClassNameFrame-expected.txt: Removed.
+        * web-platform-tests/dom/ranges/Range-mutations-expected.txt: Removed.
+        * web-platform-tests/dom/ranges/Range-mutations.html: Removed.
+        * web-platform-tests/dom/ranges/Range-test-iframe-expected.txt: Removed.
+        * web-platform-tests/dom/traversal/support/w3c-import.log:
+        * web-platform-tests/dom/w3c-import.log:
+        * web-platform-tests/interfaces/dom.idl:
+
 2022-02-05  Antoine Quint  <graouts@webkit.org>
 
         [CSS transition] can't use CSS logical properties in transition syntax

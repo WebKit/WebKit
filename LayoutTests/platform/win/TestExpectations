@@ -242,6 +242,7 @@ imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-default-fallback.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-script-fallback.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/worker-src/shared-worker-src-self-fallback.sub.html [ Skip ]
+imported/w3c/web-platform-tests/dom/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/eventsource/shared-worker [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/cors/data-url-shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/offline/no-appcache-in-shared-workers-historical.https.html [ Skip ]

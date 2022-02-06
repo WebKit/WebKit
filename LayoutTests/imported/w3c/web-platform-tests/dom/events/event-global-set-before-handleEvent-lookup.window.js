@@ -7,7 +7,7 @@ test(() => {
   let currentEvent;
   eventTarget.addEventListener("foo", {
     get handleEvent() {
-      currentEvent = self.event;
+      currentEvent = window.event;
       return () => {};
     }
   });
@@ -16,4 +16,4 @@ test(() => {
   eventTarget.dispatchEvent(event);
 
   assert_equals(currentEvent, event);
-}, "self.event is set before 'handleEvent' lookup");
+}, "window.event is set before 'handleEvent' lookup");

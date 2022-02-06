@@ -1,3 +1,0 @@
-
-PASS self.event is set before 'handleEvent' lookup
-
