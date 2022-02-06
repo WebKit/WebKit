@@ -586,6 +586,8 @@ public:
     NumericStrings numericStrings;
     std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
     Strong<JSString> lastCachedString;
+    Ref<StringImpl> lastAtomizedIdentifierStringImpl { *StringImpl::empty() };
+    Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }

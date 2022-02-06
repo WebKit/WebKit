@@ -1,3 +1,24 @@
+2022-02-06  Cameron McCormack  <heycam@apple.com>
+
+        Cache the most recent AtomString produced by JSString::toIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=236124
+
+        Reviewed by Yusuke Suzuki.
+
+        JSString::toIdentifier does not store the result of atomizing its string
+        value, except when it is a rope. We can often end up atomizing the same
+        JSString a number of times.
+
+        This patch caches the last atomized string produced from
+        JSString::toIdentifier in a given VM. From local testing, this is a 0.5%
+        Speedometer2 improvement on an M1 MacBook Air, although surprisingly is
+        neutral on a recent Intel MacBook Pro.
+
+        * runtime/JSString.h:
+        (JSC::JSRopeString::toIdentifier const):
+        (JSC::JSString::toIdentifier const):
+        * runtime/VM.h:
+
 2022-02-06  David Kilzer  <ddkilzer@apple.com>
 
         [WASM] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings in WasmLLIntGenerator.cpp
