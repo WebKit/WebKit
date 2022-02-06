@@ -1,3 +1,31 @@
+2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Make Bitmap constexpr friendly
+        https://bugs.webkit.org/show_bug.cgi?id=236180
+
+        Reviewed by Darin Adler.
+
+        Attach constexpr to constructor and methods if it is possible.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::set):
+        (WTF::WordType>::testAndSet):
+        (WTF::WordType>::testAndClear):
+        (WTF::WordType>::clear):
+        (WTF::WordType>::invert):
+        (WTF::WordType>::nextPossiblyUnset const):
+        (WTF::WordType>::isEmpty const):
+        (WTF::WordType>::isFull const):
+        (WTF::WordType>::merge):
+        (WTF::WordType>::filter):
+        (WTF::WordType>::exclude):
+        (WTF::WordType>::subsumes const):
+        (WTF::WordType>::mergeAndClear):
+        (WTF::WordType>::setAndClear):
+        (WTF::= const):
+        (WTF::=):
+        (WTF::WordType>::Bitmap): Deleted.
+
 2022-02-06  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Add internal-only flag to enable WIP display: contents support

@@ -52,7 +52,7 @@ const ASCIILiteral ObjectProtoCalledOnNullOrUndefinedError { "Object.prototype._
 const ASCIILiteral RestrictedPropertyAccessError { "'arguments', 'callee', and 'caller' cannot be accessed in this context."_s };
 
 template<unsigned charactersCount>
-static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount])
+static constexpr Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount])
 {
     static_assert(charactersCount > 0, "Since string literal is null terminated, characterCount is always larger than 0");
     Bitmap<256> bitmap;
@@ -544,7 +544,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseFloat, (JSGlobalObject* globalObject, Ca
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURI, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static const Bitmap<256> doNotUnescapeWhenDecodingURI = makeCharacterBitmap(
+    static constexpr auto doNotUnescapeWhenDecodingURI = makeCharacterBitmap(
         "#$&+,/:;=?@"
     );
 
@@ -553,13 +553,13 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURI, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncDecodeURIComponent, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static const Bitmap<256> emptyBitmap;
+    static constexpr auto emptyBitmap;
     return JSValue::encode(decode(globalObject, callFrame->argument(0), emptyBitmap, true));
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURI, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static const Bitmap<256> doNotEscapeWhenEncodingURI = makeCharacterBitmap(
+    static constexpr auto doNotEscapeWhenEncodingURI = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
@@ -570,7 +570,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURI, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURIComponent, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    static const Bitmap<256> doNotEscapeWhenEncodingURIComponent = makeCharacterBitmap(
+    static constexpr auto doNotEscapeWhenEncodingURIComponent = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
@@ -582,7 +582,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEncodeURIComponent, (JSGlobalObject* globalOb
 JSC_DEFINE_HOST_FUNCTION(globalFuncEscape, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(toStringView(globalObject, callFrame->argument(0), [&] (StringView view) -> JSString* {
-        static const Bitmap<256> doNotEscape = makeCharacterBitmap(
+        static constexpr auto doNotEscape = makeCharacterBitmap(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789"

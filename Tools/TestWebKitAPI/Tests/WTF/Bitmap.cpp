@@ -103,6 +103,15 @@ constexpr size_t expectedNumberOfSetBits2 = countBits(expectedBits2, size);
     Bitmap<smallSize, WordType> smallBitmapOnes; \
     Bitmap<smallSize, WordType> smallBitmap1; /* Will hold values specified in expectedSmallBits1. */ \
     Bitmap<smallSize, WordType> smallBitmap2; /* Will hold values specified in expectedSmallBits2. */ \
+    UNUSED_VARIABLE(bitmapZeroes); \
+    UNUSED_VARIABLE(bitmap1); \
+    UNUSED_VARIABLE(bitmap2); \
+    UNUSED_VARIABLE(bitmap2Clone); \
+    UNUSED_VARIABLE(bitmapOnes); \
+    UNUSED_VARIABLE(smallBitmapZeroes); \
+    UNUSED_VARIABLE(smallBitmapOnes); \
+    UNUSED_VARIABLE(smallBitmap1); \
+    UNUSED_VARIABLE(smallBitmap2);
 
 #define DECLARE_AND_INIT_BITMAPS_FOR_TEST() \
     DECLARE_BITMAPS_FOR_TEST() \

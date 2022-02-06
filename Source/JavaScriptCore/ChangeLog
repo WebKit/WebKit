@@ -1,3 +1,17 @@
+2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Make Bitmap constexpr friendly
+        https://bugs.webkit.org/show_bug.cgi?id=236180
+
+        Reviewed by Darin Adler.
+
+        This patch makes Bitmap more constexpr friendly so that JSGlobalObjectFunctions's
+        functions can compile Bitmap as constexpr, which avoids possible race condition.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::makeCharacterBitmap):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2022-02-06  Alexey Shvayka  <ashvayka@apple.com>
 
         Object literal doesn't properly resolve name clash between an accessor and a constant property
