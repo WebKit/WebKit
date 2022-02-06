@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSCast.h"
 #include "JSRunLoopTimer.h"
 #include "Strong.h"
 

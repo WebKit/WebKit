@@ -1,3 +1,9 @@
+2022-02-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        * runtime/DeferredWorkTimer.h: Add missing JSCast.h header inclusion.
+
 2021-12-23  Mark Lam  <mark.lam@apple.com>
 
         Make DeferredWorkTimer::addPendingWork() return a Ticket.
