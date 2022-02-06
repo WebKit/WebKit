@@ -241,7 +241,7 @@ bool InlineStyleSheetOwner::sheetLoaded(Element& element)
 
 void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
-    if (m_styleScope)
+    if (m_styleScope && !m_styleScope->hasPendingSheet(element))
         m_styleScope->addPendingSheet(element);
 }
 

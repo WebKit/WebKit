@@ -1,3 +1,23 @@
+2022-01-21  Antti Koivisto  <antti@apple.com>
+
+        WPT version of css/css-cascade/parsing/layer-import-parsing.html crashes with nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=235434
+        rdar://87832940
+
+        Reviewed by Alan Bujtas.
+
+        Test: fast/css/insert-import-rule-crash.html
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+
+        Null check the parent stylesheet. It can be null if the rule has been removed.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::startLoadingDynamicSheet):
+
+        Also fix a debug assert in addPendingSheet, this can get called multiple times.
+
 2022-01-19  Rob Buis  <rbuis@igalia.com>
 
         Null check player in taintsOrigin
