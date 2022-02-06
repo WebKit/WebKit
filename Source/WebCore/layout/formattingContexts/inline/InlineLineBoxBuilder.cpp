@@ -114,7 +114,7 @@ LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineCo
     return { lineBox, lineBoxLogicalHeight };
 }
 
-void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const
+void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const
 {
     ASSERT(!fallbackFontsForContent.isEmpty());
     ASSERT(inlineBox.isInlineBox());
@@ -149,66 +149,48 @@ void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineL
     inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
 }
 
-struct HeightAndLayoutBounds {
+struct LayoutBoundsMetrics {
     InlineLayoutUnit ascent { 0 };
     InlineLayoutUnit descent { 0 };
-    InlineLevelBox::LayoutBounds layoutBounds { };
+    InlineLayoutUnit lineSpacing { 0 };
+    std::optional<InlineLayoutUnit> preferredLineHeight { };
 };
-static auto computedHeightAndLayoutBounds(const FontMetrics& fontMetrics, std::optional<InlineLayoutUnit> preferredLineHeight)
+static LayoutBoundsMetrics layoutBoundsMetricsForInlineBox(const InlineLevelBox& inlineBox)
 {
+    ASSERT(inlineBox.isInlineBox());
+    auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
     InlineLayoutUnit ascent = fontMetrics.ascent();
     InlineLayoutUnit descent = fontMetrics.descent();
-    auto logicalHeight = ascent + descent;
+    InlineLayoutUnit lineSpacing = fontMetrics.lineSpacing();
+    return { ascent, descent, lineSpacing, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
+}
 
-    if (preferredLineHeight) {
+void LineBoxBuilder::setBaselineAndLayoutBounds(InlineLevelBox& inlineBox, const LayoutBoundsMetrics& layoutBoundsMetrics) const
+{
+    auto logicalHeight = layoutBoundsMetrics.ascent + layoutBoundsMetrics.descent;
+    auto halfLeading = InlineLayoutUnit { };
+    if (layoutBoundsMetrics.preferredLineHeight) {
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
         // https://www.w3.org/TR/css-inline-3/#inline-height
         // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
         // all inline boxes.
-        auto halfLeading = (*preferredLineHeight - logicalHeight) / 2;
-        return HeightAndLayoutBounds { ascent, descent, { ascent + halfLeading, descent + halfLeading } };
+        halfLeading = (*layoutBoundsMetrics.preferredLineHeight - logicalHeight) / 2;
+    } else {
+        // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
+        halfLeading = (layoutBoundsMetrics.lineSpacing - logicalHeight) / 2;
     }
-    // Preferred line height is purely font metrics based (i.e glyphs stretch the line).
-    auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
-    return HeightAndLayoutBounds { ascent, descent, { ascent + halfLineGap, descent + halfLineGap } };
-}
-
-void LineBoxBuilder::setVerticalGeometryForLineBreakBox(InlineLevelBox& lineBreakBox, const InlineLevelBox& parentInlineBox) const
-{
     // We need floor/ceil to match legacy layout integral positioning.
-    ASSERT(lineBreakBox.isLineBreakBox());
-    ASSERT(parentInlineBox.isInlineBox());
-
-    auto& fontMetrics = parentInlineBox.primarymetricsOfPrimaryFont();
-    auto preferredLineHeight = parentInlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(parentInlineBox.preferredLineHeight());
-    auto heightAndLayoutBounds = computedHeightAndLayoutBounds(fontMetrics, preferredLineHeight);
-
-    lineBreakBox.setBaseline(floorf(heightAndLayoutBounds.ascent));
-    lineBreakBox.setDescent(ceilf(heightAndLayoutBounds.descent));
-    lineBreakBox.setLogicalHeight(heightAndLayoutBounds.ascent + heightAndLayoutBounds.descent);
-    lineBreakBox.setLayoutBounds({ floorf(heightAndLayoutBounds.layoutBounds.ascent), ceilf(heightAndLayoutBounds.layoutBounds.descent) });
-}
-
-void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inlineBox) const
-{
-    // We need floor/ceil to match legacy layout integral positioning.
-    ASSERT(inlineBox.isInlineBox());
-
-    auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
-    auto preferredLineHeight = inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight());
-    auto heightAndLayoutBounds = computedHeightAndLayoutBounds(fontMetrics, preferredLineHeight);
-
-    inlineBox.setBaseline(floorf(heightAndLayoutBounds.ascent));
-    inlineBox.setDescent(ceilf(heightAndLayoutBounds.descent));
-    inlineBox.setLogicalHeight(heightAndLayoutBounds.ascent + heightAndLayoutBounds.descent);
-    inlineBox.setLayoutBounds({ floorf(heightAndLayoutBounds.layoutBounds.ascent), ceilf(heightAndLayoutBounds.layoutBounds.descent) });
+    inlineBox.setBaseline(floorf(layoutBoundsMetrics.ascent));
+    inlineBox.setDescent(ceilf(layoutBoundsMetrics.descent));
+    inlineBox.setLogicalHeight(logicalHeight);
+    inlineBox.setLayoutBounds({ floorf(layoutBoundsMetrics.ascent + halfLeading), ceilf(layoutBoundsMetrics.descent + halfLeading) });
 }
 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
-    setInitialVerticalGeometryForInlineBox(rootInlineBox);
+    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsMetricsForInlineBox(rootInlineBox));
 
     auto styleToUse = [&] (const auto& layoutBox) -> const RenderStyle& {
         return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
@@ -277,7 +259,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto adjustedLogicalStart = logicalLeft + std::max(0.0f, marginStart);
             auto logicalWidth = rootInlineBox.logicalWidth() - adjustedLogicalStart;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, adjustedLogicalStart, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
-            setInitialVerticalGeometryForInlineBox(inlineBox);
+            setBaselineAndLayoutBounds(inlineBox, layoutBoundsMetricsForInlineBox(inlineBox));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -292,7 +274,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
-            setInitialVerticalGeometryForInlineBox(inlineBox);
+            setBaselineAndLayoutBounds(inlineBox, layoutBoundsMetricsForInlineBox(inlineBox));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -318,7 +300,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto fallbackFonts = TextUtil::fallbackFontsForRun(run, style);
             if (!fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                adjustVerticalGeometryForInlineBoxWithFallbackFonts(parentInlineBox, fallbackFonts);
+                adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts);
             }
             continue;
         }
@@ -328,8 +310,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
-            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
-            setVerticalGeometryForLineBreakBox(lineBreakBox, parentInlineBox);
+            setBaselineAndLayoutBounds(lineBreakBox, layoutBoundsMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent())));
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }

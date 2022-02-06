@@ -37,6 +37,7 @@ namespace Layout {
 class Box;
 class ContainerBox;
 class LayoutState;
+struct LayoutBoundsMetrics;
 
 class LineBoxBuilder {
 public:
@@ -49,9 +50,8 @@ public:
     LineBoxAndHeight build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
-    void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;
-    void setVerticalGeometryForLineBreakBox(InlineLevelBox& lineBreakBox, const InlineLevelBox& parentInlineBox) const;
-    void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
+    void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
+    void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
     void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
