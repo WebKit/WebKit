@@ -130,6 +130,7 @@
 #include "SourceGraphic.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
+#include "Styleable.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include "WheelEventTestMonitor.h"
@@ -4882,8 +4883,8 @@ bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimati
     bounds = calculateLayerBounds(this, LayoutSize(), boundsFlags);
     
     LayoutRect animatedBounds = bounds;
-    if (auto* timeline = renderer().documentTimeline()) {
-        if (timeline->computeExtentOfAnimation(renderer(), animatedBounds)) {
+    if (auto styleable = Styleable::fromRenderer(renderer())) {
+        if (styleable->computeAnimationExtent(animatedBounds)) {
             bounds = animatedBounds;
             return true;
         }

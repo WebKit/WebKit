@@ -336,32 +336,6 @@ void DocumentTimeline::scheduleNextTick()
         m_tickScheduleTimer.startOneShot(scheduleDelay);
 }
 
-bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
-{
-    auto styleable = Styleable::fromRenderer(renderer);
-    if (!styleable)
-        return false;
-
-    auto* animations = styleable->animations();
-    if (!animations)
-        return false;
-
-    KeyframeEffect* matchingEffect = nullptr;
-    for (const auto& animation : *animations) {
-        auto* effect = animation->effect();
-        if (is<KeyframeEffect>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-            if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
-                matchingEffect = downcast<KeyframeEffect>(effect);
-        }
-    }
-
-    if (matchingEffect)
-        return matchingEffect->computeExtentOfTransformAnimation(bounds);
-
-    return true;
-}
-
 bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
 {
     auto styleable = Styleable::fromRenderer(renderer);

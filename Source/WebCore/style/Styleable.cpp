@@ -127,6 +127,28 @@ std::unique_ptr<RenderStyle> Styleable::computeAnimatedStyle() const
     return animatedStyle;
 }
 
+bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
+{
+    auto* animations = this->animations();
+    if (!animations)
+        return false;
+
+    KeyframeEffect* matchingEffect = nullptr;
+    for (const auto& animation : *animations) {
+        auto* effect = animation->effect();
+        if (is<KeyframeEffect>(effect)) {
+            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
+            if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
+                matchingEffect = downcast<KeyframeEffect>(effect);
+        }
+    }
+
+    if (matchingEffect)
+        return matchingEffect->computeExtentOfTransformAnimation(bounds);
+
+    return true;
+}
+
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {
     ensureAnimations().add(&animation);
