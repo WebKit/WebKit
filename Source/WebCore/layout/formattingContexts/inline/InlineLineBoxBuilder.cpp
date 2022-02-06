@@ -110,6 +110,7 @@ LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineCo
     // FIXME: The overflowing hanging content should be part of the ink overflow.  
     auto lineBox = LineBox { rootBox(), rootInlineBoxAlignmentOffset, lineContent.contentLogicalWidth - lineContent.hangingContentWidth, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox, lineContent, lineIndex);
+    adjustIdeographicBaselineIfApplicable(lineBox, lineIndex);
     auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
     return { lineBox, lineBoxLogicalHeight };
 }
@@ -155,12 +156,12 @@ struct LayoutBoundsMetrics {
     InlineLayoutUnit lineSpacing { 0 };
     std::optional<InlineLayoutUnit> preferredLineHeight { };
 };
-static LayoutBoundsMetrics layoutBoundsMetricsForInlineBox(const InlineLevelBox& inlineBox)
+static LayoutBoundsMetrics layoutBoundsMetricsForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline = AlphabeticBaseline)
 {
     ASSERT(inlineBox.isInlineBox());
     auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
-    InlineLayoutUnit ascent = fontMetrics.ascent();
-    InlineLayoutUnit descent = fontMetrics.descent();
+    InlineLayoutUnit ascent = fontMetrics.ascent(fontBaseline);
+    InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
     InlineLayoutUnit lineSpacing = fontMetrics.lineSpacing();
     return { ascent, descent, lineSpacing, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
 }
@@ -321,6 +322,52 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         ASSERT_NOT_REACHED();
     }
     lineBox.setHasContent(lineHasContent);
+}
+
+void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, size_t lineIndex)
+{
+    // Re-compute the ascent/descent values for the inline boxes on the line (including the root inline box)
+    // when the style/content needs ideographic baseline setup in vertical writing mode.
+    auto& rootInlineBox = lineBox.rootInlineBox();
+
+    auto lineNeedsIdeographicBaseline = [&] {
+        auto styleToUse = [&] (auto& inlineLevelBox) -> const RenderStyle& {
+            return !lineIndex ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
+        };
+        auto& rootInlineBoxStyle = styleToUse(rootInlineBox);
+        if (rootInlineBoxStyle.isHorizontalWritingMode())
+            return false;
+
+        auto styleRequiresIdeographicBaseline = [&] (auto& style) {
+            return style.fontDescription().orientation() == FontOrientation::Vertical || style.fontCascade().primaryFont().hasVerticalGlyphs();
+        };
+
+        if (styleRequiresIdeographicBaseline(rootInlineBoxStyle))
+            return true;
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (styleRequiresIdeographicBaseline(styleToUse(inlineLevelBox)))
+                return true;
+        }
+
+        auto contentRequiresIdeographicBaseline = [&] {
+            // FIXME: Add support for fallback fonts.
+            return false;
+        };
+        return contentRequiresIdeographicBaseline();
+    };
+
+    if (!lineNeedsIdeographicBaseline())
+        return;
+
+    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsMetricsForInlineBox(rootInlineBox, IdeographicBaseline));
+    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+        if (inlineLevelBox.isInlineBox())
+            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(inlineLevelBox, IdeographicBaseline));
+        else if (inlineLevelBox.isLineBreakBox()) {
+            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
+            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
+        }
+    }
 }
 
 }

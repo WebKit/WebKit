@@ -52,7 +52,9 @@ public:
 private:
     void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
     void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
+
     void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
+    void adjustIdeographicBaselineIfApplicable(LineBox&, size_t lineIndex);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& rootBox() const { return formattingContext().root(); }
