@@ -961,6 +961,11 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
     if (!state.source)
         return false;
 
+#if PLATFORM(GTK)
+    if (dragEvent.isTouchEvent())
+        return false;
+#endif
+
     Ref<Frame> protector(src);
     auto hitTestResult = hitTestResultForDragStart(src, *state.source, dragOrigin);
     if (!hitTestResult)

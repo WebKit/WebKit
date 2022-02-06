@@ -112,6 +112,7 @@ set(WebKitGLibAPITests_DEFINITIONS
 add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
 target_include_directories(WebKitGLibAPITestsCore PUBLIC ${WebKitGLibAPITests_INCLUDE_DIRECTORIES})
 target_include_directories(WebKitGLibAPITestsCore SYSTEM PUBLIC ${WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES})
+target_compile_definitions(WebKitGLibAPITestsCore PRIVATE BUILDING_TestWebKit)
 target_compile_definitions(WebKitGLibAPITestsCore PUBLIC ${WebKitGLibAPITests_DEFINITIONS})
 target_link_libraries(WebKitGLibAPITestsCore ${WebKitGLibAPITestsCore_LIBRARIES})
 
