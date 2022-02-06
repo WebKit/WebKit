@@ -1,3 +1,29 @@
+2022-01-23  Antoine Quint  <graouts@webkit.org>
+
+        m_lastStyleChangeEventStyle null ptr deref for accelerated CSS Animation with no duration and an implicit keyframe
+        https://bugs.webkit.org/show_bug.cgi?id=235394
+        <rdar://problem/87701738>
+
+        Reviewed by Antti Koivisto.
+
+        Test: webanimations/accelerated-animation-without-duration-crash.html
+
+        In r287827, the fix for bug 235014, we stopped filling implicit keyframes for CSS Animations at creation
+        time such that the output of getKeyframes() would correctly account for the missing keyframes. This meant
+        that we have to fill in those implicit keyframes when running an accelerated animation before we pass it
+        on to GraphicsLayer.
+
+        We would always use the value stored by lastStyleChangeEventStyle() with an assert that this value was
+        never null. However, in the case of an animation that is not relevant, such as a CSS Animation with no
+        duration, we've never had a chance to set that style since Style::TreeResolver::createAnimatedElementUpdate()
+        would not see any "relevant" (a term defined by the Web Animations specification to specify an animation
+        that has an effect on its target) animations.
+
+        We now use the renderer's style as a fallback, which is guaranteed to be defined at this stage.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+
 2022-01-21  Antti Koivisto  <antti@apple.com>
 
         WPT version of css/css-cascade/parsing/layer-import-parsing.html crashes with nullptr

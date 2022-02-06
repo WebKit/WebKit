@@ -1,3 +1,17 @@
+2022-01-23  Antoine Quint  <graouts@webkit.org>
+
+        m_lastStyleChangeEventStyle null ptr deref for accelerated CSS Animation with no duration and an implicit keyframe
+        https://bugs.webkit.org/show_bug.cgi?id=235394
+        <rdar://problem/87701738>
+
+        Reviewed by Antti Koivisto.
+
+        New test, created by Gabriel Nava Marino, that creates an accelerated animation with no
+        duration and with implicit keyframes that would crash prior to this patch.
+
+        * webanimations/accelerated-animation-without-duration-crash-expected.txt: Added.
+        * webanimations/accelerated-animation-without-duration-crash.html: Added.
+
 2022-01-21  Antti Koivisto  <antti@apple.com>
 
         WPT version of css/css-cascade/parsing/layer-import-parsing.html crashes with nullptr

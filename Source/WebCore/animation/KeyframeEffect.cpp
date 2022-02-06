@@ -1742,12 +1742,27 @@ OptionSet<AcceleratedActionApplicationResult> KeyframeEffect::applyPendingAccele
 
         ASSERT(m_target);
 
-        auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoId);
-        ASSERT(lastStyleChangeEventStyle);
+        // We need to resolve all animations up to this point to ensure any forward-filling
+        // effect is accounted for when computing the "from" value for the accelerated animation.
+        auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
+        ASSERT(effectStack);
+
+        auto underlyingStyle = [&]() {
+            if (auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle(m_pseudoId))
+                return RenderStyle::clonePtr(*lastStyleChangeEventStyle);
+            return RenderStyle::clonePtr(renderer->style());
+        }();
+
+        for (const auto& effect : effectStack->sortedEffects()) {
+            if (this == effect.get())
+                break;
+            if (auto progress = effect->getComputedTiming().progress)
+                effect->setAnimatedPropertiesInStyle(*underlyingStyle, *progress);
+        }
 
         KeyframeList explicitKeyframes(m_blendingKeyframes.animationName());
         explicitKeyframes.copyKeyframes(m_blendingKeyframes);
-        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle, nullptr);
+        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), underlyingStyle.get(), nullptr);
         return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), explicitKeyframes) ? RunningAccelerated::Yes : RunningAccelerated::No;
     };
 
