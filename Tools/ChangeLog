@@ -1,3 +1,13 @@
+2022-02-06  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Add internal-only flag to enable WIP display: contents support
+        https://bugs.webkit.org/show_bug.cgi?id=236179
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust `platformResetStateToConsistentValues` to avoid grabbing the general pasteboard when possible

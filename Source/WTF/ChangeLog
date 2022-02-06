@@ -1,3 +1,12 @@
+2022-02-06  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Add internal-only flag to enable WIP display: contents support
+        https://bugs.webkit.org/show_bug.cgi?id=236179
+
+        Reviewed by Chris Fleizach.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-05  David Kilzer  <ddkilzer@apple.com>
 
         [WTF] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings in CompletionHandler.h

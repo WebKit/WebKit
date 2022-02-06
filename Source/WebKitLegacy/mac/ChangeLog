@@ -1,3 +1,16 @@
+2022-02-06  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Add internal-only flag to enable WIP display: contents support
+        https://bugs.webkit.org/show_bug.cgi?id=236179
+
+        Reviewed by Chris Fleizach.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences cssDisplayContentsAXSupportEnabled]):
+        (-[WebPreferences setCSSDisplayContentsAXSupportEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2022-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete SelectionAcrossShadowBoundariesEnabled

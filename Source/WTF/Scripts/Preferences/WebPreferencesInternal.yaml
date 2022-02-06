@@ -122,6 +122,17 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+CSSDisplayContentsAXSupportEnabled:
+  type: bool
+  humanReadableName: "Accessibility support for display: contents elements"
+  humanReadableDescription: "Enable work-in-progress accessibility support for display: contents elements"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 CSSLogicalEnabled:
   type: bool
   humanReadableName: "CSS Logical Properties and Values"

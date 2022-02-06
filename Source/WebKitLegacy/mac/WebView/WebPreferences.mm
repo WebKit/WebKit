@@ -2880,6 +2880,16 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
 }
 
+- (BOOL)cssDisplayContentsAXSupportEnabled
+{
+    return [self _boolValueForKey:WebKitCSSDisplayContentsAXSupportEnabledPreferenceKey];
+}
+
+- (void)setCSSDisplayContentsAXSupportEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSDisplayContentsAXSupportEnabledPreferenceKey];
+}
+
 - (BOOL)cssLogicalEnabled
 {
     return [self _boolValueForKey:WebKitCSSLogicalEnabledPreferenceKey];
