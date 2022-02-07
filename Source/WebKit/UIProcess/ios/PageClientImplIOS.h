@@ -303,6 +303,10 @@ private:
     WebCore::Color contentViewBackgroundColor() final;
     String sceneID() final;
 
+    void beginFullscreenVideoExtraction(const ShareableBitmap::Handle&, AVPlayerViewController *) final;
+    void cancelFullscreenVideoExtraction(AVPlayerViewController *) final;
+    bool isFullscreenVideoExtractionEnabled() const final;
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

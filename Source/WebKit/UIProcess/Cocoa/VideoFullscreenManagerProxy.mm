@@ -447,7 +447,7 @@ PlatformVideoFullscreenInterface& VideoFullscreenManagerProxy::ensureInterface(P
     return *std::get<1>(ensureModelAndInterface(contextId));
 }
 
-PlatformVideoFullscreenInterface* VideoFullscreenManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId)
+PlatformVideoFullscreenInterface* VideoFullscreenManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
 {
     auto it = m_contextMap.find(contextId);
     if (it == m_contextMap.end())
@@ -906,6 +906,16 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionCon
 }
 
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+
+AVPlayerViewController *VideoFullscreenManagerProxy::playerViewController(PlaybackSessionContextIdentifier identifier) const
+{
+    auto* interface = findInterface(identifier);
+    return interface ? interface->avPlayerViewController() : nil;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
 

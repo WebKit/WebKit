@@ -110,6 +110,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
 
+@class AVPlayerViewController;
 @class QLPreviewController;
 @class WebEvent;
 @class WebTextIndicatorLayer;
@@ -528,6 +529,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _hasVisualSearchResults;
 #endif // USE(QUICK_LOOK)
 #endif // ENABLE(IMAGE_ANALYSIS)
+    uint32_t _fullscreenVideoExtractionRequestIdentifier;
 }
 
 @end
@@ -782,6 +784,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(UIFINDINTERACTION)
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler;
 #endif
+
+- (void)beginFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)imageHandle playerViewController:(AVPlayerViewController *)playerViewController;
+- (void)cancelFullscreenVideoExtraction:(AVPlayerViewController *)controller;
+@property (nonatomic, readonly) BOOL isFullscreenVideoExtractionEnabled;
 
 @end
 

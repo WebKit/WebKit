@@ -1,3 +1,46 @@
+2022-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add PageClient plumbing for video frame extraction
+        https://bugs.webkit.org/show_bug.cgi?id=236100
+        rdar://86237608
+
+        Reviewed by Eric Carlson.
+
+        Finish off support for fullscreen video extraction by adding a new iOS PageClient hook, and calling into it
+        after grabbing a video frame from the GPU process when the video extraction timer fires.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::findInterface const):
+        (WebKit::VideoFullscreenManagerProxy::playerViewController const):
+        (WebKit::VideoFullscreenManagerProxy::findInterface): Deleted.
+
+        Mark this method as `const`, so that we can invoke it from `VideoFullscreenManagerProxy::playerViewController`.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::updateFullscreenVideoExtraction):
+        (WebKit::WebPageProxy::fullscreenVideoExtractionTimerFired):
+
+        Request video frame data from the GPU process and hand it over to the page client along with the
+        AVPlayerViewController corresponding to the current fullscreen video.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::isFullscreenVideoExtractionEnabled const):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::beginFullscreenVideoExtraction):
+        (WebKit::PageClientImpl::cancelFullscreenVideoExtraction):
+        (WebKit::PageClientImpl::isFullscreenVideoExtractionEnabled const):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Add a new WebKitAdditions extension point that contains the implementations of the three methods below; when
+        compiling without WebKitAdditions, we simply stub out these methods.
+
+        (-[WKContentView beginFullscreenVideoExtraction:playerViewController:]):
+        (-[WKContentView cancelFullscreenVideoExtraction:]):
+        (-[WKContentView isFullscreenVideoExtractionEnabled]):
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [model] improve sizing on iOS

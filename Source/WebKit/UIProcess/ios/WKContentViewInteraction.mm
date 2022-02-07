@@ -135,6 +135,7 @@
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -10627,6 +10628,25 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#else
+
+- (void)beginFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)imageData playerViewController:(AVPlayerViewController *)controller
+{
+}
+
+- (void)cancelFullscreenVideoExtraction:(AVPlayerViewController *)controller
+{
+}
+
+- (BOOL)isFullscreenVideoExtractionEnabled
+{
+    return NO;
+}
+
+#endif
 
 @end
 

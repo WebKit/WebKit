@@ -1031,6 +1031,21 @@ String PageClientImpl::sceneID()
     return [m_contentView window].windowScene._sceneIdentifier;
 }
 
+void PageClientImpl::beginFullscreenVideoExtraction(const ShareableBitmap::Handle& imageHandle, AVPlayerViewController *playerViewController)
+{
+    [m_contentView beginFullscreenVideoExtraction:imageHandle playerViewController:playerViewController];
+}
+
+void PageClientImpl::cancelFullscreenVideoExtraction(AVPlayerViewController *controller)
+{
+    [m_contentView cancelFullscreenVideoExtraction:controller];
+}
+
+bool PageClientImpl::isFullscreenVideoExtractionEnabled() const
+{
+    return [m_contentView isFullscreenVideoExtractionEnabled];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

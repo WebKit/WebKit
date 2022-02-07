@@ -67,6 +67,7 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
@@ -500,7 +501,11 @@ public:
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
     virtual String sceneID() = 0;
+
+    virtual void beginFullscreenVideoExtraction(const ShareableBitmap::Handle&, AVPlayerViewController *) = 0;
+    virtual void cancelFullscreenVideoExtraction(AVPlayerViewController *) = 0;
 #endif
+    virtual bool isFullscreenVideoExtractionEnabled() const { return false; }
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

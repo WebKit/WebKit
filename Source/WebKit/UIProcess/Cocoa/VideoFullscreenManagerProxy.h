@@ -154,6 +154,10 @@ public:
 
     void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
+#if PLATFORM(IOS_FAMILY)
+    AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
+#endif
+
 private:
     friend class VideoFullscreenModelContext;
 
@@ -165,7 +169,7 @@ private:
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     VideoFullscreenModelContext& ensureModel(PlaybackSessionContextIdentifier);
     PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
-    PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier);
+    PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);

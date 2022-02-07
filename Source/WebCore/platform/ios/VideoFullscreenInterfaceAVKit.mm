@@ -795,7 +795,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
     _avPlayerViewController.get().playerController = playerController;
 }
 
-- (AVPlayerViewController *) avPlayerViewController
+- (AVPlayerViewController *)avPlayerViewController
 {
     return _avPlayerViewController.get();
 }
@@ -832,6 +832,11 @@ VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit()
 WebAVPlayerController *VideoFullscreenInterfaceAVKit::playerController() const
 {
     return m_playbackSessionInterface->playerController();
+}
+
+AVPlayerViewController *VideoFullscreenInterfaceAVKit::avPlayerViewController() const
+{
+    return [m_playerViewController avPlayerViewController];
 }
 
 void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel* model)
