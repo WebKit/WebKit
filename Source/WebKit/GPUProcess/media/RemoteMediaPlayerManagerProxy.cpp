@@ -200,6 +200,32 @@ Logger& RemoteMediaPlayerManagerProxy::logger()
 }
 #endif
 
+ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
+{
+    auto player = mediaPlayer(identifier);
+    if (!player)
+        return { };
+
+    auto image = player->nativeImageForCurrentTime();
+    if (!image)
+        return { };
+
+    auto imageSize = image->size();
+    auto bitmap = ShareableBitmap::createShareable(imageSize, { player->colorSpace() });
+    if (!bitmap)
+        return { };
+
+    auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return { };
+
+    context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
+
+    ShareableBitmap::Handle bitmapHandle;
+    bitmap->createHandle(bitmapHandle);
+    return bitmapHandle;
+}
+
 } // namespace WebKit
 
 #endif

@@ -30,6 +30,7 @@
 
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
+#import "GPUProcessProxy.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
@@ -509,6 +510,29 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
 
         callback(*model, *interface);
     }
+}
+
+void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&& completionHandler)
+{
+    auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (!gpuProcess) {
+        completionHandler({ });
+        return;
+    }
+
+    auto* interface = findInterface(identifier);
+    if (!interface) {
+        completionHandler({ });
+        return;
+    }
+
+    auto playerIdentifier = valueOrDefault(interface->playerIdentifier());
+    if (!playerIdentifier) {
+        completionHandler({ });
+        return;
+    }
+
+    gpuProcess->requestBitmapImageForCurrentTime(m_page->process().coreProcessIdentifier(), playerIdentifier, WTFMove(completionHandler));
 }
 
 void VideoFullscreenManagerProxy::addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver& observer)

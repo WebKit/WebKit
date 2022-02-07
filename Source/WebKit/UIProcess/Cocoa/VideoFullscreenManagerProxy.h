@@ -30,6 +30,7 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
+#include "ShareableBitmap.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -150,6 +151,8 @@ public:
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
+
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
 private:
     friend class VideoFullscreenModelContext;

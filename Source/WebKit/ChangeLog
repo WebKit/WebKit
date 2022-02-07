@@ -1,3 +1,35 @@
+2022-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper method on VideoFullscreenManagerProxy to request video frame data
+        https://bugs.webkit.org/show_bug.cgi?id=236094
+
+        Reviewed by Darin Adler.
+
+        Add a helper method on VideoFullscreenManagerProxy to asynchronously grab an image bitmap for the fullscreen
+        video corresponding to the given PlaybackSessionContextIdentifier, by sending IPC to the GPU process. This
+        mechanism will be used in a subsequent patch to support "fullscreen video extraction", which involves capturing
+        image data for paused, fullscreen videos.
+
+        See below for more details.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::requestBitmapImageForCurrentTime):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime):
+
+        Map the given PlaybackSessionContextIdentifier to a MediaPlayerIdentifier, and then send the (web process ID,
+        media player ID) identifier pair to the GPU process to request frame data for the given media player.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::requestBitmapImageForCurrentTime):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebDriver] Add support for shadow roots

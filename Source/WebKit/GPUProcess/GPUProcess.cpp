@@ -515,6 +515,17 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
 }
 #endif
 
+void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&& completion)
+{
+    auto iterator = m_webProcessConnections.find(processIdentifier);
+    if (iterator == m_webProcessConnections.end()) {
+        completion({ });
+        return;
+    }
+
+    completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

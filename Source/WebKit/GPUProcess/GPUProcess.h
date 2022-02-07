@@ -29,8 +29,10 @@
 
 #include "AuxiliaryProcess.h"
 #include "SandboxExtension.h"
+#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
@@ -114,6 +116,8 @@ public:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
+
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
 private:
     void lowMemoryHandler(Critical, Synchronous);
