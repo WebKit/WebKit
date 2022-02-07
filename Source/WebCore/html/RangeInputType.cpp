@@ -75,9 +75,9 @@ static const int rangeDefaultStepBase = 0;
 static const int rangeStepScaleFactor = 1;
 static const StepRange::StepDescription rangeStepDescription { rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor };
 
-static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum, const Decimal& fallbackValue)
+static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum)
 {
-    return proposedValue >= minimum ? proposedValue : std::max(minimum, fallbackValue);
+    return proposedValue >= minimum ? proposedValue : minimum;
 }
 
 RangeInputType::RangeInputType(HTMLInputElement& element)
@@ -118,7 +118,7 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     ASSERT(element());
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
-    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
+    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum);
 
     const AtomString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
     if (!precisionValue.isNull()) {

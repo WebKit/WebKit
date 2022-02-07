@@ -14,7 +14,7 @@ PASS default value of min attribute in input type=range
 PASS default value of max attribute in input type=range
 PASS default value when min and max attributes are given (= min plus half the difference between min and max)
 PASS default value with step control when both min and max attributes are given
-FAIL default value when both min and max attributes are given, while min > max assert_equals: expected "2" but got "51"
+PASS default value when both min and max attributes are given, while min > max
 PASS The default step scale factor is 1, unless min attribute has non-integer value
 PASS Step scale factor behavior when min attribute has integer value but max attribute is non-integer
 FAIL The default scale factor is 1 even if step attribute is explicitly set to non-integer value, unless min attribute has non-integer value assert_equals: expected "1" but got "0.5"

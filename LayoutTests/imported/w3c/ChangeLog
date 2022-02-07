@@ -1,3 +1,13 @@
+2022-02-07  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Use min as default value when min > max for input type="range"
+        https://bugs.webkit.org/show_bug.cgi?id=236223
+
+        Reviewed by Darin Adler.
+
+        Update the sub test expectation that is now passing.
+        * web-platform-tests/html/semantics/forms/the-input-element/range-expected.txt:
+
 2022-02-06  Sam Weinig  <weinig@apple.com>
 
         Update serialization of rgb() functions with none components to latest spec
