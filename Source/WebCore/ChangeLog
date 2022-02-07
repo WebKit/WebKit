@@ -1,3 +1,13 @@
+2022-02-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fixes.
+
+        * Modules/webxr/XRReferenceSpaceEvent.cpp: Add missing wtf/IsoMallocInlines.h header.
+        * Modules/webxr/XRReferenceSpaceEvent.h: Add missing wtf/IsoMalloc.h header.
+        * css/calc/CSSCalcOperationNode.cpp: Add missing Logging.h header.
+        * css/calc/CSSCalcPrimitiveValueNode.cpp: Ditto.
+        * layout/formattingContexts/FormattingQuirks.cpp: Add missing LayoutState.h header.
+
 2022-02-03  Frédéric Wang  <fwang@igalia.com>
 
         null ptr deref in RenderTreeBuilder::Block::attachIgnoringContinuation

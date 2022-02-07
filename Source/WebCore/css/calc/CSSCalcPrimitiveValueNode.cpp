@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionNumber.h"
+#include "Logging.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

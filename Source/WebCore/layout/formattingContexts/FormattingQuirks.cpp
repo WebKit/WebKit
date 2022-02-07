@@ -32,6 +32,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutState.h"
 
 namespace WebCore {
 namespace Layout {
