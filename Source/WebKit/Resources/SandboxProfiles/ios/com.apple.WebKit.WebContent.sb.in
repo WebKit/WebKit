@@ -1561,7 +1561,6 @@
 
 (define (kernel-mig-routine-only-in-use-during-launch)
     (kernel-mig-routine
-        host_get_clock_service
         host_get_special_port
         host_info
         io_server_version
@@ -1572,6 +1571,7 @@
 (define (kernel-mig-routine-in-use)
     (kernel-mig-routine
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
+        host_get_clock_service ;; After <rdar://85931614> has been fixed, we should evaluate if this is only used on launch.
         host_get_io_master
         io_connect_async_method
         io_connect_map_memory_into_task ;; <rdar://88300200>
@@ -1639,16 +1639,15 @@
 #endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-;; FIXME: enable this when rdar://85931614 is fixed
-;;            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-;;                (allow mach-message-send
-;;                    (kernel-mig-routine-only-in-use-during-launch)))
-;;            (with-filter (state-flag "WebContentProcessLaunched")
-;;                (allow mach-message-send
-;;                    (with report)
-;;                    (with telemetry)
-;;                    (with message "kernel mig routine used after launch")
-;;                    (kernel-mig-routine-only-in-use-during-launch)))
+            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+                (allow mach-message-send
+                    (kernel-mig-routine-only-in-use-during-launch)))
+            (with-filter (state-flag "WebContentProcessLaunched")
+                (allow mach-message-send
+                    (with report)
+                    (with telemetry)
+                    (with message "kernel mig routine used after launch")
+                    (kernel-mig-routine-only-in-use-during-launch)))
 #endif
 
             (when (defined? 'mach_port_is_connection_for_service)
