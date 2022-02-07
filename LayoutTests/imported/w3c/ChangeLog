@@ -1,5 +1,14 @@
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
+        [css-logical] css/css-logical/animation-003.tentative is no longer a failure
+        https://bugs.webkit.org/show_bug.cgi?id=236242
+
+        Unreviewed test gardening following a likely progression with bug 218092.
+
+        * web-platform-tests/css/css-logical/animation-003.tentative-expected.txt:
+
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
         [css-logical] [web-animations] changing direction or writing-mode should clear computed keyframes
         https://bugs.webkit.org/show_bug.cgi?id=236241
 
