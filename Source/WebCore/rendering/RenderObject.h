@@ -50,7 +50,6 @@ class AffineTransform;
 class Color;
 class Cursor;
 class Document;
-class DocumentTimeline;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -720,8 +719,6 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    DocumentTimeline* documentTimeline() const;
-
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
@@ -987,11 +984,6 @@ inline Page& RenderObject::page() const
     // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
     ASSERT(frame().page());
     return *frame().page();
-}
-
-inline DocumentTimeline* RenderObject::documentTimeline() const
-{
-    return document().existingTimeline();
 }
 
 inline bool RenderObject::renderTreeBeingDestroyed() const
