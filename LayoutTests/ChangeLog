@@ -1,3 +1,10 @@
+2022-02-07  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] Remove failure expections for newly passing tests. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=236243
+
+        * platform/gtk/TestExpectations:
+
 2022-02-07  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Add ContainerQueryEvaluator

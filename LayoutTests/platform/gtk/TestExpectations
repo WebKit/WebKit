@@ -846,15 +846,8 @@ webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-010.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-inline-010.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-004.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-006.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-007.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-016.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-manual-013.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-001.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-008.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-009.html [ ImageOnlyFailure ]
 
 # We don't yet support EXIF-based resolution
 webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
@@ -893,7 +886,6 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
-webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
@@ -901,13 +893,6 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.h
 
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
-
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-009.html [ ImageOnlyFailure ]
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-010.html [ ImageOnlyFailure ]
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-001.html [ ImageOnlyFailure ]
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-002.html [ ImageOnlyFailure ]
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-003.html [ ImageOnlyFailure ]
-webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/229732 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
 webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
@@ -1763,8 +1748,6 @@ webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.htm
 webkit.org/b/193627 editing/spelling/spelling-dots-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
-webkit.org/b/193628 imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
-webkit.org/b/193628 imported/blink/fast/text/wide-preformatted.html [ ImageOnlyFailure ]
 webkit.org/b/193628 imported/mozilla/svg/tspan-rotate-07.svg [ ImageOnlyFailure ]
 
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
@@ -1820,8 +1803,6 @@ webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-re
 webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
-
-webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
 
