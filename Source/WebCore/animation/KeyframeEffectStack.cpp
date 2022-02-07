@@ -133,8 +133,15 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             || targetStyle.transform() != previousLastStyleChangeEventStyle.transform();
     }();
 
+    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle.direction() != targetStyle.direction()
+        || previousLastStyleChangeEventStyle.writingMode() != targetStyle.writingMode();
+
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
+
+        if (propertyAffectingLogicalPropertiesChanged)
+            effect->propertyAffectingLogicalPropertiesDidChange();
+
         effect->animation()->resolve(targetStyle, resolutionContext);
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())

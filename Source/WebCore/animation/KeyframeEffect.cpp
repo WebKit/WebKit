@@ -1701,6 +1701,12 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
     addPendingAcceleratedAction(AcceleratedAction::TransformChange);
 }
 
+void KeyframeEffect::propertyAffectingLogicalPropertiesDidChange()
+{
+    if (m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation)
+        clearBlendingKeyframes();
+}
+
 void KeyframeEffect::animationWasCanceled()
 {
     if (isRunningAccelerated() || isAboutToRunAccelerated())

@@ -126,6 +126,7 @@ public:
 
     void animationTimingDidChange();
     void transformRelatedPropertyDidChange();
+    void propertyAffectingLogicalPropertiesDidChange();
     OptionSet<AcceleratedActionApplicationResult> applyPendingAcceleratedActions();
 
     void willChangeRenderer();

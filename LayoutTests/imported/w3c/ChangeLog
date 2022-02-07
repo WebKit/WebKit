@@ -1,3 +1,14 @@
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
+        [css-logical] [web-animations] changing direction or writing-mode should clear computed keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=236241
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-logical/animation-001-expected.txt:
+
 2022-02-07  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Add ContainerQueryEvaluator
