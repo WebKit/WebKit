@@ -1388,6 +1388,7 @@ static Ref<CSSPrimitiveValue> valueForAnimationComposition(CompositeOperation op
     case CompositeOperation::Replace:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueReplace);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState playState)

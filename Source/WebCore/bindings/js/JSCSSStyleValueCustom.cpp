@@ -58,6 +58,9 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case CSSStyleValueType::CSSStyleValue:
         return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
     }
+
+    ASSERT_NOT_REACHED();
+    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSStyleValue& object)

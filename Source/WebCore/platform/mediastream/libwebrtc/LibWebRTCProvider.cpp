@@ -492,6 +492,9 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const 
         ASSERT_NOT_REACHED();
         return { };
     }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioDecodingCapabilities()
@@ -530,6 +533,8 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const St
         ASSERT_NOT_REACHED();
         return { };
     }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioEncodingCapabilities()

@@ -63,6 +63,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case CSSTransformType::Translate:
         return createWrapper<CSSTranslate>(globalObject, WTFMove(value));
     }
+    ASSERT_NOT_REACHED();
+    return createWrapper<CSSTransformComponent>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSTransformComponent& object)

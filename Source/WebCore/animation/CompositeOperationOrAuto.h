@@ -41,6 +41,8 @@ constexpr CompositeOperationOrAuto toCompositeOperationOrAuto(CompositeOperation
     case CompositeOperation::Accumulate:
         return CompositeOperationOrAuto::Accumulate;
     }
+    ASSERT_NOT_REACHED();
+    return CompositeOperationOrAuto::Auto;
 }
 
 } // namespace WebCore

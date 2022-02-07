@@ -113,6 +113,8 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CustomIdent:
         return CSSUnitCategory::Other;
     }
+    ASSERT_NOT_REACHED();
+    return CSSUnitCategory::Other;
 }
 
 CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
@@ -135,6 +137,8 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
     case CSSUnitCategory::Other:
         return CSSUnitType::CSS_UNKNOWN;
     }
+    ASSERT_NOT_REACHED();
+    return CSSUnitType::CSS_UNKNOWN;
 }
 
 CSSUnitType canonicalUnitType(CSSUnitType unitType)
