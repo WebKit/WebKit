@@ -48,6 +48,7 @@ private:
         InlineRect scrollableOverflowRect;
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineBox&, const InlineRect& lineBoxRect) const;
+    InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect&, WritingMode) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }

@@ -96,13 +96,29 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
 
     // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.
     auto writingMode = root().style().writingMode();
-    return InlineDisplay::Line { InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(lineBoxRect, writingMode)
-        , InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
+    return InlineDisplay::Line { flipLogicalLineRectToVisualForWritingMode(lineBoxRect, writingMode)
+        , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.ascent()
         , contentVisualLeft
         , rootInlineBox.logicalWidth()
     };
+}
+
+InlineRect InlineDisplayLineBuilder::flipLogicalLineRectToVisualForWritingMode(const InlineRect& lineLogicalRect, WritingMode writingMode) const
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        return lineLogicalRect;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft:
+        // See InlineFormattingGeometry for more info.
+        return { lineLogicalRect.left(), lineLogicalRect.top(), lineLogicalRect.height(), lineLogicalRect.width() };
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return lineLogicalRect;
 }
 
 }
