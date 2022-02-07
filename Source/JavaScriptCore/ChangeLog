@@ -1,3 +1,14 @@
+2022-02-06  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=236216
+
+        This missing include was causing non-unified builds to fail linking
+        libWPEWebkit with undefined JSC::Structure::get(...) after dropping
+        gold as the default linker in 246713@main.
+
+        * wasm/js/JSWebAssemblyException.cpp:
+
 2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [Wasm] ref.null check should be done first in B3 call_ref

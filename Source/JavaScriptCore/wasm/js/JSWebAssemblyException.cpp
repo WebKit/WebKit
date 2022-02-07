@@ -33,6 +33,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSWebAssemblyHelpers.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
