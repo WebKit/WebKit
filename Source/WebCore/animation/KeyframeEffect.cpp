@@ -1616,6 +1616,10 @@ bool KeyframeEffect::canBeAccelerated() const
 
 void KeyframeEffect::updateAcceleratedActions()
 {
+    auto* renderer = this->renderer();
+    if (!renderer || !renderer->isComposited())
+        return;
+
     if (!canBeAccelerated()) {
         // In the case where this animation is actively targeting a transform-related property and yet
         // cannot be accelerated, we must notify the effect stack such that any running accelerated
@@ -1678,12 +1682,6 @@ void KeyframeEffect::animationDidTick()
 {
     invalidate();
     updateAcceleratedActions();
-}
-
-void KeyframeEffect::animationDidPlay()
-{
-    if (m_acceleratedPropertiesState != AcceleratedProperties::None)
-        addPendingAcceleratedAction(AcceleratedAction::Play);
 }
 
 void KeyframeEffect::animationDidChangeTimingProperties()

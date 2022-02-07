@@ -4348,7 +4348,6 @@ webkit.org/b/189836 webanimations/accelerated-animation-suspension.html [ Skip ]
 [ Win10 ] http/tests/security/local-video-poster-from-remote.html [ Failure ]
 [ Win10 ] storage/indexeddb/modern/idbindex-getallkeys-1.html [ Failure ]
 [ Win10 ] transforms/2d/hindi-rotated.html [ Failure ]
-[ Win10 ] webanimations/partly-accelerated-transition-by-removing-property.html [ Failure ]
 
 [ Win10 ] fast/repaint/block-no-inflow-children.html [ ImageOnlyFailure ]
 [ Win10 ] imported/blink/fast/borders/border-radius-with-layer.html [ ImageOnlyFailure ]
@@ -4956,6 +4955,10 @@ fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 # The DocumentTimeline.maximumFrameRate property which this test is about is not available on Windows.
 webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
+
+# This test requires an internal API which only works on Cocoa ports.
+webanimations/transform-animation-with-delay-yields-accelerated-animation.html [ Skip ]
+webanimations/partly-accelerated-transition-by-removing-property.html [ Skip ]
 
 pointerevents/mouse/pointer-button-and-buttons.html [ Failure ]
 pointerevents/mouse/pointer-capture.html [ Failure ]

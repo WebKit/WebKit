@@ -1047,9 +1047,6 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
     invalidateEffect();
 
-    if (m_effect)
-        m_effect->animationDidPlay();
-
     return { };
 }
 

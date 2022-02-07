@@ -1,3 +1,29 @@
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Starting a transform animation with a 1ms delay doesn't run it accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=236080
+        <rdar://problem/88432373>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that runs a "transform" animation with a small delay and checks that it yielded
+        an accelerated animation. We also rewrite some existing tests to use internals.acceleratedAnimationsForElement()
+        since relying on a layer tree dump was not reliable, which also resolves some platform-specific
+        issues.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Removed.
+        * platform/mac-wk1/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html: Make sure overflow doesn't cause an image failure.
+        * webanimations/partly-accelerated-transition-by-removing-property-expected.txt:
+        * webanimations/partly-accelerated-transition-by-removing-property.html: Rewrite test to check on the accelerated
+        animation count and ensure the element is already composited to make the test work on WK1 and GTK.
+        * webanimations/resources/request-frames-until-true.js: Added.
+        (const.requestFramesUntilTrue.async resolveCondition):
+        * webanimations/transform-animation-with-delay-yields-accelerated-animation-expected.txt: Added.
+        * webanimations/transform-animation-with-delay-yields-accelerated-animation.html: Added.
+
 2022-02-07  Rob Buis  <rbuis@igalia.com>
 
         Bail out early in stopForUserCancel
