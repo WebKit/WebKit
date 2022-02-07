@@ -51,6 +51,7 @@
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderPtr.h"
+#include "RenderSVGModelObject.h"
 #include "ScrollBehavior.h"
 #include <memory>
 #include <wtf/Markable.h>
@@ -967,7 +968,16 @@ private:
 
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 
-    LayoutPoint renderBoxLocation() const { return is<RenderBox>(renderer()) ? downcast<RenderBox>(renderer()).location() : LayoutPoint(); }
+    LayoutPoint rendererLocation() const
+    {
+        if (is<RenderBox>(renderer()))
+            return downcast<RenderBox>(renderer()).location();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (is<RenderSVGModelObject>(renderer()))
+            return downcast<RenderSVGModelObject>(renderer()).layoutLocation();
+#endif
+        return LayoutPoint();
+    }
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);
 

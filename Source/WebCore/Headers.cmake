@@ -1912,6 +1912,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/TextUnderlineOffset.h
     rendering/style/WillChangeData.h
 
+    rendering/svg/RenderSVGModelObject.h
+    rendering/svg/SVGBoundingBoxComputation.h
+    rendering/svg/SVGRenderSupport.h
+
     replay/UserInputBridge.h
 
     storage/Storage.h

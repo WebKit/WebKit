@@ -32,10 +32,9 @@
 #pragma once
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "RenderLayer.h"
+#include "RenderBox.h"
 #include "RenderLayerModelObject.h"
 #include "SVGBoundingBoxComputation.h"
-#include "SVGElement.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -57,7 +56,7 @@ public:
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
-    SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
+    inline SVGElement& element() const;
 
     // FIXME: [LBSE] Mark final, add applyTransform to RenderLayerModelObject
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const;
