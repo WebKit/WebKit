@@ -2483,8 +2483,6 @@ webkit.org/b/227232 imported/w3c/web-platform-tests/css/css-contain/contain-size
 webkit.org/b/227663 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Timeout Pass ]
 webkit.org/b/227663 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Timeout Pass ]
 
-webkit.org/b/227665 fast/css/parsing-relative-color-syntax.html [ Failure ]
-
 webkit.org/b/227819 imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Crash ]
 
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html [ Failure ]

@@ -1,3 +1,26 @@
+2022-02-06  Sam Weinig  <weinig@apple.com>
+
+        Remove duplicate tests that have been upstreamed to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=236214
+
+        Reviewed by Darin Adler.
+
+        * fast/css/parsing-color-contrast-expected.txt: Removed.
+        * fast/css/parsing-color-contrast.html: Removed.
+        * fast/css/parsing-color-function-expected.txt: Removed.
+        * fast/css/parsing-color-function.html: Removed.
+        * fast/css/parsing-color-mix-expected.txt: Removed.
+        * fast/css/parsing-color-mix.html: Removed.
+        * fast/css/parsing-lab-colors-expected.txt: Removed.
+        * fast/css/parsing-lab-colors.html: Removed.
+        * fast/css/parsing-relative-color-syntax-expected.txt: Removed.
+        * fast/css/parsing-relative-color-syntax.html: Removed.
+        These have all been added to wpt's css/css-color test suite.
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Update to account for removed tests.
+
 2022-02-06  Alexey Shvayka  <ashvayka@apple.com>
 
         Object literal doesn't properly resolve name clash between an accessor and a constant property
