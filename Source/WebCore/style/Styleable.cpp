@@ -149,6 +149,20 @@ bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
     return true;
 }
 
+bool Styleable::isRunningAcceleratedTransformAnimation() const
+{
+    auto* effectStack = keyframeEffectStack();
+    if (!effectStack)
+        return false;
+
+    for (const auto& effect : effectStack->sortedEffects()) {
+        if (effect->isCurrentlyAffectingProperty(CSSPropertyTransform, KeyframeEffect::Accelerated::Yes))
+            return true;
+    }
+
+    return false;
+}
+
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {
     ensureAnimations().add(&animation);

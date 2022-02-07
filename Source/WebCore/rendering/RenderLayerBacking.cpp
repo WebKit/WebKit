@@ -72,6 +72,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "Styleable.h"
 #include "TiledBacking.h"
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
@@ -1293,8 +1294,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     const auto deviceScaleFactor = this->deviceScaleFactor();
 
     bool isRunningAcceleratedTransformAnimation = false;
-    if (auto* timeline = renderer().documentTimeline())
-        isRunningAcceleratedTransformAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
+    if (auto styleable = Styleable::fromRenderer(renderer()))
+        isRunningAcceleratedTransformAnimation = styleable->isRunningAcceleratedTransformAnimation();
 
     updateTransform(style);
     updateOpacity(style);

@@ -77,6 +77,8 @@ struct Styleable {
     // we were unable to cheaply compute its effect on the extent.
     bool computeAnimationExtent(LayoutRect&) const;
 
+    bool isRunningAcceleratedTransformAnimation() const;
+
     KeyframeEffectStack* keyframeEffectStack() const
     {
         return element.keyframeEffectStack(pseudoId);

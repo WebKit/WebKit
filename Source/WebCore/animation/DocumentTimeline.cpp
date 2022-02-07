@@ -336,31 +336,6 @@ void DocumentTimeline::scheduleNextTick()
         m_tickScheduleTimer.startOneShot(scheduleDelay);
 }
 
-bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
-{
-    auto styleable = Styleable::fromRenderer(renderer);
-    if (!styleable)
-        return false;
-
-    auto* animations = styleable->animations();
-    if (!animations)
-        return false;
-
-    for (const auto& animation : *animations) {
-        auto playState = animation->playState();
-        if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
-            continue;
-        auto* effect = animation->effect();
-        if (is<KeyframeEffect>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-            if (keyframeEffect->isCurrentlyAffectingProperty(property, KeyframeEffect::Accelerated::Yes))
-                return true;
-        }
-    }
-
-    return false;
-}
-
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);

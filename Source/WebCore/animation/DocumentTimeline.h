@@ -60,7 +60,6 @@ public:
     void removeAnimation(WebAnimation&) override;
     void transitionDidComplete(RefPtr<CSSTransition>);
 
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
     bool runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject&) const;
     void detachFromDocument();

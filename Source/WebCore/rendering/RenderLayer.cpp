@@ -1354,8 +1354,8 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
 
     auto& renderBox = downcast<RenderBox>(renderer());
 
-    if (auto* timeline = renderer().documentTimeline()) {
-        if (timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
+    if (auto styleable = Styleable::fromRenderer(renderer())) {
+        if (styleable->isRunningAcceleratedTransformAnimation()) {
             TransformationMatrix currTransform;
             std::unique_ptr<RenderStyle> style = renderer().animatedStyle();
             FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
