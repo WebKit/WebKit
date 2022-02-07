@@ -163,6 +163,20 @@ bool Styleable::isRunningAcceleratedTransformAnimation() const
     return false;
 }
 
+bool Styleable::runningAnimationsAreAllAccelerated() const
+{
+    auto* effectStack = keyframeEffectStack();
+    if (!effectStack || !effectStack->hasEffects())
+        return false;
+
+    for (const auto& effect : effectStack->sortedEffects()) {
+        if (!effect->isRunningAccelerated())
+            return false;
+    }
+
+    return true;
+}
+
 void Styleable::animationWasAdded(WebAnimation& animation) const
 {
     ensureAnimations().add(&animation);

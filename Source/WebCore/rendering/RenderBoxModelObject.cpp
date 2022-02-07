@@ -31,7 +31,6 @@
 #include "CachedImage.h"
 #include "ColorBlending.h"
 #include "Document.h"
-#include "DocumentTimeline.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -60,6 +59,7 @@
 #include "RenderView.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
+#include "Styleable.h"
 #include "TextBoxPainter.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
@@ -2699,10 +2699,8 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 
 bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 {
-    if (auto* node = element()) {
-        if (auto* timeline = node->document().existingTimeline())
-            return timeline->runningAnimationsForRendererAreAllAccelerated(*this);
-    }
+    if (auto styleable = Styleable::fromRenderer(*this))
+        return styleable->runningAnimationsAreAllAccelerated();
     return false;
 }
 
