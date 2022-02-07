@@ -164,7 +164,7 @@ struct LayoutBoundsMetrics {
     InlineLayoutUnit ascent { 0 };
     InlineLayoutUnit descent { 0 };
     InlineLayoutUnit lineSpacing { 0 };
-    std::optional<InlineLayoutUnit> preferredLineHeight { };
+    std::optional<InlineLayoutUnit> preferredLineHeight;
 };
 static LayoutBoundsMetrics layoutBoundsMetricsForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline = AlphabeticBaseline)
 {
