@@ -66,6 +66,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
+#include "RenderSVGModelObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -604,19 +605,39 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_graphicsLayer);
 }
 
+static LayoutRect rendererBorderBoxRect(const RenderLayerModelObject& renderer)
+{
+    if (is<RenderBox>(renderer))
+        return downcast<RenderBox>(renderer).borderBoxRect();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGModelObject>(renderer))
+        return downcast<RenderSVGModelObject>(renderer).borderBoxRectEquivalent();
+#endif
+
+    ASSERT_NOT_REACHED();
+    return LayoutRect();
+}
+
 static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
 {
     return renderBox.paddingBoxRect();
 }
 
-static LayoutRect clippingLayerBox(const RenderBox& renderBox)
+static LayoutRect clippingLayerBox(const RenderLayerModelObject& renderer)
 {
     LayoutRect result = LayoutRect::infiniteRect();
-    if (renderBox.hasNonVisibleOverflow())
-        result = renderBox.overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+    if (renderer.hasNonVisibleOverflow()) {
+        if (is<RenderBox>(renderer))
+            result = downcast<RenderBox>(renderer).overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        else if (is<RenderSVGModelObject>(renderer))
+            result = downcast<RenderSVGModelObject>(renderer).overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+#endif
+    }
 
-    if (renderBox.hasClip())
-        result.intersect(renderBox.clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
+    if (renderer.hasClip() && is<RenderBox>(renderer))
+        result.intersect(downcast<RenderBox>(renderer).clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
 
     return result;
 }
@@ -662,9 +683,8 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         return;
     }
 
-    auto& renderBox = downcast<RenderBox>(renderer());
     const auto deviceScaleFactor = this->deviceScaleFactor();
-    auto borderBoxRect = renderBox.borderBoxRect();
+    auto borderBoxRect = rendererBorderBoxRect(renderer());
     auto transformOrigin = computeTransformOriginForPainting(borderBoxRect);
     auto layerOffset = roundPointToDevicePixels(toLayoutPoint(offsetFromParentGraphicsLayer), deviceScaleFactor);
     auto anchor = FloatPoint3D {
@@ -698,11 +718,12 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     }
 
     auto layerForChildrenTransform = [&] {
-        if (m_scrollContainerLayer)
-            return std::make_tuple(m_scrollContainerLayer.get(), scrollContainerLayerBox(renderBox));
-
+        if (m_scrollContainerLayer) {
+            ASSERT(is<RenderBox>(renderer())); // Scroll container layers are only created for RenderBox derived renderers.
+            return std::make_tuple(m_scrollContainerLayer.get(), scrollContainerLayerBox(downcast<RenderBox>(renderer())));
+        }
         if (auto* layer = clippingLayer())
-            return std::make_tuple(layer, clippingLayerBox(renderBox));
+            return std::make_tuple(layer, clippingLayerBox(renderer()));
 
         return std::make_tuple(m_graphicsLayer.get(), borderBoxRect);
     };
@@ -1365,9 +1386,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     // If we have a layer that clips children, position it.
     LayoutRect clippingBox;
     if (auto* clipLayer = clippingLayer()) {
-        auto& renderBox = downcast<RenderBox>(renderer());
         // clipLayer is the m_childContainmentLayer.
-        clippingBox = clippingLayerBox(renderBox);
+        clippingBox = clippingLayerBox(renderer());
         // Clipping layer is parented in the primary graphics layer.
         LayoutSize clipBoxOffsetFromGraphicsLayer = toLayoutSize(clippingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
         SnappedRectInfo snappedClippingGraphicsLayer = snappedGraphicsLayer(clipBoxOffsetFromGraphicsLayer, clippingBox.size(), deviceScaleFactor);
@@ -1377,7 +1397,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         auto computeMasksToBoundsRect = [&] {
             if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
-                FloatRoundedRect contentsClippingRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+                auto contentsClippingRect = FloatRoundedRect(renderer().style().getRoundedInnerBorderFor(rendererBorderBoxRect(renderer())));
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
                 return contentsClippingRect;
             }
@@ -3052,7 +3072,7 @@ LayoutSize RenderLayerBacking::offsetRelativeToRendererOriginForDescendantLayers
         return toLayoutSize(scrollContainerLayerBox(downcast<RenderBox>(renderer())).location());
 
     if (hasClippingLayer())
-        return toLayoutSize(clippingLayerBox(downcast<RenderBox>(renderer())).location());
+        return toLayoutSize(clippingLayerBox(renderer()).location());
 
     return { };
 }
@@ -3721,16 +3741,16 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool didAnimate = false;
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(renderBox()->borderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
@@ -3961,15 +3981,11 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
 
 TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedPropertyID property) const
 {
-    auto* box = renderBox();
-    if (!box)
-        return { };
-
     TransformationMatrix matrix;
 
     auto applyTransformOperation = [&](TransformOperation* operation) {
         if (operation)
-            operation->apply(matrix, snappedIntRect(renderBox()->borderBoxRect()).size());
+            operation->apply(matrix, snappedIntRect(rendererBorderBoxRect(renderer())).size());
     };
 
     if (property == AnimatedPropertyTranslate)
@@ -3979,7 +3995,7 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     else if (property == AnimatedPropertyRotate)
         applyTransformOperation(renderer().style().rotate());
     else if (property == AnimatedPropertyTransform)
-        renderer().style().transform().apply(snappedIntRect(renderBox()->borderBoxRect()).size(), matrix);
+        renderer().style().transform().apply(snappedIntRect(rendererBorderBoxRect(renderer())).size(), matrix);
     else
         ASSERT_NOT_REACHED();
 
