@@ -27,7 +27,6 @@
 
 #include "PushClientConnection.h"
 #include "PushMessageForTesting.h"
-#include "PushService.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
 #include "WebPushMessage.h"
@@ -62,10 +61,6 @@ public:
     void connectionAdded(xpc_connection_t);
     void connectionRemoved(xpc_connection_t);
 
-    void startMockPushService();
-    void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath);
-    void handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushMessage&&);
-
     // Message handlers
     void echoTwice(ClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
     void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
@@ -74,7 +69,6 @@ public:
     void setDebugModeIsEnabled(ClientConnection*, bool);
     void updateConnectionConfiguration(ClientConnection*, const WebPushDaemonConnectionConfiguration&);
     void injectPushMessageForTesting(ClientConnection*, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
-    void injectEncryptedPushMessageForTesting(ClientConnection*, const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(ClientConnection*, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void subscribeToPushService(ClientConnection*, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
     void unsubscribeFromPushService(ClientConnection*, const URL& scopeURL, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
@@ -94,17 +88,9 @@ private:
 
     void notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier);
 
-    void setPushService(std::unique_ptr<PushService>&&);
-    void runAfterStartingPushService(Function<void()>&&);
-
     ClientConnection* toClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
 
-    std::unique_ptr<PushService> m_pushService;
-    bool m_pushServiceStarted { false };
-    Deque<Function<void()>> m_pendingPushServiceFunctions;
-
-    HashMap<String, Vector<WebKit::WebPushMessage>> m_pushMessages;
     HashMap<String, Deque<PushMessageForTesting>> m_testingPushMessages;
 };
 

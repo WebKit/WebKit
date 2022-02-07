@@ -43,7 +43,6 @@ enum class MessageType : uint8_t {
     SetDebugModeIsEnabled,
     UpdateConnectionConfiguration,
     InjectPushMessageForTesting,
-    InjectEncryptedPushMessageForTesting,
     GetPendingPushMessages,
     SubscribeToPushService,
     UnsubscribeFromPushService,
@@ -60,7 +59,6 @@ inline bool messageTypeSendsReply(MessageType messageType)
     case MessageType::RequestSystemNotificationPermission:
     case MessageType::GetPendingPushMessages:
     case MessageType::InjectPushMessageForTesting:
-    case MessageType::InjectEncryptedPushMessageForTesting:
     case MessageType::SubscribeToPushService:
     case MessageType::UnsubscribeFromPushService:
     case MessageType::GetPushSubscription:

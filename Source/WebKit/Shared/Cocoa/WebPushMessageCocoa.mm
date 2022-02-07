@@ -39,30 +39,21 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
     if (!url || ![url isKindOfClass:[NSURL class]])
         return std::nullopt;
 
-    id pushData = [dictionary objectForKey:WebKitPushDataKey];
-    BOOL isNull = [pushData isEqual:[NSNull null]];
-    BOOL isData = [pushData isKindOfClass:[NSData class]];
-
-    if (!isNull && !isData)
+    NSData *pushData = [dictionary objectForKey:WebKitPushDataKey];
+    if (!pushData || ![pushData isKindOfClass:[NSData class]])
         return std::nullopt;
 
-    WebPushMessage message { { }, URL { url } };
-    if (isData) {
-        NSData *data = (NSData *)pushData;
-        message.pushData = Vector<uint8_t> { static_cast<const uint8_t*>(data.bytes), data.length };
-    }
-
-    return message;
+    return { {
+        Vector<uint8_t> { static_cast<const uint8_t*>(pushData.bytes), pushData.length },
+        URL { url }
+    } };
 }
 
 NSDictionary *WebPushMessage::toDictionary() const
 {
-    RetainPtr<NSData> nsData;
-    if (pushData)
-        nsData = nsData = adoptNS([[NSData alloc] initWithBytes:pushData->data() length:pushData->size()]);
-
+    auto nsData = adoptNS([[NSData alloc] initWithBytes:pushData.data() length:pushData.size()]);
     return @{
-        WebKitPushDataKey : nsData ? nsData.get() : [NSNull null],
+        WebKitPushDataKey : nsData.get(),
         WebKitPushRegistrationURLKey : (NSURL *)registrationURL
     };
 }

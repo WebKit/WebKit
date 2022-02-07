@@ -34,7 +34,7 @@ extern "C" {
 
 WK_EXPORT int WKXPCServiceMain(int argc, const char** argv) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 WK_EXPORT int WKAdAttributionDaemonMain(int argc, const char** argv) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-WK_EXPORT int WKWebPushDaemonMain(int argc, char** argv) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT int WKWebPushDaemonMain(int argc, const char** argv) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #ifdef __cplusplus
 }

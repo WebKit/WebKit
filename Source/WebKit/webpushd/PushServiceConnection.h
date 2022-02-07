@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <WebCore/PushMessageCrypto.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
@@ -47,8 +46,6 @@ public:
 
     PushServiceConnection() = default;
     virtual ~PushServiceConnection() = default;
-
-    virtual WebCore::PushCrypto::ClientKeys generateClientKeys();
 
     using SubscribeHandler = CompletionHandler<void(NSString *, NSError *)>;
     virtual void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) = 0;
