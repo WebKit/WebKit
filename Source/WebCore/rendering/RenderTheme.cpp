@@ -84,18 +84,39 @@ RenderTheme::RenderTheme()
 {
 }
 
+ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element) const
+{
+    if (!element)
+        return NoControlPart;
+
+    ControlPart part = style.effectiveAppearance();
+    ControlPart autoAppearance = autoAppearanceForElement(element);
+    if (part == autoAppearance)
+        return part;
+
+    // Aliases of 'auto'.
+    // https://drafts.csswg.org/css-ui-4/#typedef-appearance-compat-auto
+    if (part == AutoPart || part == SearchFieldPart || part == TextAreaPart || part == CheckboxPart || part == RadioPart || part == ListboxPart || part == MeterPart || part == ProgressBarPart) {
+        style.setEffectiveAppearance(autoAppearance);
+        return autoAppearance;
+    }
+
+    // The following keywords should work well for some element types
+    // even if their default appearances are different from the keywords.
+    if (part == MenulistButtonPart && autoAppearance != MenulistPart) {
+        style.setEffectiveAppearance(autoAppearance);
+        part = autoAppearance;
+    }
+
+    return part;
+}
+
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
-    auto part = style.effectiveAppearance();
-    if (part == AutoPart) {
-        part = autoAppearanceForElement(element);
+    auto part = adjustAppearanceForElement(style, element);
 
-        ASSERT(part != AutoPart);
-        style.setEffectiveAppearance(part);
-
-        if (part == NoControlPart)
-            return;
-    }
+    if (part == NoControlPart)
+        return;
 
     // Force inline and table display styles to be inline-block (except for table- which is block)
     if (style.display() == DisplayType::Inline || style.display() == DisplayType::InlineTable || style.display() == DisplayType::TableRowGroup

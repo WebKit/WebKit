@@ -185,8 +185,6 @@ webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
 # MESA-related segfault
 webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-segment-break-001.html [ ImageOnlyFailure Crash ]
-webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-checkbox-001.html [ ImageOnlyFailure Crash ]
-webkit.org/b/216777 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-listbox-001.html [ ImageOnlyFailure Crash ]
 
 # Navigation
 webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
