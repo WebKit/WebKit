@@ -1,3 +1,14 @@
+2022-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rename test in TestExpectations to match the actual test name.
+
+        The test was likely renamed but TestExpectations were not updated accordingly.
+        As per the bots, the test is still flaky.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative-expected.txt: Removed.
+
 2022-02-07  Alan Bujtas  <zalan@apple.com>
 
         Updating grid gap value does not recalculate styles

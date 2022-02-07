@@ -810,7 +810,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-top.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Pass Failure ]
 
 # Console logs are flaky.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html [ DumpJSConsoleLogInStdErr ]
