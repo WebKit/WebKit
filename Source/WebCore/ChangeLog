@@ -1,3 +1,25 @@
+2022-02-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        Check AccessibilityRenderObject::m_renderer for null before using it.
+        https://bugs.webkit.org/show_bug.cgi?id=235950
+        <rdar://problem/88326438>
+
+        Reviewed by Chris Fleizach.
+
+        AccessibilityRenderObject::m_renderer is a WeakPtr that can become null
+        due to a variety of changes in the render tree. This patch fixes a
+        number of cases where AccessibilityRenderObject::m_renderer was being
+        used without checking for null which leads to crashes such as:
+        https://bugs.webkit.org/show_bug.cgi?id=235945
+        https://bugs.webkit.org/show_bug.cgi?id=235827
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists const):
+        (WebCore::AccessibilityRenderObject::selection const):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::documentLinks):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+
 2022-02-01  Antti Koivisto  <antti@apple.com>
 
         AX: nullptr crash under AccessibilityRenderObject::computeAccessibilityIsIgnored
