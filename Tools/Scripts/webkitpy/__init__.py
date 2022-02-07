@@ -86,5 +86,6 @@ if sys.version_info > (3, 0):
 
 AutoInstall.register(Package('webkitflaskpy', Version(0, 1, 1)), local=True)
 AutoInstall.register(Package('webkitscmpy', Version(0, 12, 5)), local=True)
+AutoInstall.register(Package('webkitbugspy', Version(0, 1, 0)), local=True)
 
 import webkitscmpy

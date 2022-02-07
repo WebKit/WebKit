@@ -107,5 +107,8 @@ class Tracker(object):
     def populate(self, issue, member=None):
         raise NotImplementedError()
 
+    def set(self, issue, **properties):
+        raise NotImplementedError()
+
     def add_comment(self, issue, text):
         raise NotImplementedError()

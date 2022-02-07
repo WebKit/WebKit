@@ -29,6 +29,14 @@ from webkitcorepy import Environment, decorators
 from webkitbugspy import Issue, Tracker as GenericTracker, User, name as library_name, version as library_version
 
 
+class Priority(object):
+    SHOW_STOPPER = 1
+    EXPECTED = 2
+    IMPORTANT = 3
+    NICE_TO_HAVE = 4
+    NOT_SET = 5
+
+
 class Tracker(GenericTracker):
     RES = [
         re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
@@ -192,6 +200,45 @@ class Tracker(GenericTracker):
                 refs.add(candidate.link)
 
         return issue
+
+    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+        if not self.client or not self.library:
+            sys.stderr.write('radarclient inaccessible on this machine\n')
+            return None
+        if properties:
+            raise TypeError("'{}' is an invalid property".format(list(properties.keys())[0]))
+
+        radar = self.client.radar_for_id(issue.id)
+        if not radar:
+            sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+            return None
+
+        did_change = False
+
+        if assignee:
+            if not isinstance(assignee, User):
+                raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
+            issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
+            radar.assignee = self.library.Person({'dsid': int(issue._assignee.username)})
+            did_change = True
+
+        if opened is not None:
+            issue._opened = bool(opened)
+            if issue._opened:
+                radar.state = 'Analyze'
+                if radar.milestone is None or radar.priority == Priority.NOT_SET:
+                    radar.substate = 'Screen'
+                else:
+                    radar.substate = 'Investigate'
+                radar.resolution = 'Unresolved'
+            else:
+                radar.state = 'Verify'
+                radar.resolution = 'Software Changed'
+            did_change = True
+
+        if did_change:
+            radar.commit_changes()
+        return self.add_comment(issue, why) if why else issue
 
     def add_comment(self, issue, text):
         if not self.client or not self.library:

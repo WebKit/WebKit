@@ -31,6 +31,7 @@ from .issue import Issue
 from .tracker import Tracker as GenericTracker
 
 from datetime import datetime
+from webkitbugspy import User
 
 
 class Tracker(GenericTracker):
@@ -209,6 +210,46 @@ class Tracker(GenericTracker):
                     refs.add(candidate.link)
             else:
                 sys.stderr.write("Failed to fetch related issues for '{}'\n".format(issue.link))
+
+        return issue
+
+    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+        update_dict = dict()
+
+        if properties:
+            raise TypeError("'{}' is an invalid property".format(list(properties.keys())[0]))
+
+        if assignee:
+            if not isinstance(assignee, User):
+                raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
+            issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
+            update_dict['assigned_to'] = issue._assignee.username
+
+        if opened is not None:
+            issue._opened = bool(opened)
+            if issue._opened:
+                update_dict['status'] = 'REOPENED'
+                why = why or 'Reopening bug'
+            else:
+                update_dict['status'] = 'RESOLVED'
+                update_dict['resolution'] = 'FIXED'
+
+        if why is not None:
+            update_dict['comment'] = dict(body=why)
+
+        if update_dict:
+            update_dict['ids'] = [issue.id]
+            response = requests.put(
+                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                json=update_dict,
+            )
+            if response.status_code // 100 != 2:
+                if assignee:
+                    issue._assignee = None
+                if opened is not None:
+                    issue._opened = None
+                sys.stderr.write("Failed to modify '{}'\n".format(issue))
+                return None
 
         return issue
 

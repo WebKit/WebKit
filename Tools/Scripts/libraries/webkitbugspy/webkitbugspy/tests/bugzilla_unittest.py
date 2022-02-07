@@ -174,8 +174,8 @@ class TestBugzilla(unittest.TestCase):
 
     def test_add_comment(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-                BUGS_EXAMPLE_COM_PASSWORD='password',
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
         )):
             issue = bugzilla.Tracker(self.URL).issue(1)
             self.assertEqual(len(issue.comments), 2)
@@ -189,3 +189,76 @@ class TestBugzilla(unittest.TestCase):
 
             self.assertEqual(len(issue.comments), 3)
             self.assertEqual(len(bugzilla.Tracker(self.URL).issue(1).comments), 3)
+
+    def test_assign(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='ffiler@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+            issue.assign(bugzilla.Tracker(self.URL).me())
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
+            )
+
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
+            )
+
+    def test_assign_why(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='ffiler@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+            issue.assign(bugzilla.Tracker(self.URL).me(), why='Let me provide a better reproduction')
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
+            )
+            self.assertEqual(issue.comments[-1].content, 'Let me provide a better reproduction')
+
+    def test_state(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertTrue(issue.opened)
+            self.assertFalse(issue.open())
+            self.assertTrue(issue.close())
+            self.assertFalse(issue.opened)
+
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertFalse(issue.opened)
+            self.assertFalse(issue.close())
+            self.assertTrue(issue.open())
+            self.assertTrue(issue.opened)
+
+    def test_state_why(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertTrue(issue.opened)
+            self.assertTrue(issue.close(why='Fixed in 1234@main'))
+            self.assertFalse(issue.opened)
+            self.assertEqual(issue.comments[-1].content, 'Fixed in 1234@main')
+
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertFalse(issue.opened)
+            self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
+            self.assertTrue(issue.opened)
+            self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')

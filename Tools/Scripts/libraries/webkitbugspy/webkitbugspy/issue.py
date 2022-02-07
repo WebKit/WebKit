@@ -108,11 +108,25 @@ class Issue(object):
             self.tracker.populate(self, 'opened')
         return self._opened
 
+    def open(self, why=None):
+        if self.opened:
+            return False
+        return bool(self.tracker.set(self, opened=True, why=why))
+
+    def close(self, why=None):
+        if not self.opened:
+            return False
+        return bool(self.tracker.set(self, opened=False, why=why))
+
     @property
     def assignee(self):
         if self._assignee is None:
             self.tracker.populate(self, 'assignee')
         return self._assignee
+
+    def assign(self, assignee, why=None):
+        self.tracker.set(self, assignee=assignee, why=why)
+        return self.assignee
 
     @property
     def watchers(self):

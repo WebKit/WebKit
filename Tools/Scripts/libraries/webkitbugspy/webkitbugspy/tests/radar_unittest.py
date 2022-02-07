@@ -163,3 +163,64 @@ class TestRadar(unittest.TestCase):
 
             self.assertEqual(len(issue.comments), 3)
             self.assertEqual(len(radar.Tracker().issue(1).comments), 3)
+
+    def test_assign(self):
+        with wkmocks.Environment(RADAR_USERNAME='ffiler'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+            issue.assign(radar.Tracker().me())
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username=809, emails=['ffiler@example.com']),
+            )
+
+            issue = radar.Tracker().issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username=809, emails=['ffiler@example.com']),
+            )
+
+    def test_assign_why(self):
+        with wkmocks.Environment(RADAR_USERNAME='ffiler'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+            issue.assign(radar.Tracker().me(), why='Let me provide a better reproduction')
+            self.assertEqual(
+                User.Encoder().default(issue.assignee),
+                dict(name='Felix Filer', username=809, emails=['ffiler@example.com']),
+            )
+            self.assertEqual(issue.comments[-1].content, 'Let me provide a better reproduction')
+
+    def test_state(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertTrue(issue.opened)
+            self.assertFalse(issue.open())
+            self.assertTrue(issue.close())
+            self.assertFalse(issue.opened)
+
+            issue = radar.Tracker().issue(1)
+            self.assertFalse(issue.opened)
+            self.assertFalse(issue.close())
+            self.assertTrue(issue.open())
+            self.assertTrue(issue.opened)
+
+    def test_state_why(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertTrue(issue.opened)
+            self.assertTrue(issue.close(why='Fixed in 1234@main'))
+            self.assertFalse(issue.opened)
+            self.assertEqual(issue.comments[-1].content, 'Fixed in 1234@main')
+
+            issue = radar.Tracker().issue(1)
+            self.assertFalse(issue.opened)
+            self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
+            self.assertTrue(issue.opened)
+            self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')

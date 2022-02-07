@@ -98,7 +98,9 @@ class Bugzilla(Base, mocks.Requests):
             return None
         return self.users.get(match.group('login'))
 
-    def _issue(self, url, id):
+    def _issue(self, url, id, credentials=None, data=None):
+        user = self._user_for_credentials(credentials)
+
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -111,12 +113,37 @@ class Bugzilla(Base, mocks.Requests):
                 )),
             )
         issue = self.issues[id]
+        if data:
+            if not user:
+                return mocks.Response(status_code=401, url=url)
+
+            if self.users.get(data.get('assigned_to')):
+                issue['assignee'] = self.users[data['assigned_to']]
+            if data.get('status'):
+                if not issue['opened'] and data['status'] != 'REOPENED' and not data.get('comment'):
+                    return mocks.Response(
+                        url=url,
+                        headers={'Content-Type': 'text/json'},
+                        status_code=400,
+                        text=json.dumps(dict(
+                            code=32000,
+                            error=True,
+                            message="You have to specify a comment when changing the Status of a bug from RESOLVED to REOPENED.",
+                        )),
+                    )
+                issue['opened'] = data['status'] == 'REOPENED'
+            if data.get('comment'):
+                issue['comments'].append(
+                    Issue.Comment(user=user, timestamp=int(time.time()), content=data['comment']['body']),
+                )
+
         return mocks.Response.fromJson(dict(
             bugs=[dict(
                 id=id,
                 summary=issue['title'],
                 creation_time=self.time_string(issue['timestamp']),
-                status='RESOLVED' if issue['opened'] else 'FIXED',
+                status='REOPENED' if issue['opened'] else 'RESOLVED',
+                resolution='' if issue['opened'] else 'FIXED',
                 creator=self.users[issue['creator'].name].username,
                 creator_detail=dict(
                     email=issue['creator'].email,
@@ -231,6 +258,8 @@ class Bugzilla(Base, mocks.Requests):
         match = re.match(r'{}/rest/bug/(?P<id>\d+)(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._issue(url, int(match.group('id')))
+        if match and method == 'PUT':
+            return self._issue(url, int(match.group('id')), match.group('credentials'), data=json)
 
         match = re.match(r'{}/rest/bug/(?P<id>\d+)\?(?P<credentials>login=\S+\&password=\S+\&)?include_fields=see_also$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':

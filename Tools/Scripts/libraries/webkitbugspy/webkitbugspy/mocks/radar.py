@@ -64,10 +64,16 @@ class AppleDirectoryQuery(object):
 class RadarModel(object):
     class Person(object):
         def __init__(self, user):
-            self.firstName = user.name.split(' ', 1)[0]
-            self.lastName = user.name.split(' ', 1)[1]
-            self.email = user.email
-            self.dsid = user.username
+            if isinstance(user, dict):
+                self.firstName = user.get('firstName')
+                self.lastName = user.get('lastName')
+                self.email = user.get('email')
+                self.dsid = user.get('dsid')
+            else:
+                self.firstName = user.name.split(' ', 1)[0]
+                self.lastName = user.name.split(' ', 1)[1]
+                self.email = user.email
+                self.dsid = user.username
 
     class CCMembership(object):
         def __init__(self, user):
@@ -116,7 +122,11 @@ class RadarModel(object):
         self.createdAt = datetime.utcfromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds)
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
-        self.state = 'Investigate' if issue['opened'] else 'Verify'
+        self.state = 'Analyze' if issue['opened'] else 'Verify'
+        self.substate = 'Investigate' if issue['opened'] else None
+        self.milestone = '?'
+        self.priority = 2
+        self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
         self.originator = self.Person(Radar.transform_user(issue['creator']))
         self.diagnosis = self.CollectionProperty(self, *[
             Radar.DiagnosisEntry(
@@ -143,6 +153,8 @@ class RadarModel(object):
                 content=entry.text,
             ) for entry in self.diagnosis.items()
         ]
+        self.client.parent.issues[self.id]['assignee'] = self.client.parent.users[self.assignee.dsid]
+        self.client.parent.issues[self.id]['opened'] = self.state not in ('Verify', 'Closed')
 
 
 class RadarClient(object):
@@ -159,6 +171,8 @@ class RadarClient(object):
 
 class Radar(Base, ContextStack):
     top = None
+
+    Person = RadarModel.Person
 
     class AuthenticationStrategySystemAccount(object):
         def __init__(self, username, __, ___, ____):

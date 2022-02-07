@@ -32,6 +32,7 @@ from .tracker import Tracker as GenericTracker
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
+from webkitbugspy import User
 
 
 class Tracker(GenericTracker):
@@ -266,6 +267,44 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                     refs.add(candidate.link)
 
         return issue
+
+    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+        update_dict = dict()
+
+        if properties:
+            raise TypeError("'{}' is an invalid property".format(list(properties.keys())[0]))
+
+        if assignee:
+            if not isinstance(assignee, User):
+                raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
+            issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
+            update_dict['assignees'] = [issue._assignee.username]
+
+        if opened is not None:
+            issue._opened = bool(opened)
+            update_dict['state'] = 'open' if issue._opened else 'closed'
+
+        if update_dict:
+            update_dict['number'] = [issue.id]
+            response = requests.patch(
+                '{api_url}/repos/{owner}/{name}/issues/{id}'.format(
+                    api_url=self.api_url,
+                    owner=self.owner,
+                    name=self.name,
+                    id=issue.id,
+                ), auth=HTTPBasicAuth(*self.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=update_dict,
+            )
+            if response.status_code // 100 != 2:
+                if assignee:
+                    issue._assignee = None
+                if opened is not None:
+                    issue._opened = None
+                sys.stderr.write("Failed to modify '{}'\n".format(issue))
+                return None
+
+        return self.add_comment(issue, why) if why else issue
 
     def add_comment(self, issue, text):
         response = requests.post(

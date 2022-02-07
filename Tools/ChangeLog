@@ -1,3 +1,55 @@
+2022-02-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Assign and close issues
+        https://bugs.webkit.org/show_bug.cgi?id=235835
+        <rdar://problem/88203672>
+
+        Reviewed by Dewei Zhu.
+
+        Allow webkitbugspy to edit the assignee and open or close issues.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.set): Send a put request to modify assignee or bug state.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.set): Send a patch request to modify assignee or bug state.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/issue.py:
+        (Issue.open): Re-open a closed issue, provide an optional reason.
+        (Issue.close): Close an open issue, with an optional reason.
+        (Issue.assign): Assign issue to the provided user, along with an optional reason.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla._issue): Edit mocked representation of an issue.
+        (Bugzilla.request): Handle put request modifying issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub._issue): Edit mocked representation of an issue.
+        (GitHub.request): Handle patch request modifying issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/radar.py:
+        (RadarModel.Person.__init__): Accept dictionary.
+        (RadarModel.__init__): Correct 'state' values, mock radar parameters.
+        (RadarModel.commit_changes): Modify assignee and state.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Priority): Add radar priority integers.
+        (Tracker.set): Modify assignee and state.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+        (TestBugzilla.test_assign):
+        (TestBugzilla.test_assign_why):
+        (TestBugzilla.test_state):
+        (TestBugzilla.test_state_why):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_assign):
+        (TestGitHub.test_assign_why):
+        (TestGitHub.test_state):
+        (TestGitHub.test_state_why):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py:
+        (TestRadar.test_assign):
+        (TestRadar.test_assign_why):
+        (TestRadar.test_state):
+        (TestRadar.test_state_why):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py:
+        (Tracker.set): Generic API for Issues to modify their representation in their
+        respective tracker.
+
 2022-02-07  Simon Fraser  <simon.fraser@apple.com>
 
         Tidy up some ImageBuffer-related classes

@@ -78,7 +78,7 @@ class GitHub(Base, mocks.Requests):
             email=user.email,
         ), url=url)
 
-    def _issue(self, url, id):
+    def _issue(self, url, id, data=None):
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -87,6 +87,14 @@ class GitHub(Base, mocks.Requests):
                 text=json.dumps(dict(message="Not Found")),
             )
         issue = self.issues[id]
+        if data:
+            if self.users.get(data.get('assignees', [None])[0]):
+                issue['assignee'] = self.users[data['assignees'][0]]
+            if data.get('state') == 'opened':
+                issue['opened'] = True
+            if data.get('state') == 'closed':
+                issue['opened'] = False
+
         return mocks.Response.fromJson(dict(
             title=issue['title'],
             body=issue['description'],
@@ -171,8 +179,8 @@ class GitHub(Base, mocks.Requests):
             return self._user(url, match.group('username'))
 
         match = re.match(r'{}/issues/(?P<id>\d+)$'.format(self.api_host), stripped_url)
-        if match and method == 'GET':
-            return self._issue(url, int(match.group('id')))
+        if match and method in ('GET', 'PATCH'):
+            return self._issue(url, int(match.group('id')), data=json if method == 'PATCH' else None)
 
         match = re.match(r'{}/issues/(?P<id>\d+)/comments$'.format(self.api_host), stripped_url)
         if match and method == 'GET':
