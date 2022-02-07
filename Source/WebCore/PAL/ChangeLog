@@ -1,3 +1,15 @@
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
+        [model] improve sizing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236234
+        <rdar://problem/88569898>
+
+        Reviewed by Darin Adler.
+
+        Add newly-used -[ASVInlinePreview setFrameWithinFencedTransaction:] SPI on iOS.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
 2022-02-02  Alex Christensen  <achristensen@webkit.org>
 
         Use private relay for all subresources if the main document main resource was loaded using private relay

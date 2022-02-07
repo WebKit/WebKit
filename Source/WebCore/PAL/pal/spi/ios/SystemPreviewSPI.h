@@ -97,6 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setupRemoteConnectionWithCompletionHandler:(void (^)(NSError * _Nullable error))handler;
 - (void)preparePreviewOfFileAtURL:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable error))handler;
 - (void)updateFrame:(CGRect)newFrame completionHandler:(void (^)(CAFenceHandle * _Nullable fenceHandle, NSError * _Nullable error))handler;
+- (void)setFrameWithinFencedTransaction:(CGRect)frame;
 - (void)createFullscreenInstanceWithInitialFrame:(CGRect)initialFrame previewOptions:(NSDictionary *)previewOptions completionHandler:(void (^)(UIViewController *remoteViewController, CAFenceHandle * _Nullable fenceHandle, NSError * _Nullable error))handler;
 - (void)observeDismissFullscreenWithCompletionHandler:(void (^)(CAFenceHandle * _Nullable fenceHandle, NSDictionary * _Nonnull payload, NSError * _Nullable error))handler;
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;

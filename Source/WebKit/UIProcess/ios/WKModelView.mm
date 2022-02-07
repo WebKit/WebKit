@@ -157,8 +157,11 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
             return;
         }
 
-        [self.layer.context addFence:fenceHandle];
-        [fenceHandle invalidate];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.layer.context addFence:fenceHandle];
+            [_preview setFrameWithinFencedTransaction:bounds];
+            [fenceHandle invalidate];
+        });
     }];
 }
 
