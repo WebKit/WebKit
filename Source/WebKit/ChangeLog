@@ -1,3 +1,18 @@
+2022-02-07  Per Arne  <pvollan@apple.com>
+
+        Remove cfprefs shmem access
+        https://bugs.webkit.org/show_bug.cgi?id=231068
+        <rdar://73520381>
+
+        Reviewed by Brent Fulgham.
+
+        After enabling CFPrefs direct mode, we can remove cfprefs shmem access.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-07  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Handle updating session visibility state from PlatformXRCoordinator

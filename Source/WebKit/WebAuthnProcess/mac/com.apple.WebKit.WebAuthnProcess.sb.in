@@ -102,7 +102,10 @@
 ;;; Allow IPC to standard system agents.
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center")
-    (ipc-posix-name-prefix "apple.cfprefs."))
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    (ipc-posix-name-prefix "apple.cfprefs.")
+#endif
+)
 
 ;;;
 ;;; End rules originally copied from 'system.sb'

@@ -239,9 +239,6 @@
             "com.apple.diagnosticd"
             "com.apple.system.logger")))
 
-(allow ipc-posix-shm-read*
-    (ipc-posix-name-prefix "apple.cfprefs."))
- 
 ;; <rdar://problem/12413942>
 (allow file-read*
     (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
