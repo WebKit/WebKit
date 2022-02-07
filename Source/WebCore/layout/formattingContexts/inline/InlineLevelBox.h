@@ -48,7 +48,7 @@ public:
     static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
-    InlineLayoutUnit baseline() const { return m_baseline; }
+    InlineLayoutUnit ascent() const { return m_ascent; }
     std::optional<InlineLayoutUnit> descent() const { return m_descent; }
     // See https://www.w3.org/TR/css-inline-3/#layout-bounds
     struct LayoutBounds {
@@ -118,7 +118,7 @@ private:
     void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(roundToInt(logicalHeight)); }
     void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(roundToInt(logicalTop)); }
-    void setBaseline(InlineLayoutUnit baseline) { m_baseline = roundToInt(baseline); }
+    void setAscent(InlineLayoutUnit ascent) { m_ascent = roundToInt(ascent); }
     void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
     void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
 
@@ -130,7 +130,7 @@ private:
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
     LayoutBounds m_layoutBounds;
-    InlineLayoutUnit m_baseline { 0 };
+    InlineLayoutUnit m_ascent { 0 };
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
     // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box

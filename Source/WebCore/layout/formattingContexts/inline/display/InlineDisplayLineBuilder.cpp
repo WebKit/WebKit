@@ -99,7 +99,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     return InlineDisplay::Line { InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(lineBoxRect, writingMode)
         , InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
         , enclosingLineGeometry.enclosingTopAndBottom
-        , rootInlineBox.logicalTop() + rootInlineBox.baseline()
+        , rootInlineBox.logicalTop() + rootInlineBox.ascent()
         , contentVisualLeft
         , rootInlineBox.logicalWidth()
     };

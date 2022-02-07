@@ -191,7 +191,7 @@ void LineBoxBuilder::setBaselineAndLayoutBounds(InlineLevelBox& inlineBox, const
         halfLeading = (layoutBoundsMetrics.lineSpacing - logicalHeight) / 2;
     }
     // We need floor/ceil to match legacy layout integral positioning.
-    inlineBox.setBaseline(floorf(layoutBoundsMetrics.ascent));
+    inlineBox.setAscent(floorf(layoutBoundsMetrics.ascent));
     inlineBox.setDescent(ceilf(layoutBoundsMetrics.descent));
     inlineBox.setLogicalHeight(logicalHeight);
     inlineBox.setLayoutBounds({ floorf(layoutBoundsMetrics.ascent + halfLeading), ceilf(layoutBoundsMetrics.descent + halfLeading) });
@@ -255,7 +255,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
                 ascent = marginBoxHeight;
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
-            atomicInlineLevelBox.setBaseline(ascent);
+            atomicInlineLevelBox.setAscent(ascent);
             atomicInlineLevelBox.setLayoutBounds(InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
             continue;

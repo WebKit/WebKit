@@ -54,15 +54,14 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     ASSERT(run.isText() || run.isSoftLineBreak());
     auto* parentInlineBox = &inlineLevelBoxForLayoutBox(run.layoutBox().parent());
     ASSERT(parentInlineBox->isInlineBox());
-    auto& fontMetrics = parentInlineBox->primarymetricsOfPrimaryFont();
-    auto runlogicalTop = parentInlineBox->logicalTop() + parentInlineBox->baseline() - fontMetrics.ascent();
+    auto runlogicalTop = parentInlineBox->logicalTop();
+    InlineLayoutUnit logicalHeight = parentInlineBox->primarymetricsOfPrimaryFont().height();
 
     while (parentInlineBox != &m_rootInlineBox && !parentInlineBox->hasLineBoxRelativeAlignment()) {
         parentInlineBox = &inlineLevelBoxForLayoutBox(parentInlineBox->layoutBox().parent());
         ASSERT(parentInlineBox->isInlineBox());
         runlogicalTop += parentInlineBox->logicalTop();
     }
-    InlineLayoutUnit logicalHeight = fontMetrics.height();
     return { runlogicalTop, run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
