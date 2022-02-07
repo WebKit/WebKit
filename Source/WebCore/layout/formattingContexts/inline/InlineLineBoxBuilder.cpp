@@ -112,7 +112,7 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 {
 }
 
-LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
+LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootStyle = lineIndex ? rootBox().firstLineStyle() : rootBox().style();
     auto rootInlineBoxAlignmentOffset = valueOrDefault(Layout::horizontalAlignmentOffset(rootStyle.textAlign(), lineContent, lineContent.inlineBaseDirection == TextDirection::LTR));
@@ -121,7 +121,8 @@ LineBoxBuilder::LineBoxAndHeight LineBoxBuilder::build(const LineBuilder::LineCo
     constructInlineLevelBoxes(lineBox, lineContent, lineIndex);
     adjustIdeographicBaselineIfApplicable(lineBox, lineIndex);
     auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
-    return { lineBox, lineBoxLogicalHeight };
+    lineBox.setLogicalRect({ lineContent.lineLogicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight });
+    return lineBox;
 }
 
 void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const

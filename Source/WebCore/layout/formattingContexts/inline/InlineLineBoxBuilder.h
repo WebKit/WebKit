@@ -43,11 +43,7 @@ class LineBoxBuilder {
 public:
     LineBoxBuilder(const InlineFormattingContext&);
 
-    struct LineBoxAndHeight {
-        LineBox lineBox;
-        InlineLayoutUnit lineBoxLogicalHeight;
-    };
-    LineBoxAndHeight build(const LineBuilder::LineContent&, size_t lineIndex);
+    LineBox build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
     void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;

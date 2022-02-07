@@ -81,6 +81,8 @@ public:
 
     InlineLayoutUnit rootInlineBoxAlignmentOffset() const { return m_rootInlineBoxAlignmentOffset; }
 
+    const InlineRect& logicalRect() const { return m_logicalRect; }
+
 private:
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
@@ -93,10 +95,12 @@ private:
     InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox.layoutBox() ? m_rootInlineBox : m_nonRootInlineLevelBoxList[m_nonRootInlineLevelBoxMap.get(&layoutBox)]; }
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
+    void setLogicalRect(const InlineRect& logicalRect) { m_logicalRect = logicalRect; }
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
 
 private:
     bool m_hasContent { false };
+    InlineRect m_logicalRect;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
     InlineLayoutUnit m_rootInlineBoxAlignmentOffset { 0 };
