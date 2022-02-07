@@ -52,25 +52,26 @@ public:
 
     ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
-    WebCore::GraphicsContext& context() const override;
-    WebCore::IntSize backendSize() const override;
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) const override;
-    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const override;
-    void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) override;
-    void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) override;
-    String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution) const override;
-    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const override;
-    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
-    void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
-
     static constexpr bool isOriginAtBottomLeftCorner = true;
-    bool originAtBottomLeftCorner() const override { return isOriginAtBottomLeftCorner; }
-
     static constexpr bool canMapBackingStore = false;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
+    WebCore::GraphicsContext& context() const final;
+
 private:
-    unsigned bytesPerRow() const override;
+    WebCore::IntSize backendSize() const final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy) const final;
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy, WebCore::PreserveResolution) const final;
+    void draw(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
+    void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) final;
+    String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution) const final;
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const final;
+    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const final;
+    void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
+
+    bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }
+
+    unsigned bytesPerRow() const final;
 
     ImageBufferBackendHandle m_handle;
 };

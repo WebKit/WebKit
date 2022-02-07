@@ -1,3 +1,16 @@
+2022-02-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Tidy up some ImageBuffer-related classes
+        https://bugs.webkit.org/show_bug.cgi?id=236170
+
+        Reviewed by Darin Adler.
+        
+        ImageBufferTests should use the functions on ImageBuffer, not WebCore-internal
+        classes.
+
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-02-07  Ben Nham  <nham@apple.com>
 
         Add PushService

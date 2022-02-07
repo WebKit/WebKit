@@ -65,6 +65,10 @@ class TextMetrics;
 
 struct DOMMatrix2DInit;
 
+namespace DisplayList {
+class DrawingContext;
+}
+
 using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
 #if ENABLE(CSS_TYPED_OM)
     , RefPtr<CSSStyleImageValue>

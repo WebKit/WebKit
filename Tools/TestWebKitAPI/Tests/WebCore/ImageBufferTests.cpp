@@ -27,8 +27,9 @@
 
 #include "TestUtilities.h"
 #include <WebCore/Color.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/PlatformImageBuffer.h>
+#include <WebCore/PixelBuffer.h>
 #include <cmath>
 #include <wtf/MemoryFootprint.h>
 
@@ -54,10 +55,11 @@ TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
     auto pixelFormat = PixelFormat::BGRA8;
     FloatSize size { 1.f, 1.f };
     float scale = 1.f;
-    RefPtr<UnacceleratedImageBuffer> unaccelerated = UnacceleratedImageBuffer::create(size, scale, colorSpace, pixelFormat, nullptr);
-    RefPtr<AcceleratedImageBuffer> accelerated = AcceleratedImageBuffer::create(size, scale, colorSpace, pixelFormat, nullptr);
-    RefPtr<DisplayListAcceleratedImageBuffer> displayListAccelerated = DisplayListAcceleratedImageBuffer::create(size, scale, colorSpace, pixelFormat, nullptr);
-    RefPtr<DisplayListUnacceleratedImageBuffer> displayListUnaccelerated = DisplayListUnacceleratedImageBuffer::create(size, scale, colorSpace, pixelFormat, nullptr);
+    RefPtr<ImageBuffer> unaccelerated = ImageBuffer::create(size, RenderingMode::Unaccelerated, scale, colorSpace, pixelFormat, nullptr);
+    RefPtr<ImageBuffer> accelerated = ImageBuffer::create(size, RenderingMode::Accelerated, scale, colorSpace, pixelFormat, nullptr);
+    RefPtr<ImageBuffer> displayListAccelerated = ImageBuffer::create(size, RenderingMode::Unaccelerated, ShouldUseDisplayList::Yes, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, nullptr);
+    RefPtr<ImageBuffer> displayListUnaccelerated = ImageBuffer::create(size, RenderingMode::Accelerated, ShouldUseDisplayList::Yes, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, nullptr);
+
     EXPECT_NE(nullptr, accelerated);
     EXPECT_NE(nullptr, unaccelerated);
     EXPECT_NE(nullptr, displayListAccelerated);

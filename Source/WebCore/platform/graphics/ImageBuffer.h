@@ -36,12 +36,6 @@
 
 namespace WebCore {
 
-namespace DisplayList {
-class DisplayList;
-class DrawingContext;
-struct ItemBufferHandle;
-}
-
 class Filter;
 
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {

@@ -33,7 +33,7 @@ namespace WebCore {
 namespace DisplayList {
 
 template<typename BackendType>
-class ImageBuffer : public ConcreteImageBuffer<BackendType> {
+class ImageBuffer final : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::truncatedLogicalSize;
     using BaseConcreteImageBuffer::logicalSize;
@@ -75,20 +75,20 @@ public:
         flushDrawingContext();
     }
 
-    GraphicsContext& context() const override
+    GraphicsContext& context() const final
     {
         return m_drawingContext.context();
     }
 
     GraphicsContext* drawingContext() override { return &m_drawingContext.context(); }
 
-    void flushDrawingContext() override
+    void flushDrawingContext() final
     {
         if (!m_drawingContext.displayList().isEmpty())
             m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
     }
 
-    void clearBackend() override
+    void clearBackend() final
     {
         m_drawingContext.displayList().clear();
         BaseConcreteImageBuffer::clearBackend();

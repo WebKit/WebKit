@@ -48,11 +48,13 @@ public:
 
     ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&);
 
-    IOSurface* surface();
+    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
+    IOSurface* surface();
     GraphicsContext& context() const override;
     void flushContext() override;
 
+protected:
     IntSize backendSize() const override;
     
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
@@ -71,9 +73,6 @@ public:
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 
-    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
-
-protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
 

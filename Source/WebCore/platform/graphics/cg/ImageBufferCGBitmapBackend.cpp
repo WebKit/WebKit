@@ -118,6 +118,8 @@ ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& paramet
     applyBaseTransformToContext();
 }
 
+ImageBufferCGBitmapBackend::~ImageBufferCGBitmapBackend() = default;
+
 GraphicsContext& ImageBufferCGBitmapBackend::context() const
 {
     return *m_context;
