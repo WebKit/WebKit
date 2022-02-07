@@ -1,4 +1,4 @@
 Green
 
-FAIL Calling getAnimations updates layout of parent frame if needed assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+PASS Calling getAnimations updates layout of parent frame if needed
 

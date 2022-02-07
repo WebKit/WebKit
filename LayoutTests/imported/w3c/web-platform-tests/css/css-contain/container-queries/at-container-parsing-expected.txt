@@ -1,38 +1,38 @@
 
-PASS size(width)
-PASS size(min-width: 0px)
-PASS size(max-width: 0px)
-PASS size(height)
-PASS size(min-height: 0px)
-PASS size(max-height: 0px)
-PASS size(aspect-ratio)
-PASS size(min-aspect-ratio: 1/2)
-PASS size(max-aspect-ratio: 1/2)
-PASS size(orientation: portrait)
-PASS size(inline-size)
-PASS size(min-inline-size: 0px)
-PASS size(max-inline-size: 0px)
-PASS size(block-size)
-PASS size(min-block-size: 0px)
-PASS size(max-block-size: 0px)
-PASS size(width: 100px)
-PASS size((width: 100px))
-PASS size(not (width: 100px))
-PASS size((width: 100px) and (height: 100px))
-PASS size((width: 50px) or (height: 100px))
-PASS size(width < 100px)
-PASS size(100px < width)
-PASS size(100px < width < 200px)
-FAIL foo(width) assert_equals: expected "" but got "true"
-FAIL size(asdf) assert_equals: expected "" but got "true"
-FAIL size(resolution > 100dpi) assert_equals: expected "" but got "true"
-FAIL size(resolution: 150dpi) assert_equals: expected "" but got "true"
-FAIL size(color) assert_equals: expected "" but got "true"
-FAIL size(min-color: 1) assert_equals: expected "" but got "true"
-FAIL size(color-index >= 1) assert_equals: expected "" but got "true"
-FAIL (color-index >= 1) assert_equals: expected "" but got "true"
-FAIL size(grid) assert_equals: expected "" but got "true"
-FAIL (grid) assert_equals: expected "" but got "true"
+FAIL size(width) assert_equals: expected "true" but got ""
+FAIL size(min-width: 0px) assert_equals: expected "true" but got ""
+FAIL size(max-width: 0px) assert_equals: expected "true" but got ""
+FAIL size(height) assert_equals: expected "true" but got ""
+FAIL size(min-height: 0px) assert_equals: expected "true" but got ""
+FAIL size(max-height: 0px) assert_equals: expected "true" but got ""
+FAIL size(aspect-ratio) assert_equals: expected "true" but got ""
+FAIL size(min-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
+FAIL size(max-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
+FAIL size(orientation: portrait) assert_equals: expected "true" but got ""
+FAIL size(inline-size) assert_equals: expected "true" but got ""
+FAIL size(min-inline-size: 0px) assert_equals: expected "true" but got ""
+FAIL size(max-inline-size: 0px) assert_equals: expected "true" but got ""
+FAIL size(block-size) assert_equals: expected "true" but got ""
+FAIL size(min-block-size: 0px) assert_equals: expected "true" but got ""
+FAIL size(max-block-size: 0px) assert_equals: expected "true" but got ""
+FAIL size(width: 100px) assert_equals: expected "true" but got ""
+FAIL size((width: 100px)) assert_equals: expected "true" but got ""
+FAIL size(not (width: 100px)) assert_equals: expected "true" but got ""
+FAIL size((width: 100px) and (height: 100px)) assert_equals: expected "true" but got ""
+FAIL size((width: 50px) or (height: 100px)) assert_equals: expected "true" but got ""
+FAIL size(width < 100px) assert_equals: expected "true" but got ""
+FAIL size(100px < width) assert_equals: expected "true" but got ""
+FAIL size(100px < width < 200px) assert_equals: expected "true" but got ""
+PASS foo(width)
+PASS size(asdf)
+PASS size(resolution > 100dpi)
+PASS size(resolution: 150dpi)
+PASS size(color)
+PASS size(min-color: 1)
+PASS size(color-index >= 1)
+PASS (color-index >= 1)
+PASS size(grid)
+PASS (grid)
 PASS screen
 PASS print
 PASS not print

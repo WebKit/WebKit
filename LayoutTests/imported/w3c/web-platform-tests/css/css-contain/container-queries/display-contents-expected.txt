@@ -1,5 +1,5 @@
 
 FAIL getComputedStyle when container is display:contents assert_equals: expected "" but got "50"
-FAIL getComputedStyle when container becomes display:contents assert_equals: expected "30" but got "50"
-FAIL getComputedStyle when intermediate container becomes display:contents assert_equals: expected "30" but got "50"
+FAIL getComputedStyle when container becomes display:contents assert_equals: expected "" but got "50"
+FAIL getComputedStyle when intermediate container becomes display:contents assert_equals: expected "" but got "50"
 

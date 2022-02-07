@@ -1,3 +1,42 @@
+2022-02-07  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Add ContainerQueryEvaluator
+        https://bugs.webkit.org/show_bug.cgi?id=236096
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-contain/container-queries/animation-container-type-dynamic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-animation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-transition-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/aspect-ratio-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/auto-scrollbars-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.tentative-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-size-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-contents-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-none-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units-dynamic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/get-animations-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/iframe-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-vertical-rl-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/orthogonal-wm-container-query-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/percentage-padding-orthogonal-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-content-box-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/reattach-container-with-dirty-child-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-nested-dialog-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/transition-scrollbars-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/unsupported-axis-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/viewport-units-expected.txt:
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [css-logical] [web-animations] Add support for logical properties in JS-originated animations

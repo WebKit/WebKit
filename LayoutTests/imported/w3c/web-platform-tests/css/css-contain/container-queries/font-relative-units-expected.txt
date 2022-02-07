@@ -1,6 +1,6 @@
 
 PASS em relative inline-size
-PASS rem relative inline-size
+FAIL rem relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS ex relative inline-size
 PASS ch relative inline-size
 

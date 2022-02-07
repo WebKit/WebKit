@@ -1,5 +1,5 @@
 
 PASS Check that container queries is supported
 FAIL (min-width: 0) does not match a container without a principal box (display:none) assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 0, 0)"
-FAIL (min-width: 0) does not match a container without a principal box (display:contents) assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 0, 0)"
+PASS (min-width: 0) does not match a container without a principal box (display:contents)
 

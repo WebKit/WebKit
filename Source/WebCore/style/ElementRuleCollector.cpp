@@ -32,6 +32,7 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
+#include "ContainerQueryEvaluator.h"
 #include "ElementInlines.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
@@ -504,12 +505,13 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
     }
 }
 
-bool ElementRuleCollector::containerQueryMatches(const ContainerQuery&)
+bool ElementRuleCollector::containerQueryMatches(const ContainerQuery& query)
 {
     if (!m_selectorMatchingState)
         return true;
-    // FIXME: The actual matching.
-    return !m_selectorMatchingState->queryContainers.isEmpty();
+
+    ContainerQueryEvaluator evaluator(m_selectorMatchingState->queryContainers);
+    return evaluator.evaluate(query);
 }
 
 static inline bool compareRules(MatchedRule r1, MatchedRule r2)

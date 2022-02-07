@@ -10,9 +10,9 @@ FAIL getComputedStyle when outer container is display:none assert_equals: expect
 FAIL getComputedStyle when element becomes display:none assert_equals: expected "30" but got "50"
 FAIL getComputedStyle when parent becomes display:none assert_equals: expected "30" but got "50"
 FAIL getComputedStyle when ancestor becomes display:none assert_equals: expected "30" but got "50"
-FAIL getComputedStyle when container becomes display:none assert_equals: expected "30" but got "50"
-FAIL getComputedStyle when intermediate container becomes display:none assert_equals: expected "30" but got "50"
-FAIL getComputedStyle when ::before is display:none assert_equals: expected "30" but got "50"
+FAIL getComputedStyle when container becomes display:none assert_equals: expected "" but got "50"
+FAIL getComputedStyle when intermediate container becomes display:none assert_equals: expected "" but got "50"
+PASS getComputedStyle when ::before is display:none
 FAIL getComputedStyle when originating element is display:none assert_equals: expected "30" but got "50"
 FAIL getComputedStyle on ::before when ancestor element is display:none assert_equals: expected "30" but got "50"
 FAIL getComputedStyle on ::before when container is display:none assert_equals: expected "" but got "50"

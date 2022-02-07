@@ -1,3 +1,12 @@
+2022-02-07  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Add ContainerQueryEvaluator
+        https://bugs.webkit.org/show_bug.cgi?id=236096
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Starting a transform animation with a 1ms delay doesn't run it accelerated

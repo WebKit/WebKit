@@ -1,4 +1,4 @@
 
 
-FAIL @container-dependent elements respond to iframe size changes assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL @container-dependent elements respond to iframe size changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

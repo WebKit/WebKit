@@ -1,4 +1,4 @@
 Test
 
-FAIL Changing the container type invalidates relevant descendants assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
+FAIL Changing the container type invalidates relevant descendants assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

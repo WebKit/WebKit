@@ -1,5 +1,5 @@
 XXX
 
-FAIL Initially wider than 200px assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 255, 0)"
+PASS Initially wider than 200px
 PASS Container query changed and inner.style applied
 
