@@ -1,3 +1,24 @@
+2022-02-03  Frédéric Wang  <fwang@igalia.com>
+
+        null ptr deref in RenderTreeBuilder::Block::attachIgnoringContinuation
+        https://bugs.webkit.org/show_bug.cgi?id=234170
+
+        Reviewed by Antti Koivisto.
+
+        When an element with "display: contents" is put into the top layer, its computed style for
+        the display property becomes "block" [1]. However, RenderTreeUpdater::updateElementRenderer
+        does not manage well this transition. In particular, a null ptr deref happens for some
+        special configuration involving a <dialog style="display: contents">. To work around that
+        issue, always force tearing down renderers when updating an element in the top layer.
+
+        [1] https://fullscreen.spec.whatwg.org/#new-stacking-layer
+
+        Test: fast/layers/top-layer-display-contents-crash.html
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer): Always force tearing down renderers
+        for top layer element.
+
 2022-02-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Check AccessibilityRenderObject::m_renderer for null before using it.
