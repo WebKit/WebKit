@@ -1,3 +1,14 @@
+2022-02-07  Chris Dumez  <cdumez@apple.com>
+
+        WorkerGlobalScope.importScripts() should protect blob urls that were passed in until the imports are done
+        https://bugs.webkit.org/show_bug.cgi?id=236168
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/blob-url.worker-expected.txt:
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [css-logical] css/css-logical/animation-003.tentative is no longer a failure
