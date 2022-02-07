@@ -40,7 +40,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
-#include "DocumentTimeline.h"
 #include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "Editing.h"

@@ -30,7 +30,6 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
-#include "DocumentTimeline.h"
 #include "Element.h"
 #include "FullscreenManager.h"
 #include "HTMLParserIdioms.h"

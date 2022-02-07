@@ -29,7 +29,6 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
-#include "DocumentTimeline.h"
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
@@ -352,8 +351,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     OptionSet<AnimationImpact> animationImpact;
 
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
-    // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
-    // in case no Web Animations have been created through the JS API.
+    // on the document timeline.
     if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.renderView()->printing()) {
         if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
             styleable.updateCSSTransitions(*oldStyle, *newStyle);

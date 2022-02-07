@@ -33,7 +33,6 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DebugOverlayRegions.h"
-#include "DocumentTimeline.h"
 #include "EventRegion.h"
 #include "Frame.h"
 #include "FrameView.h"

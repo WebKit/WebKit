@@ -46,7 +46,6 @@
 #include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "DocumentSharedObjectPool.h"
-#include "DocumentTimeline.h"
 #include "Editing.h"
 #include "ElementAnimationRareData.h"
 #include "ElementInlines.h"
