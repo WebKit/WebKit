@@ -1,3 +1,15 @@
+2022-02-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Improve fullscreen transition when going to/from fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=236058
+        rdar://88415100
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+
 2022-02-07  Simon Fraser  <simon.fraser@apple.com>
 
         Tidy up some ImageBuffer-related classes
