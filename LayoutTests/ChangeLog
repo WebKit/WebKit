@@ -1,3 +1,14 @@
+2022-02-07  Alan Bujtas  <zalan@apple.com>
+
+        Updating grid gap value does not recalculate styles
+        https://bugs.webkit.org/show_bug.cgi?id=233252
+        <rdar://problem/85727334>
+
+        Reviewed by Simon Fraser.
+
+        * fast/dynamic/gap-style-change-should-initiate-layout-expected.html: Added.
+        * fast/dynamic/gap-style-change-should-initiate-layout.html: Added.
+
 2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: The isolated tree needs to fix-up table cell parent relationships
