@@ -1,3 +1,20 @@
+2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: The isolated tree needs to fix-up table cell parent relationships
+        https://bugs.webkit.org/show_bug.cgi?id=236156
+
+        Reviewed by Chris Fleizach.
+
+        Add AccessibilityUIElement::role implementation for use in new
+        accessibility/table-search-traversal.html test.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::role):
+        Added implementation.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::role):
+        Added implementation.
+
 2022-02-07  Roy Reapor  <rreapor@apple.com>
 
         [webkitcorepy] Autoinstaller may fail to install wheels

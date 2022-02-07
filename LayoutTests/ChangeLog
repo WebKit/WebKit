@@ -1,3 +1,27 @@
+2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: The isolated tree needs to fix-up table cell parent relationships
+        https://bugs.webkit.org/show_bug.cgi?id=236156
+
+        Reviewed by Chris Fleizach.
+
+        Add test verifying the the new, more correct isolated tree behavior.
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip new accessibility/table-search-traversal.html test due to 
+        missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
+        * platform/ios/TestExpectations:
+        Enable new accessibility/table-search-traversal.html test.
+
+        * accessibility/table-search-traversal.html: Added.
+        * platform/ios/accessibility/table-search-traversal-expected.txt: Added.
+        * platform/mac/accessibility/table-search-traversal-expected.txt: Added.
+
+        * platform/ios/imported/blink/accessibility/link-inside-label-expected.txt:
+        This patch implements AccessibilityUIElement::role on iOS, which
+        changes this test's output (in a positive way).
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [css-logical] css/css-logical/animation-003.tentative is no longer a failure

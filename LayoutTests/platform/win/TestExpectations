@@ -469,6 +469,9 @@ accessibility/model-element-attributes.html [ Skip ]
 # AccessibilityUIElement::isInCell().
 accessibility/ancestor-computation.html [ Skip ]
 
+# Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
+accessibility/table-search-traversal.html [ Skip ]
+
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
 fast/gradients/conic-repeating.html [ Skip ]

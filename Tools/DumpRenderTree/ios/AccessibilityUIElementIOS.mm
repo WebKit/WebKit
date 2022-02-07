@@ -95,6 +95,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
 - (NSString *)accessibilityDOMIdentifier;
+- (NSString *)_accessibilityWebRoleAsString;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -761,7 +762,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
-    return WTR::createJSString();
+    return [[m_element _accessibilityWebRoleAsString] createJSStringRef];
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()

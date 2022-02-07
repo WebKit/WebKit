@@ -190,11 +190,31 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axPar
     queueChangesAndRemovals(changes);
 }
 
+AXID AXIsolatedTree::parentIDForObject(AXCoreObject& axObject, AXID assumedParentID)
+{
+    ASSERT(isMainThread());
+
+    auto role = axObject.roleValue();
+    if (role == AccessibilityRole::Cell || role == AccessibilityRole::RowHeader || role == AccessibilityRole::ColumnHeader) {
+        // Unfortunately, table relationships don't always follow the usual model we build the isolated tree with (a simple
+        // live-tree walk, calling children() and setting those children to have a parent of the caller of children()).
+        // Overwrite the parentID to be that of the actual parent.
+        if (auto* actualParent = axObject.parentObjectUnignored()) {
+            // Expect that the parent row has been created by now.
+            // If we hit this m_nodeMap.contains ASSERT, we may need to create an isolated object for `actualParent` here or elsewhere.
+            ASSERT(m_nodeMap.contains(actualParent->objectID()));
+            ASSERT(actualParent->roleValue() == AccessibilityRole::Row);
+            return actualParent->objectID();
+        }
+    }
+    return assumedParentID;
+}
+
 AXIsolatedTree::NodeChange AXIsolatedTree::nodeChangeForObject(AXCoreObject& axObject, AXID parentID, bool attachWrapper, bool updateNodeMap)
 {
     ASSERT(isMainThread());
 
-    auto object = AXIsolatedObject::create(axObject, this, parentID);
+    auto object = AXIsolatedObject::create(axObject, this, parentIDForObject(axObject, parentID));
     NodeChange nodeChange { object, nullptr };
 
     if (!object->objectID().isValid()) {

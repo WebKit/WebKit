@@ -1,0 +1,33 @@
+This test ensures we can traverse through entire tables via search.
+
+StaticText
+AXLabel: Duck
+
+StaticText
+AXLabel: Cat
+
+StaticText
+AXLabel: Sound
+
+StaticText
+AXLabel: Quack
+
+StaticText
+AXLabel: Meow
+
+StaticText
+AXLabel: Biological family
+
+StaticText
+AXLabel: Anatidae
+
+StaticText
+AXLabel: Felidae
+
+Traversed 8 elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Duck	Cat
+Sound	Quack	Meow
+Biological family	Anatidae	Felidae

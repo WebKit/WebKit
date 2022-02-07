@@ -384,7 +384,9 @@ private:
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
-    // Called on main thread.
+    // Methods in this block are called on the main thread.
+    // Computes the parent ID of the given object, which is generally the "assumed" parent ID (but not always, like in the case of tables).
+    AXID parentIDForObject(AXCoreObject&, AXID assumedParentID);
     NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, bool attachWrapper = true, bool updateNodeMap = true);
     void collectNodeChangesForSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&, HashSet<AXID>* = nullptr);
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
