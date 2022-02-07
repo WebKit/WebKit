@@ -3,6 +3,10 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000;
+        color: #fff;
+    }
     dialog {
         background-color: #313231;
         color: #d7d7d8;

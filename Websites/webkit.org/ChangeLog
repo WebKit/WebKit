@@ -1,3 +1,12 @@
+2022-02-07  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, make <dialog> demos dark theme work in iframes
+
+        Add rules for <body>.
+
+        * demos/dialog-element/dark-theme.css:
+        (@media (prefers-color-scheme: dark) body):
+
 2022-02-04  Tim Nguyen  <ntim@apple.com>
 
         Add <dialog> element demos for blog post
