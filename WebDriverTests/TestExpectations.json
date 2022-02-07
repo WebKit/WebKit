@@ -1569,22 +1569,58 @@
         "expected": { "wpe": { "status": ["SKIP"] } }
     },
     "imported/w3c/webdriver/tests/find_element_from_shadow_root/find.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
-    },
-    "imported/w3c/webdriver/tests/find_element_from_shadow_root/user_prompts.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
+        "subtests": {
+            "test_find_element[tag name-a]": {
+                "expected": { "all": { "status": ["SKIP"]}}
+            },
+            "test_find_element[xpath-//a]": {
+                "expected": { "all": { "status": ["SKIP"]}}
+            },
+            "test_find_element_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_element_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_element_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_element_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/find_elements_from_shadow_root/find.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
-    },
-    "imported/w3c/webdriver/tests/find_elements_from_shadow_root/user_prompts.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
+        "subtests": {
+            "test_find_elements[tag name-a]": {
+                "expected": { "all": { "status": ["SKIP"]}}
+            },
+            "test_find_elements[xpath-//a]": {
+                "expected": { "all": { "status": ["SKIP"]}}
+            },
+            "test_find_elements_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_elements_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_elements_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            },
+            "test_find_elements_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/get_element_shadow_root/get.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
-    },
-    "imported/w3c/webdriver/tests/get_element_shadow_root/user_prompts.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230614"}}
+        "subtests": {
+            "test_no_top_browsing_context": {
+                "expected": {
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"},
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}
+                }
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/new_session/connect.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/230615"}}

@@ -52,6 +52,13 @@ const String& Session::webElementIdentifier()
     return webElementID;
 }
 
+const String& Session::shadowRootIdentifier()
+{
+    // The shadow root identifier is constant defined by the spec.
+    static NeverDestroyed<String> shadowRootID { "shadow-6066-11e4-a52e-4f735466cecf"_s };
+    return shadowRootID;
+}
+
 Session::Session(std::unique_ptr<SessionHost>&& host)
     : m_host(WTFMove(host))
     , m_scriptTimeout(defaultScriptTimeout)
@@ -984,6 +991,24 @@ Ref<JSON::Object> Session::createElement(const String& elementID)
     return elementObject;
 }
 
+RefPtr<JSON::Object> Session::createShadowRoot(RefPtr<JSON::Value>&& value)
+{
+    if (!value)
+        return nullptr;
+
+    auto valueObject = value->asObject();
+    if (!valueObject)
+        return nullptr;
+
+    auto elementID = valueObject->getString("session-node-" + id());
+    if (!elementID)
+        return nullptr;
+
+    auto elementObject = JSON::Object::create();
+    elementObject->setString(shadowRootIdentifier(), elementID);
+    return elementObject;
+}
+
 RefPtr<JSON::Object> Session::extractElement(JSON::Value& value)
 {
     String elementID = extractElementID(value);
@@ -1075,14 +1100,14 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
     });
 }
 
-void Session::findElements(const String& strategy, const String& selector, FindElementsMode mode, const String& rootElementID, Function<void (CommandResult&&)>&& completionHandler)
+void Session::findElements(const String& strategy, const String& selector, FindElementsMode mode, const String& rootElementID, ElementIsShadowRoot isShadowRoot, Function<void(CommandResult&&)>&& completionHandler)
 {
     if (!m_currentBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
         return;
     }
 
-    handleUserPrompts([this, protectedThis = Ref { *this }, strategy, selector, mode, rootElementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = Ref { *this }, strategy, selector, mode, rootElementID, isShadowRoot, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1108,9 +1133,14 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         if (m_implicitWaitTimeout)
             parameters->setDouble("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
 
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, mode, isShadowRoot, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                auto result = CommandResult::fail(WTFMove(response.responseObject));
+                if (isShadowRoot == ElementIsShadowRoot::Yes && result.errorCode() == CommandResult::ErrorCode::StaleElementReference) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::DetachedShadowRoot));
+                    return;
+                }
+                completionHandler(WTFMove(result));
                 return;
             }
 
@@ -1195,6 +1225,56 @@ void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHand
             auto elementObject = createElement(WTFMove(resultValue));
             if (!elementObject) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
+                return;
+            }
+            completionHandler(CommandResult::success(WTFMove(elementObject)));
+        });
+    });
+}
+
+void Session::getElementShadowRoot(const String& elementID, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!m_currentBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, protectedThis = Ref { *this }, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        auto arguments = JSON::Array::create();
+        arguments->pushString(createElement(elementID)->toJSONString());
+
+        auto parameters = JSON::Object::create();
+        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+        if (m_currentBrowsingContext)
+            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+        parameters->setString("function"_s, "function(element) { return element.shadowRoot; }"_s);
+        parameters->setArray("arguments"_s, WTFMove(arguments));
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+
+            auto valueString = response.responseObject->getString("result"_s);
+            if (!valueString) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+
+            auto resultValue = JSON::Value::parseJSON(valueString);
+            if (!resultValue) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+
+            auto elementObject = createShadowRoot(WTFMove(resultValue));
+            if (!elementObject) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchShadowRoot));
                 return;
             }
             completionHandler(CommandResult::success(WTFMove(elementObject)));

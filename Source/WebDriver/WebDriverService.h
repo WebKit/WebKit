@@ -88,7 +88,10 @@ private:
     void findElements(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void findElementFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void findElementsFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void findElementFromShadowRoot(RefPtr<JSON::Object>&&, Function<void(CommandResult&&)>&&);
+    void findElementsFromShadowRoot(RefPtr<JSON::Object>&&, Function<void(CommandResult&&)>&&);
     void getActiveElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void getElementShadowRoot(RefPtr<JSON::Object>&&, Function<void(CommandResult&&)>&&);
     void isElementSelected(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementAttribute(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementProperty(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

@@ -1,3 +1,16 @@
+2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Add support for shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=230614
+        <rdar://problem/83667535>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use querySelectorAll() instead of getElementsByTagName() because it is also available for shadow root.
+
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (tryToFindNode):
+
 2022-02-06  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r286936): Crash in WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData

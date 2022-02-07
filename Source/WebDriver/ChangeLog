@@ -1,3 +1,33 @@
+2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Add support for shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=230614
+        <rdar://problem/83667535>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add implementation of new shadow root commands.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode const): Handle NoSuchShadowRoot and DetachedShadowRoot errors
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::shadowRootIdentifier): Return shadow root identifier.
+        (WebDriver::Session::createShadowRoot): Create shadow root elment using the shadow root identifier.
+        (WebDriver::Session::findElements): Add ElementIsShadowRoot parameters to handle DetachedShadowRoot error.
+        (WebDriver::Session::getElementShadowRoot): Return the element shadow root.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::findElement): Pass ElementIsShadowRoot::No to Session::findElements().
+        (WebDriver::WebDriverService::findElements): Ditto.
+        (WebDriver::WebDriverService::findElementFromElement): Ditto.
+        (WebDriver::WebDriverService::findElementsFromElement): Ditto.
+        (WebDriver::WebDriverService::findElementFromShadowRoot):
+        (WebDriver::WebDriverService::findElementsFromShadowRoot):
+        (WebDriver::WebDriverService::getElementShadowRoot):
+        * WebDriverService.h:
+
 2022-02-02  Youenn Fablet  <youenn@apple.com>
 
         Clarify that some UUID routines are dedicated to UUID v4

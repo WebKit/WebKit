@@ -66,7 +66,7 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
 
             case "link text":
                 let linkTextResult = [];
-                for (let link of ancestorElement.getElementsByTagName("a")) {
+                for (let link of ancestorElement.querySelectorAll("a")) {
                     if (link.text.trim() == query) {
                         linkTextResult.push(link);
                         if (firstResultOnly)
@@ -79,7 +79,7 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
 
             case "partial link text":
                 let partialLinkResult = [];
-                for (let link of ancestorElement.getElementsByTagName("a")) {
+                for (let link of ancestorElement.querySelectorAll("a")) {
                     if (link.text.includes(query)) {
                         partialLinkResult.push(link);
                         if (firstResultOnly)
