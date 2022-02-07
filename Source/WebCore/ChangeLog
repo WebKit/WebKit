@@ -1,3 +1,28 @@
+2022-01-27  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        jsc_fuz/wktr: crash with new XRReferenceSpaceEvent('', {referenceSpace})
+        https://bugs.webkit.org/show_bug.cgi?id=235456
+
+        Reviewed by Chris Dumez.
+
+        FastMalloc.h specifies that each derived class needs to be annotated as well with WTF_MAKE_ISO_ALLOCATED
+        if the base class is annotated with WTF_MAKE_ISO_ALLOCATED.
+
+        After doing this, the crash in WebCore::Event::operator new(unsigned long) is no longer reproducible.
+        However, this caused ASSERT(m_transform) to be hit in debug builds with the attached test case.
+
+        The XRReferenceSpaceEvent spec specifies the transform attribute as nullable
+        (https://immersive-web.github.io/webxr/#dictdef-xrreferencespaceeventinit), so this patch updates the
+        XRReferenceSpaceEvent IDL and implementation to match the spec, and removes the ASSERT accordingly.
+
+        Test: webxr/xr-reference-space-event-crash.html
+
+        * Modules/webxr/XRReferenceSpaceEvent.cpp:
+        (WebCore::XRReferenceSpaceEvent::XRReferenceSpaceEvent):
+        (WebCore::XRReferenceSpaceEvent::transform const):
+        * Modules/webxr/XRReferenceSpaceEvent.h:
+        * Modules/webxr/XRReferenceSpaceEvent.idl:
+
 2022-01-25  Alexey Shvayka  <ashvayka@apple.com>
 
         XPath::Step::nodesInAxis(): add null checks after Attr::ownerElement() calls
