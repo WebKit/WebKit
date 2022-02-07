@@ -242,15 +242,16 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     for (auto cssProperty : keyframeEffect->animatedProperties())
         propertiesToMatch.add(CSSProperty::resolveDirectionAwareProperty(cssProperty, style.direction(), style.writingMode()));
 
-    Vector<RefPtr<WebAnimation>> animations;
-    if (auto* keyframeEffectStack = target->keyframeEffectStack()) {
-        for (auto& effect : keyframeEffectStack->sortedEffects()) {
-            if (effect->animation()->isRelevant())
-                animations.append(effect->animation());
+    auto protectedAnimations = [&]() -> Vector<RefPtr<WebAnimation>> {
+        if (auto* effectStack = target->keyframeEffectStack()) {
+            return effectStack->sortedEffects().map([](auto& effect) -> RefPtr<WebAnimation> {
+                return effect->animation();
+            });
         }
-    }
+        return { };
+    }();
 
-    for (auto& animationWithHigherCompositeOrder : makeReversedRange(animations)) {
+    for (auto& animationWithHigherCompositeOrder : makeReversedRange(protectedAnimations)) {
         if (&animation == animationWithHigherCompositeOrder)
             break;
 
