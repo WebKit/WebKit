@@ -57,6 +57,12 @@ void XRDeviceProxy::sessionDidEnd()
         trackingAndRenderingClient()->sessionDidEnd();
 }
 
+void XRDeviceProxy::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
+{
+    if (trackingAndRenderingClient())
+        trackingAndRenderingClient()->updateSessionVisibilityState(visibilityState);
+}
+
 void XRDeviceProxy::initializeTrackingAndRendering(PlatformXR::SessionMode sessionMode)
 {
     if (sessionMode != PlatformXR::SessionMode::ImmersiveVr)

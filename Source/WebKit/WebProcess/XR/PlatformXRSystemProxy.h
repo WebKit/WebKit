@@ -61,6 +61,7 @@ private:
 
     // Message handlers
     void sessionDidEnd(XRDeviceIdentifier);
+    void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState);
 
     PlatformXR::Instance::DeviceList m_devices;
     WebPage& m_page;

@@ -45,6 +45,7 @@ public:
     XRDeviceIdentifier identifier() const { return m_identifier; }
 
     void sessionDidEnd();
+    void updateSessionVisibilityState(PlatformXR::VisibilityState);
 
 private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);

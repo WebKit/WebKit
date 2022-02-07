@@ -106,6 +106,12 @@ void PlatformXRSystemProxy::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
         device->sessionDidEnd();
 }
 
+void PlatformXRSystemProxy::sessionDidUpdateVisibilityState(XRDeviceIdentifier deviceIdentifier, PlatformXR::VisibilityState visibilityState)
+{
+    if (auto device = deviceByIdentifier(deviceIdentifier))
+        device->updateSessionVisibilityState(visibilityState);
+}
+
 RefPtr<XRDeviceProxy> PlatformXRSystemProxy::deviceByIdentifier(XRDeviceIdentifier identifier)
 {
     for (auto& device : m_devices) {

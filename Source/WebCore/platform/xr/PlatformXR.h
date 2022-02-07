@@ -676,6 +676,15 @@ template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
     >;
 };
 
+template<> struct EnumTraits<PlatformXR::VisibilityState> {
+    using values = EnumValues<
+        PlatformXR::VisibilityState,
+        PlatformXR::VisibilityState::Visible,
+        PlatformXR::VisibilityState::VisibleBlurred,
+        PlatformXR::VisibilityState::Hidden
+    >;
+};
+
 template<> struct EnumTraits<PlatformXR::XRHandedness> {
     using values = EnumValues<
         PlatformXR::XRHandedness,

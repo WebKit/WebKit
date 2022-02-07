@@ -1,3 +1,36 @@
+2022-02-07  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Handle updating session visibility state from PlatformXRCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=236150
+
+        Reviewed by Dean Jackson.
+
+        Add plumbing to allow PlatformXRCoordinator to communicate session visibility
+        state changes to XRDeviceProxy.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/XR/XRDeviceProxy.cpp:
+        (WebKit::XRDeviceProxy::updateSessionVisibilityState):
+        Notify the PlatformXR::TrackingAndRenderingClient about the visibility state change.
+        * Shared/XR/XRDeviceProxy.h:
+        * UIProcess/XR/PlatformXRCoordinator.h:
+        Introduce a new protocol for PlatformXRCoordinator to communicate back
+        to PlatformXRSystem. This protocol so far has methods for notifying the
+        end of a session and visibility state changes in the session.
+        * UIProcess/XR/PlatformXRSystem.cpp:
+        (WebKit::PlatformXRSystem::initializeTrackingAndRendering):
+        startSession() now takes in the PlatformXRSystem instance as it now implements
+        SessionEventClient.
+        (WebKit::PlatformXRSystem::sessionDidEnd):
+        (WebKit::PlatformXRSystem::sessionDidUpdateVisibilityState):
+        * UIProcess/XR/PlatformXRSystem.h:
+        * WebProcess/XR/PlatformXRSystemProxy.cpp:
+        (WebKit::PlatformXRSystemProxy::sessionDidUpdateVisibilityState):
+        * WebProcess/XR/PlatformXRSystemProxy.h:
+        * WebProcess/XR/PlatformXRSystemProxy.messages.in:
+
 2022-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a helper method on VideoFullscreenManagerProxy to request video frame data
