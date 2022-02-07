@@ -106,6 +106,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
 #include "RenderSVGForeignObject.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
@@ -4557,7 +4558,18 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             offset -= toLayoutSize(renderer().view().frameView().scrollPositionForFixedPosition());
 
         if (renderer().hasNonVisibleOverflow()) {
-            ClipRect newOverflowClip = downcast<RenderBox>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
+            ClipRect newOverflowClip;
+            if (is<RenderBox>(renderer()))
+                newOverflowClip = downcast<RenderBox>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            else if (is<RenderSVGModelObject>(renderer()))
+                newOverflowClip = downcast<RenderSVGModelObject>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
+#endif
+            else {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+
             newOverflowClip.setAffectedByRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().isPositioned())
@@ -4567,7 +4579,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
                 clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
             }
         }
-        if (renderer().hasClip()) {
+        if (renderer().hasClip() && is<RenderBox>(renderer())) {
             LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(offset, nullptr);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
@@ -4647,13 +4659,26 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         // This layer establishes a clip of some kind.
         if (renderer().hasNonVisibleOverflow()) {
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip) {
-                foregroundRect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy));
+                LayoutRect overflowClipRect;
+
+                if (is<RenderBox>(renderer()))
+                    overflowClipRect = downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+                else if (is<RenderSVGModelObject>(renderer()))
+                    overflowClipRect = downcast<RenderSVGModelObject>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
+#endif
+                else {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+
+                foregroundRect.intersect(overflowClipRect);
                 foregroundRect.setAffectedByRadius(true);
             } else if (transform() && renderer().style().hasBorderRadius())
                 foregroundRect.setAffectedByRadius(true);
         }
 
-        if (renderer().hasClip()) {
+        if (renderer().hasClip() && is<RenderBox>(renderer())) {
             // Clip applies to *us* as well, so update the damageRect.
             LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(toLayoutPoint(offsetFromRootLocal), nullptr);
             backgroundRect.intersect(newPosClip);
@@ -4662,7 +4687,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
 
         // If we establish a clip at all, then make sure our background rect is intersected with our layer's bounds including our visual overflow,
         // since any visual overflow like box-shadow or border-outset is not clipped by overflow:auto/hidden.
-        if (renderBox()->hasVisualOverflow()) {
+        if (renderBox() && renderBox()->hasVisualOverflow()) {
             // FIXME: Does not do the right thing with CSS regions yet, since we don't yet factor in the
             // individual region boxes as overflow.
             LayoutRect layerBoundsWithVisualOverflow = renderBox()->visualOverflowRect();
@@ -4730,7 +4755,7 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
     if (clipRect.isInfinite())
         return clipRect;
 
-    if (renderer().hasClip()) {
+    if (renderer().hasClip() && is<RenderBox>(renderer())) {
         // CSS clip may be larger than our border box.
         LayoutRect cssClipRect = downcast<RenderBox>(renderer()).clipRect({ }, nullptr);
         clipExceedsBounds = !cssClipRect.isEmpty() && (clipRect.width() < cssClipRect.width() || clipRect.height() < cssClipRect.height());
