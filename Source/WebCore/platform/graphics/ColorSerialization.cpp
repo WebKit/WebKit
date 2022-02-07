@@ -35,14 +35,8 @@
 
 namespace WebCore {
 
-struct LegacyRGBComponent { float value; };
 struct NumericComponent { float value; };
 struct PercentageComponent { float value; };
-
-static LegacyRGBComponent legacyRGBComponent(float value)
-{
-    return { value };
-}
 
 static NumericComponent numericComponent(float value)
 {
@@ -58,31 +52,6 @@ static PercentageComponent percentageComponent(float value)
 };
 
 namespace WTF {
-
-template<> class StringTypeAdapter<WebCore::LegacyRGBComponent> {
-public:
-    StringTypeAdapter(WebCore::LegacyRGBComponent number)
-    {
-        if (std::isnan(number.value)) {
-            m_buffer = { 'n', 'o', 'n', 'e' };
-            m_length = 4;
-        } else {
-            auto valueAsByte = std::clamp(std::lround(number.value * 255.0f), 0l, 255l);
-            m_length = lengthOfIntegerAsString(valueAsByte);
-            writeIntegerToBuffer(valueAsByte, m_buffer.data());
-        }
-    }
-
-    unsigned length() const { return m_length; }
-    bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
-
-private:
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
-
-    std::array<char, 4> m_buffer;
-    unsigned m_length;
-};
 
 template<> class StringTypeAdapter<WebCore::NumericComponent> {
 public:
@@ -606,6 +575,26 @@ String serializationForRenderTreeAsText(const Rec2020<float>& color, bool)
 
 // MARK: SRGBA<float> overloads
 
+String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
+    return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), useColorFunctionSerialization);
+}
+
+String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    return serializationForCSS(color, useColorFunctionSerialization);
+}
+
+String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization)
+{
+    return serializationForCSS(color, useColorFunctionSerialization);
+}
+
+// MARK: SRGBA<uint8_t> overloads
+
 static char decimalDigit(unsigned number)
 {
     ASSERT(number < 10);
@@ -622,39 +611,6 @@ static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
         return { { decimalDigit(alpha * 10 / 0xFF), decimalDigit(thirdDigit), '\0', '\0' } };
     return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
 }
-
-String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization)
-{
-    if (useColorFunctionSerialization)
-        return serializationUsingColorFunction(color);
-
-    auto [red, green, blue, alpha] = color.unresolved();
-
-    if (std::isnan(alpha))
-        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / none)");
-
-    auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(alpha);
-    switch (normalizedAlpha) {
-    case 0:
-        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / 0)");
-    case 0xFF:
-        return makeString("rgb(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), ')');
-    default:
-        return makeString("rgba(", legacyRGBComponent(red), ' ', legacyRGBComponent(green), ' ', legacyRGBComponent(blue), " / 0.", fractionDigitsForFractionalAlphaValue(normalizedAlpha).data(), ')');
-    }
-}
-
-String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)
-{
-    return serializationForCSS(color, useColorFunctionSerialization);
-}
-
-String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization)
-{
-    return serializationForCSS(color, useColorFunctionSerialization);
-}
-
-// MARK: SRGBA<uint8_t> overloads
 
 String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerialization)
 {

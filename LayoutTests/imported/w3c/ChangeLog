@@ -1,3 +1,17 @@
+2022-02-06  Sam Weinig  <weinig@apple.com>
+
+        Update serialization of rgb() functions with none components to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=236210
+
+        Reviewed by Darin Adler.
+
+        Update tests for new serialization behavior.
+
+        * web-platform-tests/css/css-color/parsing/color-computed.html:
+        * web-platform-tests/css/css-color/parsing/color-valid.html:
+        * web-platform-tests/css/css-color/parsing/relative-color-computed.html:
+        * web-platform-tests/css/css-color/parsing/relative-color-valid.html:
+
 2022-02-06  Antoine Quint  <graouts@webkit.org>
 
         [css-logical] Animations should convert logical properties to their physical equivalents

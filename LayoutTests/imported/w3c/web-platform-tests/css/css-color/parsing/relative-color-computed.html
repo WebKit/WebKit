@@ -107,13 +107,13 @@
 
     // Testing with 'none'.
     // NOTE: Serialization of rgb() with 'none' components is still under discussion - https://github.com/w3c/csswg-drafts/issues/6959
-    test_computed_value(`color`, `rgb(from rebeccapurple none none none)`,                         `rgb(none none none)`);
-    test_computed_value(`color`, `rgb(from rebeccapurple none none none / none)`,                  `rgba(none none none / none)`);
-    test_computed_value(`color`, `rgb(from rebeccapurple r g none)`,                               `rgb(102 51 none)`);
-    test_computed_value(`color`, `rgb(from rebeccapurple r g none / alpha)`,                       `rgb(102 51 none)`);
-    test_computed_value(`color`, `rgb(from rebeccapurple r g b / none)`,                           `rgba(102 51 153 / none)`);
-    test_computed_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)`,              `rgba(51 102 none / 0.8)`);
-    test_computed_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g b / none)`,                  `rgba(51 102 153 / none)`);
+    test_computed_value(`color`, `rgb(from rebeccapurple none none none)`,                         `rgb(0, 0, 0)`);
+    test_computed_value(`color`, `rgb(from rebeccapurple none none none / none)`,                  `rgba(0, 0, 0, 0)`);
+    test_computed_value(`color`, `rgb(from rebeccapurple r g none)`,                               `rgb(102, 51, 0)`);
+    test_computed_value(`color`, `rgb(from rebeccapurple r g none / alpha)`,                       `rgb(102, 51, 0)`);
+    test_computed_value(`color`, `rgb(from rebeccapurple r g b / none)`,                           `rgba(102, 51, 153, 0)`);
+    test_computed_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)`,              `rgba(51, 102, 0, 0.8)`);
+    test_computed_value(`color`, `rgb(from rgb(20% 40% 60% / 80%) r g b / none)`,                  `rgba(51, 102, 153, 0)`);
     // FIXME: Clarify with spec editors if 'none' should pass through to the constants.
     test_computed_value(`color`, `rgb(from rgb(none none none) r g b)`,                            `rgb(0, 0, 0)`);
     test_computed_value(`color`, `rgb(from rgb(none none none / none) r g b / alpha)`,             `rgba(0, 0, 0, 0)`);
