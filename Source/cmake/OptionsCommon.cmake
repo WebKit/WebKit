@@ -27,9 +27,9 @@ CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
 if (USE_LD_LLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
     if ("${LD_VERSION}" MATCHES "LLD")
-        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld -Wl,--disable-new-dtags")
-        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld -Wl,--disable-new-dtags")
-        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld -Wl,--disable-new-dtags")
+        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
+        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
+        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
     else ()
         set(USE_LD_LLD OFF)
     endif ()
@@ -44,6 +44,7 @@ execute_process(
 set(LD_SUPPORTS_GDB_INDEX TRUE)
 set(LD_SUPPORTS_SPLIT_DEBUG TRUE)
 set(LD_SUPPORTS_THIN_ARCHIVES TRUE)
+set(LD_SUPPORTS_DISABLE_NEW_DTAGS TRUE)
 if (LD_VERSION MATCHES "^LLD ")
     set(LD_VARIANT LLD)
 elseif (LD_VERSION MATCHES "^mold ")
@@ -58,9 +59,14 @@ else ()
     set(LD_SUPPORTS_GDB_INDEX FALSE)
     set(LD_SUPPORTS_SPLIT_DEBUG FALSE)
     set(LD_SUPPORTS_THIN_ARCHIVES FALSE)
+    set(LD_SUPPORTS_DISABLE_NEW_DTAGS FALSE)
 endif ()
 unset(LD_VERSION)
-message(STATUS "Linker variant in use: ${LD_VARIANT} (thin archives: ${LD_SUPPORTS_THIN_ARCHIVES}, split debug: ${LD_SUPPORTS_SPLIT_DEBUG}, --gdb-index: ${LD_SUPPORTS_GDB_INDEX})")
+message(STATUS "Linker variant in use: ${LD_VARIANT} ")
+message(STATUS "  Linker supports thin archives - ${LD_SUPPORTS_THIN_ARCHIVES}")
+message(STATUS "  Linker supports split debug info - ${LD_SUPPORTS_SPLIT_DEBUG}")
+message(STATUS "  Linker supports --gdb-index - ${LD_SUPPORTS_GDB_INDEX}")
+message(STATUS "  Linker supports --disable-new-dtags - ${LD_SUPPORTS_DISABLE_NEW_DTAGS}")
 
 # Determine whether the archiver in use supports thin archives.
 execute_process(
@@ -83,7 +89,21 @@ if (AR_STATUS EQUAL 0)
 endif ()
 unset(AR_VERSION)
 unset(AR_STATUS)
-message(STATUS "Archiver variant in use: ${AR_VARIANT} (thin archives: ${AR_SUPPORTS_THIN_ARCHIVES})")
+message(STATUS "Archiver variant in use: ${AR_VARIANT}")
+message(STATUS "  Archiver supports thin archives - ${AR_SUPPORTS_THIN_ARCHIVES}")
+
+# Use --disable-new-dtags to ensure that the rpath set by CMake when building
+# will use a DT_RPATH entry in the ELF headers, to ensure that the build
+# directory lib/ subdir is always used and developers do not accidentally run
+# test programs from the build directory against system libraries. Without
+# passing the option DT_RUNPATH is used, which can be overriden by the value
+# of LD_LIBRARY_PATH set in the environment, resulting in unexpected behaviour
+# for developers.
+if (LD_SUPPORTS_DISABLE_NEW_DTAGS)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,--disable-new-dtags")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,--disable-new-dtags")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -Wl,--disable-new-dtags")
+endif ()
 
 # Prefer thin archives by default if they can be both created by the
 # archiver and read back by the linker.

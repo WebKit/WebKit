@@ -1,3 +1,14 @@
+2022-02-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] REGRESSION(r288994): Linker does not get passed --disable-new-dtags
+        https://bugs.webkit.org/show_bug.cgi?id=236205
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsCommon.cmake: Arrange passing --disable-new-dtags to linkers that
+        are known to support the option. While at it, reorganize a bit how detected linker/archiver
+        features are printed out for better readability.
+
 2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font
