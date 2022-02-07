@@ -441,10 +441,10 @@ class TestPort(Port):
         return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0, fuzzy_data={'max_difference': 0, 'total_pixels': 0})
 
     def layout_tests_dir(self):
-        return LAYOUT_TEST_DIR
+        return self._filesystem.abspath(LAYOUT_TEST_DIR)
 
     def perf_tests_dir(self):
-        return PERF_TEST_DIR
+        return self._filesystem.abspath(PERF_TEST_DIR)
 
     def webkit_base(self):
         return '/test.checkout'

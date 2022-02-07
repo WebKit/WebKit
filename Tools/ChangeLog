@@ -1,3 +1,19 @@
+2022-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r288878) webkitpy.layout_tests.controllers.layout_test_finder_legacy_unittest.LayoutTestFinderTests tests are failing with Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=236043
+        <rdar://problem/88449289>
+
+        Reviewed by Darin Adler.
+
+        Since r288878 started to use pyfakefs, Port.relative_test_filename
+        didn't work as expected in unit tests with Windows Python because
+        TestPort.layout_tests_dir returned Unix-style path while the path
+        name of layout test is Windows-style path.
+
+        * Scripts/webkitpy/port/test.py: Use abspath to convert Unix-style
+        path to Windows-style for Windows Python.
+
 2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Make Bitmap constexpr friendly
