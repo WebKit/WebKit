@@ -1,3 +1,21 @@
+2022-02-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Setup alternate mouse gesture recognizer.
+        https://bugs.webkit.org/show_bug.cgi?id=236127
+
+        Reviewed by Tim Horton.
+        
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldEnableAlternativeMouseGestureRecognizers):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView setUpMouseGestureRecognizer]):
+        (-[WKContentView _configureMouseGestureRecognizer]):
+
 2022-02-07  Per Arne  <pvollan@apple.com>
 
         Remove cfprefs shmem access

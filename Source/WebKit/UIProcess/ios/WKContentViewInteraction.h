@@ -304,6 +304,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
+    RetainPtr<WKMouseGestureRecognizer> _alternateMouseGestureRecognizer;
     WebCore::MouseEventPolicy _mouseEventPolicy;
 #endif
 

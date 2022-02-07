@@ -234,6 +234,19 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 }
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecognizer* mouseRecognizer, WKMouseGestureRecognizer* alternativeMouseRecgnizer)
+{
+    UNUSED_PARAM(mouseRecognizer);
+    UNUSED_PARAM(alternativeMouseRecgnizer);
+    
+    return false;
+}
+
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+
 #endif
 
 namespace WebKit {
@@ -1151,6 +1164,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_mouseGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
+    [_alternateMouseGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_alternateMouseGestureRecognizer.get()];
+    
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
@@ -1305,6 +1321,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
+    [self removeGestureRecognizer:_alternateMouseGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1330,6 +1347,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+    [self addGestureRecognizer:_alternateMouseGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1807,6 +1825,9 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
+        return NO;
+    
+    if (gestureRecognizer != _alternateMouseGestureRecognizer && [_alternateMouseGestureRecognizer mouseTouch] == touch)
         return NO;
 
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
@@ -8097,6 +8118,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer == _mouseGestureRecognizer)
         return NO;
+    
+    if (gestureRecognizer == _alternateMouseGestureRecognizer)
+        return NO;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -9619,8 +9643,14 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 {
     _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
     [_mouseGestureRecognizer setDelegate:self];
+    
+    _alternateMouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
+    [_alternateMouseGestureRecognizer setDelegate:self];
+    
     [self _configureMouseGestureRecognizer];
+    
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+    [self addGestureRecognizer:_alternateMouseGestureRecognizer.get()];
 }
 
 - (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
@@ -9650,6 +9680,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)_configureMouseGestureRecognizer
 {
     [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+    if (shouldEnableAlternativeMouseGestureRecognizers(_mouseGestureRecognizer.get(),  _alternateMouseGestureRecognizer.get()))
+        [_alternateMouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+    else
+        [_alternateMouseGestureRecognizer setEnabled:false];
 }
 
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy
@@ -9657,10 +9691,6 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     _mouseEventPolicy = policy;
     [self _configureMouseGestureRecognizer];
 }
-
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler
 {
