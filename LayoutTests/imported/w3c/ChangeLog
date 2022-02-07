@@ -1,3 +1,16 @@
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
+        [css-logical] [web-animations] Add support for logical properties in JS-originated animations
+        https://bugs.webkit.org/show_bug.cgi?id=236229
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-logical/animation-001-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+
 2022-02-07  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Use min as default value when min > max for input type="range"

@@ -235,7 +235,12 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
-    HashSet<CSSPropertyID> propertiesToMatch = keyframeEffect->animatedProperties();
+    ASSERT(target->renderer());
+    auto& style = target->renderer()->style();
+
+    HashSet<CSSPropertyID> propertiesToMatch;
+    for (auto cssProperty : keyframeEffect->animatedProperties())
+        propertiesToMatch.add(CSSProperty::resolveDirectionAwareProperty(cssProperty, style.direction(), style.writingMode()));
 
     Vector<RefPtr<WebAnimation>> animations;
     if (auto* keyframeEffectStack = target->keyframeEffectStack()) {
@@ -253,8 +258,9 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
             auto* effectWithHigherCompositeOrder = animationWithHigherCompositeOrder->effect();
             if (is<KeyframeEffect>(effectWithHigherCompositeOrder)) {
                 auto* keyframeEffectWithHigherCompositeOrder = downcast<KeyframeEffect>(effectWithHigherCompositeOrder);
-                for (auto cssPropertyId : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
-                    if (propertiesToMatch.remove(cssPropertyId) && propertiesToMatch.isEmpty())
+                for (auto cssProperty : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
+                    auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, style.direction(), style.writingMode());
+                    if (propertiesToMatch.remove(resolvedProperty) && propertiesToMatch.isEmpty())
                         break;
                 }
             }

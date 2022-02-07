@@ -227,10 +227,11 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     // 4. Make up a new list animation properties that consists of all of the properties that are in both input properties and animatable
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
     Vector<JSC::Identifier> animationProperties;
-    size_t numberOfProperties = inputProperties.size();
-    for (size_t i = 0; i < numberOfProperties; ++i) {
-        if (CSSPropertyAnimation::isPropertyAnimatable(IDLAttributeNameToAnimationPropertyName(inputProperties[i].string())))
-            animationProperties.append(inputProperties[i]);
+    for (auto& inputProperty : inputProperties) {
+        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
+        auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
+        if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty))
+            animationProperties.append(inputProperty);
     }
 
     // 5. Sort animation properties in ascending order by the Unicode codepoints that define each property name.
