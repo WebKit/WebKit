@@ -1,3 +1,15 @@
+2022-02-06  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r286936): Crash in WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData
+        https://bugs.webkit.org/show_bug.cgi?id=236209
+
+        Reviewed by Darin Adler.
+
+        Add null check for modificationTime returned by FileSystem::fileModificationTime.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData):
+
 2022-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Refactor RemoteLayerBackingStoreCollection to have a single backing store traversal function

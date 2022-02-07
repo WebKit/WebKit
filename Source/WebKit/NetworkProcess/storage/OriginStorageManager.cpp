@@ -246,7 +246,7 @@ private:
 
     void deleteLocalStorageData(WallTime time)
     {
-        if (auto modificationTime = FileSystem::fileModificationTime(m_localStoragePath); *modificationTime >= time) {
+        if (FileSystem::fileModificationTime(m_localStoragePath) >= time) {
             if (m_localStorageManager)
                 m_localStorageManager->clearDataOnDisk();
             WebCore::SQLiteFileSystem::deleteDatabaseFile(m_localStoragePath);
