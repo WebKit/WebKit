@@ -1,3 +1,17 @@
+2022-02-06  Jean-Yves Avenard  <jya@apple.com>
+
+        media/media-source/media-webm-vorbis-partial.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=236211
+        rdar://88298267
+
+        Reviewed by Darin Adler.
+
+        The manifest data was incorrect, the webm cluster size is 10004 bytes long.
+        Expand the test so it's consistent with the webm/opus one.
+
+        * media/media-source/content/test-vorbis-manifest.json:
+        * media/media-source/media-webm-vorbis-partial.html:
+
 2022-02-06  Sam Weinig  <weinig@apple.com>
 
         Remove duplicate tests that have been upstreamed to WPT
