@@ -62,6 +62,7 @@ private:
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
+    bool m_fallbackFontRequiresIdeographicBaseline { false };
 };
 
 }

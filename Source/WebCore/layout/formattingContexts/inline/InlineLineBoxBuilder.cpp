@@ -36,6 +36,15 @@
 namespace WebCore {
 namespace Layout {
 
+static bool fallbackFontHasVerticalGlyph(const TextUtil::FallbackFontList& fallbackFontList)
+{
+    for (auto* font : fallbackFontList) {
+        if (font->hasVerticalGlyphs())
+            return true;
+    }
+    return false;
+}
+
 static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, const LineBuilder::LineContent& lineContent, bool isLeftToRightDirection)
 {
     // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
@@ -301,6 +310,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto fallbackFonts = TextUtil::fallbackFontsForRun(run, style);
             if (!fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
+                m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || fallbackFontHasVerticalGlyph(fallbackFonts);
                 adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts);
             }
             continue;
@@ -338,22 +348,17 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (rootInlineBoxStyle.isHorizontalWritingMode())
             return false;
 
-        auto styleRequiresIdeographicBaseline = [&] (auto& style) {
+        auto primaryFontRequiresIdeographicBaseline = [&] (auto& style) {
             return style.fontDescription().orientation() == FontOrientation::Vertical || style.fontCascade().primaryFont().hasVerticalGlyphs();
         };
 
-        if (styleRequiresIdeographicBaseline(rootInlineBoxStyle))
+        if (m_fallbackFontRequiresIdeographicBaseline || primaryFontRequiresIdeographicBaseline(rootInlineBoxStyle))
             return true;
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (styleRequiresIdeographicBaseline(styleToUse(inlineLevelBox)))
+            if (primaryFontRequiresIdeographicBaseline(styleToUse(inlineLevelBox)))
                 return true;
         }
-
-        auto contentRequiresIdeographicBaseline = [&] {
-            // FIXME: Add support for fallback fonts.
-            return false;
-        };
-        return contentRequiresIdeographicBaseline();
+        return false;
     };
 
     if (!lineNeedsIdeographicBaseline())
