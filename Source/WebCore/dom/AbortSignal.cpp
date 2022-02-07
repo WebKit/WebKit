@@ -34,6 +34,7 @@
 #include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSCast.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -62,7 +63,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
     auto action = [signal](ScriptExecutionContext& context) mutable {
         signal->setHasActiveTimeoutTimer(false);
 
-        auto* globalObject = jsCast<JSDOMGlobalObject*>(context.globalObject());
+        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
         if (!globalObject)
             return;
 

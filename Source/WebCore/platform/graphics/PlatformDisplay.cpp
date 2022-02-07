@@ -84,6 +84,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
