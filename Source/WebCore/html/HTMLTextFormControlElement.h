@@ -25,6 +25,7 @@
 #pragma once
 
 #include "HTMLFormControlElementWithState.h"
+#include "PointerEventTypeNames.h"
 
 namespace WebCore {
 
@@ -146,6 +147,8 @@ private:
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     bool childShouldCreateRenderer(const Node&) const override;
+    
+    void setHovered(bool, Style::InvalidationScope, HitTestRequest) final;
 
     unsigned indexForPosition(const Position&) const;
 
@@ -162,6 +165,8 @@ private:
     unsigned m_lastChangeWasUserEdit : 1;
     unsigned m_isPlaceholderVisible : 1;
     unsigned m_canShowPlaceholder : 1;
+    
+    String m_pointerType { mousePointerEventType() };
 
     String m_textAsOfLastFormControlChangeEvent;
 

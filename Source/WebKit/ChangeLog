@@ -1,3 +1,15 @@
+2022-02-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Update hover state based on pointer type.
+        https://bugs.webkit.org/show_bug.cgi?id=236249
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (pointerTypeForUITouchType):
+        (-[WKMouseGestureRecognizer createMouseEventWithType:wasCancelled:]):
+        (-[WKMouseGestureRecognizer checkTouches:]):
+
 2022-02-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289239.

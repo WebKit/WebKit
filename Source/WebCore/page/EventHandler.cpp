@@ -85,6 +85,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
+#include "PointerEventTypeNames.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
 #include "RenderFrameSet.h"
@@ -152,6 +153,12 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/EventHandlerAdditions.cpp>
+#else
+
+static void addPointerTypeToHitTestRequest(OptionSet<WebCore::HitTestRequest::Type> &, String )
+{
+}
+
 #endif
 
 namespace WebCore {
@@ -1992,6 +1999,9 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         hitType.add(HitTestRequest::Type::ReadOnly);
     }
 #endif
+    
+    addPointerTypeToHitTestRequest(hitType, platformMouseEvent.pointerType());
+    
     HitTestRequest request(hitType);
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);
     if (hitTestResult)

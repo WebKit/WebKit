@@ -888,7 +888,7 @@ void Element::setHasFocusWithin(bool value)
     }
 }
 
-void Element::setHovered(bool value, Style::InvalidationScope invalidationScope)
+void Element::setHovered(bool value, Style::InvalidationScope invalidationScope, HitTestRequest)
 {
     if (value == hovered())
         return;

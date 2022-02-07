@@ -29,6 +29,7 @@
 #include "ElementIdentifier.h"
 #include "EventOptions.h"
 #include "FocusOptions.h"
+#include "HitTestRequest.h"
 #include "QualifiedName.h"
 #include "RenderPtr.h"
 #include "ScrollTypes.h"
@@ -342,7 +343,7 @@ public:
     bool hasFocusWithin() const { return isUserActionElement() && isUserActionElementHasFocusWithin(); };
 
     virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
-    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
+    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All, HitTestRequest = {});
     virtual void setFocus(bool, FocusVisibility = FocusVisibility::Invisible);
     void setBeingDragged(bool);
     void setHasFocusVisible(bool);

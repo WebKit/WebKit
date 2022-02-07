@@ -46,7 +46,7 @@ private:
 
     // Overridden to update the hover/active state of the corresponding control.
     void setActive(bool, bool pause, Style::InvalidationScope) final;
-    void setHovered(bool, Style::InvalidationScope) final;
+    void setHovered(bool, Style::InvalidationScope, HitTestRequest) final;
 
     // Overridden to either click() or focus() the corresponding control.
     void defaultEventHandler(Event&) final;

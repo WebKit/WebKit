@@ -7437,11 +7437,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     changeState(elementsToSetActive, CSSSelector::PseudoClassActive, true, [](auto& element) {
         element.setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, false, [](auto& element) {
-        element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, false, [request](auto& element) {
+        element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings, request);
     });
-    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, true, [](auto& element) {
-        element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
+    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, true, [request](auto& element) {
+        element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings, request);
     });
 }
 

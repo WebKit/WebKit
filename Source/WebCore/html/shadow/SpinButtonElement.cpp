@@ -249,11 +249,11 @@ void SpinButtonElement::repeatingTimerFired()
         step(m_upDownState == Up ? 1 : -1);
 }
 
-void SpinButtonElement::setHovered(bool flag, Style::InvalidationScope invalidationScope)
+void SpinButtonElement::setHovered(bool flag, Style::InvalidationScope invalidationScope, HitTestRequest request)
 {
     if (!flag)
         m_upDownState = Indeterminate;
-    HTMLDivElement::setHovered(flag, invalidationScope);
+    HTMLDivElement::setHovered(flag, invalidationScope, request);
 }
 
 bool SpinButtonElement::shouldRespondToMouseEvents()
