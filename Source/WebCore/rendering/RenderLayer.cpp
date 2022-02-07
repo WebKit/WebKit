@@ -107,8 +107,11 @@
 #include "RenderReplica.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
+#include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGRoot.h"
+#include "RenderSVGText.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableCell.h"
@@ -1062,6 +1065,17 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         }
     }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled()) {
+        if (!is<RenderSVGRoot>(renderer()))
+            ASSERT(!renderer().isFixedPositioned());
+
+        // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
+        if (is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer()))
+            ASSERT(!m_scrollableArea);
+    }
+#endif
+
     if (isComposited())
         backing()->updateAfterLayout(flags.contains(ContainingClippingLayerChangedSize), flags.contains(NeedsFullRepaintInBacking));
 
@@ -1681,6 +1695,19 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
         }
         
         box->applyTopLeftLocationOffset(localPoint);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    } else if (is<RenderSVGModelObject>(renderer())) {
+        auto& svgRenderer = downcast<RenderSVGModelObject>(renderer());
+        auto newSize = enclosingIntRect(svgRenderer.frameRectEquivalent()).size();
+        if (newSize != size()) {
+            if (flags && renderer().hasNonVisibleOverflow())
+                flags->add(ContainingClippingLayerChangedSize);
+
+            setSize(newSize);
+        }
+
+        svgRenderer.applyTopLeftLocationOffsetEquivalent(localPoint);
+#endif
     }
 
     if (!renderer().isOutOfFlowPositioned()) {
@@ -4851,6 +4878,10 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
     LayoutRect result;
     if (renderer().isInline() && is<RenderInline>(renderer()))
         result = downcast<RenderInline>(renderer()).linesVisualOverflowBoundingBox();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    else if (is<RenderSVGModelObject>(renderer()))
+        result = downcast<RenderSVGModelObject>(renderer()).visualOverflowRectEquivalent();
+#endif
     else if (is<RenderTableRow>(renderer())) {
         auto& tableRow = downcast<RenderTableRow>(renderer());
         // Our bounding box is just the union of all of our cells' border/overflow rects.
