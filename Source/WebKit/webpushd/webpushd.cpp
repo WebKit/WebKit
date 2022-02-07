@@ -26,7 +26,7 @@
 #include <WebKit/WKMain.h>
 #include <os/availability.h>
 
-int main(int argc, const char** argv)
+int main(int argc, char** argv)
 {
     WKWebPushDaemonMain(argc, argv);
 }

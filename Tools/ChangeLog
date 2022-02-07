@@ -1,3 +1,25 @@
+2022-02-07  Ben Nham  <nham@apple.com>
+
+        Add PushService
+        https://bugs.webkit.org/show_bug.cgi?id=235857
+
+        Reviewed by Brady Eidson.
+
+         - Modifed the existing injected push test to inject different types of real push objects
+           from APS (an empty push, an aesgcm-encrypted push, and an aes128gcm-encrypted push).
+         - Add a few basic test cases for subscribing and unsubscribing from push.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (-[NotificationScriptMessageHandler setMessageHandler:]):
+        (-[NotificationScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::testWebPushDaemonPList):
+        (TestWebKitAPI::createMessageDictionary):
+        (TestWebKitAPI::sendMessageToDaemon):
+        (TestWebKitAPI::sendMessageToDaemonWaitingForReply):
+        (TestWebKitAPI::sendConfigurationWithAuditToken):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::function): Deleted.
+
 2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: The isolated tree needs to fix-up table cell parent relationships

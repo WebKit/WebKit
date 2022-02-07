@@ -1,3 +1,101 @@
+2022-02-07  Ben Nham  <nham@apple.com>
+
+        Add PushService
+        https://bugs.webkit.org/show_bug.cgi?id=235857
+
+        Reviewed by Brady Eidson.
+
+        This adds PushService to webpushd. It handles requests to create, remove, and get push
+        subscriptions. It also decrypts incoming pushes and pass them back to the UI process via the
+        existing machinery in WebPushDaemon.
+
+        PushService primarily interacts with two objects:
+
+        1. PushServiceConnection: this creates and removes push subscriptions from the push server.
+           It also receives incoming pushes from the push server.
+        2. PushDatabase: this persists push subscriptions to disk.
+
+        Several things are not yet implemented; for instance, we currently always grant a page the
+        permission to receive pushes. This will be fixed in future patches.
+
+        Covered by new API tests. The current tests use a MockPushServiceConnection that vends
+        subscription with fixed data, but this can be improved in the future.
+
+        * Shared/API/Cocoa/WKMain.h:
+        * Shared/API/Cocoa/WKMain.mm:
+        (WKWebPushDaemonMain):
+        * Shared/Cocoa/WebPushMessageCocoa.mm: add ability to distinguish between an empty vs. null payload.
+        (WebKit::WebPushMessage::fromDictionary):
+        (WebKit::WebPushMessage::toDictionary const):
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+        * Shared/WebPushMessage.h:
+        (WebKit::WebPushMessage::decode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/MockPushServiceConnection.h:
+        * webpushd/MockPushServiceConnection.mm:
+        (WebPushD::MockPushServiceConnection::generateClientKeys):
+        (WebPushD::MockPushServiceConnection::subscribe):
+        (WebPushD::MockPushServiceConnection::unsubscribe):
+        * webpushd/PushService.h: Added.
+        (WebPushD::PushService::connection):
+        (WebPushD::PushService::database):
+        (WebPushD::PushService::didReceivePushMessage):
+        * webpushd/PushService.mm: Added.
+        (WebPushD::updateTopicLists):
+        (WebPushD::PushService::create):
+        (WebPushD::PushService::createMockService):
+        (WebPushD::PushService::PushService):
+        (WebPushD::makePushSubscriptionFromRecord):
+        (WebPushD::makePushTopic):
+        (WebPushD::PushServiceRequest::bundleIdentifier):
+        (WebPushD::PushServiceRequest::scope):
+        (WebPushD::PushServiceRequest::PushServiceRequest):
+        (WebPushD::PushServiceRequestImpl::PushServiceRequestImpl):
+        (WebPushD::PushServiceRequestImpl::fulfill):
+        (WebPushD::PushServiceRequestImpl::reject):
+        (WebPushD::GetSubscriptionRequest::GetSubscriptionRequest):
+        (WebPushD::GetSubscriptionRequest::startInternal):
+        (WebPushD::SubscribeRequest::SubscribeRequest):
+        (WebPushD::SubscribeRequest::startImpl):
+        (WebPushD::SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError):
+        (WebPushD::UnsubscribeRequest::UnsubscribeRequest):
+        (WebPushD::UnsubscribeRequest::startInternal):
+        (WebPushD::PushService::enqueuePushServiceRequest):
+        (WebPushD::PushService::finishedPushServiceRequest):
+        (WebPushD::PushService::getSubscription):
+        (WebPushD::PushService::didCompleteGetSubscriptionRequest):
+        (WebPushD::PushService::subscribe):
+        (WebPushD::PushService::didCompleteSubscribeRequest):
+        (WebPushD::PushService::unsubscribe):
+        (WebPushD::PushService::didCompleteUnsubscribeRequest):
+        (WebPushD::makeRawPushMessage):
+        (WebPushD::PushService::didReceivePushMessage):
+        * webpushd/PushServiceConnection.h:
+        * webpushd/PushServiceConnection.mm:
+        (WebPushD::PushServiceConnection::generateClientKeys):
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::injectEncryptedPushMessageForTesting::encodeReply):
+        (WebPushD::Daemon::startMockPushService):
+        (WebPushD::Daemon::startPushService):
+        (WebPushD::Daemon::setPushService):
+        (WebPushD::Daemon::runAfterStartingPushService):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::injectEncryptedPushMessageForTesting):
+        (WebPushD::Daemon::handleIncomingPush):
+        (WebPushD::Daemon::getPendingPushMessages):
+        (WebPushD::Daemon::subscribeToPushService):
+        (WebPushD::Daemon::unsubscribeFromPushService):
+        (WebPushD::Daemon::getPushSubscription):
+        (WebPushD::Daemon::getPushPermissionState):
+        * webpushd/WebPushDaemonMain.h:
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::WebPushDaemonMain):
+        * webpushd/com.apple.webkit.webpushd.mac.plist:
+        * webpushd/webpushd.cpp:
+        (main):
+
 2022-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add PageClient plumbing for video frame extraction

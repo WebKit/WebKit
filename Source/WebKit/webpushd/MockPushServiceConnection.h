@@ -34,6 +34,8 @@ public:
     MockPushServiceConnection();
     ~MockPushServiceConnection();
 
+    WebCore::PushCrypto::ClientKeys generateClientKeys() final;
+
     void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) override;
     void unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) override;
 

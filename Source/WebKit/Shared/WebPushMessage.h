@@ -37,7 +37,7 @@ struct WebPushMessage {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<WebPushMessage> decode(Decoder&);
 
-    Vector<uint8_t> pushData;
+    std::optional<Vector<uint8_t>> pushData;
     URL registrationURL;
 
 #if PLATFORM(COCOA)
@@ -55,7 +55,7 @@ void WebPushMessage::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<WebPushMessage> WebPushMessage::decode(Decoder& decoder)
 {
-    std::optional<Vector<uint8_t>> pushData;
+    std::optional<std::optional<Vector<uint8_t>>> pushData;
     decoder >> pushData;
     if (!pushData)
         return std::nullopt;

@@ -26,6 +26,10 @@
 #import "config.h"
 #import "MockPushServiceConnection.h"
 
+#import <wtf/text/Base64.h>
+
+using namespace WebCore::PushCrypto;
+
 namespace WebPushD {
 
 MockPushServiceConnection::MockPushServiceConnection()
@@ -34,14 +38,30 @@ MockPushServiceConnection::MockPushServiceConnection()
 
 MockPushServiceConnection::~MockPushServiceConnection() = default;
 
-void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>&, SubscribeHandler&& handler)
+ClientKeys MockPushServiceConnection::generateClientKeys()
 {
-    handler({ }, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
+    // Example values from RFC8291 Section 5.
+    auto publicKey = base64URLDecode("BCVxsr7N_eNgVRqvHtD0zTZsEc6-VV-JvLexhqUzORcxaOzi6-AYWXvTBHm4bjyPjs7Vd8pZGH6SRpkNtoIAiw4"_s).value();
+    auto privateKey = base64URLDecode("q1dXpw3UpT5VOmu_cf_v6ih07Aems3njxI-JWgLcM94"_s).value();
+    auto secret = base64URLDecode("BTBZMqHH6r4Tts7J_aSIgg"_s).value();
+
+    return ClientKeys { P256DHKeyPair { WTFMove(publicKey), WTFMove(privateKey) }, WTFMove(secret) };
+}
+
+void MockPushServiceConnection::subscribe(const String&, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& handler)
+{
+    auto alwaysRejectedKey = base64URLDecode("BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg"_s).value();
+    if (vapidPublicKey == alwaysRejectedKey) {
+        handler({ }, [NSError errorWithDomain:@"WebPush" code:-1 userInfo:nil]);
+        return;
+    }
+
+    handler(@"https://webkit.org/push", nil);
 }
 
 void MockPushServiceConnection::unsubscribe(const String&, const Vector<uint8_t>&, UnsubscribeHandler&& handler)
 {
-    handler({ }, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
+    handler(true, nil);
 }
 
 Vector<String> MockPushServiceConnection::enabledTopics()
