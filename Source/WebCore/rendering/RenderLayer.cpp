@@ -105,6 +105,7 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
+#include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
@@ -3819,6 +3820,19 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     // interleaving of the fragments to work properly.
     bool selectionOnly = localPaintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
     bool selectionAndBackgroundsOnly = localPaintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGModelObject>(renderer()) && !is<RenderSVGContainer>(renderer())) {
+        // SVG containers need to propagate paint phases. This could be saved if we remember somewhere if a SVG subtree
+        // contains e.g. RenderSVGForeignObject objects that do need the individual paint phases. For SVG shapes & SVG images
+        // we can avoid the multiple paintForegroundForFragmentsWithPhase() calls.
+        if (selectionOnly || selectionAndBackgroundsOnly)
+            return;
+
+        paintForegroundForFragmentsWithPhase(PaintPhase::Foreground, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
+        return;
+    }
+#endif
 
     if (!selectionOnly)
         paintForegroundForFragmentsWithPhase(PaintPhase::ChildBlockBackgrounds, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
