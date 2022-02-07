@@ -504,6 +504,8 @@ private:
     RefPtr<HistoryItem> m_requestedHistoryItem;
 
     bool m_alwaysAllowLocalWebarchive { false };
+
+    bool m_inStopForBackForwardCache { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

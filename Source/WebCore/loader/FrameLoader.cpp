@@ -1827,6 +1827,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
 
 void FrameLoader::stopForBackForwardCache()
 {
+    m_inStopForBackForwardCache = true;
     // Stop provisional loads in subframes (The one in the main frame is about to be committed).
     if (!m_frame.isMainFrame()) {
         if (m_provisionalDocumentLoader)
@@ -1846,6 +1847,7 @@ void FrameLoader::stopForBackForwardCache()
     // running script, which could schedule new navigations.
     policyChecker().stopCheck();
     m_frame.navigationScheduler().cancel();
+    m_inStopForBackForwardCache = false;
 }
 
 void FrameLoader::stopAllLoadersAndCheckCompleteness()
@@ -1863,6 +1865,8 @@ void FrameLoader::stopAllLoadersAndCheckCompleteness()
 
 void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
 {
+    if (m_inStopForBackForwardCache)
+        return;
     // Calling stopAllLoaders can cause the frame to be deallocated, including the frame loader.
     Ref<Frame> protectedFrame(m_frame);
 

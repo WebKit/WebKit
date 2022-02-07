@@ -1,3 +1,15 @@
+2022-02-07  Rob Buis  <rbuis@igalia.com>
+
+        Bail out early in stopForUserCancel
+        https://bugs.webkit.org/show_bug.cgi?id=223536
+
+        Reviewed by Darin Adler.
+
+        Add test for this.
+
+        * fast/loader/commit-provisional-load-crash-expected.txt: Added.
+        * fast/loader/commit-provisional-load-crash.html: Added.
+
 2022-02-07  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Alias appearance <compat-auto> keywords to 'auto'
