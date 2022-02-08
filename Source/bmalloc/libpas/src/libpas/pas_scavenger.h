@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,7 @@ PAS_API void pas_scavenger_clear_all_non_tlc_caches(void);
 PAS_API void pas_scavenger_clear_all_caches_except_remote_tlcs(void);
 PAS_API void pas_scavenger_clear_all_caches(void);
 PAS_API void pas_scavenger_decommit_expendable_memory(void);
+PAS_API void pas_scavenger_fake_decommit_expendable_memory(void); /* Useful for testing. */
 PAS_API size_t pas_scavenger_decommit_free_memory(void);
 
 PAS_API void pas_scavenger_run_synchronously_now(void);

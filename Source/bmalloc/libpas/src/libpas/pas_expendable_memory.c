@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,17 @@
 #include "pas_heap_lock.h"
 #include "pas_page_malloc.h"
 
+pas_expendable_memory_state_version pas_expendable_memory_version_counter = 1;
+
+pas_expendable_memory_state_version pas_expendable_memory_state_version_next(void)
+{
+    pas_expendable_memory_state_version result;
+    pas_heap_lock_assert_held();
+    result = ++pas_expendable_memory_version_counter;
+    PAS_ASSERT(result > 1);
+    return result;
+}
+
 void pas_expendable_memory_construct(pas_expendable_memory* memory,
                                      size_t size)
 {
@@ -43,7 +54,7 @@ void pas_expendable_memory_construct(pas_expendable_memory* memory,
     memory->size = (unsigned)size;
 
     PAS_ASSERT(pas_is_aligned(size, PAS_EXPENDABLE_MEMORY_PAGE_SIZE));
-    
+
     for (index = size / PAS_EXPENDABLE_MEMORY_PAGE_SIZE; index--;) {
         memory->states[index] =
             pas_expendable_memory_state_create(PAS_EXPENDABLE_MEMORY_STATE_KIND_DECOMMITTED, 1);
@@ -220,10 +231,12 @@ bool pas_expendable_memory_commit_if_necessary(pas_expendable_memory* header,
     }
 
     PAS_ASSERT(first_version >= header_version);
-    PAS_ASSERT(last_version >= header_version);
-    PAS_ASSERT(first_version > header_version || last_version > header_version);
 
-    new_version = PAS_MAX(first_version, last_version);
+    /* We'd like to assert that last_version >= header_version, except that it's possible for someone to
+       do a commit_if_necessary on the prefix of this object, and then not update last_version. So,
+       last_version could be stuck arbitrarily in the past. */
+
+    new_version = pas_expendable_memory_state_version_next();
     new_state = pas_expendable_memory_state_create(PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED, new_version);
 
     header->states[first] = new_state;
@@ -239,7 +252,7 @@ ignore_last_page:
 
     PAS_ASSERT(first_version > header_version);
 
-    new_version = first_version;
+    new_version = pas_expendable_memory_state_version_next();
     new_state = pas_expendable_memory_state_create(PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED, new_version);
 
     header->states[first] = new_state;
@@ -249,15 +262,18 @@ done:
     return true;
 }
 
-static bool scavenge_impl(pas_expendable_memory* header,
-                          void* payload,
-                          pas_expendable_memory_scavenge_kind scavenge_kind)
+static PAS_ALWAYS_INLINE bool scavenge_impl(pas_expendable_memory* header,
+                                            void* payload,
+                                            pas_expendable_memory_scavenge_kind scavenge_kind)
 {
     size_t index;
     size_t index_end;
     bool result;
+    pas_expendable_memory_state_version decommit_version;
     
     pas_heap_lock_assert_held();
+
+    decommit_version = pas_expendable_memory_state_version_next();
 
     PAS_ASSERT(header->size);
     PAS_ASSERT(pas_is_aligned(header->size, PAS_EXPENDABLE_MEMORY_PAGE_SIZE));
@@ -312,14 +328,15 @@ static bool scavenge_impl(pas_expendable_memory* header,
                     break;
                 }
             } else {
-                PAS_ASSERT(scavenge_kind == pas_expendable_memory_scavenge_forced);
+                PAS_ASSERT(scavenge_kind == pas_expendable_memory_scavenge_forced
+                           || scavenge_kind == pas_expendable_memory_scavenge_forced_fake);
                 if (kind < PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED)
                     break;
                 PAS_TESTING_ASSERT(kind <= PAS_EXPENDABLE_MEMORY_STATE_KIND_MAX_JUST_USED);
             }
             header->states[other_index] = pas_expendable_memory_state_create(
                 PAS_EXPENDABLE_MEMORY_STATE_KIND_DECOMMITTED,
-                pas_expendable_memory_state_get_version(state) + 1);
+                decommit_version);
         }
 
         /* Make sure that by the time we decommit, nobody can lie about using the stuff we are decommitting.
@@ -327,8 +344,10 @@ static bool scavenge_impl(pas_expendable_memory* header,
            memory. So, it might happen after we have already decommitted, or decided to decommit. */
         pas_store_store_fence();
 
-        pas_page_malloc_decommit_asymmetric((char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
-                                            (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE);
+        if (scavenge_kind != pas_expendable_memory_scavenge_forced_fake) {
+            pas_page_malloc_decommit_asymmetric((char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
+                                                (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE);
+        }
 
         /* At this point, any of the pages in this range could get decommitted, but it won't necessarily
            happen immediately. Any write to these pages will cancel the decommit, or undo it if it's already
@@ -362,9 +381,6 @@ static bool scavenge_impl(pas_expendable_memory* header,
         index = other_index - 1;
     }
 
-    if (scavenge_kind == pas_expendable_memory_scavenge_forced)
-        PAS_ASSERT(!result);
-
     return result;
 }
 
@@ -372,13 +388,18 @@ bool pas_expendable_memory_scavenge(pas_expendable_memory* header,
                                     void* payload,
                                     pas_expendable_memory_scavenge_kind kind)
 {
-    switch (kind) {
-    case pas_expendable_memory_scavenge_periodic:
+    bool result;
+    
+    if (kind == pas_expendable_memory_scavenge_periodic) {
+        /* Specialize for this case. We want the scavenger to be fast. */
         return scavenge_impl(header, payload, pas_expendable_memory_scavenge_periodic);
-    case pas_expendable_memory_scavenge_forced:
-        return scavenge_impl(header, payload, pas_expendable_memory_scavenge_forced);
     }
-    PAS_ASSERT(!"Should not be reached");
+
+    PAS_ASSERT(kind == pas_expendable_memory_scavenge_forced
+               || kind == pas_expendable_memory_scavenge_forced_fake);
+
+    result = scavenge_impl(header, payload, kind);
+    PAS_ASSERT(!result);
     return false;
 }
 

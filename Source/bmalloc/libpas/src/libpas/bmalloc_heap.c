@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "pas_deallocate.h"
 #include "pas_ensure_heap_forced_into_reserved_memory.h"
 #include "pas_get_allocation_size.h"
+#include "pas_get_heap.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -271,6 +272,12 @@ void* bmalloc_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, s
     return bmalloc_reallocate_flex_inline(heap_ref, old_ptr, new_size);
 }
 
+pas_heap* bmalloc_flex_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref)
+{
+    return pas_ensure_heap(&heap_ref->base, pas_primitive_heap_ref_kind,
+                           &bmalloc_heap_config, &bmalloc_flex_runtime_config.base);
+}
+
 PAS_NEVER_INLINE void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment)
 {
@@ -337,6 +344,12 @@ void* bmalloc_reallocate_auxiliary(void* old_ptr,
     return bmalloc_reallocate_auxiliary_inline(old_ptr, heap_ref, new_size, free_mode);
 }
 
+pas_heap* bmalloc_auxiliary_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref)
+{
+    return pas_ensure_heap(&heap_ref->base, pas_primitive_heap_ref_kind,
+                           &bmalloc_heap_config, &bmalloc_primitive_runtime_config.base);
+}
+
 void bmalloc_deallocate(void* ptr)
 {
     bmalloc_deallocate_inline(ptr);
@@ -359,6 +372,11 @@ size_t bmalloc_heap_ref_get_type_size(pas_heap_ref* heap_ref)
 size_t bmalloc_get_allocation_size(void* ptr)
 {
     return pas_get_allocation_size(ptr, BMALLOC_HEAP_CONFIG);
+}
+
+pas_heap* bmalloc_get_heap(void* ptr)
+{
+    return pas_get_heap(ptr, BMALLOC_HEAP_CONFIG);
 }
 
 PAS_END_EXTERN_C;

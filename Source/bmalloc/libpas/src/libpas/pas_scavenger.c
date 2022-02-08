@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,6 +133,16 @@ static void timed_wait(pthread_cond_t* cond, pthread_mutex_t* mutex,
         printf("Woke up from timed wait at %.2lf.\n", get_time_in_milliseconds());
 }
 
+static bool handle_expendable_memory(pas_expendable_memory_scavenge_kind kind)
+{
+    bool should_go_again = false;
+    pas_heap_lock_lock();
+    should_go_again |= pas_compact_expendable_memory_scavenge(kind);
+    should_go_again |= pas_large_expendable_memory_scavenge(kind);
+    pas_heap_lock_unlock();
+    return should_go_again;
+}
+
 static void* scavenger_thread_main(void* arg)
 {
     pas_scavenger_data* data;
@@ -200,10 +210,7 @@ static void* scavenger_thread_main(void* arg)
                                            pas_deallocator_scavenge_flush_log_if_clean_action,
                                            pas_lock_is_not_held);
 
-        pas_heap_lock_lock();
-        should_go_again |= pas_compact_expendable_memory_scavenge(pas_expendable_memory_scavenge_periodic);
-        should_go_again |= pas_large_expendable_memory_scavenge(pas_expendable_memory_scavenge_periodic);
-        pas_heap_lock_unlock();
+        should_go_again |= handle_expendable_memory(pas_expendable_memory_scavenge_periodic);
 
         /* For the purposes of performance tuning, as well as some of the scavenger tests, the epoch
            is time in nanoseconds.
@@ -478,10 +485,12 @@ void pas_scavenger_clear_all_caches(void)
 
 void pas_scavenger_decommit_expendable_memory(void)
 {
-    pas_heap_lock_lock();
-    pas_compact_expendable_memory_scavenge(pas_expendable_memory_scavenge_forced);
-    pas_large_expendable_memory_scavenge(pas_expendable_memory_scavenge_forced);
-    pas_heap_lock_unlock();
+    handle_expendable_memory(pas_expendable_memory_scavenge_forced);
+}
+
+void pas_scavenger_fake_decommit_expendable_memory(void)
+{
+    handle_expendable_memory(pas_expendable_memory_scavenge_forced_fake);
 }
 
 size_t pas_scavenger_decommit_free_memory(void)

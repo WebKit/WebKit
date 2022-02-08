@@ -118,7 +118,10 @@ struct pas_segregated_heap_medium_directory_tuple {
     
     /* This is the `index` we would use to do a lookup. A medium directory tuple represents a
        contiguous range of indices that map to a single directory. */
-    pas_segregated_heap_medium_directory_index begin_index; /* inclusive */
+    pas_segregated_heap_medium_directory_index begin_index; /* inclusive, but cannot be zero, so we can
+                                                               detect races (we could relax this if we just
+                                                               made this "begin_index_plus_one" or something
+                                                               like that) */
     pas_segregated_heap_medium_directory_index end_index; /* inclusive */
 };
 

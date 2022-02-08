@@ -27,6 +27,8 @@
 
 #include "Verifier.h"
 #include <atomic>
+#include "bmalloc_heap_config.h"
+#include "hotbit_heap_config.h"
 #include "iso_heap_config.h"
 #include "iso_test_heap_config.h"
 #include "jit_heap.h"
@@ -103,6 +105,8 @@ RuntimeConfigTestScope::RuntimeConfigTestScope(
             FOR_EACH_RUNTIME_CONFIG(iso_test, setUp);
             FOR_EACH_RUNTIME_CONFIG(minalign32, setUp);
             FOR_EACH_RUNTIME_CONFIG(pagesize64k, setUp);
+            FOR_EACH_RUNTIME_CONFIG(bmalloc, setUp);
+            FOR_EACH_RUNTIME_CONFIG(hotbit, setUp);
             setUp(pas_utility_heap_runtime_config);
             setUp(jit_heap_runtime_config);
         })

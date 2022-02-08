@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@ struct pas_expendable_memory {
 
 #define PAS_EXPENDABLE_MEMORY_PAGE_SIZE 16384lu
 
+PAS_API extern pas_expendable_memory_state_version pas_expendable_memory_version_counter;
+
 enum pas_expendable_memory_touch_kind {
     pas_expendable_memory_touch_to_note_use,
     pas_expendable_memory_touch_to_commit_if_necessary
@@ -61,8 +63,15 @@ enum pas_expendable_memory_touch_kind {
 typedef enum pas_expendable_memory_touch_kind pas_expendable_memory_touch_kind;
 
 enum pas_expendable_memory_scavenge_kind {
+    /* Decommits only things that haven't been used recently, and does the count increment that allows us
+       to tell that something hasn't been used recently. */
     pas_expendable_memory_scavenge_periodic,
-    pas_expendable_memory_scavenge_forced
+
+    /* Decommits everything that it can. */
+    pas_expendable_memory_scavenge_forced,
+
+    /* Pretends to decommit everything that it can without making any syscalls (useful for testing). */
+    pas_expendable_memory_scavenge_forced_fake,
 };
 
 typedef enum pas_expendable_memory_scavenge_kind pas_expendable_memory_scavenge_kind;
@@ -78,6 +87,8 @@ pas_expendable_memory_state_get_version(pas_expendable_memory_state state)
 {
     return state >> PAS_EXPENDABLE_MEMORY_STATE_NUM_KIND_BITS;
 }
+
+PAS_API pas_expendable_memory_state_version pas_expendable_memory_state_version_next(void);
 
 static inline pas_expendable_memory_state pas_expendable_memory_state_create(
     pas_expendable_memory_state_kind kind,

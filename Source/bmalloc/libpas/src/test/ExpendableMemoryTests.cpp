@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,14 @@
 #if PAS_ENABLE_BMALLOC
 
 #include "bmalloc_heap.h"
+#include "bmalloc_heap_config.h"
 #include <condition_variable>
 #include <mutex>
 #include "pas_compact_expendable_memory.h"
 #include "pas_large_expendable_memory.h"
 #include "pas_segregated_heap.h"
+#include "pas_segregated_size_directory_inlines.h"
+#include <thread>
 
 using namespace std;
 
@@ -212,6 +215,127 @@ void testSoManyHeaps()
     CHECK(pas_segregated_heap_num_size_lookup_rematerializations);
 }
 
+void testRage(unsigned numHeaps, function<unsigned(unsigned)> allocationSize, unsigned numThreads,
+              unsigned count, function<void()> sleep)
+{
+    thread* threads = new thread[numThreads];
+    pas_primitive_heap_ref* heaps = new pas_primitive_heap_ref[numHeaps];
+
+    for (unsigned i = numHeaps; i--;)
+        heaps[i] = BMALLOC_FLEX_HEAP_REF_INITIALIZER(new bmalloc_type(BMALLOC_TYPE_INITIALIZER(1, 1, "test")));
+
+    mutex lock;
+    unsigned numThreadsDone = 0;
+
+    for (unsigned i = numThreads; i--;) {
+        threads[i] = thread([&] () {
+            for (unsigned j = 0; j < count; ++j) {
+                pas_primitive_heap_ref* heap = heaps + deterministicRandomNumber(numHeaps);
+                size_t size = allocationSize(j);
+                void* ptr = bmalloc_allocate_flex(heap, size);
+                CHECK(ptr);
+                CHECK_GREATER_EQUAL(bmalloc_get_allocation_size(ptr), size);
+                CHECK_EQUAL(bmalloc_get_heap(ptr),
+                            bmalloc_flex_heap_ref_get_heap(heap));
+                bmalloc_deallocate(ptr);
+            }
+            lock_guard<mutex> locker(lock);
+            numThreadsDone++;
+        });
+    }
+
+    while (numThreadsDone < numThreads) {
+        pas_scavenger_decommit_expendable_memory();
+        sleep();
+    }
+}
+
+void testRematerializeAfterSearchOfDecommitted()
+{
+    static constexpr unsigned initialSize = 16;
+    static constexpr unsigned size = 10752;
+    static constexpr unsigned someOtherSize = 5000;
+    
+    pas_primitive_heap_ref heapRef = BMALLOC_FLEX_HEAP_REF_INITIALIZER(
+        new bmalloc_type(BMALLOC_TYPE_INITIALIZER(1, 1, "test")));
+    pas_heap* heap = bmalloc_flex_heap_ref_get_heap(&heapRef);
+
+    void* ptr = bmalloc_allocate_flex(&heapRef, initialSize);
+    CHECK_EQUAL(bmalloc_get_allocation_size(ptr), initialSize);
+    CHECK_EQUAL(bmalloc_get_heap(ptr), heap);
+    CHECK_EQUAL(heapRef.cached_index, pas_segregated_heap_index_for_size(initialSize, BMALLOC_HEAP_CONFIG));
+
+    ptr = bmalloc_allocate_flex(&heapRef, size);
+    CHECK_EQUAL(bmalloc_get_allocation_size(ptr), size);
+    CHECK_EQUAL(bmalloc_get_heap(ptr), heap);
+
+    pas_segregated_view view = pas_segregated_view_for_object(
+        reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
+    pas_segregated_size_directory* directory = pas_segregated_view_get_size_directory(view);
+
+    pas_segregated_heap_medium_directory_tuple* tuple =
+        pas_segregated_heap_medium_directory_tuple_for_index(
+            &heap->segregated_heap,
+            pas_segregated_heap_index_for_size(size, BMALLOC_HEAP_CONFIG),
+            pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
+            pas_lock_is_not_held);
+
+    CHECK(tuple);
+    CHECK_EQUAL(pas_compact_atomic_segregated_size_directory_ptr_load(&tuple->directory),
+                directory);
+
+    pas_scavenger_fake_decommit_expendable_memory();
+
+    tuple->begin_index = 0;
+
+    pas_segregated_heap_medium_directory_tuple* someOtherTuple =
+        pas_segregated_heap_medium_directory_tuple_for_index(
+            &heap->segregated_heap,
+            pas_segregated_heap_index_for_size(someOtherSize, BMALLOC_HEAP_CONFIG),
+            pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
+            pas_lock_is_not_held);
+
+    if (someOtherTuple) {
+        cout << "Unexpectedly found a tuple: " << someOtherTuple << "\n";
+        cout << "It points at directory = "
+             << pas_compact_atomic_segregated_size_directory_ptr_load(&someOtherTuple->directory) << "\n";
+        cout << "Our original directory is = " << directory << "\n";
+    }
+    
+    CHECK(!someOtherTuple);
+}
+
+void testBasicSizeClass(unsigned firstSize, unsigned secondSize)
+{
+    static constexpr bool verbose = false;
+    
+    pas_primitive_heap_ref heapRef = BMALLOC_FLEX_HEAP_REF_INITIALIZER(
+        new bmalloc_type(BMALLOC_TYPE_INITIALIZER(1, 1, "test")));
+
+    if (verbose)
+        cout << "Allocating " << firstSize << "\n";
+    void* ptr = bmalloc_allocate_flex(&heapRef, firstSize);
+    if (verbose)
+        cout << "Allocating " << secondSize << "\n";
+    bmalloc_allocate_flex(&heapRef, secondSize);
+
+    if (verbose)
+        cout << "Doing some checks.\n";
+    CHECK(pas_thread_local_cache_try_get());
+    CHECK_EQUAL(heapRef.cached_index, pas_segregated_heap_index_for_size(firstSize, BMALLOC_HEAP_CONFIG));
+    CHECK(heapRef.base.allocator_index);
+    CHECK(pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
+              pas_thread_local_cache_try_get(), heapRef.base.allocator_index).did_succeed);
+    if (verbose)
+        cout << "Did some checks.\n";
+
+    pas_segregated_view view = pas_segregated_view_for_object(
+        reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
+    pas_segregated_size_directory* directory = pas_segregated_view_get_size_directory(view);
+    pas_segregated_size_directory_select_allocator(
+        directory, firstSize, pas_avoid_size_lookup, &bmalloc_heap_config, &heapRef.cached_index);
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_BMALLOC
@@ -219,9 +343,26 @@ void testSoManyHeaps()
 void addExpendableMemoryTests()
 {
 #if PAS_ENABLE_BMALLOC
+    ForceTLAs forceTLAs;
+    
     ADD_TEST(testSynchronousScavengingExpendsExpendableMemory());
     ADD_TEST(testScavengerExpendsExpendableMemory());
     ADD_TEST(testSoManyHeaps());
+    ADD_TEST(testRage(10, [] (unsigned) { return deterministicRandomNumber(100000); }, 10, 100000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(10, [] (unsigned j) { return deterministicRandomNumber(j); }, 2, 1000000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(10, [] (unsigned j) { return j; }, 10, 100000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(10, [] (unsigned j) { return j; }, 1, 1000000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(1000, [] (unsigned) { return deterministicRandomNumber(100000); }, 10, 100000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(1000, [] (unsigned j) { return deterministicRandomNumber(j); }, 2, 1000000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(1000, [] (unsigned j) { return j; }, 10, 100000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(10, [] (unsigned) { return deterministicRandomNumber(100000); }, 2, 1000000, [] () { sched_yield(); }));
+    ADD_TEST(testRage(10, [] (unsigned j) { return deterministicRandomNumber(j); }, 10, 100000, [] () { usleep(1); }));
+    ADD_TEST(testRage(10, [] (unsigned j) { return j; }, 1, 100000, [] () { usleep(1); }));
+    ADD_TEST(testRage(1000, [] (unsigned) { return deterministicRandomNumber(100000); }, 2, 1000000, [] () { usleep(1); }));
+    ADD_TEST(testRage(1000, [] (unsigned j) { return deterministicRandomNumber(j); }, 2, 1000000, [] () { usleep(1); }));
+    ADD_TEST(testRage(1000, [] (unsigned j) { return j; }, 10, 100000, [] () { usleep(1); }));
+    ADD_TEST(testRematerializeAfterSearchOfDecommitted());
+    ADD_TEST(testBasicSizeClass(0, 16));
 #endif // PAS_ENABLE_BMALLOC
 }
 
