@@ -1,5 +1,64 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288631. rdar://problem/88020080
+
+    Unreviewed, revert r286855 as it caused form submission issues
+    https://bugs.webkit.org/show_bug.cgi?id=235645
+    <rdar://88020080>
+    
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+    * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+    * web-platform-tests/html/semantics/forms/the-input-element/radio-expected.txt:
+    
+    Source/WebCore:
+    
+    * html/HTMLInputElement.cpp:
+    (WebCore::HTMLInputElement::setChecked):
+    (WebCore::HTMLInputElement::didChangeForm):
+    (WebCore::HTMLInputElement::insertedIntoAncestor):
+    (WebCore::HTMLInputElement::removedFromAncestor):
+    (WebCore::HTMLInputElement::checkedRadioButtonForGroup const):
+    * html/InputType.h:
+    (WebCore::InputType::willUpdateCheckedness): Deleted.
+    * html/RadioInputType.cpp:
+    (WebCore::RadioInputType::valueMissing const):
+    (WebCore::RadioInputType::willUpdateCheckedness): Deleted.
+    * html/RadioInputType.h:
+    
+    LayoutTests:
+    
+    * fast/forms/radio/ValidityState-valueMissing-radio-expected.txt:
+    * fast/forms/radio/ValidityState-valueMissing-radio.html:
+    * fast/forms/radio/radio-live-validation-style-expected.txt:
+    * fast/forms/radio/radio-live-validation-style.html:
+    * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+    * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+    * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+    * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288631 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-26  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, revert r286855 as it caused form submission issues
+            https://bugs.webkit.org/show_bug.cgi?id=235645
+            <rdar://88020080>
+
+            * fast/forms/radio/ValidityState-valueMissing-radio-expected.txt:
+            * fast/forms/radio/ValidityState-valueMissing-radio.html:
+            * fast/forms/radio/radio-live-validation-style-expected.txt:
+            * fast/forms/radio/radio-live-validation-style.html:
+            * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+            * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+            * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+            * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288590. rdar://problem/87984277
 
     Disable input-security CSS property

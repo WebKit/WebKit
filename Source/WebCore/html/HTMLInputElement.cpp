@@ -980,8 +980,6 @@ void HTMLInputElement::setChecked(bool isChecked)
     if (checked() == isChecked)
         return;
 
-    m_inputType->willUpdateCheckedness(isChecked);
-
     Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, isChecked);
 
     m_dirtyCheckednessFlag = true;
@@ -1578,14 +1576,12 @@ void HTMLInputElement::willChangeForm()
 
 void HTMLInputElement::didChangeForm()
 {
-    addToRadioButtonGroup();
     HTMLTextFormControlElement::didChangeForm();
+    addToRadioButtonGroup();
 }
 
 Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (isRadioButton())
-        updateValidity();
     HTMLTextFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
@@ -1612,8 +1608,6 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
-    if (removalType.disconnectedFromDocument && !form() && isRadioButton())
-        updateValidity();
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
@@ -1962,21 +1956,8 @@ Vector<Ref<HTMLInputElement>> HTMLInputElement::radioButtonGroup() const
 
 RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
 {
-    if (checked())
-        return const_cast<HTMLInputElement*>(this);
-
-    auto& name = this->name();
     if (RadioButtonGroups* buttons = radioButtonGroups())
-        return buttons->checkedButtonForGroup(name);
-
-    if (name.isEmpty())
-        return nullptr;
-
-    // The input is not managed by a RadioButtonGroups, we'll need to traverse the tree.
-    for (auto& descendant : descendantsOfType<HTMLInputElement>(rootNode())) {
-        if (descendant.checked() && descendant.isRadioButton() && !descendant.form() && name == descendant.name())
-            return &descendant;
-    }
+        return buttons->checkedButtonForGroup(name());
     return nullptr;
 }
 
