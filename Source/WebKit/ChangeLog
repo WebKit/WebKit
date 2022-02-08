@@ -1,5 +1,34 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289150. rdar://problem/88521016
+
+    Don't use adattributiond on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=236157
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-02-04
+    Reviewed by John Wilander.
+    
+    It is still having configuration issues such as rdar://88334217
+    
+    * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+    (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289150 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-04  Alex Christensen  <achristensen@webkit.org>
+
+            Don't use adattributiond on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=236157
+
+            Reviewed by John Wilander.
+
+            It is still having configuration issues such as rdar://88334217
+
+            * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+            (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289123. rdar://problem/88501750
 
     [iOS][macOS] Adjust sysctl sandbox access
