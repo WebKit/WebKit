@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class MessagePort;
+class ResourceError;
 class SharedWorkerScriptLoader;
 
 struct SharedWorkerKey;

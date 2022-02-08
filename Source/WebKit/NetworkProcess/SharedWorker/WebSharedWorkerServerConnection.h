@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 struct WorkerFetchResult;
@@ -38,6 +39,7 @@ struct WorkerOptions;
 namespace WebKit {
 
 class NetworkProcess;
+class NetworkSession;
 class WebSharedWorker;
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;

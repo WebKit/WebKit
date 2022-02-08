@@ -1,3 +1,13 @@
+2022-02-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Adding new files fails to compile after SharedWorkerObjectConnection.h changes
+        https://bugs.webkit.org/show_bug.cgi?id=236294
+
+        Add forward declarations and includes.
+        Unreviewed build fix.
+
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h:
+
 2022-02-08  Youenn Fablet  <youenn@apple.com>
 
         MediaSampleAVFObjC::createImageSample should take a presentationTime as parameter
