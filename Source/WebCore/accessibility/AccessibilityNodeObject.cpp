@@ -46,6 +46,7 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
+#include "HTMLAudioElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFieldSetElement.h"
@@ -60,6 +61,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
 #include "LabelableElement.h"
 #include "LocalizedStrings.h"
@@ -235,19 +237,40 @@ Document* AccessibilityNodeObject::document() const
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
 {
     AXTRACE("AccessibilityNodeObject::determineAccessibilityRole");
-    if (!node())
-        return AccessibilityRole::Unknown;
-
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
+
+    return determineAccessibilityRoleFromNode();
+}
+
+AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline treatStyleFormatGroupAsInline) const
+{
+    if (!node())
+        return AccessibilityRole::Unknown;
 
     if (node()->isLink())
         return AccessibilityRole::WebCoreLink;
     if (node()->isTextNode())
         return AccessibilityRole::StaticText;
+    if (node()->hasTagName(selectTag)) {
+        auto& selectElement = downcast<HTMLSelectElement>(*node());
+        return selectElement.multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
+    }
+    if (is<HTMLTextAreaElement>(*node()))
+        return AccessibilityRole::TextArea;
+    if (is<HTMLImageElement>(*node()) && downcast<HTMLImageElement>(*node()).hasAttributeWithoutSynchronization(usemapAttr))
+        return AccessibilityRole::ImageMap;
+    if (node()->hasTagName(liTag))
+        return AccessibilityRole::ListItem;
     if (node()->hasTagName(buttonTag))
         return buttonRoleType();
-    if (is<HTMLInputElement>(*node())) {
+    if (node()->hasTagName(legendTag))
+        return AccessibilityRole::Legend;
+    if (node()->hasTagName(canvasTag))
+        return AccessibilityRole::Canvas;
+    if (isFileUploadButton())
+        return AccessibilityRole::Button;
+    if (is<HTMLInputElement>(node())) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*node());
         if (input.isCheckbox())
             return AccessibilityRole::CheckBox;
@@ -255,38 +278,155 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
             return AccessibilityRole::RadioButton;
         if (input.isTextButton())
             return buttonRoleType();
-        if (input.isRangeControl())
-            return AccessibilityRole::Slider;
-        if (input.isInputTypeHidden())
-            return AccessibilityRole::Ignored;
-        if (input.isSearchField())
-            return AccessibilityRole::SearchField;
+        // On iOS, the date field and time field are popup buttons. On other platforms they are text fields.
+#if PLATFORM(IOS_FAMILY)
+        if (input.isDateField() || input.isTimeField())
+            return AccessibilityRole::PopUpButton;
+#endif
 #if ENABLE(INPUT_TYPE_COLOR)
         if (input.isColorControl())
             return AccessibilityRole::ColorWell;
 #endif
+        if (input.isInputTypeHidden())
+            return AccessibilityRole::Ignored;
+        if (input.isRangeControl())
+            return AccessibilityRole::Slider;
+        if (input.isSearchField())
+            return AccessibilityRole::SearchField;
+
         return AccessibilityRole::TextField;
     }
-    if (node()->hasTagName(selectTag)) {
-        HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*node());
-        return selectElement.multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
-    }
-    if (is<HTMLTextAreaElement>(*node()))
+
+    if (hasContentEditableAttributeSet())
         return AccessibilityRole::TextArea;
+
     if (headingLevel())
         return AccessibilityRole::Heading;
-    if (node()->hasTagName(blockquoteTag))
-        return AccessibilityRole::Blockquote;
-    if (node()->hasTagName(divTag))
-        return AccessibilityRole::Div;
+
+    if (isStyleFormatGroup()) {
+        if (node()->hasTagName(delTag))
+            return AccessibilityRole::Deletion;
+        if (node()->hasTagName(insTag))
+            return AccessibilityRole::Insertion;
+        if (node()->hasTagName(subTag))
+            return AccessibilityRole::Subscript;
+        if (node()->hasTagName(supTag))
+            return AccessibilityRole::Superscript;
+        return treatStyleFormatGroupAsInline == TreatStyleFormatGroupAsInline::Yes ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
+    }
+
+    if (node()->hasTagName(ddTag))
+        return AccessibilityRole::DescriptionListDetail;
+    if (node()->hasTagName(dtTag))
+        return AccessibilityRole::DescriptionListTerm;
+    if (node()->hasTagName(dlTag))
+        return AccessibilityRole::DescriptionList;
+    if (node()->hasTagName(olTag) || node()->hasTagName(ulTag))
+        return AccessibilityRole::List;
+    if (node()->hasTagName(fieldsetTag))
+        return AccessibilityRole::Group;
+    if (node()->hasTagName(figureTag))
+        return AccessibilityRole::Figure;
     if (node()->hasTagName(pTag))
         return AccessibilityRole::Paragraph;
-    if (is<HTMLLabelElement>(*node()))
+    if (is<HTMLLabelElement>(node()))
         return AccessibilityRole::Label;
+    if (node()->hasTagName(dfnTag))
+        return AccessibilityRole::Definition;
+    if (node()->hasTagName(divTag))
+        return AccessibilityRole::Div;
+    if (is<HTMLFormElement>(node()))
+        return AccessibilityRole::Form;
+    if (node()->hasTagName(articleTag))
+        return AccessibilityRole::DocumentArticle;
+    if (node()->hasTagName(mainTag))
+        return AccessibilityRole::LandmarkMain;
+    if (node()->hasTagName(navTag))
+        return AccessibilityRole::LandmarkNavigation;
+    if (node()->hasTagName(asideTag))
+        return AccessibilityRole::LandmarkComplementary;
+
+    // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
+    // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
+    // for section elements which have names.
+    if (node()->hasTagName(sectionTag))
+        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+    if (node()->hasTagName(addressTag))
+        return AccessibilityRole::Group;
+    if (node()->hasTagName(blockquoteTag))
+        return AccessibilityRole::Blockquote;
+    if (node()->hasTagName(captionTag))
+        return AccessibilityRole::Caption;
+    if (node()->hasTagName(markTag))
+        return AccessibilityRole::Mark;
+    if (node()->hasTagName(preTag))
+        return AccessibilityRole::Pre;
+    if (is<HTMLDetailsElement>(node()))
+        return AccessibilityRole::Details;
+    if (is<HTMLSummaryElement>(node()))
+        return AccessibilityRole::Summary;
+
+    // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
+    // Output elements should be mapped to status role.
+    if (isOutput())
+        return AccessibilityRole::ApplicationStatus;
+
+#if ENABLE(VIDEO)
+    if (is<HTMLVideoElement>(node()))
+        return AccessibilityRole::Video;
+    if (is<HTMLAudioElement>(node()))
+        return AccessibilityRole::Audio;
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    if (node()->hasTagName(modelTag))
+        return AccessibilityRole::Model;
+#endif
+
+    // The HTML element should not be exposed as an element. That's what the RenderView element does.
+    if (node()->hasTagName(htmlTag))
+        return AccessibilityRole::Ignored;
+
+    // There should only be one banner/contentInfo per page. If header/footer are being used within an article or section
+    // then it should not be exposed as whole page's banner/contentInfo
+    if (node()->hasTagName(headerTag) && !isDescendantOfElementType({ articleTag, sectionTag }))
+        return AccessibilityRole::LandmarkBanner;
+
+    // http://webkit.org/b/190138 Footers should become contentInfo's if scoped to body (and consequently become a landmark).
+    // It should remain a footer if scoped to main, sectioning elements (article, section) or root sectioning element (blockquote, details, dialog, fieldset, figure, td).
+    if (node()->hasTagName(footerTag)) {
+        if (!isDescendantOfElementType({ articleTag, sectionTag, mainTag, blockquoteTag, detailsTag, fieldsetTag, figureTag, tdTag }))
+            return AccessibilityRole::LandmarkContentInfo;
+        return AccessibilityRole::Footer;
+    }
+
+    // menu tags with toolbar type should have Toolbar role.
+    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"))
+        return AccessibilityRole::Toolbar;
+    if (node()->hasTagName(timeTag))
+        return AccessibilityRole::Time;
+    if (node()->hasTagName(hrTag))
+        return AccessibilityRole::HorizontalRule;
+
+    // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
+    if (supportsARIAAttributes() || canSetFocusAttribute())
+        return AccessibilityRole::Group;
     if (is<Element>(*node()) && downcast<Element>(*node()).isFocusable())
         return AccessibilityRole::Group;
     
     return AccessibilityRole::Unknown;
+}
+
+bool AccessibilityNodeObject::isDescendantOfElementType(const HashSet<QualifiedName>& tagNames) const
+{
+    if (!m_node)
+        return false;
+
+    for (auto& ancestorElement : ancestorsOfType<Element>(*m_node)) {
+        if (tagNames.contains(ancestorElement.tagQName()))
+            return true;
+    }
+    return false;
 }
 
 void AccessibilityNodeObject::addChildren()
@@ -561,13 +701,6 @@ bool AccessibilityNodeObject::isMenuItem() const
     default:
         return false;
     }
-}
-
-bool AccessibilityNodeObject::isFileUploadButton() const
-{
-    if (is<HTMLInputElement>(m_node))
-        return downcast<HTMLInputElement>(m_node)->isFileUpload();
-    return false;
 }
 
 bool AccessibilityNodeObject::isNativeCheckboxOrRadio() const

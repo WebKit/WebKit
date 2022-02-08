@@ -66,7 +66,6 @@ public:
     bool isMenuButton() const override;
     bool isMenuItem() const override;
     bool isMenuRelated() const override;
-    bool isFileUploadButton() const override;
     bool isMultiSelectable() const override;
     virtual bool isNativeCheckboxOrRadio() const;
     bool isNativeImage() const override;
@@ -154,6 +153,11 @@ protected:
     bool isDetached() const override { return !m_node; }
 
     virtual AccessibilityRole determineAccessibilityRole();
+    enum class TreatStyleFormatGroupAsInline {
+        No,
+        Yes
+    };
+    AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     void addChildren() override;
 
     bool canHaveChildren() const override;
@@ -200,6 +204,8 @@ private:
     bool performDismissAction() final;
     bool hasTextAlternative() const;
     
+    bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
+
     Node* m_node;
 };
 

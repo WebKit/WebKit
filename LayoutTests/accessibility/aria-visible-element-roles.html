@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <a href="https://apple.com" id="link" hidden aria-hidden="false">apple.com</a>
+
+    <select id="select" name="pets" hidden aria-hidden="false">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+    </select>
+
+    <select id="select-multiple" multiple name="pets-multiple" hidden aria-hidden="false">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+    </select>
+
+    <textarea id="textarea" rows="5" cols="33" hidden aria-hidden="false">
+        It was a dark and stormy night...
+    </textarea>
+
+    <img id="img-with-map" src="resources/cake.png" width="145" height="126" usemap="#map" aria-label="Label" hidden aria-hidden="false">
+    <map name="map">
+        <area shape="rect" coords="0,0,100,100" href="#" alt="cake">
+    </map>
+
+    <ul hidden aria-hidden="false" id="ul">
+        <li hidden aria-hidden="false" id="li-element">Hello world</li>
+    </ul>
+
+    <ol hidden aria-hidden="false" id="ol">
+        <li hidden aria-hidden="false">Hello world</li>
+    </ol>
+
+    <button hidden aria-hidden="false" id="button">Click me</button>
+
+    <fieldset>
+        <legend hidden aria-hidden="false" id="legend">Choose your favorite monster</legend>
+
+        <input hidden aria-hidden="false" type="radio" id="radio-button" name="monster">
+        <label for="radio-button">Kraken</label><br/>
+
+        <input type="radio" id="sasquatch" name="monster">
+        <label for="sasquatch">Sasquatch</label><br/>
+    </fieldset>
+
+    <canvas hidden aria-hidden="false" id="canvas-without-fallback-content"></canvas>
+    <canvas hidden aria-hidden="false" id="canvas-with-fallback-content"><p>This is canvas fallback content</p></canvas>
+
+    <input hidden aria-hidden="false" id="file-upload-button" type="file"></input>
+    <input hidden aria-hidden="false" id="checkbox" type="checkbox"></input>
+    <input hidden aria-hidden="false" id="text-button" type="submit"></input>
+    <input hidden aria-hidden="false" id="text-button-with-pressed" aria-pressed="false" type="submit"></input>
+    <input hidden aria-hidden="false" id="date-input" type="date"></input>
+    <input hidden aria-hidden="false" id="time-input" type="time"></input>
+    <input hidden aria-hidden="false" id="color-input" type="color"></input>
+    <input hidden aria-hidden="false" id="range-input" type="range"></input>
+    <input hidden aria-hidden="false" id="search-input" type="search"></input>
+
+    <div hidden aria-hidden="false" id="contenteditable" contenteditable>Hello world</div>
+
+    <h2 hidden aria-hidden="false" id="h2">Hello world</h2>
+
+    <del hidden aria-hidden="false" id="del">Hello world</del>
+    <ins hidden aria-hidden="false" id="ins">Hello world</ins>
+    <sub hidden aria-hidden="false" id="sub">Hello world</sub>
+    <sup hidden aria-hidden="false" id="sup">Hello world</sup>
+    <code hidden aria-hidden="false" id="code">Hello world</code>
+
+    <dl hidden aria-hidden="false" id="dl">
+        <dt hidden aria-hidden="false" id="dt">dt element</dt>
+        <dd hidden aria-hidden="false" id="dd">dd element</dd>
+    </dl>
+
+    <figure hidden aria-hidden="false" id="figure"></figure>
+
+    <p hidden aria-hidden="false" id="p">Paragraph</p>
+
+    <label hidden aria-hidden="false" id="label">Label</label>
+
+    <dfn hidden aria-hidden="false" id="dfn">Some definition</dfn>
+
+    <div hidden aria-hidden="false" id="div">Some text</div>
+
+    <form hidden aria-hidden="false" id="form"></form>
+
+    <article hidden aria-hidden="false" id="article">Article content</article>
+
+    <main hidden aria-hidden="false" id="main">Main content</main>
+
+    <nav hidden aria-hidden="false" id="nav">Nav</nav>
+
+    <aside hidden aria-hidden="false" id="aside">Aside content</aside>
+
+    <section hidden aria-hidden="false" id="section-with-name" aria-label="Section name">Section</section>
+    <section hidden aria-hidden="false" id="section-without-name">Section</section>
+
+    <blockquote hidden aria-hidden="false" id="blockquote">To be or not to be, that is the question</blockquote>
+
+    <mark hidden aria-hidden="false" id="mark">Marked text</mark>
+
+    <pre hidden aria-hidden="false" id="pre">Pre-text</pre>
+
+    <details hidden aria-hidden="false" id="details">
+        <summary hidden aria-hidden="false" id="summary">Summary text</summary>
+    </details>
+
+    <output hidden aria-hidden="false" id="output">Output</output>
+
+    <menu hidden aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
+
+    <hr hidden aria-hidden="false" id="hr"></hr>
+
+    <time hidden aria-hidden="false" id="time"></time>
+</div>
+
+<script>
+    // Buffer test output and dump it at the end to make the test run faster vs. individual `debug` calls.
+    var testOutput = "This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria-hidden='false'` attributes) have the correct role.\n\n";
+
+    var elementUnderTest;
+    function verifyRole(elementId) {
+        testOutput += `${escapeHTML(document.getElementById(elementId).cloneNode().outerHTML)}\n`;
+        elementUnderTest = accessibilityController.accessibleElementById(elementId);
+        testOutput += `    ${elementUnderTest.role}`;
+
+        let computedRoleString = elementUnderTest.computedRoleString;
+        if (computedRoleString)
+            testOutput += `\n    computedRoleString: ${computedRoleString}`;
+
+        let subrole = elementUnderTest.subrole;
+        if (subrole.replace("AXSubrole: ", ""))
+            testOutput += `\n    ${subrole}`;
+        testOutput += `\n\n`;
+    }
+
+    if (window.accessibilityController) {
+        verifyRole("link");
+        verifyRole("select");
+        verifyRole("select-multiple");
+        verifyRole("textarea");
+        verifyRole("img-with-map");
+        verifyRole("li-element");
+        verifyRole("button");
+        verifyRole("legend");
+        verifyRole("canvas-without-fallback-content");
+        verifyRole("canvas-with-fallback-content");
+        verifyRole("file-upload-button");
+        verifyRole("checkbox");
+        verifyRole("radio-button");
+        verifyRole("text-button");
+        verifyRole("text-button-with-pressed");
+        verifyRole("date-input");
+        verifyRole("color-input");
+        verifyRole("range-input");
+        verifyRole("search-input");
+        verifyRole("h2");
+        verifyRole("del");
+        verifyRole("ins");
+        verifyRole("sub");
+        verifyRole("sup");
+        verifyRole("code");
+        verifyRole("dt");
+        verifyRole("dd");
+        verifyRole("dl");
+        verifyRole("ol");
+        verifyRole("ul");
+        verifyRole("figure");
+        verifyRole("p");
+        verifyRole("label");
+        verifyRole("dfn");
+        verifyRole("div");
+        verifyRole("form");
+        verifyRole("article");
+        verifyRole("main");
+        verifyRole("nav");
+        verifyRole("aside");
+        verifyRole("section-with-name");
+        verifyRole("section-without-name");
+        verifyRole("blockquote");
+        verifyRole("mark");
+        verifyRole("pre");
+        verifyRole("details");
+        verifyRole("summary");
+        verifyRole("output");
+        verifyRole("menu-toolbar");
+        verifyRole("hr");
+        verifyRole("time");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+

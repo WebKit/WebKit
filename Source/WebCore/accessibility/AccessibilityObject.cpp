@@ -3557,9 +3557,13 @@ AccessibilityRole AccessibilityObject::buttonRoleType() const
 
 bool AccessibilityObject::isButton() const
 {
-    AccessibilityRole role = roleValue();
-
+    auto role = roleValue();
     return role == AccessibilityRole::Button || role == AccessibilityRole::PopUpButton || role == AccessibilityRole::ToggleButton;
+}
+
+bool AccessibilityObject::isFileUploadButton() const
+{
+    return is<HTMLInputElement>(node()) && downcast<HTMLInputElement>(*node()).isFileUpload();
 }
 
 bool AccessibilityObject::accessibilityIsIgnoredByDefault() const

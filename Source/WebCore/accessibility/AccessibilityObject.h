@@ -141,7 +141,7 @@ public:
     bool isMenuBar() const override { return false; }
     bool isMenuButton() const override { return false; }
     bool isMenuItem() const override { return false; }
-    bool isFileUploadButton() const override { return false; }
+    bool isFileUploadButton() const override;
     bool isInputImage() const override { return false; }
     bool isProgressIndicator() const override { return false; }
     bool isSlider() const override { return false; }

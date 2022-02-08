@@ -49,7 +49,6 @@
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"
 #include "HTMLAreaElement.h"
-#include "HTMLAudioElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormElement.h"
@@ -2793,24 +2792,6 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
     return nullptr;
 }
 
-bool AccessibilityRenderObject::isDescendantOfElementType(const HashSet<QualifiedName>& tagNames) const
-{
-    for (auto& ancestor : ancestorsOfType<RenderElement>(*m_renderer)) {
-        if (ancestor.element() && tagNames.contains(ancestor.element()->tagQName()))
-            return true;
-    }
-    return false;
-}
-
-bool AccessibilityRenderObject::isDescendantOfElementType(const QualifiedName& tagName) const
-{
-    for (auto& ancestor : ancestorsOfType<RenderElement>(*m_renderer)) {
-        if (ancestor.element() && ancestor.element()->hasTagName(tagName))
-            return true;
-    }
-    return false;
-}
-    
 String AccessibilityRenderObject::expandedTextValue() const
 {
     if (AccessibilityObject* parent = parentObject()) {
@@ -2858,20 +2839,14 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     Node* node = m_renderer->node();
     RenderBoxModelObject* cssBox = renderBoxModelObject();
 
-    if (node && node->isLink())
-        return AccessibilityRole::WebCoreLink;
-    if (node && is<HTMLImageElement>(*node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
-        return AccessibilityRole::ImageMap;
-    if ((cssBox && cssBox->isListItem()) || (node && node->hasTagName(liTag)))
+    if (cssBox && cssBox->isListItem())
         return AccessibilityRole::ListItem;
     if (m_renderer->isListMarker())
         return AccessibilityRole::ListMarker;
-    if (node && node->hasTagName(buttonTag))
-        return buttonRoleType();
-    if (node && node->hasTagName(legendTag))
-        return AccessibilityRole::Legend;
     if (m_renderer->isText())
         return AccessibilityRole::StaticText;
+    if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
+        return AccessibilityRole::ImageMap;
     if (cssBox && cssBox->isImage()) {
         if (is<HTMLInputElement>(node))
             return hasPopup() ? AccessibilityRole::PopUpButton : AccessibilityRole::Button;
@@ -2880,90 +2855,23 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             if (svgRoot->hasAccessibleContent())
                 return AccessibilityRole::SVGRoot;
         }
-
         return AccessibilityRole::Image;
     }
-    
-    if (node && node->hasTagName(canvasTag))
-        return AccessibilityRole::Canvas;
-
-#if ENABLE(MODEL_ELEMENT)
-    if (node && node->hasTagName(modelTag))
-        return AccessibilityRole::Model;
-#endif
 
     if (cssBox && cssBox->isRenderView())
         return AccessibilityRole::WebArea;
-    
     if (cssBox && cssBox->isTextField()) {
         if (is<HTMLInputElement>(node))
             return downcast<HTMLInputElement>(*node).isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
     }
-    
     if (cssBox && cssBox->isTextArea())
         return AccessibilityRole::TextArea;
-
-    if (is<HTMLInputElement>(node)) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
-        if (input.isCheckbox())
-            return AccessibilityRole::CheckBox;
-        if (input.isRadioButton())
-            return AccessibilityRole::RadioButton;
-        if (input.isTextButton())
-            return buttonRoleType();
-        // On iOS, the date field and time field are popup buttons. On other platforms they are text fields.
-#if PLATFORM(IOS_FAMILY)
-        if (input.isDateField() || input.isTimeField())
-            return AccessibilityRole::PopUpButton;
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-        if (input.isColorControl())
-            return AccessibilityRole::ColorWell;
-#endif
-    }
-    
-    if (hasContentEditableAttributeSet())
-        return AccessibilityRole::TextArea;
-    
-    if (isFileUploadButton())
-        return AccessibilityRole::Button;
-    
     if (cssBox && cssBox->isMenuList())
         return AccessibilityRole::PopUpButton;
-    
-    if (headingLevel())
-        return AccessibilityRole::Heading;
-    
+
     if (m_renderer->isSVGRootOrLegacySVGRoot())
         return AccessibilityRole::SVGRoot;
     
-    if (isStyleFormatGroup()) {
-        if (node->hasTagName(delTag))
-            return AccessibilityRole::Deletion;
-        if (node->hasTagName(insTag))
-            return AccessibilityRole::Insertion;
-        if (node->hasTagName(subTag))
-            return AccessibilityRole::Subscript;
-        if (node->hasTagName(supTag))
-            return AccessibilityRole::Superscript;
-        return is<RenderInline>(*m_renderer) ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
-    }
-    
-    if (node && node->hasTagName(ddTag))
-        return AccessibilityRole::DescriptionListDetail;
-    
-    if (node && node->hasTagName(dtTag))
-        return AccessibilityRole::DescriptionListTerm;
-
-    if (node && node->hasTagName(dlTag))
-        return AccessibilityRole::DescriptionList;
-
-    if (node && node->hasTagName(fieldsetTag))
-        return AccessibilityRole::Group;
-
-    if (node && node->hasTagName(figureTag))
-        return AccessibilityRole::Figure;
-
     // Check for Ruby elements
     if (m_renderer->isRubyText())
         return AccessibilityRole::RubyText;
@@ -2980,107 +2888,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // the cell should not be treated as a cell (e.g. because it is a layout table.
     if (is<RenderTableCell>(renderer()))
         return AccessibilityRole::TextGroup;
-
     // Table sections should be ignored.
     if (m_renderer->isTableSection())
         return AccessibilityRole::Ignored;
 
-    if (m_renderer->isHR())
-        return AccessibilityRole::HorizontalRule;
-
-    if (node && node->hasTagName(pTag))
-        return AccessibilityRole::Paragraph;
-
-    if (is<HTMLLabelElement>(node))
-        return AccessibilityRole::Label;
-
-    if (node && node->hasTagName(dfnTag))
-        return AccessibilityRole::Definition;
-
-    if (node && node->hasTagName(divTag))
-        return AccessibilityRole::Div;
-
-    if (is<HTMLFormElement>(node))
-        return AccessibilityRole::Form;
-
-    if (node && node->hasTagName(articleTag))
-        return AccessibilityRole::DocumentArticle;
-
-    if (node && node->hasTagName(mainTag))
-        return AccessibilityRole::LandmarkMain;
-
-    if (node && node->hasTagName(navTag))
-        return AccessibilityRole::LandmarkNavigation;
-
-    if (node && node->hasTagName(asideTag))
-        return AccessibilityRole::LandmarkComplementary;
-
-    // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
-    // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
-    // for section elements which have names.
-    if (node && node->hasTagName(sectionTag))
-        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
-
-    if (node && node->hasTagName(addressTag))
-        return AccessibilityRole::Group;
-
-    if (node && node->hasTagName(blockquoteTag))
-        return AccessibilityRole::Blockquote;
-
-    if (node && node->hasTagName(captionTag))
-        return AccessibilityRole::Caption;
+    auto treatStyleFormatGroupAsInline = is<RenderInline>(*m_renderer) ? TreatStyleFormatGroupAsInline::Yes : TreatStyleFormatGroupAsInline::No;
+    auto roleFromNode = determineAccessibilityRoleFromNode(treatStyleFormatGroupAsInline);
+    if (roleFromNode != AccessibilityRole::Unknown)
+        return roleFromNode;
     
-    if (node && node->hasTagName(markTag))
-        return AccessibilityRole::Mark;
-
-    if (node && node->hasTagName(preTag))
-        return AccessibilityRole::Pre;
-
-    if (is<HTMLDetailsElement>(node))
-        return AccessibilityRole::Details;
-    if (is<HTMLSummaryElement>(node))
-        return AccessibilityRole::Summary;
-    
-    // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
-    // Output elements should be mapped to status role.
-    if (isOutput())
-        return AccessibilityRole::ApplicationStatus;
-
-#if ENABLE(VIDEO)
-    if (is<HTMLVideoElement>(node))
-        return AccessibilityRole::Video;
-    if (is<HTMLAudioElement>(node))
-        return AccessibilityRole::Audio;
-#endif
-    
-    // The HTML element should not be exposed as an element. That's what the RenderView element does.
-    if (node && node->hasTagName(htmlTag))
-        return AccessibilityRole::Ignored;
-
-    // There should only be one banner/contentInfo per page. If header/footer are being used within an article or section
-    // then it should not be exposed as whole page's banner/contentInfo
-    if (node && node->hasTagName(headerTag) && !isDescendantOfElementType({ articleTag, sectionTag }))
-        return AccessibilityRole::LandmarkBanner;
-
-    // http://webkit.org/b/190138 Footers should become contentInfo's if scoped to body (and consequently become a landmark).
-    // It should remain a footer if scoped to main, sectioning elements (article, section) or root sectioning element (blockquote, details, dialog, fieldset, figure, td).
-    if (node && node->hasTagName(footerTag)) {
-        if (!isDescendantOfElementType({ articleTag, sectionTag, mainTag, blockquoteTag, detailsTag, fieldsetTag, figureTag, tdTag }))
-            return AccessibilityRole::LandmarkContentInfo;
-        return AccessibilityRole::Footer;
-    }
-    
-    // menu tags with toolbar type should have Toolbar role.
-    if (node && node->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"))
-        return AccessibilityRole::Toolbar;
-    
-    if (node && node->hasTagName(timeTag))
-        return AccessibilityRole::Time;
-    
-    // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
-    if (supportsARIAAttributes() || canSetFocusAttribute())
-        return AccessibilityRole::Group;
-
     if (m_renderer->isRenderBlockFlow())
         return m_renderer->isAnonymousBlock() ? AccessibilityRole::TextGroup : AccessibilityRole::Group;
     

@@ -1,3 +1,29 @@
+2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Move node-dependent role computation to AccessibilityNodeObject from AccessibilityRenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=236166
+
+        Reviewed by Chris Fleizach.
+
+        Add test to verify ARIA visible objects (e.g. those with `hidden` and
+        `aria-hidden="false"`) compute their role and subrole properly based
+        on their DOM element.
+
+        * accessibility/aria-visible-element-roles.html: Added.
+        * platform/glib/accessibility/aria-visible-element-roles-expected.txt: Added.
+        * platform/mac-wk1/accessibility/aria-visible-element-roles-expected.txt: Added.
+        * platform/mac-wk2/accessibility/aria-visible-element-roles-expected.txt: Added.
+        * platform/win/accessibility/aria-visible-element-roles-expected.txt: Added.
+
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        This patch results in a progression in computing the role of these
+        inputs, which before were all consided to be AXGroup:
+          - input[type='date']
+          - input[type='datetime-local']
+          - input[type='month']
+          - input[type='time']
+          - input[type='week']
+
 2022-02-07  Chris Dumez  <cdumez@apple.com>
 
         Add support for sharing Shared Workers (including across WebProcesses)
