@@ -1,3 +1,24 @@
+2022-02-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GPUP WebGL RELEASE_LOGs errorneously for unhandled messages
+        https://bugs.webkit.org/show_bug.cgi?id=236288
+
+        Reviewed by Antti Koivisto.
+
+        Remove a RELEASE_LOG when GPUProcessConnection sees a RemoteGraphicsContextGLProxy
+        message that was not delivered to a specific instance.
+        This is business as usual, as the proxy intends to be asynchronous and can be destroyed
+        without coordinating with the GPUP side. The Proxy object cannot know at which point
+        of time a message to it might be delivered.
+        Move the message handling to RemoteGraphicsContextGLProxy static method,
+        so that the RELEASE_LOG does not get added erroneosly again.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+
 2022-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Crash at  WebKit::bindA11y() in WebKitGTK 2.35.2

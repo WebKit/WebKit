@@ -198,6 +198,20 @@ void RemoteGraphicsContextGLProxy::markContextLost()
         client->forceContextLost();
 }
 
+bool RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder& decoder)
+{
+    // Skip messages intended for already removed messageReceiverMap() destinations.
+    // These are business as usual. These can happen for example by:
+    //  - The object is created and immediately destroyed, before WasCreated was handled.
+    //  - A send to GPU process times out, we remove the object. If the GPU process delivers the message at the same
+    //    time, it might be in the message delivery callback.
+    // When adding new messages to RemoteGraphicsContextGLProxy, add them to this list.
+    ASSERT(decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasCreated::name()
+        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasLost::name()
+        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasChanged::name());
+    return true;
+}
+
 void RemoteGraphicsContextGLProxy::waitUntilInitialized()
 {
     if (isContextLost())

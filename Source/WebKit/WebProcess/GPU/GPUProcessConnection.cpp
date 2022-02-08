@@ -77,6 +77,7 @@
 #endif
 
 #if ENABLE(WEBGL)
+#include "RemoteGraphicsContextGLProxy.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #endif
 
@@ -203,12 +204,9 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return true;
 
-    // Skip messages intended for already removed messageReceiverMap() destinations.
 #if ENABLE(WEBGL)
-    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName()) {
-        RELEASE_LOG_ERROR(WebGL, "The RemoteGraphicsContextGLProxy object has beed destroyed");
-        return true;
-    }
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName())
+        return RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(connection, decoder);
 #endif
 
 #if USE(AUDIO_SESSION)

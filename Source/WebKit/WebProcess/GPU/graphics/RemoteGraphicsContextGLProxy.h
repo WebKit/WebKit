@@ -317,6 +317,7 @@ public:
     std::optional<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     // End of list used by generate-gpup-webgl script.
 
+    static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
 protected:
     RemoteGraphicsContextGLProxy(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
 
