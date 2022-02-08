@@ -515,6 +515,7 @@ typedef enum {
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 @property (nonatomic, readonly) UIEdgeInsets _effectiveContentInset;
 @property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
+@property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
 @end
 
 typedef NS_ENUM(NSUInteger, UIScrollPhase) {
