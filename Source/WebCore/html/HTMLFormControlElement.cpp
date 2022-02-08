@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -473,6 +473,7 @@ bool HTMLFormControlElement::reportValidity()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (isConnected() && isFocusable()) {
+        Ref protectedThis { *this };
         focusAndShowValidationMessage();
         return false;
     }
