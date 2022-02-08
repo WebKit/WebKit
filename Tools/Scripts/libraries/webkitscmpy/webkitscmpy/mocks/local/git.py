@@ -362,6 +362,15 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'filter-branch', '-f', '--autostash', '--env-filter', re.compile(r'.*'), '--msg-filter',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.filter_branch(
+                    args[-1],
+                    identifier_template=args[-2].split("'")[-2] if args[-3] == '--msg-filter' else None,
+                    environment_shell=args[5] if args[4] == '--env-filter' and args[5] else None,
+                    autostash=True,
+                )
+            ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f', '--env-filter', re.compile(r'.*'), '--msg-filter',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.filter_branch(
@@ -390,6 +399,10 @@ nothing to commit, working tree clean
                 self.executable, 'pull',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.pull(),
+            ), mocks.Subprocess.Route(
+                self.executable, 'pull', '--autostash',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.pull(autostash=True),
             ), mocks.Subprocess.Route(
                 self.executable, 'config', '-l',
                 cwd=self.path,
@@ -633,7 +646,10 @@ nothing to commit, working tree clean
             self.detached = something not in self.commits.keys()
         return True if commit else False
 
-    def filter_branch(self, range, identifier_template=None, environment_shell=None, sed=None):
+    def filter_branch(self, range, identifier_template=None, environment_shell=None, sed=None, autostash=False):
+        if not autostash and (self.modified or self.staged):
+            return mocks.ProcessCompletion(returncode=128)
+
         # We can't effectively mock the bash script in the command, but we can mock the python code that
         # script calls, which is where the program logic is.
         head, start = range.split('...')
@@ -869,7 +885,9 @@ nothing to commit, working tree clean
                 commit.identifier += self.commits[target][-1].identifier
         return mocks.ProcessCompletion(returncode=0)
 
-    def pull(self):
+    def pull(self, autostash=False):
+        if not autostash and (self.modified or self.staged):
+            return mocks.ProcessCompletion(returncode=128)
         self.head = self.commits[self.head.branch][-1]
         return mocks.ProcessCompletion(returncode=0)
 
