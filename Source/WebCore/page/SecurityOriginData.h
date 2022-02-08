@@ -100,7 +100,7 @@ inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData
 
 inline void add(Hasher& hasher, const SecurityOriginData& data)
 {
-    add(hasher, data.protocol, data.host, data.port.value_or(0));
+    add(hasher, data.protocol, data.host, data.port);
 }
 
 template<class Encoder>

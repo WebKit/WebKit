@@ -790,23 +790,21 @@ String Engine::representation()
     ASSERT(m_pendingClearCallbacks.isEmpty());
     ASSERT(m_initializationCallbacks.isEmpty());
 
-    bool isFirst = true;
-    StringBuilder builder;
-    builder.append("{ \"path\": \"");
-    builder.append(m_rootPath);
-    builder.append("\", \"origins\": [");
-    for (auto& keyValue : m_caches) {
-        if (!isFirst)
-            builder.append(",");
-        isFirst = false;
+    auto origins = WTF::map(m_caches, [](auto& keyValue) {
+        StringBuilder originBuilder;
+        originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \"", keyValue.key.topOrigin.toString(), "\", \"clientOrigin\": \"", keyValue.key.clientOrigin.toString(), "\" }, \"caches\" : ");
+        keyValue.value->appendRepresentation(originBuilder);
+        originBuilder.append('}');
+        return originBuilder.toString();
+    });
+    std::sort(origins.begin(), origins.end(), [](auto& a, auto& b) { return codePointCompareLessThan(a, b); });
 
-        builder.append("\n{ \"origin\" : { \"topOrigin\" : \"");
-        builder.append(keyValue.key.topOrigin.toString());
-        builder.append("\", \"clientOrigin\": \"");
-        builder.append(keyValue.key.clientOrigin.toString());
-        builder.append("\" }, \"caches\" : ");
-        keyValue.value->appendRepresentation(builder);
-        builder.append("}");
+    StringBuilder builder;
+    builder.append("{ \"path\": \"", m_rootPath, "\", \"origins\": [");
+    const char* divider = "";
+    for (auto& origin : origins) {
+        builder.append(divider, origin);
+        divider = ",";
     }
     builder.append("]}");
     return builder.toString();
