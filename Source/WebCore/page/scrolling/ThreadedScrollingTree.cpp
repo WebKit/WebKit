@@ -377,6 +377,9 @@ Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchroniza
 
 void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
 {
+    if (!m_scrollingCoordinator)
+        return;
+
     RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, hasNodeWithAnimatedScroll] {
         scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
     });
