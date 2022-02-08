@@ -512,11 +512,13 @@ void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
     m_childrenIDs.clear();
 }
 
+#if !PLATFORM(MAC)
 bool AXIsolatedObject::isDetached() const
 {
     ASSERT_NOT_REACHED();
     return false;
 }
+#endif
 
 void AXIsolatedObject::detachFromParent()
 {

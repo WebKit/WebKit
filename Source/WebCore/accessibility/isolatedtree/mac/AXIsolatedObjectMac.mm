@@ -65,6 +65,11 @@ FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, Ac
     });
 }
 
+bool AXIsolatedObject::isDetached() const
+{
+    return !wrapper() || [wrapper() axBackingObject] != this;
+}
+
 void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
 {
     [wrapper attachIsolatedObject:this];

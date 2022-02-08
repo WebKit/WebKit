@@ -608,10 +608,10 @@ void AXIsolatedTree::applyPendingChanges()
             m_readerThreadNodeMap.remove(axID);
         }
 
-        if (!item.isolatedObject->wrapper()) {
-            // The new object hasn't been attached a wrapper yet, so attach it.
+        // If the new object hasn't been attached to a wrapper yet, or if it was detached from
+        // the wrapper when processing removals above, we must attach / re-attach it.
+        if (item.isolatedObject->isDetached())
             item.isolatedObject->attachPlatformWrapper(wrapper.get());
-        }
 
         auto addResult = m_readerThreadNodeMap.add(axID, item.isolatedObject.get());
         // The newly added object must have a wrapper.
