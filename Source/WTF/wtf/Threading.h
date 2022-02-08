@@ -231,7 +231,7 @@ public:
     }
 #endif
 
-    void* savedStackPointerAtVMEntry()
+    void* savedStackPointerAtVMEntry() const
     {
         return m_savedStackPointerAtVMEntry;
     }
@@ -241,7 +241,7 @@ public:
         m_savedStackPointerAtVMEntry = stackPointerAtVMEntry;
     }
 
-    void* savedLastStackTop()
+    void* savedLastStackTop() const
     {
         return m_savedLastStackTop;
     }
