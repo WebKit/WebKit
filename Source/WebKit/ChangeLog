@@ -1,5 +1,68 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288466. rdar://problem/82554226
+
+    REGRESSION (iOS 15): HTMLAudioElement fails to load new audio when device is locked or safari is in background
+    https://bugs.webkit.org/show_bug.cgi?id=229688
+    <rdar://problem/82554226>
+    
+    Reviewed by Jer Noble.
+    Source/WebCore:
+    
+    An iOS application loses its NowPlaying status as soon as the AudioSession category
+    is set to Ambient, and it can only get it back again by changing the category
+    to Playback *and* starting playback. When an application is in the background, however,
+    it can't start playback unless it *already* has NowPlaying status. So, ipso facto,
+    background playback will always fail once the category is set to Ambient.
+    
+    If an AudioSession's category is set to Playback when it is activated, it will
+    interrupt another application playing audio, activate Bluetooth routes, etc.
+    This means WebKit has to relinquish Playback when a page is unable to produce audio
+    because AVFoundation automatically activates the audio session when playback starts
+    - even if the AVPlayer is muted or has no audio.
+    
+    To allow pages that were playing audio when WebKit went into the background to
+    continue to play after switching urls or activating another media element, add a
+    grace period when switch from Playback to Ambient.
+    
+    Test: media/audio-session-category.html
+    
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::updateSessionState):
+    
+    Source/WebKit:
+    
+    * WebProcess/GPU/media/RemoteAudioSession.cpp:
+    (WebKit::RemoteAudioSession::category const): Return the most recently set category
+    on all platforms so it is possible to test.
+    
+    LayoutTests:
+    
+    * fast/mediasession/metadata/audio-track-enabled.html: Wait longer for the audio session
+    category to be reset.
+    * media/audio-session-category-expected.txt: Added.
+    * media/audio-session-category.html: Added.
+    * platform/gtk/TestExpectations: Skip new test.
+    * platform/mac-wk1/TestExpectations: Skip new test, MediaStream isn't supported
+    on WK1.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+            REGRESSION (iOS 15): HTMLAudioElement fails to load new audio when device is locked or safari is in background
+            https://bugs.webkit.org/show_bug.cgi?id=229688
+            <rdar://problem/82554226>
+
+            Reviewed by Jer Noble.
+
+            * WebProcess/GPU/media/RemoteAudioSession.cpp:
+            (WebKit::RemoteAudioSession::category const): Return the most recently set category
+            on all platforms so it is possible to test.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288387. rdar://problem/87468788
 
     Inject Launch Services database before NSApplication is initialized

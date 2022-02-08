@@ -28,7 +28,6 @@
 
 #if USE(AUDIO_SESSION) && PLATFORM(COCOA)
 
-#import "AudioSession.h"
 #import "AudioUtilities.h"
 #import "DeprecatedGlobalSettings.h"
 #import "HTMLMediaElement.h"
@@ -60,6 +59,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
     : m_nowPlayingManager(platformStrategies()->mediaStrategy().createNowPlayingManager())
     , m_defaultBufferSize(AudioSession::sharedSession().preferredBufferSize())
+    , m_delayCategoryChangeTimer(RunLoop::main(), this, &MediaSessionManagerCocoa::possiblyChangeAudioCategory)
 {
     ensureCodecsRegistered();
 }
@@ -94,6 +94,7 @@ bool MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled()
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
+    static const Seconds delayBeforeSettingCategoryNone = { 2_s };
     int videoCount = 0;
     int videoAudioCount = 0;
     int audioCount = 0;
@@ -164,8 +165,26 @@ void MediaSessionManagerCocoa::updateSessionState()
     } else if (webAudioCount)
         category = AudioSession::CategoryType::AmbientSound;
 
+    if (category == AudioSession::CategoryType::None && m_previousCategory != AudioSession::CategoryType::None) {
+        if (!m_delayCategoryChangeTimer.isActive()) {
+            m_delayCategoryChangeTimer.startOneShot(delayBeforeSettingCategoryNone);
+            ALWAYS_LOG(LOGIDENTIFIER, "setting timer");
+        }
+        category = m_previousCategory;
+    } else
+        m_delayCategoryChangeTimer.stop();
+
+    m_previousCategory = category;
+
     ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", policy = ", policy);
     AudioSession::sharedSession().setCategory(category, policy);
+}
+
+void MediaSessionManagerCocoa::possiblyChangeAudioCategory()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_previousCategory = AudioSession::CategoryType::None;
+    updateSessionState();
 }
 
 void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)

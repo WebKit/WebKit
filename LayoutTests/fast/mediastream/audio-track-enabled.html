@@ -32,10 +32,10 @@ promise_test(async() => {
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
 
     audioTrack.stop();
-    const maxTries = 100;
+    const maxTries = 300;
     let counter = 0;
     while (++counter < maxTries) {
-        if (internals.audioSessionCategory() != "PlayAndRecord")
+        if (internals.audioSessionCategory() == defaultCategory)
             break;
         await new Promise(resolve => setTimeout(resolve, 10));
     }
