@@ -58,10 +58,6 @@ public:
 
     void setPdfImageCachingPolicy(PDFImageCachingPolicy);
     
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static RetainPtr<CFMutableDataRef> convertPostScriptDataToPDF(RetainPtr<CFDataRef>&& postScriptData);
-#endif
-
     unsigned cachingCountForTesting() const { return m_cachingCountForTesting; }
 
 private:

@@ -296,7 +296,6 @@ private:
 
     WeakPtr<WebFrame> m_frame;
 
-    bool m_isPostScript { false };
     bool m_pdfDocumentWasMutated { false };
 
     WebCore::IntSize m_scrollOffset;
