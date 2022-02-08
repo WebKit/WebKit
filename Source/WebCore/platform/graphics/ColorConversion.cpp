@@ -44,7 +44,7 @@ LCHLike convertToPolarForm(const LabLike& color)
     float hue = rad2deg(atan2(b, a));
     float chroma = std::hypot(a, b);
 
-    return { lightness, chroma, hue >= 0 ? hue : hue + 360, alpha };
+    return { lightness, chroma, hue >= 0.0f ? hue : hue + 360.0f, alpha };
 }
 
 template<typename LabLike, typename LCHLike>
@@ -272,7 +272,7 @@ Lab<float> ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>>::convert(co
     float a = 500.0f * (f0 - f1);
     float b = 200.0f * (f1 - f2);
 
-    return { lightness, a, b, alpha };
+    return makeFromComponentsClampingExceptAlpha<Lab<float>>(lightness, a, b, alpha);
 }
 
 // MARK: LCH conversions.
@@ -358,7 +358,7 @@ OKLab<float> ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>>::conver
     auto [lightness, a, b] = NonLinearLMSToOKLab.transformedColorComponents(nonLinearLMS);
 
     // 4. Transform lightness from unit lightness to percentage lightness.
-    return { lightness * 100.0f, a, b, alpha };
+    return makeFromComponentsClampingExceptAlpha<OKLab<float>>(lightness * 100.0f, a, b, alpha);
 }
 
 // MARK: OKLCH conversions.

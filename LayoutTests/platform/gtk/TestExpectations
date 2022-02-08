@@ -1838,8 +1838,11 @@ webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/whi
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
 
+webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001.html [ Failure ]
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-computed.html  [ Failure ]
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/relative-color-valid.html [ Failure ]
+webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-computed.html [ Failure ]
+webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-valid.html [ Failure ]
 
 webkit.org/b/234782 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
 

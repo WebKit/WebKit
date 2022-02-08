@@ -29,6 +29,7 @@
 #include "ColorMatrix.h"
 #include "ColorModels.h"
 #include "ColorTransferFunctions.h"
+#include <optional>
 
 namespace WebCore {
 
@@ -310,6 +311,47 @@ template<typename ColorType> inline constexpr bool IsRGBLinearEncodedType = IsRG
 template<typename ColorType1, typename ColorType2, bool enabled> inline constexpr bool IsSameRGBTypeFamilyValue = false;
 template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamilyValue<ColorType1, ColorType2, true> = std::is_same_v<typename ColorType1::Descriptor, typename ColorType2::Descriptor>;
 template<typename ColorType1, typename ColorType2> inline constexpr bool IsSameRGBTypeFamily = IsSameRGBTypeFamilyValue<ColorType1, ColorType2, IsRGBType<ColorType1> && IsRGBType<ColorType2>>;
+
+template<typename BoundedColorType> constexpr bool inGamut(typename BoundedColorType::ComponentType component)
+{
+    static_assert(IsRGBBoundedType<BoundedColorType>);
+
+    return component >= 0.0f && component <= 1.0f;
+}
+
+template<typename BoundedColorType> constexpr bool inGamut(ColorComponents<typename BoundedColorType::ComponentType, 4> components)
+{
+    static_assert(IsRGBBoundedType<BoundedColorType>);
+
+    return inGamut<BoundedColorType>(components[0]) && inGamut<BoundedColorType>(components[1]) && inGamut<BoundedColorType>(components[2]);
+}
+
+template<typename BoundedColorType, typename ColorType> constexpr bool inGamut(ColorType color)
+{
+    static_assert(IsRGBBoundedType<BoundedColorType>);
+    static_assert(std::is_same_v<BoundedColorType, typename ColorType::BoundedCounterpart>);
+
+    return inGamut<BoundedColorType>(asColorComponents(color.resolved()));
+}
+
+template<typename BoundedColorType, typename ColorType> constexpr std::optional<BoundedColorType> colorIfInGamut(ColorType color)
+{
+    static_assert(IsRGBBoundedType<BoundedColorType>);
+    static_assert(std::is_same_v<BoundedColorType, typename ColorType::BoundedCounterpart>);
+
+    auto components = asColorComponents(color.resolved());
+    if (!inGamut<BoundedColorType>(components))
+        return std::nullopt;
+    return makeFromComponents<BoundedColorType>(components);
+}
+
+template<typename BoundedColorType, typename ColorType> constexpr BoundedColorType clipToGamut(ColorType color)
+{
+    static_assert(IsRGBBoundedType<BoundedColorType>);
+    static_assert(std::is_same_v<BoundedColorType, typename ColorType::BoundedCounterpart>);
+
+    return makeFromComponentsClampingExceptAlpha<BoundedColorType>(asColorComponents(color.resolved()));
+}
 
 struct SRGBADescriptor {
     template<typename T, TransferFunctionMode Mode> using TransferFunction = SRGBTransferFunction<T, Mode>;

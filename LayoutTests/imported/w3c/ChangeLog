@@ -1,3 +1,22 @@
+2022-02-08  Sam Weinig  <weinig@apple.com>
+
+        Conversion to a color space with a smaller gamut should perform gamut mapping
+        https://bugs.webkit.org/show_bug.cgi?id=236200
+
+        Reviewed by Darin Adler.
+
+        Update tests to include more examples that force gamut mapping and update the results
+        of a few existing ones to account for the new algorithm.
+
+        * web-platform-tests/css/css-color/parsing/color-mix-computed-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-mix-computed.html:
+        * web-platform-tests/css/css-color/parsing/color-mix-valid-expected.txt:
+        * web-platform-tests/css/css-color/parsing/color-mix-valid.html:
+        * web-platform-tests/css/css-color/parsing/relative-color-computed-expected.txt:
+        * web-platform-tests/css/css-color/parsing/relative-color-computed.html:
+        * web-platform-tests/css/css-color/parsing/relative-color-valid-expected.txt:
+        * web-platform-tests/css/css-color/parsing/relative-color-valid.html:
+
 2022-02-07  Chris Dumez  <cdumez@apple.com>
 
         Add support for sharing Shared Workers (including across WebProcesses)
