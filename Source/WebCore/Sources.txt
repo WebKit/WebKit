@@ -1421,7 +1421,6 @@ html/parser/HTMLParserScheduler.cpp
 html/parser/HTMLPreloadScanner.cpp
 html/parser/HTMLResourcePreloader.cpp
 html/parser/HTMLScriptRunner.cpp
-html/parser/HTMLSourceTracker.cpp
 html/parser/HTMLSrcsetParser.cpp
 html/parser/HTMLTokenizer.cpp
 html/parser/HTMLTreeBuilder.cpp

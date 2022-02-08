@@ -274,15 +274,9 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         if (UNLIKELY(mode == AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
             return true;
 
-        if (!parsingFragment)
-            m_sourceTracker.startToken(m_input.current(), m_tokenizer);
-
         auto token = m_tokenizer.nextToken(m_input.current());
         if (!token)
             return false;
-
-        if (!parsingFragment)
-            m_sourceTracker.endToken(m_input.current(), m_tokenizer);
 
         constructTreeFromHTMLToken(token);
     } while (!isStopped());

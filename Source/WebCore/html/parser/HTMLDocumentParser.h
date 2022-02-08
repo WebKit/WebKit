@@ -28,7 +28,6 @@
 
 #include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
-#include "HTMLSourceTracker.h"
 #include "HTMLTokenizer.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
@@ -135,7 +134,6 @@ private:
     std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
     std::unique_ptr<HTMLPreloadScanner> m_insertionPreloadScanner;
     std::unique_ptr<HTMLParserScheduler> m_parserScheduler;
-    HTMLSourceTracker m_sourceTracker;
     TextPosition m_textPosition;
 
     std::unique_ptr<HTMLResourcePreloader> m_preloader;

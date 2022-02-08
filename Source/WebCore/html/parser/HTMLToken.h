@@ -56,10 +56,6 @@ public:
     struct Attribute {
         Vector<UChar, 32> name;
         Vector<UChar, 64> value;
-
-        // Used by HTMLSourceTracker.
-        unsigned startOffset;
-        unsigned endOffset;
     };
 
     typedef Vector<Attribute, 10> AttributeList;
@@ -106,18 +102,13 @@ public:
     void beginEndTag(LChar);
     void beginEndTag(const Vector<LChar, 32>&);
 
-    void beginAttribute(unsigned offset);
+    void beginAttribute();
     void appendToAttributeName(UChar);
     void appendToAttributeValue(UChar);
-    void endAttribute(unsigned offset);
+    void appendToAttributeValue(unsigned index, StringView value);
+    void endAttribute();
 
     void setSelfClosing();
-
-    // Used by HTMLTokenizer on behalf of HTMLSourceTracker.
-    void setAttributeBaseOffset(unsigned attributeBaseOffset) { m_attributeBaseOffset = attributeBaseOffset; }
-
-public:
-    void appendToAttributeValue(unsigned index, StringView value);
 
     // Character.
 
@@ -153,8 +144,6 @@ private:
 
     // For DOCTYPE
     std::unique_ptr<DoctypeData> m_doctypeData;
-
-    unsigned m_attributeBaseOffset { 0 }; // Changes across document.write() boundaries.
 };
 
 const HTMLToken::Attribute* findAttribute(const Vector<HTMLToken::Attribute>&, StringView name);
@@ -309,22 +298,16 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     m_data.appendVector(characters);
 }
 
-inline void HTMLToken::beginAttribute(unsigned offset)
+inline void HTMLToken::beginAttribute()
 {
     ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(offset);
-
     m_attributes.grow(m_attributes.size() + 1);
     m_currentAttribute = &m_attributes.last();
-
-    m_currentAttribute->startOffset = offset - m_attributeBaseOffset;
 }
 
-inline void HTMLToken::endAttribute(unsigned offset)
+inline void HTMLToken::endAttribute()
 {
-    ASSERT(offset);
     ASSERT(m_currentAttribute);
-    m_currentAttribute->endOffset = offset - m_attributeBaseOffset;
 #if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
