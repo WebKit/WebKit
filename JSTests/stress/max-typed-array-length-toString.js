@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 var exception;
 try {
     new Uint8Array(0x100000000).toString();
