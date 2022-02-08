@@ -2609,6 +2609,19 @@ RenderInline* RenderBoxModelObject::inlineContinuation() const
     return nullptr;
 }
 
+void RenderBoxModelObject::forRendererAndContinuations(RenderBoxModelObject& renderer, const std::function<void(RenderBoxModelObject&)>& function)
+{
+    function(renderer);
+    if (!renderer.hasContinuationChainNode())
+        return;
+
+    for (auto* next = continuationChainNodeMap().get(&renderer)->next; next; next = next->next) {
+        if (!next->renderer)
+            continue;
+        function(*next->renderer);
+    }
+}
+
 RenderBoxModelObject::ContinuationChainNode* RenderBoxModelObject::continuationChainNode() const
 {
     return continuationChainNodeMap().get(this);
