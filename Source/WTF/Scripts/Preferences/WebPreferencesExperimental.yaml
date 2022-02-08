@@ -1122,6 +1122,8 @@ PushAPIEnabled:
   defaultValue:
     WebCore:
       default: false
+    WebKitLegacy:
+      default: false
     WebKit:
       default: false
 

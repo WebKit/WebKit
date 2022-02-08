@@ -1,3 +1,14 @@
+2022-02-07  Ben Nham  <nham@apple.com>
+
+        Add PushService
+        https://bugs.webkit.org/show_bug.cgi?id=235857
+
+        Reviewed by Brady Eidson.
+
+        Add PushAPIEnabled to WebKitLegacy so we can enable it on in API tests via _WKExperimentalFeature.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-07  Elliott Williams  <emw@apple.com>
 
         Replace "Copy WTF Headers" with native build phases

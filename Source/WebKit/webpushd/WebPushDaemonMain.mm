@@ -30,24 +30,21 @@
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "LogInitialization.h"
 #import "WebPushDaemon.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/LogInitialization.h>
+#import <getopt.h>
+#import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <servers/bootstrap.h>
-#else
-#import <mach/std_types.h>
-extern "C" {
-extern kern_return_t bootstrap_check_in(mach_port_t bootstrapPort, const char *serviceName, mach_port_t*);
-}
-#endif
 
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::Daemon;
 
-static const char *incomingPushServiceName = "com.apple.aps.webkit.webpushd.incoming-push";
+static const ASCIILiteral entitlementName = "com.apple.private.webkit.webpush"_s;
+static const ASCIILiteral defaultMachServiceName = "com.apple.webkit.webpushd.service"_s;
+static const ASCIILiteral defaultIncomingPushServiceName = "com.apple.aps.webkit.webpushd.incoming-push"_s;
 
 namespace WebPushD {
 
@@ -74,23 +71,55 @@ using WebPushD::connectionRemoved;
 
 namespace WebKit {
 
-int WebPushDaemonMain(int argc, const char** argv)
+int WebPushDaemonMain(int argc, char** argv)
 {
-    if (argc != 3 || strcmp(argv[1], "--machServiceName")) {
-        NSLog(@"usage: webpushd --machServiceName <name>");
-        return -1;
-    }
-    const char* machServiceName = argv[2];
-
     @autoreleasepool {
-        WebKit::startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.webpush", connectionAdded, connectionRemoved, connectionEventHandler);
-
-        // TODO: remove this once we actually start using APSConnection.
-        mach_port_t incomingMessagePort;
-        if (bootstrap_check_in(bootstrap_port, incomingPushServiceName, &incomingMessagePort) != KERN_SUCCESS)
-            NSLog(@"Couldn't register for incoming push launch port.");
-        
         WTF::initializeMainThread();
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+        WTF::logChannels().initializeLogChannelsIfNecessary();
+        WebCore::logChannels().initializeLogChannelsIfNecessary();
+        WebKit::logChannels().initializeLogChannelsIfNecessary();
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+        static struct option options[] = {
+            { "machServiceName", required_argument, 0, 'm' },
+            { "incomingPushServiceName", required_argument, 0, 'p' },
+            { "useMockPushService", no_argument, 0, 'f' }
+        };
+
+        const char* machServiceName = defaultMachServiceName;
+        const char* incomingPushServiceName = defaultIncomingPushServiceName;
+        bool useMockPushService = false;
+
+        int c;
+        int optionIndex;
+        while ((c = getopt_long(argc, argv, "", options, &optionIndex)) != -1) {
+            switch (c) {
+            case 'm':
+                machServiceName = optarg;
+                break;
+            case 'p':
+                incomingPushServiceName = optarg;
+                break;
+            case 'f':
+                useMockPushService = true;
+                break;
+            default:
+                fprintf(stderr, "Unknown option: %c\n", optopt);
+                exit(1);
+            }
+        }
+
+        WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
+
+        if (useMockPushService)
+            ::WebPushD::Daemon::singleton().startMockPushService();
+        else {
+            String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+            String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit", "WebPush", "PushDatabase.db" });
+            ::WebPushD::Daemon::singleton().startPushService(incomingPushServiceName, pushDatabasePath);
+        }
     }
     CFRunLoopRun();
     return 0;
