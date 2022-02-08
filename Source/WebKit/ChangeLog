@@ -1,3 +1,46 @@
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287914. rdar://problem/85451366
+
+    Protect DocumentLoader when a reference to its members is used.
+    https://bugs.webkit.org/show_bug.cgi?id=233464
+    
+    Patch by Frédéric Wang <fwang@igalia.com> on 2022-01-12
+    Reviewed by Brady Eidson.
+    
+    Source/WebCore:
+    
+    No new tests, due to our infra (bug 127676).
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Ensure that DocumentLoader loader
+    remains alive while DocumentLoader::m_mainDocumentError is used.
+    
+    Source/WebKit:
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::didFinishLoadForFrame): If the navigationID is obsolete, skip update
+    of the page load state to avoid failure of debug ASSERT.
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad): Ensure that DocumentLoader loader
+    remains alive while DocumentLoader::m_request is used.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287914 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Frédéric Wang  <fwang@igalia.com>
+
+            Protect DocumentLoader when a reference to its members is used.
+            https://bugs.webkit.org/show_bug.cgi?id=233464
+
+            Reviewed by Brady Eidson.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didFinishLoadForFrame): If the navigationID is obsolete, skip update
+            of the page load state to avoid failure of debug ASSERT.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad): Ensure that DocumentLoader loader
+            remains alive while DocumentLoader::m_request is used.
+
 2022-02-02  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/86150540
