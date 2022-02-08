@@ -461,16 +461,18 @@ void ArgumentCoder<Ref<WebCore::Font>>::encodePlatformData(Encoder& encoder, con
         encoder << creationData->fontFaceData;
         encoder << creationData->itemInCollection;
     } else {
+        auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
+        encoder << options;
         auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont, kCTFontReferenceURLAttribute)));
         auto string = CFURLGetString(referenceURL.get());
-        encoder << String(string);
-        encoder << String(adoptCF(CTFontCopyPostScriptName(ctFont)).get());
+        encoder << string;
+        encoder << adoptCF(CTFontCopyPostScriptName(ctFont)).get();
     }
 }
 
-static RetainPtr<CTFontDescriptorRef> findFontDescriptor(const String& referenceURL, const String& postScriptName)
+static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceURL, CFStringRef postScriptName)
 {
-    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL.createCFString().get(), nullptr));
+    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL, nullptr));
     if (!url)
         return nullptr;
     auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url.get()));
@@ -481,20 +483,20 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(const String& reference
 
     for (CFIndex i = 0; i < CFArrayGetCount(fontDescriptors.get()); ++i) {
         auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
-        auto currentPostScriptName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute)));
-        if (String(currentPostScriptName.get()) == postScriptName)
+        auto currentPostScriptName = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute));
+        if (CFEqual(currentPostScriptName.get(), postScriptName))
             return fontDescriptor;
     }
     return nullptr;
 }
 
-static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, const String& referenceURL, const String& desiredPostScriptName)
+static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
 {
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
     if (fontDescriptor) {
-        auto font = adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, kCTFontOptionsSystemUIFont));
-        String actualPostScriptName(adoptCF(CTFontCopyPostScriptName(font.get())).get());
-        if (actualPostScriptName == desiredPostScriptName)
+        auto font = adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
+        auto actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
+        if (CFEqual(actualPostScriptName.get(), desiredPostScriptName))
             return font;
     }
 
@@ -506,7 +508,7 @@ static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size,
         fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
     }
     ASSERT(fontDescriptor);
-    return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, kCTFontOptionsSystemUIFont));
+    return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
 }
 
 std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData(Decoder& decoder)
@@ -577,17 +579,22 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::deco
         return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, &creationData);
     }
 
-    std::optional<String> referenceURL;
+    std::optional<CTFontDescriptorOptions> options;
+    decoder >> options;
+    if (!options)
+        return std::nullopt;
+
+    std::optional<RetainPtr<CFStringRef>> referenceURL;
     decoder >> referenceURL;
-    if (!referenceURL)
+    if (!referenceURL || !*referenceURL)
         return std::nullopt;
 
-    std::optional<String> postScriptName;
+    std::optional<RetainPtr<CFStringRef>> postScriptName;
     decoder >> postScriptName;
-    if (!postScriptName)
+    if (!postScriptName || !*postScriptName)
         return std::nullopt;
 
-    auto ctFont = createCTFont(attributes->get(), *size, *referenceURL, *postScriptName);
+    auto ctFont = createCTFont(attributes->get(), *size, *options, referenceURL->get(), postScriptName->get());
     if (!ctFont)
         return std::nullopt;
 

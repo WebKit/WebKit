@@ -1,5 +1,51 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288543. rdar://problem/84958961
+
+    REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
+    https://bugs.webkit.org/show_bug.cgi?id=235449
+    <rdar://problem/84958961>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cf/CoreTextSPI.h:
+    
+    Source/WebKit:
+    
+    The reason for this bug was I was misusing kCTFontOptionsSystemUIFont. I thought this flag just
+    meant "allow the creation of system fonts" but it turns out it means something more subtle than
+    that. Instead of unconditionally specifying this flag, we should just pull out the options field
+    from the source font (which will include that flag if the font was a system font) and use that
+    instead.
+    
+    Test: fast/text/user-installed-canvas.html
+    
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    (IPC::ArgumentCoder<Ref<WebCore::Font>>::encodePlatformData):
+    (IPC::createCTFont):
+    (IPC::ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData):
+    
+    LayoutTests:
+    
+    * fast/text/user-installed-canvas-expected.html: Added.
+    * fast/text/user-installed-canvas.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288543 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
+            https://bugs.webkit.org/show_bug.cgi?id=235449
+            <rdar://problem/84958961>
+
+            Reviewed by Darin Adler.
+
+            * pal/spi/cf/CoreTextSPI.h:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288031. rdar://problem/82997136
 
     [Cocoa] rVFC() isn't called for initial video load
