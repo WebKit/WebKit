@@ -94,8 +94,7 @@ void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remo
         if (!pixelBuffer)
             return;
 
-        sample = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored());
-        sample->setTimestamps(remoteSample.time(), MediaTime { });
+        sample = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
     } else {
         if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
             m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());

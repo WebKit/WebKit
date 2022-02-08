@@ -42,7 +42,7 @@ public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
     static RefPtr<MediaSampleAVFObjC> createImageSample(PixelBuffer&&);
-    WEBCORE_EXPORT static RefPtr<MediaSampleAVFObjC> createImageSample(RetainPtr<CVPixelBufferRef>&&, VideoRotation, bool mirrored);
+    WEBCORE_EXPORT static RefPtr<MediaSampleAVFObjC> createImageSample(RetainPtr<CVPixelBufferRef>&&, VideoRotation, bool mirrored, MediaTime presentationTime = { }, MediaTime decodingTime = { });
 
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
     static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);

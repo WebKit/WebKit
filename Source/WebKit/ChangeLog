@@ -1,5 +1,17 @@
 2022-02-08  Youenn Fablet  <youenn@apple.com>
 
+        MediaSampleAVFObjC::createImageSample should take a presentationTime as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=236067
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::videoSampleAvailable):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSample):
+
+2022-02-08  Youenn Fablet  <youenn@apple.com>
+
         SharedVideoFrameReader could directly take a IPCHandle
         https://bugs.webkit.org/show_bug.cgi?id=236068
 
