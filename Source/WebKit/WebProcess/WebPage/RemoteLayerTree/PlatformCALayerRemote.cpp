@@ -683,8 +683,10 @@ CFTypeRef PlatformCALayerRemote::contents() const
 
 void PlatformCALayerRemote::setContents(CFTypeRef value)
 {
+    if (!m_properties.backingStore)
+        return;
     if (!value)
-        m_properties.backingStore = nullptr;
+        m_properties.backingStore->clearBackingStore();
 }
 
 #if HAVE(IOSURFACE)

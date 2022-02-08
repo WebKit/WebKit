@@ -100,9 +100,10 @@ public:
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
+    void clearBackingStore();
+
 private:
     void drawInContext(WebCore::GraphicsContext&);
-    void clearBackingStore();
     void swapToValidFrontBuffer();
 
     bool supportsPartialRepaint();
