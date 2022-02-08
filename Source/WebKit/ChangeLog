@@ -1,5 +1,34 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288711. rdar://problem/88160246
+
+    [iOS][macOS] Removed unneeded telemetry
+    https://bugs.webkit.org/show_bug.cgi?id=235742
+    
+    Reviewed by Darin Adler.
+    
+    Remove some telemetry we have sufficient data for.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288711 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-27  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS][macOS] Removed unneeded telemetry
+            https://bugs.webkit.org/show_bug.cgi?id=235742
+
+            Reviewed by Darin Adler.
+
+            Remove some telemetry we have sufficient data for.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288605. rdar://problem/87948317
 
     REGRESSION (iOS 15.2): Loading gets stuck after back-navigation involving COOP header
