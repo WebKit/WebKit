@@ -344,16 +344,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     object.ariaOwnsElements(ariaOwnsElements);
     setObjectVectorProperty(AXPropertyName::ARIAOwnsElements, ariaOwnsElements);
 
-    Vector<AccessibilityText> texts;
-    object.accessibilityText(texts);
-    Vector<AccessibilityText> isolatedTexts;
-    isolatedTexts.reserveCapacity(texts.size());
-    for (const auto& text : texts) {
-        AccessibilityText isolatedText(text.text.isolatedCopy(), text.textSource);
-        isolatedTexts.uncheckedAppend(isolatedText);
-    }
-    setProperty(AXPropertyName::AccessibilityText, isolatedTexts);
-
     // Spin button support.
     setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
     setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
@@ -606,7 +596,7 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
-    texts = vectorAttributeValue<AccessibilityText>(AXPropertyName::AccessibilityText);
+    texts = const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AccessibilityText>>(AXPropertyName::AccessibilityText);
 }
 
 void AXIsolatedObject::classList(Vector<String>& list) const
@@ -977,41 +967,58 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
     );
 }
 
-String AXIsolatedObject::getOrRetrieveStringPropertyValue(AXPropertyName propertyName)
+template<typename T>
+T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
 {
+    auto typedValue = [&propertyName, this] () {
+        auto value = m_propertyMap.get(propertyName);
+        return WTF::switchOn(value,
+            [] (T& typedValue) -> T { return typedValue; },
+            [] (auto&) { return T(); }
+        );
+    };
+
     if (m_propertyMap.contains(propertyName))
-        return stringAttributeValue(propertyName);
+        return typedValue();
 
     Accessibility::performFunctionOnMainThread([&propertyName, this] () {
         auto* axObject = associatedAXObject();
         if (!axObject)
             return;
 
-        String value;
+        AXPropertyValueVariant value;
         switch (propertyName) {
 #if PLATFORM(COCOA)
         case AXPropertyName::Description:
-            value = axObject->descriptionAttributeValue();
+            value = axObject->descriptionAttributeValue().isolatedCopy();
             break;
         case AXPropertyName::TitleAttributeValue:
-            value = axObject->titleAttributeValue();
+            value = axObject->titleAttributeValue().isolatedCopy();
             break;
 #endif
+        case AXPropertyName::AccessibilityText: {
+            Vector<AccessibilityText> texts;
+            axObject->accessibilityText(texts);
+            value = texts.map([] (const auto& text) -> AccessibilityText {
+                return { text.text.isolatedCopy(), text.textSource };
+            });
+            break;
+        }
         case AXPropertyName::InnerHTML:
-            value = axObject->innerHTML();
+            value = axObject->innerHTML().isolatedCopy();
             break;
         case AXPropertyName::OuterHTML:
-            value = axObject->outerHTML();
+            value = axObject->outerHTML().isolatedCopy();
             break;
         default:
             break;
         }
 
         // Cache value so that there is no need to access the main thread in subsequent calls.
-        setProperty(propertyName, value.isolatedCopy());
+        setProperty(propertyName, WTFMove(value));
     });
 
-    return stringAttributeValue(propertyName);
+    return typedValue();
 }
 
 void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children) const
@@ -2475,12 +2482,12 @@ void AXIsolatedObject::setIsIgnoredFromParentDataForChild(AXCoreObject*)
 
 String AXIsolatedObject::innerHTML() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::InnerHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::InnerHTML);
 }
 
 String AXIsolatedObject::outerHTML() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::OuterHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::OuterHTML);
 }
 
 } // namespace WebCore

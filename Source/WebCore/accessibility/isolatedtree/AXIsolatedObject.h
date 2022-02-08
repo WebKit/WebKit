@@ -101,7 +101,7 @@ private:
     // The following method performs a lazy caching of the given property.
     // If the property is already in m_propertyMap, returns the existing value.
     // If not, retrieves the property from the main thread and cache it for later use.
-    String getOrRetrieveStringPropertyValue(AXPropertyName);
+    template<typename T> T getOrRetrievePropertyValue(AXPropertyName);
 
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);

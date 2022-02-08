@@ -105,12 +105,12 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
 
 String AXIsolatedObject::descriptionAttributeValue() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::Description);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::Description);
 }
 
 String AXIsolatedObject::titleAttributeValue() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrieveStringPropertyValue(AXPropertyName::TitleAttributeValue);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::TitleAttributeValue);
 }
 
 } // WebCore
