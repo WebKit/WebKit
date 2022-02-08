@@ -10,10 +10,10 @@ list(APPEND DocumentationDependencies
 )
 
 if (ENABLE_GTKDOC)
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/wpe-${WPE_API_VERSION}/html/wpe-${WPE_API_VERSION}
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/wpe-${WPE_API_DOC_VERSION}/html/wpe-${WPE_API_DOC_VERSION}
             DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html"
     )
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/wpe-webextensions-${WPE_API_VERSION}/html/wpe-webextensions-${WPE_API_VERSION}
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/wpe-webextensions-${WPE_API_DOC_VERSION}/html/wpe-webextensions-${WPE_API_DOC_VERSION}
         DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html"
     )
 endif ()
