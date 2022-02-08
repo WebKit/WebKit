@@ -44,13 +44,35 @@ SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 @interface WKEmptyPresenterHighlightDelegate : NSObject <RVPresenterHighlightDelegate>
+
+- (instancetype)initWithRect:(NSRect)rect;
+
+@property NSRect rect;
+
 @end
 
 @implementation WKEmptyPresenterHighlightDelegate
 
+- (instancetype)initWithRect:(NSRect)rect
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _rect = rect;
+    return self;
+}
+
+
 - (NSArray <NSValue *> *)revealContext:(RVPresentingContext *)context rectsForItem:(RVItem *)item
 {
-    return @[ ];
+    return @[ [NSValue valueWithRect:self.rect] ];
+}
+
+- (BOOL)revealContext:(RVPresentingContext *)context shouldUseDefaultHighlightForItem:(RVItem *)item
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(item);
+    return NO;
 }
 
 @end
@@ -107,20 +129,21 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     return nil;
 }
 
-RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
+RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *webView, const WebCore::IntRect& rect)
 {
     if (!PAL::isRevealFrameworkAvailable() || !PAL::isRevealCoreFrameworkAvailable())
         return nil;
 
     RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
-    auto viewForPresenter = adoptNS([[NSView alloc] init]);
     auto urlComponents = adoptNS([[NSURLComponents alloc] init]);
     [urlComponents setScheme:@"tel"];
     [urlComponents setPath:telephoneNumber];
     auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:[urlComponents URL] rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
     auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
-    auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] init]);
-    auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:NSZeroPoint inView:viewForPresenter.get() highlightDelegate:delegate.get()]);
+    auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] initWithRect:rect]);
+    auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:NSZeroPoint inView:webView highlightDelegate:delegate.get()]);
+    static char wkRevealDelegateKey;
+    objc_setAssociatedObject(context.get(), &wkRevealDelegateKey, delegate.get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     NSArray *proposedMenuItems = [presenter menuItemsForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     
     [menu setItemArray:proposedMenuItems];

@@ -1,5 +1,87 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287959. rdar://problem/80213097
+
+    Add to Contact menu item does nothing on mac.
+    https://bugs.webkit.org/show_bug.cgi?id=235154
+    Source/WebCore:
+    
+    Reviewed by Tim Horton.
+    
+    Add to Context menu item for telephone numbers did not actually show the contact card.
+    This was because the delgate did not tell the menu where to display the card from, so it just failed.
+    Plumbing that information through fixes the issue.
+    
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::handleTelephoneNumberClick):
+    * page/mac/ServicesOverlayController.mm:
+    (WebCore::ServicesOverlayController::handleClick):
+    
+    Source/WebKit:
+    
+    rdar://80213097
+    
+    Reviewed by Tim Horton.
+    
+    Add to Context menu item for telephone numbers did not actually show the contact card.
+    This was because the delgate did not tell the menu where to display the card from, so it just failed.
+    Plumbing that information through fixes the issue.
+    
+    * Platform/mac/MenuUtilities.h:
+    * Platform/mac/MenuUtilities.mm:
+    (-[WKEmptyPresenterHighlightDelegate initWithRect:]):
+    (-[WKEmptyPresenterHighlightDelegate revealContext:rectsForItem:]):
+    (-[WKEmptyPresenterHighlightDelegate revealContext:shouldUseDefaultHighlightForItem:]):
+    (WebKit::menuForTelephoneNumber):
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/mac/PageClientImplMac.h:
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::showTelephoneNumberMenu):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::handleTelephoneNumberClick):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::handleTelephoneNumberClick):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287959 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Megan Gardner  <megan_gardner@apple.com>
+
+            Add to Contact menu item does nothing on mac.
+            https://bugs.webkit.org/show_bug.cgi?id=235154
+            rdar://80213097
+
+            Reviewed by Tim Horton.
+
+            Add to Context menu item for telephone numbers did not actually show the contact card.
+            This was because the delgate did not tell the menu where to display the card from, so it just failed.
+            Plumbing that information through fixes the issue.
+
+            * Platform/mac/MenuUtilities.h:
+            * Platform/mac/MenuUtilities.mm:
+            (-[WKEmptyPresenterHighlightDelegate initWithRect:]):
+            (-[WKEmptyPresenterHighlightDelegate revealContext:rectsForItem:]):
+            (-[WKEmptyPresenterHighlightDelegate revealContext:shouldUseDefaultHighlightForItem:]):
+            (WebKit::menuForTelephoneNumber):
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/mac/PageClientImplMac.h:
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::showTelephoneNumberMenu):
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::handleTelephoneNumberClick):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::handleTelephoneNumberClick):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287930. rdar://problem/85790203
 
     [iOS] Page loading hangs for ~10s on WebProcess launch

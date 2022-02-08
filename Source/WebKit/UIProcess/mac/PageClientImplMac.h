@@ -229,6 +229,7 @@ private:
 
     NSView *activeView() const;
     NSWindow *activeWindow() const;
+    NSView *viewForPresentingRevealPopover() const override { return activeView(); }
 
     void didStartProvisionalLoadForMainFrame() override;
     void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
