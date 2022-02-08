@@ -40,7 +40,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentWidth);
+    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentLogicalWidth);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -57,7 +57,7 @@ public:
     float baseline() const { return m_aligmentBaseline; }
 
     float contentLeft() const { return m_contentLeft; }
-    float contentWidth() const { return m_contentWidth; }
+    float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     void moveVertically(float offset) { m_lineBoxRect.move({ { }, offset }); }
 
@@ -71,16 +71,16 @@ private:
     EnclosingTopAndBottom m_enclosingTopAndBottom;
     float m_aligmentBaseline { 0 };
     float m_contentLeft { 0 };
-    float m_contentWidth { 0 };
+    float m_contentLogicalWidth { 0 };
 };
 
-inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentWidth)
+inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentLogicalWidth)
     : m_lineBoxRect(lineBoxRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
     , m_contentLeft(contentLeft)
-    , m_contentWidth(contentWidth)
+    , m_contentLogicalWidth(contentLogicalWidth)
 {
 }
 

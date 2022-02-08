@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeft, float contentWidth)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeft, float contentLogicalWidth)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -46,7 +46,7 @@ public:
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
         , m_contentLeft(contentLeft)
-        , m_contentWidth(contentWidth)
+        , m_contentLogicalWidth(contentLogicalWidth)
     {
     }
 
@@ -67,7 +67,7 @@ public:
     float baseline() const { return m_baseline; }
 
     float contentLeft() const { return m_contentLeft; }
-    float contentWidth() const { return m_contentWidth; }
+    float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
 private:
     size_t m_firstBoxIndex { 0 };
@@ -83,7 +83,7 @@ private:
     FloatRect m_inkOverflow;
     float m_baseline { 0 };
     float m_contentLeft { 0 };
-    float m_contentWidth { 0 };
+    float m_contentLogicalWidth { 0 };
 };
 
 }

@@ -159,6 +159,11 @@ public:
         setHeight(std::max(0.0f, height() - delta));
     }
 
+    void shiftMaxYEdgeBy(float delta)
+    {
+        shiftMaxYEdgeTo(maxY() + delta);
+    }
+
     FloatPoint minXMinYCorner() const { return m_location; } // typically topLeft
     FloatPoint maxXMinYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
     FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
