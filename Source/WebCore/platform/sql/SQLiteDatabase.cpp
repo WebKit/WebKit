@@ -225,6 +225,7 @@ void SQLiteDatabase::useWALJournalMode()
 {
     m_useWAL = true;
     {
+        SQLiteTransactionInProgressAutoCounter transactionCounter;
         auto walStatement = prepareStatement("PRAGMA journal_mode=WAL;"_s);
         if (walStatement && walStatement->step() == SQLITE_ROW) {
 #ifndef NDEBUG
