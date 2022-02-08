@@ -106,4 +106,10 @@ TEST(RtpHeaderExtensionTest, GetId) {
   EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
 }
 
+TEST(RtpHeaderExtensionTest, RemapFails) {
+  RtpHeaderExtensionMap map;
+  EXPECT_TRUE(map.Register<TransmissionOffset>(3));
+  EXPECT_FALSE(map.Register<TransmissionOffset>(4));
+}
+
 }  // namespace webrtc

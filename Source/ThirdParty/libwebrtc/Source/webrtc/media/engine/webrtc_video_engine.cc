@@ -808,7 +808,7 @@ bool WebRtcVideoChannel::GetChangedSendParameters(
     const VideoSendParameters& params,
     ChangedSendParameters* changed_params) const {
   if (!ValidateCodecFormats(params.codecs) ||
-      !ValidateRtpExtensions(params.extensions)) {
+      !ValidateRtpExtensions(params.extensions, send_rtp_extensions_)) {
     return false;
   }
 
@@ -843,7 +843,7 @@ bool WebRtcVideoChannel::GetChangedSendParameters(
   std::vector<webrtc::RtpExtension> filtered_extensions = FilterRtpExtensions(
       params.extensions, webrtc::RtpExtension::IsSupportedForVideo, true,
       call_->trials());
-  if (!send_rtp_extensions_ || (*send_rtp_extensions_ != filtered_extensions)) {
+  if (send_rtp_extensions_ != filtered_extensions) {
     changed_params->rtp_header_extensions =
         absl::optional<std::vector<webrtc::RtpExtension>>(filtered_extensions);
   }
@@ -990,7 +990,7 @@ bool WebRtcVideoChannel::ApplyChangedParams(
     SetExtmapAllowMixed(*changed_params.extmap_allow_mixed);
   }
   if (changed_params.rtp_header_extensions) {
-    send_rtp_extensions_ = changed_params.rtp_header_extensions;
+    send_rtp_extensions_ = *changed_params.rtp_header_extensions;
   }
 
   if (changed_params.send_codec || changed_params.max_bandwidth_bps) {
@@ -1167,7 +1167,7 @@ bool WebRtcVideoChannel::GetChangedRecvParameters(
     const VideoRecvParameters& params,
     ChangedRecvParameters* changed_params) const {
   if (!ValidateCodecFormats(params.codecs) ||
-      !ValidateRtpExtensions(params.extensions)) {
+      !ValidateRtpExtensions(params.extensions, recv_rtp_extensions_)) {
     return false;
   }
 

@@ -601,7 +601,7 @@ class WebRtcVideoChannel : public VideoMediaChannel,
   std::vector<VideoCodecSettings> negotiated_codecs_
       RTC_GUARDED_BY(thread_checker_);
 
-  absl::optional<std::vector<webrtc::RtpExtension>> send_rtp_extensions_
+  std::vector<webrtc::RtpExtension> send_rtp_extensions_
       RTC_GUARDED_BY(thread_checker_);
 
   webrtc::VideoEncoderFactory* const encoder_factory_
