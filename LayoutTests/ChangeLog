@@ -1,5 +1,44 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288547. rdar://problem/87824766
+
+    (REGRESSION r287485) [LFC][IFC] Incorrect RTL content position when intrusive float is present
+    https://bugs.webkit.org/show_bug.cgi?id=235547
+    <rdar://87824766>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    The float box coordinates are always visual. They need to be converted to
+    logical to be able to properly constrain the available space on the current line.
+    
+    Test: fast/inline/intrusive-float-with-rtl-content.html
+    
+    * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+    (WebCore::Layout::LineBuilder::floatConstraints const):
+    
+    LayoutTests:
+    
+    * fast/inline/intrusive-float-with-rtl-content-expected.html: Added.
+    * fast/inline/intrusive-float-with-rtl-content.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288547 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Alan Bujtas  <zalan@apple.com>
+
+            (REGRESSION r287485) [LFC][IFC] Incorrect RTL content position when intrusive float is present
+            https://bugs.webkit.org/show_bug.cgi?id=235547
+            <rdar://87824766>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/inline/intrusive-float-with-rtl-content-expected.html: Added.
+            * fast/inline/intrusive-float-with-rtl-content.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288543. rdar://problem/84958961
 
     REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
