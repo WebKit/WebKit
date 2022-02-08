@@ -1,3 +1,17 @@
+2022-02-08  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Return 'none' for the computed style of mask when there are no mask images
+        https://bugs.webkit.org/show_bug.cgi?id=236265
+        <rdar://88178304>
+
+        Reviewed by Dean Jackson.
+
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+
+        Updated expected results to expect 'none' for all cases where there isn't an actual mask
+        image.
+
 2022-02-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Garden tests failing after r288070
