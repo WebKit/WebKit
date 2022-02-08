@@ -2049,6 +2049,14 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
 
     LayoutRect cumulativeBounds;
 
+    auto* implicitStyle = [&]() {
+        if (auto target = targetStyleable()) {
+            if (auto* lastStyleChangeEventStyle = target->lastStyleChangeEventStyle())
+                return lastStyleChangeEventStyle;
+        }
+        return &box.style();
+    }();
+
     auto addStyleToCumulativeBounds = [&](const RenderStyle* style) -> bool {
         auto keyframeBounds = bounds;
 
@@ -2072,7 +2080,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         if (!keyframe.containsProperty(CSSPropertyTransform)) {
             // If the first keyframe is missing transform style, use the current style.
             if (!keyframe.key())
-                keyframeStyle = &box.style();
+                keyframeStyle = implicitStyle;
             else
                 continue;
         }
@@ -2082,7 +2090,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
     }
 
     if (m_blendingKeyframes.hasImplicitKeyframes()) {
-        if (!addStyleToCumulativeBounds(&box.style()))
+        if (!addStyleToCumulativeBounds(implicitStyle))
             return false;
     }
 
