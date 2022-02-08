@@ -39,9 +39,11 @@ class ProcessIdentity;
 
 // Creates CVPixelBufferPool that creates CVPixelBuffers backed by IOSurfaces.
 // These buffers can be for example sent through IPC.
-WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType pixelFormat, unsigned minimumBufferCount = 0u);
+WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType pixelFormat, unsigned minimumBufferCount = 0u, bool isCGImageCompatible = false);
 
-WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType pixelFormat, unsigned minimumBufferCount = 0u);
+WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType pixelFormat, unsigned minimumBufferCount = 0u, bool isCGImageCompatible = false);
+
+WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createCVPixelBufferPool(size_t width, size_t height, OSType pixelFormat, unsigned minimumBufferCount = 0u, bool isCGImageCompatible = false, bool shouldUseIOSUrface = true);
 
 WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef);
 

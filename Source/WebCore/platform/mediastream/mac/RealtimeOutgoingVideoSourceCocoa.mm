@@ -77,7 +77,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         RELEASE_LOG_INFO(WebRTC, "RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer creating rotation session for rotation %u", rotationToAngle(rotation));
         AffineTransform transform;
         transform.rotate(rotationToAngle(rotation));
-        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), FloatSize { static_cast<float>(pixelWidth), static_cast<float>(pixelHeight) }, ImageRotationSessionVT::IsCGImageCompatible::No);
+        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), FloatSize { static_cast<float>(pixelWidth), static_cast<float>(pixelHeight) }, ImageRotationSessionVT::IsCGImageCompatible::No, ImageRotationSessionVT::ShouldUseIOSurface::No);
 
         m_currentRotationSessionAngle = rotation;
         m_rotatedWidth = pixelWidth;

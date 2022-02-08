@@ -49,13 +49,13 @@ static Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsi
     return adoptCF(pool);
 }
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount)
+Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
 {
     return createBufferPool(minimumBufferCount, @{
         (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
         (__bridge NSString *)kCVPixelBufferHeightKey : @(height),
         (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(format),
-        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : @NO,
+        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : isCGImageCompatible ? @YES : @NO,
 #if PLATFORM(MAC)
         (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
 #endif
@@ -63,17 +63,22 @@ Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBuffer
     });
 }
 
-Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount)
+Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createInMemoryCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
 {
     return createBufferPool(minimumBufferCount, @{
         (__bridge NSString *)kCVPixelBufferWidthKey : @(width),
         (__bridge NSString *)kCVPixelBufferHeightKey : @(height),
         (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(format),
-        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : @NO,
+        (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey : isCGImageCompatible ? @YES : @NO,
 #if PLATFORM(MAC)
         (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
 #endif
     });
+}
+
+Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible, bool shouldUseIOSurfacePool)
+{
+    return shouldUseIOSurfacePool ? createIOSurfaceCVPixelBufferPool(width, height, format, minimumBufferCount, isCGImageCompatible) : createInMemoryCVPixelBufferPool(width, height, format, minimumBufferCount, isCGImageCompatible);
 }
 
 Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef pixelBufferPool)
