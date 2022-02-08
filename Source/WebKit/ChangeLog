@@ -1,3 +1,19 @@
+2022-02-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Use AuthenticationServicesAgent for WebAuthn calls on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236151
+        rdar://87908259
+
+        Reviewed by Brent Fulgham.
+
+        This patch starts using the ASC apis to make WebAuthn calls on iOS the
+        same way they are made on macOS. Some cleanup work will be needed to
+        deprecate the WebAuthn process after this change is made.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest): Deleted.
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable): Deleted.
+
 2022-02-08  Chris Dumez  <cdumez@apple.com>
 
         http/tests/cache-storage/cache-origins.https.html is flaky
