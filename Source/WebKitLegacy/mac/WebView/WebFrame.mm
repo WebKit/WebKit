@@ -585,7 +585,7 @@ static NSURL *createUniqueWebDataURL();
         return OptionSet<WebCore::PaintBehavior>(WebCore::PaintBehavior::FlattenCompositingLayers) | WebCore::PaintBehavior::Snapshotting;
 #endif
 
-    if (CGContextGetType(context) != kCGContextTypeBitmap)
+    if (CGContextGetType(context) != kCGContextTypeBitmap && CGContextGetType(context) != kCGContextTypeDisplayList)
         return WebCore::PaintBehavior::Normal;
 
     // If we're drawing into a bitmap, we could be snapshotting or drawing into a layer-backed view.
