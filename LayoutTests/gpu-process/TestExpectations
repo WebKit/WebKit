@@ -32,9 +32,9 @@ css3/blending/background-blend-mode-body-transparent-image.html
 css3/calc/border-radius.html
 css3/color-filters/color-filter-color-property-list-item.html
 css3/color-filters/color-filter-color-text-decorations.html
+css3/color/box-shadows.html
 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html
-css3/filters/backdrop/dynamic-with-clip-path.html
-css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ]
+css3/filters/backdrop/dynamic-with-clip-path.html [ Pass Failure ]
 css3/filters/filters-on-svg-root.html
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
@@ -94,8 +94,10 @@ fast/css/button-height.html [ Pass ]
 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html
 fast/css/heightless-list-item.html
 fast/css/object-fit/object-fit-canvas.html [ Pass ]
+fast/css/object-position/object-position-img-svg.html
 fast/css/paint-order-shadow.html
 fast/css/variables/test-suite/005.html
+fast/css/variables/test-suite/104.html
 fast/css/webkit-mask-box-image.html
 fast/css3-text/css3-text-decoration/text-decoration-dashed.html
 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html
@@ -188,6 +190,7 @@ fast/text/international/synthesized-italic-vertical.html
 fast/text/multiple-codeunit-vertical-upright-2.html
 fast/text/multiple-codeunit-vertical-upright.html
 fast/text/negative-underline-position.html
+fast/text/simple-line-layout-text-position-with-stroke.html
 fast/text/simple-line-wordspacing.html [ Pass ]
 fast/text/strikethrough-int.html
 fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ]
@@ -198,7 +201,7 @@ http/tests/appcache/fail-on-update-2.html [ Pass Failure ]
 http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix.html
 http/tests/canvas/color-fonts/fill-color-shadow-sbix.html
 http/tests/loading/hidpi-preload-picture-sizes.html
-http/tests/misc/slow-loading-image-in-pattern.html [ Crash ]
+http/tests/misc/slow-loading-image-in-pattern.html
 http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html
@@ -242,6 +245,7 @@ imported/blink/svg/as-image/svg-as-image-object-fit-contain.html
 imported/blink/svg/as-image/svg-as-image-object-fit-cover.html
 imported/blink/svg/as-image/svgview-references.html
 imported/blink/svg/custom/fill-fallback-currentcolor-1.svg
+imported/blink/svg/paintorder/paintorder.svg
 imported/blink/svg/text/obb-paintserver.html
 imported/mozilla/svg/as-image/background-resize-3.html
 imported/mozilla/svg/as-image/background-resize-4.html
@@ -254,8 +258,8 @@ imported/mozilla/svg/blend-exclusion.svg
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/blend-overlay.svg
 imported/mozilla/svg/blend-saturation.svg
-imported/mozilla/svg/conditions-08.svg [ Crash ]
-imported/mozilla/svg/dynamic-pattern-01.svg [ Crash ]
+imported/mozilla/svg/conditions-08.svg
+imported/mozilla/svg/dynamic-pattern-01.svg
 imported/mozilla/svg/filters/feComposite-2.svg
 imported/mozilla/svg/filters/feFlood-1.svg
 imported/mozilla/svg/filters/feFlood-2.svg
@@ -288,7 +292,7 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-9.ht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip.html
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html
-imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-001.html
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-002.html
@@ -721,6 +725,8 @@ imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-0
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-022.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-023.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-005.xht
+imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-006.xht
+imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-009.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-011.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-012.xht
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-013.xht
@@ -801,6 +807,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001.html
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ Pass ]
@@ -812,11 +819,15 @@ imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection
 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html
 imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass ]
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-scaling-text-001.html
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html
+imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html
+imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html
 imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass ]
 imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type.html [ Pass ]
+imported/w3c/web-platform-tests/xhr/send-timeout-events.htm
 js/dom/Promise-reject-large-string.html
 loader/go-back-to-different-window-size.html [ Pass ]
 mathml/presentation/mroot-pref-width.html
@@ -833,11 +844,14 @@ svg/as-image/svg-cached-draw-canvas.html
 svg/as-image/svg-image-viewbox.html
 svg/as-image/svg-image-with-data-uri-use-data-uri.svg
 svg/as-image/svg-no-intrinsic-size-switching.html
-svg/batik/paints/patternPreserveAspectRatioA.svg [ Crash ]
-svg/batik/paints/patternRegionA.svg [ Crash ]
-svg/batik/paints/patternRegions-positioned-objects.svg [ Crash ]
-svg/batik/paints/patternRegions.svg [ Crash ]
-svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]
+svg/batik/paints/patternPreserveAspectRatioA.svg
+svg/batik/paints/patternRegionA.svg
+svg/batik/paints/patternRegions-positioned-objects.svg
+svg/batik/paints/patternRegions.svg
+svg/clip-path/clip-opacity.html
+svg/clip-path/clip-path-line-use-before-defined.svg [ Pass Failure ]
+svg/clip-path/clip-path-objectboundingbox-003.svg
+svg/clip-path/svg-in-html.html
 svg/clip-path/webkit-clip-path-after.svg
 svg/clip-path/webkit-clip-path-before.svg
 svg/custom/subpaths-moveto-only-rendering.svg [ Pass ]
@@ -853,6 +867,7 @@ svg/gradients/spreadMethodDiagonal4.svg
 svg/gradients/spreadMethodDuplicateStop.svg
 svg/gradients/spreadMethodReversed.svg
 svg/gradients/stopAlpha.svg
+svg/repaint/buffered-rendering-static-image.html
 svg/transforms/transformed-text-fill-gradient.html
 svg/transforms/transformed-text-fill-pattern.html
 system-preview/badge.html
@@ -867,4 +882,5 @@ webgl/max-active-contexts-gc.html
 webgl/max-active-contexts-oldest-context-lost.html
 webgl/max-active-contexts-webglcontextlost-prevent-default.html
 webrtc/datachannel/multiple-connections.html
+webrtc/vp9-profile2.html [ Timeout ]
 webxr/high-performance.html
