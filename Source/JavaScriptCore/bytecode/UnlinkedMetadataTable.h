@@ -68,6 +68,8 @@ public:
     uintptr_t offsetInMetadataTable(const Opcode& opcode)
     {
         ASSERT(m_isFinalized);
+        // UnlinkedMetadataTable can be realloc-ed from the mutator thread, thus, it is not OK to touch this table from non mutator thread if the mutator thread is running.
+        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
         uintptr_t baseTypeOffset = m_is32Bit ? offsetTable32()[Opcode::opcodeID] : offsetTable16()[Opcode::opcodeID];
         baseTypeOffset = roundUpToMultipleOf(alignof(typename Opcode::Metadata), baseTypeOffset);
         return baseTypeOffset + sizeof(typename Opcode::Metadata) * opcode.m_metadataID;

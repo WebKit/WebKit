@@ -318,7 +318,7 @@ inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs va
     if (!shouldEmitProfiling())
         return;
 
-    ptrdiff_t offset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
+    ptrdiff_t offset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
     storeValue(value, Address(s_metadataGPR, offset));
 }
 
@@ -470,37 +470,37 @@ ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutPrivateName>(OpPutPrivateName)
 template <typename Bytecode>
 ALWAYS_INLINE void JIT::loadPtrFromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
-    loadPtr(Address(s_metadataGPR, m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset), result);
+    loadPtr(Address(s_metadataGPR, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);
 }
 
 template <typename Bytecode>
 ALWAYS_INLINE void JIT::load32FromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
-    load32(Address(s_metadataGPR, m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset), result);
+    load32(Address(s_metadataGPR, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);
 }
 
 template <typename Bytecode>
 ALWAYS_INLINE void JIT::load8FromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
-    load8(Address(s_metadataGPR, m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset), result);
+    load8(Address(s_metadataGPR, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);
 }
 
 template <typename ValueType, typename Bytecode>
 ALWAYS_INLINE void JIT::store8ToMetadata(ValueType value, const Bytecode& bytecode, size_t offset)
 {
-    store8(value, Address(s_metadataGPR, m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset));
+    store8(value, Address(s_metadataGPR, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset));
 }
 
 template <typename Bytecode>
 ALWAYS_INLINE void JIT::store32ToMetadata(GPRReg value, const Bytecode& bytecode, size_t offset)
 {
-    store32(value, Address(s_metadataGPR, m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset));
+    store32(value, Address(s_metadataGPR, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset));
 }
 
 template <typename Bytecode>
 ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
 {
-    addPtr(TrustedImm32(m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + offset), s_metadataGPR, result);
+    addPtr(TrustedImm32(m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), s_metadataGPR, result);
 }
 
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
