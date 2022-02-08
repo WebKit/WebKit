@@ -94,7 +94,7 @@ bool MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled()
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
-    static const Seconds delayBeforeSettingCategoryNone = { 2_s };
+    constexpr auto delayBeforeSettingCategoryNone = 2_s;
     int videoCount = 0;
     int videoAudioCount = 0;
     int audioCount = 0;
