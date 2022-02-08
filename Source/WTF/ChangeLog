@@ -1,5 +1,30 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288706. rdar://problem/88152385
+
+    Change version number for HAVE_PASSKIT_DEFAULT_SHIPPING_METHOD
+    https://bugs.webkit.org/show_bug.cgi?id=235732
+    <rdar://problem/88152385>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288706 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-27  Devin Rousso  <drousso@apple.com>
+
+            Change version number for HAVE_PASSKIT_DEFAULT_SHIPPING_METHOD
+            https://bugs.webkit.org/show_bug.cgi?id=235732
+            <rdar://problem/88152385>
+
+            Reviewed by Wenson Hsieh.
+
+            * wtf/PlatformHave.h:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288590. rdar://problem/87984277
 
     Disable input-security CSS property
