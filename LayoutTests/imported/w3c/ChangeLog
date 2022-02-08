@@ -1,5 +1,58 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288783. rdar://problem/88052073
+
+    REGRESSION(r281687): Space widths have synthetic bold applied to them in the fast text codepath but not the complex text codepath
+    https://bugs.webkit.org/show_bug.cgi?id=235755
+    <rdar://problem/88052073>
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-fonts/synthetic-bold-space-width-expected.html: Added.
+    * web-platform-tests/css/css-fonts/synthetic-bold-space-width.html: Added.
+    
+    Source/WebCore:
+    
+    r281687 made Font::widthForGlyph() return the non-synthetically-expanded width,
+    instead of the synthetically-expanded width.
+    
+    I think this is philosophically correct, because Font::widthForGlyph() is called before shaping,
+    and shaping requires the original width. If some custom code is asking for the width of specific
+    characters without going through WidthIterator or ComplexTextController, that code needs to
+    determine whether or not it's going to run shaping, and thus when it should be adding in the
+    synthetic offset.
+    
+    adjustGlyphsAndAdvances() used to subtract out the synthetic offset because it was expecting
+    Font::widthForGlyph() to return the already-expanded width. So, the solution is just stop subtracting
+    the offset, because it hasn't been applied in the first place.
+    
+    Test: imported/w3c/web-platform-tests/css/css-fonts/synthetic-bold-space-width.html
+    
+    * platform/graphics/ComplexTextController.cpp:
+    (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+    * platform/graphics/Font.h:
+    
+    LayoutTests:
+    
+    * platform/mac/fast/text/atsui-multiple-renderers-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288783 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r281687): Space widths have synthetic bold applied to them in the fast text codepath but not the complex text codepath
+            https://bugs.webkit.org/show_bug.cgi?id=235755
+            <rdar://problem/88052073>
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/css/css-fonts/synthetic-bold-space-width-expected.html: Added.
+            * web-platform-tests/css/css-fonts/synthetic-bold-space-width.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288631. rdar://problem/88020080
 
     Unreviewed, revert r286855 as it caused form submission issues

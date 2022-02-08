@@ -693,7 +693,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const CGGlyph* glyphs = complexTextRun.glyphs();
         const FloatSize* advances = complexTextRun.baseAdvances();
 
-        float spaceWidth = font.spaceWidth() - font.syntheticBoldOffset();
+        float spaceWidth = font.spaceWidth();
         const UChar* cp = complexTextRun.characters();
         FloatPoint glyphOrigin;
         unsigned lastCharacterIndex = m_run.ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
