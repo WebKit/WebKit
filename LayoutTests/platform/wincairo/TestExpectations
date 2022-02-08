@@ -241,7 +241,6 @@ media/track/in-band/track-in-band-srt-mkv-kind.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-language.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-track-order.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
-media/media-extension-with-fragment.html [ Skip ]
 
 # VIDEO_PRESENTATION_MODE is disabled
 media/media-fullscreen-not-in-document.html [ Skip ]

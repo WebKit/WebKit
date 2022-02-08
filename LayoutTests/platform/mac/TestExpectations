@@ -2082,8 +2082,6 @@ webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 # @counter-style WPT failures specific to Mac platforms
 [ Mojave Catalina ] imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
 
-webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
-
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]

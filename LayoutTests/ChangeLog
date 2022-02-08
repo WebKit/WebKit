@@ -1,5 +1,45 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289108. rdar://problem/88599722
+
+    HTMLMediaElement should dispatch the resize event asynchronously
+    https://bugs.webkit.org/show_bug.cgi?id=230895
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    The HTMLMediaElement is currently queueing a task to dispatch the resize event in the post layout phase.
+    There is no need to run it synchronously and we could move it to another queue were it will be run
+    asynchronously as it was done for other similar tasks in the past.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::layoutSizeChanged):
+    
+    LayoutTests:
+    
+    * media/modern-media-controls/media-controller/media-controller-resize.html: Remove the event
+    listener to avoid an extra notification.
+    * platform/mac/TestExpectations: Unskipped tests that pass now.
+    * platform/wincairo/TestExpectations: Ditto.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289108 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-04  Sergio Villar Senin  <svillar@igalia.com>
+
+            HTMLMediaElement should dispatch the resize event asynchronously
+            https://bugs.webkit.org/show_bug.cgi?id=230895
+
+            Reviewed by Darin Adler.
+
+            * media/modern-media-controls/media-controller/media-controller-resize.html: Remove the event
+            listener to avoid an extra notification.
+            * platform/mac/TestExpectations: Unskipped tests that pass now.
+            * platform/wincairo/TestExpectations: Ditto.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289060. rdar://problem/86337125
 
     null ptr deref in RenderTreeBuilder::Block::attachIgnoringContinuation
