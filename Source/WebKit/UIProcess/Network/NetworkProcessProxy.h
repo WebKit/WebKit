@@ -271,6 +271,7 @@ public:
     API::CustomProtocolManagerClient& customProtocolManagerClient() { return m_customProtocolManagerClient.get(); }
 
 #if PLATFORM(COCOA)
+    bool sendXPCEndpointToProcess(AuxiliaryProcessProxy&);
     xpc_object_t xpcEndpointMessage() const { return m_endpointMessage.get(); }
 #endif
 

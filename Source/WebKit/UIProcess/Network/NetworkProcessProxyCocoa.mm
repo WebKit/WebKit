@@ -53,8 +53,14 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
 
     if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
         m_networkProcess->m_endpointMessage = event;
-        for (auto& dataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_networkProcess->m_websiteDataStores))
-            dataStore->sendNetworkProcessXPCEndpointToAllProcesses();
+        for (auto& processPool : WebProcessPool::allProcessPools()) {
+            for (auto& process : processPool->processes())
+                m_networkProcess->sendXPCEndpointToProcess(process);
+        }
+#if ENABLE(GPU_PROCESS)
+        if (auto gpuProcess = GPUProcessProxy::singletonIfCreated())
+            m_networkProcess->sendXPCEndpointToProcess(*gpuProcess);
+#endif
     }
 
     return true;
@@ -63,6 +69,20 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
 NetworkProcessProxy::XPCEventHandler::XPCEventHandler(const NetworkProcessProxy& networkProcess)
     : m_networkProcess(networkProcess)
 {
+}
+
+bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& process)
+{
+    if (process.state() != AuxiliaryProcessProxy::State::Running)
+        return false;
+    auto* connection = process.connection();
+    if (!connection)
+        return false;
+    auto message = xpcEndpointMessage();
+    if (!message)
+        return false;
+    xpc_connection_send_message(connection->xpcConnection(), message);
+    return true;
 }
 
 }

@@ -616,28 +616,4 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
-bool WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy& process) const
-{
-    if (process.state() != AuxiliaryProcessProxy::State::Running)
-        return false;
-    auto* connection = process.connection();
-    if (!connection)
-        return false;
-    auto message = networkProcess().xpcEndpointMessage();
-    if (!message)
-        return false;
-    xpc_connection_send_message(connection->xpcConnection(), message);
-    return true;
-}
-
-void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllProcesses()
-{
-    for (auto& process : m_processes)
-        sendNetworkProcessXPCEndpointToProcess(process);
-#if ENABLE(GPU_PROCESS)
-    if (GPUProcessProxy::singletonIfCreated())
-        sendNetworkProcessXPCEndpointToProcess(*GPUProcessProxy::singletonIfCreated());
-#endif
-}
-
 }
