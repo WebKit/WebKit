@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,6 +125,7 @@ void pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl(
         bool got_right_lock;
     
         page_lock = page->lock_ptr;
+        PAS_TESTING_ASSERT(page_lock);
 
         if (*held_lock == page_lock && *held_lock == &cache_node->page_lock) {
             pas_compiler_fence();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,6 +130,8 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_lock_with_unbias_not_utility(
     pas_lock** held_lock,
     pas_lock* lock_ptr)
 {
+    PAS_TESTING_ASSERT(lock_ptr);
+    
     *held_lock = lock_ptr;
     
     if (PAS_LIKELY(pas_lock_try_lock(lock_ptr)))
@@ -151,6 +153,8 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_lock_with_unbias(
         return true;
     }
 
+    PAS_TESTING_ASSERT(lock_ptr);
+
     return pas_segregated_page_lock_with_unbias_not_utility(page, held_lock, lock_ptr);
 }
 
@@ -170,7 +174,7 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_lock(
         pas_lock* held_lock_ignored;
         
         lock_ptr = page->lock_ptr;
-        
+
         if (pas_segregated_page_lock_with_unbias(page, &held_lock_ignored, lock_ptr, page_config))
             return;
         
@@ -208,6 +212,8 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_switch_lock_impl(
     
     held_lock_value = *held_lock;
     page_lock = page->lock_ptr;
+
+    PAS_TESTING_ASSERT(page_lock);
     
     if (PAS_LIKELY(held_lock_value == page_lock)) {
         if (verbose)
@@ -232,8 +238,12 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_switch_lock_with_mode(
     }
 
     switch (lock_mode) {
-    case pas_lock_lock_mode_try_lock:
-        return pas_lock_switch_with_mode(held_lock, page->lock_ptr, pas_lock_lock_mode_try_lock);
+    case pas_lock_lock_mode_try_lock: {
+        pas_lock* page_lock;
+        page_lock = page->lock_ptr;
+        PAS_TESTING_ASSERT(page_lock);
+        return pas_lock_switch_with_mode(held_lock, page_lock, pas_lock_lock_mode_try_lock);
+    }
 
     case pas_lock_lock_mode_lock: {
         pas_segregated_page_switch_lock_impl(page, held_lock);

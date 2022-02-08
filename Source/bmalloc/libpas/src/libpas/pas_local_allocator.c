@@ -180,6 +180,9 @@ static bool stop_impl(
     
     if (!pas_segregated_page_switch_lock_with_mode(page, &held_lock, page_lock_mode, page_config))
         return false;
+
+    if (!pas_segregated_page_config_is_utility(page_config) && !held_lock)
+        pas_panic("Should be holding a lock after pas_segregated_page_switch_lock_with_mode in stop_impl\n");
     
     page_config.specialized_local_allocator_return_memory_to_page(
         allocator, view, page, directory, heap_lock_hold_mode);

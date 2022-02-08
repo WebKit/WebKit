@@ -1,5 +1,63 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287991. rdar://problem/87557006
+
+    [libpas] add assertions that we aren't switching to a NULL lock
+    https://bugs.webkit.org/show_bug.cgi?id=235190
+    
+    Reviewed by Yusuke Suzuki.
+    
+    This adds a pas_panic call when pas_local_allocator_stop sees a NULL page->lock_ptr. That's one
+    possible explanation of a very rare crash I'm seeing where return_memory_to_page fails its assertion
+    that we are holding the page lock.
+    
+    This also adds TESTING asserts in a bunch of other places. The PAS_TESTING_ASSERTS about this are in
+    places that are perf-sensitive, so we probably cannot assert in production. The hope behind those is
+    that it will help to catch this issue in test_pas.
+    
+    * libpas/src/libpas/pas_local_allocator.c:
+    (stop_impl):
+    * libpas/src/libpas/pas_segregated_page.c:
+    (pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl):
+    * libpas/src/libpas/pas_segregated_page_inlines.h:
+    (pas_segregated_page_lock_with_unbias_not_utility):
+    (pas_segregated_page_lock_with_unbias):
+    (pas_segregated_page_lock):
+    (pas_segregated_page_switch_lock_impl):
+    (pas_segregated_page_switch_lock_with_mode):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287991 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Filip Pizlo  <fpizlo@apple.com>
+
+            [libpas] add assertions that we aren't switching to a NULL lock
+            https://bugs.webkit.org/show_bug.cgi?id=235190
+
+            Reviewed by Yusuke Suzuki.
+
+            This adds a pas_panic call when pas_local_allocator_stop sees a NULL page->lock_ptr. That's one
+            possible explanation of a very rare crash I'm seeing where return_memory_to_page fails its assertion
+            that we are holding the page lock.
+
+            This also adds TESTING asserts in a bunch of other places. The PAS_TESTING_ASSERTS about this are in
+            places that are perf-sensitive, so we probably cannot assert in production. The hope behind those is
+            that it will help to catch this issue in test_pas.
+
+            * libpas/src/libpas/pas_local_allocator.c:
+            (stop_impl):
+            * libpas/src/libpas/pas_segregated_page.c:
+            (pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl):
+            * libpas/src/libpas/pas_segregated_page_inlines.h:
+            (pas_segregated_page_lock_with_unbias_not_utility):
+            (pas_segregated_page_lock_with_unbias):
+            (pas_segregated_page_lock):
+            (pas_segregated_page_switch_lock_impl):
+            (pas_segregated_page_switch_lock_with_mode):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287968. rdar://problem/87256207
 
     [libpas] thread_local_cache should not be allocated in the compact heap (cherry pick 11afcedfb5968f6894379ff1a41dd449ba7745f6)
