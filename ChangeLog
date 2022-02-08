@@ -1,3 +1,12 @@
+2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Running distcheck with USE_SOUP2=OFF fails to install documentation
+        https://bugs.webkit.org/show_bug.cgi?id=236235
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/PlatformWPE.cmake: Use WPE_API_DOC_VERSION instead of WPE_API_VERSION for the documentation.
+
 2022-02-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] REGRESSION(r288994): Linker does not get passed --disable-new-dtags
