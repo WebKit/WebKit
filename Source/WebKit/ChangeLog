@@ -1,5 +1,70 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287970. rdar://problem/87423294
+
+    PCM: Same-site triggering events should support ephemeral measurement
+    https://bugs.webkit.org/show_bug.cgi?id=235160
+    <rdar://87423294>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    We added ephemeral measurement for direct response advertising in https://bugs.webkit.org/show_bug.cgi?id=228984.
+    We added support for same-site triggering events in https://bugs.webkit.org/show_bug.cgi?id=233173.
+    These two features should work together.
+    
+    The bug was that WebKit::NetworkSession::handlePrivateClickMeasurementConversion()
+    only checked for cross-site triggering events when handling ephemeral measurements.
+    
+    Test: http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html
+    
+    * loader/PrivateClickMeasurement.cpp:
+    (WebCore::PrivateClickMeasurement::isNeitherSameSiteNorCrossSiteTriggeringEvent):
+        New convenience function to enhance readability in
+        WebKit::NetworkSession::handlePrivateClickMeasurementConversion().
+    * loader/PrivateClickMeasurement.h:
+    
+    Source/WebKit:
+    
+    We added ephemeral measurement for direct response advertising in https://bugs.webkit.org/show_bug.cgi?id=228984.
+    We added support for same-site triggering events in https://bugs.webkit.org/show_bug.cgi?id=233173.
+    These two features should work together.
+    
+    * NetworkProcess/NetworkSession.cpp:
+    (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        This function previously only checked for cross-site triggering events when
+        handling ephemeral measurements. Now it also checks for same-site triggering
+        events.
+    
+    LayoutTests:
+    
+    * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral-expected.txt: Added.
+    * http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287970 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  John Wilander  <wilander@apple.com>
+
+            PCM: Same-site triggering events should support ephemeral measurement
+            https://bugs.webkit.org/show_bug.cgi?id=235160
+            <rdar://87423294>
+
+            Reviewed by Alex Christensen.
+
+            We added ephemeral measurement for direct response advertising in https://bugs.webkit.org/show_bug.cgi?id=228984.
+            We added support for same-site triggering events in https://bugs.webkit.org/show_bug.cgi?id=233173.
+            These two features should work together.
+
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+                This function previously only checked for cross-site triggering events when
+                handling ephemeral measurements. Now it also checks for same-site triggering
+                events.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287959. rdar://problem/80213097
 
     Add to Contact menu item does nothing on mac.

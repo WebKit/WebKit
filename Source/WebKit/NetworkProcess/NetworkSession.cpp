@@ -372,7 +372,7 @@ void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasure
         auto firstPartyForCookies = redirectRequest.firstPartyForCookies();
 
         // Ephemeral measurement can only have one pending click.
-        if (ephemeralMeasurement.sourceSite().registrableDomain != redirectDomain)
+        if (ephemeralMeasurement.isNeitherSameSiteNorCrossSiteTriggeringEvent(redirectDomain, firstPartyForCookies, attributionTriggerData))
             return;
         if (ephemeralMeasurement.destinationSite().registrableDomain != RegistrableDomain(firstPartyForCookies))
             return;

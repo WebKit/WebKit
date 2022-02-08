@@ -124,6 +124,15 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
     return copy;
 }
 
+bool PrivateClickMeasurement::isNeitherSameSiteNorCrossSiteTriggeringEvent(const RegistrableDomain& redirectDomain, const URL& firstPartyURL, const AttributionTriggerData& attributionTriggerData)
+{
+    auto isSameSiteTriggeringEvent = redirectDomain.matches(firstPartyURL) && attributionTriggerData.sourceRegistrableDomain;
+    if (isSameSiteTriggeringEvent)
+        return false;
+    auto isCrossSiteTriggeringEvent = sourceSite().registrableDomain == redirectDomain && !attributionTriggerData.sourceRegistrableDomain;
+    return !isCrossSiteTriggeringEvent;
+}
+
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequestQuery(const URL& redirectURL)
 {
     if (!redirectURL.hasQuery())
