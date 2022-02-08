@@ -232,7 +232,7 @@ AXIsolatedTree::NodeChange AXIsolatedTree::nodeChangeForObject(AXCoreObject& axO
     }
 
     if (updateNodeMap)
-        m_nodeMap.set(axObject.objectID(), axObject.childrenIDs());
+        m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { parentID, axObject.childrenIDs() });
 
     if (!parentID.isValid()) {
         Locker locker { m_changeLogLock };
@@ -252,14 +252,14 @@ void AXIsolatedTree::queueChange(const NodeChange& nodeChange)
     AXID parentID = nodeChange.isolatedObject->parent();
     if (parentID.isValid()) {
         ASSERT_WITH_MESSAGE(m_nodeMap.contains(parentID), "node map should've contained parentID: %s", parentID.loggingString().utf8().data());
-        auto siblingsIDs = m_nodeMap.get(parentID);
+        auto siblingsIDs = m_nodeMap.get(parentID).childrenIDs;
         m_pendingChildrenUpdates.append({ parentID, WTFMove(siblingsIDs) });
     }
 
     AXID objectID = nodeChange.isolatedObject->objectID();
     ASSERT_WITH_MESSAGE(objectID != parentID, "object ID was the same as its parent ID (%s) when queueing a node change", objectID.loggingString().utf8().data());
     ASSERT_WITH_MESSAGE(m_nodeMap.contains(objectID), "node map should've contained objectID: %s", objectID.loggingString().utf8().data());
-    auto childrenIDs = m_nodeMap.get(objectID);
+    auto childrenIDs = m_nodeMap.get(objectID).childrenIDs;
     m_pendingChildrenUpdates.append({ objectID, WTFMove(childrenIDs) });
 }
 
@@ -298,7 +298,7 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject, AXID p
         axChildrenIDs.uncheckedAppend(axChild->objectID());
     }
 
-    m_nodeMap.set(axObject.objectID(), axChildrenIDs);
+    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { parentID, axChildrenIDs });
 }
 
 void AXIsolatedTree::updateNode(AXCoreObject& axObject)
@@ -369,8 +369,11 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeAncestryChanges(AXCoreObj
         idsBeingChanged.add(change.isolatedObject->objectID());
         changes.append(WTFMove(change));
 
-        if (axParent)
-            m_nodeMap.set(axParent->objectID(), axParent->childrenIDs());
+        if (axParent && m_nodeMap.contains(axParent->objectID())) {
+            auto ids = m_nodeMap.get(axParent->objectID());
+            ids.childrenIDs = axParent->childrenIDs();
+            m_nodeMap.set(axParent->objectID(), WTFMove(ids));
+        }
 
         axObject = axParent;
     }
@@ -403,7 +406,8 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     // isolated object to the closest existing ancestor.
     Vector<NodeChange> changes = nodeAncestryChanges(axObject, idsBeingChanged);
 
-    auto oldChildrenIDs = m_nodeMap.get(axObject.objectID());
+    auto oldIDs = m_nodeMap.get(axObject.objectID());
+    auto& oldChildrenIDs = oldIDs.childrenIDs;
 
     const auto& newChildren = axObject.children();
     auto newChildrenIDs = axObject.childrenIDs(false);
@@ -421,7 +425,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             collectNodeChangesForSubtree(*newChildren[i], axObject.objectID(), true, changes, &idsBeingChanged);
         }
     }
-    m_nodeMap.set(axObject.objectID(), newChildrenIDs);
+    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { oldIDs.parentID, newChildrenIDs });
 
     // What is left in oldChildrenIDs are the IDs that are no longer children of axObject.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
@@ -431,7 +435,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         //   1. Object 123 is slated to be a child of this object (i.e. in newChildren), and we collect node changes for it.
         //   2. Object 123 is currently a member of a subtree of some other object in oldChildrenIDs.
         //   3. Thus, we don't want to delete Object 123 from the nodemap, instead allowing it to be moved.
-        removeSubtreeFromNodeMap(axID, idsBeingChanged);
+        removeSubtreeFromNodeMap(axID, &axObject, idsBeingChanged);
     }
     queueChangesAndRemovals(changes, oldChildrenIDs);
 }
@@ -490,24 +494,34 @@ void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
     m_pendingLoadingProgress = newProgressValue;
 }
 
-void AXIsolatedTree::removeNode(AXID axID)
+void AXIsolatedTree::removeNode(const AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::removeNode");
-    AXLOG(makeString("AXID ", axID.loggingString()));
+    AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
-    m_nodeMap.remove(axID);
-    Locker locker { m_changeLogLock };
-    m_pendingNodeRemovals.append(axID);
+    removeSubtreeFromNodeMap(axObject.objectID(), axObject.parentObjectUnignored());
+    queueChangesAndRemovals({ }, { axObject.objectID() });
 }
 
-void AXIsolatedTree::removeSubtreeFromNodeMap(AXID axID, const HashSet<AXID>& idsToKeep)
+void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AXCoreObject* axParent, const HashSet<AXID>& idsToKeep)
 {
-    AXTRACE("AXIsolatedTree::removeSubtree");
-    AXLOG(makeString("Removing subtree for axID ", axID.loggingString()));
+    AXTRACE("AXIsolatedTree::removeSubtreeFromNodeMap");
+    AXLOG(makeString("Removing subtree for objectID ", objectID.loggingString()));
     ASSERT(isMainThread());
 
-    Vector<AXID> removals = { axID };
+    if (!m_nodeMap.contains(objectID)) {
+        AXLOG("Tried to remove AXID that is no longer in m_nodeMap.");
+        return;
+    }
+
+    AXID axParentID = axParent ? axParent->objectID() : AXID();
+    if (axParentID != m_nodeMap.get(objectID).parentID) {
+        AXLOG(makeString("Tried to remove object from a different parent ", axParentID.loggingString(), ", actual parent ", m_nodeMap.get(objectID).parentID.loggingString(), ", bailing out."));
+        return;
+    }
+
+    Vector<AXID> removals = { objectID };
     while (removals.size()) {
         AXID axID = removals.takeLast();
         if (!axID.isValid() || idsToKeep.contains(axID))
@@ -515,9 +529,16 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID axID, const HashSet<AXID>& id
 
         auto it = m_nodeMap.find(axID);
         if (it != m_nodeMap.end()) {
-            removals.appendVector(it->value);
+            removals.appendVector(it->value.childrenIDs);
             m_nodeMap.remove(axID);
         }
+    }
+
+    // Update the childrenIDs of the parent since one of its children has been removed.
+    if (axParent) {
+        auto ids = m_nodeMap.get(axParentID);
+        ids.childrenIDs = axParent->childrenIDs();
+        m_nodeMap.set(axParentID, WTFMove(ids));
     }
 }
 

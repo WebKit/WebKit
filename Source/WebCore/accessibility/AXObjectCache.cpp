@@ -841,16 +841,16 @@ void AXObjectCache::remove(AXID axID)
     if (!axID)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
-            tree->removeNode(axID);
-    }
-#endif
-
     auto object = m_objects.take(axID);
     if (!object)
         return;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+            tree->removeNode(*object);
+    }
+#endif
 
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
 

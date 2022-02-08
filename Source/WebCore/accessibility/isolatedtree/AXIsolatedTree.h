@@ -359,10 +359,10 @@ public:
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
 
-    // Removes the given node leaving all descendants alone.
-    void removeNode(AXID);
-    // Removes the given node and all its descendants.
-    void removeSubtreeFromNodeMap(AXID, const HashSet<AXID>& = { });
+    // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
+    void removeNode(const AXCoreObject&);
+    // Removes the given node and all its descendants from m_nodeMap.
+    void removeSubtreeFromNodeMap(AXID axID, AXCoreObject*, const HashSet<AXID>& = { });
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
@@ -397,8 +397,17 @@ private:
     AXObjectCache* m_axObjectCache { nullptr };
     bool m_usedOnAXThread { true };
 
-    // Only accessed on main thread.
-    HashMap<AXID, Vector<AXID>> m_nodeMap;
+    // Stores the parent ID and children IDS for a given IsolatedObject.
+    struct ParentChildrenIDs {
+        AXID parentID;
+        Vector<AXID> childrenIDs;
+    };
+    // Only accessed on the main thread.
+    // A representation of the tree's parent-child relationships. Each
+    // IsolatedObject must have one and only one entry in this map, that maps
+    // its ObjectID to its ParentChildrenIDs struct.
+    HashMap<AXID, ParentChildrenIDs> m_nodeMap;
+
     // Only accessed on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
