@@ -209,15 +209,19 @@ class TestLandGitHub(testing.PathTestCase):
     @classmethod
     def webserver(cls, approved=None):
         result = mocks.remote.GitHub()
-        result.users = dict(
-            rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
-            tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org'], github='tcontributor'),
-        )
+        result.users.create('Ricky Reviewer', 'rreviewer', ['rreviewer@webkit.org'])
+        result.users.create('Tim Contributor', 'tcontributor', ['tcontributor@webkit.org'])
         result.issues = {
             1: dict(
+                number=1,
+                opened=True,
+                title='Example Change',
+                description='?',
+                creator=result.users.create(name='Tim Contributor', username='tcontributor'),
+                timestamp=1639536160,
+                assignee=None,
                 comments=[],
-                assignees=[],
-            )
+            ),
         }
         result.pull_requests = [dict(
             number=1,

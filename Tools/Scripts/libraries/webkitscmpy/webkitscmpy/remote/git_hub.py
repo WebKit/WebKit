@@ -29,6 +29,8 @@ import webkitcorepy
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
+from webkitbugspy import User
+from webkitbugspy.github import Tracker
 from webkitcorepy import decorators
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
@@ -43,6 +45,7 @@ class GitHub(Scm):
         def PullRequest(self, data):
             if not data:
                 return None
+            issue_ref = data.get('_links', {}).get('issue', {}).get('href')
             return PullRequest(
                 number=data['number'],
                 title=data.get('title'),
@@ -56,7 +59,7 @@ class GitHub(Scm):
                 ).get(data.get('state'), None),
                 generator=self,
                 metadata=dict(
-                    issue=data.get('_links', {}).get('issue', {}).get('href'),
+                    issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
                 ), url='{}/pull/{}'.format(self.repository.url, data['number']),
             )
 
@@ -107,14 +110,8 @@ class GitHub(Scm):
                 return None
             result = self.PullRequest(response.json())
 
-            # FIXME: Move this to bug tracking library
             issue = result._metadata.get('issue')
-            if not issue or requests.post(
-                '{}/assignees'.format(issue),
-                auth=HTTPBasicAuth(*self.repository.credentials()),
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(assignees=[user]),
-            ).status_code // 100 != 2:
+            if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
                 sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
             return result
 
@@ -164,21 +161,16 @@ class GitHub(Scm):
                 closed=False,
             ).get(data.get('state'), None)
             pull_request.generator = self
+            issue_ref = data.get('_links', {}).get('issue', {}).get('href')
             pull_request._metadata = dict(
-                issue=data.get('_links', {}).get('issue', {}).get('href'),
+                issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
             )
 
-            # FIXME: Move this to bug tracking library
             assignees = [node.get('login') for node in data.get('assignees', []) if node.get('login')]
             if user not in assignees:
                 issue = pull_request._metadata.get('issue')
-                if not issue or requests.post(
-                        '{}/assignees'.format(issue),
-                        auth=HTTPBasicAuth(*self.repository.credentials()),
-                        headers=dict(Accept='application/vnd.github.v3+json'),
-                        json=dict(assignees=assignees + [user]),
-                ).status_code // 100 != 2:
-                    sys.stderr.write("Failed to assign '{}' to '{}'\n".format(pull_request, user))
+                if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
+                    sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
 
             return pull_request
 
@@ -187,18 +179,11 @@ class GitHub(Scm):
             if result:
                 return result
 
-            response = requests.get(
-                '{api_url}/users/{username}'.format(
-                    api_url=self.repository.api_url,
-                    username=username,
-                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
-            )
-            if response.status_code // 100 != 2:
-                return Contributor(username)
-
-            data = response.json()
-            result = self.repository.contributors.create(data.get('name', username) or username, data.get('email'))
+            found = self.repository.tracker.user(username=username)
+            if found:
+                result = self.repository.contributors.create(found.name, found.email)
+            else:
+                result = self.repository.contributors.create(username)
             result.github = username
             self.repository.contributors[username] = result
             return result
@@ -235,14 +220,7 @@ class GitHub(Scm):
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
-            response = requests.post(
-                '{}/comments'.format(issue),
-                auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(body=content),
-            )
-            if response.status_code // 100 != 2:
-                sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
+            issue.add_comment(content)
 
         def comments(self, pull_request):
             issue = pull_request._metadata.get('issue')
@@ -255,23 +233,11 @@ class GitHub(Scm):
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
-            response = requests.get(
-                '{}/comments'.format(issue),
-                auth=HTTPBasicAuth(*self.repository.credentials()),
-                headers=dict(Accept='application/vnd.github.v3+json'),
-            )
-            for node in response.json() if response.status_code // 100 == 2 else []:
-                user = node.get('user', {}).get('login')
-                if not user:
-                    continue
-                tm = node.get('updated_at', node.get('created_at'))
-                if tm:
-                    tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
-
+            for comment in issue.comments:
                 yield PullRequest.Comment(
-                    author=self._contributor(user),
-                    timestamp=tm,
-                    content=node.get('body'),
+                    author=self._contributor(comment.user.username),
+                    timestamp=comment.timestamp,
+                    content=comment.content,
                 )
 
 
@@ -300,29 +266,14 @@ class GitHub(Scm):
         )
 
         self.pull_requests = self.PRGenerator(self)
+        users = User.Mapping()
+        for contributor in contributors or []:
+            if contributor.github:
+                users.create(contributor.name, contributor.github, contributor.emails)
+        self.tracker = Tracker(url, users=users)
 
     def credentials(self, required=True):
-        # FIXME: Should use webkitbugspy's impelementation
-        hostname = self.url.split('/')[2]
-        args = dict(
-            url=self.api_url,
-            required=required,
-            name=self.url.split('/')[2].replace('.', '_').upper(),
-            prompt='''GitHub's API
-Please go to https://{host}/settings/tokens/new and generate a new 'Personal access token' via 'Developer settings'
-with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
-            key_name='token',
-        )
-
-        username, token = webkitcorepy.credentials(**args)
-        if username and '@' in username:
-            sys.stderr.write(
-                "Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
-            webkitcorepy.delete_credentials(url=args['url'], name=args['name'])
-            username, token = webkitcorepy.credentials(**args)
-        if username and '@' in username:
-            raise ValueError("GitHub usernames cannot have '@' in them")
-        return username, token
+        return self.tracker.credentials(required=required)
 
     @property
     def is_git(self):

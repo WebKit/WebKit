@@ -25,6 +25,7 @@ import os
 import sys
 import unittest
 
+from webkitbugspy import User
 from webkitcorepy import OutputCapture, testing, log as wcplog
 from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote, log as wsplog
@@ -620,17 +621,21 @@ class TestNetworkPullRequestGitHub(unittest.TestCase):
     @classmethod
     def webserver(cls):
         result = mocks.remote.GitHub()
-        result.users = dict(
-            ereviewer=Contributor('Eager Reviewer', ['ereviewer@webkit.org'], github='ereviewer'),
-            rreviewer=Contributor('Reluctant Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
-            sreviewer=Contributor('Suspicious Reviewer', ['sreviewer@webkit.org'], github='sreviewer'),
-            tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org']),
-        )
+        result.users.create('Eager Reviewer', 'ereviewer', ['ereviewer@webkit.org'])
+        result.users.create('Reluctant Reviewer', 'rreviewer', ['rreviewer@webkit.org'])
+        result.users.create('Suspicious Reviewer', 'sreviewer', ['sreviewer@webkit.org'])
+        result.users.create('Tim Contributor', 'tcontributor', ['tcontributor@webkit.org'])
         result.issues = {
             1: dict(
+                number=1,
+                opened=True,
+                title='Example Change',
+                description='?',
+                creator=result.users.create(name='Tim Contributor', username='tcontributor'),
+                timestamp=1639536160,
+                assignee=None,
                 comments=[],
-                assignees=[],
-            )
+            ),
         }
         result.pull_requests = [dict(
             number=1,
