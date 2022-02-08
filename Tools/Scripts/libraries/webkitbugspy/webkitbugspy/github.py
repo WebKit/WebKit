@@ -67,7 +67,7 @@ class Tracker(GenericTracker):
 
         match = self.ROOT_RE.match(url)
         if not match:
-            raise self.Exception("'{}' is not a valid GitHub project".format(url))
+            raise TypeError("'{}' is not a valid GitHub project".format(url))
 
         self._res = [
             re.compile(template.format(match.group('domain'), match.group('owner'), match.group('repository')))

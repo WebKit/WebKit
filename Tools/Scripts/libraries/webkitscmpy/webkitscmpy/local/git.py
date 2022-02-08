@@ -300,7 +300,7 @@ class Git(Scm):
     HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
     REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
     USER_REMOTE = re.compile(r'(?P<username>[^:/]+):(?P<branch>.+)')
-    PROJECT_CONFIG_PATH = os.path.join('metadata', 'project_config')
+    PROJECT_CONFIG_PATH = os.path.join(Scm.METADATA, 'project_config')
     PROJECT_CONFIG_OPTIONS = {
         'pull.rebase': ['true', 'false'],
         'webkitscmpy.pull-request': ['overwrite', 'append'],

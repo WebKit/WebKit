@@ -47,7 +47,7 @@ class Tracker(object):
     def from_json(cls, data):
         from . import bugzilla, github, radar
 
-        data = data if isinstance(data, dict) else json.loads(data)
+        data = data if isinstance(data, (dict, list, tuple)) else json.loads(data)
         if isinstance(data, (list, tuple)):
             return [cls.from_json(datum) for datum in data]
         if data.get('type') in ('bugzilla', 'github'):

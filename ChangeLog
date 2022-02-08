@@ -1,3 +1,13 @@
+2022-02-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Allow repositories to declare their bug trackers
+        https://bugs.webkit.org/show_bug.cgi?id=236306
+        <rdar://problem/88633018>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/trackers.json: Added.
+
 2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Running distcheck with USE_SOUP2=OFF fails to install documentation

@@ -20,11 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import json
 import os
 import re
 import six
 
+from webkitbugspy import Tracker, radar
 from webkitscmpy import ScmBase, Contributor
 
 
@@ -33,6 +34,7 @@ class Scm(ScmBase):
     # the following idioms seem common enough to be shared.
     DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
     PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
+    METADATA = 'metadata'
 
     @classmethod
     def executable(cls, program):
@@ -61,7 +63,7 @@ class Scm(ScmBase):
         root_path = self.root_path
         if not contributors and root_path:
             for candidate in [
-                os.path.join(root_path, 'metadata', 'contributors.json'),
+                os.path.join(root_path, self.METADATA, 'contributors.json'),
             ]:
                 if not os.path.isfile(candidate):
                     continue
@@ -69,6 +71,20 @@ class Scm(ScmBase):
                     contributors = Contributor.Mapping.load(file)
 
         super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
+
+        trackers = []
+        if root_path:
+            path = os.path.join(root_path, self.METADATA, 'trackers.json')
+            if os.path.isfile(path):
+                with open(path, 'r') as file:
+                    trackers = Tracker.from_json(json.load(file))
+        for tracker in trackers:
+            if isinstance(tracker, radar.Tracker) and not tracker.radarclient():
+                continue
+            for contributor in self.contributors:
+                if contributor.name and contributor.emails:
+                    tracker.users.create(name=contributor.name, emails=contributor.emails)
+            Tracker.register(tracker)
 
     @property
     def root_path(self):

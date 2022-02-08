@@ -62,7 +62,7 @@ class Tracker(GenericTracker):
 
         match = self.ROOT_RE.match(url)
         if not match:
-            raise self.Exception("'{}' is not a valid bugzilla url".format(url))
+            raise TypeError("'{}' is not a valid bugzilla url".format(url))
         self.url = url
         self._res = [
             re.compile(template.format(match.group('domain')))
