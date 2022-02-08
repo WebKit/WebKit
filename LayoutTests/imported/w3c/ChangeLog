@@ -1,3 +1,14 @@
+2022-02-08  Antoine Quint  <graouts@webkit.org>
+
+        [css-logical] [css-animations] changing "direction" or "writing-mode" should recompute keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=236293
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-logical/animation-002-expected.txt:
+
 2022-02-08  Chris Dumez  <cdumez@apple.com>
 
         Resync workers/modules/shared-worker-import-meta.html from upstream WPT

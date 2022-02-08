@@ -136,11 +136,13 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle.direction() != targetStyle.direction()
         || previousLastStyleChangeEventStyle.writingMode() != targetStyle.writingMode();
 
+    auto unanimatedStyle = RenderStyle::clone(targetStyle);
+
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
 
         if (propertyAffectingLogicalPropertiesChanged)
-            effect->propertyAffectingLogicalPropertiesDidChange();
+            effect->propertyAffectingLogicalPropertiesDidChange(unanimatedStyle, resolutionContext);
 
         effect->animation()->resolve(targetStyle, resolutionContext);
 

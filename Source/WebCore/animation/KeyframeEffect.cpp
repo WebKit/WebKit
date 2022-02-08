@@ -1701,10 +1701,18 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
     addPendingAcceleratedAction(AcceleratedAction::TransformChange);
 }
 
-void KeyframeEffect::propertyAffectingLogicalPropertiesDidChange()
+void KeyframeEffect::propertyAffectingLogicalPropertiesDidChange(RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
 {
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation)
+    switch (m_blendingKeyframesSource) {
+    case BlendingKeyframesSource::CSSTransition:
+        return;
+    case BlendingKeyframesSource::CSSAnimation:
+        computeCSSAnimationBlendingKeyframes(unanimatedStyle, resolutionContext);
+        return;
+    case BlendingKeyframesSource::WebAnimation:
         clearBlendingKeyframes();
+        return;
+    }
 }
 
 void KeyframeEffect::animationWasCanceled()
