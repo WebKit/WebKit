@@ -2360,6 +2360,37 @@ void testLinearScanSpillRangesEarlyDef()
     CHECK(runResult == 99);
 }
 
+void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
+{
+    if (Options::defaultB3OptLevel() == 2)
+        return;
+
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+
+    Vector<StackSlot*> slots;
+    for (unsigned i = 0; i < 10000; ++i)
+        slots.append(code.addStackSlot(8, StackSlotKind::Spill));
+
+    for (auto* slot : slots)
+        root->append(Move32, nullptr, Tmp(GPRInfo::argumentGPR0), Arg::stack(slot));
+
+    Tmp loadResult = code.newTmp(GP);
+    Tmp sum = code.newTmp(GP);
+    root->append(Move, nullptr, Arg::imm(0), sum);
+    for (auto* slot : slots) {
+        root->append(Move, nullptr, Arg::stack(slot), loadResult);
+        root->append(Add64, nullptr, loadResult, sum);
+    }
+    root->append(Move, nullptr, sum, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t result = compileAndRun<int>(proc, 1);
+    CHECK(result == 10000);
+}
+
 #define PREFIX "O", Options::defaultB3OptLevel(), ": "
 
 #define RUN(test) do {                                 \
@@ -2454,6 +2485,8 @@ void run(const char* filter)
 
     RUN(testLinearScanSpillRangesLateUse());
     RUN(testLinearScanSpillRangesEarlyDef());
+
+    RUN(testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister());
 
     if (tasks.isEmpty())
         usage();
