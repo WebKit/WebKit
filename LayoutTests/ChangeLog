@@ -1,5 +1,63 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288789. rdar://problem/88043325
+
+    Capturing WebGL canvas through peer connection shows the image flipped
+    https://bugs.webkit.org/show_bug.cgi?id=235600
+    <rdar://problem/88043325>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-01-29
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Mirror and rotate the WebGL image at the source since WebRTC
+    does not support mirroring.
+    
+    Test: webrtc/canvas-to-peer-connection.html
+    
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.h:
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+    (WebCore::GraphicsContextGLCocoa::paintCompositedResultsToMediaSample):
+    * platform/graphics/cocoa/IOSurface.h:
+    * platform/graphics/cocoa/IOSurface.mm:
+    (WebCore::IOSurface::setOwnershipIdentity):
+    * platform/graphics/cv/CVUtilities.h:
+    * platform/graphics/cv/CVUtilities.mm:
+    (WebCore::setOwnershipIdentityForCVPixelBuffer):
+    
+    LayoutTests:
+    
+    Test sending WebGL image through a peer connection to a local video
+    and assert that the image is as drawn.
+    
+    * platform/glib/TestExpectations:
+    * webrtc/canvas-to-peer-connection-expected.txt: Added.
+    * webrtc/canvas-to-peer-connection.html: Added.
+    * webrtc/routines.js:
+    * webrtc/video-replace-track.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288789 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Capturing WebGL canvas through peer connection shows the image flipped
+            https://bugs.webkit.org/show_bug.cgi?id=235600
+            <rdar://problem/88043325>
+
+            Reviewed by Dean Jackson.
+
+            Test sending WebGL image through a peer connection to a local video
+            and assert that the image is as drawn.
+
+            * platform/glib/TestExpectations:
+            * webrtc/canvas-to-peer-connection-expected.txt: Added.
+            * webrtc/canvas-to-peer-connection.html: Added.
+            * webrtc/routines.js:
+            * webrtc/video-replace-track.html:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288783. rdar://problem/88052073
 
     REGRESSION(r281687): Space widths have synthetic bold applied to them in the fast text codepath but not the complex text codepath

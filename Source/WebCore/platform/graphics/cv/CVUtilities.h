@@ -35,6 +35,7 @@ using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
+class ProcessIdentity;
 
 // Creates CVPixelBufferPool that creates CVPixelBuffers backed by IOSurfaces.
 // These buffers can be for example sent through IPC.
@@ -45,4 +46,8 @@ WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuff
 WEBCORE_EXPORT Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef);
 
 RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef);
+
+// Should be called with non-empty ProcessIdentity.
+WEBCORE_EXPORT void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef, const ProcessIdentity&);
+
 }

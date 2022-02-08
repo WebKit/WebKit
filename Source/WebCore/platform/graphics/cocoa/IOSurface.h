@@ -161,6 +161,7 @@ public:
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
+    WEBCORE_EXPORT static void setOwnershipIdentity(IOSurfaceRef, const ProcessIdentity&);
 
     void migrateColorSpaceToProperties();
 

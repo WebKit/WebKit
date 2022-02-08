@@ -54,6 +54,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "ImageRotationSessionVT.h"
 #include "MediaSampleAVFObjC.h"
 #endif
 
@@ -775,11 +776,19 @@ RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample(
         return nullptr;
     if (displayBuffer.surface->size() != getInternalFramebufferSize())
         return nullptr;
-    m_swapChain.markDisplayBufferInUse();
+    // Display surface is not marked in use since we will mirror and rotate it explicitly.
     auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
     if (!pixelBuffer)
         return nullptr;
-    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
+    // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
+    if (!m_mediaSampleRotationSession)
+        m_mediaSampleRotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::RotationProperties { true, false, 180 }, getInternalFramebufferSize(), ImageRotationSessionVT::IsCGImageCompatible::No);
+    auto mediaSamplePixelBuffer = m_mediaSampleRotationSession->rotate(pixelBuffer->get());
+    if (!mediaSamplePixelBuffer)
+        return nullptr;
+    if (m_resourceOwner)
+        setOwnershipIdentityForCVPixelBuffer(mediaSamplePixelBuffer.get(), m_resourceOwner);
+    return MediaSampleAVFObjC::createImageSample(WTFMove(mediaSamplePixelBuffer), MediaSampleAVFObjC::VideoRotation::None, false);
 }
 #endif
 
