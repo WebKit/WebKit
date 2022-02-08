@@ -267,9 +267,12 @@ static std::optional<size_t> findTrailingRunIndex(const InlineContentBreaker::Co
     // Try not break content at inline box boundary
     // e.g. <span>fits</span><span>overflows</span>
     // when the text "overflows" completely overflows, let's break the content right before the '<span>'.
-    auto trailingCandidateIndex = breakableRunIndex - 1;
-    auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
-    return !isAtInlineBox ? trailingCandidateIndex : trailingCandidateIndex ? std::make_optional(trailingCandidateIndex - 1) : std::nullopt;
+    for (auto trailingCandidateIndex = breakableRunIndex; trailingCandidateIndex--;) {
+        auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
+        if (!isAtInlineBox)
+            return trailingCandidateIndex;
+    }
+    return { };
 }
 
 static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& run)

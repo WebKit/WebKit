@@ -1,5 +1,47 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288800. rdar://problem/88241513
+
+    [LFC][IFC] Do not break content at an inline box boundary
+    https://bugs.webkit.org/show_bug.cgi?id=235868
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Handle nested inline boxes, when the breaking position is between at an inline box boundary.
+    e.g.
+      <div style="width: 1px"><span><span><span>this_content_overflow</span></span></span></div>
+    while the breaking position is between the 3rd <span> and the letter 't', we should not let the first
+    line have all the <span><span><span> content only, but instead find a more reasonable breaking position by
+    looking at the previous runs.
+    This patch expands "findTrailingRunIndex" to find multiple, subsequent (nested) inline boxes.
+    
+    Test: fast/inline/nested-inline-box-with-word-break.html
+    
+    * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+    (WebCore::Layout::findTrailingRunIndex):
+    
+    LayoutTests:
+    
+    * fast/inline/nested-inline-box-with-word-break-expected.html: Added.
+    * fast/inline/nested-inline-box-with-word-break.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288800 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-30  Alan Bujtas  <zalan@apple.com>
+
+            [LFC][IFC] Do not break content at an inline box boundary
+            https://bugs.webkit.org/show_bug.cgi?id=235868
+
+            Reviewed by Antti Koivisto.
+
+            * fast/inline/nested-inline-box-with-word-break-expected.html: Added.
+            * fast/inline/nested-inline-box-with-word-break.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288789. rdar://problem/88043325
 
     Capturing WebGL canvas through peer connection shows the image flipped
