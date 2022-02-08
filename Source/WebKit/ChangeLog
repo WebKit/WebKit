@@ -1,3 +1,30 @@
+2022-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Crash at  WebKit::bindA11y() in WebKitGTK 2.35.2
+        https://bugs.webkit.org/show_bug.cgi?id=236144
+
+        Reviewed by Adrian Perez de Castro.
+
+        ATSPI stopped using an abstract socket but we are still assuming the a11y bus address is an abstract socket,
+        even when the path is not really used after all. However, just handling the case of the socket being a normal
+        unix socket is not enough, because the actual socket path is not mounted in the xdg-dbus-proxy sandbox, so it
+        fails to connect to the original a11y bus.
+
+        * UIProcess/Launcher/ProcessLauncher.h: Rename extraWebProcessSandboxPaths as extraSandboxPaths.
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::setAddress): Remove the DBusAddressType parameter. Check the address looks valid
+        and just store the result of dbusAddressToPath() in m_path.
+        (WebKit::XDGDBusProxyLauncher::launch): Do not require m_path to be non-null and add it to the sanbox.
+        (WebKit::XDGDBusProxyLauncher::dbusAddressToPath): Only return the path for normal unix sockets.
+        (WebKit::bindDBusSession): Remove the DBusAddressType parameter passed to dbusAddressToPath().
+        (WebKit::bindA11y): Check proxy path is not null before setting a11y bus address in display.
+        (WebKit::addExtraPaths): Helper to add extra paths to the sandbox.
+        (WebKit::bubblewrapSpawn): Call addExtraPaths() for WebProcess and DBusProxy types.
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp:
+        (WebKit::flatpakSpawn): Use extraSandboxPaths.
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions): Ditto.
+
 2022-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Test webkit/WebKitWebView/display-usermedia-permission-request times out
