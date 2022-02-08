@@ -1,3 +1,20 @@
+2022-02-07  Elliott Williams  <emw@apple.com>
+
+        Replace "Copy WTF Headers" with native build phases
+        https://bugs.webkit.org/show_bug.cgi?id=235744
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replace the rsync-based script that copied WTF headers with Xcode-native copy file phases.
+        Unfortunately, this entails having separate build phases for each subdirectory of <wtf/...>.
+
+        Workspace builds may have dependencies on individual headers in WTF, and the native copy
+        phases provide the build system with enough information to form those task dependencies.
+
+        * Configurations/WTF.xcconfig: Set PRIVATE_HEADERS_FOLDER_PATH.
+        * Configurations/CopyWTFHeaders.xcconfig: Removed.
+        * WTF.xcodeproj/project.pbxproj: Remove "Copy WTF Headers" and add copy file phases.
+
 2022-02-07  David Kilzer  <ddkilzer@apple.com>
 
         WTF::HashAndUTF8CharactersTranslator::translate() falls through ASSERT_NOT_REACHED()
