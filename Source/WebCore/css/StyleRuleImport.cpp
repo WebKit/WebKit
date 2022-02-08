@@ -72,7 +72,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, c
 
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
     m_styleSheet = StyleSheetContents::create(this, href, context);
-    if (m_parentStyleSheet->isContentOpaque() || !cachedStyleSheet->isCORSSameOrigin())
+    if ((m_parentStyleSheet && m_parentStyleSheet->isContentOpaque()) || !cachedStyleSheet->isCORSSameOrigin())
         m_styleSheet->setAsOpaque();
 
     bool parseSucceeded = m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
