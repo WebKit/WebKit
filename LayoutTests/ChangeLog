@@ -1,5 +1,64 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288801. rdar://problem/88186663
+
+    (REGRESSION)[IFC][RTL] wpt/css/css-text/white-space/trailing-space-and-text-alignment-rtl-003.html
+    https://bugs.webkit.org/show_bug.cgi?id=235823
+    <rdar://problem/88186663>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Reset the trailing whitespace bidi level before handing them over to visual reordering.
+    see https://unicode.org/reports/tr9/#L1
+    "L1. On each line, reset the embedding level of the following characters to the paragraph embedding level:
+      ...
+      Any sequence of whitespace characters ... at the end of the line."
+    
+    It ensures that
+        <div style="width: 2ch; direction: rtl">AB C</div>
+    and
+        <div style="direction: rtl">AB </div>
+    both have the trailing whitespace positioned _visually_ as trailing (and not leading) content.
+    
+    After the bidi paragraph processing "AB C" gets a uniform bidi level of 2, while "AB " is split into "AB" and " "
+    with bidi levels of 2 and 1 respectively.
+    In the latter case, the difference in bidi levels makes the runs flip visually at reordering.
+    It makes the trailing whitespace "pushed" to the left side of the "AB" making it _visually_ trailing (the content renders as " AB").
+    However in case of "AB C" with the line breaking position after " ", we would end up with a single run of "AB " with the bidi level of 2.
+    This run would render as "AB " turning the trailing whitespace into a _visually_ leading whitespace.
+    
+    In this patch we ensure that the trailing (non-collapsible) whitespace runs
+    1. are detached from their adjoining non-whitespace text runs and
+    2. they get their bidi levels reset
+    
+    Test: fast/text/rtl-pre-wrap-hanging-offset.html
+    
+    * layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp:
+    (WebCore::Layout::InlineDisplayLineBuilder::build const):
+    
+    LayoutTests:
+    
+    * fast/text/rtl-pre-wrap-hanging-offset-expected.html: Added.
+    * fast/text/rtl-pre-wrap-hanging-offset.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288801 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-30  Alan Bujtas  <zalan@apple.com>
+
+            (REGRESSION)[IFC][RTL] wpt/css/css-text/white-space/trailing-space-and-text-alignment-rtl-003.html
+            https://bugs.webkit.org/show_bug.cgi?id=235823
+            <rdar://problem/88186663>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/text/rtl-pre-wrap-hanging-offset-expected.html: Added.
+            * fast/text/rtl-pre-wrap-hanging-offset.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288800. rdar://problem/88241513
 
     [LFC][IFC] Do not break content at an inline box boundary
