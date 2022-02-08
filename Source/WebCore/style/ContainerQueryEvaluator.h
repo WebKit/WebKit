@@ -24,8 +24,11 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
+struct ContainerQuery;
 class Element;
 
 namespace Style {

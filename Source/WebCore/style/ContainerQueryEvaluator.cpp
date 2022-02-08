@@ -28,8 +28,10 @@
 #include "CSSToLengthConversionData.h"
 #include "Document.h"
 #include "MediaFeatureNames.h"
+#include "MediaList.h"
 #include "MediaQuery.h"
 #include "RenderView.h"
+#include "StyleRule.h"
 
 namespace WebCore::Style {
 
