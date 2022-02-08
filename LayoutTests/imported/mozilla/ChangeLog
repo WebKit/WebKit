@@ -1,3 +1,9 @@
+2022-02-08  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * svg/opacity-and-gradient-02.svg: Expand pixel range based on EWS run.
+
 2022-01-26  Jon Lee  <jonlee@apple.com>
 
         Add fuzzy match meta headers to tests

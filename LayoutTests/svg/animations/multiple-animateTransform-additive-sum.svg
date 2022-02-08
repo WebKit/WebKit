@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" onload="loaded()">
 <title>Example of Multiple animateTransform elements</title>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-81" />
 <g transform="translate(120,60)">
 <rect x="-10" y="-10" width="20" height="20" style="fill: #ff9; stroke: black;">
     <animateTransform attributeName="transform" attributeType="XML" type="scale" from="1 1" to="4 2" additive="sum" begin="0s" dur="4s" fill="freeze"/>

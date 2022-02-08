@@ -1,3 +1,20 @@
+2022-02-08  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Reflecting pixel diffs from EWS run.
+        * css1/basic/class_as_selector.html:
+        * css3/background/background-repeat-round-auto1.html:
+        * css3/background/background-repeat-space-content.html:
+        * css3/color/box-shadows.html:
+        * css3/color/gradients.html:
+        * fast/css/heightless-list-item.html:
+        * fast/css/object-position/object-position-img-svg.html:
+        * fast/gradients/alpha-premultiplied.html:
+        * fast/text/simple-line-layout-line-box-contain-glyphs.html:
+        * fast/text/simple-line-layout-text-position-with-stroke.html:
+        * svg/animations/multiple-animateTransform-additive-sum.svg:
+
 2022-02-08  Sam Weinig  <weinig@apple.com>
 
         Conversion to a color space with a smaller gamut should perform gamut mapping
