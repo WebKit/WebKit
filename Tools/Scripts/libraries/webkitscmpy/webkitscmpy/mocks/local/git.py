@@ -362,15 +362,6 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
-                self.executable, 'filter-branch', '-f', '--autostash', '--env-filter', re.compile(r'.*'), '--msg-filter',
-                cwd=self.path,
-                generator=lambda *args, **kwargs: self.filter_branch(
-                    args[-1],
-                    identifier_template=args[-2].split("'")[-2] if args[-3] == '--msg-filter' else None,
-                    environment_shell=args[5] if args[4] == '--env-filter' and args[5] else None,
-                    autostash=True,
-                )
-            ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f', '--env-filter', re.compile(r'.*'), '--msg-filter',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.filter_branch(
@@ -400,7 +391,7 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.pull(),
             ), mocks.Subprocess.Route(
-                self.executable, 'pull', '--autostash',
+                self.executable, 'pull', '--rebase=True', '--autostash',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.pull(autostash=True),
             ), mocks.Subprocess.Route(

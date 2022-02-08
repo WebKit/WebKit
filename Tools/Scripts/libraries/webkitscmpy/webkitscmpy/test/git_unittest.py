@@ -496,12 +496,12 @@ CommitDate: {time_b}
     def test_pull(self):
         with mocks.local.Git(self.path) as mocked, OutputCapture():
             mocked.staged['added.txt'] = 'added'
-            self.assertEqual(local.Git(self.path).pull(), 0)
+            self.assertEqual(local.Git(self.path).pull(rebase=True), 0)
 
     def test_pull_no_stash(self):
         with mocks.local.Git(self.path) as mocked, OutputCapture():
             mocked.staged['added.txt'] = 'added'
-            self.assertEqual(run([local.Git.executable(), 'pull'], cwd=self.path).returncode, 128)
+            self.assertEqual(local.Git(self.path).pull(), 128)
 
 
 class TestGitHub(testing.TestCase):

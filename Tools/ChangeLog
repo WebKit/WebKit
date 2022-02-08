@@ -1,5 +1,21 @@
 2022-02-08  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Autostash when pulling (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=235861
+        <rdar://problem/88298948>
+
+        Unreviewed follow-up fix.
+
+        Accidently landed a previous iteration of the change.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.Cache.clear): Handle empty cache.
+        (Git.pull): Only autostash when rebasing.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+
+2022-02-08  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Allow repositories to declare their bug trackers
         https://bugs.webkit.org/show_bug.cgi?id=236306
         <rdar://problem/88633018>

@@ -205,6 +205,8 @@ class Git(Scm):
             self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
             self._revisions_to_identifiers = {}
 
+            if self.repo.default_branch not in self._ordered_commits:
+                return
             self._fill(self.repo.default_branch)
             for branch in self._ordered_commits.keys():
                 if branch == self.repo.default_branch:
@@ -926,9 +928,11 @@ class Git(Scm):
         if branch and self.branch != branch:
             code = self.fetch(branch=branch, remote=remote)
         if not code:
-            command = [self.executable(), 'pull'] + ([remote, branch] if branch else []) + ['--autostash']
-            if rebase is not None:
-                command += ['--rebase={}'.format('True' if rebase else 'False')]
+            command = [self.executable(), 'pull'] + ([remote, branch] if branch else [])
+            if rebase is True:
+                command += ['--rebase=True', '--autostash']
+            elif rebase is False:
+                command += ['--rebase=False']
             code = run(command, cwd=self.root_path).returncode
         if self.cache and rebase and branch != self.branch:
             self.cache.clear(self.branch)
@@ -938,7 +942,7 @@ class Git(Scm):
             if not result.returncode and result.stdout.rstrip() != commit.hash:
                 code = run([
                     self.executable(),
-                    'filter-branch', '-f', '--autostash',
+                    'filter-branch', '-f',
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                         date='{} -{}'.format(int(time.time()), self.gmtoffset())
                     ), 'HEAD...{}'.format('{}/{}'.format(remote, branch)),
