@@ -31,6 +31,7 @@
 #include <CoreMedia/CMTime.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Observer.h>
 
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetTrack;
@@ -67,6 +68,7 @@ class InbandMetadataTextTrackPrivateAVF;
 class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
+class QueuedVideoOutput;
 class FragmentedSharedBuffer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
@@ -346,7 +348,7 @@ private:
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
-    void checkNewVideoFrameMetadata(CMTime);
+    void checkNewVideoFrameMetadata();
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
@@ -366,7 +368,7 @@ private:
 #endif
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
-    RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
+    RefPtr<QueuedVideoOutput> m_videoOutput;
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
@@ -463,6 +465,8 @@ private:
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;
     mutable std::optional<NSTimeInterval> m_cachedLiveUpdateInterval;
+    std::unique_ptr<Observer<void()>> m_currentImageChangedObserver;
+    std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
 };
 
 }

@@ -40,9 +40,10 @@
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
-#import <AVFoundation/AVPlayer_Private.h>
+#import <AVFoundation/AVPlayerItemOutput_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
+#import <AVFoundation/AVPlayer_Private.h>
 
 #if ENABLE(MEDIA_SOURCE)
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -66,6 +67,7 @@ NS_ASSUME_NONNULL_END
 #import <AVFoundation/AVCaptureSession.h>
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVPlayerItemOutput.h>
 
 #if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
 #import <AVFoundation/AVPlayerInterstitialEventController.h>
@@ -91,6 +93,11 @@ typedef NSString * AVVideoRange NS_TYPED_ENUM;
 @property (nonatomic, getter=_suppressesAudioRendering, setter=_setSuppressesAudioRendering:) BOOL suppressesAudioRendering;
 @end
 #endif
+
+@interface AVPlayerItemVideoOutput (AVPlayerItemVideoOutputEarliestTime)
+@property (nonatomic, readonly) CMTime earliestAvailablePixelBufferItemTime;
+- (void)requestNotificationOfMediaDataChangeAsSoonAsPossible;
+@end
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
 

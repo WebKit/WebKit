@@ -1,5 +1,113 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288031. rdar://problem/82997136
+
+    [Cocoa] rVFC() isn't called for initial video load
+    https://bugs.webkit.org/show_bug.cgi?id=235006
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Tests: media/request-video-frame-loadstart.html
+           media/request-video-frame-seek.html
+    
+    Add a new utility class, QueuedVideoOutput, which will pull pixel buffers out of an AVPlayerItemVideoOutput
+    pre-emptively. Once those pixel buffers are enqueued locally, their associated timing information can be used to
+    fire a callback for that buffer's display time.
+    
+    Previously, paints were blocked from pulling new pixel buffers from the video output. With the QueuedVideoOutput
+    class, this is no longer necessary. The QueuedVideoOutput will notify its client when the image for currentTime
+    changes, and other clients can freely ask for the currentTime's image.
+    
+    To curb runaway memory growth, frames are purged as soon as a new image for the current time is available, and when
+    the video output signals that its own queues were purged.
+    
+    * WebCore.xcodeproj/project.pbxproj:
+    * html/HTMLVideoElement.cpp:
+    (WebCore::HTMLVideoElement::cancelVideoFrameCallback):
+    (WebCore::HTMLVideoElement::serviceRequestVideoFrameCallbacks):
+    * html/HTMLVideoElement.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame const):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::startVideoFrameMetadataGathering):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::checkNewVideoFrameMetadata):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::colorSpace):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+    (WebCore::globalPullDelegateQueue): Deleted.
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange): Deleted.
+    (-[WebCoreAVFPullDelegate initWithPlayer:]): Deleted.
+    (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]): Deleted.
+    (-[WebCoreAVFPullDelegate outputSequenceWasFlushed:]): Deleted.
+    * platform/graphics/avfoundation/objc/QueuedVideoOutput.h: Added.
+    * platform/graphics/avfoundation/objc/QueuedVideoOutput.mm: Added.
+    (-[WebQueuedVideoOutputDelegate initWithParent:]):
+    (-[WebQueuedVideoOutputDelegate outputMediaDataWillChange:]):
+    (-[WebQueuedVideoOutputDelegate outputSequenceWasFlushed:]):
+    (-[WebQueuedVideoOutputDelegate observeValueForKeyPath:ofObject:change:context:]):
+    (WebCore::globalOutputDelegateQueue):
+    (WebCore::QueuedVideoOutput::create):
+    (WebCore::QueuedVideoOutput::QueuedVideoOutput):
+    (WebCore::QueuedVideoOutput::~QueuedVideoOutput):
+    (WebCore::QueuedVideoOutput::invalidate):
+    (WebCore::decltype):
+    (WebCore::QueuedVideoOutput::hasImageForTime const):
+    (WebCore::QueuedVideoOutput::takeVideoFrameEntryForTime):
+    (WebCore::QueuedVideoOutput::addCurrentImageChangedObserver):
+    (WebCore::QueuedVideoOutput::configureNextImageObserver):
+    (WebCore::QueuedVideoOutput::imageForCurrentTimeChanged):
+    (WebCore::QueuedVideoOutput::addVideoFrameEntries):
+    (WebCore::QueuedVideoOutput::purgeVideoFrameEntries):
+    (WebCore::QueuedVideoOutput::purgeImagesBeforeTime):
+    (WebCore::QueuedVideoOutput::rateChanged):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    LayoutTests:
+    
+    * media/request-video-frame-loadstart-expected.txt: Added.
+    * media/request-video-frame-loadstart.html: Added.
+    * media/request-video-frame-seek-expected.txt: Added.
+    * media/request-video-frame-seek.html: Added.
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac-wk1/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288031 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-14  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] rVFC() isn't called for initial video load
+            https://bugs.webkit.org/show_bug.cgi?id=235006
+
+            Reviewed by Eric Carlson.
+
+            * media/request-video-frame-loadstart-expected.txt: Added.
+            * media/request-video-frame-loadstart.html: Added.
+            * media/request-video-frame-seek-expected.txt: Added.
+            * media/request-video-frame-seek.html: Added.
+            * platform/ios-wk2/TestExpectations:
+            * platform/mac-wk1/TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288003. rdar://problem/85505101
 
     Only apply automatic minimum block-size aspect-ratio rules to non-replaced elements
