@@ -1,5 +1,55 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287981. rdar://problem/84069534
+
+    REGRESSION (r278561): Right clicking a link selects the full line with unrelated text
+    https://bugs.webkit.org/show_bug.cgi?id=235172
+    <rdar://84069534>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    r278561 slightly change highlightStateForTextBox's behavior which now (correctly) returns HighlightState::None when the
+    RenderText content is not part of the current selection. Prior to r278561, it returned the RenderText's original selection state
+    which in this case was HighlightState::End.
+    
+    <div><span>A<br>B<span style="position: absolute"></span></span>C</div>
+    
+    In this specific case when we select the outer <span>, we end up with the following selection states for the generated line boxes:
+      (B) -> "Inside"
+      (C) -> "None"
+    while previously (C) came back as "End" (note that the absolute positioned element does not generate line boxes).
+    
+    Now as Line::selectionState traverses through the line boxes, it comes across an unexpected "Inside -> None" transition at the selection end boundary (B -> C)
+    which incorrectly leaves the line state in "Inside" and we paint the selection all the way to the end of the block.
+    
+    Test: fast/editing/selection-with-absolute-positioned-empty-content.html
+    
+    * layout/integration/InlineIteratorLine.cpp:
+    (WebCore::InlineIterator::Line::selectionState const):
+    
+    LayoutTests:
+    
+    * fast/editing/selection-with-absolute-positioned-empty-content-expected.txt: Added.
+    * fast/editing/selection-with-absolute-positioned-empty-content.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287981 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Alan Bujtas  <zalan@apple.com>
+
+            REGRESSION (r278561): Right clicking a link selects the full line with unrelated text
+            https://bugs.webkit.org/show_bug.cgi?id=235172
+            <rdar://84069534>
+
+            Reviewed by Dean Jackson.
+
+            * fast/editing/selection-with-absolute-positioned-empty-content-expected.txt: Added.
+            * fast/editing/selection-with-absolute-positioned-empty-content.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287970. rdar://problem/87423294
 
     PCM: Same-site triggering events should support ephemeral measurement

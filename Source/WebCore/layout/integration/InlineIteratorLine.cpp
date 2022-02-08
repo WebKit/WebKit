@@ -190,7 +190,9 @@ RenderObject::HighlightState Line::selectionState() const
         else if (boxState == RenderObject::HighlightState::None && state == RenderObject::HighlightState::Start) {
             // We are past the end of the selection.
             state = RenderObject::HighlightState::Both;
-        }
+        } else if (boxState == RenderObject::HighlightState::None && state == RenderObject::HighlightState::Inside)
+            state = RenderObject::HighlightState::End;
+
         if (state == RenderObject::HighlightState::Both)
             break;
     }
