@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.34.5
+================
+
+What's new in WebKitGTK 2.34.5?
+
+  - Improve VP8 codec selection when using GStreamer 1.20.
+  - Fix connecting to the accessiblity bus when using the Bubblewrap sandbox.
+  - Fix links being incorrectly activated when starting a pinch zoom gesture.
+  - Fix touch-based scrolling.
+  - Fix the build with recent toolchains based on GCC 12 and on older ones as
+    included e.g. in Ubuntu 18.04.
+  - Fix the build with ICU 60, version 61 is no longer required.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.34.4
 ================
 

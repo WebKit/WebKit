@@ -1,3 +1,9 @@
+2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for the 2.34.5 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2022-02-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Allow building with ICU 60
