@@ -320,7 +320,7 @@ void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, Und
     auto actionName = command->label();
     auto commandObjC = adoptNS([[WKEditCommand alloc] initWithWebEditCommandProxy:WTFMove(command)]);
     
-    NSUndoManager *undoManager = [m_contentView undoManager];
+    NSUndoManager *undoManager = [m_contentView undoManagerForWebView];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == UndoOrRedo::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
     if (!actionName.isEmpty())
         [undoManager setActionName:(NSString *)actionName];
