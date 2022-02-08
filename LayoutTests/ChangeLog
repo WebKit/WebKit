@@ -1,3 +1,19 @@
+2022-02-07  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Add fuzzy data to tests.
+        * compositing/patterns/direct-pattern-compositing-cover.html:
+        * compositing/patterns/direct-pattern-compositing-size.html:
+        * css3/calc/block-mask-overlay-image-outset.html:
+        * fast/backgrounds/background-opaque-clipped-gradients.html:
+        * fast/borders/border-image-repeat-stretch.html:
+        * fast/layers/overflow-scroll-transform-border-radius.html:
+        * fast/text/international/system-language/hindi-system-font-punctuation.html:
+        * fast/text/simple-lines-float.html:
+        * http/tests/security/svg-image-with-cached-remote-image.html:
+        * svg/clip-path/clip-opacity.html:
+
 2022-02-07  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Move node-dependent role computation to AccessibilityNodeObject from AccessibilityRenderObject
