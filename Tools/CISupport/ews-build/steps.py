@@ -786,7 +786,6 @@ class CheckChangeRelevance(AnalyzeChange):
 
 class FindModifiedLayoutTests(AnalyzeChange):
     name = 'find-modified-layout-tests'
-    # FIXME: This regex won't work for pull-requests
     RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
@@ -2532,12 +2531,6 @@ class RunWebKitTests(shell.Test):
     def __init__(self, **kwargs):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
-
-    def _get_patch(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
 
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and

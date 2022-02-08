@@ -29,7 +29,7 @@ import twisted
 
 from base64 import b64encode
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
-from buildbot.util import service
+from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
 from steps import GitHub
 from twisted.internet import defer
@@ -314,8 +314,37 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     ACTIONS_TO_TRIGGER_EWS = ('opened', 'synchronize')
     OPEN_STATES = ('open',)
 
+    @classmethod
+    def file_with_status_sign(cls, info):
+        if info.get('status') in ('removed', 'renamed'):
+            return '--- {}'.format(info['filename'])
+        return '+++ {}'.format(info['filename'])
+
     def _get_commit_msg(self, repo, sha):
         return ''
+
+    @defer.inlineCallbacks
+    def _get_pr_files(self, repo, number):
+        # Copied from https://github.com/buildbot/buildbot/blob/v2.10.5/master/buildbot/www/hooks/github.py to include added/modified/deleted
+        headers = {"User-Agent": "Buildbot"}
+        if self._token:
+            headers["Authorization"] = "token " + self._token
+
+        url = "/repos/{}/pulls/{}/files".format(repo, number)
+        http = yield httpclientservice.HTTPClientService.getService(
+            self.master,
+            self.github_api_endpoint,
+            headers=headers,
+            debug=self.debug,
+            verify=self.verify,
+        )
+        res = yield http.get(url)
+        if 200 <= res.code < 300:
+            data = yield res.json()
+            return [self.file_with_status_sign(f) for f in data]
+
+        log.msg('Failed fetching PR files: response code {}'.format(res.code))
+        return []
 
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
