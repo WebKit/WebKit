@@ -256,6 +256,9 @@ static const char kDefaultSctpmapProtocol[] = "webrtc-datachannel";
 // types.
 const int kWildcardPayloadType = -1;
 
+// Maximum number of channels allowed.
+static const size_t kMaxNumberOfChannels = 24;
+
 struct SsrcInfo {
   uint32_t ssrc_id;
   std::string cname;
@@ -3627,6 +3630,10 @@ bool ParseRtpmapAttribute(const std::string& line,
         return false;
       }
     }
+    if (channels > kMaxNumberOfChannels) {
+      return ParseFailed(line, "At most 24 channels are supported.", error);
+    }
+
     AudioContentDescription* audio_desc = media_desc->as_audio();
     UpdateCodec(payload_type, encoding_name, clock_rate, 0, channels,
                 audio_desc);
