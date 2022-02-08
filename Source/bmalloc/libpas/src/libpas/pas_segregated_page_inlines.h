@@ -240,9 +240,33 @@ static PAS_ALWAYS_INLINE bool pas_segregated_page_switch_lock_with_mode(
     switch (lock_mode) {
     case pas_lock_lock_mode_try_lock: {
         pas_lock* page_lock;
+        pas_compiler_fence();
         page_lock = page->lock_ptr;
         PAS_TESTING_ASSERT(page_lock);
-        return pas_lock_switch_with_mode(held_lock, page_lock, pas_lock_lock_mode_try_lock);
+        if (*held_lock == page_lock) {
+            pas_compiler_fence();
+            return true;
+        }
+        pas_compiler_fence();
+        if (*held_lock)
+            pas_lock_unlock(*held_lock);
+        pas_compiler_fence();
+        for (;;) {
+            pas_lock* new_page_lock;
+            if (!pas_lock_try_lock(page_lock)) {
+                *held_lock = NULL;
+                pas_compiler_fence();
+                return false;
+            }
+            new_page_lock = page->lock_ptr;
+            if (page_lock == new_page_lock) {
+                *held_lock = page_lock;
+                pas_compiler_fence();
+                return true;
+            }
+            pas_lock_unlock(page_lock);
+            page_lock = new_page_lock;
+        }
     }
 
     case pas_lock_lock_mode_lock: {
