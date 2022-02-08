@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "NicosiaGCGLANGLEPipe.h"
+#include "NicosiaGCGLANGLELayer.h"
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
@@ -42,29 +42,21 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GCGLANGLEPipeSource::GCGLANGLEPipeSource(WebCore::GraphicsContextGLANGLE& context)
-    : m_context(context)
-{
-}
-
-GCGLANGLEPipeSource::~GCGLANGLEPipeSource()
-{
-}
-
-void GCGLANGLEPipeSource::swapBuffersIfNeeded()
+void GCGLANGLELayer::swapBuffersIfNeeded()
 {
     if (m_context.layerComposited())
         return;
 
     m_context.prepareTexture();
 
+    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(contentLayer().impl()).proxy();
+    auto size = m_context.getInternalFramebufferSize();
+
     if (m_context.m_compositorTextureBacking) {
-        auto size = m_context.getInternalFramebufferSize();
         auto format = m_context.m_compositorTextureBacking->format();
         auto stride = m_context.m_compositorTextureBacking->stride();
         auto fd = m_context.m_compositorTextureBacking->fd();
 
-        auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(platformLayer()->impl()).proxy();
         {
             Locker locker { proxy.lock() };
             proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerDmabuf>(size, format, stride, fd));
@@ -75,18 +67,27 @@ void GCGLANGLEPipeSource::swapBuffersIfNeeded()
     }
 
     // Fallback path, read back texture to main memory
-    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(m_context.getInternalFramebufferSize(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
-
     m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
 
-    handle(WTFMove(imageBuffer));
+    auto flags = m_context.contextAttributes().alpha ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
+    {
+        Locker locker { proxy.lock() };
+        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = proxy.getAvailableBuffer(size, m_context.m_internalColorFormat);
+        if (!layerBuffer) {
+            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
+            layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
+        }
 
+        layerBuffer->textureGL().setPendingContents(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer)));
+        proxy.pushNextBuffer(WTFMove(layerBuffer));
+    }
     m_context.markLayerComposited();
 }
 
-const char* GCGLANGLEPipe::ANGLEContext::errorString(int statusCode)
+const char* GCGLANGLELayer::ANGLEContext::errorString(int statusCode)
 {
     static_assert(sizeof(int) >= sizeof(EGLint), "EGLint must not be wider than int");
     switch (statusCode) {
@@ -112,12 +113,12 @@ const char* GCGLANGLEPipe::ANGLEContext::errorString(int statusCode)
     }
 }
 
-const char* GCGLANGLEPipe::ANGLEContext::lastErrorString()
+const char* GCGLANGLELayer::ANGLEContext::lastErrorString()
 {
     return errorString(EGL_GetError());
 }
 
-std::unique_ptr<GCGLANGLEPipe::ANGLEContext> GCGLANGLEPipe::ANGLEContext::createContext()
+std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext()
 {
     EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
     if (display == EGL_NO_DISPLAY)
@@ -181,7 +182,7 @@ std::unique_ptr<GCGLANGLEPipe::ANGLEContext> GCGLANGLEPipe::ANGLEContext::create
     return std::unique_ptr<ANGLEContext>(new ANGLEContext(display, config, context, EGL_NO_SURFACE));
 }
 
-GCGLANGLEPipe::ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config, EGLContext context, EGLSurface surface)
+GCGLANGLELayer::ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config, EGLContext context, EGLSurface surface)
     : m_display(display)
     , m_config(config)
     , m_context(context)
@@ -189,7 +190,7 @@ GCGLANGLEPipe::ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config, 
 {
 }
 
-GCGLANGLEPipe::ANGLEContext::~ANGLEContext()
+GCGLANGLELayer::ANGLEContext::~ANGLEContext()
 {
     if (m_context) {
         GL_BindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -201,7 +202,7 @@ GCGLANGLEPipe::ANGLEContext::~ANGLEContext()
         EGL_DestroySurface(m_display, m_surface);
 }
 
-bool GCGLANGLEPipe::ANGLEContext::makeContextCurrent()
+bool GCGLANGLELayer::ANGLEContext::makeContextCurrent()
 {
     ASSERT(m_context);
 
@@ -210,65 +211,56 @@ bool GCGLANGLEPipe::ANGLEContext::makeContextCurrent()
     return true;
 }
 
-PlatformGraphicsContextGL GCGLANGLEPipe::ANGLEContext::platformContext() const
+PlatformGraphicsContextGL GCGLANGLELayer::ANGLEContext::platformContext() const
 {
     return m_context;
 }
 
-PlatformGraphicsContextGLDisplay GCGLANGLEPipe::ANGLEContext::platformDisplay() const
+PlatformGraphicsContextGLDisplay GCGLANGLELayer::ANGLEContext::platformDisplay() const
 {
     return m_display;
 }
 
-PlatformGraphicsContextGLConfig GCGLANGLEPipe::ANGLEContext::platformConfig() const
+PlatformGraphicsContextGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() const
 {
     return m_config;
 }
 
-GCGLANGLEPipe::GCGLANGLEPipe(GraphicsContextGLANGLE& context)
-    : m_angleContext(ANGLEContext::createContext())
-    , m_source(adoptRef(*new GCGLANGLEPipeSource(context)))
-    , m_layerContentsDisplayDelegate(NicosiaImageBufferPipeSourceDisplayDelegate::create(m_source->platformLayer()))
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLANGLE& context)
+    : m_context(context)
+    , m_angleContext(ANGLEContext::createContext())
+    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
 }
 
-GCGLANGLEPipe::~GCGLANGLEPipe()
+GCGLANGLELayer::~GCGLANGLELayer()
 {
+    downcast<ContentLayerTextureMapperImpl>(m_contentLayer->impl()).invalidateClient();
 }
 
-bool GCGLANGLEPipe::makeContextCurrent()
+bool GCGLANGLELayer::makeContextCurrent()
 {
     ASSERT(m_angleContext);
     return m_angleContext->makeContextCurrent();
 
 }
 
-PlatformGraphicsContextGL GCGLANGLEPipe::platformContext() const
+PlatformGraphicsContextGL GCGLANGLELayer::platformContext() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();
 }
 
-PlatformGraphicsContextGLDisplay GCGLANGLEPipe::platformDisplay() const
+PlatformGraphicsContextGLDisplay GCGLANGLELayer::platformDisplay() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformDisplay();
 }
 
-PlatformGraphicsContextGLConfig GCGLANGLEPipe::platformConfig() const
+PlatformGraphicsContextGLConfig GCGLANGLELayer::platformConfig() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();
-}
-
-RefPtr<ImageBufferPipe::Source> GCGLANGLEPipe::source() const
-{
-    return m_source.ptr();
-}
-
-RefPtr<GraphicsLayerContentsDisplayDelegate> GCGLANGLEPipe::layerContentsDisplayDelegate()
-{
-    return m_layerContentsDisplayDelegate.ptr();
 }
 
 } // namespace Nicosia

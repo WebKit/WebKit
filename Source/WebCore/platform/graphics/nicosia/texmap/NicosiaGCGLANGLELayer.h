@@ -32,7 +32,7 @@
 
 #include "GLContext.h"
 #include "GraphicsContextGLANGLE.h"
-#include "NicosiaImageBufferPipe.h"
+#include "NicosiaContentLayerTextureMapperImpl.h"
 #include <memory>
 
 typedef void *EGLConfig;
@@ -48,18 +48,7 @@ class PlatformDisplay;
 
 namespace Nicosia {
 
-class GCGLANGLEPipeSource : public NicosiaImageBufferPipeSource {
-public:
-    GCGLANGLEPipeSource(WebCore::GraphicsContextGLANGLE&);
-    virtual ~GCGLANGLEPipeSource();
-
-    // ContentLayerTextureMapperImpl::Client overrides.
-    void swapBuffersIfNeeded() final;
-private:
-    WebCore::GraphicsContextGLANGLE& m_context;
-};
-
-class GCGLANGLEPipe final : public WebCore::ImageBufferPipe {
+class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class ANGLEContext {
@@ -87,22 +76,21 @@ public:
         EGLSurface m_surface { nullptr };
     };
 
-    GCGLANGLEPipe(WebCore::GraphicsContextGLANGLE&);
-    virtual ~GCGLANGLEPipe();
+    GCGLANGLELayer(WebCore::GraphicsContextGLANGLE&);
+    virtual ~GCGLANGLELayer();
 
     bool makeContextCurrent();
     PlatformGraphicsContextGL platformContext() const;
     PlatformGraphicsContextGLDisplay platformDisplay() const;
     PlatformGraphicsContextGLConfig platformConfig() const;
 
-    // ImageBufferPipe overrides.
-    RefPtr<WebCore::ImageBufferPipe::Source> source() const final;
-    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    ContentLayer& contentLayer() const { return m_contentLayer; }
+    void swapBuffersIfNeeded() final;
 
 private:
+    WebCore::GraphicsContextGLANGLE& m_context;
     std::unique_ptr<ANGLEContext> m_angleContext;
-    Ref<GCGLANGLEPipeSource> m_source;
-    Ref<NicosiaImageBufferPipeSourceDisplayDelegate> m_layerContentsDisplayDelegate;
+    Ref<ContentLayer> m_contentLayer;
 };
 
 } // namespace Nicosia

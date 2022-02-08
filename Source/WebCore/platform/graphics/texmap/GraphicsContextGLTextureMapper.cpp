@@ -60,7 +60,7 @@
 
 #if USE(NICOSIA)
 #if USE(ANGLE)
-#include "NicosiaGCGLANGLEPipe.h"
+#include "NicosiaGCGLANGLELayer.h"
 #else
 #include "NicosiaGCGLLayer.h"
 #endif
@@ -116,11 +116,7 @@ GraphicsContextGLTextureMapper::~GraphicsContextGLTextureMapper() = default;
 GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLTextureMapperBase(WTFMove(attributes))
 #if USE(NICOSIA)
-#if USE(ANGLE)
-    , m_layerContentsDisplayDelegate(*m_nicosiaPipe->layerContentsDisplayDelegate())
-#else
     , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer()))
-#endif
 #else
     , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(m_texmapLayer.get()))
 #endif

@@ -37,7 +37,7 @@
 
 #if USE(NICOSIA)
 #include "GBMDevice.h"
-#include "NicosiaGCGLANGLEPipe.h"
+#include "NicosiaGCGLANGLELayer.h"
 
 #include <fcntl.h>
 #include <gbm.h>
@@ -54,7 +54,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
 #if USE(NICOSIA)
-    m_nicosiaPipe = makeUnique<Nicosia::GCGLANGLEPipe>(*this);
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
 
     const auto& gbmDevice = GBMDevice::get();
     if (auto* device = gbmDevice.device()) {
@@ -228,7 +228,7 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
 #if USE(NICOSIA)
-    return m_nicosiaPipe->platformDisplay();
+    return m_nicosiaLayer->platformDisplay();
 #else
     return m_texmapLayer->platformDisplay();
 #endif
@@ -237,7 +237,7 @@ PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
 #if USE(NICOSIA)
-    return m_nicosiaPipe->platformConfig();
+    return m_nicosiaLayer->platformConfig();
 #else
     return m_texmapLayer->platformConfig();
 #endif
@@ -246,7 +246,7 @@ PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
 #if USE(NICOSIA)
-    return m_nicosiaPipe->makeContextCurrent();
+    return m_nicosiaLayer->makeContextCurrent();
 #else
     return m_texmapLayer->makeContextCurrent();
 #endif
