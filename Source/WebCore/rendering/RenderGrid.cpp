@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -186,6 +186,52 @@ bool RenderGrid::canPerformSimplifiedLayout() const
     return RenderBlock::canPerformSimplifiedLayout();
 }
 
+Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
+{
+    Vector<RenderBox*> dependentGridItems;
+
+    m_baselineItemsCached = true;
+    m_hasAnyOrthogonalItem = false;
+    m_hasAspectRatioBlockSizeDependentItem = false;
+
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned() || child->isLegend())
+            continue;
+
+        // Grid's layout logic controls the grid item's override height, hence we need to
+        // clear any override height set previously, so it doesn't interfere in current layout
+        // execution. Grid never uses the override width, that's why we don't need to clear  it.
+        child->clearOverridingLogicalHeight();
+
+        // Grid's layout logic controls the grid item's override height, hence we need to
+        // clear any override height set previously, so it doesn't interfere in current layout
+        // execution. Grid never uses the override width, that's why we don't need to clear  it.
+        child->clearOverridingLogicalHeight();
+
+        // We may need to repeat the track sizing in case of any grid item was orthogonal.
+        if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
+            m_hasAnyOrthogonalItem = true;
+
+        // For a grid item that has an aspect-ratio and block-constraints such as the relative logical height,
+        // when the grid width is auto, we may need get the real grid width before laying out the item.
+        if (GridLayoutFunctions::isAspectRatioBlockSizeDependentChild(*child) && (style().logicalWidth().isAuto() || style().logicalWidth().isMinContent() || style().logicalWidth().isMaxContent())) {
+            dependentGridItems.append(child);
+            m_hasAspectRatioBlockSizeDependentItem = true;
+        }
+
+        // We keep a cache of items with baseline as alignment values so that we only compute the baseline shims for
+        // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
+        // participation in a baseline context during the track sizing algorithm.
+        if (isBaselineAlignmentForChild(*child, GridColumnAxis))
+            m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridColumnAxis);
+        if (isBaselineAlignmentForChild(*child, GridRowAxis))
+            m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
+    }
+
+    return dependentGridItems;
+}
+
+
 void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -201,43 +247,16 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         beginUpdateScrollInfoAfterLayoutTransaction();
 
         LayoutSize previousSize = size();
+
         // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for positioned stuff.
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
         // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
         bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
-        m_hasAnyOrthogonalItem = false;
-        m_hasAspectRatioBlockSizeDependentItem = false;
-        Vector<RenderBox*> aspectRatioBlockSizeDependentGridItems;
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (child->isOutOfFlowPositioned())
-                continue;
-            // Grid's layout logic controls the grid item's override height, hence we need to
-            // clear any override height set previously, so it doesn't interfere in current layout
-            // execution. Grid never uses the override width, that's why we don't need to clear  it.
-            child->clearOverridingLogicalHeight();
 
-            // We may need to repeat the track sizing in case of any grid item was orthogonal.
-            if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
-                m_hasAnyOrthogonalItem = true;
-            
-            // For a grid item that has an aspect-ratio and block-constraints such as the relative logical height,
-            // when the grid width is auto, we may need get the real grid width before laying out the item. 
-            if (GridLayoutFunctions::isAspectRatioBlockSizeDependentChild(*child) && (style().logicalWidth().isAuto() || style().logicalWidth().isMinContent() || style().logicalWidth().isMaxContent())) {
-                aspectRatioBlockSizeDependentGridItems.append(child);
-                m_hasAspectRatioBlockSizeDependentItem = true;
-            }
-            // We keep a cache of items with baseline as alignment values so
-            // that we only compute the baseline shims for such items. This
-            // cache is needed for performance related reasons due to the
-            // cost of evaluating the item's participation in a baseline
-            // context during the track sizing algorithm.
-            if (isBaselineAlignmentForChild(*child, GridColumnAxis))
-                m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridColumnAxis);
-            if (isBaselineAlignmentForChild(*child, GridRowAxis))
-                m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
-        }
-        m_baselineItemsCached = true;
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems();
+
         resetLogicalHeightBeforeLayoutIfNeeded();
+
         updateLogicalWidth();
 
         // Fieldsets need to find their legend and position it inside the border of the object.
@@ -251,13 +270,10 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
 
-        // 1- First, the track sizing algorithm is used to resolve the sizes of the
-        // grid columns.
-        // At this point the logical width is always definite as the above call to
-        // updateLogicalWidth() properly resolves intrinsic sizes. We cannot do the
-        // same for heights though because many code paths inside
-        // updateLogicalHeight() require a previous call to setLogicalHeight() to
-        // resolve heights properly (like for positioned items for example).
+        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the 
+        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
+        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
+        // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
         // 1.5- Compute Content Distribution offsets for column tracks
