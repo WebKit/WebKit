@@ -380,6 +380,11 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         else if (inlineLevelBox.isLineBreakBox()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
             setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
+        } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
+            auto alphabeticBaseline = inlineLevelBox.ascent();
+            InlineLayoutUnit ideographicBaseline = roundToInt(alphabeticBaseline / 2);
+            // Move the baseline position but keep the same logical height.
+            setBaselineAndLayoutBounds(inlineLevelBox, { ideographicBaseline, inlineLevelBox.layoutBounds().descent + (alphabeticBaseline - ideographicBaseline) });
         }
     }
 }
