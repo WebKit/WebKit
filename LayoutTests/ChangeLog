@@ -1,5 +1,52 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289060. rdar://problem/86337125
+
+    null ptr deref in RenderTreeBuilder::Block::attachIgnoringContinuation
+    https://bugs.webkit.org/show_bug.cgi?id=234170
+    
+    Patch by Frédéric Wang <fwang@igalia.com> on 2022-02-03
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When an element with "display: contents" is put into the top layer, its computed style for
+    the display property becomes "block" [1]. However, RenderTreeUpdater::updateElementRenderer
+    does not manage well this transition. In particular, a null ptr deref happens for some
+    special configuration involving a <dialog style="display: contents">. To work around that
+    issue, always force tearing down renderers when updating an element in the top layer.
+    
+    [1] https://fullscreen.spec.whatwg.org/#new-stacking-layer
+    
+    Test: fast/layers/top-layer-display-contents-crash.html
+    
+    * rendering/updating/RenderTreeUpdater.cpp:
+    (WebCore::RenderTreeUpdater::updateElementRenderer): Always force tearing down renderers
+    for top layer element.
+    
+    LayoutTests:
+    
+    Add regression test.
+    
+    * fast/css/top-layer-display-contents-crash-expected.txt: Added.
+    * fast/css/top-layer-display-contents-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289060 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-03  Frédéric Wang  <fwang@igalia.com>
+
+            null ptr deref in RenderTreeBuilder::Block::attachIgnoringContinuation
+            https://bugs.webkit.org/show_bug.cgi?id=234170
+
+            Reviewed by Antti Koivisto.
+
+            Add regression test.
+
+            * fast/css/top-layer-display-contents-crash-expected.txt: Added.
+            * fast/css/top-layer-display-contents-crash.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289021. rdar://problem/88599774
 
     CSP: Fix matching wildcard hosts

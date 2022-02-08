@@ -317,7 +317,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         elementUpdateStyle->addCachedPseudoStyle(RenderStyle::clonePtr(*it.value.style));
     }
 
-    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
+    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.isInTopLayer());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
