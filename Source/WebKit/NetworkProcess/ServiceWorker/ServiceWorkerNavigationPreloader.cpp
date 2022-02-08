@@ -231,20 +231,14 @@ void ServiceWorkerNavigationPreloader::waitForResponse(ResponseCallback&& callba
 
 void ServiceWorkerNavigationPreloader::waitForBody(BodyCallback&& callback)
 {
-    if (!m_error.isNull()) {
+    if (!m_error.isNull() || !m_responseCompletionHandler) {
         callback({ }, 0);
         return;
     }
 
     ASSERT(!m_response.isNull());
-    ASSERT(m_responseCompletionHandler || !m_networkLoad);
-    if (!m_networkLoad) {
-        callback({ }, 0);
-        return;
-    }
-    if (m_responseCompletionHandler)
-        m_responseCompletionHandler(PolicyAction::Use);
     m_bodyCallback = WTFMove(callback);
+    m_responseCompletionHandler(PolicyAction::Use);
 }
 
 bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manager, DownloadID downloadID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)

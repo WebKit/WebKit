@@ -30,7 +30,11 @@ def main(request, response):
     value = request.server.stash.take(testId)
     if not value:
         value = b"nothing"
-    response.headers.set(b"Cache-Control", b"no-cache")
+
+    if b"cache" in request.GET:
+        response.headers.set(b"Cache-Control", b"max-age=31536000")
+    else:
+        response.headers.set(b"Cache-Control", b"no-cache")
 
     if b"download" in request.GET:
         response.headers.set(b"Content-Type", b"text/vcard")

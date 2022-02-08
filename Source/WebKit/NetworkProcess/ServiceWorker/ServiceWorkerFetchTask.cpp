@@ -363,7 +363,9 @@ void ServiceWorkerFetchTask::loadResponseFromPreloader()
 {
     SWFETCH_RELEASE_LOG("loadResponseFromPreloader");
 
-    ASSERT(!m_isLoadingFromPreloader);
+    if (m_isLoadingFromPreloader)
+        return;
+
     m_isLoadingFromPreloader = true;
 
     m_preloader->waitForResponse([weakThis = WeakPtr { *this }, this] {
@@ -392,6 +394,12 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
     SWFETCH_RELEASE_LOG("loadBodyFromPreloader");
 
     ASSERT(m_isLoadingFromPreloader);
+    if (!m_preloader) {
+        SWFETCH_RELEASE_LOG_ERROR("loadBodyFromPreloader preloader is null");
+        didFail(ResourceError(errorDomainWebKitInternal, 0, m_loader.originalRequest().url(), "Request canceled from preloader"_s, ResourceError::Type::Cancellation));
+        return;
+    }
+
     m_preloader->waitForBody([weakThis = WeakPtr { *this }, this](auto&& chunk, int length) {
         if (!weakThis)
             return;
