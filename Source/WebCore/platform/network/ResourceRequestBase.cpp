@@ -619,6 +619,18 @@ void ResourceRequestBase::removeHTTPHeaderField(HTTPHeaderName name)
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::setIsAppInitiated(bool isAppInitiated)
+{
+    updateResourceRequest();
+
+    if (m_isAppInitiated == isAppInitiated)
+        return;
+
+    m_isAppInitiated = isAppInitiated;
+
+    m_platformRequestUpdated = false;
+};
+
 #if USE(SYSTEM_PREVIEW)
 
 bool ResourceRequestBase::isSystemPreview() const

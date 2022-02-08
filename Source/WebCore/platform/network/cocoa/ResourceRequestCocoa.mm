@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014-2022 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,21 @@
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {
+
+ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
+    : m_nsRequest(nsRequest)
+{
+#if ENABLE(APP_PRIVACY_REPORT)
+    setIsAppInitiated(nsRequest.attribution == NSURLRequestAttributionDeveloper);
+#endif
+}
 
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
@@ -165,12 +174,16 @@ void ResourceRequest::doUpdatePlatformRequest()
         return;
     }
 
-    auto nsRequest = adoptNS([m_nsRequest mutableCopy]);
+    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+#endif
 
     if (ResourceRequest::httpPipeliningEnabled())
         CFURLRequestSetShouldPipelineHTTP([nsRequest _CFURLRequest], true, true);
@@ -241,12 +254,16 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         return;
     }
 
-    auto nsRequest = adoptNS([m_nsRequest mutableCopy]);
+    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+#endif
 
     FormData* formData = httpBody();
     if (formData && !formData->isEmpty())
@@ -279,7 +296,11 @@ RetainPtr<NSURLRequest> copyRequestWithStorageSession(CFURLStorageSessionRef sto
 
     auto cfRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, [request _CFURLRequest]));
     _CFURLRequestSetStorageSession(cfRequest.get(), storageSession);
-    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+    auto nsRequest = adoptNS([[NSMutableURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = request.attribution;
+#endif
+    return nsRequest;
 }
 
 NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef storageSession, NSURLRequest *request)

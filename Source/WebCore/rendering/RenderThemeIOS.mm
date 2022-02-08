@@ -35,6 +35,7 @@
 #import "CSSValueKeywords.h"
 #import "ColorBlending.h"
 #import "ColorCocoa.h"
+#import "ColorTypes.h"
 #import "DateComponents.h"
 #import "Document.h"
 #import "DrawGlyphsRecorder.h"
