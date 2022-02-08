@@ -1,5 +1,38 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289123. rdar://problem/88501750
+
+    [iOS][macOS] Adjust sysctl sandbox access
+    https://bugs.webkit.org/show_bug.cgi?id=236082
+    <rdar://problem/88436174>
+    
+    Reviewed by Brent Fulgham.
+    
+    Adjust sysctl sandbox access based on telemetry.
+    
+    * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+    * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289123 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-04  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS][macOS] Adjust sysctl sandbox access
+            https://bugs.webkit.org/show_bug.cgi?id=236082
+            <rdar://problem/88436174>
+
+            Reviewed by Brent Fulgham.
+
+            Adjust sysctl sandbox access based on telemetry.
+
+            * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289081. rdar://problem/87163253
 
     Delay writing origin file in NetworkStorageManager
