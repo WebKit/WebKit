@@ -1,3 +1,13 @@
+2022-02-08  Jon Lee  <jonlee@apple.com>
+
+        Enable GPU Process for WebGL by default on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236218
+
+        Reviewed by Kimmo Kinnunen.
+
+        * platform/ios-simulator/TestExpectations: read-pixels-test.html is no longer slow.
+        * platform/ios-wk2/TestExpectations:
+
 2022-02-08  Matt Woodrow  <mattwoodrow@apple.com>
 
         Return 'none' for the computed style of mask when there are no mask images

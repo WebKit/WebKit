@@ -45,6 +45,12 @@ static constexpr bool mediaSourceEnabledValue = false;
 static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+static constexpr bool fullGPUProcessEnabledValue = true;
+#else
+static constexpr bool fullGPUProcessEnabledValue = false;
+#endif
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -128,7 +134,7 @@ const TestFeatures& TestOptions::defaults()
             { "UseGPUProcessForDOMRenderingEnabled", false },
 #endif
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
-            { "UseGPUProcessForWebGLEnabled", false },
+            { "UseGPUProcessForWebGLEnabled", fullGPUProcessEnabledValue },
 #endif
         };
         features.stringWebPreferenceFeatures = {

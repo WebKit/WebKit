@@ -105,7 +105,6 @@ webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html
 
 # A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
 webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
-webkit.org/b/189686 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Slow ]
 # Crashes
 webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Skip ]
 

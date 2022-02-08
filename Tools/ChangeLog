@@ -1,3 +1,13 @@
+2022-02-08  Jon Lee  <jonlee@apple.com>
+
+        Enable GPU Process for WebGL by default on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236218
+
+        Reviewed by Kimmo Kinnunen.
+
+        * WebKitTestRunner/TestOptions.cpp: Add new static representing whether full GPU Process is enabled.
+        (WTR::TestOptions::defaults):
+
 2022-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Test webkit/WebKitWebView/display-usermedia-permission-request times out
