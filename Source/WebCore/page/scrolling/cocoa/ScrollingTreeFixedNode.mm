@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "ScrollingStateFixedNode.h"
+#import "ScrollingThread.h"
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollProxyNode.h"
@@ -125,6 +126,14 @@ void ScrollingTreeFixedNode::applyLayerPositions()
     auto layerPosition = computeLayerPosition();
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+
+#if ENABLE(SCROLLING_THREAD)
+    if (ScrollingThread::isCurrentThread()) {
+        // Match the behavior of ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers().
+        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+            [m_layer _web_setLayerTopLeftPosition:CGPointZero];
+    }
+#endif
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 }

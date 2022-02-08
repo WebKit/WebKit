@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingConstraints.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeStickyNode.h"
 #include <wtf/RetainPtr.h>
 
@@ -46,9 +47,9 @@ public:
 private:
     ScrollingTreeStickyNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void applyLayerPositions() override;
-    FloatPoint layerTopLeft() const override;
+    void commitStateBeforeChildren(const ScrollingStateNode&) final;
+    void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
+    FloatPoint layerTopLeft() const final;
 
     RetainPtr<CALayer> m_layer;
 };
