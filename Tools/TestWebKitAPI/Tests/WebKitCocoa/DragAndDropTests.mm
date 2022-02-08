@@ -311,6 +311,15 @@ TEST(DragAndDropTests, DataTransferTypesOnDragStartForLink)
     EXPECT_FALSE(result.containsFile);
 }
 
+TEST(DragAndDropTests, DoNotCrashWhenRemovingNodeOnDrop)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"remove-node-on-drop"];
+    [simulator runFrom:CGPointMake(150, 50) to:CGPointMake(150, 150)];
+    EXPECT_TRUE([[webView contentsAsString] containsString:@"Drag me"]);
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 
 TEST(DragAndDropTests, ColorInputToColorInput)

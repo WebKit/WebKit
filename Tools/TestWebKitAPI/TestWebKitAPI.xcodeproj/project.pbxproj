@@ -1034,6 +1034,7 @@
 		F43E3BC120DADBC500A4E7ED /* fixed-nav-bar.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F43E3BC020DADB8000A4E7ED /* fixed-nav-bar.html */; };
 		F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = F442851C2140DF2900CCDA22 /* NSFontPanelTesting.mm */; };
 		F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */; };
+		F4476F4B279082F900931786 /* remove-node-on-drop.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4476F4A279082EB00931786 /* remove-node-on-drop.html */; };
 		F44A531121B8990300DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */; };
 		F44A9AF72649BBDD00E7CB16 /* ImmediateActionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A9AF62649BBDD00E7CB16 /* ImmediateActionTests.mm */; };
 		F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */; };
@@ -1523,6 +1524,7 @@
 				F41AB9A81EF4696B0083FA08 /* prevent-operation.html in Copy Resources */,
 				F41AB9A91EF4696B0083FA08 /* prevent-start.html in Copy Resources */,
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
+				F4476F4B279082F900931786 /* remove-node-on-drop.html in Copy Resources */,
 				A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */,
 				498D030A26376B34009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db in Copy Resources */,
 				F46849C01EEF5EF300B937FE /* rich-and-plain-text.html in Copy Resources */,
@@ -2987,6 +2989,7 @@
 		F442851B2140DF2900CCDA22 /* NSFontPanelTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFontPanelTesting.h; sourceTree = "<group>"; };
 		F442851C2140DF2900CCDA22 /* NSFontPanelTesting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSFontPanelTesting.mm; sourceTree = "<group>"; };
 		F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-paragraph-contenteditable.html"; sourceTree = "<group>"; };
+		F4476F4A279082EB00931786 /* remove-node-on-drop.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "remove-node-on-drop.html"; sourceTree = "<group>"; };
 		F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = ../TestRunnerShared/cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A530E21B8976900DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClassMethodSwizzler.mm; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F44A530F21B8976900DBB99C /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClassMethodSwizzler.h; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.h; sourceTree = "<group>"; };
@@ -4693,6 +4696,7 @@
 				83148B08202AC76800BADE99 /* override-builtins-test.html */,
 				0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
+				F4476F4A279082EB00931786 /* remove-node-on-drop.html */,
 				0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */,
 				7A66BDB71EAF150100CCC924 /* set-long-title.html */,
 				CEBABD481B71687C0051210A /* should-open-external-schemes.html */,

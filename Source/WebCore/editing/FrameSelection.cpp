@@ -536,7 +536,17 @@ void DragCaretController::nodeWillBeRemoved(Node& node)
     if (RenderView* view = node.document().renderView())
         view->selection().clear();
 
-    clear();
+    // It's important to avoid updating style or layout here, since we're in the middle of removing the node from the document.
+    clearCaretPositionWithoutUpdatingStyle();
+}
+
+void DragCaretController::clearCaretPositionWithoutUpdatingStyle()
+{
+    if (RefPtr node = m_position.deepEquivalent().anchorNode())
+        invalidateCaretRect(node.get(), true);
+
+    m_position = { };
+    clearCaretRect();
 }
 
 void FrameSelection::nodeWillBeRemoved(Node& node)

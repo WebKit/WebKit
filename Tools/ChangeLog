@@ -1,3 +1,78 @@
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287992. rdar://problem/74845918
+
+    Crash in Document::updateStyleIfNeeded() when removing a node containing the drag caret
+    https://bugs.webkit.org/show_bug.cgi?id=235184
+    rdar://74845918
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    While performing drag and drop over editable content, DragCaretController handles updating and painting a drag
+    caret, which indicates where the dragged content will be inserted upon drop. If the node containing this drag
+    caret is disconnected, `DragCaretController::nodeWillBeRemoved()` resets the drag caret position and issues a
+    repaint on the renderer responsible for drawing the drag caret. This call to `nodeWillBeRemoved()` occurs in the
+    middle of node removal, so it's encapsulated by a `ScriptDisallowedScope::InMainThread` scope which causes a
+    release assertion in WebKit2 if anything tries to trigger layout or style updates.
+    
+    Currently, if the node being removed would cause the caret position to be removed as well, DragCaretController
+    calls into `setCaretPosition()` with a null visible position, which then calls into `invalidateCaretRect` with
+    the current caret position's anchor node. In turn, `invalidateCaretRect` contains logic to issue a repaint on
+    the anchor node's renderer if the node is editable. However, to check whether the node is editable, we use the
+    helper function `WebCore::isEditableNode()`, which triggers a style update if needed, only in the case where:
+    
+    1. A style recalc is needed, and...
+    2. The document contains an element with the `-webkit-user-modify` CSS property.
+    
+    As such, dirtying element styles right before removing the drag caret's anchor node from the document while
+    dispatching a `drag` or `drop` event in an editor with `-webkit-user-modify: read-write;` is sufficient to
+    trigger the release assertion and cause a crash.
+    
+    To address this, instead of calling `clear()` inside of `DragCaretController::nodeWillBeRemoved()`, we can
+    instead directly invalidate the caret rect using the current drag caret anchor (passing in `true` for
+    `caretRectChanged()` since we already know that the drag caret is being cleared out), and then reset the current
+    drag caret position and caret rect. This allows us to avoid the `isEditableNode()` check in this scenario when
+    deciding whether to trigger paint invalidation, which is unnecessary because we already know that the node
+    containing the caret is being removed, so the renderer is going to be repainted anyways. We also pull this logic
+    out into a separate helper method, `clearCaretPositionWithoutUpdatingStyle()`, to make it clear that we must
+    avoid triggering style recalc here.
+    
+    Test: DragAndDropTests.DoNotCrashWhenRemovingNodeOnDrop
+    
+    * editing/FrameSelection.cpp:
+    (WebCore::DragCaretController::nodeWillBeRemoved):
+    (WebCore::DragCaretController::clearCaretPositionWithoutUpdatingStyle):
+    * editing/FrameSelection.h:
+    
+    Tools:
+    
+    Add a test to exercise the crash using drag and drop in WebKit2, on both iOS and macOS.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/remove-node-on-drop.html: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287992 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Crash in Document::updateStyleIfNeeded() when removing a node containing the drag caret
+            https://bugs.webkit.org/show_bug.cgi?id=235184
+            rdar://74845918
+
+            Reviewed by Darin Adler.
+
+            Add a test to exercise the crash using drag and drop in WebKit2, on both iOS and macOS.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/remove-node-on-drop.html: Added.
+            * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+            (TEST):
+
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r288039. rdar://problem/79220540
