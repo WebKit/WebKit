@@ -1,3 +1,15 @@
+2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Developer extras are always enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=236295
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (View::View): Remove call to unconditionally set the developer extras setting.
+
 2022-02-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Adding new files fails to compile after SharedWorkerObjectConnection.h changes
