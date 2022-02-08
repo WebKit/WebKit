@@ -97,7 +97,7 @@ public:
     bool selfClosing() const;
     const AttributeList& attributes() const;
 
-    void beginStartTag(UChar);
+    void beginStartTag(LChar);
 
     void beginEndTag(LChar);
     void beginEndTag(const Vector<LChar, 32>&);
@@ -254,7 +254,7 @@ inline void HTMLToken::setSelfClosing()
     m_selfClosing = true;
 }
 
-inline void HTMLToken::beginStartTag(UChar character)
+inline void HTMLToken::beginStartTag(LChar character)
 {
     ASSERT(character);
     ASSERT(m_type == Uninitialized);
@@ -267,7 +267,6 @@ inline void HTMLToken::beginStartTag(UChar character)
 #endif
 
     m_data.append(character);
-    m_data8BitCheck = character;
 }
 
 inline void HTMLToken::beginEndTag(LChar character)
