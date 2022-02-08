@@ -105,7 +105,10 @@ protected:
 protected:
     void setIsProducingMicrophoneSamples(bool);
     bool isProducingMicrophoneSamples() const { return m_isProducingMicrophoneSamples; }
+    void setOutputDeviceID(uint32_t deviceID) { m_outputDeviceID = deviceID; }
+
     virtual void isProducingMicrophoneSamplesChanged() { }
+    virtual void validateOutputDevice(uint32_t /* currentOutputDeviceID */) { }
 
 private:
     OSStatus startUnit();
@@ -119,6 +122,7 @@ private:
 
     int32_t m_producingCount { 0 };
 
+    uint32_t m_outputDeviceID { 0 };
     std::optional<std::pair<String, uint32_t>> m_capturingDevice;
 
     HashSet<CoreAudioCaptureSource*> m_clients;
