@@ -921,25 +921,24 @@ class Git(Scm):
 
     def pull(self, rebase=None, branch=None, remote='origin'):
         commit = self.commit() if self.is_svn or branch else None
-        code = run(
-            [self.executable(), 'pull'] + (
-                [remote, branch] if branch else []
-            ) + (
-                [] if rebase is None else ['--rebase={}'.format('True' if rebase else 'False')]
-            ), cwd=self.root_path,
-        ).returncode
+
+        code = 0
+        if branch and self.branch != branch:
+            code = self.fetch(branch=branch, remote=remote)
+        if not code:
+            command = [self.executable(), 'pull'] + ([remote, branch] if branch else []) + ['--autostash']
+            if rebase is not None:
+                command += ['--rebase={}'.format('True' if rebase else 'False')]
+            code = run(command, cwd=self.root_path).returncode
         if self.cache and rebase and branch != self.branch:
             self.cache.clear(self.branch)
-
-        if not code and branch:
-            code = self.fetch(branch=branch, remote=remote)
 
         if not code and branch and rebase:
             result = run([self.executable(), 'rev-parse', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
             if not result.returncode and result.stdout.rstrip() != commit.hash:
                 code = run([
                     self.executable(),
-                    'filter-branch', '-f',
+                    'filter-branch', '-f', '--autostash',
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                         date='{} -{}'.format(int(time.time()), self.gmtoffset())
                     ), 'HEAD...{}'.format('{}/{}'.format(remote, branch)),

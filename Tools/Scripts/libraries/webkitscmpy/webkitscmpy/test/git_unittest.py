@@ -493,6 +493,16 @@ CommitDate: {time_b}
                 list(repo.diff_lines(base='3@main', head='4@main'))
             )
 
+    def test_pull(self):
+        with mocks.local.Git(self.path) as mocked, OutputCapture():
+            mocked.staged['added.txt'] = 'added'
+            self.assertEqual(local.Git(self.path).pull(), 0)
+
+    def test_pull_no_stash(self):
+        with mocks.local.Git(self.path) as mocked, OutputCapture():
+            mocked.staged['added.txt'] = 'added'
+            self.assertEqual(run([local.Git.executable(), 'pull'], cwd=self.path).returncode, 128)
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
