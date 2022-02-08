@@ -357,8 +357,12 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
 
         [contentInfo setContentLength:contentRange.isValid() ? contentRange.instanceLength() : response.expectedContentLength()];
         [contentInfo setByteRangeAccessSupported:YES];
-        
-        if ([contentInfo respondsToSelector:@selector(setEntireLengthAvailableOnDemand:)])
+
+        // Do not set "EntireLengthAvailableOnDemand" to YES when the loader is DataURLResourceMediaLoader.
+        // When the property is YES, AVAssetResourceLoader will request small data ranges over and over again
+        // during the playback. For DataURLResourceMediaLoader, that means it needs to decode the URL repeatedly,
+        // which is very inefficient for long URLs.
+        if (!m_dataURLMediaLoader && [contentInfo respondsToSelector:@selector(setEntireLengthAvailableOnDemand:)])
             [contentInfo setEntireLengthAvailableOnDemand:YES];
 
         if (![m_avRequest dataRequest]) {
