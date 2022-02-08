@@ -25,22 +25,38 @@
 
 #pragma once
 
+#include "SharedWorkerObjectIdentifier.h"
 #include "TransferredMessagePort.h"
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SharedWorker;
+class MessagePort;
+class SharedWorkerScriptLoader;
+
+struct SharedWorkerKey;
+struct WorkerFetchResult;
 struct WorkerOptions;
 
 class SharedWorkerObjectConnection : public RefCounted<SharedWorkerObjectConnection> {
 public:
     WEBCORE_EXPORT virtual ~SharedWorkerObjectConnection();
 
-    virtual void requestSharedWorker(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&) = 0;
+    virtual void requestSharedWorker(const SharedWorkerKey&, SharedWorkerObjectIdentifier, TransferredMessagePort&&, const WorkerOptions&) = 0;
+    virtual void sharedWorkerObjectIsGoingAway(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
 
 protected:
+    // IPC messages.
+    WEBCORE_EXPORT void fetchScriptInClient(URL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&)>&&);
+    WEBCORE_EXPORT void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const ResourceError&);
+    WEBCORE_EXPORT void postExceptionToWorkerObject(SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
+
     WEBCORE_EXPORT SharedWorkerObjectConnection();
+
+private:
+    HashMap<uint64_t, UniqueRef<SharedWorkerScriptLoader>> m_loaders;
 };
 
 } // namespace WebCore

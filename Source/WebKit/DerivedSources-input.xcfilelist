@@ -91,6 +91,8 @@ $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.i
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
+$(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.messages.in
+$(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/WebStorage/StorageManagerSet.messages.in
 $(PROJECT_DIR)/NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
@@ -217,6 +219,8 @@ $(PROJECT_DIR)/WebProcess/Plugins/PluginProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
+$(PROJECT_DIR)/WebProcess/Storage/WebSharedWorkerContextManagerConnection.messages.in
+$(PROJECT_DIR)/WebProcess/Storage/WebSharedWorkerObjectConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in

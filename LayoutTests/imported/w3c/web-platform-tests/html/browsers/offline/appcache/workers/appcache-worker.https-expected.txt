@@ -5,7 +5,7 @@ Harness Error (TIMEOUT), message = null
 PASS Dedicated worker of the cached script
 PASS Dedicated worker of the fallbacked script
 PASS Dedicated worker of the not-in-cache script
-PASS Shared worker of the cached script
-PASS Shared worker of the fallbacked script
+FAIL Shared worker of the cached script assert_equals: expected "Done: cached" but got "Error: Importing a non-cached script must fail."
+FAIL Shared worker of the fallbacked script assert_equals: expected "Done: fallbacked" but got "Error: Importing a non-cached script must fail."
 TIMEOUT Shared worker of the not-in-cache script Test timed out
 

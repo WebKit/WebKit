@@ -28,7 +28,7 @@
     Exposed=Window
 ]
 interface SharedWorker : EventTarget {
-  [CallWith=CurrentDocument&RuntimeFlags] constructor(USVString scriptURL, optional (DOMString or WorkerOptions) options);
+  [CallWith=CurrentDocument] constructor(USVString scriptURL, optional (DOMString or WorkerOptions) options);
 
   readonly attribute MessagePort port;
 };

@@ -26,23 +26,45 @@
 #include "config.h"
 #include "WebSharedWorkerObjectConnection.h"
 
+#include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
-#include <WebCore/SharedWorkerManager.h>
+#include "WebSharedWorkerServerConnectionMessages.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SharedWorkerKey.h>
+#include <WebCore/WorkerOptions.h>
 
 namespace WebKit {
 
-WebSharedWorkerObjectConnection::WebSharedWorkerObjectConnection() = default;
+#define CONNECTION_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [webProcessIdentifier=%" PRIu64 "] WebSharedWorkerObjectConnection::" fmt, this, WebCore::Process::identifier().toUInt64(), ##__VA_ARGS__)
+
+WebSharedWorkerObjectConnection::WebSharedWorkerObjectConnection()
+{
+    CONNECTION_RELEASE_LOG("WebSharedWorkerObjectConnection:");
+}
+
+WebSharedWorkerObjectConnection::~WebSharedWorkerObjectConnection()
+{
+    CONNECTION_RELEASE_LOG("~WebSharedWorkerObjectConnection:");
+}
 
 IPC::Connection* WebSharedWorkerObjectConnection::messageSenderConnection() const
 {
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-void WebSharedWorkerObjectConnection::requestSharedWorker(const URL& url, WebCore::SharedWorker& sharedWorker, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
+void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, const WebCore::WorkerOptions& workerOptions)
 {
-    // FIXME: Should send IPC to the network process.
-    WebCore::SharedWorkerManager::singleton().connect(url, sharedWorker, WTFMove(port), WTFMove(workerOptions));
+    CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    send(Messages::WebSharedWorkerServerConnection::RequestSharedWorker { sharedWorkerKey, sharedWorkerObjectIdentifier, WTFMove(port), workerOptions });
 }
+
+void WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    send(Messages::WebSharedWorkerServerConnection::SharedWorkerObjectIsGoingAway { sharedWorkerKey, sharedWorkerObjectIdentifier });
+}
+
+#undef CONNECTION_RELEASE_LOG
 
 } // namespace WebKit

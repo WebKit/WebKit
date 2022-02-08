@@ -529,7 +529,7 @@ void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProc
 void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 {
     if (RefPtr process = WebProcessProxy::processForIdentifier(processIdentifier)) {
-        process->disableServiceWorkers();
+        process->disableWorkers(WebProcessProxy::WorkerType::ServiceWorker);
         process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
     }
 }
@@ -1415,16 +1415,21 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 }
 #endif
 
+void NetworkProcessProxy::establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), sessionID, WTFMove(completionHandler));
+}
+
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(*this, WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
+    WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::serviceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
 {
     if (auto* process = WebProcessProxy::processForIdentifier(identifier))
-        process->disableServiceWorkers();
+        process->disableWorkers(WebProcessProxy::WorkerType::ServiceWorker);
 }
 
 void NetworkProcessProxy::registerServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
@@ -1459,6 +1464,12 @@ void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessI
         serviceWorkerProcess->endServiceWorkerBackgroundProcessing();
 }
 #endif
+
+void NetworkProcessProxy::sharedWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+{
+    if (auto* process = WebProcessProxy::processForIdentifier(identifier))
+        process->disableWorkers(WebProcessProxy::WorkerType::SharedWorker);
+}
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)
 {

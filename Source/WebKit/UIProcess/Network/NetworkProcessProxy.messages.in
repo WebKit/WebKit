@@ -60,6 +60,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     EndServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 #endif
+    EstablishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
+    SharedWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
 
     SetWebProcessHasUploads(WebCore::ProcessIdentifier processID, bool hasUpload)
 

@@ -374,16 +374,19 @@ public:
     void networkProcessDidTerminate(NetworkProcessProxy&, NetworkProcessProxy::TerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
+    void removeFromWorkerProcesses(WebProcessProxy&);
+
 #if ENABLE(SERVICE_WORKER)
-    static void establishServiceWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
-    void removeFromServiceWorkerProcesses(WebProcessProxy&);
-    size_t serviceWorkerProxiesCount() const { return serviceWorkerProcesses().computeSize(); }
-    void updateServiceWorkerUserAgent(const String& userAgent);
-    UserContentControllerIdentifier userContentControllerIdentifierForServiceWorkers();
+    static void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    size_t serviceWorkerProxiesCount() const;
+    UserContentControllerIdentifier userContentControllerIdentifierForWorkers();
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
     void serviceWorkerProcessCrashed(WebProcessProxy&);
+
+    void updateWorkerUserAgent(const String& userAgent);
+    static void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -618,13 +621,11 @@ private:
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
-#if ENABLE(SERVICE_WORKER)
-    static WeakHashSet<WebProcessProxy>& serviceWorkerProcesses();
-    bool m_waitingForWorkerContextProcessConnection { false };
-    String m_serviceWorkerUserAgent;
-    std::optional<WebPreferencesStore> m_serviceWorkerPreferences;
-    RefPtr<WebUserContentControllerProxy> m_userContentControllerForServiceWorker;
-#endif
+    static WeakHashSet<WebProcessProxy>& workerProcesses();
+
+    std::optional<WebPreferencesStore> m_workerPreferences;
+    RefPtr<WebUserContentControllerProxy> m_userContentControllerForWorkers;
+    String m_workerUserAgent;
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessProxy> m_gpuProcess;

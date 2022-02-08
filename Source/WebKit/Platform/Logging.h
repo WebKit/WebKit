@@ -97,6 +97,7 @@ extern "C" {
     M(ServiceWorker) \
     M(SessionState) \
     M(SharedDisplayLists) \
+    M(SharedWorker) \
     M(Storage) \
     M(StorageAPI) \
     M(TextInput) \

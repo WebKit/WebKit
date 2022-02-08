@@ -20,7 +20,7 @@ PASS dedicated worker: scheme = blob, value = *
 PASS dedicated worker: scheme = blob, value = self
 FAIL dedicated worker: scheme = blob, value = (\) assert_equals: expected false but got true
 PASS shared worker: withCoopCoep = false
-PASS shared worker: withCoopCoep = true
+FAIL shared worker: withCoopCoep = true assert_equals: expected true but got false
 PASS service worker: withCoopCoep = false
 FAIL service worker: withCoopCoep = true assert_equals: expected true but got false
 

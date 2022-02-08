@@ -59,6 +59,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
+#include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
@@ -182,11 +183,11 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 }
 
 #if ENABLE(SERVICE_WORKER)
-Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
+Ref<WebProcessProxy> WebProcessProxy::createForWorkers(WorkerType workerType, WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore)
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, CaptivePortalMode::Disabled));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
-    proxy->enableServiceWorkers(processPool.userContentControllerIdentifierForServiceWorkers());
+    proxy->enableWorkers(workerType, processPool.userContentControllerIdentifierForWorkers());
     proxy->connect();
     return proxy;
 }
@@ -995,10 +996,10 @@ void WebProcessProxy::didBecomeUnresponsive()
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
 
-    // If the web process becomes unresponsive and only runs service workers, kill it ourselves since there are no native clients to do it.
-    if (isRunningServiceWorkers() && m_pageMap.isEmpty()) {
-        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didBecomeUnresponsive: Terminating service worker-only web process because it is unresponsive");
-        disableServiceWorkers();
+    // If the web process becomes unresponsive and only runs service/shared workers, kill it ourselves since there are no native clients to do it.
+    if (isRunningWorkers() && m_pageMap.isEmpty()) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didBecomeUnresponsive: Terminating worker-only web process because it is unresponsive");
+        disableWorkers({ WorkerType::ServiceWorker, WorkerType::SharedWorker });
         terminate();
     }
 }
@@ -1694,8 +1695,9 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     auto registrableDomain = WebCore::RegistrableDomain { url };
     if (m_registrableDomain && *m_registrableDomain != registrableDomain) {
 #if ENABLE(SERVICE_WORKER)
-        disableServiceWorkers();
+        disableWorkers(WorkerType::ServiceWorker);
 #endif
+
         // Null out registrable domain since this process has now been used for several domains.
         m_registrableDomain = WebCore::RegistrableDomain { };
         return;
@@ -1872,53 +1874,84 @@ void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& s
         completionHandler();
     }, 0);
 }
+#endif
 
-void WebProcessProxy::setServiceWorkerUserAgent(const String& userAgent)
+void WebProcessProxy::setWorkerUserAgent(const String& userAgent)
 {
-    ASSERT(m_serviceWorkerInformation);
-    send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
+#if ENABLE(SERVICE_WORKER)
+    if (m_serviceWorkerInformation)
+        send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
+#endif
+    if (m_sharedWorkerInformation)
+        send(Messages::WebSharedWorkerContextManagerConnection::SetUserAgent { userAgent }, 0);
 }
 
-void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesStore& store)
+void WebProcessProxy::updateWorkerPreferencesStore(const WebPreferencesStore& store)
 {
-    ASSERT(m_serviceWorkerInformation);
-    send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+#if ENABLE(SERVICE_WORKER)
+    if (m_serviceWorkerInformation)
+        send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+#endif
+    if (m_sharedWorkerInformation)
+        send(Messages::WebSharedWorkerContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
 
-void WebProcessProxy::updateServiceWorkerProcessAssertion()
+void WebProcessProxy::updateWorkerProcessAssertion(WorkerType workerType)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateServiceWorkerProcessAssertion:");
-    ASSERT(m_serviceWorkerInformation);
-    if (!m_serviceWorkerInformation)
+    auto& workerInformation = workerType == WorkerType::SharedWorker ? m_sharedWorkerInformation : m_serviceWorkerInformation;
+    ASSERT(workerInformation);
+    if (!workerInformation)
         return;
 
-    bool shouldTakeForegroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [&](auto& process) {
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateWorkerProcessAssertion: workerType=%{public}s", workerType == WorkerType::SharedWorker ? "shared" : "service");
+
+    // FIXME: Clients do not properly get populated in m_sharedWorkerInformation so we currently take an assertion no matter what.
+    if (workerType == WorkerType::SharedWorker) {
+        if (!ProcessThrottler::isValidForegroundActivity(workerInformation->activity))
+            workerInformation->activity = m_throttler.foregroundActivity("Worker for foreground view(s)"_s);
+        return;
+    }
+
+    bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_foregroundToken;
     });
     if (shouldTakeForegroundActivity) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity))
-            m_serviceWorkerInformation->activity = m_throttler.foregroundActivity("Service Worker for foreground view(s)"_s);
+        if (!ProcessThrottler::isValidForegroundActivity(workerInformation->activity))
+            workerInformation->activity = m_throttler.foregroundActivity("Worker for foreground view(s)"_s);
         return;
     }
 
-    bool shouldTakeBackgroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [&](auto& process) {
+    bool shouldTakeBackgroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_backgroundToken;
     });
     if (shouldTakeBackgroundActivity) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))
-            m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background view(s)"_s);
+        if (!ProcessThrottler::isValidBackgroundActivity(workerInformation->activity))
+            workerInformation->activity = m_throttler.backgroundActivity("Worker for background view(s)"_s);
         return;
     }
 
-    if (m_hasServiceWorkerBackgroundProcessing) {
+    if (workerType == WorkerType::ServiceWorker && m_hasServiceWorkerBackgroundProcessing) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "Service Worker for background processing");
-        if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))
-            m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background processing"_s);
+        if (!ProcessThrottler::isValidBackgroundActivity(workerInformation->activity))
+            workerInformation->activity = m_throttler.backgroundActivity("Service Worker for background processing"_s);
         return;
     }
 
-    m_serviceWorkerInformation->activity = nullptr;
+    workerInformation->activity = nullptr;
 }
+
+void WebProcessProxy::establishSharedWorkerContext(const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, CompletionHandler<void()>&& completionHandler)
+{
+    WEBPROCESSPROXY_RELEASE_LOG(SharedWorker, "establishSharedWorkerContext: Started");
+    markProcessAsRecentlyUsed();
+    sendWithAsyncReply(Messages::WebProcess::EstablishSharedWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_sharedWorkerInformation->remoteWorkerPageProxyID, m_sharedWorkerInformation->remoteWorkerPageID, store, registrableDomain, m_sharedWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (weakThis)
+            WEBPROCESSPROXY_RELEASE_LOG(SharedWorker, "establishSharedWorkerContext: Finished");
+        completionHandler();
+    }, 0);
+}
+
+#if ENABLE(SERVICE_WORKER)
 
 void WebProcessProxy::registerServiceWorkerClientProcess(WebProcessProxy& proxy)
 {
@@ -1927,7 +1960,7 @@ void WebProcessProxy::registerServiceWorkerClientProcess(WebProcessProxy& proxy)
 
     WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "registerServiceWorkerClientProcess: clientProcess=%p, clientPID=%d", &proxy, proxy.processIdentifier());
     m_serviceWorkerInformation->clientProcesses.add(proxy);
-    updateServiceWorkerProcessAssertion();
+    updateWorkerProcessAssertion(WorkerType::ServiceWorker);
 }
 
 void WebProcessProxy::unregisterServiceWorkerClientProcess(WebProcessProxy& proxy)
@@ -1937,7 +1970,7 @@ void WebProcessProxy::unregisterServiceWorkerClientProcess(WebProcessProxy& prox
 
     WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "unregisterServiceWorkerClientProcess: clientProcess=%p, clientPID=%d", &proxy, proxy.processIdentifier());
     m_serviceWorkerInformation->clientProcesses.remove(proxy);
-    updateServiceWorkerProcessAssertion();
+    updateWorkerProcessAssertion(WorkerType::ServiceWorker);
 }
 
 bool WebProcessProxy::hasServiceWorkerForegroundActivityForTesting() const
@@ -1957,7 +1990,7 @@ void WebProcessProxy::startServiceWorkerBackgroundProcessing()
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "startServiceWorkerBackgroundProcessing");
     m_hasServiceWorkerBackgroundProcessing = true;
-    updateServiceWorkerProcessAssertion();
+    updateWorkerProcessAssertion(WorkerType::ServiceWorker);
 }
 
 void WebProcessProxy::endServiceWorkerBackgroundProcessing()
@@ -1967,23 +2000,39 @@ void WebProcessProxy::endServiceWorkerBackgroundProcessing()
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "endServiceWorkerBackgroundProcessing");
     m_hasServiceWorkerBackgroundProcessing = false;
-    updateServiceWorkerProcessAssertion();
+    updateWorkerProcessAssertion(WorkerType::ServiceWorker);
 }
 #endif // ENABLE(SERVICE_WORKER)
 
-void WebProcessProxy::disableServiceWorkers()
+void WebProcessProxy::disableWorkers(OptionSet<WorkerType> workerType)
 {
-    if (!m_serviceWorkerInformation)
+    ASSERT(!workerType.isEmpty());
+
+    bool didChange = false;
+    if (workerType.contains(WorkerType::ServiceWorker) && m_serviceWorkerInformation) {
+        m_serviceWorkerInformation = { };
+        didChange = true;
+    }
+    if (workerType.contains(WorkerType::SharedWorker) && m_sharedWorkerInformation) {
+        m_sharedWorkerInformation = { };
+        didChange = true;
+    }
+    if (!didChange)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "disableServiceWorkers:");
-    m_serviceWorkerInformation = { };
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (SharedWorkers=%d, ServiceWorkers=%d)", workerType.contains(WorkerType::SharedWorker), workerType.contains(WorkerType::ServiceWorker));
+
     updateBackgroundResponsivenessTimer();
 
+    if (!isRunningWorkers())
+        processPool().removeFromWorkerProcesses(*this);
+
 #if ENABLE(SERVICE_WORKER)
-    processPool().removeFromServiceWorkerProcesses(*this);
-    send(Messages::WebSWContextManagerConnection::Close { }, 0);
+    if (workerType.contains(WorkerType::ServiceWorker))
+        send(Messages::WebSWContextManagerConnection::Close { }, 0);
 #endif
+    if (workerType.contains(WorkerType::SharedWorker))
+        send(Messages::WebSharedWorkerContextManagerConnection::Close { }, 0);
 
     maybeShutDown();
 }
@@ -2004,11 +2053,13 @@ static Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListsFr
 }
 #endif
 
-void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier& userContentControllerIdentifier)
+void WebProcessProxy::enableWorkers(WorkerType workerType, const UserContentControllerIdentifier& userContentControllerIdentifier)
 {
-    ASSERT(!m_serviceWorkerInformation);
-    WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "enableServiceWorkers:");
-    m_serviceWorkerInformation = RemoteWorkerInformation {
+    WEBPROCESSPROXY_RELEASE_LOG(ServiceWorker, "enableWorkers: workerType=%u", static_cast<unsigned>(workerType));
+    auto& workerInformation = workerType == WorkerType::SharedWorker ? m_sharedWorkerInformation : m_serviceWorkerInformation;
+    ASSERT(!workerInformation);
+
+    workerInformation = RemoteWorkerInformation {
         WebPageProxyIdentifier::generate(),
         PageIdentifier::generate(),
         RemoteWorkerInitializationData {
@@ -2021,9 +2072,8 @@ void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier
         { }
     };
     updateBackgroundResponsivenessTimer();
-#if ENABLE(SERVICE_WORKER)
-    updateServiceWorkerProcessAssertion();
-#endif
+
+    updateWorkerProcessAssertion(workerType);
 }
 
 void WebProcessProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)

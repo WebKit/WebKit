@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebSharedWorker.h"
 
-#include "MessagePortIdentifier.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class ScriptExecutionContext;
-class SharedWorker;
-class SharedWorkerScriptLoader;
-class ScriptBuffer;
-struct WorkerOptions;
-using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
+static HashMap<WebCore::SharedWorkerIdentifier, WebSharedWorker*>& allWorkers()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, WebSharedWorker*>> allWorkers;
+    return allWorkers;
+}
 
-using SharedWorkerScriptLoaderIdentifier = ObjectIdentifier<SharedWorkerScriptLoader>;
+WebSharedWorker::WebSharedWorker(const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
+    : m_identifier(WebCore::SharedWorkerIdentifier::generate())
+    , m_key(key)
+    , m_workerOptions(workerOptions)
+{
+    ASSERT(!allWorkers().contains(m_identifier));
+    allWorkers().add(m_identifier, this);
+}
 
-class SharedWorkerManager {
-public:
-    WEBCORE_EXPORT static SharedWorkerManager& singleton();
-    WEBCORE_EXPORT void connect(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&);
+WebSharedWorker::~WebSharedWorker()
+{
+    ASSERT(allWorkers().get(m_identifier) == this);
+    allWorkers().remove(m_identifier);
+}
 
-    void scriptLoadFailed(SharedWorkerScriptLoader&);
-    void scriptLoadedSuccessfully(SharedWorkerScriptLoader&, const ScriptBuffer&, ScriptExecutionContext&, SharedWorker&, TransferredMessagePort&&);
+WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier identifier)
+{
+    return allWorkers().get(identifier);
+}
 
-private:
-    HashMap<SharedWorkerScriptLoaderIdentifier, UniqueRef<SharedWorkerScriptLoader>> m_loaders;
-};
+WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
+{
+    return WebCore::RegistrableDomain { url() };
+}
 
-} // namespace WebCore
+} // namespace WebKit

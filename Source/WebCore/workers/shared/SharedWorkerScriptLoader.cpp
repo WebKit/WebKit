@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,23 +29,26 @@
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
 #include "SharedWorker.h"
-#include "SharedWorkerManager.h"
+#include "WorkerFetchResult.h"
 #include "WorkerRunLoop.h"
 #include "WorkerScriptLoader.h"
 
 namespace WebCore {
 
-SharedWorkerScriptLoader::SharedWorkerScriptLoader(const URL& url, SharedWorker& worker, TransferredMessagePort&& port, WorkerOptions&& options)
-    : m_identifier(SharedWorkerScriptLoaderIdentifier::generate())
-    , m_options(WTFMove(options))
+SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& worker, WorkerOptions&& options)
+    : m_options(WTFMove(options))
     , m_worker(worker)
-    , m_port(WTFMove(port))
     , m_loader(WorkerScriptLoader::create())
-    , m_pendingActivity(worker.makePendingActivity(worker))
-    , m_url(url)
+    , m_url(WTFMove(url))
 {
-    m_worker->setIsLoading(true);
-    m_loader->loadAsynchronously(*worker.scriptExecutionContext(), ResourceRequest(url), worker.workerFetchOptions(options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
+}
+
+void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&)>&& completionHandler)
+{
+    ASSERT(!m_completionHandler);
+    m_completionHandler = WTFMove(completionHandler);
+
+    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse&)
@@ -55,16 +58,12 @@ void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier ident
 
 void SharedWorkerScriptLoader::notifyFinished()
 {
-    m_worker->setIsLoading(false);
+    if (m_loader->failed())
+        return m_completionHandler(workerFetchError(m_loader->error()));
 
-    auto* scriptExecutionContext = m_worker->scriptExecutionContext();
-    if (m_loader->failed() || !scriptExecutionContext) {
-        m_worker->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
-        SharedWorkerManager::singleton().scriptLoadFailed(*this); // deletes this.
-    } else {
+    if (auto* scriptExecutionContext = m_worker->scriptExecutionContext())
         InspectorInstrumentation::scriptImported(*scriptExecutionContext, m_loader->identifier(), m_loader->script().toString());
-        SharedWorkerManager::singleton().scriptLoadedSuccessfully(*this, m_loader->script(), *m_worker->scriptExecutionContext(), m_worker.get(), std::exchange(m_port, { })); // deletes this.
-    }
+    m_completionHandler({ m_loader->script(), m_loader->certificateInfo(), m_loader->contentSecurityPolicy(), m_loader->crossOriginEmbedderPolicy(), m_loader->referrerPolicy(), { } }); // deletes this.
 }
 
 } // namespace WebCore

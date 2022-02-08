@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,94 +28,72 @@
 
 #include "CacheStorageProvider.h"
 #include "ErrorEvent.h"
+#include "EventLoop.h"
 #include "EventNames.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "LibWebRTCProvider.h"
+#include "LoaderStrategy.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "Page.h"
+#include "PlatformStrategies.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "SharedWorker.h"
+#include "SharedWorkerContextManager.h"
 #include "SharedWorkerGlobalScope.h"
 #include "SharedWorkerThread.h"
+#include "WorkerFetchResult.h"
+#include "WorkerThread.h"
+#include <JavaScriptCore/IdentifiersFactory.h>
 
 namespace WebCore {
 
-SharedWorkerThreadProxy::SharedWorkerThreadProxy(SharedWorker& sharedWorker)
-    : m_sharedWorker(sharedWorker)
-    , m_scriptExecutionContext(sharedWorker.scriptExecutionContext())
-    , m_identifierForInspector(sharedWorker.identifierForInspector())
+static HashSet<SharedWorkerThreadProxy*>& allSharedWorkerThreadProxies()
 {
+    static NeverDestroyed<HashSet<SharedWorkerThreadProxy*>> set;
+    return set;
 }
 
-void SharedWorkerThreadProxy::startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& scriptBuffer, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
+static WorkerParameters generateWorkerParameters(const URL& scriptURL, const WorkerFetchResult& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, Document& document)
 {
-    if (m_askedToTerminate)
-        return;
-
-    auto parameters = WorkerParameters {
+    return WorkerParameters {
         scriptURL,
-        name,
-        m_identifierForInspector,
+        workerOptions.name,
+        "sharedworker:" + Inspector::IdentifiersFactory::createIdentifier(),
         userAgent,
-        isOnline,
-        contentSecurityPolicyResponseHeaders,
-        shouldBypassMainWorldContentSecurityPolicy,
-        crossOriginEmbedderPolicy,
-        timeOrigin,
-        referrerPolicy,
-        workerType,
-        credentials,
-        m_scriptExecutionContext->settingsValues()
+        platformStrategies()->loaderStrategy()->isOnLine(),
+        workerFetchResult.contentSecurityPolicy,
+        false,
+        workerFetchResult.crossOriginEmbedderPolicy,
+        MonotonicTime::now(),
+        parseReferrerPolicy(workerFetchResult.referrerPolicy, ReferrerPolicySource::HTTPHeader).value_or(ReferrerPolicy::EmptyString),
+        workerOptions.type,
+        workerOptions.credentials,
+        document.settingsValues()
     };
+}
 
-    if (!m_workerThread) {
-        m_workerThread = SharedWorkerThread::create(SharedWorkerIdentifier::generate(), parameters, scriptBuffer, *this, *this, *this, WorkerThreadStartMode::Normal, m_scriptExecutionContext->topOrigin(), m_scriptExecutionContext->idbConnectionProxy(), m_scriptExecutionContext->socketProvider(), runtimeFlags);
-        m_workerThread->start();
+SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, const URL& scriptURL, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, CacheStorageProvider& cacheStorageProvider)
+    : m_page(WTFMove(page))
+    , m_document(*m_page->mainFrame().document())
+    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(scriptURL, workerFetchResult, WTFMove(workerOptions), userAgent, m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
+    , m_cacheStorageProvider(cacheStorageProvider)
+{
+    ASSERT(!allSharedWorkerThreadProxies().contains(this));
+    allSharedWorkerThreadProxies().add(this);
+
+    static bool addedListener;
+    if (!addedListener) {
+        platformStrategies()->loaderStrategy()->addOnlineStateChangeListener(&networkStateChanged);
+        addedListener = true;
     }
 }
 
-void SharedWorkerThreadProxy::terminateWorkerGlobalScope()
+SharedWorkerThreadProxy::~SharedWorkerThreadProxy()
 {
-    if (m_askedToTerminate)
-        return;
-
-    m_askedToTerminate = true;
-    if (m_workerThread)
-        m_workerThread->stop(nullptr);
-}
-
-void SharedWorkerThreadProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
-{
-    // FIXME: SharedWorker doesn't have postMessage, so this might not be necessary.
-    postTaskToWorkerGlobalScope([message = WTFMove(message)](auto& scriptContext) mutable {
-        auto& context = downcast<SharedWorkerGlobalScope>(scriptContext);
-        auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
-        context.dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
-    });
-}
-
-void SharedWorkerThreadProxy::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&& task)
-{
-    if (m_askedToTerminate)
-        return;
-    m_workerThread->runLoop().postTask(WTFMove(task));
-}
-
-bool SharedWorkerThreadProxy::hasPendingActivity() const
-{
-    return m_hasPendingActivity && !m_askedToTerminate;
-}
-
-void SharedWorkerThreadProxy::workerObjectDestroyed()
-{
-    m_sharedWorker = nullptr;
-    m_scriptExecutionContext->postTask([this] (auto&) {
-        m_mayBeDestroyed = true;
-        if (m_workerThread)
-            terminateWorkerGlobalScope();
-        else
-            workerGlobalScopeDestroyedInternal();
-    });
+    ASSERT(allSharedWorkerThreadProxies().contains(this));
+    allSharedWorkerThreadProxies().remove(this);
 }
 
 SharedWorkerIdentifier SharedWorkerThreadProxy::identifier() const
@@ -125,88 +103,54 @@ SharedWorkerIdentifier SharedWorkerThreadProxy::identifier() const
 
 void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
 {
-    if (m_askedToTerminate)
+    if (m_isTerminatingOrTerminated)
         return;
 
-    if (!m_workerThread)
-        return;
-
-    m_workerThread->runLoop().postTask([isOnline] (ScriptExecutionContext& context) {
+    postTaskForModeToWorkerOrWorkletGlobalScope([isOnline] (ScriptExecutionContext& context) {
         auto& globalScope = downcast<WorkerGlobalScope>(context);
         globalScope.setIsOnline(isOnline);
-        globalScope.dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    });
-}
-
-void SharedWorkerThreadProxy::suspendForBackForwardCache()
-{
-
-}
-
-void SharedWorkerThreadProxy::resumeForBackForwardCache()
-{
-
+        globalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [globalScope = Ref { globalScope }, isOnline] {
+            globalScope->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        });
+    }, WorkerRunLoop::defaultMode());
 }
 
 void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext&) {
-        if (!m_sharedWorker)
-            return;
+    ASSERT(!isMainThread());
+    if (!m_workerThread->isInStaticScriptEvaluation())
+        return;
 
-        // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
-        // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
-        ActiveDOMObject::queueTaskToDispatchEvent(*m_sharedWorker, TaskSource::DOMManipulation, ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { }));
-    });
-}
-
-void SharedWorkerThreadProxy::workerGlobalScopeDestroyed()
-{
-    m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
-        workerGlobalScopeDestroyedInternal();
-    });
-}
-
-void SharedWorkerThreadProxy::postMessageToWorkerObject(MessageWithMessagePorts&&)
-{
-
-}
-
-void SharedWorkerThreadProxy::confirmMessageFromWorkerObject(bool)
-{
-}
-
-void SharedWorkerThreadProxy::reportPendingActivity(bool hasPendingActivity)
-{
-    m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
-        m_hasPendingActivity = hasPendingActivity;
+    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy(), lineNumber, columnNumber, sourceURL = sourceURL.isolatedCopy()] {
+        if (auto* connection = SharedWorkerContextManager::singleton().connection())
+            connection->postExceptionToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL);
     });
 }
 
 RefPtr<CacheStorageConnection> SharedWorkerThreadProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    return document.page()->cacheStorageProvider().createCacheStorageConnection();
+    if (!m_cacheStorageConnection)
+        m_cacheStorageConnection = m_cacheStorageProvider.createCacheStorageConnection();
+    return m_cacheStorageConnection;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    if (!document.page())
-        return nullptr;
-    return document.page()->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return m_page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 void SharedWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
-    m_scriptExecutionContext->postTask(WTFMove(task));
+    callOnMainThread([task = WTFMove(task), protectedThis = Ref { *this }] () mutable {
+        task.performTask(protectedThis->m_document.get());
+    });
 }
 
 bool SharedWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
-    if (m_askedToTerminate)
+    if (m_isTerminatingOrTerminated)
         return false;
 
     m_workerThread->runLoop().postTaskForMode(WTFMove(task), mode);
@@ -223,16 +167,10 @@ void SharedWorkerThreadProxy::setResourceCachingDisabledByWebInspector(bool)
 
 }
 
-void SharedWorkerThreadProxy::workerGlobalScopeDestroyedInternal()
+void SharedWorkerThreadProxy::networkStateChanged(bool isOnLine)
 {
-    // This is always the last task to be performed, so the proxy is not needed for communication
-    // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
-    m_askedToTerminate = true;
-    m_workerThread = nullptr;
-
-    // This balances the original ref in construction.
-    if (m_mayBeDestroyed)
-        deref();
+    for (auto* proxy : allSharedWorkerThreadProxies())
+        proxy->notifyNetworkStateChange(isOnLine);
 }
 
 } // namespace WebCore

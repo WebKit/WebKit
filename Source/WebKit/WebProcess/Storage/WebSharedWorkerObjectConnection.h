@@ -25,20 +25,25 @@
 
 #pragma once
 
+#include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/SharedWorkerObjectConnection.h>
 
 namespace WebKit {
 
-class WebSharedWorkerObjectConnection final : public WebCore::SharedWorkerObjectConnection, private IPC::MessageSender {
+class WebSharedWorkerObjectConnection final : public WebCore::SharedWorkerObjectConnection, private IPC::MessageSender, public IPC::MessageReceiver {
 public:
     static Ref<WebSharedWorkerObjectConnection> create() { return adoptRef(*new WebSharedWorkerObjectConnection); }
+    ~WebSharedWorkerObjectConnection();
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
     WebSharedWorkerObjectConnection();
 
     // WebCore::SharedWorkerObjectConnection.
-    void requestSharedWorker(const URL&, WebCore::SharedWorker&, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&) final;
+    void requestSharedWorker(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, const WebCore::WorkerOptions&) final;
+    void sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier) final;
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

@@ -88,6 +88,9 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CloseSWContextConnection()
 #endif
 
+    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain domain) -> () Async
+    CloseSharedWorkerContextConnection()
+
     CreateRTCProvider() -> () Async
 #if ENABLE(WEB_RTC)
     ConnectToRTCDataChannelRemoteSource(struct WebCore::RTCDataChannelIdentifier source, struct WebCore::RTCDataChannelIdentifier handler) -> (std::optional<bool> result) Async

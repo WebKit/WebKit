@@ -1,3 +1,196 @@
+2022-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Add support for sharing Shared Workers (including across WebProcesses)
+        https://bugs.webkit.org/show_bug.cgi?id=235958
+        <rdar://problem/88330666>
+
+        Reviewed by Darin Adler.
+
+        Add support for sharing Shared Workers, including across WebProcesses. The architecture
+        is modeled after the one we use for Service Workers since they are very similar. I tried
+        sharing as much code as possible with Service Workers but some more work can probably be
+        done in this area.
+
+        With this change, shared workers should be mostly functional and spec compliant. However,
+        the feature remains disabled by default for now as there are still WPT tests failures I
+        need to investigate. Also, I need to implement a better process suspension logic on iOS
+        to replace the hack I added in this patch (to make the tests run reliably on iOS).
+
+        As with Service Workers, Shared Workers are partitioned by (Top Origin + Frame Origin)
+        for privacy reasons. This is achieved via the SharedWorkerKey object that we use as
+        HashMap key.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::m_schemeRegistry):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::establishSharedWorkerContextConnection):
+        (WebKit::NetworkConnectionToWebProcess::establishSharedWorkerServerConnection):
+        (WebKit::NetworkConnectionToWebProcess::closeSharedWorkerContextConnection):
+        (WebKit::NetworkConnectionToWebProcess::unregisterSharedWorkerConnection):
+        (WebKit::NetworkConnectionToWebProcess::sharedWorkerServerToContextConnectionIsNoLongerNeeded):
+        (WebKit::NetworkConnectionToWebProcess::sharedWorkerConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::ensureSharedWorkerServer):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::sharedWorkerServer):
+        * NetworkProcess/SharedWorker/WebSharedWorker.cpp: Copied from Source/WebKit/WebProcess/Storage/WebSharedWorkerObjectConnection.cpp.
+        (WebKit::WebSharedWorker::WebSharedWorker):
+        (WebKit::WebSharedWorker::~WebSharedWorker):
+        (WebKit::WebSharedWorker::fromIdentifier):
+        (WebKit::WebSharedWorker::registrableDomain const):
+        * NetworkProcess/SharedWorker/WebSharedWorker.h: Added.
+        (WebKit::WebSharedWorker::identifier const):
+        (WebKit::WebSharedWorker::key const):
+        (WebKit::WebSharedWorker::workerOptions const):
+        (WebKit::WebSharedWorker::origin const):
+        (WebKit::WebSharedWorker::url const):
+        (WebKit::WebSharedWorker::sharedWorkerObjects):
+        (WebKit::WebSharedWorker::isRunning const):
+        (WebKit::WebSharedWorker::markAsRunning):
+        (WebKit::WebSharedWorker::fetchResult const):
+        (WebKit::WebSharedWorker::setFetchResult):
+        (WebKit::WebSharedWorker::didFinishFetching const):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp: Added.
+        (WebKit::WebSharedWorkerServer::WebSharedWorkerServer):
+        (WebKit::WebSharedWorkerServer::sessionID):
+        (WebKit::WebSharedWorkerServer::requestSharedWorker):
+        (WebKit::WebSharedWorkerServer::didFinishFetchingSharedWorkerScript):
+        (WebKit::WebSharedWorkerServer::needsContextConnectionForRegistrableDomain const):
+        (WebKit::WebSharedWorkerServer::createContextConnection):
+        (WebKit::WebSharedWorkerServer::addContextConnection):
+        (WebKit::WebSharedWorkerServer::removeContextConnection):
+        (WebKit::WebSharedWorkerServer::contextConnectionCreated):
+        (WebKit::WebSharedWorkerServer::sharedWorkerObjectIsGoingAway):
+        (WebKit::WebSharedWorkerServer::shutDownSharedWorker):
+        (WebKit::WebSharedWorkerServer::addConnection):
+        (WebKit::WebSharedWorkerServer::removeConnection):
+        (WebKit::WebSharedWorkerServer::contextConnectionForRegistrableDomain const):
+        (WebKit::WebSharedWorkerServer::postExceptionToWorkerObject):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.h: Added.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp: Added.
+        (WebKit::WebSharedWorkerServerConnection::WebSharedWorkerServerConnection):
+        (WebKit::WebSharedWorkerServerConnection::~WebSharedWorkerServerConnection):
+        (WebKit::WebSharedWorkerServerConnection::messageSenderConnection const):
+        (WebKit::WebSharedWorkerServerConnection::sessionID):
+        (WebKit::WebSharedWorkerServerConnection::session):
+        (WebKit::WebSharedWorkerServerConnection::requestSharedWorker):
+        (WebKit::WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway):
+        (WebKit::WebSharedWorkerServerConnection::fetchScriptInClient):
+        (WebKit::WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion):
+        (WebKit::WebSharedWorkerServerConnection::postExceptionToWorkerObject):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h: Added.
+        (WebKit::WebSharedWorkerServerConnection::server):
+        (WebKit::WebSharedWorkerServerConnection::server const):
+        (WebKit::WebSharedWorkerServerConnection::webProcessIdentifier const):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.messages.in: Added.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp: Added.
+        (WebKit::WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection):
+        (WebKit::WebSharedWorkerServerToContextConnection::~WebSharedWorkerServerToContextConnection):
+        (WebKit::WebSharedWorkerServerToContextConnection::webProcessIdentifier const):
+        (WebKit::WebSharedWorkerServerToContextConnection::ipcConnection const):
+        (WebKit::WebSharedWorkerServerToContextConnection::messageSenderConnection const):
+        (WebKit::WebSharedWorkerServerToContextConnection::messageSenderDestinationID const):
+        (WebKit::WebSharedWorkerServerToContextConnection::connectionIsNoLongerNeeded):
+        (WebKit::WebSharedWorkerServerToContextConnection::postExceptionToWorkerObject):
+        (WebKit::WebSharedWorkerServerToContextConnection::launchSharedWorker):
+        (WebKit::WebSharedWorkerServerToContextConnection::postConnectEvent):
+        (WebKit::WebSharedWorkerServerToContextConnection::terminateSharedWorker):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.h: Added.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.messages.in: Added.
+        * Platform/Logging.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Sources.txt:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses):
+        (WebKit::NetworkProcessProxy::establishSharedWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::serviceWorkerContextConnectionNoLongerNeeded):
+        (WebKit::NetworkProcessProxy::sharedWorkerContextConnectionNoLongerNeeded):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setUserAgent):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::removeFromWorkerProcesses):
+        (WebKit::WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::userContentControllerIdentifierForWorkers):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::updateWorkerUserAgent):
+        (WebKit::WebProcessPool::terminateServiceWorkers):
+        (WebKit::WebProcessPool::workerProcesses):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::isServiceWorkerPageID const):
+        (WebKit::WebProcessPool::serviceWorkerProxiesCount const):
+        (WebKit::WebProcessPool::hasServiceWorkerForegroundActivityForTesting const):
+        (WebKit::WebProcessPool::hasServiceWorkerBackgroundActivityForTesting const):
+        (WebKit::WebProcessPool::removeFromServiceWorkerProcesses): Deleted.
+        (WebKit::WebProcessPool::userContentControllerIdentifierForServiceWorkers): Deleted.
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent): Deleted.
+        (WebKit::WebProcessPool::serviceWorkerProcesses): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createForWorkers):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+        (WebKit::WebProcessProxy::setWorkerUserAgent):
+        (WebKit::WebProcessProxy::updateWorkerPreferencesStore):
+        (WebKit::WebProcessProxy::updateWorkerProcessAssertion):
+        (WebKit::WebProcessProxy::establishSharedWorkerContext):
+        (WebKit::WebProcessProxy::registerServiceWorkerClientProcess):
+        (WebKit::WebProcessProxy::unregisterServiceWorkerClientProcess):
+        (WebKit::WebProcessProxy::startServiceWorkerBackgroundProcessing):
+        (WebKit::WebProcessProxy::endServiceWorkerBackgroundProcessing):
+        (WebKit::WebProcessProxy::disableWorkers):
+        (WebKit::WebProcessProxy::enableWorkers):
+        (WebKit::WebProcessProxy::createForServiceWorkers): Deleted.
+        (WebKit::WebProcessProxy::setServiceWorkerUserAgent): Deleted.
+        (WebKit::WebProcessProxy::updateServiceWorkerPreferencesStore): Deleted.
+        (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion): Deleted.
+        (WebKit::WebProcessProxy::disableServiceWorkers): Deleted.
+        (WebKit::WebProcessProxy::enableServiceWorkers): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isRunningSharedWorkers const):
+        (WebKit::WebProcessProxy::isStandaloneSharedWorkerProcess const):
+        (WebKit::WebProcessProxy::isRunningWorkers const):
+        (WebKit::WebProcessProxy::hasServiceWorkerPageProxy):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp: Added.
+        (WebKit::WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection):
+        (WebKit::m_userContentController):
+        (WebKit::WebSharedWorkerContextManagerConnection::establishConnection):
+        (WebKit::WebSharedWorkerContextManagerConnection::postExceptionToWorkerObject):
+        (WebKit::WebSharedWorkerContextManagerConnection::updatePreferencesStore):
+        (WebKit::WebSharedWorkerContextManagerConnection::launchSharedWorker):
+        (WebKit::WebSharedWorkerContextManagerConnection::close):
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.h: Added.
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.messages.in: Added.
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.cpp:
+        (WebKit::WebSharedWorkerObjectConnection::WebSharedWorkerObjectConnection):
+        (WebKit::WebSharedWorkerObjectConnection::~WebSharedWorkerObjectConnection):
+        (WebKit::WebSharedWorkerObjectConnection::requestSharedWorker):
+        (WebKit::WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway):
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.h:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::establishSharedWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2022-02-07  Megan Gardner  <megan_gardner@apple.com>
 
         Update hover state based on pointer type.

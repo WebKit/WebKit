@@ -3694,11 +3694,9 @@ void WebPageProxy::setUserAgent(String&& userAgent)
         return;
     m_userAgent = WTFMove(userAgent);
 
-#if ENABLE(SERVICE_WORKER)
     // We update the service worker there at the moment to be sure we use values used by actual web pages.
     // FIXME: Refactor this when we have a better User-Agent story.
-    process().processPool().updateServiceWorkerUserAgent(m_userAgent);
-#endif
+    process().processPool().updateWorkerUserAgent(m_userAgent);
 
     if (!hasRunningProcess())
         return;

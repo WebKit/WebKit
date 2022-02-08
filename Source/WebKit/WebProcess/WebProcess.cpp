@@ -84,6 +84,8 @@
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include "WebSharedWorkerContextManagerConnection.h"
+#include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerProvider.h"
 #include "WebSocketStream.h"
 #include "WebsiteData.h"
@@ -134,6 +136,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <pal/Logging.h>
 #include <wtf/Algorithms.h>
@@ -904,7 +907,6 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 
 #if ENABLE(SERVICE_WORKER)
-    // FIXME: Remove?
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
@@ -912,6 +914,13 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
         return;
     }
 #endif
+
+    if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
+        ASSERT(SharedWorkerContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SharedWorkerContextManager::singleton().connection())
+            static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
+        return;
+    }
 
     LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(decoder.messageName()), decoder.destinationID(), static_cast<int>(getCurrentProcessID()));
 }
@@ -1917,6 +1926,16 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
     if (!m_libWebRTCNetwork)
         m_libWebRTCNetwork = LibWebRTCNetwork::create();
     return *m_libWebRTCNetwork;
+}
+
+void WebProcess::establishSharedWorkerContextConnectionToNetworkProcess(PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
+{
+    // We are in the Shared Worker context process and the call below establishes our connection to the Network Process
+    // by calling ensureNetworkProcessConnection. SharedWorkerContextManager needs to use the same underlying IPC::Connection as the
+    // NetworkProcessConnection for synchronization purposes.
+    auto& ipcConnection = ensureNetworkProcessConnection().connection();
+    SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+    SharedWorkerContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
 }
 
 #if ENABLE(SERVICE_WORKER)

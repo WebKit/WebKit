@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,9 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
 #include "MessagePortIdentifier.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
-#include "SharedWorkerManager.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/ObjectIdentifier.h>
@@ -39,32 +37,28 @@ namespace WebCore {
 
 class SharedWorker;
 class WorkerScriptLoader;
-
-class SharedWorkerScriptLoader;
-
-using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
+struct WorkerFetchResult;
 
 class SharedWorkerScriptLoader : private WorkerScriptLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SharedWorkerScriptLoader(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&);
+    SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);
 
-    SharedWorkerScriptLoaderIdentifier identifier() const { return m_identifier; }
+    void load(CompletionHandler<void(WorkerFetchResult&&)>&&);
+
     const URL& url() const { return m_url; }
     SharedWorker& worker() { return m_worker.get(); }
-    const WorkerOptions& options() { return m_options; }
+    const WorkerOptions& options() const { return m_options; }
 
 private:
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void notifyFinished() final;
 
-    const SharedWorkerScriptLoaderIdentifier m_identifier;
     const WorkerOptions m_options;
     const Ref<SharedWorker> m_worker;
-    TransferredMessagePort m_port;
     const Ref<WorkerScriptLoader> m_loader;
-    const Ref<ActiveDOMObject::PendingActivity<SharedWorker>> m_pendingActivity;
     const URL m_url;
+    CompletionHandler<void(WorkerFetchResult&&)> m_completionHandler;
 };
 
 } // namespace WebCore

@@ -48,6 +48,7 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 namespace WebKit {
 
 class WebIDBConnectionToServer;
+class WebSharedWorkerObjectConnection;
 class WebSWClientConnection;
 class WebSharedWorkerObjectConnection;
 

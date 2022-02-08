@@ -1,7 +1,6 @@
 Blocked access to external URL https://www.localhost:9444/common/blank.html
 Blocked access to external URL https://www.localhost:9444/common/blank.html
 Blocked access to external URL https://www.localhost:9444/common/blank.html
-Blocked access to external URL https://www.localhost:9444/common/blank.html
 
 PASS Test that local scheme workers inherit COEP: require-corp from the creating document
 PASS blob URL dedicated worker: Same origin should be allowed.

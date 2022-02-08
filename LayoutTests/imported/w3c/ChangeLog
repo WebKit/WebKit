@@ -1,5 +1,39 @@
 2022-02-07  Chris Dumez  <cdumez@apple.com>
 
+        Add support for sharing Shared Workers (including across WebProcesses)
+        https://bugs.webkit.org/show_bug.cgi?id=235958
+        <rdar://problem/88330666>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing WPT tests involving shared workers.
+
+        * web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/sharedworker-report-only.sub-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/sharedworker-script-src.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/worker-set-timeout.sub-expected.txt:
+        * web-platform-tests/html/browsers/offline/appcache/workers/appcache-worker.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/shared-workers.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/worker-inheritance.sub.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https-expected.txt:
+        * web-platform-tests/workers/SharedWorker_dataUrl-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import-blob-url.window-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import-data-url-cross-origin-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import-data-url.window-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import-referrer-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import.window-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-options-credentials-expected.txt:
+        * web-platform-tests/workers/semantics/multiple-workers/004-expected.txt:
+        * web-platform-tests/workers/semantics/multiple-workers/008-expected.txt:
+        * web-platform-tests/workers/shared-worker-from-blob-url.window-expected.txt:
+        * web-platform-tests/workers/shared-worker-name-via-options-expected.txt:
+        * web-platform-tests/workers/shared-worker-options-mismatch-expected.txt:
+        * web-platform-tests/xhr/open-url-redirected-sharedworker-origin-expected.txt:
+
+2022-02-07  Chris Dumez  <cdumez@apple.com>
+
         WorkerGlobalScope.importScripts() should protect blob urls that were passed in until the imports are done
         https://bugs.webkit.org/show_bug.cgi?id=236168
 

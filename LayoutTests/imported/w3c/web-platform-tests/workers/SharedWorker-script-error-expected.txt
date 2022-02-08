@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Error: assert_unreached: FAIL: onerror invoked for a script error. Reached unreachable code
-
-Harness Error (FAIL), message = Error: assert_unreached: FAIL: onerror invoked for a script error. Reached unreachable code
 
 PASS Test script error unhandled.
 PASS Test script error handled.

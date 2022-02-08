@@ -47,6 +47,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
 #include "WebSWOriginStore.h"
+#include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
@@ -652,6 +653,13 @@ bool NetworkSession::hasServiceWorkerDatabasePath() const
 }
 
 #endif // ENABLE(SERVICE_WORKER)
+
+WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
+{
+    if (!m_sharedWorkerServer)
+        m_sharedWorkerServer = makeUnique<WebSharedWorkerServer>(*this);
+    return *m_sharedWorkerServer;
+}
 
 WebIDBServer& NetworkSession::ensureWebIDBServer()
 {

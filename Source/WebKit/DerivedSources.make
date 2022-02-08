@@ -133,6 +133,8 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask \
 	NetworkProcess/ServiceWorker/ServiceWorkerFetchTask \
 	NetworkProcess/ServiceWorker/WebSWServerToContextConnection \
+	NetworkProcess/SharedWorker/WebSharedWorkerServerConnection \
+	NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection \
 	NetworkProcess/NetworkSocketStream \
 	NetworkProcess/NetworkProcess \
 	NetworkProcess/NetworkResourceLoader \
@@ -225,6 +227,8 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/WebFileSystemStorageConnection \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
+	WebProcess/Storage/WebSharedWorkerContextManagerConnection \
+	WebProcess/Storage/WebSharedWorkerObjectConnection \
 	WebProcess/Storage/WebSWContextManagerConnection \
 	WebProcess/Storage/WebSWClientConnection \
 	WebProcess/WebProcess \

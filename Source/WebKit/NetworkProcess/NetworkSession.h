@@ -79,6 +79,7 @@ class ServiceWorkerFetchTask;
 class WebIDBServer;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
+class WebSharedWorkerServer;
 class WebSocketTask;
 class WebSWOriginStore;
 class WebSWServerConnection;
@@ -210,6 +211,9 @@ public:
     void addServiceWorkerSession(bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
+    WebSharedWorkerServer* sharedWorkerServer() { return m_sharedWorkerServer.get(); }
+    WebSharedWorkerServer& ensureSharedWorkerServer();
+
     WebIDBServer* webIDBServer() { return m_webIDBServer.get(); }
     WebIDBServer& ensureWebIDBServer();
     void closeIDBServer(CompletionHandler<void()>&&);
@@ -318,6 +322,7 @@ protected:
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
     std::unique_ptr<WebCore::SWServer> m_swServer;
 #endif
+    std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 
     String m_idbDatabasePath;
     RefPtr<WebIDBServer> m_webIDBServer;

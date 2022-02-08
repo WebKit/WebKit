@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,17 @@
 #include "config.h"
 #include "SharedWorker.h"
 
+#include "ClientOrigin.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "EventNames.h"
+#include "Logging.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
+#include "ResourceError.h"
 #include "SecurityOrigin.h"
-#include "SharedWorkerManager.h"
 #include "SharedWorkerObjectConnection.h"
 #include "SharedWorkerProvider.h"
-#include "SharedWorkerThreadProxy.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/IsoMallocInlines.h>
@@ -43,22 +45,37 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 
+#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%{public}s] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
+
+static HashMap<SharedWorkerObjectIdentifier, SharedWorker*>& allSharedWorkers()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashMap<SharedWorkerObjectIdentifier, SharedWorker*>> allSharedWorkers;
+    return allSharedWorkers;
+}
+
+SharedWorker* SharedWorker::fromIdentifier(SharedWorkerObjectIdentifier identifier)
+{
+    return allSharedWorkers().get(identifier);
+}
+
 static inline SharedWorkerObjectConnection* mainThreadConnection()
 {
     return SharedWorkerProvider::singleton().sharedWorkerConnection();
 }
 
-ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, JSC::RuntimeFlags runtimeFlags, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
+ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
 {
     if (!mainThreadConnection())
         return Exception { NotSupportedError, "Shared workers are not supported" };
 
-    if (!document.securityOrigin().canAccessSharedWorkers(document.topOrigin()))
-        return Exception { SecurityError, "This iframe doesn't have storage access"_s };
-
     auto url = document.completeURL(scriptURLString);
     if (!url.isValid())
         return Exception { SyntaxError, "Invalid script URL"_s };
+
+    if (url.isLocalFile())
+        return Exception { SecurityError, "Cannot construct a shared worker with a file:// URL"_s };
 
     if (auto* contentSecurityPolicy = document.contentSecurityPolicy()) {
         if (!contentSecurityPolicy->allowWorkerFromSource(url))
@@ -77,26 +94,37 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, JSC::Run
     auto channel = MessageChannel::create(document);
     auto transferredPort = channel->port2().disentangle();
 
-    auto sharedWorker = adoptRef(*new SharedWorker(document, channel->port1(), runtimeFlags));
+    ClientOrigin clientOrigin { document.topDocument().securityOrigin().data(), document.securityOrigin().data() };
+    SharedWorkerKey key { clientOrigin, url, options.name };
+
+    auto sharedWorker = adoptRef(*new SharedWorker(document, key, channel->port1()));
     sharedWorker->suspendIfNeeded();
 
-    mainThreadConnection()->requestSharedWorker(url, sharedWorker.get(), WTFMove(transferredPort), WTFMove(options));
+    mainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTFMove(transferredPort), options);
     return sharedWorker;
 }
 
-SharedWorker::SharedWorker(Document& document, Ref<MessagePort>&& port, JSC::RuntimeFlags runtimeFlags)
+SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<MessagePort>&& port)
     : ActiveDOMObject(&document)
+    , m_key(key)
+    , m_identifier(SharedWorkerObjectIdentifier::generate())
     , m_port(WTFMove(port))
     , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
-    , m_runtimeFlags(runtimeFlags)
-    , m_creationTime(MonotonicTime::now())
-    , m_proxy(SharedWorkerThreadProxy::create(*this))
 {
+    SHARED_WORKER_RELEASE_LOG("SharedWorker:");
+    allSharedWorkers().add(m_identifier, this);
+
+    // If the shared worker URL is a blob URL, make sure to keep it alive until the worker has finished loading.
+    if (m_key.url.protocolIsBlob())
+        m_blobURLExtension = m_key.url;
 }
 
 SharedWorker::~SharedWorker()
 {
-    m_proxy.workerObjectDestroyed();
+    ASSERT(allSharedWorkers().get(m_identifier) == this);
+    SHARED_WORKER_RELEASE_LOG("~SharedWorker:");
+    allSharedWorkers().remove(m_identifier);
+    ASSERT(!m_isActive);
 }
 
 ScriptExecutionContext* SharedWorker::scriptExecutionContext() const
@@ -114,19 +142,29 @@ EventTargetInterface SharedWorker::eventTargetInterface() const
     return SharedWorkerEventTargetInterfaceType;
 }
 
-void SharedWorker::stop()
+void SharedWorker::didFinishLoading(const ResourceError& error)
 {
-    terminate();
+    SHARED_WORKER_RELEASE_LOG("finishLoading: success=%d", error.isNull());
+    if (!error.isNull()) {
+        queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+        m_isActive = false;
+    }
+    m_blobURLExtension.clear();
 }
 
 bool SharedWorker::virtualHasPendingActivity() const
 {
-    return m_proxy.hasPendingActivity() || m_isLoading;
+    return m_isActive;
 }
 
-void SharedWorker::terminate()
+void SharedWorker::stop()
 {
-    m_proxy.terminateWorkerGlobalScope();
+    SHARED_WORKER_RELEASE_LOG("stop:");
+    m_isActive = false;
+    mainThreadConnection()->sharedWorkerObjectIsGoingAway(m_key, m_identifier);
 }
+
+#undef SHARED_WORKER_RELEASE_LOG
+#undef SHARED_WORKER_RELEASE_LOG_ERROR
 
 } // namespace WebCore

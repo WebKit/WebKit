@@ -334,6 +334,8 @@ private:
     void startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void endServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
 #endif
+    void sharedWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier);
+    void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
 

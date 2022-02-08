@@ -141,6 +141,11 @@ NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
+NetworkProcess/SharedWorker/WebSharedWorker.cpp
+NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
+NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
+NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
+
 NetworkProcess/storage/FileSystemStorageManager.cpp
 NetworkProcess/storage/FileSystemStorageHandle.cpp
 NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp
@@ -783,8 +788,9 @@ WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/Storage/WebSWOriginTable.cpp
 WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
-WebProcess/Storage/WebSharedWorkerProvider.cpp
+WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp
 WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
+WebProcess/Storage/WebSharedWorkerProvider.cpp
 
 WebProcess/UserContent/WebUserContentController.cpp
 
@@ -887,3 +893,7 @@ RemoteWebLockRegistryMessageReceiver.cpp
 ServiceWorkerDownloadTaskMessageReceiver.cpp
 WebBroadcastChannelRegistryMessageReceiver.cpp
 WebLockRegistryProxyMessageReceiver.cpp
+WebSharedWorkerContextManagerConnectionMessageReceiver.cpp
+WebSharedWorkerObjectConnectionMessageReceiver.cpp
+WebSharedWorkerServerConnectionMessageReceiver.cpp
+WebSharedWorkerServerToContextConnectionMessageReceiver.cpp

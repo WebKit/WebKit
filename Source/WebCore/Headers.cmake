@@ -1964,9 +1964,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerFontLoadRequest.h
     workers/WorkerGlobalScope.h
     workers/WorkerLoaderProxy.h
+    workers/WorkerObjectProxy.h
+    workers/WorkerOptions.h
     workers/WorkerOrWorkletGlobalScope.h
     workers/WorkerOrWorkletScriptController.h
     workers/WorkerOrWorkletThread.h
+    workers/WorkerReportingProxy.h
     workers/WorkerRunLoop.h
     workers/WorkerScriptLoader.h
     workers/WorkerScriptLoaderClient.h
@@ -2010,9 +2013,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/server/SWServerWorker.h
 
     workers/shared/SharedWorkerIdentifier.h
-    workers/shared/SharedWorkerManager.h
+    workers/shared/SharedWorkerKey.h
     workers/shared/SharedWorkerObjectConnection.h
+    workers/shared/SharedWorkerObjectIdentifier.h
     workers/shared/SharedWorkerProvider.h
+
+    workers/shared/context/SharedWorkerContextManager.h
     workers/shared/context/SharedWorkerThread.h
     workers/shared/context/SharedWorkerThreadProxy.h
 

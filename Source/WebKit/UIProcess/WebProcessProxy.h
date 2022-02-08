@@ -136,9 +136,13 @@ public:
 
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class CaptivePortalMode : bool { Disabled, Enabled };
+    enum class WorkerType : uint32_t {
+        ServiceWorker = 1 << 0,
+        SharedWorker = 1 << 1
+    };
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, CaptivePortalMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
-    static Ref<WebProcessProxy> createForServiceWorkers(WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
+    static Ref<WebProcessProxy> createForWorkers(WorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
     ~WebProcessProxy();
 
@@ -161,8 +165,8 @@ public:
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
-    void enableServiceWorkers(const UserContentControllerIdentifier&);
-    void disableServiceWorkers();
+    void enableWorkers(WorkerType, const UserContentControllerIdentifier&);
+    void disableWorkers(OptionSet<WorkerType>);
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
     void setWebsiteDataStore(WebsiteDataStore&);
@@ -194,6 +198,9 @@ public:
 
     bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }
     bool isStandaloneServiceWorkerProcess() const { return isRunningServiceWorkers() && !pageCount(); }
+    bool isRunningSharedWorkers() const { return !!m_sharedWorkerInformation; }
+    bool isStandaloneSharedWorkerProcess() const { return isRunningSharedWorkers() && !pageCount(); }
+    bool isRunningWorkers() const { return m_sharedWorkerInformation || m_serviceWorkerInformation; }
 
     bool isDummyProcessProxy() const;
 
@@ -359,12 +366,13 @@ public:
 
     void updateAudibleMediaAssertions();
 
+    void setWorkerUserAgent(const String&);
+    void updateWorkerPreferencesStore(const WebPreferencesStore&);
+    void establishSharedWorkerContext(const WebPreferencesStore&, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
+    void updateWorkerProcessAssertion(WorkerType);
 #if ENABLE(SERVICE_WORKER)
     void establishServiceWorkerContext(const WebPreferencesStore&, const WebCore::RegistrableDomain&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
-    void setServiceWorkerUserAgent(const String&);
-    void updateServiceWorkerPreferencesStore(const WebPreferencesStore&);
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->remoteWorkerPageProxyID == pageProxyID; }
-    void updateServiceWorkerProcessAssertion();
     void registerServiceWorkerClientProcess(WebProcessProxy&);
     void unregisterServiceWorkerClientProcess(WebProcessProxy&);
     bool hasServiceWorkerForegroundActivityForTesting() const;
@@ -656,6 +664,7 @@ private:
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
     std::optional<RemoteWorkerInformation> m_serviceWorkerInformation;
+    std::optional<RemoteWorkerInformation> m_sharedWorkerInformation;
     bool m_hasServiceWorkerBackgroundProcessing { false };
 
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;

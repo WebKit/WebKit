@@ -92,6 +92,8 @@ class NetworkSocketStream;
 class ServiceWorkerFetchTask;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
+class WebSharedWorkerServerConnection;
+class WebSharedWorkerServerToContextConnection;
 
 namespace NetworkCache {
 struct DataKey;
@@ -185,6 +187,9 @@ public:
     WebSWServerConnection* swConnection();
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
 #endif
+    void sharedWorkerServerToContextConnectionIsNoLongerNeeded();
+
+    WebSharedWorkerServerConnection* sharedWorkerConnection();
 
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
 
@@ -253,12 +258,18 @@ private:
     void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, const WebCore::ClientOrigin&);
     void updateQuotaBasedOnSpaceUsageForTesting(const WebCore::ClientOrigin&);
 
+    void establishSharedWorkerServerConnection();
+    void unregisterSharedWorkerConnection();
+
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
     void establishSWContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
 #endif
+
+    void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
+    void closeSharedWorkerContextConnection();
 
     void createRTCProvider(CompletionHandler<void()>&&);
 #if ENABLE(WEB_RTC)
@@ -404,6 +415,8 @@ private:
     WeakPtr<WebSWServerConnection> m_swConnection;
     std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
 #endif
+    WeakPtr<WebSharedWorkerServerConnection> m_sharedWorkerConnection;
+    std::unique_ptr<WebSharedWorkerServerToContextConnection> m_sharedWorkerContextConnection;
 
 #if ENABLE(WEB_RTC)
     bool m_isRegisteredToRTCDataChannelProxy { false };

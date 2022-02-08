@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL Creating a shared worker from a blob URL works. assert_equals: expected "worker_OK_2" but got "worker_OK_1"
+PASS Creating a shared worker from a blob URL works.
 PASS Creating a shared worker from a blob URL works immediately before revoking.
-TIMEOUT Connecting to a shared worker on a revoked blob URL works. Test timed out
+PASS Connecting to a shared worker on a revoked blob URL works.
 

@@ -2,7 +2,7 @@ Verify the Cross-Origin Embedder Policy for Shared Workers by performing a cross
 
 
 PASS default policy (derived from response)
-FAIL "require-corp" (derived from response) assert_equals: expected "failure" but got "success"
+PASS "require-corp" (derived from response)
 PASS default policy (derived from owner set due to use of local scheme - blob URL)
 FAIL "require-corp" (derived from owner set due to use of local scheme - blob URL) assert_equals: expected "failure" but got "success"
 PASS default policy (derived from owner set due to use of local scheme - data URL)

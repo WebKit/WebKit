@@ -28,6 +28,7 @@
 #include "RegistrableDomain.h"
 #include "SecurityOriginData.h"
 #include <wtf/HashTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -35,7 +36,6 @@ namespace WebCore {
 struct ClientOrigin {
     static ClientOrigin emptyKey() { return { }; }
 
-    unsigned hash() const;
     bool operator==(const ClientOrigin&) const;
     bool operator!=(const ClientOrigin& other) const { return !(*this == other); }
 
@@ -51,13 +51,9 @@ struct ClientOrigin {
     SecurityOriginData clientOrigin;
 };
 
-inline unsigned ClientOrigin::hash() const
+inline void add(Hasher& hasher, const ClientOrigin& origin)
 {
-    unsigned hashes[2];
-    hashes[0] = SecurityOriginDataHash::hash(topOrigin);
-    hashes[1] = SecurityOriginDataHash::hash(clientOrigin);
-
-    return StringHasher::hashMemory(hashes, sizeof(hashes));
+    add(hasher, origin.topOrigin, origin.clientOrigin);
 }
 
 inline bool ClientOrigin::operator==(const ClientOrigin& other) const
@@ -95,7 +91,7 @@ template<class Decoder> inline std::optional<ClientOrigin> ClientOrigin::decode(
 namespace WTF {
 
 struct ClientOriginKeyHash {
-    static unsigned hash(const WebCore::ClientOrigin& key) { return key.hash(); }
+    static unsigned hash(const WebCore::ClientOrigin& key) { return computeHash(key); }
     static bool equal(const WebCore::ClientOrigin& a, const WebCore::ClientOrigin& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };

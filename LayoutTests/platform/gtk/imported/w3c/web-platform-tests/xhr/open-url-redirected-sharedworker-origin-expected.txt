@@ -1,0 +1,5 @@
+
+FAIL Referer header assert_equals: expected "Referer: http://localhost:8800/xhr/resources/workerxhr-origin-referrer.js\n" but got "Referer: http://localhost:8800/xhr/resources/redirect.py?location=workerxhr-origin-referrer.js\n"
+PASS Origin header
+PASS Request URL test
+

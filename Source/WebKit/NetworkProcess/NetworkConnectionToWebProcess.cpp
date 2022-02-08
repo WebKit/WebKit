@@ -66,6 +66,11 @@
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
 #include "WebSWServerToContextConnectionMessages.h"
+#include "WebSharedWorkerServer.h"
+#include "WebSharedWorkerServerConnection.h"
+#include "WebSharedWorkerServerConnectionMessages.h"
+#include "WebSharedWorkerServerToContextConnection.h"
+#include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
@@ -132,6 +137,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
 #if ENABLE(SERVICE_WORKER)
     establishSWServerConnection();
 #endif
+    establishSharedWorkerServerConnection();
 }
 
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
@@ -166,6 +172,7 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 #if ENABLE(SERVICE_WORKER)
     unregisterSWConnection();
 #endif
+    unregisterSharedWorkerConnection();
 }
 
 void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
@@ -274,6 +281,17 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
     }
 #endif
+
+    if (decoder.messageReceiverName() == Messages::WebSharedWorkerServerConnection::messageReceiverName()) {
+        if (m_sharedWorkerConnection)
+            m_sharedWorkerConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebSharedWorkerServerToContextConnection::messageReceiverName()) {
+        if (m_sharedWorkerContextConnection)
+            m_sharedWorkerContextConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
@@ -398,9 +416,8 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
     m_swContextConnection = nullptr;
-#else
-    UNUSED_PARAM(connection);
 #endif
+    m_sharedWorkerContextConnection = nullptr;
 
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
@@ -441,6 +458,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 #if ENABLE(SERVICE_WORKER)
     unregisterSWConnection();
 #endif
+    unregisterSharedWorkerConnection();
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     m_paymentCoordinator = nullptr;
@@ -1185,6 +1203,61 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(WebCore::Resour
     return m_networkActivityTrackers.findIf([&](const auto& item) {
         return item.resourceID == resourceID;
     });
+}
+
+void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&& registrableDomain, CompletionHandler<void()>&& completionHandler)
+{
+    CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
+    auto* session = networkSession();
+    if (auto* swServer = session ? session->sharedWorkerServer() : nullptr)
+        m_sharedWorkerContextConnection = makeUnique<WebSharedWorkerServerToContextConnection>(*this, WTFMove(registrableDomain), *swServer);
+    completionHandler();
+}
+
+void NetworkConnectionToWebProcess::establishSharedWorkerServerConnection()
+{
+    if (m_sharedWorkerConnection)
+        return;
+
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerServerConnection:");
+
+    auto& server = session->ensureSharedWorkerServer();
+    auto connection = makeUnique<WebSharedWorkerServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
+
+    m_sharedWorkerConnection = *connection;
+    server.addConnection(WTFMove(connection));
+}
+
+void NetworkConnectionToWebProcess::closeSharedWorkerContextConnection()
+{
+    CONNECTION_RELEASE_LOG(SharedWorker, "closeSharedWorkerContextConnection:");
+    m_sharedWorkerContextConnection = nullptr;
+}
+
+void NetworkConnectionToWebProcess::unregisterSharedWorkerConnection()
+{
+    CONNECTION_RELEASE_LOG(SharedWorker, "unregisterSharedWorkerConnection:");
+    if (m_sharedWorkerConnection)
+        m_sharedWorkerConnection->server().removeConnection(m_sharedWorkerConnection->webProcessIdentifier());
+}
+
+void NetworkConnectionToWebProcess::sharedWorkerServerToContextConnectionIsNoLongerNeeded()
+{
+    CONNECTION_RELEASE_LOG(SharedWorker, "sharedWorkerServerToContextConnectionIsNoLongerNeeded:");
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::SharedWorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
+
+    m_sharedWorkerContextConnection = nullptr;
+}
+
+WebSharedWorkerServerConnection* NetworkConnectionToWebProcess::sharedWorkerConnection()
+{
+    if (!m_sharedWorkerConnection)
+        establishSharedWorkerServerConnection();
+    return m_sharedWorkerConnection.get();
 }
     
 #if ENABLE(SERVICE_WORKER)

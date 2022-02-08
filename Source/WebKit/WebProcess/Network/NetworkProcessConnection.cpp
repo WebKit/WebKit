@@ -57,7 +57,10 @@
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include "WebSharedWorkerContextManagerConnection.h"
+#include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerObjectConnection.h"
+#include "WebSharedWorkerObjectConnectionMessages.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelMessages.h"
 #include "WebSocketStream.h"
@@ -174,6 +177,16 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 #endif
+    if (decoder.messageReceiverName() == Messages::WebSharedWorkerObjectConnection::messageReceiverName()) {
+        sharedWorkerConnection().didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
+        ASSERT(SharedWorkerContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SharedWorkerContextManager::singleton().connection())
+            static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
+        return;
+    }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {

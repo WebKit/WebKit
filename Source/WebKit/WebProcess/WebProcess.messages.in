@@ -100,6 +100,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     GamepadDisconnected(unsigned index)
 #endif
 
+    EstablishSharedWorkerContextConnectionToNetworkProcess(WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, struct WebKit::RemoteWorkerInitializationData initializationData) -> () Async
+
 #if ENABLE(SERVICE_WORKER)
     EstablishServiceWorkerContextConnectionToNetworkProcess(WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> () Async
 #endif

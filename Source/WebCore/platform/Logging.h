@@ -128,6 +128,7 @@ namespace WebCore {
     M(WebGL) \
     M(WebRTC) \
     M(WebRTCStats) \
+    M(Worker) \
     M(XR) \
     M(WheelEventTestMonitor) \
 

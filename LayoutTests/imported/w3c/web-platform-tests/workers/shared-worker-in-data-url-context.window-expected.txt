@@ -1,4 +1,5 @@
+CONSOLE MESSAGE: Cannot load http://localhost:8800/workers/support/post-message-on-load-worker.js.
 
-FAIL Create a shared worker in a data url frame assert_equals: expected "PASS" but got "SharedWorker construction unexpectedly synchronously failed"
-FAIL Create a data url shared worker in a data url frame assert_equals: expected "PASS" but got "SharedWorker construction unexpectedly synchronously failed"
+PASS Create a shared worker in a data url frame
+PASS Create a data url shared worker in a data url frame
 

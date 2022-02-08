@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "SharedWorkerIdentifier.h"
 #include "WorkerDebuggerProxy.h"
-#include "WorkerGlobalScopeProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerOptions.h"
@@ -35,50 +34,54 @@
 
 namespace WebCore {
 
+class CacheStorageProvider;
+class Page;
 class SharedWorker;
 class SharedWorkerThread;
 
-class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
+struct ClientOrigin;
+struct WorkerFetchResult;
+
+class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
-    template<typename... Args> static SharedWorkerThreadProxy& create(Args&&... args) { return *new SharedWorkerThreadProxy(std::forward<Args>(args)...); }
+    template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }
+    WEBCORE_EXPORT ~SharedWorkerThreadProxy();
 
     SharedWorkerIdentifier identifier() const;
-    SharedWorkerThread* thread() { return m_workerThread.get(); }
+    SharedWorkerThread& thread() { return m_workerThread; }
 
-    void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
-    void workerObjectDestroyed() final;
-    bool hasPendingActivity() const final;
-    void terminateWorkerGlobalScope() final;
+    bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
+    void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
 private:
-    explicit SharedWorkerThreadProxy(SharedWorker&);
+    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, const URL& scriptURL, WorkerFetchResult&&, WorkerOptions&&, const String& userAgent, CacheStorageProvider&);
 
-    void workerGlobalScopeDestroyedInternal();
-
-    void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) final;
-    void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) final;
-    void notifyNetworkStateChange(bool isOnline) final;
-    void suspendForBackForwardCache() final;
-    void resumeForBackForwardCache() final;
+    // WorkerObjectProxy.
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
-    void workerGlobalScopeDestroyed() final;
-    void postMessageToWorkerObject(MessageWithMessagePorts&&) final;
-    void confirmMessageFromWorkerObject(bool hasPendingActivity) final;
-    void reportPendingActivity(bool hasPendingActivity) final;
+    void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
+    void workerGlobalScopeDestroyed() final { }
+    void confirmMessageFromWorkerObject(bool) final { }
+    void reportPendingActivity(bool) final { }
+
+    // WorkerLoaderProxy.
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
+
+    // WorkerDebuggerProxy.
     void postMessageToDebugger(const String&) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
 
-    WeakPtr<SharedWorker> m_sharedWorker;
-    RefPtr<SharedWorkerThread> m_workerThread;
-    const RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    const String m_identifierForInspector;
-    bool m_askedToTerminate { false };
-    bool m_hasPendingActivity { false };
-    bool m_mayBeDestroyed { false };
+    static void networkStateChanged(bool isOnLine);
+    void notifyNetworkStateChange(bool isOnline);
+
+    UniqueRef<Page> m_page;
+    Ref<Document> m_document;
+    Ref<SharedWorkerThread> m_workerThread;
+    CacheStorageProvider& m_cacheStorageProvider;
+    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    bool m_isTerminatingOrTerminated { false };
 };
 
 } // namespace WebCore

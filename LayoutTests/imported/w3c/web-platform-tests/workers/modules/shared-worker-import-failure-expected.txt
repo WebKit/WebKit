@@ -1,9 +1,8 @@
-CONSOLE MESSAGE: Cannot load static-import-worker.js.
 
 PASS importScripts() on module worker should throw an exception.
 PASS Worker construction for non-existent script should dispatch an ErrorEvent.
 PASS Static import for non-existent script should dispatch an ErrorEvent.
 PASS Dynamic import for non-existent script should throw an exception.
 PASS SharedWorker construction for an invalid URL should throw an exception.
-FAIL SharedWorker construction for a file URL should throw an exception. assert_throws_dom: function "() => new SharedWorker(scriptURL, { type: 'module' })" did not throw
+PASS SharedWorker construction for a file URL should throw an exception.
 

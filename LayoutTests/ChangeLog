@@ -1,5 +1,25 @@
 2022-02-07  Chris Dumez  <cdumez@apple.com>
 
+        Add support for sharing Shared Workers (including across WebProcesses)
+        https://bugs.webkit.org/show_bug.cgi?id=235958
+        <rdar://problem/88330666>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing WPT tests involving shared workers.
+
+        * TestExpectations:
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-connect-src.sub-expected.txt: Added.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-report-only.sub-expected.txt: Added.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-script-src.sub-expected.txt: Added.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-blob-url.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-blob-url.window-expected.txt.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.window-expected.txt.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/workers/modules/shared-worker-import.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/workers/modules/shared-worker-import.window-expected.txt.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials-expected.txt: Added.
+        * platform/gtk-wk2/imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin-expected.txt.
+
+2022-02-07  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rename test in TestExpectations to match the actual test name.
 
         The test was likely renamed but TestExpectations were not updated accordingly.

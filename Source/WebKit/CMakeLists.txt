@@ -28,6 +28,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/Notifications"
     "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement"
     "${WEBKIT_DIR}/NetworkProcess/ServiceWorker"
+    "${WEBKIT_DIR}/NetworkProcess/SharedWorker"
     "${WEBKIT_DIR}/NetworkProcess/WebStorage"
     "${WEBKIT_DIR}/NetworkProcess/cache"
     "${WEBKIT_DIR}/NetworkProcess/storage"
@@ -202,6 +203,9 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/ServiceWorker/WebSWServerConnection
     NetworkProcess/ServiceWorker/WebSWServerToContextConnection
 
+    NetworkProcess/SharedWorker/WebSharedWorkerServerConnection
+    NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection
+
     NetworkProcess/WebStorage/StorageManagerSet
 
     NetworkProcess/cache/CacheStorageEngineConnection
@@ -305,6 +309,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager
 
+    WebProcess/Storage/WebSharedWorkerContextManagerConnection
+    WebProcess/Storage/WebSharedWorkerObjectConnection
     WebProcess/Storage/WebSWClientConnection
     WebProcess/Storage/WebSWContextManagerConnection
 

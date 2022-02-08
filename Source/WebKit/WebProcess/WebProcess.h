@@ -474,6 +474,7 @@ private:
     void gamepadDisconnected(unsigned index);
 #endif
 
+    void establishSharedWorkerContextConnectionToNetworkProcess(PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, RemoteWorkerInitializationData&&, CompletionHandler<void()>&&);
 #if ENABLE(SERVICE_WORKER)
     void establishServiceWorkerContextConnectionToNetworkProcess(PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&&, CompletionHandler<void()>&&);
 #endif

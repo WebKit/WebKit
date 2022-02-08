@@ -1,4 +1,4 @@
 
 FAIL Dedicated worker inherits CSP from main document assert_equals: expected "setTimeout allowed" but got "setTimeout blocked"
-FAIL Shared worker delivers its own CSP assert_equals: expected "setTimeout blocked" but got "setTimeout allowed"
+PASS Shared worker delivers its own CSP
 
