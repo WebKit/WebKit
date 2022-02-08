@@ -274,7 +274,7 @@ void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackend
     else if (imageBuffer->canMapBackingStore())
         imageBuffer->setBackend(AcceleratedImageBufferShareableMappedBackend::create(imageBuffer->parameters(), WTFMove(handle)));
     else
-        imageBuffer->setBackend(AcceleratedImageBufferShareableBackend::create(imageBuffer->parameters(), WTFMove(handle)));
+        imageBuffer->setBackend(AcceleratedImageBufferRemoteBackend::create(imageBuffer->parameters(), WTFMove(handle)));
 }
 
 void RemoteRenderingBackendProxy::didFlush(GraphicsContextFlushIdentifier flushIdentifier, RenderingResourceIdentifier renderingResourceIdentifier)

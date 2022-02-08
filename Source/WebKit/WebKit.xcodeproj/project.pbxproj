@@ -3494,8 +3494,8 @@
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGestureControllerMessages.h; path = DerivedSources/WebKit/ViewGestureControllerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1E8221216FFF5000A15265 /* WKWebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKWebEvent.h; path = ios/WKWebEvent.h; sourceTree = "<group>"; };
 		2D1E8222216FFF5100A15265 /* WKWebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebEvent.mm; path = ios/WKWebEvent.mm; sourceTree = "<group>"; };
-		2D25F32825758E9000231A8B /* ImageBufferShareableIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableIOSurfaceBackend.h; sourceTree = "<group>"; };
-		2D25F32925758E9100231A8B /* ImageBufferShareableIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableIOSurfaceBackend.cpp; sourceTree = "<group>"; };
+		2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemoteIOSurfaceBackend.h; sourceTree = "<group>"; };
+		2D25F32925758E9100231A8B /* ImageBufferRemoteIOSurfaceBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemoteIOSurfaceBackend.cpp; sourceTree = "<group>"; };
 		2D279E0E2694C226004B3EEB /* WKHoverPlatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKHoverPlatter.h; path = ios/WKHoverPlatter.h; sourceTree = "<group>"; };
 		2D279E0F2694C227004B3EEB /* WKHoverPlatter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKHoverPlatter.mm; path = ios/WKHoverPlatter.mm; sourceTree = "<group>"; };
 		2D279E102694C2D1004B3EEB /* WKHoverPlatterParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKHoverPlatterParameters.h; path = ios/WKHoverPlatterParameters.h; sourceTree = "<group>"; };
@@ -10262,8 +10262,8 @@
 		727A7F3324078527004D2931 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				2D25F32925758E9100231A8B /* ImageBufferShareableIOSurfaceBackend.cpp */,
-				2D25F32825758E9000231A8B /* ImageBufferShareableIOSurfaceBackend.h */,
+				2D25F32925758E9100231A8B /* ImageBufferRemoteIOSurfaceBackend.cpp */,
+				2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */,
 				727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */,
 				727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */,
 				7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */,

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ImageBufferShareableIOSurfaceBackend.h"
+#include "ImageBufferRemoteIOSurfaceBackend.h"
 
 #if HAVE(IOSURFACE)
 
@@ -37,96 +37,96 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferRemoteIOSurfaceBackend);
 
-IntSize ImageBufferShareableIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
+IntSize ImageBufferRemoteIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
     return ImageBufferIOSurfaceBackend::calculateSafeBackendSize(parameters);
 }
 
-size_t ImageBufferShareableIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
+size_t ImageBufferRemoteIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
 {
     return ImageBufferIOSurfaceBackend::calculateMemoryCost(parameters);
 }
 
-size_t ImageBufferShareableIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
+size_t ImageBufferRemoteIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
 {
     return ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(parameters);
 }
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
     if (!std::holds_alternative<MachSendRight>(handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return makeUnique<ImageBufferShareableIOSurfaceBackend>(parameters, WTFMove(handle));
+    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(handle));
 }
 
-ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle() const
+ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createImageBufferBackendHandle() const
 {
     return std::get<MachSendRight>(m_handle).copySendRight();
 }
 
-GraphicsContext& ImageBufferShareableIOSurfaceBackend::context() const
+GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context() const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return *(GraphicsContext*)nullptr;
 }
 
-IntSize ImageBufferShareableIOSurfaceBackend::backendSize() const
+IntSize ImageBufferRemoteIOSurfaceBackend::backendSize() const
 {
     return calculateBackendSize(m_parameters);
 }
 
-unsigned ImageBufferShareableIOSurfaceBackend::bytesPerRow() const
+unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
 {
     IntSize backendSize = calculateBackendSize(m_parameters);
     return ImageBufferIOSurfaceBackend::calculateBytesPerRow(backendSize);
 }
 
-RefPtr<NativeImage> ImageBufferShareableIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-RefPtr<Image> ImageBufferShareableIOSurfaceBackend::copyImage(BackingStoreCopy, PreserveResolution) const
+RefPtr<Image> ImageBufferRemoteIOSurfaceBackend::copyImage(BackingStoreCopy, PreserveResolution) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-void ImageBufferShareableIOSurfaceBackend::draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
+void ImageBufferRemoteIOSurfaceBackend::draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void ImageBufferShareableIOSurfaceBackend::drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&)
+void ImageBufferRemoteIOSurfaceBackend::drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String ImageBufferShareableIOSurfaceBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
-Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toData(const String&, std::optional<double>) const
+String ImageBufferRemoteIOSurfaceBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-std::optional<PixelBuffer> ImageBufferShareableIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
+Vector<uint8_t> ImageBufferRemoteIOSurfaceBackend::toData(const String&, std::optional<double>) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-void ImageBufferShareableIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
+std::optional<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+void ImageBufferRemoteIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

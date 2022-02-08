@@ -620,7 +620,7 @@ WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
 
-WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp
+WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm
 WebProcess/GPU/media/RemoteAudioSourceProvider.cpp

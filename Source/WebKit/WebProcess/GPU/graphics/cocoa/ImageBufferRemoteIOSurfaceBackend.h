@@ -34,17 +34,17 @@
 
 namespace WebKit {
 
-class ImageBufferShareableIOSurfaceBackend final : public WebCore::ImageBufferBackend {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
-    WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
+class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend {
+    WTF_MAKE_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
+    WTF_MAKE_NONCOPYABLE(ImageBufferRemoteIOSurfaceBackend);
 public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
     static size_t calculateExternalMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferShareableIOSurfaceBackend(const Parameters& parameters, ImageBufferBackendHandle&& handle)
+    ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, ImageBufferBackendHandle&& handle)
         : ImageBufferBackend(parameters)
         , m_handle(WTFMove(handle))
     {

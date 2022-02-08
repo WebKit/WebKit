@@ -125,7 +125,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
                 if (m_frontBuffer.imageBuffer->canMapBackingStore())
                     handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*backend).createImageBufferBackendHandle();
                 else
-                    handle = static_cast<AcceleratedImageBufferShareableBackend&>(*backend).createImageBufferBackendHandle();
+                    handle = static_cast<AcceleratedImageBufferRemoteBackend&>(*backend).createImageBufferBackendHandle();
             }
             break;
         case Type::Bitmap:
