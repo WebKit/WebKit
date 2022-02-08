@@ -1,3 +1,15 @@
+2022-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::HashAndUTF8CharactersTranslator::translate() falls through ASSERT_NOT_REACHED()
+        <https://webkit.org/b/234944>
+        <rdar://problem/87230618>
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        - Change ASSERT_NOT_REACHED() to RELEASE_ASSERT_NOT_REACHED().
+
 2022-02-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289239.

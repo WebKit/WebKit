@@ -197,7 +197,7 @@ struct HashAndUTF8CharactersTranslator {
         bool isAllASCII;
         const char* source = buffer.characters;
         if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII))
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 
         if (isAllASCII)
             newString = StringImpl::create(buffer.characters, buffer.length);
