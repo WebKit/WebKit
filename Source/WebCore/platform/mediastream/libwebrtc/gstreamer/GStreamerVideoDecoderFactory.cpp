@@ -369,11 +369,12 @@ public:
     static std::unique_ptr<webrtc::VideoDecoder> Create()
     {
         auto factory = GstDecoderFactory("video/x-vp8");
-
-        if (factory && !g_strcmp0(GST_OBJECT_NAME(GST_OBJECT(factory.get())), "vp8dec")) {
-            GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
-
-            return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+        if (!factory) {
+            const auto* factoryName = GST_OBJECT_NAME(GST_OBJECT(factory.get()));
+            if (!g_strcmp0(factoryName, "vp8dec") || !g_strcmp0(factoryName, "vp8alphadecodebin")) {
+                GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
+                return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+            }
         }
 
         return std::unique_ptr<webrtc::VideoDecoder>(new VP8Decoder());

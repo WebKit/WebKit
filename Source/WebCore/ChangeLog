@@ -1,3 +1,38 @@
+2022-02-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 21.08.10 and GStreamer 1.20 releases
+        https://bugs.webkit.org/show_bug.cgi?id=236136
+
+        Reviewed by Adrian Perez de Castro.
+
+        Switch GStreamer 1.19 version checks to 1.20 now that it is officially released. Also
+        include a couple fixes that are needed with GStreamer 1.20 and one that is useful whatever
+        the GStreamer version:
+
+        - GStreamer 1.20 ships a vp8alphadecodebin element able to handle video/x-vp8 caps, so our
+          libwebrtc decoder factory needs to account for its presence, in addition to vp8dec.
+        - With GStreamer 1.20 media/media-source/media-source-seek-back.html started racy crashing
+          in the VideoTrackPrivateGStreamer configuration update, where the track was disconnected
+          (hence its stream was cleared) and then a GObject notification was emitted by decodebin3. We
+          should actually disconnect the GObject signal handlers before clearing the stream, to
+          prevent potential null pointer access.
+
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::handleNewDeinterleavePad):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::updateConfigurationFromCaps):
+        (WebCore::AudioTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::connectDecoderPad):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::updateConfigurationFromCaps):
+        (WebCore::VideoTrackPrivateGStreamer::disconnect):
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::VP8Decoder::Create):
+
 2022-02-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fixes.

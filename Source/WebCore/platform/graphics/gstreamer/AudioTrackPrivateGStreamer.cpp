@@ -62,6 +62,9 @@ AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
 
 void AudioTrackPrivateGStreamer::disconnect()
 {
+    if (m_stream)
+        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
 }

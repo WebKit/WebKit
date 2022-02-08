@@ -316,7 +316,7 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 // In GStreamer 1.20 gst_audio_format_fill_silence() will be deprecated in favor of
 // gst_audio_format_info_fill_silence().
-#if GST_CHECK_VERSION(1, 19, 0)
+#if GST_CHECK_VERSION(1, 20, 0)
 #define webkitGstAudioFormatFillSilence gst_audio_format_info_fill_silence
 #else
 #define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
@@ -324,7 +324,7 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 // In GStreamer 1.20 gst_element_get_request_pad() was renamed to gst_element_request_pad_simple(),
 // so create an alias for older versions.
-#if !GST_CHECK_VERSION(1, 19, 0)
+#if !GST_CHECK_VERSION(1, 20, 0)
 #define gst_element_request_pad_simple gst_element_get_request_pad
 #endif
 
