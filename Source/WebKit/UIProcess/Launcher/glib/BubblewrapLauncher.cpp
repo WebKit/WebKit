@@ -166,24 +166,18 @@ static int createFlatpakInfo()
     return createSealedMemFdWithData("flatpak-info", data->get(), size);
 }
 
-enum class DBusAddressType {
-    Normal,
-    Abstract,
-};
-
 class XDGDBusProxyLauncher {
 public:
-    void setAddress(const char* dbusAddress, DBusAddressType addressType)
+    void setAddress(const char* dbusAddress)
     {
-        CString dbusPath = dbusAddressToPath(dbusAddress, addressType);
-        if (dbusPath.isNull())
+        if (!dbusAddress || !g_str_has_prefix(dbusAddress, "unix:"))
             return;
 
         GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
         m_proxyPath = makeProxyPath(appRunDir.get());
 
         m_socket = dbusAddress;
-        m_path = WTFMove(dbusPath);
+        m_path = dbusAddressToPath(dbusAddress);
     }
 
     bool isRunning() const { return m_isRunning; };
@@ -200,7 +194,7 @@ public:
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
 
-        if (m_socket.isNull() || m_path.isNull() || m_proxyPath.isNull())
+        if (m_socket.isNull() || m_proxyPath.isNull())
             return;
 
         int syncFds[2];
@@ -248,6 +242,8 @@ public:
 
         ProcessLauncher::LaunchOptions launchOptions;
         launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
+        if (!m_path.isNull())
+            launchOptions.extraSandboxPaths.add(m_path, SandboxPermission::ReadOnly);
         GUniqueOutPtr<GError> error;
         GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
         if (!process.get())
@@ -281,30 +277,24 @@ private:
         return CString(proxySocketTemplate.get());
     };
 
-    static CString dbusAddressToPath(const char* address, DBusAddressType addressType = DBusAddressType::Normal)
+    static CString dbusAddressToPath(const char* address)
     {
-        if (!address)
-            return { };
-
-        if (!g_str_has_prefix(address, "unix:"))
-            return { };
-
-        const char* path = strstr(address, addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
+        const char* path = strstr(address, "path=");
         if (!path)
             return { };
 
-        path += strlen(addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
+        path += strlen("path=");
         const char* pathEnd = path;
         while (*pathEnd && *pathEnd != ',')
             pathEnd++;
 
         return CString(path, pathEnd - path);
-}
+    }
 
     CString m_socket;
     CString m_path;
     CString m_proxyPath;
-    bool m_isRunning;
+    bool m_isRunning { false };
     Vector<CString> m_permissions;
 };
 
@@ -332,9 +322,9 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
 static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
 {
     if (!proxy.isRunning())
-        proxy.setAddress(g_getenv("DBUS_SESSION_BUS_ADDRESS"), DBusAddressType::Normal);
+        proxy.setAddress(g_getenv("DBUS_SESSION_BUS_ADDRESS"));
 
-    if (proxy.proxyPath().data()) {
+    if (!proxy.proxyPath().isNull() && !proxy.path().isNull()) {
         args.appendVector(Vector<CString>({
             "--bind", proxy.proxyPath(), proxy.path(),
         }));
@@ -503,7 +493,7 @@ static void bindA11y(Vector<CString>& args)
             } else {
                 GUniqueOutPtr<char> a11yAddress;
                 g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                proxy.setAddress(a11yAddress.get(), DBusAddressType::Abstract);
+                proxy.setAddress(a11yAddress.get());
             }
         }
 
@@ -521,7 +511,7 @@ static void bindA11y(Vector<CString>& args)
         proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"));
     }
 
-    if (proxy.proxyPath().data()) {
+    if (!proxy.proxyPath().isNull()) {
         GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy.proxyPath().data()));
         args.appendVector(Vector<CString>({
             "--ro-bind", proxy.proxyPath(), proxy.proxyPath(),
@@ -802,6 +792,16 @@ static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
     return true;
 }
 
+static void addExtraPaths(const HashMap<CString, SandboxPermission>& paths, Vector<CString>& args)
+{
+    for (const auto& pathAndPermission : paths) {
+        args.appendVector(Vector<CString>({
+            pathAndPermission.value == SandboxPermission::ReadOnly ? "--ro-bind-try": "--bind-try",
+            pathAndPermission.key, pathAndPermission.key
+        }));
+    }
+}
+
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
 {
     ASSERT(launcher);
@@ -866,6 +866,8 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             // is where we mount our proxy socket.
             "--bind", runDir, runDir,
         }));
+
+        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
     }
 
     if (shouldUnshareNetwork(launchOptions.processType))
@@ -914,12 +916,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             bindX11(sandboxArgs);
 #endif
 
-        for (const auto& pathAndPermission : launchOptions.extraWebProcessSandboxPaths) {
-            sandboxArgs.appendVector(Vector<CString>({
-                pathAndPermission.value == SandboxPermission::ReadOnly ? "--ro-bind-try": "--bind-try",
-                pathAndPermission.key, pathAndPermission.key
-            }));
-        }
+        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
         Vector<String> extraPaths = { "applicationCacheDirectory", "mediaKeysDirectory", "waylandSocket", "webSQLDatabaseDirectory" };
         for (const auto& path : extraPaths) {

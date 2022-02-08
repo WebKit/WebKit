@@ -93,7 +93,7 @@ public:
         CString customWebContentServiceBundleIdentifier;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        HashMap<CString, SandboxPermission> extraWebProcessSandboxPaths;
+        HashMap<CString, SandboxPermission> extraSandboxPaths;
 #if ENABLE(DEVELOPER_MODE)
         String processCmdPrefix;
 #endif

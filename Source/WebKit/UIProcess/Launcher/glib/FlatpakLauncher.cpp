@@ -59,7 +59,7 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
             "--sandbox-flag=allow-dbus", // Note that this only allows portals and $appid.Sandbox.* access
         }));
 
-        for (const auto& pathAndPermission : launchOptions.extraWebProcessSandboxPaths) {
+        for (const auto& pathAndPermission : launchOptions.extraSandboxPaths) {
             const char* formatString = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro=%s": "--sandbox-expose-path=%s";
             GUniquePtr<gchar> pathArg(g_strdup_printf(formatString, pathAndPermission.key.data()));
             flatpakArgs.append(pathArg.get());
