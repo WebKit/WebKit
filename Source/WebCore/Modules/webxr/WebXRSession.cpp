@@ -265,8 +265,7 @@ unsigned WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callb
     // Script can add multiple requestAnimationFrame callbacks but we should only request a device frame once.
     // When requestAnimationFrame is called during processing RAF callbacks the next requestFrame is scheduled
     // at the end of WebXRSession::onFrame() to prevent requesting a new frame before the current one has ended.
-    if (m_callbacks.size() == 1)
-        requestFrame();
+    requestFrameIfNeeded();
 
     // 4. Return session's animation frame callback identifier's current value.
     return newId;
@@ -451,12 +450,9 @@ void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visi
     if (m_visibilityState == visibilityState)
         return;
 
-    bool wasHidden = m_visibilityState == XRVisibilityState::Hidden;
-
     m_visibilityState = visibilityState;
 
-    if (wasHidden && !m_ended && !m_callbacks.isEmpty())
-        requestFrame();
+    requestFrameIfNeeded();
 
     // From https://immersive-web.github.io/webxr/#event-types
     // A user agent MUST dispatch a visibilitychange event on an XRSession each time the
@@ -523,9 +519,22 @@ bool WebXRSession::frameShouldBeRendered() const
     return true;
 }
 
-void WebXRSession::requestFrame()
+void WebXRSession::requestFrameIfNeeded()
 {
+    ASSERT(isMainThread());
+
+    if (m_ended)
+        return;
+
+    if (m_visibilityState == XRVisibilityState::Hidden)
+        return;
+
+    if (m_callbacks.isEmpty() || m_isDeviceFrameRequestPending)
+        return;
+
+    m_isDeviceFrameRequestPending = true;
     m_device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
+        m_isDeviceFrameRequestPending = false;
         onFrame(WTFMove(frameData));
     });
 }
@@ -613,9 +622,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             m_device->submitFrame(WTFMove(frameLayers));
         }
 
-        if (!m_callbacks.isEmpty())
-            requestFrame();
-
+        requestFrameIfNeeded();
     });
 }
 

@@ -123,7 +123,7 @@ private:
     bool referenceSpaceIsSupported(XRReferenceSpaceType) const;
 
     bool frameShouldBeRendered() const;
-    void requestFrame();
+    void requestFrameIfNeeded();
     void onFrame(PlatformXR::Device::FrameData&&);
     void applyPendingRenderState();
 
@@ -145,6 +145,7 @@ private:
 
     unsigned m_nextCallbackId { 1 };
     Vector<Ref<XRFrameRequestCallback>> m_callbacks;
+    bool m_isDeviceFrameRequestPending { false };
 
     Vector<PlatformXR::Device::ViewData> m_views;
     PlatformXR::Device::FrameData m_frameData;
