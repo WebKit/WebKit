@@ -34,57 +34,46 @@
 namespace WebCore {
 
 class JSValueInWrappedObject {
+    // It must not be copyable. Changing this will break concurrent GC.
+    WTF_MAKE_NONCOPYABLE(JSValueInWrappedObject);
 public:
     JSValueInWrappedObject(JSC::JSValue = { });
-    JSValueInWrappedObject(const JSValueInWrappedObject&);
+
+    // FIXME: Remove them once AudioBuffer's m_channelWrappers bug is fixed.
+    // https://bugs.webkit.org/show_bug.cgi?id=236279
+    JSValueInWrappedObject(JSValueInWrappedObject&&) = default;
+    JSValueInWrappedObject& operator=(JSValueInWrappedObject&&) = default;
+
     operator JSC::JSValue() const;
     explicit operator bool() const;
-    JSValueInWrappedObject& operator=(const JSValueInWrappedObject& other);
     template<typename Visitor> void visit(Visitor&) const;
     void clear();
 
+    void set(JSC::VM&, const JSC::JSCell* owner, JSC::JSValue);
+    void setWeakly(JSC::JSValue);
+
+    // FIXME: Remove this once IDBRequest semantic bug is fixed.
+    // https://bugs.webkit.org/show_bug.cgi?id=236278
+    void setWithoutBarrier(JSValueInWrappedObject&);
+
 private:
-    // Use a weak pointer here so that if this code or client code has a visiting mistake,
-    // we get null rather than a dangling pointer to a deleted object.
-    using Weak = JSC::Weak<JSC::JSCell>;
-    // FIXME: Would storing a separate JSValue alongside a Weak be better than using a Variant?
-    using Value = std::variant<JSC::JSValue, Weak>;
-    static Value makeValue(JSC::JSValue);
-    Value m_value;
+    // Keep in mind that all of these fields are accessed concurrently without lock from concurrent GC thread.
+    JSC::JSValue m_nonCell { };
+    JSC::Weak<JSC::JSCell> m_cell { };
 };
 
 JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const Function<JSC::JSValue()>&);
 
-inline auto JSValueInWrappedObject::makeValue(JSC::JSValue value) -> Value
-{
-    if (!value.isCell())
-        return value;
-    // FIXME: This is not quite right. It is possible that this value is being
-    // stored in a wrapped object that does not yet have a wrapper. If garbage
-    // collection occurs before the wrapped object gets a wrapper, it's possible
-    // the value object could be collected, and this will become null. A future
-    // version of this class should prevent the value from being collected in
-    // that case. Unclear if this can actually happen in practice.
-    return Weak { value.asCell() };
-}
-
 inline JSValueInWrappedObject::JSValueInWrappedObject(JSC::JSValue value)
-    : m_value(makeValue(JSC::JSValue(value)))
 {
-}
-
-inline JSValueInWrappedObject::JSValueInWrappedObject(const JSValueInWrappedObject& value)
-    : m_value(makeValue(value))
-{
+    setWeakly(value);
 }
 
 inline JSValueInWrappedObject::operator JSC::JSValue() const
 {
-    return WTF::switchOn(m_value, [] (JSC::JSValue value) {
-        return value;
-    }, [] (const Weak& value) -> JSC::JSValue {
-        return value.get();
-    });
+    if (m_nonCell)
+        return m_nonCell;
+    return m_cell.get();
 }
 
 inline JSValueInWrappedObject::operator bool() const
@@ -92,30 +81,46 @@ inline JSValueInWrappedObject::operator bool() const
     return JSC::JSValue { *this }.operator bool();
 }
 
-inline JSValueInWrappedObject& JSValueInWrappedObject::operator=(const JSValueInWrappedObject& other)
-{
-    m_value = makeValue(JSC::JSValue(other));
-    return *this;
-}
-
 template<typename Visitor>
 inline void JSValueInWrappedObject::visit(Visitor& visitor) const
 {
-    return WTF::switchOn(m_value, [] (JSC::JSValue) {
-        // Nothing to visit.
-    }, [&visitor] (const Weak& value) {
-        visitor.append(value);
-    });
+    visitor.append(m_cell);
 }
 
 template void JSValueInWrappedObject::visit(JSC::AbstractSlotVisitor&) const;
 template void JSValueInWrappedObject::visit(JSC::SlotVisitor&) const;
 
+inline void JSValueInWrappedObject::setWeakly(JSC::JSValue value)
+{
+    if (!value.isCell()) {
+        m_nonCell = value;
+        m_cell.clear();
+        return;
+    }
+    m_nonCell = { };
+    JSC::Weak weak { value.asCell() };
+    WTF::storeStoreFence();
+    m_cell = WTFMove(weak);
+}
+
+inline void JSValueInWrappedObject::set(JSC::VM& vm, const JSC::JSCell* owner, JSC::JSValue value)
+{
+    setWeakly(value);
+    vm.writeBarrier(owner, value);
+}
+
 inline void JSValueInWrappedObject::clear()
 {
-    WTF::switchOn(m_value, [] (Weak& value) {
-        value.clear();
-    }, [] (auto&) { });
+    m_nonCell = { };
+    m_cell.clear();
+}
+
+inline void JSValueInWrappedObject::setWithoutBarrier(JSValueInWrappedObject& other)
+{
+    JSC::Weak weak { other.m_cell.get() };
+    WTF::storeStoreFence(); // Ensure Weak is fully initialized for concurrent access.
+    m_nonCell = other.m_nonCell;
+    m_cell = WTFMove(weak);
 }
 
 inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue()>& function)
@@ -123,8 +128,7 @@ inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject
     if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue))
         return cachedValue;
     auto value = function();
-    cachedValue = cloneAcrossWorlds(lexicalGlobalObject, owner, value);
-    lexicalGlobalObject.vm().writeBarrier(&owner, value);
+    cachedValue.set(lexicalGlobalObject.vm(), &owner, cloneAcrossWorlds(lexicalGlobalObject, owner, value));
     ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue));
     return cachedValue;
 }
