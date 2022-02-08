@@ -2824,6 +2824,9 @@
             }
         },
         "input-security": {
+            "codegen-properties": {
+                "settings-flag": "cssInputSecurityEnabled"
+            },
             "values": [
                 "auto",
                 "none"

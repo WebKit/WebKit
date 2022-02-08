@@ -321,6 +321,18 @@ CSSIndividualTransformPropertiesEnabled:
     WebCore:
       default: true
 
+CSSInputSecurityEnabled:
+  type: bool
+  humanReadableName: "CSS Input Security"
+  humanReadableDescription: "Enable input-security CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMotionPathEnabled:
   type: bool
   humanReadableName: "CSS Motion Path"

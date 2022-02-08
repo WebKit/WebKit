@@ -1,5 +1,83 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288590. rdar://problem/87984277
+
+    Disable input-security CSS property
+    https://bugs.webkit.org/show_bug.cgi?id=235557
+    rdar://87984277
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    CSSWG is planning to remove input-security from CSS UI 4
+    (https://github.com/w3c/csswg-drafts/issues/6788).
+    
+    Keep the property around as an experimental feature, so that
+    it can be used in the UA stylesheet, and easily turned on if the
+    resolution is not finalized.
+    
+    * css/CSSComputedStyleDeclaration.cpp:
+    (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+    * css/CSSProperties.json:
+    * css/parser/CSSParserContext.cpp:
+    (WebCore::CSSParserContext::CSSParserContext):
+    
+    Enable input-security when parsing the UA stylesheet, as it is used to
+    obscure text in password inputs.
+    
+    (WebCore::operator==):
+    (WebCore::add):
+    (WebCore::CSSParserContext::isPropertyRuntimeDisabled const):
+    * css/parser/CSSParserContext.h:
+    * css/parser/CSSParserFastPaths.cpp:
+    (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+    
+    Source/WebKitLegacy/win:
+    
+    Add support for tests enabling the CSSInputSecurityEnabled preference.
+    
+    * WebPreferences.cpp:
+    (WebPreferences::cssInputSecurityEnabled):
+    * WebPreferences.h:
+    * WebView.cpp:
+    (WebView::notifyPreferencesChanged):
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    Make input-security a disabled-by-default experimental feature.
+    
+    Tools:
+    
+    * DumpRenderTree/TestOptions.cpp:
+    (WTR::TestOptions::defaults):
+    
+    Add default for WebKitLegacy on Windows.
+    
+    LayoutTests:
+    
+    * fast/css/computed-text-security-for-input-security.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
+
+            Disable input-security CSS property
+            https://bugs.webkit.org/show_bug.cgi?id=235557
+            rdar://87984277
+
+            Reviewed by Dean Jackson.
+
+            * DumpRenderTree/TestOptions.cpp:
+            (WTR::TestOptions::defaults):
+
+            Add default for WebKitLegacy on Windows.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288478. rdar://problem/72567903
 
     Regression (r286936): SessionStorage data is not cleared when deleting website data by modification time

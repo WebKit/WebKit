@@ -50,6 +50,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     if (mode == UASheetMode) {
         individualTransformPropertiesEnabled = true;
         focusVisibleEnabled = true;
+        inputSecurityEnabled = true;
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
         transformStyleOptimized3DEnabled = true;
 #endif
@@ -109,6 +110,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , overflowClipEnabled { document.settings().overflowClipEnabled() }
     , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
+    , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -158,6 +160,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.overflowClipEnabled == b.overflowClipEnabled
         && a.gradientPremultipliedAlphaInterpolationEnabled == b.gradientPremultipliedAlphaInterpolationEnabled
         && a.gradientInterpolationColorSpacesEnabled == b.gradientInterpolationColorSpacesEnabled
+        && a.inputSecurityEnabled == b.inputSecurityEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
@@ -204,7 +207,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.attachmentEnabled                         << 28
 #endif
         | context.accentColorEnabled                        << 29
-        | context.mode                                      << 30; // This is multiple bits, so keep it last.
+        | context.inputSecurityEnabled                      << 30
+        | context.mode                                      << 31; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -229,6 +233,8 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
         return !containmentEnabled;
     case CSSPropertyAppleColorFilter:
         return !colorFilterEnabled;
+    case CSSPropertyInputSecurity:
+        return !inputSecurityEnabled;
     case CSSPropertyTranslate:
     case CSSPropertyRotate:
     case CSSPropertyScale:
