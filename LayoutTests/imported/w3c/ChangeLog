@@ -1,5 +1,44 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288564. rdar://problem/87268956
+
+    REGRESSION(r281419): iCloud.com Notes web app fonts render incorrectly
+    https://bugs.webkit.org/show_bug.cgi?id=235559
+    <rdar://problem/87268956>
+    
+    Reviewed by Darin Adler.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/null-character-expected.txt: Added.
+    * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/null-character.html: Added.
+    
+    Source/WebCore:
+    
+    Chrome and Firefox render U+0000 NULL as invisible. We should do the same, despite it technically being classified as a control character.
+    
+    https://github.com/w3c/csswg-drafts/pull/6983
+    
+    Test: imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/null-character.html
+    
+    * platform/graphics/WidthIterator.cpp:
+    (WebCore::WidthIterator::applyCSSVisibilityRules):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288564 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r281419): iCloud.com Notes web app fonts render incorrectly
+            https://bugs.webkit.org/show_bug.cgi?id=235559
+            <rdar://problem/87268956>
+
+            Reviewed by Darin Adler.
+
+            * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/null-character-expected.txt: Added.
+            * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/null-character.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288362. rdar://problem/87832940
 
     WPT version of css/css-cascade/parsing/layer-import-parsing.html crashes with nullptr
