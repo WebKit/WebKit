@@ -1,3 +1,20 @@
+2022-02-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Never retry no-change build for pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=236046
+        <rdar://problem/88408671>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Pull-requests are not automatically rebased in EWS, so if a build fails on a specific
+        commit, a retry is unlikely to rectify the situation.
+
+        * CISupport/ews-build/steps.py:
+        (ReRunWebKitTests.evaluateCommand):
+        (RunWebKitTestsRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand):
+        (ReRunAPITests.evaluateCommand):
+
 2022-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Test webkit/WebKitWebView/display-usermedia-permission-request times out

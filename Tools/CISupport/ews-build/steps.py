@@ -59,6 +59,7 @@ Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit']
 HASH_LENGTH_TO_DISPLAY = 8
+RETRY_PRS = False
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -2766,7 +2767,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 UnApplyPatch(),
                                                 RevertPullRequestChanges(),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                                                CompileWebKitWithoutChange(retry_build_on_failure=True),
+                                                CompileWebKitWithoutChange(retry_build_on_failure=bool(self.getProperty('patch_id')) or RETRY_PRS),
                                                 ValidateChange(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunWebKitTestsWithoutChange()])
@@ -3116,7 +3117,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
                 next_steps.extend([
                     UnApplyPatch(),
                     RevertPullRequestChanges(),
-                    CompileWebKitWithoutChange(retry_build_on_failure=True),
+                    CompileWebKitWithoutChange(retry_build_on_failure=bool(self.getProperty('patch_id')) or RETRY_PRS),
                     ValidateChange(verifyBugClosed=False, addURLs=False),
                     RunWebKitTestsWithoutChangeRedTree(),
                 ])
@@ -3153,7 +3154,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
                 KillOldProcesses(),
                 UnApplyPatch(),
                 RevertPullRequestChanges(),
-                CompileWebKitWithoutChange(retry_build_on_failure=True),
+                CompileWebKitWithoutChange(retry_build_on_failure=bool(self.getProperty('patch_id')) or RETRY_PRS),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 RunWebKitTestsRepeatFailuresWithoutPatchRedTree(),
             ])
@@ -3580,7 +3581,7 @@ class ReRunAPITests(RunAPITests):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+            steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=bool(self.getProperty('patch_id')) or RETRY_PRS))
             steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
             steps_to_add.append(RunAPITestsWithoutPatch())
