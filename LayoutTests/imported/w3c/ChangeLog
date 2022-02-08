@@ -1,3 +1,137 @@
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288132. rdar://problem/87569029
+
+    CSP: Improve handling of multiple policies
+    https://bugs.webkit.org/show_bug.cgi?id=235199
+    
+    Reviewed by Kate Cheney.
+    
+    LayoutTests/imported/w3c:
+    
+    Add new test expectations with more passes.
+    
+    * web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-one-using-hashing-algorithms-expected.txt:
+    * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted-expected.txt:
+    * web-platform-tests/content-security-policy/style-src/style-src-error-event-fires-expected.txt:
+    * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event-expected.txt:
+    * web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms-expected.txt: Added.
+    
+    Source/WebCore:
+    
+    This fixes many issues with multiple CSP policies.
+    
+    To quote the spec for script-src:
+    
+    > Their behavior will be blocked unless every policy allows inline script, either implicitly by not
+      specifying a script-src (or default-src) directive, or explicitly, by specifying "unsafe-inline",
+      a nonce-source or a hash-source that matches the inline block.
+    
+    The previous structure was many distinct calls to check if there was a nonce in any policy, then if there
+    was a hash in any policy, etc, rather than actually checking the policies as a whole to know if they
+    allow or block a behavior. This lead to various issues where polices were not properly respected and where
+    reports were inaccurate.
+    
+    The allScriptPoliciesAllow() function did try to consider all policies but was not very flexible and had buggy
+    behavior like for each policy it would call findHashOfContentInPolicies() meaning hashes from other policies
+    incorrectly applied to the current policy, plus general inefficiency of hashing the same content many
+    times over.
+    
+    The new behavior relies more on passing all required information in a single function call to verify all
+    policies in a single pass.
+    
+    * bindings/js/CachedScriptFetcher.cpp:
+    (WebCore::CachedScriptFetcher::requestScriptWithCache const):
+    * dom/InlineStyleSheetOwner.cpp:
+    (WebCore::InlineStyleSheetOwner::createSheet):
+    * dom/ScriptElement.cpp:
+    (WebCore::ScriptElement::requestModuleScript):
+    (WebCore::ScriptElement::executeClassicScript):
+    * dom/StyledElement.cpp:
+    (WebCore::StyledElement::styleAttributeChanged):
+    * html/HTMLLinkElement.cpp:
+    (WebCore::HTMLLinkElement::process):
+    * loader/DocumentThreadableLoader.cpp:
+    (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy):
+    * loader/ResourceLoaderOptions.h:
+    * loader/cache/CachedResourceLoader.cpp:
+    (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::parseSubResourceIntegrityIntoDigests):
+    (WebCore::generateHashesForContent):
+    (WebCore::ContentSecurityPolicy::allowJavaScriptURLs const):
+    (WebCore::ContentSecurityPolicy::allowInlineEventHandlers const):
+    (WebCore::ContentSecurityPolicy::allowNonParserInsertedScripts const):
+    (WebCore::ContentSecurityPolicy::allowInlineScript const):
+    (WebCore::ContentSecurityPolicy::allowInlineStyle const):
+    (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+    (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+    (WebCore::ContentSecurityPolicy::allScriptPoliciesAllow const): Deleted.
+    (WebCore::ContentSecurityPolicy::findHashOfContentInPolicies const): Deleted.
+    (WebCore::ContentSecurityPolicy::checkHashAndReportViolation const): Deleted.
+    * page/csp/ContentSecurityPolicy.h:
+    * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineJavascriptURL const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineEventHandlers const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleAttribute const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScript const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle const):
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript const): Deleted.
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle const): Deleted.
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForParserInsertedScript const): Deleted.
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptAttribute const): Deleted.
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash const): Deleted.
+    (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash const): Deleted.
+    * page/csp/ContentSecurityPolicyDirectiveList.h:
+    
+    LayoutTests:
+    
+    Update test expectations, Some newly passing tests are no longer skipped and some have new reports.
+    
+    * TestExpectations:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-multiple-policies-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-enforced-policy-and-not-in-report-only-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-enforced-policy-and-not-in-report-only-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-multiple-policies-expected.txt:
+    * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/window-open-javascript-url-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked-expected.txt:
+    * platform/glib/TestExpectations:
+    * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288132 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-18  Patrick Griffis  <pgriffis@igalia.com>
+
+            CSP: Improve handling of multiple policies
+            https://bugs.webkit.org/show_bug.cgi?id=235199
+
+            Reviewed by Kate Cheney.
+
+            Add new test expectations with more passes.
+
+            * web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-one-using-hashing-algorithms-expected.txt:
+            * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted-expected.txt:
+            * web-platform-tests/content-security-policy/style-src/style-src-error-event-fires-expected.txt:
+            * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event-expected.txt:
+            * web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms-expected.txt: Added.
+
 2022-02-02  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288955. rdar://problem/88359001

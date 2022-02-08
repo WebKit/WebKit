@@ -334,61 +334,33 @@ bool ContentSecurityPolicy::allPoliciesAllow(ViolatedDirectiveCallback&& callbac
     return isAllowed;
 }
 
-bool ContentSecurityPolicy::allScriptPoliciesAllow(ViolatedDirectiveCallback&& callback, const URL& url, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+static Vector<ResourceCryptographicDigest> parseSubResourceIntegrityIntoDigests(const String& subResourceIntegrity)
 {
-    bool isAllowed = true;
-    for (auto& policy : m_policies) {
-        auto violatedDirectiveForNonParserInsertedScript = policy.get()->violatedDirectiveForParserInsertedScript(parserInserted);
-        auto violatedDirectiveForScriptNonce = policy.get()->violatedDirectiveForScriptNonce(nonce);
-        auto violatedDirectiveForScriptSrc = policy.get()->violatedDirectiveForScript(url, false, { });
-        auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
+    auto encodedDigests = parseIntegrityMetadata(subResourceIntegrity);
+    Vector<ResourceCryptographicDigest> decodedDigests;
 
-        if (violatedDirectiveForNonParserInsertedScript && violatedDirectiveForScriptNonce && violatedDirectiveForScriptSrc && !foundHashInEnforcedPolicies) {
-            if (!violatedDirectiveForNonParserInsertedScript->directiveList().isReportOnly()
-                || !violatedDirectiveForScriptNonce->directiveList().isReportOnly()
-                || !violatedDirectiveForScriptSrc->directiveList().isReportOnly()
-                || foundHashInReportOnlyPolicies)
-                isAllowed = false;
+    if (!encodedDigests.has_value())
+        return { };
 
-            callback(*violatedDirectiveForScriptSrc);
+    for (const auto& encodedDigest : encodedDigests.value()) {
+        auto decodedDigest = decodeEncodedResourceCryptographicDigest(encodedDigest);
+        if (decodedDigest.has_value())
+            decodedDigests.append(decodedDigest.value());
         }
-    }
-    return isAllowed;
+
+    return decodedDigests;
 }
 
-template<typename Predicate>
-ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPolicy::findHashOfContentInPolicies(const Predicate& predicate, StringView content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms) const
+static Vector<ContentSecurityPolicyHash> generateHashesForContent(const StringView content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)
 {
-    if (algorithms.isEmpty() || content.isEmpty())
-        return { false, false };
-
     CString utf8Content = content.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
-    bool foundHashInEnforcedPolicies = false;
-    bool foundHashInReportOnlyPolicies = false;
     Vector<ContentSecurityPolicyHash> hashes;
     for (auto algorithm : algorithms) {
         auto hash = cryptographicDigestForBytes(algorithm, utf8Content.data(), utf8Content.length());
         hashes.append(hash);
     }
-    if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, predicate, hashes))
-        foundHashInEnforcedPolicies = true;
-    if (!foundHashInReportOnlyPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::ReportOnly, predicate, hashes))
-        foundHashInReportOnlyPolicies = true;
 
-    return { foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies };
-}
-
-template<typename ViolatedDirective, typename HashSearchPolicy>
-bool ContentSecurityPolicy::checkHashAndReportViolation(const String& source, const ViolatedDirective& violatedDirective, const HashSearchPolicy& searchPolicy, OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithms, ContentSecurityPolicy::ViolatedDirectiveCallback&& callback) const
-{
-    auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(searchPolicy, source, hashAlgorithms);
-    if (foundHashInEnforcedPolicies && foundHashInReportOnlyPolicies)
-        return true;
-
-    if (!foundHashInReportOnlyPolicies)
-        allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::ReportOnly, std::forward<ViolatedDirectiveCallback>(callback), violatedDirective);
-
-    return foundHashInEnforcedPolicies || allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, WTFMove(callback), violatedDirective);
+    return hashes;
 }
 
 bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& source, bool overrideContentSecurityPolicy) const
@@ -397,7 +369,7 @@ bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const 
         return true;
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
-        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "its hash, its nonce, or 'unsafe-inline'");
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "its hash or 'unsafe-inline'");
         // FIXME (rdar://83332874) implement scriptSrcElem properly.
         reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, "inline"_s, consoleMessage, contextURL, source, TextPosition(contextLine, OrdinalNumber()));
         if (!didNotifyInspector && violatedDirective.directiveList().isReportOnly()) {
@@ -406,7 +378,8 @@ bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const 
         }
     };
 
-    return checkHashAndReportViolation(source, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript, m_hashAlgorithmsForInlineScripts, handleViolatedDirective);
+    auto contentHashes = generateHashesForContent(source, m_hashAlgorithmsForInlineScripts);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineJavascriptURL, contentHashes);
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, const OrdinalNumber& contextLine, const String& source, Element* element, bool overrideContentSecurityPolicy) const
@@ -423,7 +396,8 @@ bool ContentSecurityPolicy::allowInlineEventHandlers(const String& contextURL, c
         }
     };
 
-    return checkHashAndReportViolation(source, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptAttribute, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript, m_hashAlgorithmsForInlineScripts, handleViolatedDirective);
+    auto contentHashes = generateHashesForContent(source, m_hashAlgorithmsForInlineScripts);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineEventHandlers, contentHashes);
 }
 
 bool ContentSecurityPolicy::allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy) const
@@ -471,10 +445,12 @@ bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, 
         reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
     };
 
-    return allScriptPoliciesAllow(handleViolatedDirective, sourceURL, nonce, scriptContent, parserInserted);
+    auto contentHashes = generateHashesForContent(scriptContent, m_hashAlgorithmsForInlineScripts);
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts, strippedNonce, contentHashes, sourceURL, parserInserted);
 }
 
-bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element& element, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element& element, const String& nonce, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy || shouldPerformEarlyCSPCheck())
         return true;
@@ -487,12 +463,13 @@ bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const Or
             didNotifyInspector = true;
         }
     };
-    // FIXME: We should not report that the inline script violated a policy when its hash matched a source
-    // expression in the policy and the page has more than one policy. See <https://bugs.webkit.org/show_bug.cgi?id=159832>.
-    return checkHashAndReportViolation(scriptContent.toString(), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement, &ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, m_hashAlgorithmsForInlineScripts, handleViolatedDirective);
+
+    auto contentHashes = generateHashesForContent(scriptContent, m_hashAlgorithmsForInlineScripts);
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement, strippedNonce, contentHashes);
 }
 
-bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const OrdinalNumber& contextLine, StringView styleContent, CheckUnsafeHashes shouldCheckUnsafeHashes, Element& element, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const OrdinalNumber& contextLine, StringView styleContent, CheckUnsafeHashes shouldCheckUnsafeHashes, Element& element, const String& nonce, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;
@@ -504,12 +481,13 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const Ord
         reportViolation(name, violatedDirective, "inline"_s, consoleMessage, contextURL, styleContent, TextPosition(contextLine, OrdinalNumber()), URL(), nullptr, &element);
     };
 
-    if (shouldCheckUnsafeHashes == CheckUnsafeHashes::Yes)
-        return checkHashAndReportViolation(styleContent.toString(), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleAttribute, &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle, m_hashAlgorithmsForInlineStylesheets, handleViolatedDirective);
+    auto contentHashes = generateHashesForContent(styleContent, m_hashAlgorithmsForInlineStylesheets);
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
 
-    // FIXME: We should not report that the inline stylesheet violated a policy when its hash matched a source
-    // expression in the policy and the page has more than one policy. See <https://bugs.webkit.org/show_bug.cgi?id=159832>.
-    return checkHashAndReportViolation(styleContent.toString(), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement, &ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash, m_hashAlgorithmsForInlineStylesheets, handleViolatedDirective);
+    if (shouldCheckUnsafeHashes == CheckUnsafeHashes::Yes)
+        return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleAttribute, strippedNonce, contentHashes);
+
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement, strippedNonce, contentHashes);
 }
 
 bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole shouldLogToConsole, StringView codeContent, bool overrideContentSecurityPolicy) const
@@ -634,24 +612,7 @@ bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, Redirect
     return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::childSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext, preRedirectURL);
 }
 
-static Vector<ResourceCryptographicDigest> parseSubResourceIntegrityIntoDigests(const String& subResourceIntegrity)
-{
-    auto encodedDigests = parseIntegrityMetadata(subResourceIntegrity);
-    Vector<ResourceCryptographicDigest> decodedDigests;
-
-    if (!encodedDigests.has_value())
-        return { };
-
-    for (const auto& encodedDigest : encodedDigests.value()) {
-        auto decodedDigest = decodeEncodedResourceCryptographicDigest(encodedDigest);
-        if (decodedDigest.has_value())
-            decodedDigests.append(decodedDigest.value());
-    }
-
-    return decodedDigests;
-}
-
-bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& subResourceIntegrity) const
+bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& subResourceIntegrity, const String& nonce) const
 {
     if (shouldPerformEarlyCSPCheck())
         return true;
@@ -667,7 +628,8 @@ bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectRespon
     };
 
     auto subResourceIntegrityDigests = parseSubResourceIntegrityIntoDigests(subResourceIntegrity);
-    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForScript, url, redirectResponseReceived == RedirectResponseReceived::Yes, subResourceIntegrityDigests);
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForScript, url, redirectResponseReceived == RedirectResponseReceived::Yes, subResourceIntegrityDigests, strippedNonce);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
@@ -675,9 +637,20 @@ bool ContentSecurityPolicy::allowImageFromSource(const URL& url, RedirectRespons
     return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::imgSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForImage, preRedirectURL);
 }
 
-bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
+bool ContentSecurityPolicy::allowStyleFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL, const String& nonce) const
 {
-    return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::styleSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle, preRedirectURL);
+    if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
+        return true;
+    String sourceURL;
+    const auto& blockedURL = !preRedirectURL.isNull() ? preRedirectURL : url;
+    TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+    auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::styleSrc, violatedDirective, blockedURL, "Refused to load");
+        reportViolation(ContentSecurityPolicyDirectiveNames::styleSrc, violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), sourcePosition);
+    };
+
+    String strippedNonce = stripLeadingAndTrailingHTMLSpaces(nonce);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle, url, redirectResponseReceived == RedirectResponseReceived::Yes, strippedNonce);
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const

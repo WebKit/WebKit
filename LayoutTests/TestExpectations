@@ -950,7 +950,6 @@ imported/w3c/web-platform-tests/content-security-policy [ DumpJSConsoleLogInStdE
 
 # FIXME: Skip Content Security Policy tests that are dumping the render tree instead of text:
 imported/w3c/web-platform-tests/content-security-policy/svg/scripted.svg [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-multiple-policies-one-using-hashing-algorithms.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/svg/including.sub.svg [ Skip ]
 
 # Skip Content Security Policy tests that time out
@@ -994,13 +993,9 @@ imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript
 # FIXME: Skip Content Security Policy tests whose output is non-deterministic
 imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-multiple-policies-multiple-hashing-algorithms.html [ Skip ]
 
 # Content Security Policy: Embedded Enforcement is not supported
 imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
-
-# Skip some Content Security Policy script-dynamic tests as we do not fully support the feature
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html [ Skip ]
 
 # Skip Content Security Policy shared workers tests as we do not support shared workers
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html

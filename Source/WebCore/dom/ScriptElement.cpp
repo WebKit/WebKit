@@ -379,8 +379,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     if (!contentSecurityPolicy.allowNonParserInsertedScripts(URL(), m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
         return false;
 
-    bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(nonce, m_element.isInUserAgentShadowTree());
-    if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, hasKnownNonce))
+    if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, nonce, m_element.isInUserAgentShadowTree()))
         return false;
 
     m_loadableScript = WTFMove(script);
@@ -403,8 +402,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
         if (!contentSecurityPolicy.allowNonParserInsertedScripts(URL(), m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
             return;
 
-        bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.nonce(), m_element.isInUserAgentShadowTree());
-        if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, hasKnownNonce))
+        if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, m_element.nonce(), m_element.isInUserAgentShadowTree()))
             return;
     }
 

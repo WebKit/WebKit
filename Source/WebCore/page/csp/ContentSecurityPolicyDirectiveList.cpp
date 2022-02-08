@@ -190,75 +190,61 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashScript(const Vector<ContentSecurityPolicyHash>& hashes) const
-{
-    auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkUnsafeHashes(operativeDirective, hashes))
-        return nullptr;
-    return operativeDirective;
-}
-
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeHashStyle(const Vector<ContentSecurityPolicyHash>& hashes) const
-{
-    auto* operativeDirective = this->operativeDirective(m_styleSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkUnsafeHashes(operativeDirective, hashes))
-        return nullptr;
-    return operativeDirective;
-}
-
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForParserInsertedScript(ParserInserted parserInserted) const
-{
-    auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkNonParserInsertedScripts(operativeDirective, parserInserted))
-        return nullptr;
-
-    return operativeDirective;
-}
-
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement() const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptElement(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
-    if (checkInline(operativeDirective))
+    if (checkHashes(operativeDirective, hashes)
+        || checkNonce(operativeDirective, nonce)
+        || checkInline(operativeDirective))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineScriptAttribute() const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineJavascriptURL(const Vector<ContentSecurityPolicyHash>& hashes) const
+{
+    auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
+    if (checkUnsafeHashes(operativeDirective, hashes)
+        || checkInline(operativeDirective))
+        return nullptr;
+    return operativeDirective;
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForInlineEventHandlers(const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcAttr.get(), ContentSecurityPolicyDirectiveNames::scriptSrcAttr);
-    if (checkInline(operativeDirective))
+    if (checkUnsafeHashes(operativeDirective, hashes)
+        || checkInline(operativeDirective))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement() const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const URL& url, ParserInserted parserInserted) const
+{
+    auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
+    if (checkHashes(operativeDirective, hashes)
+        || checkNonParserInsertedScripts(operativeDirective, parserInserted)
+        || checkNonce(operativeDirective, nonce)
+        || checkSource(operativeDirective, url))
+        return nullptr;
+    return operativeDirective;
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleElement(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirectiveStyle(m_styleSrcElem.get(), ContentSecurityPolicyDirectiveNames::styleSrcElem);
-    if (checkInline(operativeDirective))
+    if (checkHashes(operativeDirective, hashes)
+        || checkNonce(operativeDirective, nonce)
+        || checkInline(operativeDirective))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleAttribute() const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeInlineStyleAttribute(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes) const
 {
     auto* operativeDirective = this->operativeDirectiveStyle(m_styleSrcAttr.get(), ContentSecurityPolicyDirectiveNames::styleSrcAttr);
-    if (checkInline(operativeDirective))
-        return nullptr;
-    return operativeDirective;
-}
-
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash(const Vector<ContentSecurityPolicyHash>& hashes) const
-{
-    auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
-    if (checkHashes(operativeDirective, hashes))
-        return nullptr;
-    return operativeDirective;
-}
-
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleHash(const Vector<ContentSecurityPolicyHash>& hashes) const
-{
-    auto* operativeDirective = this->operativeDirective(m_styleSrc.get(), ContentSecurityPolicyDirectiveNames::styleSrc);
-    if (checkHashes(operativeDirective, hashes))
+    if (checkUnsafeHashes(operativeDirective, hashes)
+        || checkNonce(operativeDirective, nonce)
+        || checkInline(operativeDirective))
         return nullptr;
     return operativeDirective;
 }
@@ -387,22 +373,24 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_pluginTypes.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScript(const URL& url, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScript(const URL& url, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests, const String& nonce) const
 {
     auto* operativeDirective = this->operativeDirective(m_scriptSrc.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
 
-    if (!operativeDirective || operativeDirective->containsAllHashes(subResourceIntegrityDigests))
+    if (!operativeDirective
+        || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
+        || checkNonce(operativeDirective, nonce)
+        || checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
 
-    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
-        return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle(const URL& url, bool didReceiveRedirectResponse) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle(const URL& url, bool didReceiveRedirectResponse, const String& nonce) const
 {
     auto* operativeDirective = this->operativeDirective(m_styleSrc.get(), ContentSecurityPolicyDirectiveNames::styleSrcElem);
-    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
+    if (checkNonce(operativeDirective, nonce)
+        || checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }

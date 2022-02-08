@@ -46,16 +46,12 @@ public:
     ContentSecurityPolicyHeaderType headerType() const { return m_headerType; }
 
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeEval() const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForParserInsertedScript(ParserInserted) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScriptElement() const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScriptAttribute() const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleElement() const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleAttribute() const;
-
-    const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const Vector<ContentSecurityPolicyHash>&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForStyleHash(const Vector<ContentSecurityPolicyHash>&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashScript(const Vector<ContentSecurityPolicyHash>&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeHashStyle(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForInlineJavascriptURL(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForInlineEventHandlers(const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScriptElement(const String&, const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForNonParserInsertedScripts(const String&, const Vector<ContentSecurityPolicyHash>&, const URL&, ParserInserted) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleElement(const String&, const Vector<ContentSecurityPolicyHash>&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleAttribute(const String&, const Vector<ContentSecurityPolicyHash>&) const;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForScriptNonce(const String&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const;
@@ -75,8 +71,8 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, bool didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>&, const String&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&, bool didReceiveRedirectResponse, const String&) const;
 
     const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 
