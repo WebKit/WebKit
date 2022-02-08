@@ -39,6 +39,12 @@ class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
     ISSUE_LINK_RE = re.compile(r'#(?P<id>\d+)')
     USERNAME_RE = re.compile(r'(^|\s|\'|")@(?P<username>[^\s"\'<>]+)')
+    RE_TEMPLATES = [
+        r'\Ahttps?://github.{}/{}/{}/issues/(?P<id>\d+)\Z',
+        r'\Agithub.{}/{}/{}/issues/(?P<id>\d+)\Z',
+        r'\Ahttps?://api.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
+        r'\Aapi.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
+    ]
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -48,8 +54,8 @@ class Tracker(GenericTracker):
                     type='github',
                     url=obj.url,
                 )
-                if obj._res[2:]:
-                    result['res'] = [compiled.pattern for compiled in obj._res[2:]]
+                if obj._res[len(Tracker.RE_TEMPLATES):]:
+                    result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
                 return result
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
@@ -64,11 +70,8 @@ class Tracker(GenericTracker):
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
 
         self._res = [
-            re.compile(r'\Ahttps?://github.{}/{}/{}/issues/(?P<id>\d+)\Z'.format(
-                match.group('domain'), match.group('owner'), match.group('repository'),
-            )), re.compile(r'\Agithub.{}/{}/{}/issues/(?P<id>\d+)\Z'.format(
-                match.group('domain'), match.group('owner'), match.group('repository'),
-            )),
+            re.compile(template.format(match.group('domain'), match.group('owner'), match.group('repository')))
+            for template in self.RE_TEMPLATES
         ] + (res or [])
 
         self.url = url
@@ -334,7 +337,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             timestamp=tm,
             content=data.get('body'),
         )
-        if not issue._comments:
+        if issue._comments is None:
             self.populate(issue, 'comments')
-        issue._comments.append(result)
+        else:
+            issue._comments.append(result)
         return result

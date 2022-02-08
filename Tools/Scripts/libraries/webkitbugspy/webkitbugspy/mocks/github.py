@@ -48,14 +48,16 @@ class GitHub(Base, mocks.Requests):
 
     def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None):
         hostname, repo = hostname.split('/', 1)
-        self.api_host = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
+        self.api_remote = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
         Base.__init__(self, users=users, issues=issues)
         mocks.Requests.__init__(self, hostname, 'api.{}'.format(hostname))
 
         prefix = self.hosts[0].replace('.', '_').upper()
+        if not environment:
+            self.users.create(username='username')
         self._environment = environment or mocks.Environment(**{
-            '{}_USERNAME'.format(prefix): 'usernmae',
+            '{}_USERNAME'.format(prefix): 'username',
             '{}_TOKEN'.format(prefix): 'token',
         })
 
@@ -101,8 +103,8 @@ class GitHub(Base, mocks.Requests):
             user=dict(login=self.users[issue['creator'].name].username),
             created_at=self.time_string(issue['timestamp']),
             state='opened' if issue['opened'] else 'closed',
-            assignee=dict(login=self.users[issue['assignee'].name].username),
-            assignees=[dict(login=self.users[user.name].username) for user in issue['watchers']],
+            assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
+            assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
         ))
 
     def _comments(self, url, id):
@@ -178,17 +180,17 @@ class GitHub(Base, mocks.Requests):
         if match and method == 'GET':
             return self._user(url, match.group('username'))
 
-        match = re.match(r'{}/issues/(?P<id>\d+)$'.format(self.api_host), stripped_url)
+        match = re.match(r'{}/issues/(?P<id>\d+)$'.format(self.api_remote), stripped_url)
         if match and method in ('GET', 'PATCH'):
             return self._issue(url, int(match.group('id')), data=json if method == 'PATCH' else None)
 
-        match = re.match(r'{}/issues/(?P<id>\d+)/comments$'.format(self.api_host), stripped_url)
+        match = re.match(r'{}/issues/(?P<id>\d+)/comments$'.format(self.api_remote), stripped_url)
         if match and method == 'GET':
             return self._comments(url, int(match.group('id')))
         if match and method == 'POST':
             return self._post_comment(url, int(match.group('id')), auth, json)
 
-        match = re.match(r'{}/issues/(?P<id>\d+)/timeline$'.format(self.api_host), stripped_url)
+        match = re.match(r'{}/issues/(?P<id>\d+)/timeline$'.format(self.api_remote), stripped_url)
         if match and method == 'GET':
             return self._timelines(url, int(match.group('id')))
 

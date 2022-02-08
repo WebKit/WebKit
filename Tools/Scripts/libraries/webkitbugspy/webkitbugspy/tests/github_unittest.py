@@ -73,6 +73,10 @@ class TestGitHub(unittest.TestCase):
             tracker.from_string('http://github.example.com/WebKit/WebKit/issues/1234').link,
             'https://github.example.com/WebKit/WebKit/issues/1234',
         )
+        self.assertEqual(
+            tracker.from_string('http://api.github.example.com/repos/WebKit/WebKit/issues/1234').link,
+            'https://github.example.com/WebKit/WebKit/issues/1234',
+        )
         self.assertEqual(tracker.from_string('https://github.example.com/Apple/Swift/issues/1234'), None)
 
     def test_title(self):

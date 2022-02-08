@@ -36,6 +36,10 @@ from webkitbugspy import User
 
 class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)\Z')
+    RE_TEMPLATES = [
+        r'\Ahttps?://{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
+        r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
+    ]
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -45,8 +49,8 @@ class Tracker(GenericTracker):
                     type='bugzilla',
                     url=obj.url,
                 )
-                if obj._res[2:]:
-                    result['res'] = [compiled.pattern for compiled in obj._res[2:]]
+                if obj._res[len(Tracker.RE_TEMPLATES):]:
+                    result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
                 return result
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
@@ -61,8 +65,8 @@ class Tracker(GenericTracker):
             raise self.Exception("'{}' is not a valid bugzilla url".format(url))
         self.url = url
         self._res = [
-            re.compile(r'\Ahttps?://{}/show_bug.cgi\?id=(?P<id>\d+)\Z'.format(match.group('domain'))),
-            re.compile(r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z'.format(match.group('domain'))),
+            re.compile(template.format(match.group('domain')))
+            for template in self.RE_TEMPLATES
         ] + (res or [])
 
     def user(self, name=None, username=None, email=None):
