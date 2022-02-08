@@ -110,7 +110,7 @@ void lowerStackArgs(Code& code)
 
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                    auto stackAddr = [&] (Value::OffsetType offsetFromFP) -> Arg {
+                    auto stackAddr = [&] (unsigned instIndex, Value::OffsetType offsetFromFP) -> Arg {
                         int32_t offsetFromSP = offsetFromFP + code.frameSize();
 
                         if (inst.admitsExtendedOffsetAddr(arg)) {
@@ -137,6 +137,7 @@ void lowerStackArgs(Code& code)
                         result = Arg::addr(tmp, 0);
                         return result;
 #elif CPU(X86_64)
+                        UNUSED_PARAM(instIndex);
                         // Can't happen on x86: immediates are always big enough for frame size.
                         RELEASE_ASSERT_NOT_REACHED();
 #else
@@ -171,13 +172,13 @@ void lowerStackArgs(Code& code)
                             RELEASE_ASSERT(isValidForm(storeOpcode, operandKind, Arg::Stack));
                             insertionSet.insert(
                                 instIndex + 1, storeOpcode, inst.origin, operand,
-                                stackAddr(arg.offset() + 4 + slot->offsetFromFP()));
+                                stackAddr(instIndex + 1, arg.offset() + 4 + slot->offsetFromFP()));
                         }
-                        arg = stackAddr(arg.offset() + slot->offsetFromFP());
+                        arg = stackAddr(instIndex, arg.offset() + slot->offsetFromFP());
                         break;
                     }
                     case Arg::CallArg:
-                        arg = stackAddr(arg.offset() - code.frameSize());
+                        arg = stackAddr(instIndex, arg.offset() - code.frameSize());
                         break;
                     default:
                         break;
