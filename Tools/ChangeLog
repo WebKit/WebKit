@@ -1,5 +1,43 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288478. rdar://problem/72567903
+
+    Regression (r286936): SessionStorage data is not cleared when deleting website data by modification time
+    https://bugs.webkit.org/show_bug.cgi?id=235542
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    The old behavior before r286936 is to delete SessionStorage data regardless of the modifiedSince parameter.
+    r286936 made it check modifiedSince and perform deleteion when modifiedSince time is -Walltime::infinity. This
+    patch corrects it by deleting SessionStorage data when modifiedSince time is in the past.
+    
+    API test: SessionStorage.ClearByModificationTime
+    
+    * NetworkProcess/storage/OriginStorageManager.cpp:
+    (WebKit::OriginStorageManager::StorageBucket::deleteData):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SessionStorage.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288478 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Sihui Liu  <sihui_liu@apple.com>
+
+            Regression (r286936): SessionStorage data is not cleared when deleting website data by modification time
+            https://bugs.webkit.org/show_bug.cgi?id=235542
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/SessionStorage.mm:
+            (TEST):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288178. rdar://problem/79296770
 
     REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus
