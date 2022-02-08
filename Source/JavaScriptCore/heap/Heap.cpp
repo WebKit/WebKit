@@ -2159,6 +2159,8 @@ void Heap::finalize()
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
         vm().jsonAtomStringCache.clear();
 
+    m_possiblyAccessedStringsFromConcurrentThreads.clear();
+
     immutableButterflyToStringCache.clear();
     
     for (const HeapFinalizerCallback& callback : m_heapFinalizerCallbacks)

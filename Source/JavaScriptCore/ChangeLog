@@ -1,3 +1,88 @@
+2022-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Convert JSString's non-atomic WTF::String to atomic string while concurrent compilers / heap threads run
+        https://bugs.webkit.org/show_bug.cgi?id=236262
+
+        Reviewed by Saam Barati.
+
+        Inspired from r289177. This patch introduces a new protocol which allows us to replace JSString's underlying non-atomic String
+        to atomic String if we once call toIdentifier / toAtomString.
+
+        We had a problem that,
+
+        1. We have a JSString, which has a "test" WTF::String.
+        2. We already have "test" atomic string in the table.
+        3. Then, when we call JSString::toIdentifier, we know that there is an atomic "test" string, but we cannot replace the current JSString's
+           WTF::String because it can be accessed concurrently from concurrent compilers and GC heap helpers.
+        4. Thus, JSString keeps non atomic "test" WTF::String.
+
+        But this means that we need to lookup atom string table every time we would like to get an atom string from this JSString.
+
+        So, in this patch, we introduce a new protocol, which allows swapping existing WTF::String with an atom string.
+
+        When we found that JSString has a WTF::String and we already have atom string in the table with the same content (when calling
+        toIdentifier / toAtomString), we attempt to replace JSString's WTF::String with the atom string, but *keep the old string in JSC::Heap's
+        vector called m_possiblyAccessedStringsFromConcurrentThreads. Then, we can keep these strings alive until next GC ends. This ensures that
+        all concurrent compilers / heap helpers can keep accessing to the old strings. And then, in the GC finalize, we clear this vector since
+        resumed concurrent compilers and GC heap helpers will not touch these old strings in the next GC cycle. Only case we have a problem is
+        that we keep having StringImpl* of the old string after GC safepoint in the concurrent compiler, and the only use of that is
+        DFG::Graph::m_copiedStrings. So, I changed the code not to keep old StringImpl* in DFG::Graph::m_copiedStrings. Also, note that we do
+        this only when we convert non-atom string to atom string so all UniquedStringImpl* from JSString* (it is atom ones) does not matter since
+        they are already atom one: they will not be replaced.
+
+        This does not increase memory usage, rather, improve memory usage since this kept string was anyway held by the wrapper's JSString at least
+        until the next GC run. And we clear m_possiblyAccessedStringsFromConcurrentThreads in the next GC run, so we can shrink memory.
+
+        It improves Speedometer2 by 0.2%.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |106.193333   |105.690000   |0.995260  | 0.050074                                         |
+            | VueJS-TodoMVC                        |21.671667    |21.741667    |1.003230  | 0.715305                                         |
+            | EmberJS-TodoMVC                      |113.146667   |110.871667   |0.979893  | 0.000000 (significant)                           |
+            | BackboneJS-TodoMVC                   |42.481667    |42.346667    |0.996822  | 0.358040                                         |
+            | Preact-TodoMVC                       |15.796667    |16.016667    |1.013927  | 0.226011                                         |
+            | AngularJS-TodoMVC                    |117.568333   |117.345000   |0.998100  | 0.543369                                         |
+            | Vanilla-ES2015-TodoMVC               |58.348333    |57.905000    |0.992402  | 0.000381 (significant)                           |
+            | Inferno-TodoMVC                      |54.656667    |54.946667    |1.005306  | 0.254310                                         |
+            | Flight-TodoMVC                       |61.106667    |61.141667    |1.000573  | 0.880780                                         |
+            | Angular2-TypeScript-TodoMVC          |37.030000    |37.065000    |1.000945  | 0.918550                                         |
+            | VanillaJS-TodoMVC                    |47.741667    |47.911667    |1.003561  | 0.497675                                         |
+            | jQuery-TodoMVC                       |205.251667   |203.903333   |0.993431  | 0.000420 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |312.448333   |308.848333   |0.988478  | 0.000020 (significant)                           |
+            | React-TodoMVC                        |78.381667    |78.268333    |0.998554  | 0.654647                                         |
+            | React-Redux-TodoMVC                  |131.246667   |131.626667   |1.002895  | 0.138912                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |57.860000    |57.533333    |0.994354  | 0.156536                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 290.61106
+            b mean = 291.21768
+            pValue = 0.1419936818
+            (Bigger means are better.)
+            1.002 times better
+            Results ARE NOT significant
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::prepareJumpTableForStringSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::CrossThreadStringTranslator::hash):
+        (JSC::DFG::CrossThreadStringTranslator::equal):
+        (JSC::DFG::CrossThreadStringTranslator::translate):
+        (JSC::DFG::LazyJSValue::tryGetString const):
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::knownStringImpl):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalize):
+        * heap/Heap.h:
+        (JSC::Heap::appendPossiblyAccessedStringFromConcurrentThreads):
+        * runtime/JSString.h:
+        (JSC::JSString::swapToAtomString const):
+        (JSC::JSString::toIdentifier const):
+        (JSC::JSString::toAtomString const):
+
 2022-02-07  Saam Barati  <sbarati@apple.com>
 
         Wasm crash on https://copy.sh/v86/?profile=dsl

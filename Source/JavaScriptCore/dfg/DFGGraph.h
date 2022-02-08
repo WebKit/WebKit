@@ -1176,7 +1176,7 @@ public:
     Vector<CatchEntrypointData> m_catchEntrypoints;
 
     HashSet<String> m_localStrings;
-    HashMap<const StringImpl*, String> m_copiedStrings;
+    HashSet<String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
     HashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;

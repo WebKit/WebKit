@@ -246,6 +246,8 @@ private:
 
     StringView unsafeView(JSGlobalObject*) const;
 
+    void swapToAtomString(VM&, RefPtr<AtomStringImpl>&&) const;
+
     friend JSString* jsString(VM&, const String&);
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*);
     friend JSString* jsString(JSGlobalObject*, const String&, JSString*);
@@ -769,6 +771,19 @@ ALWAYS_INLINE Identifier JSRopeString::toIdentifier(JSGlobalObject* globalObject
     return Identifier::fromString(vm, atomString);
 }
 
+ALWAYS_INLINE void JSString::swapToAtomString(VM& vm, RefPtr<AtomStringImpl>&& atom) const
+{
+    // We replace currently held string with new AtomString. But the old string can be accessed from concurrent compilers and GC threads at any time.
+    // So, we keep the old string alive by appending it to Heap::m_possiblyAccessedStringsFromConcurrentThreads. And GC clears that list when GC finishes.
+    // This is OK since (1) when finishing GC concurrent compiler threads and GC threads are stopped, and (2) AtomString is already held in the atom table,
+    // and we anyway keep this old string until this JSString* is GC-ed. So it does not increase any memory pressure, we release at the same timing.
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    String target(WTFMove(atom));
+    WTF::storeStoreFence(); // Ensure AtomStringImpl's string is fully initialized when it is exposed to concurrent threads.
+    valueInternal().swap(target);
+    vm.heap.appendPossiblyAccessedStringFromConcurrentThreads(WTFMove(target));
+}
+
 ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
@@ -782,6 +797,10 @@ ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) co
         vm.lastAtomizedIdentifierStringImpl = *valueInternal().impl();
         vm.lastAtomizedIdentifierAtomStringImpl = AtomStringImpl::add(valueInternal().impl()).releaseNonNull();
     }
+    // It is possible that AtomStringImpl::add converts existing valueInternal()'s StringImpl to AtomicStringImpl,
+    // thus we need to recheck atomicity status here.
+    if (!valueInternal().impl()->isAtom())
+        swapToAtomString(vm, RefPtr { vm.lastAtomizedIdentifierAtomStringImpl.ptr() });
     return Identifier::fromString(vm, Ref { vm.lastAtomizedIdentifierAtomStringImpl });
 }
 
@@ -791,7 +810,12 @@ ALWAYS_INLINE AtomString JSString::toAtomString(JSGlobalObject* globalObject) co
         vm().verifyCanGC();
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToAtomString(globalObject);
-    return AtomString(valueInternal());
+    AtomString atom(valueInternal());
+    // It is possible that AtomString constructor converts existing valueInternal()'s StringImpl to AtomicStringImpl,
+    // thus we need to recheck atomicity status here.
+    if (!valueInternal().impl()->isAtom())
+        swapToAtomString(getVM(globalObject), RefPtr { atom.impl() });
+    return atom;
 }
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> JSString::toExistingAtomString(JSGlobalObject* globalObject) const
