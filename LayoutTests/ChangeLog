@@ -1,5 +1,71 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288003. rdar://problem/85505101
+
+    Only apply automatic minimum block-size aspect-ratio rules to non-replaced elements
+    https://bugs.webkit.org/show_bug.cgi?id=235058
+    <rdar://85505101>
+    
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    The rules in https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
+    that define the automatic minimum size of an element subject to an
+    aspect-ratio only apply if the element is non-replaced.
+    
+    In constrainLogicalHeightByMinMax specifically, when min-height is
+    auto, after applying the aspect-ratio to produce an automatic minimum
+    height, we bump it up to the content height if the element has
+    children. This, presumably, is to account for the way the height of a
+    block is computed in CSS 2.2. (As CSS 2.2 doesn't have an auto value
+    for min-height, and a CSS Block Layout module has not been written in
+    terms of CSS Sizing concepts, there is no clear definition of
+    automatic minimum sizing for blocks at the moment.) If we erroneously
+    apply this to a replaced element, such as an image or video, it can
+    get a computed min-height equal to the intrinsic height of the image,
+    which may be much larger than expected.
+    
+    This commit adds an is<RenderReplaced>() check for both automatic
+    minimum logical width and height calculations, although I was unable to
+    produce a test to exercise the logical width case (which does not take
+    the intrinsic size into account when computing the automatic minimum).
+    
+    Test: fast/css/aspect-ratio-min-height-replaced.html
+    
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::constrainLogicalWidthInFragmentByMinMax const):
+    (WebCore::RenderBox::constrainLogicalHeightByMinMax const):
+    
+    LayoutTests:
+    
+    Test that replaced elements with child content (in this case, a
+    <video> element's controls in the UA shadow tree) don't influence the
+    automatic minimum size calculation.
+    
+    * fast/css/aspect-ratio-min-height-replaced-expected.html: Added.
+    * fast/css/aspect-ratio-min-height-replaced.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288003 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Cameron McCormack  <heycam@apple.com>
+
+            Only apply automatic minimum block-size aspect-ratio rules to non-replaced elements
+            https://bugs.webkit.org/show_bug.cgi?id=235058
+            <rdar://85505101>
+
+            Reviewed by Alan Bujtas.
+
+            Test that replaced elements with child content (in this case, a
+            <video> element's controls in the UA shadow tree) don't influence the
+            automatic minimum size calculation.
+
+            * fast/css/aspect-ratio-min-height-replaced-expected.html: Added.
+            * fast/css/aspect-ratio-min-height-replaced.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287981. rdar://problem/84069534
 
     REGRESSION (r278561): Right clicking a link selects the full line with unrelated text
