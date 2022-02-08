@@ -138,6 +138,7 @@ private:
 
     void processNewVideoSample(MediaSample&, bool hasChangedOrientation, VideoSampleMetadata, Seconds);
     void enqueueVideoSample(MediaSample&);
+    void reenqueueCurrentVideoSampleIfNeeded();
     void requestNotificationWhenReadyForVideoData();
 
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -168,6 +169,7 @@ private:
 
     void updateTracks();
     void updateRenderingMode();
+    void scheduleRenderingModeChanged();
     void checkSelectedVideoTrack();
     void updateDisplayLayer();
 
