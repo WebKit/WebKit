@@ -1,5 +1,171 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289018. rdar://problem/87358372
+
+    Use private relay for all subresources if the main document main resource was loaded using private relay
+    https://bugs.webkit.org/show_bug.cgi?id=236000
+    Source/WebCore:
+    
+    <rdar://87358372>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-02-02
+    Reviewed by Brady Eidson.
+    
+    This can be manually tested using instructions in the radar.
+    
+    * loader/DocumentLoader.h:
+    (WebCore::DocumentLoader::setMainResourceWasPrivateRelayed):
+    (WebCore::DocumentLoader::mainResourceWasPrivateRelayed const):
+    
+    Source/WebCore/PAL:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-02-02
+    Reviewed by Brady Eidson.
+    
+    * pal/spi/cf/CFNetworkSPI.h:
+    
+    Source/WebKit:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-02-02
+    Reviewed by Brady Eidson.
+    
+    * NetworkProcess/Downloads/PendingDownload.cpp:
+    (WebKit::PendingDownload::didReceiveResponse):
+    * NetworkProcess/Downloads/PendingDownload.h:
+    * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+    (WebKit::NetworkCORSPreflightChecker::didReceiveResponse):
+    * NetworkProcess/NetworkCORSPreflightChecker.h:
+    * NetworkProcess/NetworkDataTask.cpp:
+    (WebKit::NetworkDataTask::didReceiveResponse):
+    * NetworkProcess/NetworkDataTask.h:
+    * NetworkProcess/NetworkDataTaskBlob.cpp:
+    (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+    * NetworkProcess/NetworkLoad.cpp:
+    (WebKit::NetworkLoad::didReceiveResponse):
+    (WebKit::NetworkLoad::notifyDidReceiveResponse):
+    * NetworkProcess/NetworkLoad.h:
+    * NetworkProcess/NetworkLoadClient.h:
+    * NetworkProcess/NetworkLoadParameters.h:
+    * NetworkProcess/NetworkResourceLoadParameters.cpp:
+    (WebKit::NetworkResourceLoadParameters::encode const):
+    (WebKit::NetworkResourceLoadParameters::decode):
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    (WebKit::NetworkResourceLoader::transferToNewWebProcess):
+    (WebKit::NetworkResourceLoader::didReceiveResponse):
+    (WebKit::NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup):
+    (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+    (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+    * NetworkProcess/NetworkResourceLoader.h:
+    * NetworkProcess/PingLoad.cpp:
+    (WebKit::PingLoad::didReceiveResponse):
+    * NetworkProcess/PingLoad.h:
+    * NetworkProcess/PreconnectTask.cpp:
+    (WebKit::PreconnectTask::didReceiveResponse):
+    * NetworkProcess/PreconnectTask.h:
+    * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+    (WebKit::ServiceWorkerFetchTask::processResponse):
+    * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+    (WebKit::ServiceWorkerNavigationPreloader::loadWithCacheEntry):
+    (WebKit::ServiceWorkerNavigationPreloader::willSendRedirectedRequest):
+    (WebKit::ServiceWorkerNavigationPreloader::didReceiveResponse):
+    * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h:
+    * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+    (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveResponse):
+    * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h:
+    * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+    (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+    * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+    (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+    * Shared/PrivateRelayed.h: Added.
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/Network/WebLoaderStrategy.cpp:
+    (WebKit::addParametersShared):
+    * WebProcess/Network/WebResourceLoader.cpp:
+    (WebKit::WebResourceLoader::mainFrameMainResource const):
+    (WebKit::WebResourceLoader::willSendRequest):
+    (WebKit::WebResourceLoader::didReceiveResponse):
+    * WebProcess/Network/WebResourceLoader.h:
+    * WebProcess/Network/WebResourceLoader.messages.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289018 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-02  Alex Christensen  <achristensen@webkit.org>
+
+            Use private relay for all subresources if the main document main resource was loaded using private relay
+            https://bugs.webkit.org/show_bug.cgi?id=236000
+
+            Reviewed by Brady Eidson.
+
+            * NetworkProcess/Downloads/PendingDownload.cpp:
+            (WebKit::PendingDownload::didReceiveResponse):
+            * NetworkProcess/Downloads/PendingDownload.h:
+            * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+            (WebKit::NetworkCORSPreflightChecker::didReceiveResponse):
+            * NetworkProcess/NetworkCORSPreflightChecker.h:
+            * NetworkProcess/NetworkDataTask.cpp:
+            (WebKit::NetworkDataTask::didReceiveResponse):
+            * NetworkProcess/NetworkDataTask.h:
+            * NetworkProcess/NetworkDataTaskBlob.cpp:
+            (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::didReceiveResponse):
+            (WebKit::NetworkLoad::notifyDidReceiveResponse):
+            * NetworkProcess/NetworkLoad.h:
+            * NetworkProcess/NetworkLoadClient.h:
+            * NetworkProcess/NetworkLoadParameters.h:
+            * NetworkProcess/NetworkResourceLoadParameters.cpp:
+            (WebKit::NetworkResourceLoadParameters::encode const):
+            (WebKit::NetworkResourceLoadParameters::decode):
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::transferToNewWebProcess):
+            (WebKit::NetworkResourceLoader::didReceiveResponse):
+            (WebKit::NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup):
+            (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+            (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+            * NetworkProcess/NetworkResourceLoader.h:
+            * NetworkProcess/PingLoad.cpp:
+            (WebKit::PingLoad::didReceiveResponse):
+            * NetworkProcess/PingLoad.h:
+            * NetworkProcess/PreconnectTask.cpp:
+            (WebKit::PreconnectTask::didReceiveResponse):
+            * NetworkProcess/PreconnectTask.h:
+            * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+            (WebKit::ServiceWorkerFetchTask::processResponse):
+            * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp:
+            (WebKit::ServiceWorkerNavigationPreloader::loadWithCacheEntry):
+            (WebKit::ServiceWorkerNavigationPreloader::willSendRedirectedRequest):
+            (WebKit::ServiceWorkerNavigationPreloader::didReceiveResponse):
+            * NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.h:
+            * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+            (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveResponse):
+            * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h:
+            * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+            (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+            * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+            * Shared/PrivateRelayed.h: Added.
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/Network/WebLoaderStrategy.cpp:
+            (WebKit::addParametersShared):
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::mainFrameMainResource const):
+            (WebKit::WebResourceLoader::willSendRequest):
+            (WebKit::WebResourceLoader::didReceiveResponse):
+            * WebProcess/Network/WebResourceLoader.h:
+            * WebProcess/Network/WebResourceLoader.messages.in:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288957. rdar://problem/88300200
 
     [iOS][WP] Add access in sandbox to Mach message

@@ -202,6 +202,9 @@ typedef enum {
 - (BOOL)_schemeWasUpgradedDueToDynamicHSTS;
 - (BOOL)_preventHSTSStorage;
 - (BOOL)_ignoreHSTS;
+#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
+@property (setter=_setPrivacyProxyFailClosed:) BOOL _privacyProxyFailClosed;
+#endif
 @end
 
 @interface NSURLResponse ()
