@@ -138,13 +138,11 @@ private:
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);
 
-    bool copySharedVideoFrame(Encoder&, CVPixelBufferRef);
-    bool copySharedVideoFrame(Encoder&, const webrtc::VideoFrame&);
-
 private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
     HashSet<RTCDecoderIdentifier> m_decodingErrors;
 
+    Lock m_encodersLock;
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
 
     std::atomic<bool> m_needsGPUProcessConnection;

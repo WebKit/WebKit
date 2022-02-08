@@ -48,7 +48,7 @@ namespace WebKit {
 
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public CanMakeWeakPtr<MediaRecorderPrivate> {
+    , public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
@@ -64,6 +64,9 @@ private:
     const String& mimeType() const final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
+
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
     bool copySharedVideoFrame(CVPixelBufferRef);

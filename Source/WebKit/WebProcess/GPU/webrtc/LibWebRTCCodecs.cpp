@@ -379,11 +379,15 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
         parameters.append(std::make_pair(String::fromUTF8(keyValue.first.data(), keyValue.first.length()), String::fromUTF8(keyValue.second.data(), keyValue.second.length())));
 
     ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
-        Locker locker { m_connectionLock };
-        encoder->connection = m_connection;
+        {
+            Locker locker { m_connectionLock };
+            encoder->connection = m_connection;
+        }
+
         encoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromCodecType(type), parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
         encoder->parameters = WTFMove(parameters);
 
+        Locker locker { m_encodersLock };
         auto encoderIdentifier = encoder->identifier;
         ASSERT(!m_encoders.contains(encoderIdentifier));
         m_encoders.add(encoderIdentifier, WTFMove(encoder));
@@ -400,6 +404,7 @@ int32_t LibWebRTCCodecs::releaseEncoder(Encoder& encoder)
     }
 #endif
     ensureGPUProcessConnectionAndDispatchToThread([this, encoderIdentifier = encoder.identifier] {
+        Locker locker { m_encodersLock };
         ASSERT(m_encoders.contains(encoderIdentifier));
         auto encoder = m_encoders.take(encoderIdentifier);
         encoder->connection->send(Messages::LibWebRTCCodecsProxy::ReleaseEncoder { encoderIdentifier }, 0);
@@ -418,26 +423,18 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     return 0;
 }
 
-bool LibWebRTCCodecs::copySharedVideoFrame(Encoder& encoder, CVPixelBufferRef pixelBuffer)
+template<typename Buffer>
+bool copySharedVideoFrame(LibWebRTCCodecs::Encoder& encoder, Buffer&& frameBuffer)
 {
-    return encoder.sharedVideoFrameWriter.write(pixelBuffer,
-        [&encoder](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
-        [&encoder](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
-    );
-}
-
-bool LibWebRTCCodecs::copySharedVideoFrame(Encoder& encoder, const webrtc::VideoFrame& frame)
-{
-    return encoder.sharedVideoFrameWriter.write(frame,
-        [&encoder](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
-        [&encoder](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
+    return encoder.sharedVideoFrameWriter.write(frameBuffer,
+        [&](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
+        [&](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
     );
 }
 
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
-    Locker locker { m_connectionLock };
-
+    Locker locker { m_encodersLock };
     if (!encoder.connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
@@ -467,7 +464,7 @@ void LibWebRTCCodecs::registerEncodeFrameCallback(Encoder& encoder, void* encode
 
 void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_t frameRate)
 {
-    Locker locker { m_connectionLock };
+    Locker locker { m_encodersLock };
 
     if (!encoder.connection) {
         callOnMainRunLoop([encoderIdentifier = encoder.identifier, bitRate, frameRate] {
@@ -527,20 +524,23 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
         return;
 
     ensureGPUProcessConnectionOnMainThreadWithLock();
-    dispatchToThread([this]() {
-        // Lock everything so that we can update encoder/decoder connection.
-        Locker locker { m_connectionLock };
-        // Recreate encoders and initialize them, recreate decoders.
-        for (auto& encoder : m_encoders.values()) {
-            m_connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromWebRTCCodecType(encoder->codecType), encoder->parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
-            if (encoder->initializationData)
-                m_connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
-            encoder->sharedVideoFrameWriter = { };
-            encoder->connection = m_connection.get();
-        }
+    dispatchToThread([this, connection = m_connection]() {
         for (auto& decoder : m_decoders.values()) {
-            createRemoteDecoder(*decoder, *m_connection);
-            decoder->connection = m_connection.get();
+            createRemoteDecoder(*decoder, *connection);
+            decoder->connection = connection.get();
+        }
+
+        // In case we are waiting for GPUProcess, let's end the wait to not deadlock.
+        for (auto& encoder : m_encoders.values())
+            encoder->sharedVideoFrameWriter.disable();
+
+        Locker locker { m_encodersLock };
+        for (auto& encoder : m_encoders.values()) {
+            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromWebRTCCodecType(encoder->codecType), encoder->parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
+            if (encoder->initializationData)
+                connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
+            encoder->connection = connection.get();
+            encoder->sharedVideoFrameWriter = { };
         }
     });
 }

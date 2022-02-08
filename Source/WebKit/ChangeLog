@@ -1,3 +1,29 @@
+2022-02-08  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCCodecs SharedVideoFrameWriters can deadlock in case of GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=236132
+
+        Reviewed by Eric Carlson.
+
+        When sending sampels through SharedVideoFrameWriters, we might lock on a binary semaphore controlled by GPUProcess.
+        It is not always the case that the semaphore will unblock in case of GPUProcess crash for instance.
+        To prevent this, whenever we detect a GPUProcess crash, we disable SharedVideoFrameWriters, which has the effect of
+        disabling semaphore wait for future call and unlocking any current wait by calling semaphore.signal.
+        Then, the SharedVideoFrameWriter is recreated as needed by owner classes such as LibWebRTCCodecs or SampleBufferDisplayLayer.
+
+        In the case of LibWebRTCCodecs, we further reduce locking cases by introducing a lock dedicated to encoders.
+        Previously, the lock for encoders was also encompassing the codecs connection and the decoders.
+
+        Test: webrtc/vp8-then-h264-gpu-process-crash.html
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+
 2022-02-08  Alex Christensen  <achristensen@webkit.org>
 
         Reduce allocations and increase thread safety of constructedPath

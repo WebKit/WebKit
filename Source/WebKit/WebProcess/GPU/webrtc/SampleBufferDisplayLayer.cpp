@@ -170,6 +170,7 @@ void SampleBufferDisplayLayer::setDidFail(bool value)
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
+    m_sharedVideoFrameWriter.disable();
     m_didFail = true;
     if (m_client)
         m_client->sampleBufferDisplayLayerStatusDidFail();

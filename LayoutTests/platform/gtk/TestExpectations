@@ -217,6 +217,9 @@ webkit.org/b/208988 http/wpt/webxr [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/208988 webxr [ Skip ]
 
+# Crash on EWS bot.
+webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below

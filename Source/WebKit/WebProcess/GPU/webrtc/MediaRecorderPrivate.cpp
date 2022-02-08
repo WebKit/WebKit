@@ -54,6 +54,7 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const Med
     , m_options(options)
     , m_hasVideo(stream.hasVideo())
 {
+    WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
 }
 
 void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
@@ -87,6 +88,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
 MediaRecorderPrivate::~MediaRecorderPrivate()
 {
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 }
 
 void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
@@ -176,6 +178,7 @@ void MediaRecorderPrivate::storageChanged(SharedMemory* storage, const WebCore::
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&& completionHandler)
 {
     m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::FetchData { }, [completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& data, double timeCode) mutable {
+        // FIXME: If completion handler is called following a GPUProcess connection being closed, we should fail the MediaRecorder.
         RefPtr<FragmentedSharedBuffer> buffer;
         if (data.size())
             buffer = SharedBuffer::create(data.data(), data.size());
@@ -204,6 +207,11 @@ const String& MediaRecorderPrivate::mimeType() const
     static NeverDestroyed<const String> audioMP4(MAKE_STATIC_STRING_IMPL("audio/mp4"));
     static NeverDestroyed<const String> videoMP4(MAKE_STATIC_STRING_IMPL("video/mp4"));
     return m_hasVideo ? videoMP4 : audioMP4;
+}
+
+void MediaRecorderPrivate::gpuProcessConnectionDidClose(GPUProcessConnection&)
+{
+    m_sharedVideoFrameWriter.disable();
 }
 
 }

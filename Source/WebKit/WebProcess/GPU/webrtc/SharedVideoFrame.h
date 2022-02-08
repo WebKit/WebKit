@@ -31,6 +31,7 @@
 #include "SharedMemory.h"
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
@@ -48,20 +49,23 @@ namespace WebKit {
 class SharedVideoFrameWriter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SharedVideoFrameWriter() = default;
+    SharedVideoFrameWriter();
 
     bool write(CVPixelBufferRef, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 #if USE(LIBWEBRTC)
     bool write(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 #endif
+    void disable();
 
 private:
     bool wait(const Function<void(IPC::Semaphore&)>&);
     bool allocateStorage(size_t, const Function<void(const SharedMemory::IPCHandle&)>&);
     bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 
-    std::unique_ptr<IPC::Semaphore> m_semaphore;
+    UniqueRef<IPC::Semaphore> m_semaphore;
     RefPtr<SharedMemory> m_storage;
+    bool m_isSemaphoreInUse { false };
+    bool m_isDisabled { false };
 };
 
 class SharedVideoFrameReader {
