@@ -62,7 +62,7 @@ private:
     Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
     bool m_wasRefreshAudioCaptureDevicesScheduled { false };
-    bool m_filterTapEnabledDevices { true };
+    bool m_filterTapEnabledDevices { false };
 };
 
 } // namespace WebCore
