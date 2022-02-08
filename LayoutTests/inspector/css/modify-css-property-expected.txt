@@ -41,3 +41,7 @@ PASS: Commented out property should be disabled.
 PASS: Style declaration text should update immediately with commented out property.
 PASS: Uncommented property should be enabled.
 
+-- Running test case: ModifyCSSProperty.ReplacePropertyName
+PASS: Style declaration text should be empty.
+PASS: Style declaration text should have new property name.
+

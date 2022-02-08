@@ -1,3 +1,57 @@
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287891. rdar://problem/85345180
+
+    REGRESSION (r283723): Web Inspector: CSS declarations unexpectedly removed when editing property value
+    https://bugs.webkit.org/show_bug.cgi?id=233195
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebInspectorUI:
+    
+    Re-attach CSS property if it was detached while editing.
+    
+    CSSProperty is detached when focusing on property name and deleting it. Consequent edits of the detached
+    CSSProperty were not saved. This patch re-attaches detached property at the previous position.
+    
+    * UserInterface/Models/CSSProperty.js:
+    (WI.CSSProperty.prototype.set name):
+    * UserInterface/Models/CSSStyleDeclaration.js:
+    (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+    (WI.CSSStyleDeclaration.prototype.insertProperty):
+    Introduce this method since the logic is used in two different places now.
+    
+    LayoutTests:
+    
+    Test removing CSS property name.
+    
+    * inspector/css/modify-css-property-expected.txt:
+    * inspector/css/modify-css-property.html:
+    * inspector/css/resources/modify-css-property.css:
+    (.rule-e):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287891 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            REGRESSION (r283723): Web Inspector: CSS declarations unexpectedly removed when editing property value
+            https://bugs.webkit.org/show_bug.cgi?id=233195
+
+            Reviewed by Devin Rousso.
+
+            Re-attach CSS property if it was detached while editing.
+
+            CSSProperty is detached when focusing on property name and deleting it. Consequent edits of the detached
+            CSSProperty were not saved. This patch re-attaches detached property at the previous position.
+
+            * UserInterface/Models/CSSProperty.js:
+            (WI.CSSProperty.prototype.set name):
+            * UserInterface/Models/CSSStyleDeclaration.js:
+            (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+            (WI.CSSStyleDeclaration.prototype.insertProperty):
+            Introduce this method since the logic is used in two different places now.
+
 2022-01-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r288385. rdar://problem/87851989
