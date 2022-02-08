@@ -129,6 +129,8 @@ public:
     static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
+    virtual void ensureNativeImagesHaveCopiedBackingStore() { }
+
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
 

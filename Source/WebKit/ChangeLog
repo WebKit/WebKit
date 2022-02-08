@@ -1,5 +1,117 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288076. rdar://problem/83863292
+
+    Ensure in flight layer transactions don't accumulate further canvas drawing
+    https://bugs.webkit.org/show_bug.cgi?id=231163
+    <rdar://problem/83863292>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    When UI side compositing is enabled (as it is on iOS), we build a
+    layer tree transaction in RemoteLayerTreeDrawingArea::updateRendering to
+    send off to the UI process. At a high level, updateRendering does this:
+    
+    1. Run any requestAnimationFrame callbacks
+    2. Iterate over the composited layers to draw their contents into the
+       layer backing stores
+    3. Dispatch a task to a different thread to flush the contexts of the
+       layer backing stores and then send the transaction to the UI
+       process
+    
+    Step 3 is done off a separate task as an optimization, to get the
+    drawing work queued up by step 2 happening in parallel to any work the
+    page may day once updateRendering is finished. This can be a problem
+    when:
+    
+    - GPU process canvas rendering is enabled (but DOM rendering is
+      disabled)
+    - we have accelerated ImageBuffers for both layer backing stores and
+      canvas backing stores
+    - the page does canvas drawing between steps 2 and 3, which affects
+      the contents of a canvas backing store IOSurface that was drawn into
+      a layer backing store IOSurface while building the transaction
+    
+    The way we draw the canvas contents into the layer is by creating a
+    CGImage from the canvas backing store ImageBuffer's IOSurface.
+    Normally, if we draw into an IOSurface that has been wrapped by a
+    CGImage, this will cause the CGImage to obtain a unique copy of the
+    IOSurface's pixels, rather than continue holding on to the IOSurface
+    itself.
+    
+    When the drawing of this CGImage on to the layer backing store
+    IOSurface happens, the "draw image" command is queued up to be
+    processed later. It's only when the flush happens in step 3 above that
+    the drawing occurs. This means that the CGImage wrapping the IOSurface
+    exists until that flush.
+    
+    But while the CGImage does exist, it's in the Web process, and the
+    canvas drawing on to the same IOSurface happens in the GPU process.
+    Since QuartzCore doesn't know of its existence, it doesn't cause the
+    copy-on-write to occur. The effect of this is that subsequent page
+    drawing on to the canvas can make its way into the layer transaction
+    unexpectedly.
+    
+    This patch induces the copy-on-write in the Web process when needed,
+    by tracking whether a canvas has been drawn into a layer backing
+    store and the layer transaction flush hasn't happened yet. Just before
+    we do any more drawing on the canvas, if we are in this state, we
+    perform a no-op drawing command on the IOSurface, then flush, to make
+    the CGImage copy the IOSurface data out.
+    
+    * html/HTMLCanvasElement.cpp:
+    (WebCore::imageDrawingRequiresGuardAgainstUseByPendingLayerTransaction):
+    We only need to induce the CGImage copy-on-write behavior if both the
+    layer and canvas backing stores are accelerated, the canvas
+    ImageBuffer is remote, and the layer ImageBuffer is not remote.
+    (WebCore::HTMLCanvasElement::paint):
+    (WebCore::HTMLCanvasElement::drawingContext const):
+    Use drawingContext as a convenient single place to check whether we
+    are performing the first drawing command before the layer tree
+    transaction flush has happened.
+    * html/HTMLCanvasElement.h:
+    * page/Page.h:
+    (WebCore::Page::setIsAwaitingLayerTreeTransactionFlush):
+    (WebCore::Page::isAwaitingLayerTreeTransactionFlush const):
+    * platform/graphics/ImageBufferBackend.h:
+    (WebCore::ImageBufferBackend::ensureNativeImagesHaveCopiedBackingStore):
+    * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+    (WebCore::ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore):
+    The flush is needed since the CGImage wrapping the IOSurface will only
+    copy the pixel data out once the no-op drawing command is processed.
+    * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+    
+    Source/WebKit:
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::willCommitLayerTree):
+    (WebKit::WebPage::didFlushLayerTreeAtTime):
+    Inform the WebCore::Page about the state of the layer tree transaction
+    building.
+    * WebProcess/WebPage/WebPage.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288076 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-16  Cameron McCormack  <heycam@apple.com>
+
+            Ensure in flight layer transactions don't accumulate further canvas drawing
+            https://bugs.webkit.org/show_bug.cgi?id=231163
+            <rdar://problem/83863292>
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::willCommitLayerTree):
+            (WebKit::WebPage::didFlushLayerTreeAtTime):
+            Inform the WebCore::Page about the state of the layer tree transaction
+            building.
+            * WebProcess/WebPage/WebPage.h:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287995. rdar://problem/87458502
 
     Avoid unnecessary call to windowScreenDidChange
