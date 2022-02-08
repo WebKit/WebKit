@@ -1,5 +1,54 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288196. rdar://problem/87768936
+
+    [:has() pseudo-class] Compute specificity correctly
+    https://bugs.webkit.org/show_bug.cgi?id=235351
+    
+    Reviewed by Alexey Shvayka.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/selectors/has-complexity.html:
+    
+    Fix specificity used in this test.
+    
+    * web-platform-tests/css/selectors/has-specificity-expected.txt: Added.
+    * web-platform-tests/css/selectors/has-specificity.html: Added.
+    
+    Source/WebCore:
+    
+    "The specificity of an ':is()', ':not()', or ':has()' pseudo-class is replaced by
+    the specificity of the most specific complex selector in its selector list argument."
+    
+    https://www.w3.org/TR/selectors-4/#specificity-rules
+    
+    Test: imported/w3c/web-platform-tests/css/selectors/has-specificity.html
+    
+    * css/CSSSelector.cpp:
+    (WebCore::simpleSelectorSpecificityInternal):
+    
+    Compute :has() specificity like :is() and :not().
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288196 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Antti Koivisto  <antti@apple.com>
+
+            [:has() pseudo-class] Compute specificity correctly
+            https://bugs.webkit.org/show_bug.cgi?id=235351
+
+            Reviewed by Alexey Shvayka.
+
+            * web-platform-tests/css/selectors/has-complexity.html:
+
+            Fix specificity used in this test.
+
+            * web-platform-tests/css/selectors/has-specificity-expected.txt: Added.
+            * web-platform-tests/css/selectors/has-specificity.html: Added.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288132. rdar://problem/87569029
 
     CSP: Improve handling of multiple policies
