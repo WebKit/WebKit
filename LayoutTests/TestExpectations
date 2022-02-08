@@ -5171,6 +5171,7 @@ webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-dec
 
 # Test is crashing in Debug builds since import.
 webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
+webkit.org/b/234315 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 
 # Plugins
 # FIXME: Remove these tests.

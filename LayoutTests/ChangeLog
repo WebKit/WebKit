@@ -1,3 +1,25 @@
+2022-02-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287055. rdar://problem/86488039
+
+    REGRESSION (r286982): ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]
+    https://bugs.webkit.org/show_bug.cgi?id=234315
+    
+    Unreviewed test gardening.
+    
+    * TestExpectations: Skip the test.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287055 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+            REGRESSION (r286982): ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]
+            https://bugs.webkit.org/show_bug.cgi?id=234315
+
+            Unreviewed test gardening.
+
+            * TestExpectations: Skip the test.
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289108. rdar://problem/88599722
