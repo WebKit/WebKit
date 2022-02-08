@@ -102,8 +102,9 @@ protected:
     void setIsRenderingAudio(bool);
 
 protected:
-    void setIsProducingMicrophoneSamples(bool value) { m_isProducingMicrophoneSamples = value; }
+    void setIsProducingMicrophoneSamples(bool);
     bool isProducingMicrophoneSamples() const { return m_isProducingMicrophoneSamples; }
+    virtual void isProducingMicrophoneSamplesChanged() { }
 
 private:
     OSStatus startUnit();
