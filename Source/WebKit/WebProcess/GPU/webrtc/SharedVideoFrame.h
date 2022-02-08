@@ -71,7 +71,7 @@ public:
     explicit SharedVideoFrameReader(UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
 
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
-    void setSharedMemory(Ref<SharedMemory>&& storage) { m_storage = WTFMove(storage); }
+    bool setSharedMemory(const SharedMemory::IPCHandle&);
 
     RetainPtr<CVPixelBufferRef> read();
 

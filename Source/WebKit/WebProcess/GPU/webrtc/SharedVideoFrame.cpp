@@ -133,6 +133,11 @@ CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFr
     return m_bufferPool.get();
 }
 
+bool SharedVideoFrameReader::setSharedMemory(const SharedMemory::IPCHandle& ipcHandle)
+{
+    m_storage = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    return !!m_storage;
+}
 
 }
 

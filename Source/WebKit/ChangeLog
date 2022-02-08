@@ -1,3 +1,23 @@
+2022-02-08  Youenn Fablet  <youenn@apple.com>
+
+        SharedVideoFrameReader could directly take a IPCHandle
+        https://bugs.webkit.org/show_bug.cgi?id=236068
+
+        Reviewed by Eric Carlson.
+
+        Move more code in SharedVideoFrameReader::setSharedMemory, as a refactoring.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::setSharedVideoFrameMemory):
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::setSharedVideoFrameMemory):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        (WebKit::SharedVideoFrameReader::setSharedMemory):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+        (WebKit::SharedVideoFrameReader::setSharedMemory): Deleted.
+
 2022-02-07  Ben Nham  <nham@apple.com>
 
         Add PushService

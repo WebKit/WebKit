@@ -164,11 +164,7 @@ void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore
 
 void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(const SharedMemory::IPCHandle& ipcHandle)
 {
-    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!memory)
-        return;
-
-    m_sharedVideoFrameReader.setSharedMemory(memory.releaseNonNull());
+    m_sharedVideoFrameReader.setSharedMemory(ipcHandle);
 }
 
 }

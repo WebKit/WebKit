@@ -267,13 +267,9 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(RTCEncoderIdentifier identi
     if (!encoder)
         return;
 
-    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!memory)
-        return;
-
     if (!encoder->frameReader)
         encoder->frameReader = makeUnique<SharedVideoFrameReader>();
-    encoder->frameReader->setSharedMemory(memory.releaseNonNull());
+    encoder->frameReader->setSharedMemory(ipcHandle);
 }
 
 bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const
