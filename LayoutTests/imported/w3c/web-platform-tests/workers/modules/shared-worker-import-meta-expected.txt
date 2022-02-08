@@ -1,5 +1,5 @@
 
 PASS Test import.meta.url on the top-level module script.
 PASS Test import.meta.url on the imported module script.
-FAIL Test import.meta.url on the imported module script with a fragment. assert_true: expected true got false
+PASS Test import.meta.url on the imported module script with a fragment.
 

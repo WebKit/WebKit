@@ -1,3 +1,15 @@
+2022-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Resync workers/modules/shared-worker-import-meta.html from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=236302
+
+        Reviewed by Yusuke Suzuki.
+
+        Resync workers/modules/shared-worker-import-meta.html from upstream WPT after https://github.com/web-platform-tests/wpt/pull/32704.
+
+        * web-platform-tests/workers/modules/shared-worker-import-meta-expected.txt:
+        * web-platform-tests/workers/modules/shared-worker-import-meta.html:
+
 2022-02-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
