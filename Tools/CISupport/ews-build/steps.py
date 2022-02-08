@@ -59,6 +59,7 @@ Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit']
 HASH_LENGTH_TO_DISPLAY = 8
+RETRY_PRS = False
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -2995,6 +2996,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
         pass
 
     def start(self):
+        retry_enabled = bool(self.getProperty('patch_id')) or RETRY_PRS
         first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit')
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
         second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit')
@@ -3013,7 +3015,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             return self.retry_build('Unexpected infrastructure issue, retrying build')
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
-            if (len(first_results_failing_tests) - len(clean_tree_results_failing_tests)) <= 5:
+            if retry_enabled and (len(first_results_failing_tests) - len(clean_tree_results_failing_tests)) <= 5:
                 # If we've made it here, then many tests are failing with the patch applied, but
                 # if the clean tree is also failing many tests, even if it's not quite as many,
                 # then we can't be certain that the discrepancy isn't due to flakiness, and hence we must defer judgement.
@@ -3021,20 +3023,22 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             return self.report_failure(first_results_failing_tests)
 
         if second_results_did_exceed_test_failure_limit:
-            if clean_tree_results_did_exceed_test_failure_limit:
+            if retry_enabled and clean_tree_results_did_exceed_test_failure_limit:
                 return self.retry_build()
             failures_introduced_by_patch = first_results_failing_tests - clean_tree_results_failing_tests
             if failures_introduced_by_patch:
                 return self.report_failure(failures_introduced_by_patch)
-            return self.retry_build()
+            if retry_enabled:
+                return self.retry_build()
 
         if first_results_did_exceed_test_failure_limit:
-            if clean_tree_results_did_exceed_test_failure_limit:
+            if retry_enabled or clean_tree_results_did_exceed_test_failure_limit:
                 return self.retry_build()
             failures_introduced_by_patch = second_results_failing_tests - clean_tree_results_failing_tests
             if failures_introduced_by_patch:
                 return self.report_failure(failures_introduced_by_patch)
-            return self.retry_build()
+            if retry_enabled:
+                return self.retry_build()
 
         # FIXME: Here it could be a good idea to also use the info of results.flaky_tests from the runs
         if self._results_failed_different_tests(first_results_failing_tests, second_results_failing_tests):
@@ -3046,7 +3050,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
 
             tests_that_consistently_failed = first_results_failing_tests.intersection(second_results_failing_tests)
             if tests_that_consistently_failed:
-                if clean_tree_results_did_exceed_test_failure_limit:
+                if retry_enabled and clean_tree_results_did_exceed_test_failure_limit:
                     return self.retry_build()
                 failures_introduced_by_patch = tests_that_consistently_failed - clean_tree_results_failing_tests
                 if failures_introduced_by_patch:
@@ -3057,7 +3061,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             # We still mark the build as SUCCESS.
             return self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures)
 
-        if clean_tree_results_did_exceed_test_failure_limit:
+        if retry_enabled and clean_tree_results_did_exceed_test_failure_limit:
             return self.retry_build()
         failures_introduced_by_patch = first_results_failing_tests - clean_tree_results_failing_tests
         if failures_introduced_by_patch:

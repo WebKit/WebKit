@@ -2331,6 +2331,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_introduced_by_patch(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ["jquery/offset.html"])
         self.setProperty('second_run_failures', ["jquery/offset.html"])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: jquery/offset.html (failure)')
@@ -2338,6 +2339,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure_on_clean_tree(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ["jquery/offset.html"])
         self.setProperty('second_run_failures', ["jquery/offset.html"])
         self.setProperty('clean_tree_run_failures', ["jquery/offset.html"])
@@ -2348,6 +2350,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_flaky_and_consistent_failures_without_clean_tree_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test1'])
@@ -2359,6 +2362,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_consistent_failure_without_clean_tree_failures_commit_queue(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
@@ -2370,6 +2374,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_flaky_and_inconsistent_failures_without_clean_tree_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test3'])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
@@ -2377,6 +2382,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_flaky_failures_in_first_run(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', [])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
@@ -2386,6 +2392,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_flaky_and_inconsistent_failures_with_clean_tree_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test3'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test3'])
@@ -2396,6 +2403,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1', 'test2'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2'])
@@ -2404,6 +2412,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_mildly_flaky_patch_with_some_tree_redness_and_flakiness(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
         self.setProperty('second_run_failures', ['test1', 'test2'])
         self.setProperty('clean_tree_run_failures', ['test1', 'test2', 'test4'])
@@ -2414,6 +2423,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_first_run_exceed_failure_limit(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_results_exceed_failure_limit', True)
         self.setProperty('first_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('second_run_failures', [])
@@ -2422,6 +2432,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_second_run_exceed_failure_limit(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', [])
         self.setProperty('second_results_exceed_failure_limit', True)
         self.setProperty('second_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
@@ -2430,6 +2441,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_clean_tree_exceed_failure_limit(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_results_exceed_failure_limit', True)
@@ -2439,6 +2451,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_clean_tree_exceed_failure_limit_with_triggered_by(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
         self.setProperty('triggered_by', 'ios-13-sim-build-ews')
         self.setProperty('first_run_failures', ['test1'])
@@ -2453,6 +2466,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_clean_tree_has_lot_of_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_results_exceed_failure_limit', True)
         self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('second_results_exceed_failure_limit', True)
@@ -2463,6 +2477,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_clean_tree_has_some_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_results_exceed_failure_limit', True)
         self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('second_results_exceed_failure_limit', True)
@@ -2473,6 +2488,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_clean_tree_has_lot_of_failures_and_no_new_failure(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 20)])
@@ -2483,6 +2499,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_patch_introduces_lot_of_failures(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('first_results_exceed_failure_limit', True)
         self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 300)])
@@ -2497,6 +2514,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_unexpected_infra_issue(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', [])
         self.setProperty('second_run_failures', [])
         self.setProperty('clean_tree_run_status', FAILURE)
@@ -2505,6 +2523,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_patch_breaks_layout_tests(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', [])
         self.setProperty('second_run_failures', [])
         self.setProperty('clean_tree_run_failures', [])
@@ -2514,6 +2533,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_patch_removes_skipped_test_that_fails(self):
         self.configureStep()
+        self.setProperty('patch_id', 1234)
         self.setProperty('first_run_failures', ['test-was-skipped-patch-removed-expectation-but-still-fails.html'])
         self.setProperty('second_run_failures', ['test-was-skipped-patch-removed-expectation-but-still-fails.html'])
         self.setProperty('clean_tree_run_failures', [])
