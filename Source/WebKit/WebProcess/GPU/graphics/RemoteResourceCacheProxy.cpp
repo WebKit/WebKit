@@ -103,6 +103,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (handle.isNull())
         return;
 
+    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()

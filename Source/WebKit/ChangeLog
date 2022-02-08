@@ -1,3 +1,56 @@
+2022-02-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288090. rdar://problem/87601499
+
+    Frequent GPU process jetsams due to RemoteRenderingBackendProxy not claiming ownership of SharedMemory buffers
+    https://bugs.webkit.org/show_bug.cgi?id=235226
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-01-17
+    Reviewed by Simon Fraser.
+    
+    Claim memory from SharedBitmaps and SharedMemory that RemoteRenderingBackendProxy
+    asks and receives from RemoteRenderingBackend. This is not very good,
+    as GPUP allocates most of the memory and thus might jetsam
+    before WP claims them. However, that is a bigger change to be done
+    after this one.
+    
+    No new tests, hard to test currently.
+    
+    * Shared/ShareableBitmap.cpp:
+    (WebKit::ShareableBitmap::Handle::takeOwnershipOfMemory const):
+    * Shared/ShareableBitmap.h:
+    * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+    (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+    (WebKit::RemoteRenderingBackendProxy::getFilteredImage):
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+    (WebKit::RemoteResourceCacheProxy::recordNativeImageUse):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288090 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Frequent GPU process jetsams due to RemoteRenderingBackendProxy not claiming ownership of SharedMemory buffers
+            https://bugs.webkit.org/show_bug.cgi?id=235226
+
+            Reviewed by Simon Fraser.
+
+            Claim memory from SharedBitmaps and SharedMemory that RemoteRenderingBackendProxy
+            asks and receives from RemoteRenderingBackend. This is not very good,
+            as GPUP allocates most of the memory and thus might jetsam
+            before WP claims them. However, that is a bigger change to be done
+            after this one.
+
+            No new tests, hard to test currently.
+
+            * Shared/ShareableBitmap.cpp:
+            (WebKit::ShareableBitmap::Handle::takeOwnershipOfMemory const):
+            * Shared/ShareableBitmap.h:
+            * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+            (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+            (WebKit::RemoteRenderingBackendProxy::getFilteredImage):
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+            (WebKit::RemoteResourceCacheProxy::recordNativeImageUse):
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289150. rdar://problem/88521016
