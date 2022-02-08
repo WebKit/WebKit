@@ -375,7 +375,9 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
                 m_hangingTrailingContent.add(inlineTextItem, logicalWidth);
         } else  {
             m_hangingTrailingContent.reset();
-            m_trimmableTrailingContent.addFullyTrimmableContent(lastRunIndex, contentLogicalWidth() - oldContentLogicalWidth);
+            auto trimmableWidth = logicalWidth;
+            auto trimmableContentOffset = (contentLogicalWidth() - oldContentLogicalWidth) - trimmableWidth;
+            m_trimmableTrailingContent.addFullyTrimmableContent(lastRunIndex, trimmableContentOffset, trimmableWidth);
         }
         m_trailingSoftHyphenWidth = { };
     } else {
@@ -482,11 +484,12 @@ Line::TrimmableTrailingContent::TrimmableTrailingContent(RunList& runs)
 {
 }
 
-void Line::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)
+void Line::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth)
 {
     // Any subsequent trimmable whitespace should collapse to zero advanced width and ignored at ::appendTextContent().
     ASSERT(!m_hasFullyTrimmableContent);
-    m_fullyTrimmableWidth = trimmableWidth;
+    m_fullyTrimmableWidth = trimmableContentOffset + trimmableWidth;
+    m_trimmableContentOffset = trimmableContentOffset;
     // Note that just because the trimmable width is 0 (font-size: 0px), it does not mean we don't have a trimmable trailing content.
     m_hasFullyTrimmableContent = true;
     m_firstTrimmableRunIndex = m_firstTrimmableRunIndex.value_or(runIndex);
@@ -513,12 +516,12 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     auto& trimmableRun = m_runs[*m_firstTrimmableRunIndex];
     ASSERT(trimmableRun.isText());
 
+    auto trimmedWidth = m_trimmableContentOffset;
     if (m_hasFullyTrimmableContent)
-        trimmableRun.removeTrailingWhitespace();
+        trimmedWidth += trimmableRun.removeTrailingWhitespace();
     if (m_partiallyTrimmableWidth)
-        trimmableRun.removeTrailingLetterSpacing();
+        trimmedWidth += trimmableRun.removeTrailingLetterSpacing();
 
-    auto trimmableWidth = width();
     // When the trimmable run is followed by some non-content runs, we need to adjust their horizontal positions.
     // e.g. <div>text is followed by trimmable content    <span> </span></div>
     // When the [text...] run is trimmed (trailing whitespace is removed), both "<span>" and "</span>" runs
@@ -527,7 +530,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     for (auto index = *m_firstTrimmableRunIndex + 1; index < m_runs.size(); ++index) {
         auto& run = m_runs[index];
         ASSERT(run.isWordBreakOpportunity() || run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());
-        run.moveHorizontally(-trimmableWidth);
+        run.moveHorizontally(-trimmedWidth);
     }
     if (!trimmableRun.textContent()->length) {
         // This trimmable run is fully collapsed now (e.g. <div><img>    <span></span></div>).
@@ -535,7 +538,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
         m_runs.remove(*m_firstTrimmableRunIndex);
     }
     reset();
-    return trimmableWidth;
+    return trimmedWidth;
 }
 
 InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent()
@@ -657,6 +660,7 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
     if (!whitespaceType) {
         m_trailingWhitespace = { };
         m_textContent->length += inlineTextItem.length();
+        m_lastNonWhitespaceContentStart = inlineTextItem.start();
         return;
     }
     auto whitespaceWidth = !m_trailingWhitespace ? logicalWidth : m_trailingWhitespace->width + logicalWidth;
@@ -701,23 +705,39 @@ InlineLayoutUnit Line::Run::trailingLetterSpacing() const
     return InlineLayoutUnit { letterSpacing() };
 }
 
-void Line::Run::removeTrailingLetterSpacing()
+InlineLayoutUnit Line::Run::removeTrailingLetterSpacing()
 {
     ASSERT(hasTrailingLetterSpacing());
-    shrinkHorizontally(trailingLetterSpacing());
+    auto trailingWidth = trailingLetterSpacing();
+    shrinkHorizontally(trailingWidth);
     ASSERT(logicalWidth() > 0 || (!logicalWidth() && letterSpacing() >= static_cast<float>(intMaxForLayoutUnit)));
+    return trailingWidth;
 }
 
-void Line::Run::removeTrailingWhitespace()
+InlineLayoutUnit Line::Run::removeTrailingWhitespace()
 {
     ASSERT(m_trailingWhitespace);
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsible so the length of the trailing trimmable whitespace is always 1 (or non-existent).
-    ASSERT(m_textContent->length);
+    ASSERT(m_textContent && m_textContent->length);
     constexpr size_t trailingTrimmableContentLength = 1;
+
+    auto trimmedWidth = m_trailingWhitespace->width;
+    if (m_lastNonWhitespaceContentStart && inlineDirection() == TextDirection::RTL) {
+        // While LTR content could also suffer from slightly incorrect content width after trimming trailing whitespace (see TextUtil::width)
+        // it hardly produces visually observable result.
+        // FIXME: This may still incorrectly leave some content on the line (vs. re-measuring also at ::expand).
+        auto& inlineTextBox = downcast<InlineTextBox>(*m_layoutBox);
+        auto startPosition = *m_lastNonWhitespaceContentStart;
+        auto endPosition = m_textContent->start + m_textContent->length;
+        RELEASE_ASSERT(startPosition < endPosition - trailingTrimmableContentLength);
+        if (inlineTextBox.content()[endPosition - 1] == space)
+            trimmedWidth = TextUtil::trailingWhitespaceWidth(inlineTextBox, m_style.fontCascade(), startPosition, endPosition);
+    }
     m_textContent->length -= trailingTrimmableContentLength;
-    shrinkHorizontally(m_trailingWhitespace->width);
     m_trailingWhitespace = { };
+    shrinkHorizontally(trimmedWidth);
+    return trimmedWidth;
 }
 
 }
