@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IntlDisplayNames.h"
 #include <unicode/udatpg.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>
@@ -39,7 +40,9 @@ public:
     IntlCache() = default;
 
     Vector<UChar, 32> getBestDateTimePattern(const CString& locale, const UChar* skeleton, unsigned skeletonSize, UErrorCode&);
+#if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
     Vector<UChar, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
+#endif
 
 private:
     UDateTimePatternGenerator* getSharedPatternGenerator(const CString& locale, UErrorCode& status)

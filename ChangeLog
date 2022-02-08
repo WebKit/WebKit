@@ -1,3 +1,15 @@
+2022-02-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Allow building with ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=235367
+
+        Unreviewed build fix.
+
+        Turns out we can reduce our ICU requirement from ICU 61 to ICU 60 with only minimal changes.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Running distcheck with USE_SOUP2=OFF fails to install documentation
