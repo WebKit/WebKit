@@ -181,7 +181,7 @@ public:
 
         JSCell* callee = visitor->callee().asCell();
 
-        if (callee && (callee->inherits<JSBoundFunction>(callee->vm()) || callee->type() == ProxyObjectType))
+        if (callee && (callee->inherits<JSBoundFunction>(callee->vm()) || callee->inherits<JSRemoteFunction>(callee->vm()) || callee->type() == ProxyObjectType))
             return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && callee != m_targetCallee)

@@ -35,6 +35,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "JSRemoteFunction.h"
 #include "JSToWasmICCallee.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
@@ -123,8 +124,8 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, cons
     ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 
-    // JSBoundFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
-    ASSERT(!this->inherits<JSBoundFunction>(vm));
+    // JSBoundFunction/JSRemoteFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
+    ASSERT(!this->inherits<JSBoundFunction>(vm) && !this->inherits<JSRemoteFunction>(vm));
 
     putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     if (!name.isNull())
@@ -248,6 +249,12 @@ JSString* JSFunction::toString(JSGlobalObject* globalObject)
     VM& vm = getVM(globalObject);
     if (inherits<JSBoundFunction>(vm)) {
         JSBoundFunction* function = jsCast<JSBoundFunction*>(this);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        return asString(string);
+    } else if (inherits<JSRemoteFunction>(vm)) {
+        JSRemoteFunction* function = jsCast<JSRemoteFunction*>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
         JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -571,6 +578,8 @@ void JSFunction::reifyLength(VM& vm)
     double length = 0;
     if (this->inherits<JSBoundFunction>(vm))
         length = jsCast<JSBoundFunction*>(this)->length(vm);
+    else if (this->inherits<JSRemoteFunction>(vm))
+        length = jsCast<JSRemoteFunction*>(this)->length(vm);
     else {
         ASSERT(!isHostFunction());
         length = jsExecutable()->parameterCount();
@@ -624,7 +633,7 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
 
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
-    if (isHostOrBuiltinFunction() && !this->inherits<JSBoundFunction>(vm))
+    if (isHostOrBuiltinFunction() && !this->inherits<JSBoundFunction>(vm) && !this->inherits<JSRemoteFunction>(vm))
         return PropertyStatus::Eager;
     PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
     if (isLazy(lazyLength))
@@ -638,7 +647,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGloba
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     ASSERT(isHostOrBuiltinFunction());
-    if (isBuiltinFunction() || this->inherits<JSBoundFunction>(vm)) {
+    if (isBuiltinFunction() || this->inherits<JSBoundFunction>(vm) || this->inherits<JSRemoteFunction>(vm)) {
         PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
         if (isLazy(lazyLength))
             return lazyLength;
@@ -695,6 +704,14 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
         putDirect(vm, nameIdent, string, initialAttributes);
+    } else if (this->inherits<JSRemoteFunction>(vm)) {
+        FunctionRareData* rareData = this->ensureRareData(vm);
+        JSString* name = jsCast<JSRemoteFunction*>(this)->nameMayBeNull();
+        if (!name)
+            name = jsEmptyString(vm);
+        unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
+        rareData->setHasReifiedName();
+        putDirect(vm, nameIdent, name, initialAttributes);
     }
     return PropertyStatus::Reified;
 }

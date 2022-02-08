@@ -432,6 +432,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(remoteFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scopedArgumentsTableSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetchParametersSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetcherSpace)
@@ -572,6 +573,9 @@ public:
     Weak<NativeExecutable> m_slowBoundExecutable;
     Weak<NativeExecutable> m_slowCanConstructBoundExecutable;
 
+    Weak<NativeExecutable> m_fastRemoteFunctionExecutable;
+    Weak<NativeExecutable> m_slowRemoteFunctionExecutable;
+
     Ref<DeferredWorkTimer> deferredWorkTimer;
 
     JSCell* currentlyDestructingCallbackObject;
@@ -686,6 +690,7 @@ public:
     NativeExecutable* getHostFunction(NativeFunction, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
 
     NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
+    NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTILinkCall();

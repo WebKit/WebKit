@@ -1345,6 +1345,7 @@ public:
     void jitAssertIsNull(GPRReg);
     void jitAssertTagsInPlace();
     void jitAssertArgumentCountSane();
+    inline void jitAssertNoException(VM& vm) { jitReleaseAssertNoException(vm); }
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }
@@ -1355,6 +1356,7 @@ public:
     void jitAssertIsNull(GPRReg) { }
     void jitAssertTagsInPlace() { }
     void jitAssertArgumentCountSane() { }
+    void jitAssertNoException(VM&) { }
 #endif
 
     void jitReleaseAssertNoException(VM&);

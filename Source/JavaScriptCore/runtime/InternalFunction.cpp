@@ -189,6 +189,10 @@ JSGlobalObject* getFunctionRealm(JSGlobalObject* globalObject, JSObject* object)
             object = jsCast<JSBoundFunction*>(object)->targetFunction();
             continue;
         }
+        if (object->inherits<JSRemoteFunction>(vm)) {
+            object = jsCast<JSRemoteFunction*>(object)->targetFunction();
+            continue;
+        }
 
         if (object->type() == ProxyObjectType) {
             auto* proxy = jsCast<ProxyObject*>(object);

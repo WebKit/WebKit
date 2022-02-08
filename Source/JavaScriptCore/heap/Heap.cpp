@@ -51,6 +51,7 @@
 #include "JITStubRoutineSet.h"
 #include "JITWorklistInlines.h"
 #include "JSFinalizationRegistry.h"
+#include "JSRemoteFunction.h"
 #include "JSVirtualMachineInternal.h"
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
@@ -3219,6 +3220,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(moduleNamespaceObjectSpace, moduleNamesp
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, nativeStdFunctionHeapCellType, JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType, ProxyObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType, ProxyRevoke) // Hash:0xb506a939
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(remoteFunctionSpace, cellHeapCellType, JSRemoteFunction)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetchParametersSpace, destructibleCellHeapCellType, JSScriptFetchParameters)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetcherSpace, destructibleCellHeapCellType, JSScriptFetcher)

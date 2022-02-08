@@ -55,6 +55,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
+#include "JSRemoteFunction.h"
 #include "JSWithScope.h"
 #include "LLIntEntrypoint.h"
 #include "ObjectConstructor.h"
@@ -113,6 +114,87 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStackOverflowErrorFromThunk, void, (JSGlo
     throwStackOverflowError(globalObject, scope);
     genericUnwind(vm, callFrame);
     ASSERT(vm.targetMachinePCForThrow);
+}
+
+static JSValue getWrappedValue(JSGlobalObject* globalObject, JSGlobalObject* targetGlobalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!value.isObject())
+        RELEASE_AND_RETURN(scope, value);
+
+    if (value.isCallable(vm))
+        RELEASE_AND_RETURN(scope, JSRemoteFunction::create(vm, targetGlobalObject, static_cast<JSObject*>(value.asCell())));
+
+    throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive");
+    return jsUndefined();
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ASSERT(isRemoteFunction(vm, callee));
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSGlobalObject* targetGlobalObject = callee->targetFunction()->globalObject();
+    RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, targetGlobalObject, JSValue::decode(encodedValue))));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ASSERT(isRemoteFunction(vm, callee));
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, globalObject, JSValue::decode(encodedValue))));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction* callee))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ASSERT(isRemoteFunction(vm, callee));
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Exception* exception = scope.exception();
+
+    // We should only be here when "rethrowing" an exception
+    RELEASE_ASSERT(exception);
+
+    if (UNLIKELY(vm.isTerminationException(exception))) {
+        scope.release();
+        return { };
+    }
+
+    JSValue exceptionValue = exception->value();
+    scope.clearException();
+
+    String exceptionString = exceptionValue.toWTFString(globalObject);
+    Exception* toStringException = scope.exception();
+    if (UNLIKELY(toStringException && vm.isTerminationException(toStringException))) {
+        scope.release();
+        return { };
+    }
+    scope.clearException();
+
+    if (exceptionString.length())
+        return throwVMTypeError(globalObject, scope, exceptionString);
+
+    return throwVMTypeError(globalObject, scope);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlobalObject* globalObject))

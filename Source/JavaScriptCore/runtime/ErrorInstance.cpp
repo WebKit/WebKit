@@ -163,8 +163,9 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
         messageValue = messageSlot.getValue(globalObject, messagePropertName);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!messageValue)
+    if (!messageValue || !messageValue.isPrimitive())
         return { };
+
     RELEASE_AND_RETURN(scope, messageValue.toWTFString(globalObject));
 }
 
@@ -194,7 +195,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
     }
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!nameValue)
+    if (!nameValue || !nameValue.isPrimitive())
         return "Error"_s;
     RELEASE_AND_RETURN(scope, nameValue.toWTFString(globalObject));
 }

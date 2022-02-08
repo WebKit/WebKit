@@ -11257,6 +11257,9 @@ void SpeculativeJIT::compileFunctionToString(Node* node)
     static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
     slowCases.append(m_jit.branchPtr(CCallHelpers::Equal, result.gpr(), TrustedImmPtr(JSBoundFunction::info())));
 
+    static_assert(std::is_final_v<JSRemoteFunction>, "We don't handle subclasses when comparing classInfo below");
+    slowCases.append(m_jit.branchPtr(CCallHelpers::Equal, result.gpr(), TrustedImmPtr(JSRemoteFunction::info())));
+
     getExecutable(m_jit, function.gpr(), executable.gpr());
     JITCompiler::Jump isNativeExecutable = m_jit.branch8(JITCompiler::Equal, JITCompiler::Address(executable.gpr(), JSCell::typeInfoTypeOffset()), TrustedImm32(NativeExecutableType));
 

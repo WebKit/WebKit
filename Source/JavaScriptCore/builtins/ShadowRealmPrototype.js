@@ -32,39 +32,7 @@ function wrap(fromShadowRealm, shadowRealm, target)
     "use strict";
 
     if (@isCallable(target)) {
-        var wrapped = function(/* args... */) {
-            var length = arguments.length;
-            var wrappedArgs = @newArrayWithSize(length);
-            for (var index = 0; index < length; ++index)
-                // Note that for arguments, we flip `fromShadowRealm` since to
-                // wrap a function from realm A to work in realm B, we need to
-                // wrap the arguments (from realm B) to work in realm A before
-                // calling the wrapped function
-                @putByValDirect(wrappedArgs, index, @wrap(!fromShadowRealm, shadowRealm, arguments[index]));
-
-            try {
-                var result = target.@apply(@undefined, wrappedArgs);
-            } catch (e) {
-                const msg = "wrapped function threw: " + e.toString();
-                if (fromShadowRealm)
-                    @throwTypeError(msg);
-                else {
-                    const mkTypeError = @evalInRealm(shadowRealm, "(msg) => new TypeError(msg)");
-                    const err = mkTypeError.@apply(msg);
-                    throw err;
-                }
-            }
-            return @wrap(fromShadowRealm, shadowRealm, result);
-        };
-        delete wrapped['name'];
-        delete wrapped['length'];
-
-        // Because this function (wrap) will run with the incubating realm
-        // active, we only need to fix the prototype on `wrapped` if we are
-        // moving the function from the incubating realm to the shadow realm
-        if (!fromShadowRealm)
-            @moveFunctionToRealm(wrapped, shadowRealm);
-        return wrapped;
+        return @createRemoteFunction(target, fromShadowRealm ? null : shadowRealm);
     } else if (@isObject(target)) {
         @throwTypeError("value passing between realms must be callable or primitive");
     }

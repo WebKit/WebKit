@@ -49,6 +49,7 @@
 #include "JSBigInt.h"
 #include "JSFinalizationRegistry.h"
 #include "JSFunction.h"
+#include "JSFunctionInlines.h"
 #include "JSInternalPromise.h"
 #include "JSLock.h"
 #include "JSNativeStdFunction.h"
@@ -366,6 +367,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDollarEvalScript);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarGC);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarClearKeptObjects);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarGlobalObjectFor);
+static JSC_DECLARE_HOST_FUNCTION(functionDollarIsRemoteFunction);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentStart);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReport);
@@ -649,6 +651,7 @@ private:
         addFunction(vm, dollar, "gc", functionDollarGC, 0, static_cast<unsigned>(PropertyAttribute::None));
         addFunction(vm, dollar, "clearKeptObjects", functionDollarClearKeptObjects, 0, static_cast<unsigned>(PropertyAttribute::None));
         addFunction(vm, dollar, "globalObjectFor", functionDollarGlobalObjectFor, 1, static_cast<unsigned>(PropertyAttribute::None));
+        addFunction(vm, dollar, "isRemoteFunction", functionDollarIsRemoteFunction, 1, static_cast<unsigned>(PropertyAttribute::None));
         
         dollar->putDirect(vm, Identifier::fromString(vm, "global"), globalThis());
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
@@ -2082,6 +2085,18 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
         return JSValue::encode(asObject(arg)->globalObject(vm)->globalThis());
 
     return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDollarIsRemoteFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (callFrame->argumentCount() < 1)
+        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
+
+    JSValue arg = callFrame->argument(0);
+    return JSValue::encode(jsBoolean(isRemoteFunction(vm, arg)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))

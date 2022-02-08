@@ -80,8 +80,17 @@ function shouldThrow(func, errorType, assertionFn) {
     shouldBe(Object.getPrototypeOf(wrappedInvokeAndAdd), Function.prototype);
 
     // name and length properties from wrapped function are absent
-    shouldBe(Object.getOwnPropertyDescriptor(wrappedInvokeAndAdd, "length"), undefined);
-    shouldBe(Object.getOwnPropertyDescriptor(wrappedInvokeAndAdd, "name"), undefined);
+    let lengthDesc = Object.getOwnPropertyDescriptor(wrappedInvokeAndAdd, "length");
+    shouldBe(lengthDesc.value, 2);
+    shouldBe(lengthDesc.writable, false);
+    shouldBe(lengthDesc.enumerable, false);
+    shouldBe(lengthDesc.configurable, true);
+
+    let nameDesc = Object.getOwnPropertyDescriptor(wrappedInvokeAndAdd, "name");
+    shouldBe(nameDesc.value, "invokeAndAdd");
+    shouldBe(nameDesc.writable, false);
+    shouldBe(nameDesc.enumerable, false);
+    shouldBe(nameDesc.configurable, true);
 
     // can't pass objects into a shadow realm-wrapped function
     let numberObj = { valueOf() { return -1 } };

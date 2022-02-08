@@ -1,3 +1,58 @@
+2022-02-08  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] move function wrapping logic to a new Function type
+        https://bugs.webkit.org/show_bug.cgi?id=235382
+
+        Reviewed by Yusuke Suzuki.
+
+        In this initial patch, there is still a lot of JS-builtin machinery,
+        including some duplicated functionality. Additionally, JIT support
+        has not been incorporated yet.
+
+        Broadly, the idea is that there are custom hooks for calling a
+        JSRemoteFunction, which perform the wrapping functionality. This avoids
+        the need for allocating closures which contain the wrapping logic.
+
+        TODO:
+        - JIT/DFG/FTL support
+        - structure caching (unnecessary since these are not constructors?)
+        - improved baseline perf
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/LinkBuffer.h:
+        * builtins/BuiltinNames.h:
+        * builtins/ShadowRealmPrototype.js:
+        * bytecode/LinkTimeConstant.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        * interpreter/Interpreter.cpp:
+        * jit/AssemblyHelpers.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/ThunkGenerators.cpp:
+        * jit/ThunkGenerators.h:
+        * jsc.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/Intrinsic.cpp:
+        * runtime/Intrinsic.h:
+        * runtime/JSCast.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSRemoteFunction.cpp: Added.
+        * runtime/JSRemoteFunction.h: Added.
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2022-02-08  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: [Flexbox] Add support for showing/hiding flex container overlays and basic overlay drawing

@@ -1083,6 +1083,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSPromiseConstructor.h
     runtime/JSPropertyNameEnumerator.h
     runtime/JSProxy.h
+    runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
     runtime/JSScriptFetchParameters.h

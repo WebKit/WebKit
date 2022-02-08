@@ -92,6 +92,7 @@ public:
     v(DFGThunk) \
     v(FTLThunk) \
     v(BoundFunctionThunk) \
+    v(RemoteFunctionThunk) \
     v(SpecializedThunk) \
     v(VirtualThunk) \
     v(WasmThunk) \

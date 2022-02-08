@@ -29,6 +29,7 @@
 #include "JITOperations.h"
 #include "JITThunks.h"
 #include "JSBoundFunction.h"
+#include "JSRemoteFunction.h"
 #include "LLIntThunks.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"
@@ -1419,6 +1420,192 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_CODE(
         linkBuffer, JITThunkPtrTag, "Specialized thunk for bound function calls with no arguments");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
+{
+    CCallHelpers jit;
+    jit.emitFunctionPrologue();
+
+    // Set up our call frame.
+    jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
+    jit.store32(CCallHelpers::TrustedImm32(0), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+    unsigned extraStackNeeded = 0;
+    if (unsigned stackMisalignment = sizeof(CallerFrameAndPC) % stackAlignmentBytes())
+        extraStackNeeded = stackAlignmentBytes() - stackMisalignment;
+
+    // We need to forward all of the arguments that we were passed. We aren't allowed to do a tail
+    // call here as far as I can tell. At least not so long as the generic path doesn't do a tail
+    // call, since that would be way too weird.
+
+    // The formula for the number of stack bytes needed given some number of parameters (including
+    // this) is:
+    //
+    //     stackAlign((numParams + numFrameLocals + CallFrameHeaderSize) * sizeof(Register) - sizeof(CallerFrameAndPC))
+    //
+    // Probably we want to write this as:
+    //
+    //     stackAlign((numParams + numFrameLocals + (CallFrameHeaderSize - CallerFrameAndPCSize)) * sizeof(Register))
+    static constexpr int numFrameLocals = 1;
+    VirtualRegister loopIndex = virtualRegisterForLocal(0);
+
+    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    jit.load32(CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
+
+    jit.add32(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters - CallerFrameAndPC::sizeInRegisters + numFrameLocals), GPRInfo::regT1, GPRInfo::regT2);
+    jit.lshift32(CCallHelpers::TrustedImm32(3), GPRInfo::regT2);
+    jit.add32(CCallHelpers::TrustedImm32(stackAlignmentBytes() - 1), GPRInfo::regT2);
+    jit.and32(CCallHelpers::TrustedImm32(-stackAlignmentBytes()), GPRInfo::regT2);
+
+    if (extraStackNeeded)
+        jit.add32(CCallHelpers::TrustedImm32(extraStackNeeded), GPRInfo::regT2);
+
+    // At this point regT1 has the actual argument count, and regT2 has the amount of stack we will need.
+    // Check to see if we have enough stack space.
+
+    jit.negPtr(GPRInfo::regT2);
+    jit.addPtr(CCallHelpers::stackPointerRegister, GPRInfo::regT2);
+    CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
+
+    // Throw Stack Overflow exception
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfScopeChain()), GPRInfo::regT3);
+    jit.setupArguments<decltype(operationThrowStackOverflowErrorFromThunk)>(GPRInfo::regT3);
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationThrowStackOverflowErrorFromThunk)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.jumpToExceptionHandler(vm);
+
+    haveStackSpace.link(&jit);
+    jit.move(GPRInfo::regT2, CCallHelpers::stackPointerRegister);
+
+    // Set `this` to undefined
+    // NOTE: needs concensus in TC39 (https://github.com/tc39/proposal-shadowrealm/issues/328)
+    jit.store32(GPRInfo::regT1, CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
+    jit.storeTrustedValue(jsUndefined(), CCallHelpers::calleeArgumentSlot(0));
+
+    JSValueRegs valueRegs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT4, GPRInfo::regT2);
+
+    // Before processing the arguments loop, check that we have generated JIT code for calling
+    // to avoid processing the loop twice in the slow case.
+    CCallHelpers::Jump noCode;
+    {
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSRemoteFunction::offsetOfTargetFunction()), GPRInfo::regT2);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT2);
+        auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT2, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT2);
+        hasExecutable.link(&jit);
+
+        jit.loadPtr(
+            CCallHelpers::Address(
+                GPRInfo::regT2, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
+            GPRInfo::regT2);
+        noCode = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT2);
+    }
+
+    CCallHelpers::JumpList exceptionChecks;
+
+    // Argument processing loop:
+    // For each argument (order should not be observable):
+    //     if the value is a Primitive, copy it into the new call frame arguments, otherwise
+    //     perform wrapping logic. If the wrapping logic results in a new JSRemoteFunction,
+    //     copy it into the new call frame's arguments, otherwise it must have thrown a TypeError.
+    CCallHelpers::Jump done = jit.branchSub32(CCallHelpers::Zero, CCallHelpers::TrustedImm32(1), GPRInfo::regT1);
+    {
+        CCallHelpers::Label loop = jit.label();
+        jit.loadValue(CCallHelpers::addressFor(virtualRegisterForArgumentIncludingThis(0)).indexedBy(GPRInfo::regT1, CCallHelpers::TimesEight), valueRegs);
+
+        CCallHelpers::JumpList valueIsPrimitive;
+        valueIsPrimitive.append(jit.branchIfNotCell(valueRegs));
+        valueIsPrimitive.append(jit.branchIfNotObject(valueRegs.payloadGPR()));
+
+        jit.storePtr(GPRInfo::regT1, jit.addressFor(loopIndex));
+
+        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForTarget)), GPRInfo::nonArgGPR0);
+        emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+
+        jit.setupArguments<decltype(operationGetWrappedValueForTarget)>(GPRInfo::regT0, valueRegs);
+        jit.prepareCallOperation(vm);
+        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+        exceptionChecks.append(jit.emitJumpIfException(vm));
+
+        jit.setupResults(valueRegs);
+        jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+
+        jit.loadPtr(jit.addressFor(loopIndex), GPRInfo::regT1);
+
+        valueIsPrimitive.link(&jit);
+        jit.storeValue(valueRegs, CCallHelpers::calleeArgumentSlot(0).indexedBy(GPRInfo::regT1, CCallHelpers::TimesEight));
+        jit.branchSub32(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), GPRInfo::regT1).linkTo(loop, &jit);
+
+        done.link(&jit);
+    }
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSRemoteFunction::offsetOfTargetFunction()), GPRInfo::regT2);
+    jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT0);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT0);
+    hasExecutable.link(&jit);
+
+    jit.loadPtr(
+        CCallHelpers::Address(
+            GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
+        GPRInfo::regT0);
+
+    // Based on the check above, we should be good with this. On ARM64, emitPointerValidation will do this.
+#if ASSERT_ENABLED && !CPU(ARM64E)
+    {
+        CCallHelpers::Jump checkNotNull = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0);
+        jit.abortWithReason(TGInvalidPointer);
+        checkNotNull.link(&jit);
+    }
+#endif
+
+    emitPointerValidation(jit, GPRInfo::regT0, JSEntryPtrTag);
+    jit.call(GPRInfo::regT0, JSEntryPtrTag);
+
+    // Wrap return value
+#if USE(JSVALUE64)
+    JSValueRegs resultRegs(GPRInfo::returnValueGPR);
+#else
+    JSValueRegs resultRegs(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
+#endif
+
+    CCallHelpers::JumpList resultIsPrimitive;
+    resultIsPrimitive.append(jit.branchIfNotCell(resultRegs));
+    resultIsPrimitive.append(jit.branchIfNotObject(resultRegs.payloadGPR()));
+
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForCaller)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+
+    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT2);
+    jit.setupArguments<decltype(operationGetWrappedValueForCaller)>(GPRInfo::regT2, resultRegs);
+    jit.prepareCallOperation(vm);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    exceptionChecks.append(jit.emitJumpIfException(vm));
+
+    resultIsPrimitive.link(&jit);
+    jit.emitFunctionEpilogue();
+    jit.ret();
+
+    exceptionChecks.link(&jit);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm));
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationLookupExceptionHandler)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+
+    jit.jumpToExceptionHandler(vm);
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::RemoteFunctionThunk);
+    linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
+    return FINALIZE_CODE(
+        linkBuffer, JITThunkPtrTag, "Specialized thunk for remote function calls");
 }
 
 } // namespace JSC

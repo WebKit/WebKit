@@ -118,6 +118,7 @@ enum Intrinsic : uint8_t {
     TypedArrayEntriesIntrinsic,
     IsTypedArrayViewIntrinsic,
     BoundFunctionCallIntrinsic,
+    RemoteFunctionCallIntrinsic,
     JSMapGetIntrinsic,
     JSMapHasIntrinsic,
     JSMapSetIntrinsic,

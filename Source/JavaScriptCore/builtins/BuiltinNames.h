@@ -189,6 +189,8 @@ namespace JSC {
     macro(outOfLineReactionCounts) \
     macro(emptyPropertyNameEnumerator) \
     macro(sentinelString) \
+    macro(createRemoteFunction) \
+    macro(isRemoteFunction) \
 
 
 namespace Symbols {

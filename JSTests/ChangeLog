@@ -1,3 +1,16 @@
+2022-02-08  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] move function wrapping logic to a new Function type
+        https://bugs.webkit.org/show_bug.cgi?id=235382
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds a new file testing CopyNameAndLength stuff in the ShadowRealm proposal,
+        and fix up assertions about this in shadow-realm-evaluate.js
+
+        * stress/shadow-realm-evaluate.js:
+        * stress/shadow-realm-remote-function-copy-length-and-name.js: Added.
+
 2022-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [Wasm] ref.null check should be done first in B3 call_ref

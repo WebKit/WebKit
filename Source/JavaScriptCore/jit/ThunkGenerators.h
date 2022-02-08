@@ -82,6 +82,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
 
+MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&);
+
 #if ENABLE(EXTRA_CTI_THUNKS)
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&);
 #endif

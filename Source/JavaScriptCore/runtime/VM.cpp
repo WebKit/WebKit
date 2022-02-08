@@ -632,6 +632,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return randomThunkGenerator;
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;
+    case RemoteFunctionCallIntrinsic:
+        return remoteFunctionCallGenerator;
     default:
         return nullptr;
     }
@@ -707,6 +709,25 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
     if (canConstruct)
         return getOrCreate(m_fastCanConstructBoundExecutable);
     return getOrCreate(m_fastBoundExecutable);
+}
+
+NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
+{
+    bool slowCase = !isJSFunction;
+    auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
+        if (auto* cached = slot.get())
+            return cached;
+        NativeExecutable* result = getHostFunction(
+            slowCase ? remoteFunctionCallGeneric : remoteFunctionCallForJSFunction,
+            slowCase ? NoIntrinsic : RemoteFunctionCallIntrinsic,
+            callHostFunctionAsConstructor, nullptr, String());
+        slot = Weak<NativeExecutable>(result);
+        return result;
+    };
+
+    if (slowCase)
+        return getOrCreate(m_slowRemoteFunctionExecutable);
+    return getOrCreate(m_fastRemoteFunctionExecutable);
 }
 
 MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
