@@ -1,5 +1,84 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287930. rdar://problem/85790203
+
+    [iOS] Page loading hangs for ~10s on WebProcess launch
+    https://bugs.webkit.org/show_bug.cgi?id=235089
+    
+    Reviewed by Eric Carlson.
+    
+    WebPage::setMuted() will result in calling into the current audioCaptureFactory,
+    which will be by default CoreAudioAudioCaptureFactory unless replaced.
+    CoreAudioAudioCaptureFactory will in turn call into AVAudioSession, which will block
+    for multiple seconds due to the WebContent process sandbox.
+    
+    Change the order in which these calls occur by configuring the audioCaptureFactory
+    in platformInitialize(), which occurs near the top of the constructor. This requires
+    access to the WebPageCreationParameters passed into the constructor, modify that method
+    to take a WebPageCreationParameters, and modify all the platform-specific definitions of
+    that method.
+    
+    * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+    (WebKit::WebPage::platformInitialize):
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::m_appHighlightsVisible):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+    (WebKit::WebPage::platformInitialize):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::platformInitialize): Deleted.
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::platformInitializeAccessibility):
+    (WebKit::WebPage::platformInitialize): Deleted.
+    * WebProcess/WebPage/playstation/WebPagePlayStation.cpp:
+    (WebKit::WebPage::platformInitialize):
+    * WebProcess/WebPage/win/WebPageWin.cpp:
+    (WebKit::WebPage::platformInitialize):
+    * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+    (WebKit::WebPage::platformInitialize):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287930 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-12  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Page loading hangs for ~10s on WebProcess launch
+            https://bugs.webkit.org/show_bug.cgi?id=235089
+
+            Reviewed by Eric Carlson.
+
+            WebPage::setMuted() will result in calling into the current audioCaptureFactory,
+            which will be by default CoreAudioAudioCaptureFactory unless replaced.
+            CoreAudioAudioCaptureFactory will in turn call into AVAudioSession, which will block
+            for multiple seconds due to the WebContent process sandbox.
+
+            Change the order in which these calls occur by configuring the audioCaptureFactory
+            in platformInitialize(), which occurs near the top of the constructor. This requires
+            access to the WebPageCreationParameters passed into the constructor, modify that method
+            to take a WebPageCreationParameters, and modify all the platform-specific definitions of
+            that method.
+
+            * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+            (WebKit::WebPage::platformInitialize):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::m_appHighlightsVisible):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+            (WebKit::WebPage::platformInitialize):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::platformInitialize): Deleted.
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::platformInitializeAccessibility):
+            (WebKit::WebPage::platformInitialize): Deleted.
+            * WebProcess/WebPage/playstation/WebPagePlayStation.cpp:
+            (WebKit::WebPage::platformInitialize):
+            * WebProcess/WebPage/win/WebPageWin.cpp:
+            (WebKit::WebPage::platformInitialize):
+            * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+            (WebKit::WebPage::platformInitialize):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287914. rdar://problem/85451366
 
     Protect DocumentLoader when a reference to its members is used.

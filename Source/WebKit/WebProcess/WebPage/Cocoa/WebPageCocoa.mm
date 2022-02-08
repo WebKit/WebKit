@@ -30,6 +30,7 @@
 #import "LaunchServicesDatabaseManager.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
+#import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 #import "WebPageProxyMessages.h"
 #import "WebPaymentCoordinator.h"
@@ -63,6 +64,16 @@
 #if PLATFORM(COCOA)
 
 namespace WebKit {
+
+void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
+{
+    platformInitializeAccessibility();
+
+#if ENABLE(MEDIA_STREAM)
+    if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
+        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess);
+#endif
+}
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {

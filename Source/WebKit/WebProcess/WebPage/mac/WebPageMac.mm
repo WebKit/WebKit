@@ -109,7 +109,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize()
+void WebPage::platformInitializeAccessibility()
 {
     auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
 

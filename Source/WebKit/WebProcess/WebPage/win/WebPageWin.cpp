@@ -52,7 +52,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize()
+void WebPage::platformInitialize(const WebPageCreationParameters&)
 {
 }
 

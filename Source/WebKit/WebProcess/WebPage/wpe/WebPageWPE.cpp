@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize()
+void WebPage::platformInitialize(const WebPageCreationParameters&)
 {
 #if ENABLE(ACCESSIBILITY)
     // Create the accessible object (the plug) that will serve as the
