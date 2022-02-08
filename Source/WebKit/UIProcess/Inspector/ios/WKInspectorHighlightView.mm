@@ -277,6 +277,9 @@ static void layerPath(CAShapeLayer *layer, const WebCore::FloatQuad& outerQuad)
 
     for (auto gridHighlightOverlay : _highlight->gridHighlightOverlays)
         WebCore::InspectorOverlay::drawGridOverlay(context, gridHighlightOverlay);
+
+    for (auto flexHighlightOverlay : _highlight->flexHighlightOverlays)
+        WebCore::InspectorOverlay::drawFlexOverlay(context, flexHighlightOverlay);
 }
 
 - (void)update:(const WebCore::InspectorOverlay::Highlight&)highlight scale:(double)scale frame:(const WebCore::FloatRect&)frame

@@ -141,6 +141,18 @@ public:
 #endif
         };
 
+        struct FlexHighlightOverlay {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+            Color color;
+            FloatQuad containerBounds;
+
+#if PLATFORM(IOS_FAMILY)
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> decode(Decoder&);
+#endif
+        };
+
         void setDataFromConfig(const Config& config)
         {
             contentColor = config.content;
@@ -160,6 +172,7 @@ public:
         Type type {Type::Node};
         Vector<FloatQuad> quads;
         Vector<GridHighlightOverlay> gridHighlightOverlays;
+        Vector<FlexHighlightOverlay> flexHighlightOverlays;
         bool usePageCoordinates {true};
 
         using Bounds = FloatRect;
@@ -180,6 +193,19 @@ public:
         };
 
         WeakPtr<Node> gridNode;
+        Config config;
+    };
+
+    struct Flex {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        struct Config {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+            Color flexColor;
+        };
+
+        WeakPtr<Node> flexNode;
         Config config;
     };
 
@@ -207,18 +233,24 @@ public:
 
     Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
+    unsigned flexOverlayCount() const { return m_activeFlexOverlays.size(); }
 
     void didSetSearchingForNode(bool enabled);
 
     void setIndicating(bool indicating);
 
-    // Multiple grid overlays can be active at the same time. These methods
+    // Multiple grid and flex overlays can be active at the same time. These methods
     // will fail if the node is not a grid or if the node has been GC'd.
     Inspector::ErrorStringOr<void> setGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
     Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
     void clearAllGridOverlays();
 
+    Inspector::ErrorStringOr<void> setFlexOverlayForNode(Node&, const InspectorOverlay::Flex::Config&);
+    Inspector::ErrorStringOr<void> clearFlexOverlayForNode(Node&);
+    void clearAllFlexOverlays();
+
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
+    WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlay::Highlight::FlexHighlightOverlay&);
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -236,10 +268,12 @@ private:
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
     std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
+    std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 
     void updatePaintRectsTimerFired();
 
     bool removeGridOverlayForNode(Node&);
+    bool removeFlexOverlayForNode(Node&);
 
     Page& m_page;
     InspectorClient* m_client;
@@ -255,6 +289,7 @@ private:
     Timer m_paintRectUpdateTimer;
 
     Vector<InspectorOverlay::Grid> m_activeGridOverlays;
+    Vector<InspectorOverlay::Flex> m_activeFlexOverlays;
 
     bool m_indicating { false };
     bool m_showPaintRects { false };
@@ -263,6 +298,22 @@ private:
 };
 
 #if PLATFORM(IOS_FAMILY)
+
+template<class Encoder> void InspectorOverlay::Highlight::FlexHighlightOverlay::encode(Encoder& encoder) const
+{
+    encoder << color;
+    encoder << containerBounds;
+}
+
+template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::Highlight::FlexHighlightOverlay::decode(Decoder& decoder)
+{
+    InspectorOverlay::Highlight::FlexHighlightOverlay flexHighlightOverlay;
+    if (!decoder.decode(flexHighlightOverlay.color))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.containerBounds))
+        return { };
+    return { flexHighlightOverlay };
+}
 
 template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::encode(Encoder& encoder) const
 {

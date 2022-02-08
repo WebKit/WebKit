@@ -72,7 +72,6 @@ function test()
             await DOMAgent.showGridOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
             await checkGridOverlayCount(1);
 
-            // No error should occur if showing grid overlay for a node that already has one.
             InspectorTest.log("Requesting to show second grid overlay");
             await DOMAgent.showGridOverlay(second.id, WI.Color.fromString("green").toProtocol());
             await checkGridOverlayCount(2);
@@ -100,7 +99,6 @@ function test()
             await DOMAgent.showGridOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
             await checkGridOverlayCount(1);
 
-            // No error should occur if showing grid overlay for a node that already has one.
             InspectorTest.log("Requesting to show a different grid overlay");
             await DOMAgent.showGridOverlay(second.id, WI.Color.fromString("green").toProtocol());
             await checkGridOverlayCount(2);

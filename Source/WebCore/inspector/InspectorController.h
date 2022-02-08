@@ -106,6 +106,7 @@ public:
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
     WEBCORE_EXPORT unsigned gridOverlayCount() const;
+    WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
     InspectorClient* inspectorClient() const { return m_inspectorClient; }

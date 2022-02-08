@@ -1542,6 +1542,41 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(std:
     return { };
 }
 
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexColor)
+{
+    Protocol::ErrorString errorString;
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    auto parsedColor = parseColor(WTFMove(flexColor));
+    if (!parsedColor)
+        return makeUnexpected("Invalid color could not be parsed.");
+
+    InspectorOverlay::Flex::Config config;
+    config.flexColor = *parsedColor;
+
+    m_overlay->setFlexOverlayForNode(*node, config);
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideFlexOverlay(std::optional<Protocol::DOM::NodeId>&& nodeId)
+{
+    if (nodeId) {
+        Protocol::ErrorString errorString;
+        auto node = assertNode(errorString, *nodeId);
+        if (!node)
+            return makeUnexpected(errorString);
+
+        return m_overlay->clearFlexOverlayForNode(*node);
+    }
+
+    m_overlay->clearAllFlexOverlays();
+
+    return { };
+}
+
 Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::moveTo(Protocol::DOM::NodeId nodeId, Protocol::DOM::NodeId targetNodeId, std::optional<Protocol::DOM::NodeId>&& insertBeforeNodeId)
 {
     Protocol::ErrorString errorString;

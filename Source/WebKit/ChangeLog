@@ -1,3 +1,19 @@
+2022-02-08  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: [Flexbox] Add support for showing/hiding flex container overlays and basic overlay drawing
+        https://bugs.webkit.org/show_bug.cgi?id=236013
+        <rdar://87893201>
+
+        Reviewed by Patrick Angle.
+
+        Add basic logic to draw a flex overlay on top of a flex container on iOS/iPadOS. Used by Web Inspector.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<InspectorOverlay::Highlight>::encode):
+        (IPC::ArgumentCoder<InspectorOverlay::Highlight>::decode):
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView drawRect:]):
+
 2022-02-08  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCCodecs SharedVideoFrameWriters can deadlock in case of GPUProcess crash

@@ -61,6 +61,7 @@
 #include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
@@ -437,6 +438,11 @@ void InspectorOverlay::paint(GraphicsContext& context)
             drawGridOverlay(context, *gridHighlightOverlay);
     }
 
+    for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
+        if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
+            drawFlexOverlay(context, *flexHighlightOverlay);
+    }
+
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
@@ -446,7 +452,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
 void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size())
+    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size())
         return;
 
     highlight.type = InspectorOverlay::Highlight::Type::None;
@@ -469,6 +475,11 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
     for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
         if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll))
             highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
+    }
+
+    for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
+        if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
+            highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
     }
 }
 
@@ -530,7 +541,7 @@ bool InspectorOverlay::shouldShowOverlay() const
 {
     // Don't show the overlay when m_showRulersDuringElementSelection is true, as it's only supposed
     // to have an effect when element selection is active (e.g. a node is hovered).
-    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers || m_activeGridOverlays.size();
+    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers || m_activeGridOverlays.size() || m_activeFlexOverlays.size();
 }
 
 void InspectorOverlay::update()
@@ -626,6 +637,45 @@ ErrorStringOr<void> InspectorOverlay::clearGridOverlayForNode(Node& node)
 void InspectorOverlay::clearAllGridOverlays()
 {
     m_activeGridOverlays.clear();
+
+    update();
+}
+
+bool InspectorOverlay::removeFlexOverlayForNode(Node& node)
+{
+    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node> has been cleared.
+    return m_activeFlexOverlays.removeAllMatching([&] (const InspectorOverlay::Flex& flexOverlay) {
+        return !flexOverlay.flexNode || flexOverlay.flexNode.get() == &node;
+    });
+}
+
+ErrorStringOr<void> InspectorOverlay::setFlexOverlayForNode(Node& node, const InspectorOverlay::Flex::Config& flexOverlayConfig)
+{
+    if (!is<RenderFlexibleBox>(node.renderer()))
+        return makeUnexpected("Node does not initiate a flex context");
+
+    removeFlexOverlayForNode(node);
+
+    m_activeFlexOverlays.append({ node, flexOverlayConfig });
+
+    update();
+
+    return { };
+}
+
+ErrorStringOr<void> InspectorOverlay::clearFlexOverlayForNode(Node& node)
+{
+    if (!removeFlexOverlayForNode(node))
+        return makeUnexpected("No flex overlay exists for the node, so cannot clear.");
+
+    update();
+
+    return { };
+}
+
+void InspectorOverlay::clearAllFlexOverlays()
+{
+    m_activeFlexOverlays.clear();
 
     update();
 }
@@ -1935,6 +1985,56 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     }
 
     return { gridHighlightOverlay };
+}
+
+void InspectorOverlay::drawFlexOverlay(GraphicsContext& context, const InspectorOverlay::Highlight::FlexHighlightOverlay& flexHighlightOverlay)
+{
+    GraphicsContextStateSaver saver(context);
+    context.setStrokeThickness(1);
+    context.setStrokeColor(flexHighlightOverlay.color);
+    context.strokePath(quadToPath(flexHighlightOverlay.containerBounds));
+}
+
+std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::buildFlexOverlay(const InspectorOverlay::Flex& flexOverlay)
+{
+    // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
+    if (!flexOverlay.flexNode) {
+        m_activeFlexOverlays.removeAllMatching([&] (const InspectorOverlay::Flex& flexOverlay) {
+            return !flexOverlay.flexNode;
+        });
+        return { };
+    }
+
+    // Always re-check because the node's renderer may have changed since being added.
+    // If renderer is no longer a flex, then remove the flex overlay for the node.
+    Node* node = flexOverlay.flexNode.get();
+    auto renderer = node->renderer();
+    if (!is<RenderFlexibleBox>(renderer)) {
+        removeFlexOverlayForNode(*node);
+        return { };
+    }
+
+    auto& renderFlex = *downcast<RenderFlexibleBox>(renderer);
+
+    Frame* containingFrame = node->document().frame();
+    if (!containingFrame)
+        return { };
+    FrameView* containingView = containingFrame->view();
+
+    auto localQuadToRootQuad = [&](const FloatQuad& quad) -> FloatQuad {
+        return {
+            localPointToRootPoint(containingView, quad.p1()),
+            localPointToRootPoint(containingView, quad.p2()),
+            localPointToRootPoint(containingView, quad.p3()),
+            localPointToRootPoint(containingView, quad.p4())
+        };
+    };
+
+    InspectorOverlay::Highlight::FlexHighlightOverlay flexHighlightOverlay;
+    flexHighlightOverlay.color = flexOverlay.config.flexColor;
+    flexHighlightOverlay.containerBounds = localQuadToRootQuad({ renderFlex.absoluteContentQuad() });
+
+    return { flexHighlightOverlay };
 }
 
 } // namespace WebCore

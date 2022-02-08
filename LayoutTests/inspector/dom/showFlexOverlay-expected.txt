@@ -1,0 +1,51 @@
+Tests for the DOM.showFlexOverlay command.
+
+
+
+== Running test suite: DOM.showFlexOverlay
+-- Running test case: DOM.showFlexOverlay.ShowOneOverlay
+PASS: Should have 0 flex overlays displayed.
+Requesting to show flex overlay for first .flex-container
+PASS: Should have 1 flex overlay displayed.
+Requesting to show a different flex overlay for first .flex-container
+PASS: Should have 1 flex overlay displayed.
+Requesting to hide flex overlay
+PASS: Should have 0 flex overlays displayed.
+
+-- Running test case: DOM.showFlexOverlay.ShowTwoOverlays
+PASS: Should have 0 flex overlays displayed.
+Requesting to show first flex overlay
+PASS: Should have 1 flex overlay displayed.
+Requesting to show second flex overlay
+PASS: Should have 2 flex overlays displayed.
+Requesting to hide first flex overlay
+PASS: Should have 1 flex overlay displayed.
+Requesting to hide second flex overlay
+PASS: Should have 0 flex overlays displayed.
+
+-- Running test case: DOM.showFlexOverlay.HideAllOverlays
+PASS: Should have 0 flex overlays displayed.
+Requesting to show first flex overlay
+PASS: Should have 1 flex overlay displayed.
+Requesting to show second flex overlay
+PASS: Should have 2 flex overlays displayed.
+Requesting to hide all flex overlays.
+PASS: Should have 0 flex overlays displayed.
+Requesting to hide all flex overlays again, expecting none to be cleared. Hiding all flex overlays is idempotent and should not throw an error.
+PASS: Should have 0 flex overlays displayed.
+
+-- Running test case: DOM.showFlexOverlay.HideBeforeShowShouldError
+PASS: Should have 0 flex overlays displayed.
+Requesting to hide flex overlay for .flex-container
+PASS: Should produce an exception.
+Error: No flex overlay exists for the node, so cannot clear.
+Requesting to hide all flex overlays. Hiding all flex overlays is idempotent and should not throw an error.
+PASS: Should have 0 flex overlays displayed.
+
+-- Running test case: DOM.showFlexOverlay.ForNonexistentNodeShouldError
+PASS: Should have 0 flex overlays displayed.
+Requesting to show flex overlay for invalid nodeId -1
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+PASS: Should have 0 flex overlays displayed.
+

@@ -1,3 +1,17 @@
+2022-02-08  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: [Flexbox] Add support for showing/hiding flex container overlays and basic overlay drawing
+        https://bugs.webkit.org/show_bug.cgi?id=236013
+        <rdar://87893201>
+
+        Reviewed by Patrick Angle.
+
+        * inspector/dom/showFlexOverlay-expected.txt: Added.
+        * inspector/dom/showFlexOverlay.html: Added.
+
+        * inspector/dom/showGridOverlay.html:
+        - Drive-by clean-up of out-of-context comments.
+
 2022-02-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

@@ -369,6 +369,11 @@ unsigned InspectorController::gridOverlayCount() const
     return m_overlay->gridOverlayCount();
 }
 
+unsigned InspectorController::flexOverlayCount() const
+{
+    return m_overlay->flexOverlayCount();
+}
+
 unsigned InspectorController::paintRectCount() const
 {
     if (m_inspectorClient->overridesShowPaintRects())

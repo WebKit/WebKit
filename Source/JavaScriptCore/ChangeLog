@@ -1,3 +1,15 @@
+2022-02-08  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: [Flexbox] Add support for showing/hiding flex container overlays and basic overlay drawing
+        https://bugs.webkit.org/show_bug.cgi?id=236013
+        <rdar://87893201>
+
+        Reviewed by Patrick Angle.
+
+        Add new commands to show and hide flex overlays.
+
+        * inspector/protocol/DOM.json:
+
 2022-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Convert JSString's non-atomic WTF::String to atomic string while concurrent compilers / heap threads run
