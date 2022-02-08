@@ -100,6 +100,9 @@ ALWAYS_INLINE auto SecureARM64EHashPins::metadata() -> Metadata*
 
 void SecureARM64EHashPins::initializeAtStartup()
 {
+    if (!g_jscConfig.useFastJITPermissions)
+        return;
+
     VALIDATE_THIS_VALUE();
     RELEASE_ASSERT(!m_memory);
 
@@ -173,6 +176,9 @@ bool SecureARM64EHashPins::allocatePinForCurrentThreadImpl(const AbstractLocker&
 
 void SecureARM64EHashPins::allocatePinForCurrentThread()
 {
+    if (!g_jscConfig.useFastJITPermissions)
+        return;
+
     VALIDATE_THIS_VALUE();
 
     Locker locker { hashPinsLock };
@@ -205,6 +211,9 @@ void SecureARM64EHashPins::allocatePinForCurrentThread()
 
 void SecureARM64EHashPins::deallocatePinForCurrentThread()
 {
+    if (!g_jscConfig.useFastJITPermissions)
+        return;
+
     VALIDATE_THIS_VALUE();
 
     Locker locker { hashPinsLock };
