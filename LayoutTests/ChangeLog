@@ -1,3 +1,11 @@
+2022-02-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Garden tests failing after r288070
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2022-02-07  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

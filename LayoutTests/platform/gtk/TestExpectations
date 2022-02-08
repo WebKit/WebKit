@@ -899,6 +899,25 @@ webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
 webkit.org/b/229740 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure Crash ]
 
+webkit.org/b/236298 css1/pseudo/firstletter-surrogate.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/sub-pixel/ellipsis-table.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/combining-character-sequence-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/fallback-font-and-zero-width-glyph.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/hanging-punctuation-allow-end-basic.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/simple-lines-text-transform.html [ ImageOnlyFailure ]
+webkit.org/b/236298 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-content/quotes-009.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-content/quotes-024.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001a.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001b.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-005.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFailure ]
+webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
