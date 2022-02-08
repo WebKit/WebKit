@@ -1,5 +1,42 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288831. rdar://problem/88268450
+
+    [iOS] SharePlay is shown prominently for system-provided Share Sheets
+    https://bugs.webkit.org/show_bug.cgi?id=235895
+    rdar://88268450
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    Content shared using the Web Share API should not display a SharePlay action.
+    
+    * UIProcess/Cocoa/WKShareSheet.mm:
+    (-[WKShareSheet presentWithShareDataArray:inRect:]):
+    
+    Use `-[UIActivityViewController setExcludedActivityTypes:]` to ensure
+    a SharePlay action is not displayed.
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288831 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-31  Aditya Keerthi  <akeerthi@apple.com>
+
+            [iOS] SharePlay is shown prominently for system-provided Share Sheets
+            https://bugs.webkit.org/show_bug.cgi?id=235895
+            rdar://88268450
+
+            Reviewed by Wenson Hsieh.
+
+            * wtf/PlatformHave.h:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288706. rdar://problem/88152385
 
     Change version number for HAVE_PASSKIT_DEFAULT_SHIPPING_METHOD

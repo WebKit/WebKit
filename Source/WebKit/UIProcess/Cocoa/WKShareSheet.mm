@@ -181,6 +181,11 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
+
+#if HAVE(UIACTIVITYTYPE_SHAREPLAY)
+    [_shareSheetViewController setExcludedActivityTypes:@[ UIActivityTypeSharePlay ]];
+#endif
+
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
         _didShareSuccessfully |= completed;
 
