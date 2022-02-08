@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ pas_segregated_partial_view_create(
 
     result->alloc_bits_offset = 0;
     result->alloc_bits_size = 0;
-    pas_compact_tagged_unsigned_ptr_store(&result->alloc_bits, NULL);
+    pas_lenient_compact_unsigned_ptr_store(&result->alloc_bits, NULL);
 
     result->inline_alloc_bits = 0; /* There isn't a real big need to do this, but it helps keep
                                       things sane. */
@@ -186,7 +186,7 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
 
     shared_view = pas_compact_segregated_shared_view_ptr_load_non_null(&view->shared_view);
 
-    full_alloc_bits = pas_compact_tagged_unsigned_ptr_load_non_null(&view->alloc_bits);
+    full_alloc_bits = pas_lenient_compact_unsigned_ptr_load(&view->alloc_bits);
 
     if (shared_view->is_owned) {
         page_boundary = (uintptr_t)pas_shared_handle_or_page_boundary_get_page_boundary(

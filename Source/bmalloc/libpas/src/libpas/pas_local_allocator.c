@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,6 +118,8 @@ void pas_local_allocator_move(pas_local_allocator* dst,
     pas_segregated_partial_view* partial_view;
     pas_segregated_shared_view* shared_view;
 
+    pas_heap_lock_assert_held(); /* Needed to modify a lenient_compact_ptr. */
+
     directory = pas_segregated_view_get_size_directory(src->view);
     
     size = pas_segregated_size_directory_local_allocator_size(directory);
@@ -135,8 +137,8 @@ void pas_local_allocator_move(pas_local_allocator* dst,
        is the only client of partial_view->alloc_bits being right during primordial mode, and it
        happens to hold the ownership lock. */
     pas_lock_lock(&shared_view->ownership_lock);
-    if (pas_compact_tagged_unsigned_ptr_load(&partial_view->alloc_bits) == (unsigned*)src->bits)
-        pas_compact_tagged_unsigned_ptr_store(&partial_view->alloc_bits, (unsigned*)dst->bits);
+    if (pas_lenient_compact_unsigned_ptr_load(&partial_view->alloc_bits) == (unsigned*)src->bits)
+        pas_lenient_compact_unsigned_ptr_store(&partial_view->alloc_bits, (unsigned*)dst->bits);
     pas_lock_unlock(&shared_view->ownership_lock);
 }
 

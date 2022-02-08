@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -352,7 +352,7 @@ pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
 
     partial_view_as_view = pas_segregated_partial_view_as_view((pas_segregated_partial_view*)view);
     
-    full_alloc_bits = pas_full_alloc_bits_create_for_partial(partial_view_as_view);
+    full_alloc_bits = pas_full_alloc_bits_create_for_partial_but_not_primordial(partial_view_as_view);
     
     allocator->view = partial_view_as_view;
 
@@ -599,21 +599,16 @@ pas_local_allocator_start_allocating_in_primordial_partial_view(
         shared_page_directory = page_config.shared_page_directory_selector(heap, size_directory);
         
         shared_view = pas_segregated_shared_page_directory_find_first_eligible(
-            shared_page_directory, size, alignment,
-            pas_segregated_page_config_heap_lock_hold_mode(page_config));
+            shared_page_directory, size, alignment, pas_lock_is_not_held);
 
         PAS_ASSERT(shared_view);
         
-        pas_lock_lock_conditionally(
-            &shared_view->commit_lock,
-            pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        pas_lock_lock(&shared_view->commit_lock);
 
         handle = pas_segregated_shared_view_commit_page_if_necessary(
             shared_view, heap, shared_page_directory, view, page_config);
         if (!handle) {
-            pas_lock_unlock_conditionally(
-                &shared_view->commit_lock,
-                pas_segregated_page_config_heap_lock_hold_mode(page_config));
+            pas_lock_unlock(&shared_view->commit_lock);
             return false;
         }
 
@@ -663,13 +658,6 @@ pas_local_allocator_start_allocating_in_primordial_partial_view(
 
         pas_zero_memory(allocator->bits, pas_segregated_page_config_num_alloc_bytes(page_config));
 
-        /* Doing this helps heap introspection but isn't otherwise necessary. */
-        pas_compact_tagged_unsigned_ptr_store(&view->alloc_bits, (unsigned*)allocator->bits);
-        PAS_ASSERT(!view->alloc_bits_offset);
-        PAS_ASSERT((uint8_t)pas_segregated_page_config_num_alloc_words(page_config)
-                   == pas_segregated_page_config_num_alloc_words(page_config));
-        view->alloc_bits_size = (uint8_t)pas_segregated_page_config_num_alloc_words(page_config);
-
         pas_local_allocator_set_up_primordial_bump(
             allocator, view, handle, page, &held_lock, bump_result,
             pas_local_allocator_primordial_bump_stash_whole_allocation,
@@ -679,11 +667,37 @@ pas_local_allocator_start_allocating_in_primordial_partial_view(
 
         view->is_attached_to_shared_handle = true;
 
-        pas_lock_switch(&held_lock, NULL);
-        pas_lock_unlock_conditionally(
-            &shared_view->commit_lock,
-            pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        pas_lock_unlock(&shared_view->commit_lock);
+
+        /* This code to set the view's alloc_bits is primarily for heap enumeration.
+           
+           If the enumerator ran right now then (before we do this stuff), then it would see:
         
+           - A bunch of page alloc bits set for the objects we are about to allocate.
+           - No partial views say that they own those objects.
+           - Local allocator claims to own those objects.
+        
+           So, we would report that those objects are not live right now. I believe they would show up
+           as "meta" allocations, not even as objects.
+        
+           Immediately after settings the view's alloc_bits and alloc_bits_size, we will know that the
+           objects exist (view alloc bits are set), but they are dead (despite page alloc bits also being
+           set, the objects are part of the bump range). */
+        if (!pas_heap_lock_try_lock()) {
+            pas_lock_switch(&held_lock, NULL);
+            pas_heap_lock_lock();
+            pas_segregated_page_switch_lock(page, &held_lock, page_config);
+        }
+
+        pas_lenient_compact_unsigned_ptr_store(&view->alloc_bits, (unsigned*)allocator->bits);
+        PAS_ASSERT(!view->alloc_bits_offset);
+        PAS_ASSERT((uint8_t)pas_segregated_page_config_num_alloc_words(page_config)
+                   == pas_segregated_page_config_num_alloc_words(page_config));
+        pas_compiler_fence();
+        view->alloc_bits_size = (uint8_t)pas_segregated_page_config_num_alloc_words(page_config);
+        pas_lock_switch(&held_lock, NULL);
+        pas_heap_lock_unlock();
+
         return true;
     }
 }
@@ -775,30 +789,28 @@ pas_local_allocator_bless_primordial_partial_view_before_stopping(
     
     PAS_ASSERT((uint8_t)alloc_bits_offset == alloc_bits_offset);
     view->alloc_bits_offset = (uint8_t)alloc_bits_offset;
+    
+    /* We hold the page lock. Lock ordering says that we cannot acquire the heap lock when
+       we are holding the page lock.
+       
+       Luckily, this is a fine place to drop the page lock.
+       
+       Therefore, we try-lock the heap lock. It's always safe to do that. Usually it will just
+       succeed. But if it fails, we will drop the page lock and then acquire both of them. */
+    if (!pas_heap_lock_try_lock_conditionally(heap_lock_hold_mode)) {
+        pas_segregated_page_unlock(page, page_config);
+        pas_heap_lock_lock();
+        pas_segregated_page_lock(page, page_config);
+    }
 
     if (alloc_bits_size == 1)
         alloc_bits = &view->inline_alloc_bits - alloc_bits_offset;
     else {
-        /* We hold the page lock. Lock ordering says that we cannot acquire the heap lock when
-           we are holding the page lock.
-           
-           Luckily, this is a fine place to drop the page lock.
-           
-           Therefore, we try-lock the heap lock. It's always safe to do that. Usually it will just
-           succeed. But if it fails, we will drop the page lock and then acquire both of them. */
-        if (!pas_heap_lock_try_lock_conditionally(heap_lock_hold_mode)) {
-            pas_segregated_page_unlock(page, page_config);
-            pas_heap_lock_lock();
-            pas_segregated_page_lock(page, page_config);
-        }
-
         alloc_bits = (unsigned*)pas_immortal_heap_allocate_with_manual_alignment(
             alloc_bits_size * sizeof(unsigned),
             sizeof(unsigned),
             "pas_segregated_partial_view/alloc_bits",
             pas_object_allocation) - alloc_bits_offset;
-
-        pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     }
     
     memcpy(alloc_bits + alloc_bits_offset,
@@ -807,7 +819,9 @@ pas_local_allocator_bless_primordial_partial_view_before_stopping(
 
     pas_store_store_fence();
 
-    pas_compact_tagged_unsigned_ptr_store(&view->alloc_bits, alloc_bits);
+    pas_lenient_compact_unsigned_ptr_store(&view->alloc_bits, alloc_bits);
+    
+    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result

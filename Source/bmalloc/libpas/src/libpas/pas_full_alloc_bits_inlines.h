@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,19 @@ pas_full_alloc_bits_create_for_exclusive(
 }
 
 static PAS_ALWAYS_INLINE pas_full_alloc_bits
+pas_full_alloc_bits_create_for_partial_but_not_primordial(pas_segregated_view view)
+{
+    pas_segregated_partial_view* partial_view;
+    
+    partial_view = pas_segregated_view_get_partial(view);
+
+    return pas_full_alloc_bits_create(
+        pas_lenient_compact_unsigned_ptr_load_compact_non_null(&partial_view->alloc_bits),
+        partial_view->alloc_bits_offset,
+        partial_view->alloc_bits_offset + partial_view->alloc_bits_size);
+}
+
+static PAS_ALWAYS_INLINE pas_full_alloc_bits
 pas_full_alloc_bits_create_for_partial(pas_segregated_view view)
 {
     pas_segregated_partial_view* partial_view;
@@ -56,7 +69,7 @@ pas_full_alloc_bits_create_for_partial(pas_segregated_view view)
     partial_view = pas_segregated_view_get_partial(view);
 
     return pas_full_alloc_bits_create(
-        pas_compact_tagged_unsigned_ptr_load_non_null(&partial_view->alloc_bits),
+        pas_lenient_compact_unsigned_ptr_load(&partial_view->alloc_bits),
         partial_view->alloc_bits_offset,
         partial_view->alloc_bits_offset + partial_view->alloc_bits_size);
 }
