@@ -4461,6 +4461,9 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
 
 bool RenderLayer::clipCrossesPaintingBoundary() const
 {
+    if (establishesTopLayer())
+        return true;
+
     return parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)
         || parent()->enclosingCompositingLayerForRepaint() != enclosingCompositingLayerForRepaint();
 }

@@ -1,3 +1,40 @@
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287847. rdar://problem/86488039
+
+    ASSERTION FAILED in RenderLayer::updateClipRects
+    https://bugs.webkit.org/show_bug.cgi?id=234315
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    In clippingRootForPainting(), the dialog element uses the top layer as its clipping root layer.
+    When it caculates the clip rects, it caculates all its ancestors' clip rects and caches them
+    including the clipping root layer. However, if the ancestor is a transformed layer, it should be
+    treated as a root layer. When the transformed layer updates its clip rects, the root layer won't
+    match the one in cache. This patch stops the dialog descendant propagating its clipping root layer
+    to the ancestors' in cache.
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::clipCrossesPaintingBoundary const):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287847 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-10  Cathie Chen  <cathiechen@igalia.com>
+
+            ASSERTION FAILED in RenderLayer::updateClipRects
+            https://bugs.webkit.org/show_bug.cgi?id=234315
+
+            Reviewed by Simon Fraser.
+
+            * TestExpectations:
+
 2022-02-02  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288423. rdar://problem/87701738
