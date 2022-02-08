@@ -269,14 +269,19 @@ private:
     std::unique_ptr<SessionStorageManager> m_sessionStorageManager;
 };
 
-OriginStorageManager::OriginStorageManager(String&& path, String&& localStoragePath)
-    : m_path(WTFMove(path))
+OriginStorageManager::OriginStorageManager(Function<void()>&& writeOriginFileFunction, String&& path, String&& localStoragePath)
+    : m_writeOriginFileFunction(WTFMove(writeOriginFileFunction))
+    , m_path(WTFMove(path))
     , m_localStoragePath(WTFMove(localStoragePath))
 {
     ASSERT(!RunLoop::isMain());
 }
 
-OriginStorageManager::~OriginStorageManager() = default;
+OriginStorageManager::~OriginStorageManager()
+{
+    if (m_writeOriginFileFunction)
+        m_writeOriginFileFunction();
+}
 
 void OriginStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
