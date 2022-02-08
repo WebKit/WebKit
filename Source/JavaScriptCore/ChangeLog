@@ -1,3 +1,36 @@
+2022-02-07  Saam Barati  <sbarati@apple.com>
+
+        Wasm crash on https://copy.sh/v86/?profile=dsl
+        https://bugs.webkit.org/show_bug.cgi?id=236037
+        rdar://88358719
+
+        Reviewed by Mark Lam.
+
+        Lower stack args in Air had a bug where it was emitting a constant
+        materialization at the wrong instruction offset for certain types
+        of spill instructions. This happens when we have a stack slot that
+        is 8 bytes wide, but we're emitting a zero def Move32. We need to
+        zero the upper 4 bytes. However, there is also code inside lower
+        stack args that uses the temp register when encountering offsets
+        that are too large to encode in a single instruction. However,
+        this offset materialization code for the second Move32 to zero
+        the upper bytes was happening before the actual store. For example,
+        we'd end up with:
+        movz x16, #k
+        movz x16, #k2
+        stur x1, [x16]
+        stur zr, [x16]
+        
+        instead of
+        movz x16, #k
+        stur x1, [x16]
+        movz x16, #k2
+        stur zr, [x16]
+
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/testair.cpp:
+
 2022-02-06  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes
