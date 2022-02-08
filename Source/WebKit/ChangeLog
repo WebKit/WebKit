@@ -1,5 +1,48 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288296. rdar://problem/88593227
+
+    Disable fallback path to WebRTC platform sockets
+    https://bugs.webkit.org/show_bug.cgi?id=235402
+    
+    Reviewed by Eric Carlson.
+    
+    We should not fallback to the legacy WebRTC socket code path in Cocoa ports.
+    Instead, if we cannot create the corresponding sockets (in case of ssltcp candidates for instance),
+    we mark the socket as closed.
+    Minor refactoring to show that NetworkRTCUDPSocketCocoa code path should always be successful.
+    
+    Manually tested on meet.google.com which can make use of ssltcp candidates.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    * NetworkProcess/webrtc/NetworkRTCProvider.h:
+    * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+    * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288296 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Youenn Fablet  <youenn@apple.com>
+
+            Disable fallback path to WebRTC platform sockets
+            https://bugs.webkit.org/show_bug.cgi?id=235402
+
+            Reviewed by Eric Carlson.
+
+            We should not fallback to the legacy WebRTC socket code path in Cocoa ports.
+            Instead, if we cannot create the corresponding sockets (in case of ssltcp candidates for instance),
+            we mark the socket as closed.
+            Minor refactoring to show that NetworkRTCUDPSocketCocoa code path should always be successful.
+
+            Manually tested on meet.google.com which can make use of ssltcp candidates.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            * NetworkProcess/webrtc/NetworkRTCProvider.h:
+            * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+            * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288185. rdar://problem/87709485
 
     [Cocoa] Do not change preferred AudioSession buffer size when VPIO is running
