@@ -1321,9 +1321,11 @@
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
+        SYS_iopolicysys
         SYS_open_dprotected_np
         SYS_psynch_rw_wrlock
-        SYS_umask))
+        SYS_umask
+        SYS_work_interval_ctl))
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
