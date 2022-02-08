@@ -500,7 +500,10 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
 #if ENABLE(SERVICE_WORKER)
 std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
-    return swConnection().createFetchTask(loader, request);
+    auto* swConnection = this->swConnection();
+    if (!swConnection)
+        return nullptr;
+    return swConnection->createFetchTask(loader, request);
 }
 #endif
 
@@ -1198,11 +1201,11 @@ void NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
     m_swContextConnection = nullptr;
 }
 
-WebSWServerConnection& NetworkConnectionToWebProcess::swConnection()
+WebSWServerConnection* NetworkConnectionToWebProcess::swConnection()
 {
     if (!m_swConnection)
         establishSWServerConnection();
-    return *m_swConnection;
+    return m_swConnection.get();
 }
 #endif
 

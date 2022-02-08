@@ -352,7 +352,10 @@ void ServiceWorkerFetchTask::softUpdateIfNeeded()
     SWFETCH_RELEASE_LOG("softUpdateIfNeeded: (m_shouldSoftUpdate=%d)", m_shouldSoftUpdate);
     if (!m_shouldSoftUpdate)
         return;
-    if (auto* registration = m_loader.connectionToWebProcess().swConnection().server().getRegistration(m_serviceWorkerRegistrationIdentifier))
+    auto* swConnection = m_loader.connectionToWebProcess().swConnection();
+    if (!swConnection)
+        return;
+    if (auto* registration = swConnection->server().getRegistration(m_serviceWorkerRegistrationIdentifier))
         registration->scheduleSoftUpdate(m_loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 }
 
