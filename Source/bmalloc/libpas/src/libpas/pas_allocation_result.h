@@ -102,7 +102,8 @@ pas_allocation_result_set_errno(pas_allocation_result result)
 static PAS_ALWAYS_INLINE pas_allocation_result
 pas_allocation_result_crash_on_error(pas_allocation_result result)
 {
-    PAS_ASSERT(result.did_succeed);
+    if (PAS_UNLIKELY(!result.did_succeed))
+        pas_panic_on_out_of_memory_error();
     return result;
 }
 

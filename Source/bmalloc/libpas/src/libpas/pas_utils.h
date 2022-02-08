@@ -160,6 +160,8 @@ PAS_BEGIN_EXTERN_C;
 /* NOTE: panic format string must have \n at the end. */
 PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
 
+PAS_API PAS_NEVER_INLINE PAS_NO_RETURN void pas_panic_on_out_of_memory_error(void);
+
 #define pas_set_deallocation_did_fail_callback __pas_set_deallocation_did_fail_callback
 #define pas_set_reallocation_did_fail_callback __pas_set_reallocation_did_fail_callback
 
