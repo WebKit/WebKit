@@ -1,5 +1,42 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288825. rdar://problem/88172449
+
+    [WP] Remove PostScript conversion code
+    https://bugs.webkit.org/show_bug.cgi?id=235892
+    <rdar://88172449>
+    
+    Reviewed by Brent Fulgham.
+    
+    The WebContent process no longer has access to the PostScript conversion service, so there is no need to keep this code.
+    
+    * WebProcess/Plugins/PDF/PDFPlugin.h:
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (WebKit::PDFPlugin::streamDidFinishLoading):
+    (WebKit::PDFPlugin::manualStreamDidFinishLoading):
+    (WebKit::PDFPlugin::convertPostScriptDataIfNeeded): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288825 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+            [WP] Remove PostScript conversion code
+            https://bugs.webkit.org/show_bug.cgi?id=235892
+            <rdar://88172449>
+
+            Reviewed by Brent Fulgham.
+
+            The WebContent process no longer has access to the PostScript conversion service, so there is no need to keep this code.
+
+            * WebProcess/Plugins/PDF/PDFPlugin.h:
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::streamDidFinishLoading):
+            (WebKit::PDFPlugin::manualStreamDidFinishLoading):
+            (WebKit::PDFPlugin::convertPostScriptDataIfNeeded): Deleted.
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288776. rdar://problem/88214729
 
     [macOS][WP] Temporarily add syscall to sandbox

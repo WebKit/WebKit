@@ -1623,14 +1623,6 @@ JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
     return JSObjectMake(ctx, jsPDFDocClass, this);
 }
 
-void PDFPlugin::convertPostScriptDataIfNeeded()
-{
-    if (!m_isPostScript)
-        return;
-
-    m_data = PDFDocumentImage::convertPostScriptDataToPDF(WTFMove(m_data));
-}
-
 void PDFPlugin::documentDataDidFinishLoading()
 {
     if (m_hasBeenDestroyed)
@@ -1734,7 +1726,6 @@ void PDFPlugin::streamDidFinishLoading(uint64_t streamID)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
-    convertPostScriptDataIfNeeded();
     documentDataDidFinishLoading();
 }
 
@@ -1796,7 +1787,6 @@ void PDFPlugin::manualStreamDidReceiveData(const SharedBuffer& buffer)
 
 void PDFPlugin::manualStreamDidFinishLoading()
 {
-    convertPostScriptDataIfNeeded();
     documentDataDidFinishLoading();
 }
 
