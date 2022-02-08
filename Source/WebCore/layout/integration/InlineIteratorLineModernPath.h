@@ -67,7 +67,7 @@ public:
     float y() const { return lineBoxTop(); }
     float logicalHeight() const { return lineBoxBottom() - lineBoxTop(); }
     bool isHorizontal() const { return true; }
-    FontBaseline baselineType() const { return AlphabeticBaseline; }
+    FontBaseline baselineType() const { return line().baselineType(); }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
     const LegacyRootInlineBox* legacyRootInlineBox() const { return nullptr; }

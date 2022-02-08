@@ -40,7 +40,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentLogicalWidth);
+    Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLeft, float contentLogicalWidth);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -55,6 +55,7 @@ public:
     EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
 
     float baseline() const { return m_aligmentBaseline; }
+    FontBaseline baselineType() const { return m_baselineType; }
 
     float contentLeft() const { return m_contentLeft; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
@@ -72,15 +73,17 @@ private:
     float m_aligmentBaseline { 0 };
     float m_contentLeft { 0 };
     float m_contentLogicalWidth { 0 };
+    FontBaseline m_baselineType { AlphabeticBaseline };
 };
 
-inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, float contentLeft, float contentLogicalWidth)
+inline Line::Line(const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLeft, float contentLogicalWidth)
     : m_lineBoxRect(lineBoxRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
     , m_contentLeft(contentLeft)
     , m_contentLogicalWidth(contentLogicalWidth)
+    , m_baselineType(baselineType)
 {
 }
 
