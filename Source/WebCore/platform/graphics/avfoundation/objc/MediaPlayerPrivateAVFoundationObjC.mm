@@ -2556,7 +2556,7 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
         };
     }
 
-    if (m_imageRotationSession)
+    if (m_lastPixelBuffer && m_imageRotationSession)
         m_lastPixelBuffer = m_imageRotationSession->rotate(m_lastPixelBuffer.get());
 
     m_lastImage = nullptr;
