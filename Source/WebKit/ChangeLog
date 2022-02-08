@@ -1,5 +1,36 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r287995. rdar://problem/87458502
+
+    Avoid unnecessary call to windowScreenDidChange
+    https://bugs.webkit.org/show_bug.cgi?id=235198
+    <rdar://87458502>
+    
+    Reviewed by Geoffrey Garen.
+    
+    It is a page load performance progression to avoid this call in initWithDrawingAreaProxy.
+    
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+    (-[WKOneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287995 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Per Arne Vollan  <pvollan@apple.com>
+
+            Avoid unnecessary call to windowScreenDidChange
+            https://bugs.webkit.org/show_bug.cgi?id=235198
+            <rdar://87458502>
+
+            Reviewed by Geoffrey Garen.
+
+            It is a page load performance progression to avoid this call in initWithDrawingAreaProxy.
+
+            * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+            (-[WKOneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287970. rdar://problem/87423294
 
     PCM: Same-site triggering events should support ephemeral measurement
