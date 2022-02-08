@@ -61,6 +61,7 @@ public:
     void transitionDidComplete(RefPtr<CSSTransition>);
 
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
+    bool runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject&) const;
     void detachFromDocument();
 
     void enqueueAnimationEvent(AnimationEventBase&);

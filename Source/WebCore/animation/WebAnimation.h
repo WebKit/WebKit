@@ -134,6 +134,7 @@ public:
     void acceleratedStateDidChange();
     void willChangeRenderer();
 
+    bool isRunningAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void updateRelevance();
     void effectTimingDidChange();
