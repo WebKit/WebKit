@@ -1,5 +1,36 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288586. rdar://problem/87994712
+
+    [macOS] Observe CFNetwork preference domain
+    https://bugs.webkit.org/show_bug.cgi?id=235603
+    <rdar://87994712>
+    
+    Reviewed by Darin Adler.
+    
+    Since the Networking process is now using CF prefs direct mode, the CFNetwork preference domain should be observed for changes.
+    
+    * UIProcess/Cocoa/PreferenceObserver.mm:
+    (-[WKPreferenceObserver init]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288586 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Observe CFNetwork preference domain
+            https://bugs.webkit.org/show_bug.cgi?id=235603
+            <rdar://87994712>
+
+            Reviewed by Darin Adler.
+
+            Since the Networking process is now using CF prefs direct mode, the CFNetwork preference domain should be observed for changes.
+
+            * UIProcess/Cocoa/PreferenceObserver.mm:
+            (-[WKPreferenceObserver init]):
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288543. rdar://problem/84958961
 
     REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
