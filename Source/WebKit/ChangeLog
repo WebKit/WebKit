@@ -1,3 +1,14 @@
+2022-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Test webkit/WebKitWebView/display-usermedia-permission-request times out
+        https://bugs.webkit.org/show_bug.cgi?id=235955
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConfigureMediaCapture): Don't notify display capture updates as camera capture
+        updates.
+
 2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Developer extras are always enabled by default

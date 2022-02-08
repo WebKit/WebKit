@@ -122,14 +122,14 @@ public:
 
     virtual void whenReady(CompletionHandler<void(String)>&&);
 
-    bool isProducingData() const { return m_isProducingData; }
+    virtual bool isProducingData() const;
     void start();
     void stop();
     virtual void requestToEnd(Observer& callingObserver);
     bool isEnded() const { return m_isEnded; }
 
     bool muted() const { return m_muted; }
-    void setMuted(bool);
+    virtual void setMuted(bool);
 
     bool captureDidFail() const { return m_captureDidFailed; }
 
@@ -330,6 +330,11 @@ inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& cal
 inline bool RealtimeMediaSource::isVideoSource() const
 {
     return false;
+}
+
+inline bool RealtimeMediaSource::isProducingData() const
+{
+    return m_isProducingData;
 }
 
 } // namespace WebCore

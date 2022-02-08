@@ -1,3 +1,12 @@
+2022-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Test webkit/WebKitWebView/display-usermedia-permission-request times out
+        https://bugs.webkit.org/show_bug.cgi?id=235955
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * TestWebKitAPI/glib/TestExpectations.json: Unflag test now passing.
+
 2022-02-07  Ben Nham  <nham@apple.com>
 
         Add PushService

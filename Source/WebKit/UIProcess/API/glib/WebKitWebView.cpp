@@ -4881,6 +4881,7 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
                 break;
             case WebCore::MediaProducerMediaCaptureKind::Display:
+                break;
             case WebCore::MediaProducerMediaCaptureKind::Camera:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_CAMERA_CAPTURE_STATE]);
                 break;

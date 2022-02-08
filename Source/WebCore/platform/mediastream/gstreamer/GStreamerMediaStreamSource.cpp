@@ -56,9 +56,9 @@ GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const MediaStreamTrackPrivate
     if (!track->label().isEmpty())
         gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, track->label().utf8().data(), nullptr);
 
-    if (track->type() == RealtimeMediaSource::Type::Audio)
+    if (track->hasAudio())
         gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, WEBKIT_MEDIA_TRACK_TAG_KIND, static_cast<int>(AudioTrackPrivate::Kind::Main), nullptr);
-    else if (track->type() == RealtimeMediaSource::Type::Video) {
+    else if (track->hasVideo()) {
         gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, WEBKIT_MEDIA_TRACK_TAG_KIND, static_cast<int>(VideoTrackPrivate::Kind::Main), nullptr);
 
         auto& settings = track->settings();
@@ -77,15 +77,13 @@ GstStream* webkitMediaStreamNew(MediaStreamTrackPrivate* track)
     GRefPtr<GstCaps> caps;
     GstStreamType type;
 
-    if (track->type() == RealtimeMediaSource::Type::Audio) {
+    if (track->hasAudio()) {
         caps = adoptGRef(gst_static_pad_template_get_caps(&audioSrcTemplate));
         type = GST_STREAM_TYPE_AUDIO;
-    } else if (track->type() == RealtimeMediaSource::Type::Video) {
+    } else {
+        RELEASE_ASSERT((track->hasVideo()));
         caps = adoptGRef(gst_static_pad_template_get_caps(&videoSrcTemplate));
         type = GST_STREAM_TYPE_VIDEO;
-    } else {
-        GST_FIXME("Handle %d type", static_cast<int>(track->type()));
-        return nullptr;
     }
 
     auto* stream = gst_stream_new(track->id().utf8().data(), caps.get(), type, GST_STREAM_FLAG_SELECT);
@@ -131,10 +129,10 @@ public:
         , m_padName(padName)
     {
         const char* elementName = nullptr;
-        if (track.type() == RealtimeMediaSource::Type::Audio) {
+        if (track.hasAudio()) {
             m_audioTrack = AudioTrackPrivateMediaStream::create(track);
             elementName = "audiosrc";
-        } else if (track.type() == RealtimeMediaSource::Type::Video) {
+        } else if (track.hasVideo()) {
             m_videoTrack = VideoTrackPrivateMediaStream::create(track);
             elementName = "videosrc";
         } else
@@ -172,16 +170,10 @@ public:
 
         GST_DEBUG_OBJECT(m_src.get(), "Starting track/source observation");
         m_track.addObserver(*this);
-        switch (m_track.type()) {
-        case RealtimeMediaSource::Type::Audio:
+        if (m_track.hasAudio())
             m_track.source().addAudioSampleObserver(*this);
-            break;
-        case RealtimeMediaSource::Type::Video:
+        else if (m_track.hasVideo())
             m_track.source().addVideoSampleObserver(*this);
-            break;
-        case RealtimeMediaSource::Type::None:
-            ASSERT_NOT_REACHED();
-        }
         m_isObserving = true;
     }
 
@@ -192,22 +184,16 @@ public:
 
         GST_DEBUG_OBJECT(m_src.get(), "Stopping track/source observation");
         m_isObserving = false;
-        switch (m_track.type()) {
-        case RealtimeMediaSource::Type::Audio:
+        if (m_track.hasAudio())
             m_track.source().removeAudioSampleObserver(*this);
-            break;
-        case RealtimeMediaSource::Type::Video:
+        else if (m_track.hasVideo())
             m_track.source().removeVideoSampleObserver(*this);
-            break;
-        case RealtimeMediaSource::Type::None:
-            ASSERT_NOT_REACHED();
-        }
         m_track.removeObserver(*this);
     }
 
     void configureAudioTrack(float volume, bool isMuted, bool isPlaying)
     {
-        ASSERT(m_track.type() == RealtimeMediaSource::Type::Audio);
+        ASSERT(m_track.hasAudio());
         m_audioTrack->setVolume(volume);
         m_audioTrack->setMuted(isMuted);
         m_audioTrack->setEnabled(m_audioTrack->streamTrack().enabled() && !m_audioTrack->streamTrack().muted());
@@ -230,12 +216,12 @@ public:
             gst_pad_set_offset(pad.get(), -m_firstBufferPts);
         }
 
-        if (m_track.type() == RealtimeMediaSource::Type::Video && drop)
+        if (m_track.hasVideo() && drop)
             drop = doCapsHaveType(caps, "video/x-raw") || GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT);
 
         if (drop) {
             m_needsDiscont = true;
-            GST_INFO_OBJECT(m_src.get(), "%s queue full already... not pushing", m_track.type() == RealtimeMediaSource::Type::Video ? "Video" : "Audio");
+            GST_INFO_OBJECT(m_src.get(), "%s queue full already... not pushing", m_track.hasVideo() ? "Video" : "Audio");
             return;
         }
 
@@ -663,30 +649,24 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
 
 void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPrivate* track, bool onlyTrack)
 {
-    const char* sourceType = "unknown";
-    unsigned counter = 0;
-    GstStaticPadTemplate* padTemplate = nullptr;
-    if (track->type() == RealtimeMediaSource::Type::Audio) {
+    const char* sourceType;
+    unsigned counter;
+    GstStaticPadTemplate* padTemplate;
+    if (track->hasAudio()) {
         padTemplate = &audioSrcTemplate;
         sourceType = "audio";
         counter = self->priv->audioPadCounter.exchangeAdd(1);
-    } else if (track->type() == RealtimeMediaSource::Type::Video) {
+    } else {
+        RELEASE_ASSERT(track->hasVideo());
         padTemplate = &videoSrcTemplate;
         sourceType = "video";
         counter = self->priv->videoPadCounter.exchangeAdd(1);
-    } else {
-        GST_WARNING_OBJECT(self, "Unsupported track type: %d", static_cast<int>(track->type()));
-        return;
     }
 
-    StringBuilder padName;
-    padName.append(sourceType);
-    padName.append("_src");
-    padName.append(counter);
-
+    auto padName = makeString(sourceType, "_src", counter);
     GST_DEBUG_OBJECT(self, "Setup %s source for track %s, only track: %s", sourceType, track->id().utf8().data(), boolForPrinting(onlyTrack));
 
-    auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName.toString());
+    auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName);
     auto* element = source->get();
     gst_bin_add(GST_BIN_CAST(self), element);
 
@@ -718,7 +698,7 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
     auto tracks = stream->tracks();
     bool onlyTrack = tracks.size() == 1;
     for (auto& track : tracks) {
-        if (!isVideoPlayer && track->type() == RealtimeMediaSource::Type::Video)
+        if (!isVideoPlayer && track->hasVideo())
             continue;
         webkitMediaStreamSrcAddTrack(self, track.get(), onlyTrack);
     }
@@ -789,7 +769,7 @@ void InternalSource::trackEnded(MediaStreamTrackPrivate&)
 void webkitMediaStreamSrcConfigureAudioTracks(WebKitMediaStreamSrc* self, float volume, bool isMuted, bool isPlaying)
 {
     for (auto& source : self->priv->sources) {
-        if (source->track().type() == RealtimeMediaSource::Type::Audio)
+        if (source->track().hasAudio())
             source->configureAudioTrack(volume, isMuted, isPlaying);
     }
 }

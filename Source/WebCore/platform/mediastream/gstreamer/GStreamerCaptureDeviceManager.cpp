@@ -144,6 +144,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             gst_device_monitor_add_filter(m_deviceMonitor.get(), "Audio/Source", caps.get());
             break;
         }
+        case CaptureDevice::DeviceType::SystemAudio:
         case CaptureDevice::DeviceType::Speaker:
             // FIXME: Add Audio/Sink filter. See https://bugs.webkit.org/show_bug.cgi?id=216880
         case CaptureDevice::DeviceType::Screen:

@@ -59,14 +59,15 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
             return WTFMove(error.value().badConstraint);
     }
 
-    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(WTFMove(mockSource), WTFMove(hashSalt), device.type()));
+    auto type = device.type() == CaptureDevice::DeviceType::Screen ? RealtimeMediaSource::Type::Screen : RealtimeMediaSource::Type::Window;
+    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(type, WTFMove(mockSource), WTFMove(hashSalt), device.type()));
     return CaptureSourceOrError(WTFMove(source));
 }
 
-MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&& source, String&& hashSalt, CaptureDevice::DeviceType type)
-    : RealtimeMediaSource(Type::Video, source->name().isolatedCopy(), source->persistentID().isolatedCopy(), WTFMove(hashSalt))
+MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type type, Ref<MockRealtimeVideoSourceGStreamer>&& source, String&& hashSalt, CaptureDevice::DeviceType deviceType)
+    : RealtimeMediaSource(type, source->name().isolatedCopy(), source->persistentID().isolatedCopy(), WTFMove(hashSalt))
     , m_source(WTFMove(source))
-    , m_type(type)
+    , m_deviceType(deviceType)
 {
     m_source->addVideoSampleObserver(*this);
 }
@@ -84,8 +85,15 @@ void MockDisplayCaptureSourceGStreamer::stopProducingData()
 
 void MockDisplayCaptureSourceGStreamer::requestToEnd(Observer& callingObserver)
 {
+    RealtimeMediaSource::requestToEnd(callingObserver);
     m_source->removeVideoSampleObserver(*this);
     m_source->requestToEnd(callingObserver);
+}
+
+void MockDisplayCaptureSourceGStreamer::setMuted(bool isMuted)
+{
+    RealtimeMediaSource::setMuted(isMuted);
+    m_source->setMuted(isMuted);
 }
 
 void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
