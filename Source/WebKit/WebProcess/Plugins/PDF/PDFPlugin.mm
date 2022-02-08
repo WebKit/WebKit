@@ -532,7 +532,6 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-static const char* postScriptMIMEType = "application/postscript";
 const uint64_t pdfDocumentRequestID = 1; // PluginController supports loading multiple streams, but we only need one for PDF.
 
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
@@ -1294,12 +1293,6 @@ PluginInfo PDFPlugin::pluginInfo()
     textPDFMimeClassInfo.extensions.append("pdf");
     info.mimes.append(textPDFMimeClassInfo);
 
-    MimeClassInfo postScriptMimeClassInfo;
-    postScriptMimeClassInfo.type = postScriptMIMEType;
-    postScriptMimeClassInfo.desc = postScriptDocumentTypeDescription();
-    postScriptMimeClassInfo.extensions.append("ps");
-    info.mimes.append(postScriptMimeClassInfo);
-    
     return info;
 }
 
@@ -1706,9 +1699,6 @@ void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
     setSuggestedFilename(suggestedFilename);
-
-    if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
-        m_isPostScript = true;
 }
 
 void PDFPlugin::streamDidReceiveData(uint64_t streamID, const SharedBuffer& buffer)
@@ -1739,9 +1729,6 @@ void PDFPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
 {
     setSuggestedFilename(suggestedFilename);
-
-    if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
-        m_isPostScript = true;
 }
 
 void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)

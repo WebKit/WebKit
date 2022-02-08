@@ -372,25 +372,6 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 
 #endif // !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
 
-#if PLATFORM(MAC)
-
-RetainPtr<CFMutableDataRef> PDFDocumentImage::convertPostScriptDataToPDF(RetainPtr<CFDataRef>&& postScriptData)
-{
-    // Convert PostScript to PDF using the Quartz 2D API.
-    // http://developer.apple.com/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_ps_convert/chapter_16_section_1.html
-
-    CGPSConverterCallbacks callbacks = { };
-    auto converter = adoptCF(CGPSConverterCreate(0, &callbacks, 0));
-    auto provider = adoptCF(CGDataProviderCreateWithCFData(postScriptData.get()));
-    auto pdfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    auto consumer = adoptCF(CGDataConsumerCreateWithCFData(pdfData.get()));
-
-    CGPSConverterConvert(converter.get(), provider.get(), consumer.get(), 0);
-    return pdfData;
-}
-
-#endif
-
 void PDFDocumentImage::dump(TextStream& ts) const
 {
     Image::dump(ts);

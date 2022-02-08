@@ -527,15 +527,7 @@ RefPtr<SharedBuffer> CachedImage::convertedDataIfNeeded(const FragmentedSharedBu
 {
     if (!data)
         return nullptr;
-    if (!isPostScriptResource())
-        return data->makeContiguous();
-#if PLATFORM(MAC) && !USE(WEBKIT_IMAGE_DECODERS)
-    return SharedBuffer::create(PDFDocumentImage::convertPostScriptDataToPDF(data->makeContiguous()->createCFData()).get());
-#else
-    // Loading the image should have been canceled if the system does not support converting PostScript to PDF.
-    ASSERT_NOT_REACHED();
-    return nullptr;
-#endif
+    return data->makeContiguous();
 }
 
 void CachedImage::didUpdateImageData()
