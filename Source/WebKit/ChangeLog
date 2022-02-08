@@ -1,5 +1,58 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288185. rdar://problem/87709485
+
+    [Cocoa] Do not change preferred AudioSession buffer size when VPIO is running
+    https://bugs.webkit.org/show_bug.cgi?id=235317
+    <rdar://87709485>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add infra to be notified when audio capture unit is stopped.
+    Add a check to return early with microphone sample callback if microphone samples are not to be processed.
+    
+    Manually tested.
+    
+    * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+    * platform/mediastream/mac/BaseAudioSharedUnit.h:
+    * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+    * platform/mediastream/mac/CoreAudioCaptureSource.h:
+    
+    Source/WebKit:
+    
+    When we stop capturing, we might still use the VPIO unit to render audio.
+    In that case, it might be problematic to increase the preferred buffer size as:
+    - Audio unit might stop running, hence stopping audio rendering
+    - Increasing the preferred buffer size might increase latency which is not a good thing in VPIO usecases.
+    
+    * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+    * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+    * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288185 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Youenn Fablet  <youenn@apple.com>
+
+            [Cocoa] Do not change preferred AudioSession buffer size when VPIO is running
+            https://bugs.webkit.org/show_bug.cgi?id=235317
+            <rdar://87709485>
+
+            Reviewed by Eric Carlson.
+
+            When we stop capturing, we might still use the VPIO unit to render audio.
+            In that case, it might be problematic to increase the preferred buffer size as:
+            - Audio unit might stop running, hence stopping audio rendering
+            - Increasing the preferred buffer size might increase latency which is not a good thing in VPIO usecases.
+
+            * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+            * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+            * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288178. rdar://problem/79296770
 
     REGRESSION (r264352): Mail compose body field does not avoid the keyboard when scrolling after focus

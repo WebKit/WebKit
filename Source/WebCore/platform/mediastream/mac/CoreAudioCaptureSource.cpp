@@ -397,6 +397,9 @@ OSStatus CoreAudioSharedUnit::processMicrophoneSamples(AudioUnitRenderActionFlag
 
     ++m_microphoneProcsCalled;
 
+    if (!isProducingMicrophoneSamples())
+        return noErr;
+
     double adjustedHostTime = m_DTSConversionRatio * timeStamp.mHostTime;
     uint64_t sampleTime = timeStamp.mSampleTime;
 #if !LOG_DISABLED
@@ -736,6 +739,11 @@ void CoreAudioCaptureSourceFactory::unregisterSpeakerSamplesProducer(CoreAudioSp
 bool CoreAudioCaptureSourceFactory::isAudioCaptureUnitRunning()
 {
     return CoreAudioSharedUnit::unit().isRunning();
+}
+
+void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<void()>&& callback)
+{
+    return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
 }
 
 CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t captureDeviceID, BaseAudioSharedUnit* overrideUnit)

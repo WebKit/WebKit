@@ -126,6 +126,7 @@ public:
     WEBCORE_EXPORT void registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     WEBCORE_EXPORT void unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     WEBCORE_EXPORT bool isAudioCaptureUnitRunning();
+    WEBCORE_EXPORT void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
 
 private:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) override;

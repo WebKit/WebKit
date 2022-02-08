@@ -32,6 +32,7 @@
 #include "GPUProcessConnectionMessages.h"
 #include "RemoteAudioSessionProxy.h"
 #include <WebCore/AudioSession.h>
+#include <WebCore/CoreAudioCaptureSource.h>
 #include <wtf/HashCountedSet.h>
 
 namespace WebKit {
@@ -111,14 +112,25 @@ void RemoteAudioSessionProxyManager::updateCategory()
     AudioSession::sharedSession().setCategory(category, policy);
 }
 
-void RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess(RemoteAudioSessionProxy& proxy, size_t preferredBufferSize)
+void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
 {
-    for (auto& otherProxy : m_proxies) {
-        if (otherProxy.preferredBufferSize() && otherProxy.preferredBufferSize() < preferredBufferSize)
-            preferredBufferSize = otherProxy.preferredBufferSize();
+#if ENABLE(MEDIA_STREAM)
+    if (CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning()) {
+        CoreAudioCaptureSourceFactory::singleton().whenAudioCaptureUnitIsNotRunning([weakThis = WeakPtr { *this }] {
+            if (weakThis)
+                weakThis->updatePreferredBufferSizeForProcess();
+        });
+        return;
+    }
+#endif
+    size_t preferredBufferSize = std::numeric_limits<size_t>::max();
+    for (auto& proxy : m_proxies) {
+        if (proxy.preferredBufferSize() && proxy.preferredBufferSize() < preferredBufferSize)
+            preferredBufferSize = proxy.preferredBufferSize();
     }
 
-    AudioSession::sharedSession().setPreferredBufferSize(preferredBufferSize);
+    if (preferredBufferSize != std::numeric_limits<size_t>::max())
+        AudioSession::sharedSession().setPreferredBufferSize(preferredBufferSize);
 }
 
 bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
