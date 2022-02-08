@@ -1,5 +1,52 @@
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289021. rdar://problem/88599774
+
+    CSP: Fix matching wildcard hosts
+    https://bugs.webkit.org/show_bug.cgi?id=235992
+    
+    Reviewed by Kate Cheney.
+    
+    LayoutTests/imported/w3c:
+    
+    Update expectations.
+    
+    * web-platform-tests/content-security-policy/img-src/img-src-full-host-wildcard-blocked.sub-expected.txt:
+    
+    Source/WebCore:
+    
+    As per the spec wildcard hosts must include the leading '.' for matches:
+    https://www.w3.org/TR/CSP3/#match-hosts.
+    
+    Test: http/tests/security/contentSecurityPolicy/image-full-host-wildcard-blocked.html
+    
+    * page/csp/ContentSecurityPolicySource.cpp:
+    (WebCore::ContentSecurityPolicySource::hostMatches const):
+    
+    LayoutTests:
+    
+    Rewrite test to expect CSP3 compliant behavior.
+    
+    * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-allowed-expected.txt: Removed.
+    * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-blocked-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-blocked.html: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/image-full-host-wildcard-allowed.html.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289021 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-02  Patrick Griffis  <pgriffis@igalia.com>
+
+            CSP: Fix matching wildcard hosts
+            https://bugs.webkit.org/show_bug.cgi?id=235992
+
+            Reviewed by Kate Cheney.
+
+            Update expectations.
+
+            * web-platform-tests/content-security-policy/img-src/img-src-full-host-wildcard-blocked.sub-expected.txt:
+
+2022-02-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288879. rdar://problem/88322836
 
     [css-cascade] Fix removal of not yet loaded CSS @import
