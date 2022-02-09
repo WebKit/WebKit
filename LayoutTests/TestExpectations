@@ -807,6 +807,7 @@ imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-subresource.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/render-blocked-apis-by-preload-link.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-window-onerror-module.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/charset/without-inheritance.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-charset/speculative-script.tentative.html [ Failure Pass ]

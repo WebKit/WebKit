@@ -1,3 +1,13 @@
+2022-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/dom from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236252
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/reflection-misc-expected.txt:
+
 2022-02-09  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Improving applyStep() to be in line with specs

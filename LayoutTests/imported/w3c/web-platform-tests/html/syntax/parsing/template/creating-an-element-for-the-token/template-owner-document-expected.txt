@@ -26,7 +26,7 @@ PASS Test ownerDocument for the element cite in the template
 PASS Test ownerDocument for the element code in the template
 PASS Test ownerDocument for the element col in the template
 PASS Test ownerDocument for the element colgroup in the template
-PASS Test ownerDocument for the element command in the template
+PASS Test ownerDocument for the element data in the template
 PASS Test ownerDocument for the element datalist in the template
 PASS Test ownerDocument for the element dd in the template
 PASS Test ownerDocument for the element del in the template
@@ -50,7 +50,6 @@ PASS Test ownerDocument for the element h4 in the template
 PASS Test ownerDocument for the element h5 in the template
 PASS Test ownerDocument for the element h6 in the template
 PASS Test ownerDocument for the element header in the template
-PASS Test ownerDocument for the element hgroup in the template
 PASS Test ownerDocument for the element hr in the template
 PASS Test ownerDocument for the element i in the template
 PASS Test ownerDocument for the element iframe in the template
@@ -58,11 +57,11 @@ PASS Test ownerDocument for the element img in the template
 PASS Test ownerDocument for the element input in the template
 PASS Test ownerDocument for the element ins in the template
 PASS Test ownerDocument for the element kbd in the template
-PASS Test ownerDocument for the element keygen in the template
 PASS Test ownerDocument for the element label in the template
 PASS Test ownerDocument for the element legend in the template
 PASS Test ownerDocument for the element li in the template
 PASS Test ownerDocument for the element link in the template
+PASS Test ownerDocument for the element main in the template
 PASS Test ownerDocument for the element map in the template
 PASS Test ownerDocument for the element mark in the template
 PASS Test ownerDocument for the element menu in the template
@@ -88,15 +87,19 @@ PASS Test ownerDocument for the element samp in the template
 PASS Test ownerDocument for the element script in the template
 PASS Test ownerDocument for the element section in the template
 PASS Test ownerDocument for the element select in the template
+PASS Test ownerDocument for the element slot in the template
 PASS Test ownerDocument for the element small in the template
 PASS Test ownerDocument for the element source in the template
 PASS Test ownerDocument for the element span in the template
 PASS Test ownerDocument for the element strong in the template
 PASS Test ownerDocument for the element style in the template
 PASS Test ownerDocument for the element sub in the template
+PASS Test ownerDocument for the element sup in the template
+PASS Test ownerDocument for the element summary in the template
 PASS Test ownerDocument for the element table in the template
 PASS Test ownerDocument for the element tbody in the template
 PASS Test ownerDocument for the element td in the template
+PASS Test ownerDocument for the element template in the template
 PASS Test ownerDocument for the element textarea in the template
 PASS Test ownerDocument for the element tfoot in the template
 PASS Test ownerDocument for the element th in the template
@@ -130,7 +133,7 @@ PASS Test ownerDocument for the element cite in the template. Document has brows
 PASS Test ownerDocument for the element code in the template. Document has browsing context
 PASS Test ownerDocument for the element col in the template. Document has browsing context
 PASS Test ownerDocument for the element colgroup in the template. Document has browsing context
-PASS Test ownerDocument for the element command in the template. Document has browsing context
+PASS Test ownerDocument for the element data in the template. Document has browsing context
 PASS Test ownerDocument for the element datalist in the template. Document has browsing context
 PASS Test ownerDocument for the element dd in the template. Document has browsing context
 PASS Test ownerDocument for the element del in the template. Document has browsing context
@@ -154,7 +157,6 @@ PASS Test ownerDocument for the element h4 in the template. Document has browsin
 PASS Test ownerDocument for the element h5 in the template. Document has browsing context
 PASS Test ownerDocument for the element h6 in the template. Document has browsing context
 PASS Test ownerDocument for the element header in the template. Document has browsing context
-PASS Test ownerDocument for the element hgroup in the template. Document has browsing context
 PASS Test ownerDocument for the element hr in the template. Document has browsing context
 PASS Test ownerDocument for the element i in the template. Document has browsing context
 PASS Test ownerDocument for the element iframe in the template. Document has browsing context
@@ -162,11 +164,11 @@ PASS Test ownerDocument for the element img in the template. Document has browsi
 PASS Test ownerDocument for the element input in the template. Document has browsing context
 PASS Test ownerDocument for the element ins in the template. Document has browsing context
 PASS Test ownerDocument for the element kbd in the template. Document has browsing context
-PASS Test ownerDocument for the element keygen in the template. Document has browsing context
 PASS Test ownerDocument for the element label in the template. Document has browsing context
 PASS Test ownerDocument for the element legend in the template. Document has browsing context
 PASS Test ownerDocument for the element li in the template. Document has browsing context
 PASS Test ownerDocument for the element link in the template. Document has browsing context
+PASS Test ownerDocument for the element main in the template. Document has browsing context
 PASS Test ownerDocument for the element map in the template. Document has browsing context
 PASS Test ownerDocument for the element mark in the template. Document has browsing context
 PASS Test ownerDocument for the element menu in the template. Document has browsing context
@@ -192,15 +194,19 @@ PASS Test ownerDocument for the element samp in the template. Document has brows
 PASS Test ownerDocument for the element script in the template. Document has browsing context
 PASS Test ownerDocument for the element section in the template. Document has browsing context
 PASS Test ownerDocument for the element select in the template. Document has browsing context
+PASS Test ownerDocument for the element slot in the template. Document has browsing context
 PASS Test ownerDocument for the element small in the template. Document has browsing context
 PASS Test ownerDocument for the element source in the template. Document has browsing context
 PASS Test ownerDocument for the element span in the template. Document has browsing context
 PASS Test ownerDocument for the element strong in the template. Document has browsing context
 PASS Test ownerDocument for the element style in the template. Document has browsing context
 PASS Test ownerDocument for the element sub in the template. Document has browsing context
+PASS Test ownerDocument for the element sup in the template. Document has browsing context
+PASS Test ownerDocument for the element summary in the template. Document has browsing context
 PASS Test ownerDocument for the element table in the template. Document has browsing context
 PASS Test ownerDocument for the element tbody in the template. Document has browsing context
 PASS Test ownerDocument for the element td in the template. Document has browsing context
+PASS Test ownerDocument for the element template in the template. Document has browsing context
 PASS Test ownerDocument for the element textarea in the template. Document has browsing context
 PASS Test ownerDocument for the element tfoot in the template. Document has browsing context
 PASS Test ownerDocument for the element th in the template. Document has browsing context

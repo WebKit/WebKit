@@ -19,7 +19,7 @@ PASS Template may contain cite element
 PASS Template may contain code element
 PASS Template may contain col element
 PASS Template may contain colgroup element
-PASS Template may contain command element
+PASS Template may contain data element
 PASS Template may contain datalist element
 PASS Template may contain dd element
 PASS Template may contain del element
@@ -43,7 +43,6 @@ PASS Template may contain h4 element
 PASS Template may contain h5 element
 PASS Template may contain h6 element
 PASS Template may contain header element
-PASS Template may contain hgroup element
 PASS Template may contain hr element
 PASS Template may contain i element
 PASS Template may contain iframe element
@@ -51,11 +50,11 @@ PASS Template may contain img element
 PASS Template may contain input element
 PASS Template may contain ins element
 PASS Template may contain kbd element
-PASS Template may contain keygen element
 PASS Template may contain label element
 PASS Template may contain legend element
 PASS Template may contain li element
 PASS Template may contain link element
+PASS Template may contain main element
 PASS Template may contain map element
 PASS Template may contain mark element
 PASS Template may contain menu element
@@ -81,15 +80,19 @@ PASS Template may contain samp element
 PASS Template may contain script element
 PASS Template may contain section element
 PASS Template may contain select element
+PASS Template may contain slot element
 PASS Template may contain small element
 PASS Template may contain source element
 PASS Template may contain span element
 PASS Template may contain strong element
 PASS Template may contain style element
 PASS Template may contain sub element
+PASS Template may contain sup element
+PASS Template may contain summary element
 PASS Template may contain table element
 PASS Template may contain tbody element
 PASS Template may contain td element
+PASS Template may contain template element
 PASS Template may contain textarea element
 PASS Template may contain tfoot element
 PASS Template may contain th element
@@ -123,7 +126,7 @@ PASS Template may contain cite element. The template element and contents are ad
 PASS Template may contain code element. The template element and contents are added via body.innerHTML
 PASS Template may contain col element. The template element and contents are added via body.innerHTML
 PASS Template may contain colgroup element. The template element and contents are added via body.innerHTML
-PASS Template may contain command element. The template element and contents are added via body.innerHTML
+PASS Template may contain data element. The template element and contents are added via body.innerHTML
 PASS Template may contain datalist element. The template element and contents are added via body.innerHTML
 PASS Template may contain dd element. The template element and contents are added via body.innerHTML
 PASS Template may contain del element. The template element and contents are added via body.innerHTML
@@ -147,7 +150,6 @@ PASS Template may contain h4 element. The template element and contents are adde
 PASS Template may contain h5 element. The template element and contents are added via body.innerHTML
 PASS Template may contain h6 element. The template element and contents are added via body.innerHTML
 PASS Template may contain header element. The template element and contents are added via body.innerHTML
-PASS Template may contain hgroup element. The template element and contents are added via body.innerHTML
 PASS Template may contain hr element. The template element and contents are added via body.innerHTML
 PASS Template may contain i element. The template element and contents are added via body.innerHTML
 PASS Template may contain iframe element. The template element and contents are added via body.innerHTML
@@ -155,11 +157,11 @@ PASS Template may contain img element. The template element and contents are add
 PASS Template may contain input element. The template element and contents are added via body.innerHTML
 PASS Template may contain ins element. The template element and contents are added via body.innerHTML
 PASS Template may contain kbd element. The template element and contents are added via body.innerHTML
-PASS Template may contain keygen element. The template element and contents are added via body.innerHTML
 PASS Template may contain label element. The template element and contents are added via body.innerHTML
 PASS Template may contain legend element. The template element and contents are added via body.innerHTML
 PASS Template may contain li element. The template element and contents are added via body.innerHTML
 PASS Template may contain link element. The template element and contents are added via body.innerHTML
+PASS Template may contain main element. The template element and contents are added via body.innerHTML
 PASS Template may contain map element. The template element and contents are added via body.innerHTML
 PASS Template may contain mark element. The template element and contents are added via body.innerHTML
 PASS Template may contain menu element. The template element and contents are added via body.innerHTML
@@ -185,15 +187,19 @@ PASS Template may contain samp element. The template element and contents are ad
 PASS Template may contain script element. The template element and contents are added via body.innerHTML
 PASS Template may contain section element. The template element and contents are added via body.innerHTML
 PASS Template may contain select element. The template element and contents are added via body.innerHTML
+PASS Template may contain slot element. The template element and contents are added via body.innerHTML
 PASS Template may contain small element. The template element and contents are added via body.innerHTML
 PASS Template may contain source element. The template element and contents are added via body.innerHTML
 PASS Template may contain span element. The template element and contents are added via body.innerHTML
 PASS Template may contain strong element. The template element and contents are added via body.innerHTML
 PASS Template may contain style element. The template element and contents are added via body.innerHTML
 PASS Template may contain sub element. The template element and contents are added via body.innerHTML
+PASS Template may contain sup element. The template element and contents are added via body.innerHTML
+PASS Template may contain summary element. The template element and contents are added via body.innerHTML
 PASS Template may contain table element. The template element and contents are added via body.innerHTML
 PASS Template may contain tbody element. The template element and contents are added via body.innerHTML
 PASS Template may contain td element. The template element and contents are added via body.innerHTML
+PASS Template may contain template element. The template element and contents are added via body.innerHTML
 PASS Template may contain textarea element. The template element and contents are added via body.innerHTML
 PASS Template may contain tfoot element. The template element and contents are added via body.innerHTML
 PASS Template may contain th element. The template element and contents are added via body.innerHTML

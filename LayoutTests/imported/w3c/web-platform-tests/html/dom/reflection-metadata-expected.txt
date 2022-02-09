@@ -2585,6 +2585,44 @@ PASS meta.content: IDL set to "\0"
 PASS meta.content: IDL set to null
 PASS meta.content: IDL set to object "test-toString"
 PASS meta.content: IDL set to object "test-valueOf"
+PASS meta.media: typeof IDL attribute
+PASS meta.media: IDL get with DOM attribute unset
+PASS meta.media: setAttribute() to ""
+PASS meta.media: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS meta.media: setAttribute() to undefined
+PASS meta.media: setAttribute() to 7
+PASS meta.media: setAttribute() to 1.5
+PASS meta.media: setAttribute() to "5%"
+PASS meta.media: setAttribute() to "+100"
+PASS meta.media: setAttribute() to ".5"
+PASS meta.media: setAttribute() to true
+PASS meta.media: setAttribute() to false
+PASS meta.media: setAttribute() to object "[object Object]"
+PASS meta.media: setAttribute() to NaN
+PASS meta.media: setAttribute() to Infinity
+PASS meta.media: setAttribute() to -Infinity
+PASS meta.media: setAttribute() to "\0"
+PASS meta.media: setAttribute() to null
+PASS meta.media: setAttribute() to object "test-toString"
+PASS meta.media: setAttribute() to object "test-valueOf"
+PASS meta.media: IDL set to ""
+PASS meta.media: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS meta.media: IDL set to undefined
+PASS meta.media: IDL set to 7
+PASS meta.media: IDL set to 1.5
+PASS meta.media: IDL set to "5%"
+PASS meta.media: IDL set to "+100"
+PASS meta.media: IDL set to ".5"
+PASS meta.media: IDL set to true
+PASS meta.media: IDL set to false
+PASS meta.media: IDL set to object "[object Object]"
+PASS meta.media: IDL set to NaN
+PASS meta.media: IDL set to Infinity
+PASS meta.media: IDL set to -Infinity
+PASS meta.media: IDL set to "\0"
+PASS meta.media: IDL set to null
+PASS meta.media: IDL set to object "test-toString"
+PASS meta.media: IDL set to object "test-valueOf"
 PASS meta.scheme: typeof IDL attribute
 PASS meta.scheme: IDL get with DOM attribute unset
 PASS meta.scheme: setAttribute() to ""

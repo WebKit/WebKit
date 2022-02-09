@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: IntersectionObserver
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
+CONSOLE MESSAGE: Unhandled Promise Rejection: 'scroll' event is dispatched
+CONSOLE MESSAGE: Unhandled Promise Rejection: 'animationstart' event is dispatched
+CONSOLE MESSAGE: Unhandled Promise Rejection: Animation frame callback is run
+Lorem ipsum
+
+Harness Error (FAIL), message = Unhandled rejection
+
+FAIL Should not flush autofocus candidates when render-blocked promise_test: Unhandled rejection with value: "'focus' event is dispatched"
+PASS Should not run the resize steps when render-blocked
+FAIL Should not run the scroll steps when render-blocked promise_test: Unhandled rejection with value: "'scroll' event is dispatched"
+PASS Should not run the evaluate media queries and report changes steps when render-blocked
+FAIL Should not run the update animations and send events steps when render-blocked promise_test: Unhandled rejection with value: "'animationstart' event is dispatched"
+PASS Should not run the fullscreen steps when render-blocked
+FAIL Should not run animation frame callbacks when render-blocked promise_test: Unhandled rejection with value: "Animation frame callback is run"
+FAIL Should not run the update intersection observers step when render-blocked promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: IntersectionObserver"
+PASS Render-blocking web font is applied
+
+
