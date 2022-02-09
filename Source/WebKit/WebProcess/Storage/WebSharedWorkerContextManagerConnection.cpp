@@ -59,7 +59,7 @@ WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection
 #if PLATFORM(COCOA)
     , m_userAgent(WebCore::standardUserAgentWithApplicationName({ }))
 #else
-    , m_userAgent(standardUserAgent())
+    , m_userAgent(WebCore::standardUserAgent())
 #endif
     , m_userContentController(WebUserContentController::getOrCreate(initializationData.userContentControllerIdentifier))
 {

@@ -43,6 +43,7 @@ class NetworkSession;
 class WebSharedWorker;
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
+class NetworkSession;
 
 class WebSharedWorkerServerConnection : public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;

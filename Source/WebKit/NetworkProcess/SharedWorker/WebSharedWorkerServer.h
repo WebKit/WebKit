@@ -32,6 +32,10 @@
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/WeakPtr.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class RegistrableDomain;
 

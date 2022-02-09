@@ -379,13 +379,13 @@ public:
 #if ENABLE(SERVICE_WORKER)
     static void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     size_t serviceWorkerProxiesCount() const;
-    UserContentControllerIdentifier userContentControllerIdentifierForWorkers();
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
     void serviceWorkerProcessCrashed(WebProcessProxy&);
 
     void updateWorkerUserAgent(const String& userAgent);
+    UserContentControllerIdentifier userContentControllerIdentifierForWorkers();
     static void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
