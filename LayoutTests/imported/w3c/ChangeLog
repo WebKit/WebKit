@@ -1,3 +1,11 @@
+2022-02-09  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Add fuzzy data.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html:
+        * web-platform-tests/css/motion/offset-rotate-003.html:
+
 2022-02-09  Antoine Quint  <graouts@webkit.org>
 
         Dialog element only animates once

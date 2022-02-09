@@ -1,3 +1,12 @@
+2022-02-09  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening
+
+        Update fuzzy data.
+        * css1/basic/class_as_selector.html:
+        * css3/color-filters/color-filter-color-text-decorations.html:
+        * css3/color-filters/color-filter-text-decoration-shadow.html:
+
 2022-02-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         compositing/masks/compositing-clip-path-mask-change.html is failing for ports using TextureMapper
