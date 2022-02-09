@@ -51,6 +51,7 @@ protected:
 private:
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
+    void sizeDidChange(WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
     void enterFullscreen() override;
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) override;

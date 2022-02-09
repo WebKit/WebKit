@@ -1,3 +1,36 @@
+2022-02-09  Antoine Quint  <graouts@webkit.org>
+
+        [model] improve sizing on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=236233
+        <rdar://problem/88569881>
+
+        Reviewed by Simon Fraser.
+
+        We override the new ModelPlayer::sizeDidChange() virtual method on ARKitInlinePreviewModelPlayerMac
+        to be notified when the <model> layer's has changed size. We then send the new ModelElementSizeDidChange
+        message to the UI process which will yield a call to ModelElementController::modelElementSizeDidChange().
+
+        In that new method, we call -[ASVInlinePreview updateFrame:completionHandler:] which provides us with a
+        CAFenceHandle which we copy to create a MachSendRight to send back to the Web process in the IPC callback.
+
+        Back in the Web process, we install this fence on the drawing area and finally call -[ASVInlinePreview
+        setFrameWithinFencedTransaction:] to complete the sizing update on both the ASVInlinePreview instances.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementSizeDidChange):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementSizeDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.h:
+        * WebProcess/Model/ARKitInlinePreviewModelPlayer.mm:
+        (WebKit::ARKitInlinePreviewModelPlayer::sizeDidChange):
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::load):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::sizeDidChange):
+
 2022-02-09  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         DisplayListRecorder implementations are not able to obtain extra information out of source ImageBuffers

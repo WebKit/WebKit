@@ -46,6 +46,10 @@ void ARKitInlinePreviewModelPlayer::load(WebCore::Model&, WebCore::LayoutSize)
 {
 }
 
+void ARKitInlinePreviewModelPlayer::sizeDidChange(LayoutSize)
+{
+}
+
 PlatformLayer* ARKitInlinePreviewModelPlayer::layer()
 {
     return nullptr;

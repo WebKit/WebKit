@@ -33,7 +33,9 @@
 #import <WebCore/LayoutPoint.h>
 #import <WebCore/LayoutUnit.h>
 #import <WebCore/ResourceError.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <simd/simd.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 
@@ -43,7 +45,6 @@
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeViews.h"
 #import "WKModelView.h"
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #endif
 
@@ -237,6 +238,42 @@ void ModelElementController::handleMouseUpForModelElement(const String& uuid, co
 {
     if (auto preview = previewForUUID(uuid))
         [preview mouseUpAtLocation:CGPointMake(flippedLocationInElement.x().toFloat(), flippedLocationInElement.y().toFloat()) timestamp:timestamp.secondsSinceEpoch().value()];
+}
+
+void ModelElementController::modelElementSizeDidChange(const String& uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&& completionHandler)
+{
+    auto preview = previewForUUID(uuid);
+    if (!preview) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Could not find model"_s }));
+        return;
+    }
+
+    auto handler = CompletionHandlerWithFinalizer<void(Expected<MachSendRight, WebCore::ResourceError>)>(WTFMove(completionHandler), [] (Function<void(Expected<MachSendRight, WebCore::ResourceError>)>& completionHandler) {
+        completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::ResourceError::Type::General }));
+    });
+
+    [preview updateFrame:CGRectMake(0, 0, size.width(), size.height()) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), uuid] (CAFenceHandle *fenceHandle, NSError *error) mutable {
+        if (error) {
+            LOG(ModelElement, "Unable to update frame: %@.", error.localizedDescription);
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), handler = WTFMove(handler), error = WebCore::ResourceError { error }] () mutable {
+                if (!weakThis)
+                    return;
+                handler(makeUnexpected(error));
+            });
+            [fenceHandle invalidate];
+            return;
+        }
+
+        RetainPtr strongFenceHandle = fenceHandle;
+        callOnMainRunLoop([weakThis = WTFMove(weakThis), handler = WTFMove(handler), uuid, strongFenceHandle = WTFMove(strongFenceHandle)] () mutable {
+            if (!weakThis)
+                return;
+
+            auto fenceSendRight = MachSendRight::adopt([strongFenceHandle copyPort]);
+            [strongFenceHandle invalidate];
+            handler(fenceSendRight);
+        });
+    }).get()];
 }
 
 #endif

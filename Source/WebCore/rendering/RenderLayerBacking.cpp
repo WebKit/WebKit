@@ -1120,9 +1120,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
         // Some ModelPlayers use a platformLayer() and some pass the Model to the layer as contents,
         // but this is a runtime decision.
-        if (element->usesPlatformLayer()) {
+        if (element->usesPlatformLayer())
             m_graphicsLayer->setContentsToPlatformLayer(element->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Model);
-        } else if (auto model = element->model())
+        else if (auto model = element->model())
             m_graphicsLayer->setContentsToModel(WTFMove(model));
 
         layerConfigChanged = true;
@@ -1531,6 +1531,14 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (subpixelOffsetFromRendererChanged(oldSubpixelOffsetFromRenderer, m_subpixelOffsetFromRenderer, deviceScaleFactor) && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
+
+#if ENABLE(MODEL_ELEMENT)
+    if (is<RenderModel>(renderer())) {
+        auto* element = downcast<HTMLModelElement>(renderer().element());
+        if (element->usesPlatformLayer())
+            element->sizeMayHaveChanged();
+    }
+#endif
 }
 
 void RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor(const RenderLayer& ancestorLayer)

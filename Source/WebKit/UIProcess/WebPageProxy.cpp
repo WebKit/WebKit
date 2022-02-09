@@ -11097,6 +11097,11 @@ void WebPageProxy::modelElementDidCreatePreview(const URL& url, const String& uu
     modelElementController()->modelElementDidCreatePreview(url, uuid, size, WTFMove(completionHandler));
 }
 
+void WebPageProxy::modelElementSizeDidChange(const String& uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&& completionHandler)
+{
+    modelElementController()->modelElementSizeDidChange(uuid, size, WTFMove(completionHandler));
+}
+
 void WebPageProxy::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     modelElementController()->handleMouseDownForModelElement(uuid, flippedLocationInElement, timestamp);

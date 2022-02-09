@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class Event;
+class LayoutSize;
 class Model;
 class ModelPlayer;
 class MouseEvent;
@@ -103,7 +104,9 @@ public:
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren();
 #endif
-    
+
+    void sizeMayHaveChanged();
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
@@ -144,6 +147,8 @@ private:
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     bool isInteractive() const;
+
+    LayoutSize contentSize() const;
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;

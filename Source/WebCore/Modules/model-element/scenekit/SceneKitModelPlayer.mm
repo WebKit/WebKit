@@ -73,6 +73,10 @@ void SceneKitModelPlayer::load(Model& modelSource, LayoutSize)
     m_loader = loadSceneKitModel(modelSource, *this);
 }
 
+void SceneKitModelPlayer::sizeDidChange(LayoutSize)
+{
+}
+
 PlatformLayer* SceneKitModelPlayer::layer()
 {
     return m_layer.get();

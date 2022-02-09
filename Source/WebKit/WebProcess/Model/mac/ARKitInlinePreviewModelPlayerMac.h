@@ -51,6 +51,7 @@ private:
 
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
+    void sizeDidChange(WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
     bool supportsMouseInteraction() override;
     bool supportsDragging() override;
@@ -61,6 +62,7 @@ private:
     void createFile(WebCore::Model&);
     void clearFile();
 
+    WebCore::LayoutSize m_size;
     String m_filePath;
     RetainPtr<ASVInlinePreview> m_inlinePreview;
 };

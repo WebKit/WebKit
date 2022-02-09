@@ -44,6 +44,7 @@ public:
     virtual ~ModelPlayer();
 
     virtual void load(Model&, LayoutSize) = 0;
+    virtual void sizeDidChange(LayoutSize) = 0;
     virtual PlatformLayer* layer() = 0;
     virtual void enterFullscreen() = 0;
     virtual bool supportsMouseInteraction();

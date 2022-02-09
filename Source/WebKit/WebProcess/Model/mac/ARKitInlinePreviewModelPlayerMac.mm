@@ -28,10 +28,13 @@
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
+#import "DrawingArea.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/Model.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/SystemPreviewSPI.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 
@@ -124,6 +127,8 @@ void ARKitInlinePreviewModelPlayerMac::clearFile()
 
 void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore::LayoutSize size)
 {
+    m_size = size;
+
     auto strongClient = client();
     if (!strongClient)
         return;
@@ -170,6 +175,39 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
     };
     
     strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementDidCreatePreview(URL::fileURLWithFileSystemPath(m_filePath), [m_inlinePreview uuid].UUIDString, size), WTFMove(completionHandler));
+}
+
+void ARKitInlinePreviewModelPlayerMac::sizeDidChange(WebCore::LayoutSize size)
+{
+    if (m_size == size)
+        return;
+
+    m_size = size;
+
+    RefPtr strongPage = page();
+    if (!strongPage)
+        return;
+
+    String uuid = [m_inlinePreview uuid].UUIDString;
+    CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)> completionHandler = [weakSelf = WeakPtr { *this }, strongPage, size] (Expected<MachSendRight, WebCore::ResourceError> result) mutable {
+        if (!result)
+            return;
+
+        RefPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        auto* drawingArea = strongPage->drawingArea();
+        if (!drawingArea)
+            return;
+
+        auto fenceSendRight = *result;
+        drawingArea->addFence(fenceSendRight);
+
+        [strongSelf->m_inlinePreview setFrameWithinFencedTransaction:CGRectMake(0, 0, size.width(), size.height())];
+    };
+
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementSizeDidChange(uuid, size), WTFMove(completionHandler));
 }
 
 PlatformLayer* ARKitInlinePreviewModelPlayerMac::layer()

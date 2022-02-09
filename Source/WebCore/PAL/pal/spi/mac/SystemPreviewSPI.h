@@ -50,6 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)preparePreviewOfFileAtURL:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable error))handler;
 - (void)setRemoteContext:(uint32_t)contextId;
 
+- (void)updateFrame:(CGRect)newFrame completionHandler:(void (^)(CAFenceHandle * _Nullable fenceHandle, NSError * _Nullable error))handler;
+- (void)setFrameWithinFencedTransaction:(CGRect)frame;
+
 - (void)mouseDownAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
 - (void)mouseDraggedAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;
 - (void)mouseUpAtLocation:(CGPoint)location timestamp:(NSTimeInterval)timestamp;

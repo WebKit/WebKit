@@ -1,3 +1,16 @@
+2022-02-09  Antoine Quint  <graouts@webkit.org>
+
+        [model] improve sizing on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=236233
+        <rdar://problem/88569881>
+
+        Reviewed by Simon Fraser.
+
+        Add newly-used CAFenceHandle and ASVInlinePreview SPIs.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
 2022-02-07  Antoine Quint  <graouts@webkit.org>
 
         [model] improve sizing on iOS
