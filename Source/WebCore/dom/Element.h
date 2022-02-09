@@ -635,6 +635,7 @@ public:
 
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
+    void invalidateForQueryContainerChange();
 
     void invalidateEventListenerRegions();
 

@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "LayoutSize.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleScopeOrdinal.h"
 #include "Timer.h"
@@ -38,6 +39,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -127,6 +129,8 @@ public:
     static Scope& forNode(Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
+    bool updateQueryContainerState();
+
 private:
     Scope& documentScope();
     bool isForUserAgentShadowTree() const;
@@ -201,6 +205,7 @@ private:
     bool m_isUpdatingStyleResolver { false };
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
+    WeakHashMap<Element, LayoutSize> m_queryContainerStates;
 
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;

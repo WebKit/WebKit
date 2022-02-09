@@ -173,8 +173,12 @@ void RenderBox::willBeDestroyed()
     view().unscheduleLazyRepaint(*this);
     removeControlStatesForRenderer(*this);
 
-    if (hasInitializedStyle() && style().hasSnapPosition())
-        view().unregisterBoxWithScrollSnapPositions(*this);
+    if (hasInitializedStyle()) {
+        if (style().hasSnapPosition())
+            view().unregisterBoxWithScrollSnapPositions(*this);
+        if (style().containerType() != ContainerType::None)
+            view().unregisterContainerQueryBox(*this);
+    }
 
     RenderBoxModelObject::willBeDestroyed();
 }
@@ -292,6 +296,11 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         else
             view().unregisterBoxWithScrollSnapPositions(*this);
     }
+
+    if (newStyle.containerType() != ContainerType::None)
+        view().registerContainerQueryBox(*this);
+    else if (oldStyle && oldStyle->containerType() != ContainerType::None)
+        view().unregisterContainerQueryBox(*this);
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }

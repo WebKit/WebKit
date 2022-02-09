@@ -41,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "ProcessingInstruction.h"
+#include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
@@ -780,6 +781,34 @@ Scope& Scope::documentScope()
 bool Scope::isForUserAgentShadowTree() const
 {
     return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
+}
+
+bool Scope::updateQueryContainerState()
+{
+    ASSERT(!m_shadowRoot);
+    ASSERT(m_document.renderView());
+
+    auto previousStates = WTFMove(m_queryContainerStates);
+    m_queryContainerStates.clear();
+
+    Vector<Element*> changedContainers;
+
+    for (auto& containerRenderer : m_document.renderView()->containerQueryBoxes()) {
+        auto* containerElement = containerRenderer.element();
+        if (!containerElement)
+            continue;
+        auto size = containerRenderer.size();
+        auto it = previousStates.find(*containerElement);
+        bool changed = it == previousStates.end() || it->value != size;
+        if (changed)
+            changedContainers.append(containerElement);
+        m_queryContainerStates.add(*containerElement, size);
+    }
+
+    for (auto* toInvalidate : changedContainers)
+        toInvalidate->invalidateForQueryContainerChange();
+
+    return !changedContainers.isEmpty();
 }
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)

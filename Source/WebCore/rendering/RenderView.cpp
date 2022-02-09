@@ -962,4 +962,14 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
     m_boxesWithScrollSnapPositions.remove(&box);
 }
 
+void RenderView::registerContainerQueryBox(const RenderBox& box)
+{
+    m_containerQueryBoxes.add(box);
+}
+
+void RenderView::unregisterContainerQueryBox(const RenderBox& box)
+{
+    m_containerQueryBoxes.remove(box);
+}
+
 } // namespace WebCore

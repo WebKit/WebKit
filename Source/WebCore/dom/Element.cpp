@@ -2130,6 +2130,12 @@ void Element::invalidateStyleForSubtreeInternal()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
 }
 
+void Element::invalidateForQueryContainerChange()
+{
+    // FIXME: This doesn't really need to recompute the element style.
+    Node::invalidateStyle(Style::Validity::ElementInvalid);
+}
+
 void Element::invalidateEventListenerRegions()
 {
     // Event listener region is updated via style update.

@@ -4539,6 +4539,7 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
                 didWork = true;
             if (view->needsLayout()) {
                 view->layoutContext().layout();
+                view->frame().document()->styleScope().updateQueryContainerState();
                 didWork = true;
             }
         }

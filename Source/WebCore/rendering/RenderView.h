@@ -29,6 +29,7 @@
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -204,6 +205,10 @@ public:
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
     const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 
+    void registerContainerQueryBox(const RenderBox&);
+    void unregisterContainerQueryBox(const RenderBox&);
+    const WeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
+
 private:
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
@@ -270,6 +275,7 @@ private:
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 
     HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
+    WeakHashSet<const RenderBox> m_containerQueryBoxes;
 };
 
 } // namespace WebCore

@@ -2198,9 +2198,15 @@ void Document::updateLayout()
 
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    // Only do a layout if changes have occurred that make it necessary.      
-    if (frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
-        frameView->layoutContext().layout();
+    if (!frameView || !renderView())
+        return;
+    if (!frameView->layoutContext().isLayoutPending() && !renderView()->needsLayout())
+        return;
+
+    frameView->layoutContext().layout();
+
+    if (styleScope().updateQueryContainerState())
+        updateLayout();
 }
 
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
