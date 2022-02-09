@@ -86,14 +86,14 @@ protected:
     virtual void recordClearShadow() = 0;
     virtual void recordClip(const FloatRect&) = 0;
     virtual void recordClipOut(const FloatRect&) = 0;
-    virtual void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) = 0;
+    virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
     virtual void recordClipOutToPath(const Path&) = 0;
     virtual void recordClipPath(const Path&, WindRule) = 0;
     virtual void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) = 0;
     virtual void recordEndClipToDrawingCommands(const FloatRect& destination) = 0;
-    virtual void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) = 0;
+    virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
-    virtual void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
+    virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
     virtual void recordBeginTransparencyLayer(float) = 0;

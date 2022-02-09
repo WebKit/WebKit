@@ -175,9 +175,9 @@ void RemoteDisplayListRecorderProxy::recordClipOut(const FloatRect& rect)
     send(Messages::RemoteDisplayListRecorder::ClipOut(rect));
 }
 
-void RemoteDisplayListRecorderProxy::recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
+void RemoteDisplayListRecorderProxy::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
 {
-    send(Messages::RemoteDisplayListRecorder::ClipToImageBuffer(imageBufferIdentifier, destinationRect));
+    send(Messages::RemoteDisplayListRecorder::ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
 }
 
 void RemoteDisplayListRecorderProxy::recordClipOutToPath(const Path& path)
@@ -200,9 +200,12 @@ void RemoteDisplayListRecorderProxy::recordEndClipToDrawingCommands(const FloatR
     send(Messages::RemoteDisplayListRecorder::EndClipToDrawingCommands(destination));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
+void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, IPC::FilterReference(Ref<Filter> { filter })));
+    std::optional<RenderingResourceIdentifier> identifier;
+    if (sourceImage)
+        identifier = sourceImage->renderingResourceIdentifier();
+    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, IPC::FilterReference(Ref<Filter> { filter })));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -210,9 +213,9 @@ void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, const Gl
     send(Messages::RemoteDisplayListRecorder::DrawGlyphs(DisplayList::DrawGlyphs { font, glyphs, advances, count, localAnchor, mode }));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawImageBuffer(imageBufferIdentifier, destRect, srcRect, options));
+    send(Messages::RemoteDisplayListRecorder::DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

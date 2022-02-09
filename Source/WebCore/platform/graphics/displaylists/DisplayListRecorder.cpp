@@ -159,7 +159,7 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
     }
 
     if (!sourceImage) {
-        recordDrawFilteredImageBuffer({ }, sourceImageRect, filter);
+        recordDrawFilteredImageBuffer(nullptr, sourceImageRect, filter);
         return;
     }
 
@@ -168,7 +168,7 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
         return;
     }
 
-    recordDrawFilteredImageBuffer(sourceImage->renderingResourceIdentifier(), sourceImageRect, filter);
+    recordDrawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
 }
 
 void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
@@ -192,7 +192,7 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
         return;
     }
 
-    recordDrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
+    recordDrawImageBuffer(imageBuffer, destRect, srcRect, options);
 }
 
 void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -483,7 +483,7 @@ IntRect Recorder::clipBounds() const
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
     recordResourceUse(imageBuffer);
-    recordClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect);
+    recordClipToImageBuffer(imageBuffer, destRect);
 }
 
 GraphicsContext::ClipToDrawingCommandsResult Recorder::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)

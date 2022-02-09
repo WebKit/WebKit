@@ -67,14 +67,14 @@ private:
     void recordClearShadow() final;
     void recordClip(const FloatRect&) final;
     void recordClipOut(const FloatRect&) final;
-    void recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect) final;
+    void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
     void recordClipOutToPath(const Path&) final;
     void recordClipPath(const Path&, WindRule) final;
     void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) final;
     void recordEndClipToDrawingCommands(const FloatRect& destination) final;
-    void recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter&) final;
+    void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
-    void recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
+    void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
     void recordBeginTransparencyLayer(float) final;
