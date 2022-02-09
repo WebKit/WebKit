@@ -35,34 +35,48 @@ namespace WebKit {
 
 #if HAVE(SAFE_BROWSING)
 
-// FIXME: These four functions ought to be API calls to the SafariSafeBrowsing framework when such SPI is available.
-// That way WebKit does not need to know about the SafariSafeBrowsing framework's possible providers.
-static const char* malwareDetailsBase(SSBServiceLookupResult *result)
+static String malwareDetailsBase(SSBServiceLookupResult *result)
 {
+#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
+    return result.malwareDetailsBaseURLString;
+#else
     if ([result.provider isEqualToString:SSBProviderTencent])
         return "https://www.urlsec.qq.com/check.html?tpl=safari";
     return "https://google.com/safebrowsing/diagnostic?tpl=safari";
+#endif
 }
 
 static NSURL *learnMoreURL(SSBServiceLookupResult *result)
 {
+#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
+    return result.learnMoreURL;
+#else
     if ([result.provider isEqualToString:SSBProviderTencent])
         return [NSURL URLWithString:@"https://www.urlsec.qq.com/standard/s1.html?tpl=safari"];
     return [NSURL URLWithString:@"https://www.google.com/support/bin/answer.py?answer=106318"];
+#endif
 }
 
-static const char* reportAnErrorBase(SSBServiceLookupResult *result)
+static String reportAnErrorBase(SSBServiceLookupResult *result)
 {
+#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
+    return result.reportAnErrorBaseURLString;
+#else
     if ([result.provider isEqualToString:SSBProviderTencent])
         return "https://www.urlsec.qq.com/complain.html?tpl=safari";
     return "https://www.google.com/safebrowsing/report_error/?tpl=safari";
+#endif
 }
 
 static String localizedProvider(SSBServiceLookupResult *result)
 {
+#if HAVE(SAFE_BROWSING_RESULT_DETAILS)
+    return result.localizedProviderDisplayName;
+#else
     if ([result.provider isEqualToString:SSBProviderTencent])
         return WEB_UI_NSSTRING(@"Tencent Safe Browsing", "Tencent Safe Browsing");
     return WEB_UI_NSSTRING(@"Google Safe Browsing", "Google Safe Browsing");
+#endif
 }
 
 
