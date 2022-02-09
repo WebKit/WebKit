@@ -52,13 +52,13 @@
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkSocketStream.h"
 #include "NetworkSocketStreamMessages.h"
+#include "NetworkStorageManager.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
-#include "WebIDBServer.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -408,8 +408,12 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
 void NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting(const ClientOrigin& origin)
 {
-    auto storageQuotaManager = m_networkProcess->storageQuotaManager(sessionID(), origin);
-    storageQuotaManager->resetQuotaUpdatedBasedOnUsageForTesting();
+    auto* session = m_networkProcess->networkSession(sessionID());
+    if (!session)
+        return;
+
+    if (auto* storageManager = session->storageManager())
+        storageManager->resetQuotaUpdatedBasedOnUsageForTesting(origin);
 }
 
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
@@ -1001,8 +1005,10 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        if (auto* session = networkSession())
-            session->ensureWebIDBServer().registerTemporaryBlobFilePaths(m_connection, filePaths);
+        if (auto* session = networkSession()) {
+            if (auto* storageManager = session->storageManager())
+                storageManager->registerTemporaryBlobFilePaths(m_connection, filePaths);
+        }
         completionHandler(WTFMove(filePaths));
     });
 }

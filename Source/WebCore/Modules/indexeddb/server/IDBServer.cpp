@@ -101,13 +101,13 @@ void IDBServer::unregisterTransaction(UniqueIDBDatabaseTransaction& transaction)
     m_transactions.remove(transaction.info().identifier());
 }
 
-void IDBServer::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+void IDBServer::registerConnection(UniqueIDBDatabaseConnection& connection)
 {
     ASSERT(!m_databaseConnections.contains(connection.identifier()));
     m_databaseConnections.set(connection.identifier(), &connection);
 }
 
-void IDBServer::unregisterDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+void IDBServer::unregisterConnection(UniqueIDBDatabaseConnection& connection)
 {
     ASSERT(m_databaseConnections.contains(connection.identifier()));
     m_databaseConnections.remove(connection.identifier());
@@ -128,13 +128,13 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
     if (m_databaseDirectoryPath.isEmpty())
-        return makeUnique<MemoryIDBBackingStore>(m_sessionID, identifier);
+        return makeUnique<MemoryIDBBackingStore>(identifier);
 
     ASSERT(!m_sessionID.isEphemeral());
     if (identifier.isTransient())
-        return makeUnique<MemoryIDBBackingStore>(m_sessionID, identifier);
+        return makeUnique<MemoryIDBBackingStore>(identifier);
 
-    return makeUnique<SQLiteIDBBackingStore>(m_sessionID, identifier, m_databaseDirectoryPath);
+    return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier));
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)
@@ -175,17 +175,6 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     database->handleDelete(*connection, requestData);
     if (database->tryClose())
         m_uniqueIDBDatabaseMap.remove(database->identifier());
-}
-
-std::unique_ptr<UniqueIDBDatabase> IDBServer::closeAndTakeUniqueIDBDatabase(UniqueIDBDatabase& database)
-{
-    LOG(IndexedDB, "IDBServer::closeUniqueIDBDatabase");
-    ASSERT(isMainThread());
-
-    auto uniquePointer = m_uniqueIDBDatabaseMap.take(database.identifier());
-    ASSERT(uniquePointer);
-
-    return uniquePointer;
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
@@ -750,7 +739,7 @@ void IDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, const
         FileSystem::moveFile(oldOriginPath, newOriginPath);
 }
 
-StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize, CompletionHandler<void(bool)>&& completionHandler) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
@@ -762,7 +751,7 @@ StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin
     result = m_spaceRequester(origin, taskSize);
     m_lock.lock();
 
-    return result;
+    completionHandler(result == StorageQuotaManager::Decision::Grant);
 }
 
 uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin)
@@ -782,6 +771,23 @@ void IDBServer::upgradeFilesIfNecessary()
     String newVersionDirectory = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1");
     if (!FileSystem::fileExists(newVersionDirectory))
         FileSystem::makeAllDirectories(newVersionDirectory);
+}
+
+String IDBServer::upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier& identifier)
+{
+    String oldOriginDirectory = identifier.databaseDirectoryRelativeToRoot(m_databaseDirectoryPath, "v0");
+    String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, SQLiteIDBBackingStore::encodeDatabaseName(identifier.databaseName()));
+    String newOriginDirectory = identifier.databaseDirectoryRelativeToRoot(m_databaseDirectoryPath, "v1");
+    String fileNameHash = SQLiteFileSystem::computeHashForFileName(identifier.databaseName());
+    String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
+    FileSystem::makeAllDirectories(newDatabaseDirectory);
+
+    if (FileSystem::fileExists(oldDatabaseDirectory)) {
+        FileSystem::moveFile(oldDatabaseDirectory, newDatabaseDirectory);
+        FileSystem::deleteEmptyDirectory(oldOriginDirectory);
+    }
+
+    return newDatabaseDirectory;
 }
 
 bool IDBServer::hasDatabaseActivitiesOnMainThread() const

@@ -524,14 +524,10 @@ void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::Compl
         return;
     }
 
-    m_engine->requestSpace(m_origin, spaceRequired, [callback = WTFMove(callback)](auto decision) mutable {
-        switch (decision) {
-        case WebCore::StorageQuotaManager::Decision::Deny:
-            callback(Error::QuotaExceeded);
-            return;
-        case WebCore::StorageQuotaManager::Decision::Grant:
-            callback({ });
-        };
+    m_engine->requestSpace(m_origin, spaceRequired, [callback = WTFMove(callback)](bool granted) mutable {
+        if (!granted)
+            return callback(Error::QuotaExceeded);
+        callback({ });
     });
 }
 

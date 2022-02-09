@@ -214,14 +214,8 @@ public:
     WebSharedWorkerServer* sharedWorkerServer() { return m_sharedWorkerServer.get(); }
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
-    WebIDBServer* webIDBServer() { return m_webIDBServer.get(); }
-    WebIDBServer& ensureWebIDBServer();
-    void closeIDBServer(CompletionHandler<void()>&&);
-    void addIndexedDatabaseSession(const String& indexedDatabaseDirectory, SandboxExtension::Handle&);
-    bool hasIDBDatabasePath() const { return !m_idbDatabasePath.isEmpty(); }
-
     NetworkStorageManager* storageManager() { return m_storageManager.get(); }
-    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle);
+    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota);
 
     CacheStorage::Engine* cacheEngine() { return m_cacheEngine.get(); }
     void ensureCacheEngine(Function<void(CacheStorage::Engine&)>&&);
@@ -323,9 +317,6 @@ protected:
     std::unique_ptr<WebCore::SWServer> m_swServer;
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
-
-    String m_idbDatabasePath;
-    RefPtr<WebIDBServer> m_webIDBServer;
 
     RefPtr<NetworkStorageManager> m_storageManager;
     RefPtr<CacheStorage::Engine> m_cacheEngine;

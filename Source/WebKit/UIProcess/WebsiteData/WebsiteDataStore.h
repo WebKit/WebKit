@@ -350,6 +350,7 @@ public:
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
     static bool http3Enabled();
+    static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
 
     void resetQuota(CompletionHandler<void()>&&);
     void clearStorage(CompletionHandler<void()>&&);

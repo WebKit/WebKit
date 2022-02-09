@@ -1716,7 +1716,7 @@ void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 uint64_t WebsiteDataStore::perThirdPartyOriginStorageQuota() const
 {
     // FIXME: Consider whether allowing to set a perThirdPartyOriginStorageQuota from a WebsiteDataStore.
-    return WebCore::StorageQuotaManager::defaultThirdPartyQuotaFromPerOriginQuota(perOriginStorageQuota());
+    return perOriginStorageQuota() / 10;
 }
 
 void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)

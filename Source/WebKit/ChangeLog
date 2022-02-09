@@ -1,3 +1,265 @@
+2022-02-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Manage IndexedDB storage by origin
+        https://bugs.webkit.org/show_bug.cgi?id=234925
+        <rdar://problem/87555014>
+
+        Reviewed by Chris Dumez.
+
+        In network process, IndexedDB data is managed by WebKit::WebIDBServer. Each session owns a WebIDBServer 
+        (IDBServer) and each IDBServer owns one or more UniqueIDBDatabases (resprenting one actual database that
+        IDBDatabase connects to, can be identified by {session, origin, name}). Now that we have NetworkStorageManager, 
+        which manages session storage by origin, we can merge WebIDBServer with NetworkStorageManager, since IndexedDB 
+        storage is not shared across origins.
+
+        The old structure is:
+        NetworkSession - WebIDBServer - IDBServer - UniqueIDBDatabases
+        The new structure is:
+        NetworkSession - NetworkStorageManager - OriginStorageManager - IDBStorageManager - UniqueIDBDatabase
+
+        To complete this transition, we need to make a few changes:
+        1. Web process now sends IndexedDB related messages to NetworkStorageManager instead of WebIDBServer. 
+        2. Some messages are sent to operate on UniqueIDBDatabaseConnection or UniqueIDBDatabaseTransaction, and they 
+        use identifiers to specify the target. Therefore, NetworkStorageManagers needs to know the mapping between 
+        identifiers and target objects. A new clas IDBStorageRegistry is added record this mapping. Each 
+        NetworkStorageManager owns a IDBStorageRegistry and it passes IDBStorageRegistry to IDBStorageManager,
+        IDBStorageManager will register objects to IDBStorageRegistry and NetworkStorageManager can do search via 
+        IDBStorageRegistry.
+        3. Quota check for IndexedDB operations becomes async by adding new QuotaManager class, which is similar to 
+        WebCore::StorageQuotaManager but provides async interfaces. 
+        We used to block the IDBServer thread when it is waiting for quota check result from UI process, this is fine 
+        because IDBServer runs on its own thread. Now that IDBStorageManager runs on the same thread as the other 
+        storage types, we cannot block the thread on quota check.
+        4. Rename WebIDBConnectionToClient to IDBStorageConnectionToClient to reflect the change on the structure. Also,
+        IDBStorageConnectionToClient does not keep reference to the IPC::Connection now, it only records 
+        IPC::Connection::UniqueID.
+        5. IndexedDB data may be put in different version dirctories. We used to migrate database to new version 
+        diretory when the database is accessed. As IDBStorageManager now manages IndexedDB data of one origin, it's 
+        simpler if it only keeps track of one directory. Therefore, we now migrate all databases of one origin
+        when the origin is accessed (see IDBStorageManager::idbStorageOriginDirectory).
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::resetQuota):
+        (WebKit::NetworkProcess::didIncreaseQuota):
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        (WebKit::NetworkProcess::suspendIDBServers): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::shouldSuspendIDBServers const): Deleted.
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::addStorageManagerSession):
+        (WebKit::NetworkSession::ensureWebIDBServer): Deleted.
+        (WebKit::NetworkSession::closeIDBServer): Deleted.
+        (WebKit::NetworkSession::addIndexedDatabaseSession): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::webIDBServer): Deleted.
+        (WebKit::NetworkSession::hasIDBDatabasePath const): Deleted.
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::storagePath):
+        (WebKit::CacheStorage::Engine::diskUsage):
+        (WebKit::CacheStorage::Engine::requestSpace):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::requestSpace):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::setIsHoldingLockedFiles):
+        * NetworkProcess/storage/IDBStorageConnectionToClient.cpp: Added.
+        (WebKit::IDBStorageConnectionToClient::IDBStorageConnectionToClient):
+        (WebKit::IDBStorageConnectionToClient::~IDBStorageConnectionToClient):
+        (WebKit::IDBStorageConnectionToClient::connectionToClient):
+        (WebKit::IDBStorageConnectionToClient::didGetResult):
+        (WebKit::IDBStorageConnectionToClient::didDeleteDatabase):
+        (WebKit::IDBStorageConnectionToClient::didOpenDatabase):
+        (WebKit::IDBStorageConnectionToClient::didStartTransaction):
+        (WebKit::IDBStorageConnectionToClient::didAbortTransaction):
+        (WebKit::IDBStorageConnectionToClient::didCommitTransaction):
+        (WebKit::IDBStorageConnectionToClient::didCreateObjectStore):
+        (WebKit::IDBStorageConnectionToClient::didDeleteObjectStore):
+        (WebKit::IDBStorageConnectionToClient::didRenameObjectStore):
+        (WebKit::IDBStorageConnectionToClient::didClearObjectStore):
+        (WebKit::IDBStorageConnectionToClient::didCreateIndex):
+        (WebKit::IDBStorageConnectionToClient::didDeleteIndex):
+        (WebKit::IDBStorageConnectionToClient::didRenameIndex):
+        (WebKit::IDBStorageConnectionToClient::didPutOrAdd):
+        (WebKit::IDBStorageConnectionToClient::didGetRecord):
+        (WebKit::IDBStorageConnectionToClient::didGetAllRecords):
+        (WebKit::IDBStorageConnectionToClient::didGetCount):
+        (WebKit::IDBStorageConnectionToClient::didDeleteRecord):
+        (WebKit::IDBStorageConnectionToClient::didOpenCursor):
+        (WebKit::IDBStorageConnectionToClient::didIterateCursor):
+        (WebKit::IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions):
+        (WebKit::IDBStorageConnectionToClient::fireVersionChangeEvent):
+        (WebKit::IDBStorageConnectionToClient::didCloseFromServer):
+        (WebKit::IDBStorageConnectionToClient::notifyOpenDBRequestBlocked):
+        * NetworkProcess/storage/IDBStorageConnectionToClient.h: Added.
+        * NetworkProcess/storage/IDBStorageManager.cpp: Added.
+        (WebKit::migrateOriginData):
+        (WebKit::IDBStorageManager::idbStorageOriginDirectory):
+        (WebKit::IDBStorageManager::idbStorageSize):
+        (WebKit::getOriginsForVersion):
+        (WebKit::IDBStorageManager::originsOfIDBStorageData):
+        (WebKit::IDBStorageManager::IDBStorageManager):
+        (WebKit::IDBStorageManager::isActive const):
+        (WebKit::IDBStorageManager::hasDataInMemory const):
+        (WebKit::IDBStorageManager::closeDatabasesForDeletion):
+        (WebKit::IDBStorageManager::stopDatabaseActivitiesForSuspend):
+        (WebKit::IDBStorageManager::getOrCreateUniqueIDBDatabase):
+        (WebKit::IDBStorageManager::openDatabase):
+        (WebKit::IDBStorageManager::deleteDatabase):
+        (WebKit::IDBStorageManager::getAllDatabaseNamesAndVersions):
+        (WebKit::IDBStorageManager::openDBRequestCancelled):
+        (WebKit::IDBStorageManager::registerConnection):
+        (WebKit::IDBStorageManager::unregisterConnection):
+        (WebKit::IDBStorageManager::registerTransaction):
+        (WebKit::IDBStorageManager::unregisterTransaction):
+        (WebKit::IDBStorageManager::createBackingStore):
+        (WebKit::IDBStorageManager::requestSpace):
+        * NetworkProcess/storage/IDBStorageManager.h: Added.
+        * NetworkProcess/storage/IDBStorageRegistry.cpp: Added.
+        (WebKit::IDBStorageRegistry::ensureConnectionToClient):
+        (WebKit::IDBStorageRegistry::removeConnectionToClient):
+        (WebKit::IDBStorageRegistry::registerConnection):
+        (WebKit::IDBStorageRegistry::unregisterConnection):
+        (WebKit::IDBStorageRegistry::registerTransaction):
+        (WebKit::IDBStorageRegistry::unregisterTransaction):
+        (WebKit::IDBStorageRegistry::connection):
+        (WebKit::IDBStorageRegistry::transaction):
+        * NetworkProcess/storage/IDBStorageRegistry.h: Added.
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::create):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::canHandleTypes):
+        (WebKit::NetworkStorageManager::stopReceivingMessageFromConnection):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::NetworkStorageManager::didIncreaseQuota):
+        (WebKit::NetworkStorageManager::getAllOrigins):
+        (WebKit::NetworkStorageManager::moveData):
+        (WebKit::NetworkStorageManager::suspend):
+        (WebKit::NetworkStorageManager::registerTemporaryBlobFilePaths):
+        (WebKit::NetworkStorageManager::requestSpace):
+        (WebKit::NetworkStorageManager::resetQuotaForTesting):
+        (WebKit::NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting):
+        (WebKit::NetworkStorageManager::openDatabase):
+        (WebKit::NetworkStorageManager::openDBRequestCancelled):
+        (WebKit::NetworkStorageManager::deleteDatabase):
+        (WebKit::NetworkStorageManager::establishTransaction):
+        (WebKit::NetworkStorageManager::databaseConnectionPendingClose):
+        (WebKit::NetworkStorageManager::databaseConnectionClosed):
+        (WebKit::NetworkStorageManager::abortOpenAndUpgradeNeeded):
+        (WebKit::NetworkStorageManager::didFireVersionChangeEvent):
+        (WebKit::NetworkStorageManager::abortTransaction):
+        (WebKit::NetworkStorageManager::commitTransaction):
+        (WebKit::NetworkStorageManager::didFinishHandlingVersionChangeTransaction):
+        (WebKit::NetworkStorageManager::createObjectStore):
+        (WebKit::NetworkStorageManager::deleteObjectStore):
+        (WebKit::NetworkStorageManager::renameObjectStore):
+        (WebKit::NetworkStorageManager::clearObjectStore):
+        (WebKit::NetworkStorageManager::createIndex):
+        (WebKit::NetworkStorageManager::deleteIndex):
+        (WebKit::NetworkStorageManager::renameIndex):
+        (WebKit::NetworkStorageManager::putOrAdd):
+        (WebKit::NetworkStorageManager::getRecord):
+        (WebKit::NetworkStorageManager::getAllRecords):
+        (WebKit::NetworkStorageManager::getCount):
+        (WebKit::NetworkStorageManager::deleteRecord):
+        (WebKit::NetworkStorageManager::openCursor):
+        (WebKit::NetworkStorageManager::iterateCursor):
+        (WebKit::NetworkStorageManager::getAllDatabaseNamesAndVersions):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::StorageBucket):
+        (WebKit::OriginStorageManager::StorageBucket::toWebsiteDataType):
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier):
+        (WebKit::OriginStorageManager::StorageBucket::idbStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingIDBStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::isActive const):
+        (WebKit::OriginStorageManager::StorageBucket::isEmpty const):
+        (WebKit::OriginStorageManager::StorageBucket::deleteData):
+        (WebKit::OriginStorageManager::StorageBucket::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromMemory):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk):
+        (WebKit::OriginStorageManager::StorageBucket::deleteIDBStorageData):
+        (WebKit::createQuotaManager):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::defaultBucket):
+        (WebKit::OriginStorageManager::quotaManager):
+        (WebKit::OriginStorageManager::idbStorageManager):
+        (WebKit::OriginStorageManager::existingIDBStorageManager):
+        (WebKit::OriginStorageManager::moveData):
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * NetworkProcess/storage/QuotaManager.cpp: Added.
+        (WebKit::QuotaManager::create):
+        (WebKit::QuotaManager::QuotaManager):
+        (WebKit::QuotaManager::requestSpace):
+        (WebKit::QuotaManager::handleRequests):
+        (WebKit::QuotaManager::grantWithCurrentQuota):
+        (WebKit::QuotaManager::grantFastPath):
+        (WebKit::QuotaManager::didIncreaseQuota):
+        (WebKit::QuotaManager::resetQuotaUpdatedBasedOnUsageForTesting):
+        (WebKit::QuotaManager::resetQuotaForTesting):
+        * NetworkProcess/storage/QuotaManager.h: Added.
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/WebsiteData/QuotaIncreaseRequestIdentifier.h: Added.
+        * Shared/WebsiteDataStoreParameters.h:
+        * Sources.txt:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::increaseQuota):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::perThirdPartyOriginStorageQuota const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::defaultPerOriginQuota):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::deleteDatabase):
+        (WebKit::WebIDBConnectionToServer::openDatabase):
+        (WebKit::WebIDBConnectionToServer::abortTransaction):
+        (WebKit::WebIDBConnectionToServer::commitTransaction):
+        (WebKit::WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBConnectionToServer::createObjectStore):
+        (WebKit::WebIDBConnectionToServer::deleteObjectStore):
+        (WebKit::WebIDBConnectionToServer::renameObjectStore):
+        (WebKit::WebIDBConnectionToServer::clearObjectStore):
+        (WebKit::WebIDBConnectionToServer::createIndex):
+        (WebKit::WebIDBConnectionToServer::deleteIndex):
+        (WebKit::WebIDBConnectionToServer::renameIndex):
+        (WebKit::WebIDBConnectionToServer::putOrAdd):
+        (WebKit::WebIDBConnectionToServer::getRecord):
+        (WebKit::WebIDBConnectionToServer::getAllRecords):
+        (WebKit::WebIDBConnectionToServer::getCount):
+        (WebKit::WebIDBConnectionToServer::deleteRecord):
+        (WebKit::WebIDBConnectionToServer::openCursor):
+        (WebKit::WebIDBConnectionToServer::iterateCursor):
+        (WebKit::WebIDBConnectionToServer::establishTransaction):
+        (WebKit::WebIDBConnectionToServer::databaseConnectionPendingClose):
+        (WebKit::WebIDBConnectionToServer::databaseConnectionClosed):
+        (WebKit::WebIDBConnectionToServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBConnectionToServer::didFireVersionChangeEvent):
+        (WebKit::WebIDBConnectionToServer::openDBRequestCancelled):
+        (WebKit::WebIDBConnectionToServer::getAllDatabaseNamesAndVersions):
+
 2022-02-09  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified build fixes after r289247

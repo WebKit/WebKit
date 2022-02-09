@@ -26,16 +26,15 @@
 #pragma once
 
 #include "Connection.h"
+#include "QuotaManager.h"
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-struct ClientOrigin;
-}
 
 namespace WebKit {
 
 class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager;
+class IDBStorageManager;
+class IDBStorageRegistry;
 class LocalStorageManager;
 class SessionStorageManager;
 class StorageAreaRegistry;
@@ -44,35 +43,38 @@ enum class WebsiteDataType : uint32_t;
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OriginStorageManager(String&& path, String&& localStoragePath);
+    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& localStoragePath, String&& idbStoragePath, String&& cacheStoragePath);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
     void setPersisted(bool value);
+    QuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* existingLocalStorageManager();
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
     SessionStorageManager* existingSessionStorageManager();
+    IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
+    IDBStorageManager* existingIDBStorageManager();
     bool isActive();
     bool isEmpty();
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
-    void moveData(const String& newPath, const String& localStoragePath);
+    void moveData(const String& newPath, const String& localStoragePath, const String& idbStoragePath);
 
 private:
     enum class StorageBucketMode : bool;
     class StorageBucket;
     StorageBucket& defaultBucket();
 
-    void createOriginFileIfNecessary(const WebCore::ClientOrigin&);
-    void deleteOriginFileIfNecessary();
-
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;
     bool m_persisted { false };
     String m_localStoragePath;
+    String m_idbStoragePath;
+    String m_cacheStoragePath;
+    Ref<QuotaManager> m_quotaManager;
 };
 
 } // namespace WebKit

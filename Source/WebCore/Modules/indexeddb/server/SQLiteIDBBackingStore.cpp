@@ -236,12 +236,10 @@ static ASCIILiteral indexInfoTableSchemaTemp()
     return TABLE_SCHEMA_PREFIX "_Temp_IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
 }
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
-    : m_sessionID(sessionID)
-    , m_identifier(identifier)
-    , m_databaseRootDirectory(databaseRootDirectory)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+    : m_identifier(identifier)
+    , m_databaseDirectory(databaseDirectory)
 {
-    m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
 
 SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
@@ -912,17 +910,27 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     return databaseInfo;
 }
 
-String SQLiteIDBBackingStore::filenameForDatabaseName() const
+String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
 {
-    ASSERT(!m_identifier.databaseName().isNull());
-
-    if (m_identifier.databaseName().isEmpty())
+    ASSERT(!databaseName.isEmpty());
+    if (databaseName.isEmpty())
         return "%00";
 
-    String filename = FileSystem::encodeForFileName(m_identifier.databaseName());
-    filename.replace('.', "%2E");
+    String filename = FileSystem::encodeForFileName(databaseName);
+    filename.replaceWithLiteral('.', "%2E");
 
     return filename;
+}
+
+String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
+{
+    if (encodedName == "%00"_s)
+        return emptyString();
+
+    String name = encodedName;
+    name.replace("%2E"_s, "."_s);
+
+    return FileSystem::decodeFromFilename(name);
 }
 
 String SQLiteIDBBackingStore::fullDatabasePathForDirectory(const String& fullDatabaseDirectory)
@@ -965,23 +973,6 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
     return IDBDatabaseNameAndVersion { databaseName, *databaseVersion };
 }
 
-String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
-{
-    String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v0");
-    String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
-    String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
-    String fileNameHash = SQLiteFileSystem::computeHashForFileName(m_identifier.databaseName());
-    String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
-    FileSystem::makeAllDirectories(newDatabaseDirectory);
-
-    if (FileSystem::fileExists(oldDatabaseDirectory)) {
-        FileSystem::moveFile(oldDatabaseDirectory, newDatabaseDirectory);
-        FileSystem::deleteEmptyDirectory(oldOriginDirectory);
-    }
-
-    return newDatabaseDirectory;
-}
-
 IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getOrEstablishDatabaseInfo - database %s", m_identifier.databaseName().utf8().data());
@@ -991,11 +982,11 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { };
     }
 
-    String dbFilename = fullDatabasePath();
-
+    String databasePath = fullDatabasePath();
+    FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
     m_sqliteDB = makeUnique<SQLiteDatabase>();
-    if (!m_sqliteDB->open(dbFilename)) {
-        LOG_ERROR("Failed to open SQLite database at path '%s'", dbFilename.utf8().data());
+    if (!m_sqliteDB->open(databasePath)) {
+        LOG_ERROR("Failed to open SQLite database at path '%s'", databasePath.utf8().data());
         closeSQLiteDB();
     }
 
@@ -1044,7 +1035,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         databaseInfo = createAndPopulateInitialDatabaseInfo();
 
     if (!databaseInfo) {
-        LOG_ERROR("Unable to establish IDB database at path '%s'", dbFilename.utf8().data());
+        LOG_ERROR("Unable to establish IDB database at path '%s'", databasePath.utf8().data());
         closeSQLiteDB();
         return IDBError { UnknownError, "Unable to establish IDB database file"_s };
     }
@@ -2798,7 +2789,6 @@ void SQLiteIDBBackingStore::deleteBackingStore()
 
     SQLiteFileSystem::deleteDatabaseFile(databasePath);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory));
 }
 
 void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)

@@ -42,6 +42,8 @@
 
 using namespace WebCore;
 
+static constexpr uint64_t defaultPerOriginQuota =  1000 * MB;
+
 Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
@@ -73,7 +75,7 @@ InProcessIDBServer::~InProcessIDBServer()
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
 {
     return m_quotaManagers.ensure(origin, [] {
-        return StorageQuotaManager::create(StorageQuotaManager::defaultQuota(), [] {
+        return StorageQuotaManager::create(defaultPerOriginQuota, [] {
             return 0;
         }, [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             callback(quota + currentSpace + spaceIncrease);

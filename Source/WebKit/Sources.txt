@@ -149,10 +149,14 @@ NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
 NetworkProcess/storage/FileSystemStorageManager.cpp
 NetworkProcess/storage/FileSystemStorageHandle.cpp
 NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp
+NetworkProcess/storage/IDBStorageConnectionToClient.cpp
+NetworkProcess/storage/IDBStorageManager.cpp
+NetworkProcess/storage/IDBStorageRegistry.cpp
 NetworkProcess/storage/LocalStorageManager.cpp
 NetworkProcess/storage/MemoryStorageArea.cpp
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
+NetworkProcess/storage/QuotaManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/storage/SessionStorageManager.cpp
 NetworkProcess/storage/StorageAreaBase.cpp

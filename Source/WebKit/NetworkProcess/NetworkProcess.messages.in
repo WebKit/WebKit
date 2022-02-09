@@ -179,6 +179,7 @@ messages -> NetworkProcess LegacyReceiver {
 
     ResetQuota(PAL::SessionID sessionID) -> () Async
     ClearStorage(PAL::SessionID sessionID) -> () Async
+    DidIncreaseQuota(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, WebKit::QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
     
 #if ENABLE(APP_BOUND_DOMAINS)
     HasAppBoundSession(PAL::SessionID sessionID) -> (bool hasAppBoundSession) Async

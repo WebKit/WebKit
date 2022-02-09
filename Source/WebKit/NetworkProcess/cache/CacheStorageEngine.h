@@ -29,7 +29,6 @@
 #include "NetworkCacheData.h"
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -84,8 +83,9 @@ public:
 
     static void initializeQuotaUser(NetworkSession&, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
 
-    static uint64_t diskUsage(const String& rootPath, const WebCore::ClientOrigin&);
-    void requestSpace(const WebCore::ClientOrigin&, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&&);
+    static String storagePath(const String& rootDirectory, const WebCore::ClientOrigin&);
+    static uint64_t diskUsage(const String& originDirectory);
+    void requestSpace(const WebCore::ClientOrigin&, uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
     bool shouldPersist() const { return !!m_ioQueue;}
 

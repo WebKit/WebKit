@@ -87,7 +87,7 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
     [[NSFileManager defaultManager] copyItemAtPath:databaseFilePath toPath:fakeShmPath error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:databaseFilePath toPath:fakeWalPath error:nil];
 
-    // Make some other .blob files in the database directory to later validate that only appropriate files are deleted.
+    // Make some other .blob files in the database directory to later validate all blob files in the directory are deleted.
     NSString *otherBlob1 = [databaseDirectory stringByAppendingPathComponent:@"7182.blob"];
     NSString *otherBlob2 = [databaseDirectory stringByAppendingPathComponent:@"1a.blob"];
     NSString *otherBlob3 = [databaseDirectory stringByAppendingPathComponent:@"a1.blob"];
@@ -102,13 +102,12 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:blobFilePath]);
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:databaseFilePath]);
 
-        // Make sure the fake blob file with a valid blob file name is gone.
+        // Make sure all fake blob file are gone.
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob1]);
 
-        // Make sure the fake blob files with invalid blob file names are still there.
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob2]);
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob3]);
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob4]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob2]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob3]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:otherBlob4]);
 
         // Make sure everything related to the fake database is gone.
         EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fakeShmPath]);

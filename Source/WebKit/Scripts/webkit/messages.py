@@ -288,6 +288,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::NativeImageReference',
         'WebCore::PageIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',
+        'WebKit::QuotaIncreaseRequestIdentifier',
         'WebCore::PluginLoadClientPolicy',
         'WebCore::PointerID',
         'WebCore::PushSubscriptionIdentifier',

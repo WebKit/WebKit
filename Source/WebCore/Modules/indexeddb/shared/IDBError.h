@@ -52,6 +52,7 @@ public:
     String message() const;
 
     bool isNull() const { return !m_code; }
+    operator bool() const { return !isNull(); }
 
     WEBCORE_EXPORT IDBError isolatedCopy() const;
 

@@ -33,6 +33,7 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkResourceLoadIdentifier.h"
+#include "QuotaIncreaseRequestIdentifier.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
@@ -288,12 +289,11 @@ public:
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
 #endif
 
-    bool shouldSuspendIDBServers() const { return m_shouldSuspendIDBServers; }
-
     void syncLocalStorage(CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
     void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
+    void didIncreaseQuota(PAL::SessionID, const WebCore::ClientOrigin&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -473,8 +473,6 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
 
-    void suspendIDBServers(bool isSuspensionImminent);
-
 #if PLATFORM(IOS_FAMILY)
     void setIsHoldingLockedFiles(bool);
 #endif
@@ -482,6 +480,7 @@ private:
     class SessionStorageQuotaManager {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        SessionStorageQuotaManager() = delete;
         SessionStorageQuotaManager(const String& cacheRootPath, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota)
             : m_cacheRootPath(cacheRootPath)
             , m_defaultQuota(defaultQuota)
@@ -508,8 +507,8 @@ private:
     private:
         String m_cacheRootPath;
         String m_idbRootPath;
-        uint64_t m_defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
-        uint64_t m_defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
+        uint64_t m_defaultQuota;
+        uint64_t m_defaultThirdPartyQuota;
         HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_storageQuotaManagers;
     };
     void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
@@ -549,9 +548,6 @@ private:
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
-
-    bool m_shouldSuspendIDBServers { false };
-    uint64_t m_suspensionIdentifier { 0 };
     
 #if ENABLE(WEB_RTC)
     RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;

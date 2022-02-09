@@ -71,20 +71,23 @@ static void runTest()
     RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
     EXPECT_WK_STREQ(@"Success", string2.get());
 
-    // For database that is not opened after upgrade, its file should be in v0.
+    // All databases of an origin are migrated to new version directory when the origin is accessed.
     auto defaultFileManager = [NSFileManager defaultManager];
     NSString *existingDatabaseName = @"IndexedDBTest";
     NSString *createdDatabaseName = @"IndexedDBOther";
     NSString *unusedDatabaseName = @"IndexedDBUnused";
     NSString *existingDatbaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(existingDatabaseName);
     NSString *createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(createdDatabaseName);
+    NSString *unusedDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(createdDatabaseName);
     NSURL *idbRootURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
     NSURL *oldVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v0"];
     NSURL *newVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v1"];
     NSURL *oldVersionOriginDirectoryURL = [oldVersionDirectoryURL URLByAppendingPathComponent: @"file__0"];
     NSURL *newVersionOriginDirectoryURL = [newVersionDirectoryURL URLByAppendingPathComponent: @"file__0"];
     NSURL *oldVersionUnusedDatabaseDirectoryURL = [oldVersionOriginDirectoryURL URLByAppendingPathComponent:unusedDatabaseName];
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:oldVersionUnusedDatabaseDirectoryURL.path]);
+    NSURL *newVersionUnusedDatabaseDirectoryURL = [newVersionOriginDirectoryURL URLByAppendingPathComponent:unusedDatabaseHash];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:oldVersionUnusedDatabaseDirectoryURL.path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:newVersionUnusedDatabaseDirectoryURL.path]);
     
     // For database that is opened after upgrade, its file should only be in v1.
     NSURL *oldVersionExistingDatabaseDirectoryURL = [oldVersionOriginDirectoryURL URLByAppendingPathComponent: existingDatabaseName];

@@ -49,7 +49,7 @@ public:
     IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
-    static IDBResourceIdentifier emptyValue();
+    WEBCORE_EXPORT static IDBResourceIdentifier emptyValue();
     bool isEmpty() const
     {
         return !m_resourceNumber && !m_idbConnectionIdentifier;
@@ -60,7 +60,8 @@ public:
         uint64_t hashCodes[2] = { m_idbConnectionIdentifier.toUInt64(), m_resourceNumber };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
-    
+
+    bool operator!=(const IDBResourceIdentifier& other) const { return !(*this == other); }
     bool operator==(const IDBResourceIdentifier& other) const
     {
         return m_idbConnectionIdentifier == other.m_idbConnectionIdentifier

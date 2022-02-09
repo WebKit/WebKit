@@ -305,10 +305,14 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     EXPECT_WK_STREQ( @"database is created - put item success", (NSString *)[lastScriptMessage body]);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        EXPECT_EQ(1u, dataRecords.count);
-        EXPECT_WK_STREQ("iframe", [[dataRecords firstObject] displayName]);
-        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() forDataRecords:dataRecords completionHandler:^() {
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(2u, records.count);
+        NSSortDescriptor *recordDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"displayName" ascending:YES];
+        NSArray *sortDescriptors = @[recordDescriptor];
+        NSArray *sortedRecords = [records sortedArrayUsingDescriptors:sortDescriptors];
+        EXPECT_WK_STREQ("iframe", [[sortedRecords objectAtIndex:0] displayName]);
+        EXPECT_WK_STREQ("webkit.org", [[sortedRecords objectAtIndex:1] displayName]);
+        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() forDataRecords:records completionHandler:^() {
             readyToContinue = true;
         }];
     }];

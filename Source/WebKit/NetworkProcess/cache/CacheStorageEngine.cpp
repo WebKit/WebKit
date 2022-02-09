@@ -31,6 +31,7 @@
 #include "NetworkCacheIOChannel.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "NetworkStorageManager.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/RetrieveRecordsOptions.h>
@@ -203,40 +204,52 @@ static uint64_t getDirectorySize(const String& directoryPath)
     return directorySize;
 }
 
-uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& origin)
+String Engine::storagePath(const String& rootDirectory, const WebCore::ClientOrigin& origin)
+{
+    ASSERT(!isMainRunLoop());
+    
+    if (rootDirectory.isEmpty())
+        return emptyString();
+
+    String saltPath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
+    auto salt = FileSystem::readOrMakeSalt(saltPath);
+    if (!salt)
+        return emptyString();
+
+    Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, *salt);
+    return FileSystem::pathByAppendingComponent(rootDirectory, key.hashAsString());
+}
+
+uint64_t Engine::diskUsage(const String& originDirectory)
 {
     ASSERT(!isMainRunLoop());
 
-    if (rootPath.isEmpty())
+    if (originDirectory.isEmpty())
         return 0;
 
-    String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
-    auto salt = FileSystem::readOrMakeSalt(saltPath);
-    if (!salt)
-        return 0;
-
-    Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, *salt);
-    String directoryPath = FileSystem::pathByAppendingComponent(rootPath, key.hashAsString());
-
-    String sizeFilePath = Caches::cachesSizeFilename(directoryPath);
+    String sizeFilePath = Caches::cachesSizeFilename(originDirectory);
     if (auto recordedSize = readSizeFile(sizeFilePath))
         return *recordedSize;
 
-    return getDirectorySize(directoryPath);
+    return getDirectorySize(originDirectory);
 }
 
-void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&& callback)
+void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(bool)>&& callback)
 {
     ASSERT(isMainThread());
 
     if (!m_networkProcess)
-        callback(WebCore::StorageQuotaManager::Decision::Deny);
+        callback(false);
 
-    RefPtr<WebCore::StorageQuotaManager> storageQuotaManager = m_networkProcess->storageQuotaManager(m_sessionID, origin);
-    if (!storageQuotaManager)
-        callback(WebCore::StorageQuotaManager::Decision::Deny);
+    auto* session = m_networkProcess->networkSession(m_sessionID);
+    if (!session)
+        callback(false);
 
-    storageQuotaManager->requestSpaceOnMainThread(spaceRequested, WTFMove(callback));
+    auto* storageManager = session->storageManager();
+    if (!storageManager)
+        callback(false);
+
+    storageManager->requestSpace(origin, spaceRequested, WTFMove(callback));
 }
 
 Engine::Engine(NetworkSession& networkSession, String&& rootPath)

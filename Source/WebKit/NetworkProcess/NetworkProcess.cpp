@@ -264,8 +264,6 @@ void NetworkProcess::didClose(IPC::Connection&)
     // Make sure we flush all cookies to disk before exiting.
     forEachNetworkSession([&] (auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
-        // Make sure reference to NetworkProcess in spaceRequester is removed.
-        session.closeIDBServer([callbackAggregator] { });
     });
 }
 
@@ -382,7 +380,6 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     if (auto* session = networkSession(sessionID)) {
-        session->ensureWebIDBServer().addConnection(connection.connection(), identifier);
         if (auto* manager = session->storageManager())
             manager->startReceivingMessageFromConnection(connection.connection());
     }
@@ -406,8 +403,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
     addSessionStorageQuotaManager(sessionID, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
 
     if (auto* session = networkSession(sessionID)) {
-        session->addStorageManagerSession(parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
-        session->addIndexedDatabaseSession(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+        session->addStorageManagerSession(parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle, parameters.cacheStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota);
 #if ENABLE(SERVICE_WORKER)
         session->addServiceWorkerSession(parameters.serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
@@ -1452,13 +1448,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         callbackAggregator->m_websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
 #endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && session && session->hasIDBDatabasePath()) {
-        session->ensureWebIDBServer().getOrigins([callbackAggregator](auto&& origins) {
-            while (!origins.isEmpty())
-                callbackAggregator->m_websiteData.entries.append({ origins.takeAny(), WebsiteDataType::IndexedDBDatabases, 0 });
-        });
-    }
-
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && session && session->hasServiceWorkerDatabasePath()) {
         session->ensureSWServer().getOriginsWithRegistrations([callbackAggregator](const HashSet<SecurityOriginData>& securityOrigins) mutable {
@@ -1524,9 +1513,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session)
         CacheStorage::Engine::clearAllCaches(*session, [clearTasksHandler] { });
-
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral() && session)
-        session->ensureWebIDBServer().closeAndDeleteDatabasesModifiedSince(modifiedSince, [clearTasksHandler] { });
 
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
@@ -1619,9 +1605,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         for (auto& originData : originDatas)
             CacheStorage::Engine::clearCachesForOrigin(*session, SecurityOriginData { originData }, [clearTasksHandler] { });
     }
-
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral() && session)
-        session->ensureWebIDBServer().closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler] { });
 
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
@@ -1811,17 +1794,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
             }
         });
     }
-
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && session && session->hasIDBDatabasePath()) {
-        session->ensureWebIDBServer().getOrigins([this, protectedThis = Ref { *this }, sessionID, callbackAggregator, domainsToDeleteAllNonCookieWebsiteDataFor](auto&& origins) {
-            auto* session = networkSession(sessionID);
-            if (!session || !session->webIDBServer())
-                return;
-
-            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllNonCookieWebsiteDataFor, callbackAggregator->m_domains);
-            session->webIDBServer()->closeAndDeleteDatabasesForOrigins(originsToDelete, [callbackAggregator] { });
-        });
-    }
     
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
@@ -1955,13 +1927,6 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache) && session) {
         CacheStorage::Engine::fetchEntries(*session, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator](auto entries) mutable {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
-        });
-    }
-    
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && session && session->hasIDBDatabasePath()) {
-        session->ensureWebIDBServer().getOrigins([callbackAggregator](auto&& origins) {
-            while (!origins.isEmpty())
-                callbackAggregator->m_websiteData.entries.append({ origins.takeAny(), WebsiteDataType::IndexedDBDatabases, 0 });
         });
     }
     
@@ -2129,42 +2094,9 @@ void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandle
     prepareToSuspend(true, WTFMove(completionHandler));
 }
 
-void NetworkProcess::suspendIDBServers(bool isSuspensionImminent)
-{
-    m_shouldSuspendIDBServers = true;
-    ++m_suspensionIdentifier;
-
-    bool allSuspended = true;
-    auto condition = isSuspensionImminent ? WebIDBServer::SuspensionCondition::Always : WebIDBServer::SuspensionCondition::IfIdle;
-    forEachNetworkSession([&](auto& session) {
-        if (auto* server = session.webIDBServer())
-            allSuspended &= server->suspend(condition);
-    });
-
-    if (allSuspended)
-        return;
-
-    RunLoop::main().dispatchAfter(5_s, [this, weakThis = WeakPtr { *this }, suspensionIdentifier = m_suspensionIdentifier] {
-        if (!weakThis)
-            return;
-
-        if (!m_shouldSuspendIDBServers || suspensionIdentifier != m_suspensionIdentifier)
-            return;
-
-        forEachNetworkSession([](auto& session) {
-            if (auto* server = session.webIDBServer())
-                server->suspend(WebIDBServer::SuspensionCondition::Always);
-        });
-    });
-}
-
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d", this, isSuspensionImminent);
-
-#if PLATFORM(IOS_FAMILY)
-    suspendIDBServers(isSuspensionImminent);
-#endif
 
     lowMemoryHandler(Critical::Yes);
 
@@ -2224,17 +2156,9 @@ void NetworkProcess::resume()
         if (auto* swServer = session.swServer())
             swServer->endSuspension();
 #endif
-#if PLATFORM(IOS_FAMILY)
-        if (auto* server = session.webIDBServer())
-            server->resume();
-#endif
         if (auto* manager = session.storageManager())
             manager->resume();
     });
-
-#if PLATFORM(IOS_FAMILY)
-    m_shouldSuspendIDBServers = false;
-#endif
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)
@@ -2281,12 +2205,15 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    Locker locker { m_sessionStorageQuotaManagersLock };
-    if (auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID)) {
-        for (auto storageQuotaManager : sessionStorageQuotaManager->existingStorageQuotaManagers())
-            storageQuotaManager->resetQuotaForTesting();
-    }
-    completionHandler();
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return completionHandler();
+
+    auto* storageManager = session->storageManager();
+    if (!storageManager)
+        return completionHandler();
+
+    storageManager->resetQuotaForTesting(WTFMove(completionHandler));
 }
 
 void NetworkProcess::clearStorage(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -2296,6 +2223,16 @@ void NetworkProcess::clearStorage(PAL::SessionID sessionID, CompletionHandler<vo
         manager->clearStorageForTesting(WTFMove(completionHandler));
     else
         completionHandler();
+}
+
+void NetworkProcess::didIncreaseQuota(PAL::SessionID sessionID, const ClientOrigin& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    if (auto* manager = session->storageManager())
+        manager->didIncreaseQuota(origin, identifier, newQuota);
 }
 
 void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
@@ -2310,9 +2247,6 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
     auto* session = networkSession(sessionID);
     if (auto* manager = session ? session->storageManager() : nullptr)
         manager->moveData(oldOrigin, newOrigin, [aggregator] { });
-
-    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && session && session->hasIDBDatabasePath())
-        session->ensureWebIDBServer().renameOrigin(oldOrigin, newOrigin, [aggregator] { });
 }
 
 #if ENABLE(SERVICE_WORKER)
@@ -2372,7 +2306,8 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
     StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()]() {
         ASSERT(!isMainRunLoop());
 
-        return CacheStorage::Engine::diskUsage(cacheRootPath, origin) + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
+        auto cacheStoragePath = CacheStorage::Engine::storagePath(cacheRootPath, origin);
+        return CacheStorage::Engine::diskUsage(cacheStoragePath) + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
     };
     StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = WeakPtr { *this }, sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
         ASSERT(isMainRunLoop());
@@ -2586,8 +2521,6 @@ void NetworkProcess::removeKeptAliveLoad(NetworkResourceLoader& loader)
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)
 {
     if (auto* session = networkSession(sessionID)) {
-        if (auto* server = session->webIDBServer())
-            server->removeConnection(connection);
         if (auto* manager = session->storageManager())
             manager->stopReceivingMessageFromConnection(connection);
     }

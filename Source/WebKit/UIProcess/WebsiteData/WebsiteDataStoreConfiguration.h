@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include <WebCore/StorageQuotaManager.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -207,7 +206,7 @@ private:
 
     String m_cacheStorageDirectory;
     String m_generalStorageDirectory;
-    uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
+    uint64_t m_perOriginStorageQuota;
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
     String m_applicationCacheFlatFileSubdirectoryName { "Files"_s };

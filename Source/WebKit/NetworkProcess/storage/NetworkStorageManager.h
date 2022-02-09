@@ -36,6 +36,8 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
+#include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexedDB.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 
@@ -44,18 +46,31 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+class IDBCursorInfo;
+class IDBKeyData;
+class IDBIndexInfo;
+class IDBObjectStoreInfo;
+class IDBRequestData;
+class IDBTransactionInfo;
+class IDBValue;
 struct ClientOrigin;
+struct IDBGetAllRecordsData;
+struct IDBGetRecordData;
+struct IDBGetAllRecordsData;
+struct IDBIterateCursorData;
+struct IDBKeyRangeData;
 enum class StorageType : uint8_t;
 }
 
 namespace WebKit {
 
 class FileSystemStorageHandleRegistry;
+class IDBStorageRegistry;
 class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<NetworkStorageManager> create(PAL::SessionID, const String& path, const String& customLocalStoragePath);
+    static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
 
     void startReceivingMessageFromConnection(IPC::Connection&);
@@ -64,6 +79,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     void close();
     void clearStorageForTesting(CompletionHandler<void()>&&);
+    void didIncreaseQuota(const WebCore::ClientOrigin&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     void fetchData(OptionSet<WebsiteDataType>, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
     void deleteData(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
     void deleteDataModifiedSince(OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
@@ -73,14 +89,18 @@ public:
     void resume();
     void handleLowMemoryWarning();
     void syncLocalStorage(CompletionHandler<void()>&&);
+    void registerTemporaryBlobFilePaths(IPC::Connection&, const Vector<String>&);
+    void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&);
+    void resetQuotaForTesting(CompletionHandler<void()>&&);
+    void resetQuotaUpdatedBasedOnUsageForTesting(const WebCore::ClientOrigin&);
 
 private:
     NetworkStorageManager(PAL::SessionID, const String& path, const String& customLocalStoragePath);
+    NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota);
     ~NetworkStorageManager();
     OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
     void deleteOriginDirectoryIfPossible(const WebCore::ClientOrigin&);
-    FileSystemStorageHandleRegistry& fileSystemStorageHandleRegistry();
 
     void forEachOriginDirectory(const Function<void(const String&)>&);
     HashSet<WebCore::ClientOrigin> getAllOrigins();
@@ -118,6 +138,34 @@ private:
     void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&&);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
+    // Message handlers for IndexedDB.
+    void openDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
+    void openDBRequestCancelled(const WebCore::IDBRequestData&);
+    void deleteDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
+    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
+    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
+    void abortTransaction(const WebCore::IDBResourceIdentifier&);
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount);
+    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
+    void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
+    void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
+    void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);
+    void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
+    void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
+    void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
+    void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
+    void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
+    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
+    void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
+    void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
+    void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);
+    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
+    void getAllDatabaseNamesAndVersions(IPC::Connection&, const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&);
+
     PAL::SessionID m_sessionID;
     Ref<SuspendableWorkQueue> m_queue;
     String m_path;
@@ -127,7 +175,14 @@ private:
     WeakHashSet<IPC::Connection> m_connections; // Main thread only.
     std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
+    std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;
     String m_customLocalStoragePath;
+    String m_customIDBStoragePath;
+    String m_customCacheStoragePath;
+    uint64_t m_defaultOriginQuota;
+    uint64_t m_defaultThirdPartyOriginQuota;
+    IPC::Connection::UniqueID m_parentConnection;
+    HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection;
 };
 
 } // namespace WebKit

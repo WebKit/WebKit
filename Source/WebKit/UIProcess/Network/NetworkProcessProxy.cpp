@@ -1506,6 +1506,16 @@ void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const We
     });
 }
 
+void NetworkProcessProxy::increaseQuota(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, QuotaIncreaseRequestIdentifier identifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t spaceRequested)
+{
+    requestStorageSpace(sessionID, origin, currentQuota, currentUsage, spaceRequested, [this, weakThis = WeakPtr { *this }, sessionID, origin, identifier](auto result) mutable {
+        if (!weakThis)
+            return;
+
+        send(Messages::NetworkProcess::DidIncreaseQuota(sessionID, origin, identifier, result), 0);
+    });
+}
+
 void NetworkProcessProxy::registerSchemeForLegacyCustomProtocol(const String& scheme)
 {
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)

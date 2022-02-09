@@ -205,8 +205,6 @@ void NetworkSession::invalidateAndCancel()
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
-    if (auto server = std::exchange(m_webIDBServer, nullptr))
-        server->close();
     if (auto manager = std::exchange(m_storageManager, nullptr))
         manager->close();
     m_cacheEngine = nullptr;
@@ -661,55 +659,18 @@ WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
     return *m_sharedWorkerServer;
 }
 
-WebIDBServer& NetworkSession::ensureWebIDBServer()
-{
-    if (!m_webIDBServer) {
-        String path;
-        if (!sessionID().isEphemeral()) {
-            ASSERT(!m_idbDatabasePath.isNull());
-            path = m_idbDatabasePath;
-        }
-
-        auto spaceRequester = [networkProcess = Ref { networkProcess() }, sessionID = sessionID()](const auto& origin, uint64_t spaceRequested) {
-            return networkProcess->storageQuotaManager(sessionID, origin)->requestSpaceOnBackgroundThread(spaceRequested);
-        };
-
-        m_webIDBServer = WebIDBServer::create(sessionID(), path, WTFMove(spaceRequester));
-        if (networkProcess().shouldSuspendIDBServers())
-            m_webIDBServer->suspend(WebIDBServer::SuspensionCondition::Always);
-    }
-    return *m_webIDBServer;
-}
-
-void NetworkSession::closeIDBServer(CompletionHandler<void()>&& completionHandler)
-{
-    if (!m_webIDBServer)
-        return completionHandler();
-
-    std::exchange(m_webIDBServer, nullptr)->close(WTFMove(completionHandler));
-}
-
-void NetworkSession::addIndexedDatabaseSession(const String& indexedDatabaseDirectory, SandboxExtension::Handle& handle)
-{
-    // *********
-    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
-    // *********
-    auto isNew = m_idbDatabasePath.isNull();
-    m_idbDatabasePath = indexedDatabaseDirectory;
-    if (isNew) {
-        SandboxExtension::consumePermanently(handle);
-        networkProcess().setSessionStorageQuotaManagerIDBRootPath(sessionID(), indexedDatabaseDirectory);
-    }
-}
-
-void NetworkSession::addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle)
+void NetworkSession::addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota)
 {
     if (m_storageManager)
         return;
 
     SandboxExtension::consumePermanently(generalStoragePathHandle);
     SandboxExtension::consumePermanently(localStoragePathHandle);
-    m_storageManager = NetworkStorageManager::create(sessionID(), generalStoragePath, localStoragePath);
+    SandboxExtension::consumePermanently(idbStoragePathHandle);
+    IPC::Connection::UniqueID connectionID;
+    if (auto* connection = networkProcess().parentProcessConnection())
+        connectionID = connection->uniqueID();
+    m_storageManager = NetworkStorageManager::create(sessionID(), connectionID, generalStoragePath, localStoragePath, idbStoragePath, cacheStoragePath, defaultOriginQuota, defaultThirdPartyQuota);
 }
 
 void NetworkSession::ensureCacheEngine(Function<void(CacheStorage::Engine&)>&& callback)

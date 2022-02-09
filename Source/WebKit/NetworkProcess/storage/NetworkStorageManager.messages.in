@@ -47,4 +47,31 @@
     SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) Async WantsConnection
     RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () Async WantsConnection
     Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () Async WantsConnection
+
+    OpenDatabase(WebCore::IDBRequestData requestData) WantsConnection
+    OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
+    DeleteDatabase(WebCore::IDBRequestData requestData) WantsConnection
+    EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
+    DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+    DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
+    DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
+    CommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, uint64_t pendingRequestCount)
+    CreateObjectStore(WebCore::IDBRequestData requestData, WebCore::IDBObjectStoreInfo info)
+    DeleteObjectStore(WebCore::IDBRequestData requestData, String objectStoreName)
+    RenameObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String newName)
+    ClearObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier)
+    CreateIndex(WebCore::IDBRequestData requestData, WebCore::IDBIndexInfo info)
+    DeleteIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String indexName)
+    RenameIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, String newName)
+    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, WebCore::IDBValue value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode) WantsConnection
+    GetRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBGetRecordData getRecordData)
+    GetAllRecords(WebCore::IDBRequestData requestData, struct WebCore::IDBGetAllRecordsData getAllRecordsData)
+    GetCount(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
+    DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
+    OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info)
+    IterateCursor(WebCore::IDBRequestData requestData, struct WebCore::IDBIterateCursorData data)
+    GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
 }

@@ -28,7 +28,6 @@
 
 #include "IDBIterateCursorData.h"
 #include "IDBResultData.h"
-#include "IDBServer.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
 
@@ -50,12 +49,14 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
         m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(database->info());
 
-    databaseConnection().server()->registerTransaction(*this);
+    if (auto* manager = databaseConnection().manager())
+        manager->registerTransaction(*this);
 }
 
 UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
 {
-    databaseConnection().server()->unregisterTransaction(*this);
+    if (auto* manager = databaseConnection().manager())
+        manager->unregisterTransaction(*this);
 }
 
 UniqueIDBDatabaseConnection& UniqueIDBDatabaseTransaction::databaseConnection()

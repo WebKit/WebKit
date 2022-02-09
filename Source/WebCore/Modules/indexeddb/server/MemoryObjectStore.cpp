@@ -38,18 +38,17 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
 
-Ref<MemoryObjectStore> MemoryObjectStore::create(PAL::SessionID sessionID, const IDBObjectStoreInfo& info)
+Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
 {
-    return adoptRef(*new MemoryObjectStore(sessionID, info));
+    return adoptRef(*new MemoryObjectStore(info));
 }
 
-MemoryObjectStore::MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo& info)
+MemoryObjectStore::MemoryObjectStore(const IDBObjectStoreInfo& info)
     : m_info(info)
 {
 }
