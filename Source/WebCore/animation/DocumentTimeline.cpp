@@ -386,24 +386,6 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
         effectStack->stopAcceleratingTransformRelatedProperties(UseAcceleratedAction::No);
 }
 
-bool DocumentTimeline::runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject& renderer) const
-{
-    auto styleable = Styleable::fromRenderer(renderer);
-    if (!styleable)
-        return false;
-
-    auto* animations = styleable->animations();
-    if (!animations || animations->isEmpty())
-        return false;
-
-    for (const auto& animation : *animations) {
-        if (!animation->isRunningAccelerated())
-            return false;
-    }
-
-    return true;
-}
-
 void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
 {
     m_pendingAnimationEvents.append(event);

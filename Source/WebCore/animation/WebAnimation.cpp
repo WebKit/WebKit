@@ -1252,11 +1252,6 @@ void WebAnimation::runPendingPauseTask()
     invalidateEffect();
 }
 
-bool WebAnimation::isRunningAccelerated() const
-{
-    return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isRunningAccelerated();
-}
-
 bool WebAnimation::needsTick() const
 {
     return pending() || playState() == PlayState::Running || m_hasScheduledEventsDuringTick;

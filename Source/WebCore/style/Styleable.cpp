@@ -60,15 +60,15 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
                 return Styleable(topLayerElement.get(), PseudoId::Backdrop);
         }
         break;
-    case PseudoId::Marker:
-        if (auto* ancestor = renderer.parent()) {
-            while (ancestor && !ancestor->element())
-                ancestor = ancestor->parent();
-            ASSERT(is<RenderListItem>(ancestor));
-            ASSERT(downcast<RenderListItem>(ancestor)->markerRenderer() == &renderer);
-            return Styleable(*ancestor->element(), PseudoId::Marker);
+    case PseudoId::Marker: {
+        auto* ancestor = renderer.parent();
+        while (ancestor) {
+            if (is<RenderListItem>(ancestor) && ancestor->element() && downcast<RenderListItem>(ancestor)->markerRenderer() == &renderer)
+                return Styleable(*ancestor->element(), PseudoId::Marker);
+            ancestor = ancestor->parent();
         }
         break;
+    }
     case PseudoId::After:
     case PseudoId::Before:
     case PseudoId::None:
@@ -161,6 +161,20 @@ bool Styleable::isRunningAcceleratedTransformAnimation() const
     }
 
     return false;
+}
+
+bool Styleable::runningAnimationsAreAllAccelerated() const
+{
+    auto* effectStack = keyframeEffectStack();
+    if (!effectStack || !effectStack->hasEffects())
+        return false;
+
+    for (const auto& effect : effectStack->sortedEffects()) {
+        if (!effect->isRunningAccelerated())
+            return false;
+    }
+
+    return true;
 }
 
 void Styleable::animationWasAdded(WebAnimation& animation) const
