@@ -39,24 +39,23 @@
                     { "name": "bot1024", "platform": "mac-bigsur" },
                     { "name": "bot1027", "platform": "mac-bigsur" },
 
-                    { "name": "bot205", "platform": "mac-catalina" },
-                    { "name": "bot241", "platform": "mac-catalina" },
-                    { "name": "bot242", "platform": "mac-catalina" },
-                    { "name": "bot243", "platform": "mac-catalina" },
-                    { "name": "bot244", "platform": "mac-catalina" },
-                    { "name": "bot245", "platform": "mac-catalina" },
-                    { "name": "bot246", "platform": "mac-catalina" },
-                    { "name": "bot247", "platform": "mac-catalina" },
-                    { "name": "bot248", "platform": "mac-catalina" },
-                    { "name": "bot674", "platform": "mac-catalina" },
-                    { "name": "bot683", "platform": "mac-catalina" },
-                    { "name": "bot687", "platform": "mac-catalina" },
-                    { "name": "bot688", "platform": "mac-catalina" },
-
+                    { "name": "bot205", "platform": "*" },
+                    { "name": "bot241", "platform": "*" },
+                    { "name": "bot242", "platform": "*" },
+                    { "name": "bot243", "platform": "*" },
+                    { "name": "bot244", "platform": "*" },
+                    { "name": "bot245", "platform": "*" },
+                    { "name": "bot246", "platform": "*" },
+                    { "name": "bot247", "platform": "*" },
+                    { "name": "bot248", "platform": "*" },
                     { "name": "bot611", "platform": "*" },
                     { "name": "bot612", "platform": "*" },
                     { "name": "bot613", "platform": "*" },
+                    { "name": "bot674", "platform": "*" },
+                    { "name": "bot683", "platform": "*" },
                     { "name": "bot684", "platform": "*" },
+                    { "name": "bot687", "platform": "*" },
+                    { "name": "bot688", "platform": "*" },
 
                     { "name": "bot210", "platform": "ios-simulator-15" },
                     { "name": "bot600", "platform": "ios-simulator-15" },
@@ -272,15 +271,15 @@
                       "workernames": ["bot142"]
                     },
                     { "name": "Apple-BigSur-Debug-JSC-Tests", "factory": "TestJSCFactory", "builddir": "bigsur-debug-tests-jsc",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot638"]
                     },
                     { "name": "Apple-BigSur-Release-JSC-Tests", "factory": "TestJSCFactory", "builddir": "bigsur-release-tests-jsc",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot610"]
                     },
                     { "name": "Apple-BigSur-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory", "builddir": "bigsur-debug-tests-wk2-gpuprocess",
-                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
                       "workernames": ["bot260"]
                     },
@@ -290,38 +289,8 @@
                     },
                     {
                       "name": "Apple-BigSur-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "bigsur-release-perf-tests",
-                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot184"]
-                    },
-                    { "name": "Apple-Catalina-Debug-Build", "factory": "BuildFactory", "builddir": "catalina-debug",
-                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2"],
-                      "workernames": ["bot687", "bot688"]
-                    },
-                    { "name": "Apple-Catalina-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "catalina-debug-tests-wk1",
-                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot241", "bot242"]
-                    },
-                    { "name": "Apple-Catalina-Debug-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "catalina-debug-tests-wk2",
-                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot243", "bot244"]
-                    },
-                    { "name": "Apple-Catalina-Release-Build", "factory": "BuildFactory", "builddir": "catalina-release",
-                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["catalina-release-tests-wk1", "catalina-release-tests-wk2"],
-                      "workernames": ["bot683", "bot674"]
-                    },
-                    { "name": "Apple-Catalina-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "catalina-release-tests-wk1",
-                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot245", "bot246"]
-                    },
-                    { "name": "Apple-Catalina-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "catalina-release-tests-wk2",
-                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "workernames": ["bot247", "bot248"]
                     },
                     {
                       "name": "Apple-iOS-15-Release-Build", "factory": "BuildFactory", "builddir": "ios-15-release",
@@ -724,21 +693,6 @@
                     },
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-BigSur-Debug-WK2-GPUProcess-Tests"]
-                    },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-Catalina-Release-Build", "Apple-Catalina-Debug-Build"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-release-tests-wk1",
-                      "builderNames": ["Apple-Catalina-Release-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-release-tests-wk2",
-                      "builderNames": ["Apple-Catalina-Release-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-debug-tests-wk1",
-                      "builderNames": ["Apple-Catalina-Debug-WK1-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
-                      "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-15", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-15-Release-Build"]

@@ -176,7 +176,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Catalina-Release-Build-EWS': [
+        'macOS-BigSur-Release-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -190,7 +190,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'macOS-Catalina-Release-WK1-Tests-EWS': [
+        'macOS-BigSur-Release-WK1-Tests-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -212,7 +212,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Catalina-Release-WK2-Tests-EWS': [
+        'macOS-BigSur-Release-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -253,7 +253,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Catalina-Debug-Build-EWS': [
+        'macOS-BigSur-Debug-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -267,7 +267,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'macOS-Catalina-Debug-WK1-Tests-EWS': [
+        'macOS-BigSur-Debug-WK1-Tests-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',

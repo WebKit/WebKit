@@ -687,6 +687,20 @@
         (Port.relative_test_filename): Normalize filename with
         TEST_PATH_SEPARATOR before comparing with layout_tests_dir().
 
+2022-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move macOS EWS to Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=236035
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
 2022-02-03  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Allow use of hardware-fixed credentials while using alternate store
