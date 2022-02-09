@@ -82,6 +82,7 @@ static String testES256PrivateKeyBase64 =
     "RQ==";
 static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVkSm9obg=="; // { "id": h'00010203040506070809', "name": "John" }
 static String webAuthenticationPanelSelectedCredentialName;
+static String testWebKitAPIAccessGroup = "com.apple.TestWebKitAPI";
 static bool laContextRequested = false;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
@@ -385,7 +386,8 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
         (id)kSecAttrLabel: rpId,
         (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:userHandleBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-        (id)kSecUseDataProtectionKeychain: @YES
+        (id)kSecUseDataProtectionKeychain: @YES,
+        (id)kSecAttrAccessGroup: testWebKitAPIAccessGroup,
     }];
     if (synchronizable)
         [addQuery.get() setObject:@YES forKey:(__bridge id)kSecAttrSynchronizable];
@@ -2266,7 +2268,7 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64);
 
-    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup];
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 1lu);
 
@@ -2276,8 +2278,12 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
     
     cleanUpKeychain("example.com");
 
-    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorCredential:exportedKey error:&error];
+    EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 0lu);
+
+    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:testWebKitAPIAccessGroup credential:exportedKey error:&error];
     EXPECT_WK_STREQ([[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] base64EncodedStringWithOptions:0], [credentialId base64EncodedStringWithOptions:0]);
+
+    EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 1lu);
 
     cleanUpKeychain("example.com");
 }
@@ -2289,7 +2295,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64);
 
-    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup];
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 1lu);
 
@@ -2297,7 +2303,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     NSError *error = nil;
     auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
 
-    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorCredential:exportedKey error:&error];
+    auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:testWebKitAPIAccessGroup credential:exportedKey error:&error];
     EXPECT_EQ(credentialId, nil);
     EXPECT_EQ(error.code, WKErrorDuplicateCredential);
 

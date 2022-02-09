@@ -398,6 +398,11 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
 + (NSData *)importLocalAuthenticatorCredential:(NSData *)credentialBlob error:(NSError **)error
 {
+    return [self importLocalAuthenticatorWithAccessGroup:@(WebCore::LocalAuthenticatorAccessGroup) credential:credentialBlob error:error];
+}
+
++ (NSData *)importLocalAuthenticatorWithAccessGroup:(NSString *)accessGroup credential:(NSData *)credentialBlob error:(NSError **)error
+{
 #if ENABLE(WEB_AUTHN)
     auto credential = cbor::CBORReader::read(vectorFromNSData(credentialBlob));
     if (!credential || !credential->isMap()) {
@@ -481,6 +486,9 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     ]);
     updateQueryIfNecessary(query.get());
 
+    if (accessGroup != nil)
+        [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
+
     OSStatus status = SecItemCopyMatching(bridge_cast(query.get()), nullptr);
     if (!status) {
         // Credential with same id already exists, duplicate key.
@@ -489,15 +497,22 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     }
 
     auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:keyTag->data() length:keyTag->size()]);
-    NSDictionary *addQuery = @{
-        (id)kSecValueRef: (id)key.get(),
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-        (id)kSecAttrLabel: rp,
-        (id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
-        (id)kSecUseDataProtectionKeychain: @YES,
-        (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock
-    };
-    status = SecItemAdd(bridge_cast(addQuery), NULL);
+
+    auto addQuery = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
+        (id)key.get(), (id)kSecValueRef,
+        (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
+        (id)rp, (id)kSecAttrLabel,
+        secAttrApplicationTag.get(), (id)kSecAttrApplicationTag,
+        @YES, (id)kSecUseDataProtectionKeychain,
+        (id)kSecAttrAccessibleAfterFirstUnlock, (id)kSecAttrAccessible,
+        nil
+    ]);
+    updateQueryIfNecessary(addQuery.get());
+
+    if (accessGroup != nil)
+        [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
+
+    status = SecItemAdd(bridge_cast(addQuery.get()), NULL);
     if (status) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorUnknown);
         return nullptr;

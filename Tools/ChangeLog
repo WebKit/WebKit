@@ -1,3 +1,17 @@
+2022-02-09  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Specify LocalAuthenticatorAccessGroup when importing credentials
+        https://bugs.webkit.org/show_bug.cgi?id=236311
+        rdar://88394179
+
+        Reviewed by Brent Fulgham.
+
+        Added check for accessGroup to API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::WebCore::addKeyToKeychain):
+        (TestWebKitAPI::TEST):
+
 2022-02-09  Sihui Liu  <sihui_liu@apple.com>
 
         Manage IndexedDB storage by origin
