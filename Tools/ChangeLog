@@ -1,3 +1,27 @@
+2022-02-09  Martin Robinson  <mrobinson@webkit.org>
+
+        [Flatpak SDK] Add a wrapper for clangd
+        https://bugs.webkit.org/show_bug.cgi?id=236240
+
+        Reviewed by Philippe Normand.
+
+        * flatpak/flatpakutils.py: Refactor this file so that the build constants can be
+        reused in the new script.
+        (convert_webkit_source_path_to_sandbox_path):
+        (convert_sandbox_path_to_webkit_source_path):
+        (get_build_dir):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.is_build_jsc):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.check_toolchains_generated):
+        (WebkitFlatpak.pack_toolchain):
+        (WebkitFlatpak.host_path_to_sandbox_path): Deleted.
+        (WebkitFlatpak.sandbox_path_to_host_path): Deleted.
+        * flatpak/webkit-clangd: Added.
+
 2022-02-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Allow hanging run-javascriptcore-tests to print backtrace

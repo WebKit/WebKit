@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2021 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import flatpakutils
+import os
+import sys
+
+platform = "GTK"
+if "--wpe" in sys.argv:
+    platform = "WPE"
+    sys.argv.remove("--wpe")
+if "--gtk" in sys.argv:
+    sys.argv.remove("--gtk")
+
+build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ \
+    else flatpakutils.DEFAULT_BUILD_ROOT
+mappings = "--path-mappings=" + ",".join([
+    "{}={}".format(
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Debug"),
+        os.path.join(build_path, platform, "Debug")),
+    "{}={}".format(
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Release"),
+        os.path.join(build_path, platform, "Release")),
+    "{}={}".format(
+        os.path.join(flatpakutils.WEBKIT_SOURCE_DIR, "Source"),
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Source")),
+    "/usr/include={}".format(
+        os.path.join(flatpakutils.FLATPAK_USER_DIR_PATH, "runtime", "org.webkit.Sdk",
+                     "x86_64", flatpakutils.SDK_BRANCH, "active", "files", "include")),
+])
+
+print(f"Running clangd with arguments: {[mappings] + sys.argv[1:]}")
+flatpakutils.run_in_sandbox_if_available(["clangd", mappings] + sys.argv[1:])

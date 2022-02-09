@@ -35,6 +35,9 @@ import tempfile
 import re
 import platform
 
+SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
+WEBKIT_SOURCE_DIR = os.path.normpath(os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..")))
+sys.path.insert(0, os.path.join(WEBKIT_SOURCE_DIR, "Tools", "Scripts"))
 from webkitpy.common.system.logutils import configure_logging
 from webkitcorepy import string_utils
 import toml
@@ -59,11 +62,20 @@ except ImportError:
 
 FLATPAK_REQUIRED_VERSION = "1.4.4"
 
-scriptdir = os.path.abspath(os.path.dirname(__file__))
 _log = logging.getLogger(__name__)
 
-FLATPAK_USER_DIR_PATH = os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak"))
+BUILD_ROOT_DIR_NAME = 'WebKitBuild'
+
+# This path doesn't take $WEBKIT_OUTPUTDIR in account because the standalone toolchains
+# paths depend on it and those are also hard-coded in the generated sccache config.
+DEFAULT_BUILD_ROOT = os.path.join(WEBKIT_SOURCE_DIR, BUILD_ROOT_DIR_NAME)
+BUILD_ROOT = os.path.join(os.environ.get("WEBKIT_OUTPUTDIR", WEBKIT_SOURCE_DIR), BUILD_ROOT_DIR_NAME)
+FLATPAK_USER_DIR_PATH = os.path.realpath(os.path.join(DEFAULT_BUILD_ROOT, "UserFlatpak"))
+
 DEFAULT_SCCACHE_SCHEDULER='https://sccache.igalia.com'
+
+# Where the source folder is mounted inside the sandbox.
+SANDBOX_SOURCE_ROOT = "/app/webkit"
 
 # Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
 # in our SDK build definitions please don't forget to update the version here as well.
@@ -197,6 +209,20 @@ def check_flatpak(verbose=True):
 
     return current_version
 
+
+def convert_webkit_source_path_to_sandbox_path(source_path):
+    '''Convert a path in the WebKit source directory to the same path in the
+       sandboxed source diretory. '''
+    return source_path.replace(WEBKIT_SOURCE_DIR, SANDBOX_SOURCE_ROOT)
+
+
+def convert_sandbox_path_to_webkit_source_path(sandbox_path):
+    # For now this supports only files in the /app/webkit path
+    return sandbox_path.replace(SANDBOX_SOURCE_ROOT, WEBKIT_SOURCE_DIR)
+
+
+def get_build_dir(platform, build_type):
+    return os.path.join(BUILD_ROOT, platform, build_type)
 
 class FlatpakObject:
 
@@ -523,11 +549,6 @@ class WebkitFlatpak:
 
         self.release = False
         self.debug = False
-        self.source_root = os.path.normpath(os.path.abspath(os.path.join(scriptdir, '../../')))
-        # Where the source folder is mounted inside the sandbox.
-        self.sandbox_source_root = "/app/webkit"
-
-        self.base_build_dir = 'WebKitBuild'
 
         self.build_gst = False
 
@@ -571,7 +592,7 @@ class WebkitFlatpak:
 
     def clean_args(self):
         if self.user_repo:
-            os.environ["FLATPAK_USER_DIR"] = FLATPAK_USER_DIR_PATH + ".Local"
+            os.environ["FLATPAK_USER_DIR"] = os.path.join(FLATPAK_USER_DIR_PATH, ".Local")
         else:
             os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
         self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
@@ -586,16 +607,10 @@ class WebkitFlatpak:
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = True
 
-        # This path doesn't take $WEBKIT_OUTPUTDIR in account because the standalone toolchains
-        # paths depend on it and those are also hard-coded in the generated sccache config.
-        self.default_build_root = os.path.join(self.source_root, self.base_build_dir)
-
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
         self.sccache_config_file = os.path.join(self.flatpak_build_path, 'sccache.toml')
 
-        build_root = os.environ.get("WEBKIT_OUTPUTDIR", self.source_root)
-        self.build_root = os.path.join(build_root, self.base_build_dir)
-        self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
+        self.build_path = get_build_dir(self.platform, self.build_type)
         _log.debug("Building %s port in %s" % (self.platform, self.build_path))
 
         self.toolchains_directory = os.path.join(self.flatpak_build_path, "Toolchains")
@@ -657,8 +672,8 @@ class WebkitFlatpak:
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
             raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
 
-        gst_builddir = os.path.join(self.source_root, self.base_build_dir, 'gst-build')
-        if not os.path.exists(os.path.join(self.default_build_root, 'gst-build', 'build.ninja')):
+        gst_builddir = os.path.join(DEFAULT_BUILD_ROOT, 'gst-build')
+        if not os.path.exists(os.path.join(DEFAULT_BUILD_ROOT, 'gst-build', 'build.ninja')):
             if not building:
                 raise RuntimeError('Trying to enter gst-build env from %s but it is not built, make sure to rebuild webkit.' % gst_dir)
 
@@ -684,7 +699,7 @@ class WebkitFlatpak:
             if not var_name.startswith("GST_") and var_name not in allowlist:
                 continue
             if var_name not in nopathlist:
-                new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
+                new_contents = ':'.join([convert_webkit_source_path_to_sandbox_path(p) for p in contents.split(":")])
             else:
                 new_contents = contents.replace("'", "")
             env[var_name] = new_contents
@@ -716,14 +731,6 @@ class WebkitFlatpak:
     def is_build_jsc(self, command):
         return command and "build-jsc" in os.path.basename(command)
 
-    def host_path_to_sandbox_path(self, host_path):
-        # For now this supports only files in the /app/webkit path
-        return host_path.replace(self.source_root, self.sandbox_source_root)
-
-    def sandbox_path_to_host_path(self, sandbox_path):
-        # For now this supports only files in the /app/webkit path
-        return sandbox_path.replace(self.sandbox_source_root, self.source_root)
-
     @staticmethod
     def get_user_runtime_dir():
         return os.environ.get('XDG_RUNTIME_DIR', os.path.join('/run/user', str(os.getuid())))
@@ -731,7 +738,6 @@ class WebkitFlatpak:
     def run_in_sandbox(self, *args, **kwargs):
         if not self.setup_builddir():
             return 1
-        cwd = kwargs.get("cwd", None)
         extra_env_vars = kwargs.get("env", {})
         stdout = kwargs.get("stdout", sys.stdout)
         extra_flatpak_args = kwargs.get("extra_flatpak_args", [])
@@ -748,7 +754,7 @@ class WebkitFlatpak:
         if not isinstance(args, list):
             args = list(args)
 
-        sandbox_build_path = os.path.join(self.sandbox_source_root, self.base_build_dir, self.build_type)
+        sandbox_build_path = os.path.join(SANDBOX_SOURCE_ROOT, BUILD_ROOT_DIR_NAME, self.build_type)
         sandbox_environment = {
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
             "PATH": "/usr/lib/sdk/llvm12/bin:/usr/bin:/usr/lib/sdk/rust/bin/",
@@ -763,7 +769,7 @@ class WebkitFlatpak:
             elif os.path.exists(args[0]):
                 command = os.path.normpath(os.path.abspath(args[0]))
                 # Take into account the fact that the webkit source dir is remounted inside the sandbox.
-                args[0] = command.replace(self.source_root, self.sandbox_source_root)
+                args[0] = convert_webkit_source_path_to_sandbox_path(command)
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])
@@ -888,7 +894,7 @@ class WebkitFlatpak:
             sccache_environment = {}
             if os.path.isfile(self.sccache_config_file) and not self.regenerate_toolchains and \
                "SCCACHE_CONF" not in os.environ.keys():
-                sccache_environment["SCCACHE_CONF"] = self.host_path_to_sandbox_path(self.sccache_config_file)
+                sccache_environment["SCCACHE_CONF"] = convert_webkit_source_path_to_sandbox_path(self.sccache_config_file)
 
             override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
             if override_sccache_server_port:
@@ -925,7 +931,7 @@ class WebkitFlatpak:
                     Console.error_message("%s toolchain not found. ICECC_VERSION_OVERRIDE mis-configured?", toolchain_override)
                     return 1
 
-                toolchain_path = self.host_path_to_sandbox_path(toolchain_override)
+                toolchain_path = convert_webkit_source_path_to_sandbox_path(toolchain_override)
 
             if not toolchain_path:
                 Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r or set ICECC_VERSION_OVERRIDE to a valid host path")
@@ -937,7 +943,7 @@ class WebkitFlatpak:
                     Console.error_message("%s is not a valid IceCC toolchain. ICECC_VERSION_APPEND mis-configured?", extra_toolchain)
                     return 1
                 toolchain_path += ","
-                toolchain_path += self.host_path_to_sandbox_path(extra_toolchain)
+                toolchain_path += convert_webkit_source_path_to_sandbox_path(extra_toolchain)
 
             sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
@@ -993,7 +999,7 @@ class WebkitFlatpak:
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
         flatpak_env.update({
-            "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
+            "FLATPAK_BWRAP": os.path.join(SCRIPT_DIR, "webkit-bwrap"),
             "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path),
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
@@ -1047,7 +1053,7 @@ class WebkitFlatpak:
                     Console.message("Forcing next WebKit build to re-run CMake")
                     for platform in ('GTK', 'WPE'):
                         for build_type in ('Release', 'Debug'):
-                            cache_path = os.path.join(self.build_root, platform, build_type, 'CMakeCache.txt')
+                            cache_path = os.path.join(get_build_dir(platform, build_type), 'CMakeCache.txt')
                             if os.path.isfile(cache_path):
                                 Console.message("Removing %s", cache_path)
                                 os.remove(cache_path)
@@ -1070,7 +1076,7 @@ class WebkitFlatpak:
 
             # Toolchains used to be stored in WebKitBuild/Toolchains. Remove this path if found, to save
             # up disk space.
-            old_toolchains_path = os.path.join(self.default_build_root, "Toolchains")
+            old_toolchains_path = os.path.join(DEFAULT_BUILD_ROOT, "Toolchains")
             if os.path.isdir(old_toolchains_path):
                 Console.message("Purging obsolete toolchains")
                 shutil.rmtree(old_toolchains_path)
@@ -1144,7 +1150,7 @@ class WebkitFlatpak:
                 config = json.load(config_fd)
                 if 'icecc_version' in config:
                     for compiler in config['icecc_version']:
-                        if os.path.isfile(self.sandbox_path_to_host_path(config['icecc_version'][compiler])):
+                        if os.path.isfile(convert_sandbox_path_to_webkit_source_path(config['icecc_version'][compiler])):
                             found_toolchains += 1
         return found_toolchains > 1
 
@@ -1156,7 +1162,7 @@ class WebkitFlatpak:
         with tempfile.NamedTemporaryFile() as tmpfile:
             command = ['icecc', '--build-native']
             command.extend(compiler_mapping.values())
-            retcode = self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root, skip_icc=True)
+            retcode = self.run_in_sandbox(*command, stdout=tmpfile, cwd=WEBKIT_SOURCE_DIR, skip_icc=True)
             if retcode != 0:
                 Console.error_message('Flatpak command "%s" failed with return code %s', " ".join(command), retcode)
                 return []
@@ -1166,7 +1172,7 @@ class WebkitFlatpak:
             relative_filename = "webkit-sdk-{name}-{filename}".format(name=compilers[0], filename=icc_version_filename.decode())
             archive_filename = os.path.join(self.toolchains_directory, relative_filename)
             os.rename(icc_version_filename, archive_filename)
-            archive_sandbox_path = self.host_path_to_sandbox_path(archive_filename)
+            archive_sandbox_path = convert_webkit_source_path_to_sandbox_path(archive_filename)
             self.icc_version[compilers[0]] = archive_sandbox_path
             Console.message("Created %s self-contained toolchain archive", archive_filename)
 
