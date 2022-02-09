@@ -1,5 +1,17 @@
 2022-02-08  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] additive and accumulation interpolation does not work correctly with implicit 0% and 100% keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=236314
+
+        Reviewed by Dean Jackson.
+
+        Add some new WPT tests and mark our PASS results for the "add" case (we still fail for "accumulate").
+
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition.html:
+
+2022-02-08  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] Animation.commitStyles() should use the non-animated style
         https://bugs.webkit.org/show_bug.cgi?id=236315
 
