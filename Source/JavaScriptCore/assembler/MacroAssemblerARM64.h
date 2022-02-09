@@ -4521,14 +4521,18 @@ public:
     void loadFromTLS32(uint32_t offset, RegisterID dst)
     {
         m_assembler.mrs_TPIDRRO_EL0(dst);
+#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
         and64(TrustedImm32(~7), dst);
+#endif
         load32(Address(dst, offset), dst);
     }
     
     void loadFromTLS64(uint32_t offset, RegisterID dst)
     {
         m_assembler.mrs_TPIDRRO_EL0(dst);
+#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
         and64(TrustedImm32(~7), dst);
+#endif
         load64(Address(dst, offset), dst);
     }
 
@@ -4542,7 +4546,9 @@ public:
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
         ASSERT(src != tmp);
         m_assembler.mrs_TPIDRRO_EL0(tmp);
+#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
         and64(TrustedImm32(~7), tmp);
+#endif
         store32(src, Address(tmp, offset));
     }
     
@@ -4551,7 +4557,9 @@ public:
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
         ASSERT(src != tmp);
         m_assembler.mrs_TPIDRRO_EL0(tmp);
+#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
         and64(TrustedImm32(~7), tmp);
+#endif
         store64(src, Address(tmp, offset));
     }
 
