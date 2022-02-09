@@ -2835,8 +2835,7 @@ OptionSet<Containment> RenderStyle::effectiveContainment() const
         containment.add({ Containment::Layout, Containment::Style, Containment::Size });
         break;
     case ContainerType::InlineSize:
-        // FIXME: Support inline-size containment.
-        containment.add({ Containment::Layout, Containment::Style });
+        containment.add({ Containment::Layout, Containment::Style, Containment::InlineSize });
         break;
     };
 

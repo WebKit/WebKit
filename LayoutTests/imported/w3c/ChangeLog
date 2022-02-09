@@ -1,3 +1,12 @@
+2022-02-09  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Implement inline-size containment
+        https://bugs.webkit.org/show_bug.cgi?id=236354
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-contain/container-queries/container-type-containment-expected.txt:
+
 2022-02-09  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Improving applyStep() to be in line with specs

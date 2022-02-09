@@ -4081,6 +4081,11 @@ static inline LayoutUnit preferredWidth(LayoutUnit preferredWidth, float result)
 
 void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    // "The inline-axis intrinsic sizes of the principal box are determined as if the element had no content."
+    // https://drafts.csswg.org/css-contain-3/#containment-inline-size
+    if (style().effectiveContainment().contains(Containment::InlineSize))
+        return;
+
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (const_cast<RenderBlockFlow&>(*this).tryComputePreferredWidthsUsingModernPath(minLogicalWidth, maxLogicalWidth))
         return;

@@ -797,9 +797,23 @@ bool Scope::updateQueryContainerState()
         auto* containerElement = containerRenderer.element();
         if (!containerElement)
             continue;
-        auto size = containerRenderer.size();
+        
+        auto size = containerRenderer.logicalSize();
+
+        auto sizeChanged = [&](LayoutSize oldSize) {
+            switch (containerRenderer.style().containerType()) {
+            case ContainerType::InlineSize:
+                return size.width() != oldSize.width();
+            case ContainerType::Size:
+                return size != oldSize;
+            case ContainerType::None:
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        };
+
         auto it = previousStates.find(*containerElement);
-        bool changed = it == previousStates.end() || it->value != size;
+        bool changed = it == previousStates.end() || sizeChanged(it->value);
         if (changed)
             changedContainers.append(containerElement);
         m_queryContainerStates.add(*containerElement, size);
