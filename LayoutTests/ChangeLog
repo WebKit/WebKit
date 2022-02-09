@@ -1,3 +1,12 @@
+2022-02-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        compositing/masks/compositing-clip-path-mask-change.html is failing for ports using TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=236323
+
+        Reviewed by Don Olmstead.
+
+        * platform/gtk/TestExpectations:
+
 2022-02-09  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

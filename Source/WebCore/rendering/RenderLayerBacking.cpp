@@ -2300,13 +2300,13 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 
         if (!m_maskLayer) {
             m_maskLayer = createGraphicsLayer("mask", requiredLayerType);
-            m_maskLayer->setDrawsContent(paintsContent);
-            m_maskLayer->setPaintingPhase(maskPhases);
             layerChanged = true;
             m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
             // We need a geometry update to size the new mask layer.
             m_owningLayer.setNeedsCompositingGeometryUpdate();
         }
+        m_maskLayer->setDrawsContent(paintsContent);
+        m_maskLayer->setPaintingPhase(maskPhases);
     } else if (m_maskLayer) {
         m_graphicsLayer->setMaskLayer(nullptr);
         willDestroyLayer(m_maskLayer.get());
