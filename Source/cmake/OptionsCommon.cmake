@@ -36,11 +36,16 @@ if (USE_LD_LLD)
 endif ()
 
 # Determine which linker is being used with the chosen linker flags.
+separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
+    "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"
+)
 execute_process(
-    COMMAND ${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version
+    COMMAND ${LD_VERSION_COMMAND}
     OUTPUT_VARIABLE LD_VERSION
     ERROR_QUIET
 )
+unset(LD_VERSION_COMMAND)
+
 set(LD_SUPPORTS_GDB_INDEX TRUE)
 set(LD_SUPPORTS_SPLIT_DEBUG TRUE)
 set(LD_SUPPORTS_THIN_ARCHIVES TRUE)
@@ -69,12 +74,15 @@ message(STATUS "  Linker supports --gdb-index - ${LD_SUPPORTS_GDB_INDEX}")
 message(STATUS "  Linker supports --disable-new-dtags - ${LD_SUPPORTS_DISABLE_NEW_DTAGS}")
 
 # Determine whether the archiver in use supports thin archives.
+separate_arguments(AR_VERSION_COMMAND UNIX_COMMAND "${CMAKE_AR} -V")
 execute_process(
-    COMMAND ${CMAKE_AR} -V
+    COMMAND ${AR_VERSION_COMMAND}
     OUTPUT_VARIABLE AR_VERSION
     RESULT_VARIABLE AR_STATUS
     ERROR_QUIET
 )
+unset(AR_VERSION_COMMAND)
+
 set(AR_SUPPORTS_THIN_ARCHIVES FALSE)
 if (AR_STATUS EQUAL 0)
     if (AR_VERSION MATCHES "^GNU ar ")

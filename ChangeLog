@@ -1,3 +1,14 @@
+2022-02-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] REGRESSION(r288994): Setting multiple values in LDFLAGS causes incorrect linker detection
+        https://bugs.webkit.org/show_bug.cgi?id=236365
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsCommon.cmake: Use separate_arguments() to turn plain command strings
+        into lists of strings, which can then be passed down to execute_process() as it knows how
+        to handle lists properly.
+
 2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.3 release
