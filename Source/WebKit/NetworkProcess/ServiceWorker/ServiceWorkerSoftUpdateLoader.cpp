@@ -196,7 +196,7 @@ void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadM
 {
     if (m_decoder)
         m_script.append(m_decoder->flush());
-    m_completionHandler({ ScriptBuffer { m_script.toString() }, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
+    m_completionHandler({ ScriptBuffer { m_script.toString() }, m_jobData.scriptURL, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
     didComplete();
 }
 

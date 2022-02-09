@@ -45,6 +45,7 @@ class ThreadableLoaderClient {
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
+    virtual void redirectReceived(const URL& /*redirectURL*/) { }
     virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) { }
     virtual void didReceiveData(const SharedBuffer&) { }
     virtual void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) { }

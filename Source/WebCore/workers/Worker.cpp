@@ -213,12 +213,7 @@ void Worker::notifyFinished()
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;
 
-    URL responseURL = m_scriptLoader->responseURL();
-    if (!m_scriptLoader->isRedirected() && m_scriptLoader->responseSource() != ResourceResponse::Source::ServiceWorker) {
-        if (m_scriptLoader->url().hasFragmentIdentifier())
-            responseURL.setFragmentIdentifier(m_scriptLoader->url().fragmentIdentifier());
-    }
-    m_contextProxy.startWorkerGlobalScope(responseURL, m_options.name, context->userAgent(responseURL), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
+    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->lastRequestURL(), m_options.name, context->userAgent(m_scriptLoader->lastRequestURL()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script().toString());
 }
 

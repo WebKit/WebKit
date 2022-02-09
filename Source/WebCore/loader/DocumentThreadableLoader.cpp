@@ -314,6 +314,9 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     Ref<DocumentThreadableLoader> protectedThis(*this);
     --m_options.maxRedirectCount;
 
+    if (m_client)
+        m_client->redirectReceived(request.url());
+
     // FIXME: We restrict this check to Fetch API for the moment, as this might disrupt WorkerScriptLoader.
     // Reassess this check based on https://github.com/whatwg/fetch/issues/393 discussions.
     // We should also disable that check in navigation mode.

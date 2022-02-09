@@ -37,6 +37,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "TextResourceDecoder.h"
+#include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
@@ -57,6 +58,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
 
     m_url = url;
+    m_lastRequestURL = url;
     m_destination = FetchOptions::Destination::Script;
     m_isCOEPEnabled = scriptExecutionContext->settingsValues().crossOriginEmbedderPolicyEnabled;
 
@@ -116,6 +118,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 {
     m_client = &client;
     m_url = scriptRequest.url();
+    m_lastRequestURL = scriptRequest.url();
     m_destination = fetchOptions.destination;
     m_isCOEPEnabled = scriptExecutionContext.settingsValues().crossOriginEmbedderPolicyEnabled;
 
@@ -176,6 +179,11 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
     }
 
     return { };
+}
+
+void WorkerScriptLoader::redirectReceived(const URL& redirectURL)
+{
+    m_lastRequestURL = redirectURL;
 }
 
 void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
@@ -264,6 +272,13 @@ void WorkerScriptLoader::cancel()
     m_client = nullptr;
     m_threadableLoader->cancel();
     m_threadableLoader = nullptr;
+}
+
+WorkerFetchResult WorkerScriptLoader::fetchResult() const
+{
+    if (m_failed)
+        return workerFetchError(error());
+    return { script(), lastRequestURL(), certificateInfo(), contentSecurityPolicy(), crossOriginEmbedderPolicy(), referrerPolicy(), { } };
 }
 
 } // namespace WebCore

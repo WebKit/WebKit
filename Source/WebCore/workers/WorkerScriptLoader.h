@@ -49,6 +49,7 @@ class Exception;
 class ScriptExecutionContext;
 class TextResourceDecoder;
 class WorkerScriptLoaderClient;
+struct WorkerFetchResult;
 enum class CertificateInfoPolicy : uint8_t;
 
 class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
@@ -64,11 +65,12 @@ public:
 
     void notifyError();
 
-    const ScriptBuffer& script() { return m_script; }
+    const ScriptBuffer& script() const { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     const URL& url() const { return m_url; }
+    const URL& lastRequestURL() const { return m_lastRequestURL; }
     const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
@@ -78,6 +80,9 @@ public:
     ResourceLoaderIdentifier identifier() const { return m_identifier; }
     const ResourceError& error() const { return m_error; }
 
+    WorkerFetchResult fetchResult() const;
+
+    void redirectReceived(const URL& redirectURL) override;
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
@@ -103,6 +108,7 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;
     URL m_url;
+    URL m_lastRequestURL;
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
     String m_responseMIMEType;

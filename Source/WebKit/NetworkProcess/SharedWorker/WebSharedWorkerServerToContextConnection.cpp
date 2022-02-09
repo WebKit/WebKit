@@ -90,7 +90,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
 {
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();
-    send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.url(), sharedWorker.workerOptions(), sharedWorker.fetchResult() });
+    send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult() });
     for (auto& port : sharedWorker.sharedWorkerObjects().values())
         postConnectEvent(sharedWorker, port);
 }

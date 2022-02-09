@@ -54,7 +54,7 @@ public:
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
 private:
-    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, const URL& scriptURL, WorkerFetchResult&&, WorkerOptions&&, const String& userAgent, CacheStorageProvider&);
+    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, const String& userAgent, CacheStorageProvider&);
 
     // WorkerObjectProxy.
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;

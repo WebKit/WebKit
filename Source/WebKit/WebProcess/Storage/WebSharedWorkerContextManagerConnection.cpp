@@ -89,7 +89,7 @@ void WebSharedWorkerContextManagerConnection::updatePreferencesStore(const WebPr
     m_preferencesStore = store;
 }
 
-void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::ClientOrigin&& origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, URL&& url, WebCore::WorkerOptions&& workerOptions, WebCore::WorkerFetchResult&& workerFetchResult)
+void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::ClientOrigin&& origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::WorkerOptions&& workerOptions, WebCore::WorkerFetchResult&& workerFetchResult)
 {
     RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
@@ -110,8 +110,8 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
         WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
         page->settings().setStorageBlockingPolicy(static_cast<WebCore::StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
     }
-    page->setupForRemoteWorker(url, origin.topOrigin, workerFetchResult.referrerPolicy);
-    auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, url, WTFMove(workerFetchResult), WTFMove(workerOptions), m_userAgent, WebProcess::singleton().cacheStorageProvider());
+    page->setupForRemoteWorker(workerFetchResult.lastRequestURL, origin.topOrigin, workerFetchResult.referrerPolicy);
+    auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), m_userAgent, WebProcess::singleton().cacheStorageProvider());
 
     WebCore::SharedWorkerContextManager::singleton().registerSharedWorkerThread(WTFMove(sharedWorkerThreadProxy));
 }

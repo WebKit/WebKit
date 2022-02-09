@@ -55,10 +55,10 @@ static HashSet<SharedWorkerThreadProxy*>& allSharedWorkerThreadProxies()
     return set;
 }
 
-static WorkerParameters generateWorkerParameters(const URL& scriptURL, const WorkerFetchResult& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, Document& document)
+static WorkerParameters generateWorkerParameters(const WorkerFetchResult& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, Document& document)
 {
     return WorkerParameters {
-        scriptURL,
+        workerFetchResult.lastRequestURL,
         workerOptions.name,
         "sharedworker:" + Inspector::IdentifiersFactory::createIdentifier(),
         userAgent,
@@ -74,10 +74,10 @@ static WorkerParameters generateWorkerParameters(const URL& scriptURL, const Wor
     };
 }
 
-SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, const URL& scriptURL, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, CacheStorageProvider& cacheStorageProvider)
+SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, CacheStorageProvider& cacheStorageProvider)
     : m_page(WTFMove(page))
     , m_document(*m_page->mainFrame().document())
-    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(scriptURL, workerFetchResult, WTFMove(workerOptions), userAgent, m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
+    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTFMove(workerOptions), userAgent, m_document), WTFMove(workerFetchResult.script), *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->idbConnectionProxy(), m_document->socketProvider(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
 {
     ASSERT(!allSharedWorkerThreadProxies().contains(this));

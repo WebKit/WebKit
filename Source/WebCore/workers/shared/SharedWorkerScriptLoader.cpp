@@ -58,12 +58,9 @@ void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier ident
 
 void SharedWorkerScriptLoader::notifyFinished()
 {
-    if (m_loader->failed())
-        return m_completionHandler(workerFetchError(m_loader->error()));
-
-    if (auto* scriptExecutionContext = m_worker->scriptExecutionContext())
+    if (auto* scriptExecutionContext = m_worker->scriptExecutionContext(); !m_loader->failed())
         InspectorInstrumentation::scriptImported(*scriptExecutionContext, m_loader->identifier(), m_loader->script().toString());
-    m_completionHandler({ m_loader->script(), m_loader->certificateInfo(), m_loader->contentSecurityPolicy(), m_loader->crossOriginEmbedderPolicy(), m_loader->referrerPolicy(), { } }); // deletes this.
+    m_completionHandler(m_loader->fetchResult()); // deletes this.
 }
 
 } // namespace WebCore

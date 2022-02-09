@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebSharedWorkerContextManagerConnection NotRefCounted {
-    LaunchSharedWorker(struct WebCore::ClientOrigin origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, URL url, struct WebCore::WorkerOptions workerOptions, struct WebCore::WorkerFetchResult workerFetchResult)
+    LaunchSharedWorker(struct WebCore::ClientOrigin origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, struct WebCore::WorkerOptions workerOptions, struct WebCore::WorkerFetchResult workerFetchResult)
     PostConnectEvent(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::TransferredMessagePort port, String sourceOrigin)
     TerminateSharedWorker(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)

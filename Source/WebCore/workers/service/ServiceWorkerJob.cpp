@@ -37,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
+#include "WorkerFetchResult.h"
 #include "WorkerRunLoop.h"
 
 namespace WebCore {
@@ -165,7 +166,7 @@ void ServiceWorkerJob::notifyFinished()
     auto scriptLoader = WTFMove(m_scriptLoader);
 
     if (!scriptLoader->failed()) {
-        m_client.jobFinishedLoadingScript(*this, scriptLoader->script(), scriptLoader->certificateInfo(), scriptLoader->contentSecurityPolicy(), scriptLoader->crossOriginEmbedderPolicy(), scriptLoader->referrerPolicy());
+        m_client.jobFinishedLoadingScript(*this, scriptLoader->fetchResult());
         return;
     }
 
