@@ -2219,3 +2219,4 @@ webkit.org/b/234536 webxr/high-performance.html
 webkit.org/b/234536 fast/mediastream/getUserMedia-to-canvas-1.html [ Crash ]
 webkit.org/b/234536 fast/mediastream/getUserMedia-to-canvas-2.html [ Crash ]
 webkit.org/b/234536 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
+webkit.org/b/234536 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]

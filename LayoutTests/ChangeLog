@@ -1,3 +1,10 @@
+2022-02-09  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Timeout due to turning WebGL on by default on bots. Will be addressed in b234536.
+        * platform/ios-wk2/TestExpectations:
+
 2022-02-09  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/dom from upstream
