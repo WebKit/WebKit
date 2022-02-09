@@ -1451,7 +1451,16 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one animation effect associated with
     // animation whose effect target is target.
 
-    auto& style = renderer->style();
+    auto unanimatedStyle = [&]() {
+        if (auto styleable = Styleable::fromRenderer(*renderer)) {
+            if (auto* lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
+                return RenderStyle::clone(*lastStyleChangeEventStyle);
+        }
+        // If we don't have a style for the last style change event, then the
+        // current renderer style cannot be animated.
+        return RenderStyle::clone(renderer->style());
+    }();
+
     auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
     auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
     inlineStyle->setCssText(styledElement.getAttribute("style"));
@@ -1471,7 +1480,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
         // We actually perform those steps in a different way: instead of building a copy of the effect stack and then removing stuff, we iterate through the
         // effect stack and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
-        auto animatedStyle = RenderStyle::clonePtr(style);
+        auto animatedStyle = RenderStyle::clonePtr(unanimatedStyle);
         for (const auto& effectInStack : keyframeStack.sortedEffects()) {
             if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this))
                 break;

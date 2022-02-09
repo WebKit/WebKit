@@ -1,3 +1,14 @@
+2022-02-08  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] Animation.commitStyles() should use the non-animated style
+        https://bugs.webkit.org/show_bug.cgi?id=236315
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progression.
+
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+
 2022-02-08  Chris Dumez  <cdumez@apple.com>
 
         FileReaderSync should be exposed to shared workers
