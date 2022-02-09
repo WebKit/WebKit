@@ -403,6 +403,9 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
             if (returnedExceptionMessage)
                 *returnedExceptionMessage = genericErrorMessage;
         }
+
+        JSLockHolder lock(vm);
+        reportException(m_globalScopeWrapper.get(), returnedException);
     }
 }
 

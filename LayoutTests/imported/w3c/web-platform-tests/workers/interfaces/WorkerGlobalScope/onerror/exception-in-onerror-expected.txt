@@ -7,8 +7,8 @@ PASS Throw in setTimeout(string): classic: listener
 PASS Throw in setTimeout(string): classic: handler
 PASS Throw in message handler: classic: listener
 PASS Throw in message handler: classic: handler
-FAIL Throw in worker initialization: module: listener assert_unreached: Worker.onerror not fired for: Throw in toplevel Throw in error handler Reached unreachable code
-FAIL Throw in worker initialization: module: handler assert_unreached: Worker.onerror not fired for: Throw in toplevel Throw in error handler Reached unreachable code
+PASS Throw in worker initialization: module: listener
+PASS Throw in worker initialization: module: handler
 PASS Throw in setTimeout(function): module: listener
 PASS Throw in setTimeout(function): module: handler
 PASS Throw in setTimeout(string): module: listener
