@@ -94,10 +94,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
 
     m_lineIndex = lineIndex;
     // Every line starts with a root box, even the empty ones.
-    auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-    rootInlineBoxRect.moveHorizontally(displayLine.left() + displayLine.contentLeft());
-    rootInlineBoxRect.moveVertically(displayLine.top());
-
+    auto rootInlineBoxRect = flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, root().style().writingMode());
     boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
@@ -327,7 +324,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
     ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
-    auto contentStartInVisualOrder = movePointHorizontallyForWritingMode(displayLine.topLeft(), displayLine.contentLeft(), writingMode);
+    auto contentStartInVisualOrder = movePointHorizontallyForWritingMode(displayLine.topLeft(), displayLine.contentLogicalOffset(), writingMode);
 
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
@@ -545,7 +542,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     ancestorStack.push({ }, root());
 
     auto writingMode = root().style().writingMode();
-    auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLeft();
+    auto contentStartInVisualOrder = displayLine.left() + displayLine.contentLogicalOffset();
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
 
@@ -799,6 +796,28 @@ InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWit
         break;
     }
     return logicalRect;
+}
+
+InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, const InlineDisplay::Line& displayLine, WritingMode writingMode) const
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom: {
+        auto visualRect = rootInlineBoxLogicalRect;
+        visualRect.moveBy({ displayLine.left() + displayLine.contentLogicalOffset(), displayLine.top() });
+        return visualRect;
+    }
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft: {
+        // See InlineFormattingGeometry for more info.
+        auto visualRect = InlineRect { rootInlineBoxLogicalRect.left(), rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.height(), rootInlineBoxLogicalRect.width() };
+        visualRect.moveBy({ displayLine.left(), displayLine.top() + displayLine.contentLogicalOffset() });
+        return visualRect;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return rootInlineBoxLogicalRect;
 }
 
 InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMode(const InlineLayoutPoint& logicalPoint, InlineLayoutUnit horizontalOffset, WritingMode writingMode) const

@@ -137,7 +137,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         }
 
         auto boxCount = boxIndex - firstBoxIndex;
-        inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentLeft(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentLogicalOffset(), line.contentLogicalWidth() });
     }
 }
 

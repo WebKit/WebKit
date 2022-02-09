@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLeft, float contentLogicalWidth)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -45,7 +45,7 @@ public:
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
-        , m_contentLeft(contentLeft)
+        , m_contentLogicalOffset(contentLogicalOffset)
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
     {
@@ -68,7 +68,7 @@ public:
     float baseline() const { return m_baseline; }
     FontBaseline baselineType() const { return m_baselineType; }
 
-    float contentLeft() const { return m_contentLeft; }
+    float contentLogicalOffset() const { return m_contentLogicalOffset; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
 private:
@@ -84,7 +84,7 @@ private:
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };
-    float m_contentLeft { 0 };
+    float m_contentLogicalOffset { 0 };
     float m_contentLogicalWidth { 0 };
     FontBaseline m_baselineType { AlphabeticBaseline }; 
 };

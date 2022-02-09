@@ -83,7 +83,7 @@ public:
         auto& style = box().style();
         auto expansion = box().expansion();
         auto rect = this->rect();
-        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLeft());
+        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalOffset());
 
         auto textForRun = [&] {
             if (mode == CreateTextRunMode::Editing || !hasHyphen())
