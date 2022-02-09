@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (221,1) size 426x17
               text run at (221,1) width 426: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8866"
           RenderText {#text} at (647,1) size 761x36
-            text run at (647,1) width 4: " "
-            text run at (651,1) width 110: "REGRESSION:"
+            text run at (647,1) width 5: " "
+            text run at (652,1) width 109: "REGRESSION:"
             text run at (0,20) width 277: "Incorrect caret position in RTL text"
         RenderText {#text} at (277,20) size 5x17
           text run at (277,20) width 5: "."

@@ -1,3 +1,93 @@
+2022-02-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Update baselines after r288944
+
+        Unreviewed test gardening.
+
+        The bulk of these tests needed to update their baselines after
+        r288944, although other baseline updates in this patch might not due
+        to that change.
+
+        * platform/glib/fast/text/whitespace/nbsp-mode-and-linewraps-expected.png: Added.
+        * platform/glib/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/glib/webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt:
+        * platform/gtk/editing/deleting/5144139-2-expected.png:
+        * platform/gtk/editing/deleting/5144139-2-expected.txt:
+        * platform/gtk/fast/borders/rtl-border-04-expected.txt:
+        * platform/gtk/fast/borders/rtl-border-05-expected.png:
+        * platform/gtk/fast/borders/rtl-border-05-expected.txt:
+        * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/text/basic/014-expected.txt:
+        * platform/gtk/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/gtk/fast/text/international/003-expected.png:
+        * platform/gtk/fast/text/international/003-expected.txt:
+        * platform/gtk/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/gtk/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/gtk/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/gtk/fast/text/international/bidi-european-terminators-expected.png:
+        * platform/gtk/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/gtk/fast/text/international/bidi-ignored-for-first-child-inline-expected.png:
+        * platform/gtk/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/gtk/fast/text/international/bidi-innertext-expected.png:
+        * platform/gtk/fast/text/international/bidi-innertext-expected.txt:
+        * platform/gtk/fast/text/international/bidi-menulist-expected.png:
+        * platform/gtk/fast/text/international/bidi-menulist-expected.txt:
+        * platform/gtk/fast/text/international/bidi-override-expected.png:
+        * platform/gtk/fast/text/international/bidi-override-expected.txt:
+        * platform/gtk/fast/text/international/rtl-caret-expected.png:
+        * platform/gtk/fast/text/international/rtl-caret-expected.txt:
+        * platform/gtk/fast/text/international/rtl-white-space-pre-wrap-expected.png:
+        * platform/gtk/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/gtk/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/gtk/fast/text/whitespace/nbsp-mode-and-linewraps-expected.png: Removed.
+        * platform/gtk/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug46924-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/wpe/fast/borders/rtl-border-04-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/wpe/fast/borders/rtl-border-05-expected.txt:
+        * platform/wpe/fast/events/updateLayoutForHitTest-expected.png: Added.
+        * platform/wpe/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/wpe/fast/text/basic/014-expected.png: Added.
+        * platform/wpe/fast/text/basic/014-expected.txt:
+        * platform/wpe/fast/text/in-rendered-text-rtl-expected.png: Added.
+        * platform/wpe/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/wpe/fast/text/international/003-expected.txt:
+        * platform/wpe/fast/text/international/bidi-L2-run-reordering-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wpe/fast/text/international/bidi-european-terminators-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wpe/fast/text/international/bidi-innertext-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-innertext-expected.txt:
+        * platform/wpe/fast/text/international/bidi-menulist-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-menulist-expected.txt:
+        * platform/wpe/fast/text/international/bidi-override-expected.png: Added.
+        * platform/wpe/fast/text/international/bidi-override-expected.txt:
+        * platform/wpe/fast/text/international/rtl-caret-expected.png: Added.
+        * platform/wpe/fast/text/international/rtl-caret-expected.txt:
+        * platform/wpe/fast/text/international/rtl-white-space-pre-wrap-expected.png: Added.
+        * platform/wpe/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/wpe/fast/text/midword-break-after-breakable-char-expected.png: Added.
+        * platform/wpe/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/wpe/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-02-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

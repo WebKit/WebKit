@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (293,20) size 5x17
           text run at (293,20) width 5: "."
       RenderBlock {P} at (0,54) size 784x38
-        RenderText {#text} at (0,1) size 767x36
-          text run at (0,1) width 767: "The rightmost two words in the Hebrew text should be selectable by dragging or double-clicking"
+        RenderText {#text} at (0,1) size 766x36
+          text run at (0,1) width 766: "The rightmost two words in the Hebrew text should be selectable by dragging or double-clicking"
           text run at (0,20) width 47: "them."
       RenderBlock {HR} at (0,108) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,118) size 784x19

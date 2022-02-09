@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (64,1) size 373x17
               text run at (64,1) width 373: "http://bugs.webkit.org/show_bug.cgi?id=13775"
           RenderText {#text} at (436,1) size 755x36
-            text run at (436,1) width 5: " "
-            text run at (440,1) width 315: "REGRESSION: Popup button text should"
+            text run at (436,1) width 6: " "
+            text run at (441,1) width 314: "REGRESSION: Popup button text should"
             text run at (0,20) width 525: "use \"natural\" directionality to match the items in the popup menu"
         RenderText {#text} at (525,20) size 5x17
           text run at (525,20) width 5: "."

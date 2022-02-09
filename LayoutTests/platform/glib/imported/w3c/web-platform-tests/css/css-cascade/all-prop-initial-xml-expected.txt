@@ -97,6 +97,8 @@ PASS column-rule-width
 PASS column-span
 PASS column-width
 PASS contain
+PASS container-name
+PASS container-type
 PASS content
 PASS counter-increment
 PASS counter-reset
@@ -355,7 +357,6 @@ PASS -webkit-column-break-after
 PASS -webkit-column-break-before
 PASS -webkit-column-break-inside
 PASS -webkit-column-progression
-PASS -webkit-cursor-visibility
 PASS -webkit-font-smoothing
 PASS -webkit-hyphenate-character
 PASS -webkit-hyphenate-limit-after
