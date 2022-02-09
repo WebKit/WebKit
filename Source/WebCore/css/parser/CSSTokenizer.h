@@ -57,12 +57,14 @@ public:
     Vector<String>&& escapedStringsForAdoption() { return WTFMove(m_stringPool); }
 
 private:
-    CSSTokenizer(String&&, CSSParserObserverWrapper*, bool* constructionSuccess);
+    CSSTokenizer(const String&, CSSParserObserverWrapper*, bool* constructionSuccess);
 
     CSSParserToken nextToken();
 
     UChar consume();
     void reconsume(UChar);
+
+    String preprocessString(String);
 
     CSSParserToken consumeNumericToken();
     CSSParserToken consumeIdentLikeToken();
@@ -122,11 +124,10 @@ private:
     static const CodePoint codePoints[];
 
     Vector<CSSParserTokenType, 8> m_blockStack;
-    CSSTokenizerInputStream m_input;
-    
     Vector<CSSParserToken, 32> m_tokens;
     // We only allocate strings when escapes are used.
     Vector<String> m_stringPool;
+    CSSTokenizerInputStream m_input;
 };
 
 } // namespace WebCore
