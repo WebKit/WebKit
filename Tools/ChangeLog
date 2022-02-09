@@ -1,3 +1,13 @@
+2022-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        WKWebView: WKURLSchemeHandler “request to the end of the resource” produces an invalid header
+        https://bugs.webkit.org/show_bug.cgi?id=236401
+        rdar://88528286
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2022-02-09  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Specify LocalAuthenticatorAccessGroup when importing credentials
