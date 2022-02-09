@@ -566,7 +566,6 @@ webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001.html [ Failure ]
 
 # Still failing even after r259188.
 webkit.org/b/206885 css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
@@ -1299,9 +1298,6 @@ webkit.org/b/212200 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-dir
 
 webkit.org/b/212023 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure ]
-
 webkit.org/b/158472 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 
 webkit.org/b/212204 fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
@@ -1352,5 +1348,3 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/scrollabl
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests require platform support.
-fast/text/locale-shaping-2.html [ ImageOnlyFailure ]
-fast/text/locale-shaping-3.html [ ImageOnlyFailure ]

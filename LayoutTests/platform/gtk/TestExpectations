@@ -145,7 +145,6 @@ webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 
 # canvas
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.coordinatespace.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.missingargs.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.voidreturn.worker.html [ Failure ]
@@ -168,9 +167,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transfo
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
-webkit.org/b/234831 imported/w3c/web-platform-tests/css/css-contain/contain-paint-004.html [ ImageOnlyFailure ]
 # Download
-
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Failure ]
@@ -1602,8 +1599,6 @@ webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
-webkit.org/b/163984 fast/dom/Window/child-window-focus.html [ Failure ]
-
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
 webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
@@ -1826,8 +1821,6 @@ webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.h
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
-webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
-
 webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
@@ -1878,5 +1871,3 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests require platform support.
-fast/text/locale-shaping-2.html [ ImageOnlyFailure ]
-fast/text/locale-shaping-3.html [ ImageOnlyFailure ]

@@ -1,3 +1,15 @@
+2022-02-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Remove tests passing from TestExpectations
+
+        Unreviewed test gardening.
+
+        Also sort lines in TestExpectations.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2022-02-08  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: [Flexbox] Add support for showing/hiding flex container overlays and basic overlay drawing

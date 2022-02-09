@@ -503,9 +503,6 @@ webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 webkit.org/b/221308 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
 webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
-webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
-webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-004.html [ Failure ]
-
 webkit.org/b/228920 imported/w3c/web-platform-tests/css/css-overflow/clip-006.html [ ImageOnlyFailure ]
 webkit.org/b/228920 imported/w3c/web-platform-tests/css/css-overflow/clip-007.html [ ImageOnlyFailure ]
 
@@ -1063,8 +1060,6 @@ webkit.org/b/224118 perf/array-reverse.html [ Failure Pass ]
 # ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/224657 imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html [ Failure ]
-
 webkit.org/b/227659 imported/w3c/web-platform-tests/resource-timing/same-origin-from-cross-origin-redirect.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1166,8 +1161,6 @@ webkit.org/b/213113 svg/filters/feConvolveMatrix-clipped.svg [ ImageOnlyFailure 
 webkit.org/b/213113 svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
 
 webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass ]
-
-webkit.org/b/131354 imported/mozilla/svg/blend-saturation.svg [ ImageOnlyFailure ]
 
 webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 webkit.org/b/189739 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
@@ -1376,7 +1369,6 @@ webkit.org/b/229051 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Fa
 
 webkit.org/b/229052 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
 
-webkit.org/b/96828 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -1481,14 +1473,7 @@ webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.h
 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Failure Pass ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
 
 webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure ]
 
@@ -2136,7 +2121,6 @@ webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
 # [GTK] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
-webkit.org/b/168426 svg/clip-path/clip-opacity.html [ ImageOnlyFailure ]
 
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
@@ -2278,7 +2262,6 @@ webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-017.h
 
 webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
 webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text-replace.html [ ImageOnlyFailure ]
-webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html [ Failure ]
 
 # WPT fetch tests.
 webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker.html [ Failure ]
@@ -2520,7 +2503,6 @@ webkit.org/b/229346 webrtc/multi-audio.html [ Timeout Pass ]
 webkit.org/b/229715 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
 webkit.org/b/229715 [ Debug ] fast/mediastream/screencapture-user-gesture.html [ Timeout ]
 
-webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]
 
@@ -2627,7 +2609,6 @@ webkit.org/b/232386 fast/selectors/empty-namespace-with-element-selector.html [ 
 webkit.org/b/232386 fast/table/Rowspan-value-more-than-number-of-rows-present.html [ Failure ]
 webkit.org/b/232386 fast/text/crash-font-family-parsed.html [ Failure ]
 webkit.org/b/232386 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
-webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 webkit.org/b/232386 fast/text/text-shadow-no-default-color.html [ Failure ]
 webkit.org/b/232386 fast/text/text-underline-first-line-decoration.html [ ImageOnlyFailure ]
 webkit.org/b/232386 fast/text/text-underline-style.html [ ImageOnlyFailure ]
