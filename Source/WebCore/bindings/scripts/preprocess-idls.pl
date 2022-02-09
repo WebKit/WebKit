@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # Copyright (C) 2011 Google Inc.  All rights reserved.
-# Copyright (C) 2020 Apple Inc.  All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -404,8 +404,6 @@ if ($supplementalMakefileDeps) {
         my @dependencies = sort(keys %{{ map{$_=>1}@dependencyList}});
 
         $makefileDeps .= "JS${basename}.h: @{dependencies}\n";
-        $makefileDeps .= "DOM${basename}.h: @{dependencies}\n";
-        $makefileDeps .= "WebDOM${basename}.h: @{dependencies}\n";
         foreach my $dependency (@dependencies) {
             $makefileDeps .= "${dependency}:\n";
         }
