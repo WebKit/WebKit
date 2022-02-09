@@ -544,7 +544,8 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
 GstElement* makeGStreamerElement(const char* factoryName, const char* name)
 {
     auto* element = gst_element_factory_make(factoryName, name);
-    RELEASE_ASSERT_WITH_MESSAGE(element, "GStreamer element %s not found. Please install it", factoryName);
+    if (!element)
+        WTFLogAlways("GStreamer element %s not found. Please install it", factoryName);
     return element;
 }
 
@@ -552,7 +553,8 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
 {
     GUniqueOutPtr<GError> error;
     auto* bin = gst_parse_bin_from_description(description, ghostUnlinkedPads, &error.outPtr());
-    RELEASE_ASSERT_WITH_MESSAGE(bin, "Unable to create bin for description: \"%s\". Error: %s", description, error->message);
+    if (!bin)
+        WTFLogAlways("Unable to create bin for description: \"%s\". Error: %s", description, error->message);
     return bin;
 }
 

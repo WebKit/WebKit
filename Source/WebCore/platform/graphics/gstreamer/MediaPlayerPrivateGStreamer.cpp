@@ -3491,6 +3491,12 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     if (!m_player->isVideoPlayer()) {
         m_videoSink = makeGStreamerElement("fakevideosink", nullptr);
+        if (!m_videoSink) {
+            GST_DEBUG_OBJECT(m_pipeline.get(), "Falling back to fakesink for video rendering");
+            m_videoSink = gst_element_factory_make("fakesink", nullptr);
+            g_object_set(m_videoSink.get(), "sync", TRUE, nullptr);
+        }
+
         return m_videoSink.get();
     }
 
