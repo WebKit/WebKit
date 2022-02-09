@@ -885,6 +885,19 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_singleTapGestureRecognizer requireGestureRecognizerToFail:_doubleTapGestureRecognizer.get()];
 }
 
+- (void)_createAndConfigureHighlightLongPressGestureRecognizer
+{
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress)
+        return;
+#endif
+
+    _highlightLongPressGestureRecognizer = adoptNS([[WKHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
+    [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
+    [_highlightLongPressGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+}
+
 - (void)_createAndConfigureLongPressGestureRecognizer
 {
     _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
@@ -1013,11 +1026,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_twoFingerDoubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
 
-    _highlightLongPressGestureRecognizer = adoptNS([[WKHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
-    [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
-    [_highlightLongPressGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
-
+    [self _createAndConfigureHighlightLongPressGestureRecognizer];
     [self _createAndConfigureLongPressGestureRecognizer];
 
 #if HAVE(LINK_PREVIEW)
@@ -1286,6 +1295,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _resetPanningPreventionFlags];
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress)
+        [self _startSuppressingSelectionAssistantForReason:WebKit::HoverPlatterEnabled];
+#endif
 
     _cachedSelectedTextRange = nil;
 }
@@ -3089,23 +3103,49 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return _latestTapID;
 }
 
+- (CGPoint)_locationForGesture:(UIGestureRecognizer *)gestureRecognizer
+{
+    auto location = [gestureRecognizer locationInView:self];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.enabled)
+        return [_hoverPlatter adjustedPointForPoint:location];
+#endif
+
+    return location;
+}
+
+- (CGPoint)_startPointForGesture:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    auto location = [gestureRecognizer startPoint];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.enabled)
+        return [_hoverPlatter adjustedPointForPoint:location];
+#endif
+
+    return location;
+}
+
 - (void)_highlightLongPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _highlightLongPressGestureRecognizer);
     [self _resetIsDoubleTapPending];
 
-    _lastInteractionLocation = gestureRecognizer.startPoint;
+    auto startPoint = [self _startPointForGesture:gestureRecognizer];
+
+    _lastInteractionLocation = startPoint;
 
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
         _longPressCanClick = YES;
         cancelPotentialTapIfNecessary(self);
-        _page->tapHighlightAtPosition([gestureRecognizer startPoint], [self nextTapIdentifier]);
+        _page->tapHighlightAtPosition(startPoint, [self nextTapIdentifier]);
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
         if (_longPressCanClick && _positionInformation.isElement) {
-            [self _attemptSyntheticClickAtLocation:gestureRecognizer.startPoint modifierFlags:gestureRecognizer.modifierFlags];
+            [self _attemptSyntheticClickAtLocation:startPoint modifierFlags:gestureRecognizer.modifierFlags];
             [self _finishInteraction];
         } else
             [self _cancelInteraction];
@@ -3122,14 +3162,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_doubleTapRecognizedForDoubleClick:(UITapGestureRecognizer *)gestureRecognizer
 {
-    _page->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint(gestureRecognizer.location), WebKit::webEventModifierFlags(gestureRecognizer.modifierFlags), _layerTreeTransactionIdAtLastInteractionStart);
+    _page->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint([self _locationForGesture:gestureRecognizer]), WebKit::webEventModifierFlags(gestureRecognizer.modifierFlags), _layerTreeTransactionIdAtLastInteractionStart);
 }
 
 - (void)_twoFingerSingleTapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = YES;
-    _page->handleTwoFingerTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.centroid), WebKit::webEventModifierFlags(gestureRecognizer.modifierFlags | UIKeyModifierCommand), [self nextTapIdentifier]);
+    _page->handleTwoFingerTapAtPoint(WebCore::roundedIntPoint([self _locationForGesture:gestureRecognizer]), WebKit::webEventModifierFlags(gestureRecognizer.modifierFlags | UIKeyModifierCommand), [self nextTapIdentifier]);
 }
 
 - (void)_longPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -3137,9 +3177,18 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
     [self _resetIsDoubleTapPending];
     [self _cancelTouchEventGestureRecognizer];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress) {
+        [_hoverPlatter didLongPressAtPoint:gestureRecognizer.startPoint];
+        _lastInteractionLocation = gestureRecognizer.startPoint;
+        return;
+    }
+#endif
+
     _page->didRecognizeLongPress();
 
-    _lastInteractionLocation = gestureRecognizer.startPoint;
+    _lastInteractionLocation = [self _startPointForGesture:gestureRecognizer];
 
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
         SEL action = [self _actionForLongPress];
@@ -3163,7 +3212,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _potentialTapInProgress = NO;
 }
 
-
 - (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
@@ -3176,7 +3224,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
 
-    _page->potentialTapAtPosition(gestureRecognizer.location, shouldRequestMagnificationInformation, [self nextTapIdentifier]);
+    _page->potentialTapAtPosition([self _locationForGesture:gestureRecognizer], shouldRequestMagnificationInformation, [self nextTapIdentifier]);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
@@ -3250,7 +3298,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     ASSERT(_potentialTapInProgress);
 
-    _lastInteractionLocation = gestureRecognizer.location;
+    _lastInteractionLocation = [self _locationForGesture:gestureRecognizer];
 
     [self _endPotentialTapAndEnableDoubleTapGesturesIfNecessary];
 
@@ -3280,9 +3328,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     RELEASE_LOG(ViewGestures, "Identified a double tap (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
 
     [self _resetIsDoubleTapPending];
-    _lastInteractionLocation = gestureRecognizer.location;
 
-    _smartMagnificationController->handleSmartMagnificationGesture(gestureRecognizer.location);
+    auto location = [self _locationForGesture:gestureRecognizer];
+    _lastInteractionLocation = location;
+    _smartMagnificationController->handleSmartMagnificationGesture(location);
 }
 
 - (void)_resetIsDoubleTapPending
@@ -3292,16 +3341,17 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_nonBlockingDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
-    _lastInteractionLocation = gestureRecognizer.location;
+    _lastInteractionLocation = [self _locationForGesture:gestureRecognizer];
     _isDoubleTapPending = YES;
 }
 
 - (void)_twoFingerDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     [self _resetIsDoubleTapPending];
-    _lastInteractionLocation = gestureRecognizer.location;
 
-    _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
+    auto location = [self _locationForGesture:gestureRecognizer];
+    _lastInteractionLocation = location;
+    _smartMagnificationController->handleResetMagnificationGesture(location);
 }
 
 - (void)_attemptSyntheticClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags
@@ -7853,6 +7903,10 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)_shouldUseContextMenus
 {
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress)
+        return NO;
+#endif
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
     return linkedOnOrAfter(SDKVersion::FirstThatHasUIContextMenuInteraction);
 #endif
@@ -8224,6 +8278,11 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 
 - (void)setUpDragAndDropInteractions
 {
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress)
+        return;
+#endif
+
     _dragInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dropInteraction = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
     [_dragInteraction _setLiftDelay:self.dragLiftDelay];
@@ -9673,9 +9732,13 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (event->type() == WebKit::WebEvent::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
         [self.window makeKeyWindow];
 
+    if (WKHoverPlatterDomain.rootSettings.enabled) {
+        [_hoverPlatter didReceiveMouseEvent:*event];
+        _page->handleMouseEvent([_hoverPlatter adjustedEventForEvent:*event]);
+        return;
+    }
+
     _page->handleMouseEvent(*event);
-    if (WKHoverPlatterDomain.rootSettings.platterEnabledForMouse)
-        [_hoverPlatter setHoverPoint:event->position()];
 }
 
 - (void)_configureMouseGestureRecognizer
@@ -9696,6 +9759,13 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler
 {
     [self doAfterPositionInformationUpdate:completionHandler forRequest:request];
+}
+
+- (void)interactableRegionsForHoverPlatter:(WKHoverPlatter *)platter inRect:(WebCore::FloatRect)rect completionHandler:(void (^)(Vector<WebCore::FloatRect>))completionHandler
+{
+    _page->interactableRegionsInRootViewCoordinates(rect, [completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::FloatRect> rects) {
+        completionHandler(rects);
+    });
 }
 
 #endif

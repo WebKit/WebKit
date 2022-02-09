@@ -43,6 +43,11 @@ NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned shor
 {
 }
 
+NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& otherEvent, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ)
+    : WebMouseEvent(otherEvent.type(), otherEvent.button(), otherEvent.buttons(), position, globalPosition, deltaX, deltaY, deltaZ, otherEvent.clickCount(), otherEvent.modifiers(), otherEvent.timestamp(), otherEvent.force(), otherEvent.syntheticClickType(), otherEvent.pointerId(), otherEvent.pointerType(), otherEvent.gestureWasCancelled())
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

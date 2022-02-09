@@ -1,3 +1,97 @@
+2022-02-09  Tim Horton  <timothy_horton@apple.com>
+
+        WKHoverPlatter should scale up the platter content to make it easier to see
+        https://bugs.webkit.org/show_bug.cgi?id=236289
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/ios/NativeWebMouseEventIOS.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        Add a NativeWebMouseEvent constructor that takes most properties from
+        another event, but allows overriding the positions and deltas.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::interactableRegionsInRootViewCoordinates):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::interactableRegionsInRootViewCoordinates):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add a method to count the number of clickable elements in a given rectangle.
+        This is just a first attempt at the heuristic; this will get more complex in the future.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        Add a selection assistant suppression reason for WKHoverPlatter.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureHighlightLongPressGestureRecognizer]):
+        Factor out highlight-long-press gesture creation like long-press. Bail if the platter is enabled.
+
+        (-[WKContentView setUpInteraction]):
+        Disable the selection assistant if WKHoverPlatter wants to use long press.
+
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _locationForGesture:]):
+        (-[WKContentView _startPointForGesture:]):
+        Add funnels for extracting the primary location or starting location from
+        a gesture, allowing WKHoverPlatter to mutate it if it is currently engaged.
+
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _doubleTapRecognizedForDoubleClick:]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _doubleTapRecognized:]):
+        (-[WKContentView _nonBlockingDoubleTapRecognized:]):
+        (-[WKContentView _twoFingerDoubleTapRecognized:]):
+        Adopt _locationForGesture/_startPointForGesture.
+
+        (-[WKContentView _longPressRecognized:]):
+        Adopt _locationForGesture/_startPointForGesture.
+        Redirect a recognized long press to WKHoverPlatter if it wants to use long press.
+
+        (-[WKContentView _shouldUseContextMenus]):
+        Disable context menus if WKHoverPlatter wants to use long press.
+
+        (-[WKContentView setUpDragAndDropInteractions]):
+        Disable drag and drop if WKHoverPlatter wants to use long press.
+
+        (-[WKContentView mouseGestureRecognizerChanged:]):
+        Allow WKHoverPlatter to mutate the location of mouse events if it is currently engaged.
+
+        (-[WKContentView numberOfLinksForHoverPlatter:inRect:completionHandler:]):
+        * UIProcess/ios/WKHoverPlatter.h:
+        * UIProcess/ios/WKHoverPlatter.mm:
+        (-[WKHoverPlatter initWithView:delegate:]):
+        (-[WKHoverPlatter didReceiveMouseEvent:]):
+        (-[WKHoverPlatter didLongPressAtPoint:]):
+        (-[WKHoverPlatter platterBoundingRect]):
+        (-[WKHoverPlatter linkSearchRect]):
+        (-[WKHoverPlatter update]):
+        (-[WKHoverPlatter updateDebugIndicator]):
+        (-[WKHoverPlatter dismissPlatterWithAnimation:]):
+        (-[WKHoverPlatter didFinishDismissalAnimation:]):
+        (-[WKHoverPlatter clearLayers]):
+        (-[WKHoverPlatter adjustedPointForPoint:]):
+        (-[WKHoverPlatter adjustedEventForEvent:]):
+        (setAdditionalPlatterLayerProperties): Deleted.
+        (addAdditionalIncomingAnimations): Deleted.
+        (addAdditionalDismissalAnimations): Deleted.
+        (-[WKHoverPlatter setHoverPoint:]): Deleted.
+        (-[WKHoverPlatter requestPositionInformationForCurrentHoverPoint]): Deleted.
+        (-[WKHoverPlatter didReceivePositionInformation:]): Deleted.
+        (-[WKHoverPlatter didFinishAnimationForShadow:]): Deleted.
+        * UIProcess/ios/WKHoverPlatterParameters.h:
+        * UIProcess/ios/WKHoverPlatterParameters.mm:
+        (-[WKHoverPlatterParameters setDefaultValues]):
+        (-[WKHoverPlatterParameters enabled]):
+        (+[WKHoverPlatterParameters settingsControllerModule]):
+        (addAdditionalPlatterLayoutParameters): Deleted.
+        (setDefaultValuesForAdditionalPlatterLayoutParameters): Deleted.
+        Adjust WKHoverPlatter to scale up its content, and adjust the shape
+        and animations.
+
 2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.3 release

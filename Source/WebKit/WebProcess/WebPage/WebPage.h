@@ -931,6 +931,8 @@ public:
     void didUpdateComposition();
     void didEndUserTriggeredSelectionChanges();
 
+    void interactableRegionsInRootViewCoordinates(WebCore::FloatRect, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
+
 #if PLATFORM(COCOA)
     void platformInitializeAccessibility();
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);

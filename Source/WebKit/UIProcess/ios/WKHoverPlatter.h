@@ -25,6 +25,8 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
+#import "NativeWebMouseEvent.h"
+
 @class WKHoverPlatter;
 
 @protocol WKHoverPlatterDelegate
@@ -32,11 +34,19 @@
 @required
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler;
 
+- (void)interactableRegionsForHoverPlatter:(WKHoverPlatter *)hoverPlatter inRect:(WebCore::FloatRect)rect completionHandler:(void (^)(Vector<WebCore::FloatRect>))completionHandler;
+
 @end
 
 @interface WKHoverPlatter : NSObject
 
 - (instancetype)initWithView:(UIView *)view delegate:(id <WKHoverPlatterDelegate>)delegate;
+
+- (void)didReceiveMouseEvent:(const WebKit::NativeWebMouseEvent&)event;
+- (void)didLongPressAtPoint:(WebCore::FloatPoint)point;
+
+- (WebCore::FloatPoint)adjustedPointForPoint:(WebCore::FloatPoint)point;
+- (WebKit::NativeWebMouseEvent)adjustedEventForEvent:(const WebKit::NativeWebMouseEvent&)event;
 
 - (void)dismissPlatterWithAnimation:(BOOL)withAnimation;
 

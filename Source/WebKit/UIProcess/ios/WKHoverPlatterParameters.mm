@@ -49,13 +49,6 @@
 
 @end
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKHoverPlatterParametersAdditions.mm>
-#else
-static void addAdditionalPlatterLayoutParameters(NSMutableArray *) { }
-static void setDefaultValuesForAdditionalPlatterLayoutParameters(WKHoverPlatterParameters *) { }
-#endif
-
 @implementation WKHoverPlatterParameters
 
 - (void)setDefaultValues
@@ -63,33 +56,41 @@ static void setDefaultValuesForAdditionalPlatterLayoutParameters(WKHoverPlatterP
     [super setDefaultValues];
 
     _platterEnabledForMouse = NO;
-    _platterEnabledForHover = NO;
+    _platterEnabledForLongPress = NO;
 
-    _platterCornerRadius = 6;
-    _platterPadding = 5;
-    _platterShadowOpacity = 0.6;
-    _platterShadowRadius = 10;
-    _platterInflationSize = 8;
+    _showDebugOverlay = NO;
 
-    _animateBetweenPlatters = YES;
+    _platterRadius = 200;
+    _platterScale = 2;
+
+    _linkSearchRadius = 40;
+
     _springMass = 2;
-    _springStiffness = 100;
-    _springDamping = 50;
+    _springStiffness = 200;
+    _springDamping = 200;
     _duration = 0.3;
     _useSpring = YES;
+    _animateScale = YES;
+}
 
-    setDefaultValuesForAdditionalPlatterLayoutParameters(self);
+- (BOOL)enabled
+{
+    return _platterEnabledForMouse || _platterEnabledForLongPress;
 }
 
 + (PTModule *)settingsControllerModule
 {
     PTSection *enablementSection = [PTModule sectionWithRows:@[
         [PTSwitchRow rowWithTitle:@"Enable Platter For Mouse" valueKeyPath:@"platterEnabledForMouse"],
-        [PTSwitchRow rowWithTitle:@"Enable Platter For Hover" valueKeyPath:@"platterEnabledForHover"],
+        [PTSwitchRow rowWithTitle:@"Enable Platter For Long Press" valueKeyPath:@"platterEnabledForLongPress"],
     ] title:@"Platter"];
 
+    PTSection *debugSection = [PTModule sectionWithRows:@[
+        [PTSwitchRow rowWithTitle:@"Show Debug Overlay" valueKeyPath:@"showDebugOverlay"],
+    ] title:@"Debug"];
+
     PTSection *animationSection = [PTModule sectionWithRows:@[
-        [PTSwitchRow rowWithTitle:@"Animate Between Platters" valueKeyPath:@"animateBetweenPlatters"],
+        [PTSwitchRow rowWithTitle:@"Animate Scale" valueKeyPath:@"animateScale"],
         [PTSwitchRow rowWithTitle:@"Use Spring" valueKeyPath:@"useSpring"],
         [[[PTSliderRow rowWithTitle:@"Duration" valueKeyPath:@"duration"] minValue:0 maxValue:1] condition:[NSPredicate predicateWithFormat:@"useSpring == FALSE"]],
         [[PTEditFloatRow rowWithTitle:@"Spring Mass" valueKeyPath:@"springMass"] condition:[NSPredicate predicateWithFormat:@"useSpring == TRUE"]],
@@ -97,22 +98,20 @@ static void setDefaultValuesForAdditionalPlatterLayoutParameters(WKHoverPlatterP
         [[PTEditFloatRow rowWithTitle:@"Spring Damping" valueKeyPath:@"springDamping"] condition:[NSPredicate predicateWithFormat:@"useSpring == TRUE"]],
     ] title:@"Animation"];
 
-    RetainPtr<NSMutableArray> platterLayoutRows = adoptNS([@[
-        [[PTSliderRow rowWithTitle:@"Corner Radius" valueKeyPath:@"platterCornerRadius"] integerMinValue:0 maxValue:20],
-        [[PTSliderRow rowWithTitle:@"Padding" valueKeyPath:@"platterPadding"] integerMinValue:0 maxValue:20],
-        [[PTSliderRow rowWithTitle:@"Shadow Opacity" valueKeyPath:@"platterShadowOpacity"] minValue:0 maxValue:1],
-        [[PTSliderRow rowWithTitle:@"Shadow Radius" valueKeyPath:@"platterShadowRadius"] integerMinValue:0 maxValue:20],
-        [[PTSliderRow rowWithTitle:@"Inflation Size" valueKeyPath:@"platterInflationSize"] integerMinValue:0 maxValue:30]
-    ] mutableCopy]);
-    addAdditionalPlatterLayoutParameters(platterLayoutRows.get());
+    PTSection *platterSection = [PTModule sectionWithRows:@[
+        [[PTSliderRow rowWithTitle:@"Radius" valueKeyPath:@"platterRadius"] integerMinValue:0 maxValue:400],
+        [[PTSliderRow rowWithTitle:@"Scale" valueKeyPath:@"platterScale"] minValue:1 maxValue:4],
+    ] title:@"Platter"];
 
-    PTSection *platterLayoutSection = [PTModule sectionWithRows:platterLayoutRows.get() title:@"Platter Layout"];
+    PTSection *linkSearchingSection = [PTModule sectionWithRows:@[
+        [[PTSliderRow rowWithTitle:@"Radius" valueKeyPath:@"linkSearchRadius"] integerMinValue:0 maxValue:200],
+    ] title:@"Link Searching"];
 
     PTSection *restoreDefaultsSection = [PTModule sectionWithRows:@[
         [PTButtonRow rowWithTitle:@"Restore Defaults" action:[PTRestoreDefaultSettingsRowAction action]]
     ]];
 
-    return [PTModule moduleWithTitle:nil contents:@[ enablementSection, animationSection, platterLayoutSection, restoreDefaultsSection ]];
+    return [PTModule moduleWithTitle:nil contents:@[ enablementSection, debugSection, animationSection, platterSection, linkSearchingSection, restoreDefaultsSection ]];
 }
 
 @end

@@ -30,20 +30,23 @@
 @interface WKHoverPlatterParameters : PTSettings
 
 @property (nonatomic) BOOL platterEnabledForMouse;
-@property (nonatomic) BOOL platterEnabledForHover;
+@property (nonatomic) BOOL platterEnabledForLongPress;
 
-@property (nonatomic) CGFloat platterCornerRadius;
-@property (nonatomic) CGFloat platterPadding;
-@property (nonatomic) CGFloat platterShadowOpacity;
-@property (nonatomic) CGFloat platterShadowRadius;
-@property (nonatomic) unsigned platterInflationSize;
+@property (nonatomic, readonly) BOOL enabled;
 
-@property (nonatomic) BOOL animateBetweenPlatters;
+@property (nonatomic) BOOL showDebugOverlay;
+
+@property (nonatomic) CGFloat platterRadius;
+@property (nonatomic) CGFloat platterScale;
+
+@property (nonatomic) CGFloat linkSearchRadius;
+
 @property (nonatomic) CGFloat springMass;
 @property (nonatomic) CGFloat springStiffness;
 @property (nonatomic) CGFloat springDamping;
 @property (nonatomic) NSTimeInterval duration;
-@property (nonatomic) CGFloat useSpring;
+@property (nonatomic) BOOL useSpring;
+@property (nonatomic) BOOL animateScale;
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKHoverPlatterParametersAdditions.h>
