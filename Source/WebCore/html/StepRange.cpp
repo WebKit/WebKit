@@ -142,6 +142,20 @@ Decimal StepRange::roundByStep(const Decimal& value, const Decimal& base) const
     return base + ((value - base) / m_step).round() * m_step;
 }
 
+Decimal StepRange::stepSnappedMaximum() const
+{
+    Decimal base = stepBase();
+    Decimal step =  m_step;
+    if (base - step == base || !(base / step).isFinite())
+        return Decimal::nan();
+    Decimal alignedMaximum = base + ((maximum() - base) / step).floor() * step;
+    if (alignedMaximum > maximum())
+        alignedMaximum -= step;
+    if (alignedMaximum < minimum())
+        return Decimal::nan();
+    return alignedMaximum;
+}
+
 bool StepRange::stepMismatch(const Decimal& valueForCheck) const
 {
     if (!m_hasStep)

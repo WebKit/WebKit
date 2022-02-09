@@ -1,3 +1,29 @@
+2022-02-09  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Improving applyStep() to be in line with specs
+        https://bugs.webkit.org/show_bug.cgi?id=236134
+
+        Reviewed by Chris Dumez.
+
+        Update test expectations.
+        * fast/forms/date/date-stepup-stepdown-expected.txt:
+        * fast/forms/date/date-stepup-stepdown.html:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-expected.txt:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html:
+        * fast/forms/month/month-stepup-stepdown-expected.txt:
+        * fast/forms/month/month-stepup-stepdown.html:
+        * fast/forms/number/number-stepup-stepdown-expected.txt:
+        * fast/forms/number/number-stepup-stepdown.html:
+        * fast/forms/range/range-stepup-stepdown-expected.txt:
+        * fast/forms/range/range-stepup-stepdown.html:
+        * fast/forms/time/time-stepup-stepdown-expected.txt:
+        * fast/forms/time/time-stepup-stepdown.html:
+        * fast/forms/week/week-stepup-stepdown-expected.txt:
+        * fast/forms/week/week-stepup-stepdown.html:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+
 2022-02-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Garden several WPT tests that are now passing

@@ -38,8 +38,8 @@ function stepDown(value, step, min, optionalStepCount) {
 
 input.type = 'datetime-local';
 debug('Invalid value');
-shouldThrowErrorName('stepUp("", null, null)', "InvalidStateError");
-shouldThrowErrorName('stepDown("", null, null)', "InvalidStateError");
+shouldBe('stepUp("", null, null)', '"1970-01-01T00:01"');
+shouldBe('stepDown("", null, null)', '"1969-12-31T23:59"');
 debug('Non-number arguments');
 shouldBe('stepUp("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
 shouldBe('stepDown("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
@@ -59,7 +59,7 @@ shouldThrowErrorName('stepUp("2010-02-10T20:13", "any", null)', "InvalidStateErr
 shouldThrowErrorName('stepDown("2010-02-10T20:13", "any", null)', "InvalidStateError");
 debug('Overflow/underflow');
 shouldBe('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', '"2010-02-10T20:13"');
+shouldBe('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', '"1970-01-01T00:00"');
 shouldBe('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
 shouldBe('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
 </script>

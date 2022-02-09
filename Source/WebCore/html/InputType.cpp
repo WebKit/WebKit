@@ -921,32 +921,51 @@ unsigned InputType::width() const
 
 ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldEventBehavior eventBehavior)
 {
+    // https://html.spec.whatwg.org/C/#dom-input-stepup
+
     StepRange stepRange(createStepRange(anyStepHandling));
     if (!stepRange.hasStep())
         return Exception { InvalidStateError };
 
-    ASSERT(element());
-    const Decimal current = parseToNumberOrNaN(element()->value());
-    if (!current.isFinite())
-        return Exception { InvalidStateError };
-    Decimal newValue = current + stepRange.step() * count;
-    if (!newValue.isFinite())
-        return Exception { InvalidStateError };
-
-    const Decimal acceptableErrorValue = stepRange.acceptableError();
-    if (newValue - stepRange.minimum() < -acceptableErrorValue)
+    // 3. If the element has a minimum and a maximum and the minimum is greater than the maximum, then abort these steps.
+    if (stepRange.minimum() > stepRange.maximum())
         return { };
-    if (newValue < stepRange.minimum())
-        newValue = stepRange.minimum();
+    
+    // 4. If the element has a minimum and a maximum and there is no value greater than or equal to the element's minimum and less than or equal to
+    // the element's maximum that, when subtracted from the step base, is an integral multiple of the allowed value step, then abort these steps.
+    Decimal alignedMaximum = stepRange.stepSnappedMaximum();
+    if (!alignedMaximum.isFinite())
+        return { };
 
-    if (!equalLettersIgnoringASCIICase(element()->attributeWithoutSynchronization(stepAttr), "any"))
+    ASSERT(element());
+    const Decimal current = parseToNumber(element()->value(), 0);
+    Decimal base = stepRange.stepBase();
+    Decimal step = stepRange.step();
+    Decimal newValue = current;
+
+    newValue = newValue + stepRange.step() * Decimal::fromDouble(count);
+    const AtomString& stepString = element()->getAttribute(HTMLNames::stepAttr);
+    if (!equalIgnoringASCIICase(stepString, "any"))
         newValue = stepRange.alignValueForStep(current, newValue);
 
-    if (newValue - stepRange.maximum() > acceptableErrorValue)
-        return { };
-    if (newValue > stepRange.maximum())
-        newValue = stepRange.maximum();
+    // 8. If the element has a minimum, and value is less than that minimum, then set value to the smallest value that, when subtracted from the step
+    // base, is an integral multiple of the allowed value step, and that is more than or equal to minimum.
+    if (newValue < stepRange.minimum()) {
+        const Decimal alignedMinimum = base + ((stepRange.minimum() - base) / step).ceiling() * step;
+        ASSERT(alignedMinimum >= stepRange.minimum());
+        newValue = alignedMinimum;
+    }
 
+    // 9. If the element has a maximum, and value is greater than that maximum, then set value to the largest value that, when subtracted from the step
+    // base, is an integral multiple of the allowed value step, and that is less than or equal to maximum.
+    if (newValue > stepRange.maximum())
+        newValue = alignedMaximum;
+
+    // 10. If either the method invoked was the stepDown() method and value is greater than valueBeforeStepping, or the method invoked was the stepUp()
+    // method and value is less than valueBeforeStepping, then return.
+    if ((count < 0 && current < newValue) || (count > 0 && current > newValue))
+        return { };
+    
     Ref protectedThis { *this };
     auto result = setValueAsDecimal(newValue, eventBehavior);
     if (result.hasException() || !element())

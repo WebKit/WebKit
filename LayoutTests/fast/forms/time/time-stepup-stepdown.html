@@ -38,8 +38,8 @@ function stepDown(value, step, min, optionalStepCount) {
 
 input.type = 'time';
 debug('Invalid value');
-shouldThrowErrorName('stepUp("", null, null)', "InvalidStateError");
-shouldThrowErrorName('stepDown("", null, null)', "InvalidStateError");
+shouldBe('stepUp("", null, null)', '"00:01"');
+shouldBe('stepDown("", null, null)', '"00:00"');
 debug('Non-number arguments');
 shouldBe('stepUp("20:13", null, null, "0")', '"20:13"');
 shouldBe('stepDown("20:13", null, null, "0")', '"20:13"');
@@ -59,9 +59,9 @@ shouldThrowErrorName('stepUp("20:13", "any", null)', "InvalidStateError");
 shouldThrowErrorName('stepDown("20:13", "any", null)', "InvalidStateError");
 debug('Overflow/underflow');
 shouldBe('stepUp("20:13", "3.40282346e+38", null)', '"20:13"');
-shouldBe('stepDown("20:13", "3.40282346e+38", null)', '"20:13"');
-shouldBe('stepUp("20:13", "1", "20:13")', '"20:13"');
-shouldBe('stepDown("20:13", "1", "20:13")', '"20:13"');
+shouldBe('stepDown("20:13", "3.40282346e+38", null)', '"00:00:00"');
+shouldBe('stepUp("20:13", "1", "20:13")', '"20:13:00"');
+shouldBe('stepDown("20:13", "1", "20:13")', '"20:13:00"');
 shouldBe('stepUp("23:59", null, null)', '"23:59"');
 shouldBe('stepDown("00:00", null, null)', '"00:00"');
 

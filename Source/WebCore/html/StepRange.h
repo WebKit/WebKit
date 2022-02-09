@@ -73,6 +73,7 @@ public:
     bool hasRangeLimitations() const { return m_hasRangeLimitations; }
     Decimal maximum() const { return m_maximum; }
     Decimal minimum() const { return m_minimum; }
+    Decimal stepSnappedMaximum() const;
     static Decimal parseStep(AnyStepHandling, const StepDescription&, const String&);
     Decimal step() const { return m_step; }
     Decimal stepBase() const { return m_stepBase; }
