@@ -40,6 +40,9 @@ ALWAYS_INLINE uint64_t SecureARM64EHashPins::keyForCurrentThread()
         :
         :
     );
+#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)
+    result = result & ~0x7ull;
+#endif
     return result + 1;
 }
 
