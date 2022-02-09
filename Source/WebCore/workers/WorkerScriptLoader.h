@@ -104,7 +104,6 @@ private:
 
     WorkerScriptLoaderClient* m_client { nullptr };
     RefPtr<ThreadableLoader> m_threadableLoader;
-    String m_responseEncoding;
     RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;
     URL m_url;

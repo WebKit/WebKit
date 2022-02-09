@@ -197,7 +197,6 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
     m_responseURL = response.url();
     m_certificateInfo = response.certificateInfo() ? *response.certificateInfo() : CertificateInfo();
     m_responseMIMEType = response.mimeType();
-    m_responseEncoding = response.textEncodingName();
     m_responseSource = response.source();
     m_isRedirected = response.isRedirected();
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
@@ -213,12 +212,8 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     if (m_failed)
         return;
 
-    if (!m_decoder) {
-        if (!m_responseEncoding.isEmpty())
-            m_decoder = TextResourceDecoder::create("text/javascript"_s, m_responseEncoding);
-        else
-            m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
-    }
+    if (!m_decoder)
+        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
 
     if (buffer.isEmpty())
         return;
