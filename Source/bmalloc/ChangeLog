@@ -1,3 +1,12 @@
+2022-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] add documentation
+        https://bugs.webkit.org/show_bug.cgi?id=236385
+
+        Rubber stamped by Mark Lam.
+
+        * libpas/Documentation.md: Added.
+
 2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Thread suspend and resume should take a global lock to avoid deadlock
