@@ -1,3 +1,22 @@
+2022-02-09  Antoine Quint  <graouts@webkit.org>
+
+        Dialog element only animates once
+        https://bugs.webkit.org/show_bug.cgi?id=236274
+        rdar://88635487
+
+        Reviewed by Tim Nguyen and Dean Jackson.
+
+        Add two new tests that check that we correctly start, stop and resume animations on <dialog>
+        and ::backdrop as a <dialog> element is open, closed and open again.
+
+        * web-platform-tests/css/css-animations/dialog-animation-expected.txt: Added.
+        * web-platform-tests/css/css-animations/dialog-animation.html: Added.
+        * web-platform-tests/css/css-animations/dialog-backdrop-animation-expected.txt: Added.
+        * web-platform-tests/css/css-animations/dialog-backdrop-animation.html: Added.
+        * web-platform-tests/css/css-animations/support/testcommon.js:
+        (addElement):
+        (addDiv):
+
 2022-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Add TAO check to PerformanceResourceTiming::fetchStart
