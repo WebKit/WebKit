@@ -42,7 +42,7 @@ PASS The File interface object should be exposed
 PASS The Blob interface object should be exposed
 PASS The FileList interface object should be exposed
 PASS The FileReader interface object should be exposed
-FAIL The FileReaderSync interface object should be exposed assert_true: expected true got false
+PASS The FileReaderSync interface object should be exposed
 PASS The EventTarget interface object should be exposed
 PASS The ErrorEvent interface object should be exposed
 PASS The Event interface object should be exposed

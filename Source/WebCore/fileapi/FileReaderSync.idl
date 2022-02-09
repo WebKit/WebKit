@@ -29,7 +29,7 @@
  */
 
 [
-    Exposed=DedicatedWorker,
+    Exposed=(DedicatedWorker,SharedWorker),
 ] interface FileReaderSync {
     constructor();
 
