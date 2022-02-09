@@ -373,6 +373,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
     if (!lineNeedsIdeographicBaseline())
         return;
 
+    lineBox.setBaselineType(IdeographicBaseline);
     setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsMetricsForInlineBox(rootInlineBox, IdeographicBaseline));
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (inlineLevelBox.isInlineBox())
