@@ -1,5 +1,18 @@
 2022-02-09  Chris Dumez  <cdumez@apple.com>
 
+        Stop obfuscating exceptions thrown by scripts in data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=236329
+
+        Reviewed by Brent Fulgham.
+
+        Rebaseline WPT tests that are now passing or whose output looks different.
+
+        * web-platform-tests/workers/dedicated-worker-in-data-url-context.window-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/004-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006-expected.txt:
+
+2022-02-09  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/html/dom from upstream
         https://bugs.webkit.org/show_bug.cgi?id=236252
 
