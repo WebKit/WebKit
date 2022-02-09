@@ -26,8 +26,10 @@
 #pragma once
 
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/SharedWorkerKey.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/WeakPtr.h>
@@ -37,10 +39,8 @@ class SessionID;
 }
 
 namespace WebCore {
-class RegistrableDomain;
 
 struct ClientOrigin;
-struct SharedWorkerKey;
 struct WorkerFetchResult;
 struct WorkerOptions;
 }

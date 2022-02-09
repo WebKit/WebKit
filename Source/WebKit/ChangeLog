@@ -1,3 +1,21 @@
+2022-02-09  Lauro Moura  <lmoura@igalia.com>
+
+        Non-unified build fixes after r289247
+        https://bugs.webkit.org/show_bug.cgi?id=236343
+
+        Reviewed by Fujii Hironori.
+
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp: Moved
+        SharedWorkerKey include to .h file, as it declares a HashMap of it and
+        it has custom HashTraits that must be visible.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.h: Ditto.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp: Add
+        missing includes.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h: Add
+        missing includes and forward declarations.
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp:
+        Add missing include with proper coder/decoder support.
+
 2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add a javascript atom to get the visible text

@@ -27,6 +27,7 @@
 #pragma once
 
 #include "AuxiliaryBarrier.h"
+#include "JSFunction.h"
 #include "JSObject.h"
 #include <wtf/TaggedArrayStoragePtr.h>
 

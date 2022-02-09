@@ -33,6 +33,7 @@
 #include "SharedWorker.h"
 #include "SharedWorkerScriptLoader.h"
 #include "WorkerFetchResult.h"
+#include "WorkerScriptLoader.h"
 
 namespace WebCore {
 

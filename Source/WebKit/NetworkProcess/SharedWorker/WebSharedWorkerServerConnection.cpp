@@ -29,9 +29,12 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessProxyMessages.h"
+#include "NetworkSession.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerObjectConnectionMessages.h"
+#include "WebSharedWorkerServer.h"
 #include <WebCore/WorkerFetchResult.h>
 
 namespace WebKit {

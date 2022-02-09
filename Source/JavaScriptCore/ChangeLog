@@ -1,3 +1,12 @@
+2022-02-09  Lauro Moura  <lmoura@igalia.com>
+
+        Non-unified build fixes after r289247
+        https://bugs.webkit.org/show_bug.cgi?id=236343
+
+        Reviewed by Fujii Hironori.
+
+        * runtime/JSRemoteFunction.h: Drive-by fix, add missing include.
+
 2022-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] YarrJIT inlining should be disabled when we have DotStarEnclosure

@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontBaseline.h"
 #include "InlineRect.h"
 
 namespace WebCore {

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerServer.h"

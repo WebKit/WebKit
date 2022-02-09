@@ -27,6 +27,8 @@
 #include "SharedWorkerContextManager.h"
 
 #include "Logging.h"
+#include "SharedWorkerGlobalScope.h"
+#include "SharedWorkerThread.h"
 #include "SharedWorkerThreadProxy.h"
 #include <wtf/NeverDestroyed.h>
 

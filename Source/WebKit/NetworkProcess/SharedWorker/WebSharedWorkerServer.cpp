@@ -33,8 +33,6 @@
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerServerConnection.h"
 #include "WebSharedWorkerServerToContextConnection.h"
-#include <WebCore/RegistrableDomain.h>
-#include <WebCore/SharedWorkerKey.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerOptions.h>
 

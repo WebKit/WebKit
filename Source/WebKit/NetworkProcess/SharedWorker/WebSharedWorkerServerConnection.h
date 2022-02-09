@@ -29,9 +29,12 @@
 #include "MessageSender.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
+#include <WebCore/TransferredMessagePort.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {
+class ResourceError;
+struct SharedWorkerKey;
 struct WorkerFetchResult;
 struct WorkerOptions;
 }
