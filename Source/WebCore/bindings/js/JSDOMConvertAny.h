@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include "JSValueInWrappedObject.h"
 
 namespace WebCore {
 
@@ -58,6 +59,11 @@ template<> struct JSConverter<IDLAny> {
     static JSC::JSValue convert(const JSC::Strong<JSC::Unknown>& value)
     {
         return value.get();
+    }
+
+    static JSC::JSValue convert(const JSValueInWrappedObject& value)
+    {
+        return value.getValue();
     }
 };
 

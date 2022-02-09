@@ -60,12 +60,12 @@ static unsigned busChannelCount(const AudioBus* bus)
 
 static JSArray* toJSArray(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsCast<JSArray*>(static_cast<JSValue>(wrapper)) : nullptr;
+    return wrapper ? jsCast<JSArray*>(wrapper.getValue()) : nullptr;
 }
 
 static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsCast<JSObject*>(static_cast<JSValue>(wrapper)) : nullptr;
+    return wrapper ? jsCast<JSObject*>(wrapper.getValue()) : nullptr;
 }
 
 static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, unsigned length, const float* data = nullptr)
@@ -223,15 +223,15 @@ void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObjec
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
     if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
         m_jsInputs = { constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes) };
-    args.append(m_jsInputs);
+    args.append(m_jsInputs.getValue());
 
     if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
         m_jsOutputs = { constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No) };
-    args.append(m_jsOutputs);
+    args.append(m_jsOutputs.getValue());
 
     if (!copyDataFromParameterMapToJSObject(vm, globalObject, paramValuesMap, toJSObject(m_jsParamValues)))
         m_jsParamValues = { constructFrozenKeyValueObject(vm, globalObject, paramValuesMap) };
-    args.append(m_jsParamValues);
+    args.append(m_jsParamValues.getValue());
 }
 
 bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)

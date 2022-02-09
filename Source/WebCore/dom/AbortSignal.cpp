@@ -114,7 +114,7 @@ void AbortSignal::signalFollow(AbortSignal& signal)
         return;
 
     if (signal.aborted()) {
-        signalAbort(signal.reason());
+        signalAbort(signal.reason().getValue());
         return;
     }
 
@@ -122,7 +122,7 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     m_followingSignal = signal;
     signal.addAlgorithm([weakThis = WeakPtr { this }] {
         if (weakThis)
-            weakThis->signalAbort(weakThis->m_followingSignal ? static_cast<JSC::JSValue>(weakThis->m_followingSignal->reason()) : JSC::jsUndefined());
+            weakThis->signalAbort(weakThis->m_followingSignal ? weakThis->m_followingSignal->reason().getValue() : JSC::jsUndefined());
     });
 }
 
@@ -150,7 +150,7 @@ void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
 
     auto& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwException(&lexicalGlobalObject, scope, m_reason);
+    throwException(&lexicalGlobalObject, scope, m_reason.getValue());
 }
 
 } // namespace WebCore

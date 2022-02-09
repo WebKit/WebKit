@@ -1,3 +1,14 @@
+2022-02-09  Saam Barati  <sbarati@apple.com>
+
+        Don't return an empty value from AbortController.signal.reason and make it harder to return empty values from JSValueInWrappedObject
+        https://bugs.webkit.org/show_bug.cgi?id=236318
+        <rdar://88580935>
+
+        Reviewed by Mark Lam.
+
+        * fast/dom/AbortSignal-reason-crash-2-expected.txt: Added.
+        * fast/dom/AbortSignal-reason-crash-2.html: Added.
+
 2022-02-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Update baselines after r288944

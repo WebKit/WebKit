@@ -77,10 +77,10 @@ EventInterface ErrorEvent::eventInterface() const
 
 JSValue ErrorEvent::error(JSGlobalObject& globalObject)
 {    
-    JSValue error = m_error;
-    if (!error)
+    if (!m_error)
         return jsNull();
 
+    JSValue error = m_error.getValue();
     if (!isWorldCompatible(globalObject, error)) {
         // We need to make sure ErrorEvents do not leak their error property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
@@ -96,7 +96,7 @@ JSValue ErrorEvent::error(JSGlobalObject& globalObject)
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(JSGlobalObject& exec)
 {
     if (!m_serializedError && !m_triedToSerialize) {
-        m_serializedError = SerializedScriptValue::create(exec, m_error, SerializationErrorMode::NonThrowing);
+        m_serializedError = SerializedScriptValue::create(exec, m_error.getValue(), SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
     return m_serializedError;
