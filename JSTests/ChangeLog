@@ -1,3 +1,14 @@
+2022-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] YarrJIT inlining should be disabled when we have DotStarEnclosure
+        https://bugs.webkit.org/show_bug.cgi?id=236332
+        rdar://88483574
+
+        Reviewed by Michael Saboff.
+
+        * stress/yarr-inlining-dot-star-enclosure.js: Added.
+        (test):
+
 2022-02-08  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] move function wrapping logic to a new Function type

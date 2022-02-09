@@ -196,8 +196,10 @@ public:
     GPRReg regT1 { InvalidGPRReg };
     GPRReg regT2 { InvalidGPRReg };
 
-    // Unicode character processing
+    // DotStarEnclosure
     GPRReg initialStart { InvalidGPRReg };
+
+    // Unicode character processing
     GPRReg remainingMatchCount { InvalidGPRReg };
     GPRReg regUnicodeInputAndTrail { InvalidGPRReg };
     GPRReg unicodeTemp { InvalidGPRReg };
