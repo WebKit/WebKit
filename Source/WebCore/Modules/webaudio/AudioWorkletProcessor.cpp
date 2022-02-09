@@ -222,15 +222,15 @@ void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObjec
 {
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
     if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
-        m_jsInputs = { constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes) };
+        m_jsInputs.setWeakly(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
     args.append(m_jsInputs.getValue());
 
     if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
-        m_jsOutputs = { constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No) };
+        m_jsOutputs.setWeakly(constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No));
     args.append(m_jsOutputs.getValue());
 
     if (!copyDataFromParameterMapToJSObject(vm, globalObject, paramValuesMap, toJSObject(m_jsParamValues)))
-        m_jsParamValues = { constructFrozenKeyValueObject(vm, globalObject, paramValuesMap) };
+        m_jsParamValues.setWeakly(constructFrozenKeyValueObject(vm, globalObject, paramValuesMap));
     args.append(m_jsParamValues.getValue());
 }
 

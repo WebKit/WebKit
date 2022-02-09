@@ -43,11 +43,12 @@ MessageEvent::MessageEvent() = default;
 
 inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
-    , m_data(JSValueInWrappedObject { initializer.data })
+    , m_data(JSValueTag { })
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
     , m_source(WTFMove(initializer.source))
     , m_ports(WTFMove(initializer.ports))
+    , m_jsData(initializer.data)
 {
 }
 
@@ -113,13 +114,19 @@ void MessageEvent::initMessageEvent(const AtomString& type, bool canBubble, bool
 
     initEvent(type, canBubble, cancelable);
 
-    m_data = JSValueInWrappedObject { data };
-    m_cachedData = { };
+    {
+        Locker { m_concurrentDataAccessLock };
+        m_data = JSValueTag { };
+    }
+    // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
+    // https://bugs.webkit.org/show_bug.cgi?id=236353
+    m_jsData.setWeakly(data);
+    m_cachedData.clear();
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = WTFMove(source);
     m_ports = WTFMove(ports);
-    m_cachedPorts = { };
+    m_cachedPorts.clear();
 }
 
 EventInterface MessageEvent::eventInterface() const
@@ -129,7 +136,8 @@ EventInterface MessageEvent::eventInterface() const
 
 size_t MessageEvent::memoryCost() const
 {
-    return WTF::switchOn(m_data, [] (const JSValueInWrappedObject&) -> size_t {
+    Locker { m_concurrentDataAccessLock };
+    return WTF::switchOn(m_data, [] (JSValueTag) -> size_t {
         return 0;
     }, [] (const Ref<SerializedScriptValue>& data) -> size_t {
         return data->memoryCost();
