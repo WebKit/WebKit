@@ -464,6 +464,8 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
+        if 'sigtermTime' not in kwargs:
+            kwargs['sigtermTime'] = 10
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
