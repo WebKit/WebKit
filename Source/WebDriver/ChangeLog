@@ -1,3 +1,17 @@
+2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add a javascript atom to get the visible text
+        https://bugs.webkit.org/show_bug.cgi?id=174617
+        <rdar://problem/32307461>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Generate the JavaScript atoms using the new command and use the new atom to get element text.
+
+        * CMakeLists.txt:
+        * Session.cpp:
+        (WebDriver::Session::getElementText):
+
 2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebDriver] Add support for shadow roots

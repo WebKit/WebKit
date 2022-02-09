@@ -1358,7 +1358,7 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         // FIXME: Add an atom to properly implement this instead of just using innerText.
-        parameters->setString("function"_s, "function(element) { return element.innerText.replace(/^[^\\S\\xa0]+|[^\\S\\xa0]+$/g, '') }"_s);
+        parameters->setString("function"_s, StringImpl::createWithoutCopying(ElementTextJavaScript, sizeof(ElementTextJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {

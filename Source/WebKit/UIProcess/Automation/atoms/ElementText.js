@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,5 +26,5 @@
 function(element) {
     "use strict";
 
-    return utils.isShown(element);
+    return utils.getText(element);
 }

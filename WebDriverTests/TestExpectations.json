@@ -133,9 +133,6 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
         "subtests": {
-            "testSelectByVisibleTextShouldNormalizeSpaces": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
-            },
             "testSelectByIndexMultiple": {
                 "expected": {"all": {"slow": true}}
             },
@@ -149,19 +146,10 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/text_handling_tests.py": {
         "subtests": {
-            "testShouldConvertANonBreakingSpaceIntoANormalSpaceCharacter": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
-            },
-            "testShouldTreatANonBreakingSpaceAsAnyOtherWhitespaceCharacterWhenCollapsingWhitespace": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
-            },
             "testShouldBeAbleToSetMoreThanOneLineOfTextInATextArea": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
             },
             "testShouldHandleSiblingBlockLevelElements": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
-            },
-            "testShouldOnlyIncludeVisibleText": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
             }
         }
@@ -839,18 +827,6 @@
     },
     "imported/w3c/webdriver/tests/find_element/find.py": {
         "subtests": {
-            "test_find_element_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
             "test_no_top_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
             },
@@ -861,18 +837,6 @@
     },
     "imported/w3c/webdriver/tests/find_elements/find.py": {
         "subtests": {
-            "test_find_elements_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
             "test_no_top_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
             },
@@ -883,18 +847,6 @@
     },
     "imported/w3c/webdriver/tests/find_elements_from_element/find.py": {
         "subtests": {
-            "test_find_elements_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
             "test_parent_of_document_node_errors": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
             },
@@ -908,18 +860,6 @@
     },
     "imported/w3c/webdriver/tests/find_element_from_element/find.py": {
         "subtests": {
-            "test_find_element_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
             "test_parent_of_document_node_errors": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
             },
@@ -1575,18 +1515,6 @@
             },
             "test_find_element[xpath-//a]": {
                 "expected": { "all": { "status": ["SKIP"]}}
-            },
-            "test_find_element_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_element_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
             }
         }
     },
@@ -1597,18 +1525,6 @@
             },
             "test_find_elements[xpath-//a]": {
                 "expected": { "all": { "status": ["SKIP"]}}
-            },
-            "test_find_elements_link_text[<a href=#>link<br>text</a>-link\\ntext]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_link_text[<a href=# style='text-transform: uppercase'>link text</a>-LINK TEXT]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=#>partial link<br>text</a>-k\\nt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            },
-            "test_find_elements_partial_link_text[<a href=# style='text-transform: uppercase'>partial link text</a>-LINK]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
             }
         }
     },
