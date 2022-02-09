@@ -1,3 +1,11 @@
+2022-02-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Garden several WPT tests that are now passing
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2022-02-09  Saam Barati  <sbarati@apple.com>
 
         Don't return an empty value from AbortController.signal.reason and make it harder to return empty values from JSValueInWrappedObject

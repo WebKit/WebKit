@@ -168,15 +168,26 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-001.h
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-image.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-list-style-image.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/active-selection-041.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/file-selector-button-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/file-selector-button-after-part.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-line-with-inline-block.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/selection-paint-image.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-005.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
 
 # Passing since r260062.
@@ -195,11 +206,34 @@ imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pa
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-merge-no-inputs.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/filters-sepia-001-test.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ Pass ]
+
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs.html [ Pass ]
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ Pass ]
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/placeholder-white-space.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
@@ -207,6 +241,8 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldse
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
 
 imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ Pass ]
+
+imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
 
 # Tests that timeout on Apple platforms.
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Pass ]
