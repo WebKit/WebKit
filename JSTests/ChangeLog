@@ -1,3 +1,13 @@
+2022-02-09  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip failing shadow realms tests on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=236361
+
+        Unreviewed gardening.
+
+        * stress/shadow-realm-evaluate.js:
+        * stress/shadow-realm-import-value.js:
+
 2022-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] YarrJIT inlining should be disabled when we have DotStarEnclosure

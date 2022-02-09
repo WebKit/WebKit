@@ -1,3 +1,4 @@
+//@ skip if "mips" == $architecture
 //@ requireOptions("--useShadowRealm=1")
 
 function shouldBe(actual, expected) {
