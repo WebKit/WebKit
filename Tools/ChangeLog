@@ -1,3 +1,15 @@
+2022-02-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Link commit URL to pull request
+        https://bugs.webkit.org/show_bug.cgi?id=236399
+        <rdar://problem/88707207>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHub.commit_url): We should link to commit within pull request
+        (ConfigureBuild.add_pr_details): Pass pr_number to GitHub.commit_url.
+
 2022-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         WKWebView: WKURLSchemeHandler “request to the end of the resource” produces an invalid header
