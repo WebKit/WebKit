@@ -1907,6 +1907,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     });
 }
 
+- (void)logMissingBackingObject
+{
+    TextStream stream;
+    stream << "No backingObject for wrapper " << &self << "!";
+    AXLOG(stream.release());
+}
+
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
@@ -1918,12 +1925,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
-        AXLOG("No backingObject!!!");
+        [self logMissingBackingObject];
         return nil;
     }
 
     if (backingObject->isDetachedFromParent()) {
         AXLOG("backingObject is detached from parent!!!");
+        AXLOG(backingObject);
         return nil;
     }
 
@@ -3104,7 +3112,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
-        AXLOG("No backingObject!!!");
+        [self logMissingBackingObject];
         return;
     }
 
