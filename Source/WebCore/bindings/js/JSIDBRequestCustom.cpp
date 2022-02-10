@@ -38,29 +38,46 @@ using namespace JSC;
 
 JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().resultWrapper(), [&] {
-        auto result = wrapped().result();
-        if (UNLIKELY(result.hasException())) {
-            auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-            propagateException(lexicalGlobalObject, throwScope, result.releaseException());
-            return jsNull();
-        }
+    auto result = wrapped().result();
+    if (UNLIKELY(result.hasException())) {
+        auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        propagateException(lexicalGlobalObject, throwScope, result.releaseException());
+        return jsNull();
+    }
 
-        IDBRequest::Result resultValue = result.releaseReturnValue();
-        return WTF::switchOn(resultValue, [&lexicalGlobalObject] (RefPtr<IDBCursor>& cursor) {
+    auto resultValue = result.releaseReturnValue();
+    auto& resultWrapper = wrapped().resultWrapper();
+    return WTF::switchOn(resultValue, [] (IDBRequest::NullResultType result) {
+        if (result == IDBRequest::NullResultType::Empty)
+            return JSC::jsNull();
+        return JSC::jsUndefined();
+    }, [] (uint64_t number) {
+        return toJS<IDLUnsignedLongLong>(number);
+    }, [&] (RefPtr<IDBCursor>& cursor) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
             return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, cursor.get());
-        }, [&lexicalGlobalObject] (RefPtr<IDBDatabase>& database) {
+        });
+    }, [&] (RefPtr<IDBDatabase>& database) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
             return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, database.get());
-        }, [&lexicalGlobalObject] (IDBKeyData keyData) {
+        });
+    }, [&] (IDBKeyData keyData) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyData);
-        }, [&lexicalGlobalObject] (Vector<IDBKeyData> keyDatas) {
+        });
+    }, [&] (Vector<IDBKeyData> keyDatas) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyDatas);
-        }, [&lexicalGlobalObject] (IDBGetResult getResult) {
+        });
+    }, [&] (IDBGetResult getResult) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             auto result = deserializeIDBValueWithKeyInjection(lexicalGlobalObject, getResult.value(), getResult.keyData(), getResult.keyPath());
             return result ? result.value() : jsNull();
-        }, [&lexicalGlobalObject] (IDBGetAllResult getAllResult) {
+        });
+    }, [&] (IDBGetAllResult getAllResult) {
+        return cachedPropertyValue(lexicalGlobalObject, *this, resultWrapper, [&] {
             auto& keys = getAllResult.keys();
             auto& values = getAllResult.values();
             auto& keyPath = getAllResult.keyPath();
@@ -77,12 +94,6 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
                 }
             }
             return JSValue(JSC::constructArray(&lexicalGlobalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list));
-        }, [] (uint64_t number) {
-            return toJS<IDLUnsignedLongLong>(number);
-        }, [] (IDBRequest::NullResultType other) {
-            if (other == IDBRequest::NullResultType::Empty)
-                return JSC::jsNull();
-            return JSC::jsUndefined();
         });
     });
 }
@@ -92,7 +103,6 @@ void JSIDBRequest::visitAdditionalChildren(Visitor& visitor)
 {
     auto& request = wrapped();
     request.resultWrapper().visit(visitor);
-    request.cursorWrapper().visit(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBRequest);

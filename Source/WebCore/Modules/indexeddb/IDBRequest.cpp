@@ -470,17 +470,6 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     if (!context)
         return;
 
-    VM& vm = context->vm();
-    JSLockHolder lock(vm);
-
-    // FIXME: This code is wrong: let's consider that these fields' access are reordered in the concurrent GC thread.
-    // And we just scanned cleared m_resultWrapper and then, we missed scanning m_cursorWrapper with a new value.
-    // Then we could make both collected. Whenever changing JSValueInWrappedObject fields, we should emit a write barrier
-    // if we would like to keep them alive.
-    // https://bugs.webkit.org/show_bug.cgi?id=236278
-    if (m_resultWrapper)
-        m_cursorWrapper.setWithoutBarrier(m_resultWrapper);
-    m_resultWrapper.clear();
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
     m_idbError = IDBError { };
@@ -499,19 +488,14 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     JSLockHolder lock(vm);
 
     m_result = NullResultType::Empty;
-    m_resultWrapper.clear();
-
-    // FIXME: This code is wrong: let's consider that these fields' access are reordered in the concurrent GC thread.
-    // And we just scanned cleared m_resultWrapper and then, we missed scanning m_cursorWrapper with a new value.
-    // Then we could make both collected. Whenever changing JSValueInWrappedObject fields, we should emit a write barrier
-    // if we would like to keep them alive.
-    // https://bugs.webkit.org/show_bug.cgi?id=236278
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
-        if (m_pendingCursor->setGetResult(*this, resultData.getResult(), m_currentTransactionOperationID) && m_cursorWrapper)
-            m_resultWrapper.setWithoutBarrier(m_cursorWrapper);
+        m_pendingCursor->setGetResult(*this, resultData.getResult(), m_currentTransactionOperationID);
         if (resultData.getResult().isDefined())
             m_result = m_pendingCursor;
     }
+
+    if (std::get_if<NullResultType>(&m_result))
+        m_resultWrapper.clear();
 
     m_pendingCursor = nullptr;
 
@@ -573,7 +557,6 @@ void IDBRequest::clearWrappers()
     JSLockHolder lock(vm);
     
     m_resultWrapper.clear();
-    m_cursorWrapper.clear();
     
     WTF::switchOn(m_result,
         [] (RefPtr<IDBCursor>& cursor) { cursor->clearWrappers(); },
