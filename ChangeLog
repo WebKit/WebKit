@@ -1,3 +1,14 @@
+2022-02-10  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Improve device detection in the GbmDevice
+        https://bugs.webkit.org/show_bug.cgi?id=236436
+
+        Reviewed by Chris Lord.
+
+        * Source/cmake/OptionsGTK.cmake: Search for drm and gbm libraries
+        when compiling WebGL ANGLE support.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2022-02-10  Tim Nguyen  <ntim@apple.com>
 
         Unreviewed, update my (Tim Nguyen) status to reviewer

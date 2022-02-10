@@ -383,6 +383,9 @@ endif ()
 
 if (USE_ANGLE_WEBGL)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE TRUE)
+
+    find_package(GBM REQUIRED)
+    find_package(LibDRM REQUIRED)
 endif ()
 
 if (ENABLE_SPELLCHECK)

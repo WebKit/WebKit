@@ -128,6 +128,17 @@ if (USE_OPENGL)
     )
 endif ()
 
+if (USE_ANGLE_WEBGL)
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${LIBDRM_INCLUDE_DIR}
+        ${GBM_INCLUDE_DIR}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${LIBDRM_LIBRARIES}
+        ${GBM_LIBRARIES}
+    )
+endif ()
+
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/wayland/PlatformDisplayWayland.h

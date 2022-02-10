@@ -94,6 +94,17 @@ if (USE_OPENXR)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${OPENXR_INCLUDE_DIRS})
 endif ()
 
+if (USE_ANGLE_WEBGL)
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${LIBDRM_INCLUDE_DIR}
+        ${GBM_INCLUDE_DIR}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${LIBDRM_LIBRARIES}
+        ${GBM_LIBRARIES}
+    )
+endif ()
+
 if (USE_ATSPI)
     set(WebCore_AtspiInterfaceFiles
         ${WEBCORE_DIR}/accessibility/atspi/xml/Accessible.xml

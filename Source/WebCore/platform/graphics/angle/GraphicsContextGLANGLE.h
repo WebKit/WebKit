@@ -459,7 +459,7 @@ protected:
     class EGLImageBacking {
     WTF_MAKE_FAST_ALLOCATED;
     public:
-        EGLImageBacking(gbm_device*, PlatformGraphicsContextGLDisplay);
+        EGLImageBacking(PlatformGraphicsContextGLDisplay);
         ~EGLImageBacking();
 
         bool reset(int width, int height, bool hasAlpha);
@@ -472,7 +472,6 @@ protected:
     private:
         void releaseResources();
 
-        gbm_device* m_device;
         PlatformGraphicsContextGLDisplay m_display;
 
         gbm_bo* m_BO { nullptr };

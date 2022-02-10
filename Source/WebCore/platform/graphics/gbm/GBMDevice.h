@@ -44,6 +44,8 @@ public:
     struct gbm_device* device() const { return m_device; }
 
 private:
+    int getDeviceFd();
+
     struct gbm_device* m_device { nullptr };
 };
 

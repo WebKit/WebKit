@@ -33,6 +33,7 @@
 #include <gbm.h>
 #include <mutex>
 #include <wtf/ThreadSpecific.h>
+#include <xf86drm.h>
 
 namespace WebCore {
 
@@ -54,18 +55,9 @@ const GBMDevice& GBMDevice::get()
 
 GBMDevice::GBMDevice()
 {
-    int fd;
-    char deviceName[30];
-    for (int i = 128; i < 192; ++i) {
-        snprintf(deviceName, sizeof(deviceName), "/dev/dri/renderD%d", i);
-        fd = open(deviceName, O_RDWR | O_CLOEXEC);
-        if (fd >= 0) {
-            m_device = gbm_create_device(fd);
-            if (m_device)
-                break;
-            close(fd);
-        }
-    }
+    int fd = getDeviceFd();
+    if (fd >= 0)
+        m_device = gbm_create_device(fd);
 }
 
 GBMDevice::~GBMDevice()
@@ -74,6 +66,29 @@ GBMDevice::~GBMDevice()
         gbm_device_destroy(m_device);
         m_device = nullptr;
     }
+}
+
+int GBMDevice::getDeviceFd()
+{
+    drmDevicePtr devices[64];
+    memset(devices, 0, sizeof(devices));
+
+    int numDevices = drmGetDevices2(0, devices, WTF_ARRAY_LENGTH(devices));
+    if (numDevices <=0)
+        return -1;
+
+    int fd = -1;
+    for (int i = 0; i < numDevices; ++i) {
+        drmDevice* device = devices[i];
+        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY)))
+            continue;
+
+        fd = open(device->nodes[DRM_NODE_PRIMARY], O_RDWR);
+        if (fd < 0)
+            continue;
+    }
+
+    return fd;
 }
 
 } // namespace WebCore
