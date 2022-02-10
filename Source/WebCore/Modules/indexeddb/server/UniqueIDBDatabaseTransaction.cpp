@@ -30,6 +30,8 @@
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
+#include "UniqueIDBDatabaseConnection.h"
+#include "UniqueIDBDatabaseManager.h"
 
 namespace WebCore {
 namespace IDBServer {
