@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT MediaStreamAudioSourceNode captures the right track. Test timed out
-

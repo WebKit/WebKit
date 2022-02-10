@@ -1,3 +1,24 @@
+2022-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/webaudio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236373
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/webaudio from upstream 012f446eafc392c7.
+
+        * web-platform-tests/webaudio/idlharness.https-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiodestinationnode-interface/idl-test-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audiodestinationnode-interface/idl-test.html: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audiodestinationnode-interface/w3c-import.log: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-sharedarraybuffer.https-expected.txt: Removed.
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing-expected.txt: Removed.
+
 2022-02-10  Youenn Fablet  <youenn@apple.com>
 
         Do not expose in WebIDL the parts of the permission API that are not yet supported

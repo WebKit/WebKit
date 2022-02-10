@@ -1495,8 +1495,6 @@ webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.
 
 webkit.org/b/222493 [ BigSur+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
 
-webkit.org/b/221819 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
-
 webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
