@@ -1,3 +1,19 @@
+2022-02-10  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Perform a full build when analyzing
+        https://bugs.webkit.org/show_bug.cgi?id=236421
+
+        Reviewed by Alexey Proskuryakov.
+
+        `xcodebuild analyze` does just enough work to run the analyzer on each target, and doesn't
+        appear to run build phases that only impact consumers of the target. In particular, it
+        doesn't copy framework headers.
+        
+        Fix by telling xcodebuild to build _and_ analyze at once. AFAICT, this is exactly what
+        Xcode's Product > Analyze command does.
+
+        * Makefile.shared: s/analyze/build analyze
+
 2022-02-10  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Improve device detection in the GbmDevice
