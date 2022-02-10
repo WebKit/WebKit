@@ -1040,6 +1040,7 @@ webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass Ima
 webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash ]
 
 webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
+[ Debug ] accessibility/mac/line-index-for-textmarker.html [ Slow ]
 
 webkit.org/b/208014 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Pass Crash ]
 

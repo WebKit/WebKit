@@ -1,3 +1,13 @@
+2022-02-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Mark accessibility/mac/line-index-for-textmarker.html as Slow in Mac-wk2 Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=236448
+        <rdar://problem/88757785>
+
+        Unreviewed gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-10  Youenn Fablet  <youenn@apple.com>
 
         Settling of a fetch promise should be delayed in case page is entering page cache
