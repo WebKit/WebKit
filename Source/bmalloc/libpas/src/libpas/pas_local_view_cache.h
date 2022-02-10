@@ -36,13 +36,21 @@ PAS_BEGIN_EXTERN_C;
 struct pas_local_view_cache;
 typedef struct pas_local_view_cache pas_local_view_cache;
 
+enum pas_local_view_cache_state {
+    pas_local_view_cache_stopped_state,
+    pas_local_view_cache_not_full_state,
+    pas_local_view_cache_full_state
+};
+
+typedef enum pas_local_view_cache_state pas_local_view_cache_state;
+
 struct pas_local_view_cache {
     pas_local_allocator_scavenger_data scavenger_data;
     uint8_t capacity;
     /* bottom_index and top_index must be < capacity. */
     uint8_t bottom_index;
     uint8_t top_index;
-    bool is_full;
+    uint8_t state;
     pas_compact_segregated_exclusive_view_ptr views[1];
 };
 
@@ -54,13 +62,90 @@ struct pas_local_view_cache {
 PAS_API void pas_local_view_cache_construct(pas_local_view_cache* cache,
                                             uint8_t capacity);
 
+static inline pas_local_view_cache_state pas_local_view_cache_get_state(pas_local_view_cache* cache)
+{
+    return (pas_local_view_cache_state)cache->state;
+}
+
+static inline void pas_local_view_cache_set_state(pas_local_view_cache* cache,
+                                                  pas_local_view_cache_state state)
+{
+    cache->state = (uint8_t)state;
+}
+
+static inline bool pas_local_view_cache_is_full(pas_local_view_cache* cache)
+{
+    return pas_local_view_cache_get_state(cache) == pas_local_view_cache_full_state;
+}
+
+static inline bool pas_local_view_cache_can_push(pas_local_view_cache* cache)
+{
+    return pas_local_view_cache_get_state(cache) == pas_local_view_cache_not_full_state;
+}
+
 static inline bool pas_local_view_cache_is_empty(pas_local_view_cache* cache)
 {
     PAS_TESTING_ASSERT(cache->bottom_index < cache->capacity);
     PAS_TESTING_ASSERT(cache->top_index < cache->capacity);
-    PAS_TESTING_ASSERT(!cache->is_full || cache->bottom_index == cache->top_index);
+    PAS_TESTING_ASSERT(!pas_local_view_cache_is_full(cache) || cache->bottom_index == cache->top_index);
 
-    return cache->top_index == cache->bottom_index && !cache->is_full;
+    return cache->top_index == cache->bottom_index && !pas_local_view_cache_is_full(cache);
+}
+
+static inline bool pas_local_view_cache_prepare_to_pop(pas_local_view_cache* cache)
+{
+    pas_local_view_cache_state state;
+    
+    PAS_TESTING_ASSERT(cache->bottom_index < cache->capacity
+                       || pas_local_view_cache_get_state(cache) == pas_local_view_cache_stopped_state);
+    PAS_TESTING_ASSERT(cache->top_index < cache->capacity
+                       || pas_local_view_cache_get_state(cache) == pas_local_view_cache_stopped_state);
+    PAS_TESTING_ASSERT(!pas_local_view_cache_is_full(cache) || cache->bottom_index == cache->top_index);
+
+    if (cache->top_index != cache->bottom_index)
+        return true;
+
+    state = pas_local_view_cache_get_state(cache);
+    switch (state) {
+    case pas_local_view_cache_stopped_state:
+        pas_local_allocator_scavenger_data_commit_if_necessary_slow(
+            &cache->scavenger_data,
+            pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_in_use_with_no_locks_held_mode,
+            pas_local_allocator_view_cache_kind);
+        return false;
+    case pas_local_view_cache_full_state:
+        return true;
+    case pas_local_view_cache_not_full_state:
+        return false;
+    }
+}
+
+static inline bool pas_local_view_cache_prepare_to_push(pas_local_view_cache* cache)
+{
+    pas_local_view_cache_state state;
+    
+    PAS_TESTING_ASSERT(cache->bottom_index < cache->capacity
+                       || pas_local_view_cache_get_state(cache) == pas_local_view_cache_stopped_state);
+    PAS_TESTING_ASSERT(cache->top_index < cache->capacity
+                       || pas_local_view_cache_get_state(cache) == pas_local_view_cache_stopped_state);
+    PAS_TESTING_ASSERT(!pas_local_view_cache_is_full(cache) || cache->bottom_index == cache->top_index);
+
+    state = pas_local_view_cache_get_state(cache);
+    if (state == pas_local_view_cache_not_full_state)
+        return true;
+
+    pas_compiler_fence();
+    if (state == pas_local_view_cache_stopped_state) {
+        pas_local_allocator_scavenger_data_commit_if_necessary_slow(
+            &cache->scavenger_data,
+            pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_not_in_use_with_scavenger_lock_held_mode,
+            pas_local_allocator_view_cache_kind);
+        PAS_TESTING_ASSERT(pas_local_view_cache_can_push(cache));
+        return true;
+    }
+
+    PAS_TESTING_ASSERT(state == pas_local_view_cache_full_state);
+    return false;
 }
 
 static inline pas_segregated_exclusive_view* pas_local_view_cache_pop(pas_local_view_cache* cache)
@@ -110,18 +195,13 @@ static inline pas_segregated_exclusive_view* pas_local_view_cache_pop(pas_local_
     
     if (PAS_ENABLE_TESTING)
         pas_compact_segregated_exclusive_view_ptr_store(cache->views + pop_index, NULL);
-    
-    cache->is_full = false;
+
+    pas_local_view_cache_set_state(cache, pas_local_view_cache_not_full_state);
     
     if (verbose)
         pas_log("%p: popped %p.\n", cache, result);
 
     return result;
-}
-
-static inline bool pas_local_view_cache_is_full(pas_local_view_cache* cache)
-{
-    return cache->is_full;
 }
 
 static inline void pas_local_view_cache_push(
@@ -135,7 +215,7 @@ static inline void pas_local_view_cache_push(
 
     PAS_TESTING_ASSERT(cache->bottom_index < cache->capacity);
     PAS_TESTING_ASSERT(cache->top_index < cache->capacity);
-    PAS_TESTING_ASSERT(!pas_local_view_cache_is_full(cache));
+    PAS_TESTING_ASSERT(pas_local_view_cache_can_push(cache));
     PAS_TESTING_ASSERT(view);
 
     if (verbose)
@@ -149,7 +229,7 @@ static inline void pas_local_view_cache_push(
     }
 
     if (next_top_index == cache->bottom_index)
-        cache->is_full = true;
+        pas_local_view_cache_set_state(cache, pas_local_view_cache_full_state);
     
     PAS_TESTING_ASSERT(pas_compact_segregated_exclusive_view_ptr_is_null(cache->views + top_index));
 
@@ -161,6 +241,8 @@ PAS_API void pas_local_view_cache_move(pas_local_view_cache* destination,
                                        pas_local_view_cache* source);
 
 PAS_API bool pas_local_view_cache_stop(pas_local_view_cache* cache, pas_lock_lock_mode page_lock_mode);
+
+PAS_API void pas_local_view_cache_did_restart(pas_local_view_cache* cache);
 
 PAS_END_EXTERN_C;
 

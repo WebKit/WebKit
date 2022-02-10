@@ -39,7 +39,7 @@
 void pas_large_free_heap_deferred_commit_log_construct(
     pas_large_free_heap_deferred_commit_log* log)
 {
-    pas_range_min_heap_construct(&log->impl);
+    pas_large_virtual_range_min_heap_construct(&log->impl);
     log->total = 0;
 }
 
@@ -52,12 +52,12 @@ void pas_large_free_heap_deferred_commit_log_destruct(
     PAS_ASSERT(!log->impl.size);
     
     pas_bootstrap_free_heap_allocation_config_construct(&allocation_config, pas_lock_is_held);
-    pas_range_min_heap_destruct(&log->impl, &allocation_config);
+    pas_large_virtual_range_min_heap_destruct(&log->impl, &allocation_config);
 }
 
 bool pas_large_free_heap_deferred_commit_log_add(
     pas_large_free_heap_deferred_commit_log* log,
-    pas_range range,
+    pas_large_virtual_range range,
     pas_physical_memory_transaction* transaction)
 {
     pas_allocation_config allocation_config;
@@ -70,10 +70,10 @@ bool pas_large_free_heap_deferred_commit_log_add(
         return false;
     }
     
-    log->total += pas_range_size(range);
+    log->total += pas_large_virtual_range_size(range);
     
     pas_bootstrap_free_heap_allocation_config_construct(&allocation_config, pas_lock_is_held);
-    pas_range_min_heap_add(&log->impl, range, &allocation_config);
+    pas_large_virtual_range_min_heap_add(&log->impl, range, &allocation_config);
     
     return true;
 }
@@ -84,11 +84,11 @@ static void dump_large_commit(pas_stream* stream, void* arg)
     pas_stream_printf(stream, "large deferred");
 }
 
-static void commit(pas_range range)
+static void commit(pas_large_virtual_range range)
 {
     static const bool verbose = false;
     
-    if (pas_range_is_empty(range))
+    if (pas_large_virtual_range_is_empty(range))
         return;
     
     if (verbose) {
@@ -97,10 +97,10 @@ static void commit(pas_range range)
                (void*)range.end);
     }
     
-    pas_page_malloc_commit((void*)range.begin, pas_range_size(range));
+    pas_page_malloc_commit((void*)range.begin, pas_large_virtual_range_size(range), range.mmap_capability);
 
     if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT)
-        pas_debug_spectrum_add(dump_large_commit, dump_large_commit, pas_range_size(range));
+        pas_debug_spectrum_add(dump_large_commit, dump_large_commit, pas_large_virtual_range_size(range));
 }
 
 static void commit_all(
@@ -108,19 +108,19 @@ static void commit_all(
     pas_physical_memory_transaction* transaction,
     bool for_real)
 {
-    pas_range current_range;
+    pas_large_virtual_range current_range;
     
     if (!log->total)
         return;
     
-    current_range = pas_range_create_empty();
+    current_range = pas_large_virtual_range_create_empty();
     
     for (;;) {
-        pas_range next_range = pas_range_min_heap_take_min(&log->impl);
-        if (pas_range_is_empty(next_range))
+        pas_large_virtual_range next_range = pas_large_virtual_range_min_heap_take_min(&log->impl);
+        if (pas_large_virtual_range_is_empty(next_range))
             break;
         
-        PAS_ASSERT(!pas_range_overlaps(current_range, next_range));
+        PAS_ASSERT(!pas_large_virtual_range_overlaps(current_range, next_range));
         
         if (next_range.begin == current_range.end) {
             current_range.end = next_range.end;

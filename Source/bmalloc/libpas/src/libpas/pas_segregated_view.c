@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,8 @@
 pas_segregated_size_directory*
 pas_segregated_view_get_size_directory_slow(pas_segregated_view view)
 {
+    if (!view)
+        return NULL;
     switch (pas_segregated_view_get_kind(view)) {
     case pas_segregated_exclusive_view_kind:
     case pas_segregated_ineligible_exclusive_view_kind:

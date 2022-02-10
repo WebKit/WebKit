@@ -65,6 +65,39 @@ static inline void pas_local_allocator_reset_impl(pas_local_allocator* allocator
     allocator->config_kind = pas_local_allocator_config_kind_create_normal(kind);
 }
 
+static PAS_ALWAYS_INLINE void pas_local_allocator_commit_if_necessary_impl(pas_local_allocator* allocator,
+                                                                           pas_heap_config config)
+{
+    /* It's possible that:
+       
+       - The allocator was stopped.
+       - We started allocating, and set is_in_use = true.
+       - Someone decommitted the page that this allocator was on, causing is_in_use to become false.
+       
+       And then we end up in here.
+    
+       Therefore, we cannot assert that is_in_use is true. But, when we return from here, it must be true. */
+    if (PAS_LIKELY(allocator->scavenger_data.kind == pas_local_allocator_allocator_kind))
+        return;
+
+    if (config.kind == pas_heap_config_kind_pas_utility) {
+        allocator->scavenger_data.kind = pas_local_allocator_allocator_kind;
+        return;
+    }
+
+    pas_local_allocator_scavenger_data_commit_if_necessary_slow(
+        &allocator->scavenger_data,
+        pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_in_use_with_no_locks_held_mode,
+        pas_local_allocator_allocator_kind);
+}
+
+static PAS_ALWAYS_INLINE void pas_local_allocator_commit_if_necessary(pas_local_allocator* allocator,
+                                                                      pas_heap_config config)
+{
+    pas_local_allocator_commit_if_necessary_impl(allocator, config);
+    PAS_ASSERT(allocator->scavenger_data.is_in_use);
+}
+
 static inline void pas_local_allocator_set_up_bump(pas_local_allocator* allocator,
                                                    uintptr_t page_boundary,
                                                    uintptr_t begin,
@@ -745,7 +778,6 @@ pas_local_allocator_bless_primordial_partial_view_before_stopping(
          word_index < pas_segregated_page_config_num_alloc_words(page_config);
          word_index++) {
         unsigned full_alloc_word;
-        bool should_be_eligible;
 
         full_alloc_word = bits[word_index];
         
@@ -754,21 +786,6 @@ pas_local_allocator_bless_primordial_partial_view_before_stopping(
 
         if (verbose)
             pas_log("Nonzero full alloc word at index = %zu\n", word_index);
-
-        /* We go into this loop with the partial view appearing eligibile to deallocations. So,
-           something may have been freed. If it was, let folks know. Note that the only reason why
-           we have a special case for enable_empty_word_eligibility_optimization is that this
-           simplifies the logic in pas_segregated_view_should_be_eligible(). It would only be a tiny
-           behavioral change - slightly better for space, slightly worse for time - to get rid of
-           this special case, in which case we'd have to edit should_be_eligible(). */
-        if (page_config.enable_empty_word_eligibility_optimization_for_shared)
-            should_be_eligible = !!(full_alloc_word && !page->alloc_bits[word_index]);
-        else
-            should_be_eligible = !!(full_alloc_word & ~page->alloc_bits[word_index]);
-        if (should_be_eligible) {
-            view->eligibility_notification_has_been_deferred = true;
-            view->eligibility_has_been_noted = true;
-        }
 
         if (!has_first_non_zero_word_index) {
             first_non_zero_word_index = word_index;
@@ -1060,8 +1077,8 @@ pas_local_allocator_refill_with_known_config(
             pas_compiler_fence();
             
             pas_local_allocator_scavenger_data_did_use_for_allocation(&view_cache->scavenger_data);
-            
-            if (!pas_local_view_cache_is_empty(view_cache)) {
+
+            if (pas_local_view_cache_prepare_to_pop(view_cache)) {
                 new_view = pas_segregated_exclusive_view_as_view(pas_local_view_cache_pop(view_cache));
                 
                 PAS_TESTING_ASSERT(pas_segregated_view_is_some_exclusive(new_view));
@@ -1517,11 +1534,14 @@ pas_local_allocator_try_allocate_small_segregated_slow_impl(
 {
     PAS_ASSERT(!pas_debug_heap_is_enabled(config.kind));
     
+    pas_local_allocator_commit_if_necessary(allocator, config);
+    
     for (;;) {
         pas_allocation_result result;
         bool refill_result;
 
         PAS_ASSERT(config.small_segregated_config.base.is_enabled);
+
         PAS_TESTING_ASSERT(allocator->config_kind == pas_local_allocator_config_kind_create_normal(
                                config.small_segregated_config.kind));
 
@@ -1577,8 +1597,9 @@ pas_local_allocator_try_allocate_out_of_line_cases(
     if (config.small_bitfit_config.base.is_enabled &&
         our_kind == pas_local_allocator_config_kind_create_bitfit(
             config.small_bitfit_config.kind)) {
+        pas_local_allocator_scavenger_data_did_use_for_allocation(&allocator->scavenger_data);
         return config.small_bitfit_config.specialized_allocator_try_allocate(
-            pas_local_allocator_get_bitfit(allocator), size, alignment);
+            pas_local_allocator_get_bitfit(allocator), allocator, size, alignment);
     }
     
     if (config.medium_segregated_config.base.is_enabled &&
@@ -1592,8 +1613,9 @@ pas_local_allocator_try_allocate_out_of_line_cases(
     if (config.medium_bitfit_config.base.is_enabled &&
         our_kind == pas_local_allocator_config_kind_create_bitfit(
             config.medium_bitfit_config.kind)) {
+        pas_local_allocator_scavenger_data_did_use_for_allocation(&allocator->scavenger_data);
         return config.medium_bitfit_config.specialized_allocator_try_allocate(
-            pas_local_allocator_get_bitfit(allocator), size, alignment);
+            pas_local_allocator_get_bitfit(allocator), allocator, size, alignment);
     }
     
     if (config.small_segregated_config.base.is_enabled &&
@@ -1617,8 +1639,9 @@ pas_local_allocator_try_allocate_out_of_line_cases(
     if (config.marge_bitfit_config.base.is_enabled &&
         our_kind == pas_local_allocator_config_kind_create_bitfit(
             config.marge_bitfit_config.kind)) {
+        pas_local_allocator_scavenger_data_did_use_for_allocation(&allocator->scavenger_data);
         return config.marge_bitfit_config.specialized_allocator_try_allocate(
-            pas_local_allocator_get_bitfit(allocator), size, alignment);
+            pas_local_allocator_get_bitfit(allocator), allocator, size, alignment);
     }
     
     return pas_fast_path_allocation_result_create_need_slow();
@@ -1637,8 +1660,10 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
         pas_log("Called try_allocate_slow with kind = %s\n",
                 pas_local_allocator_config_kind_get_string(allocator->config_kind));
     }
-
+    
     PAS_ASSERT(!pas_debug_heap_is_enabled(config.kind));
+    
+    pas_local_allocator_commit_if_necessary(allocator, config);
     
     for (;;) {
         pas_fast_path_allocation_result fast_result;
@@ -1655,6 +1680,8 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
                     pas_local_allocator_config_kind_get_string(allocator->config_kind));
         }
 
+        PAS_TESTING_ASSERT(allocator->config_kind != pas_local_allocator_config_kind_unselected);
+        
         PAS_TESTING_ASSERT(allocator->config_kind != pas_local_allocator_config_kind_unselected);
         PAS_TESTING_ASSERT(allocator->config_kind != pas_local_allocator_config_kind_null);
         PAS_TESTING_ASSERT(!pas_local_allocator_has_bitfit(allocator));

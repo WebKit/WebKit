@@ -38,6 +38,8 @@ PAS_BEGIN_EXTERN_C;
 #define BMALLOC_MINALIGN_SHIFT ((size_t)4)
 #define BMALLOC_MINALIGN_SIZE ((size_t)1 << BMALLOC_MINALIGN_SHIFT)
 
+#define BMALLOC_SMALL_SHARING_SHIFT 4
+
 PAS_API void bmalloc_heap_config_activate(void);
 
 #define BMALLOC_HEAP_CONFIG PAS_BASIC_HEAP_CONFIG( \
@@ -48,7 +50,7 @@ PAS_API void bmalloc_heap_config_activate(void);
     .dump_type = bmalloc_type_as_heap_type_dump, \
     .check_deallocation = false, \
     .small_segregated_min_align_shift = BMALLOC_MINALIGN_SHIFT, \
-    .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \
+    .small_segregated_sharing_shift = BMALLOC_SMALL_SHARING_SHIFT, \
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \

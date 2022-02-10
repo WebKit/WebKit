@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BITFIT_ALLOCATOR_H
-#define PAS_BITFIT_ALLOCATOR_H
+#ifndef PAS_LARGE_VIRTUAL_RANGE_MIN_HEAP_H
+#define PAS_LARGE_VIRTUAL_RANGE_MIN_HEAP_H
 
+#include "pas_min_heap.h"
 #include "pas_utils.h"
+#include "pas_large_virtual_range.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_allocator;
-struct pas_bitfit_size_class;
-struct pas_bitfit_page;
-struct pas_bitfit_size_class;
-struct pas_bitfit_view;
-typedef struct pas_bitfit_allocator pas_bitfit_allocator;
-typedef struct pas_bitfit_size_class pas_bitfit_size_class;
-typedef struct pas_bitfit_page pas_bitfit_page;
-typedef struct pas_bitfit_size_class pas_bitfit_size_class;
-typedef struct pas_bitfit_view pas_bitfit_view;
+static inline int pas_large_virtual_range_compare_begin(pas_large_virtual_range* left,
+                                                        pas_large_virtual_range* right)
+{
+    if (left->begin < right->begin)
+        return -1;
+    if (left->begin == right->begin)
+        return 0;
+    return 1;
+}
 
-struct pas_bitfit_allocator {
-    pas_bitfit_size_class* size_class;
-    pas_bitfit_view* view;
-};
+static inline size_t pas_large_virtual_range_get_index(pas_large_virtual_range* range)
+{
+    PAS_ASSERT(!"Should not be reached");
+    PAS_UNUSED_PARAM(range);
+    return 0;
+}
 
-PAS_API void pas_bitfit_allocator_construct(pas_bitfit_allocator* allocator,
-                                            pas_bitfit_size_class* size_class);
+static inline void pas_large_virtual_range_set_index(pas_large_virtual_range* range, size_t index)
+{
+    PAS_UNUSED_PARAM(range);
+    PAS_UNUSED_PARAM(index);
+}
 
-PAS_API void pas_bitfit_allocator_stop(pas_bitfit_allocator* allocator);
+PAS_CREATE_MIN_HEAP(
+    pas_large_virtual_range_min_heap,
+    pas_large_virtual_range,
+    32,
+    .compare = pas_large_virtual_range_compare_begin,
+    .get_index = pas_large_virtual_range_get_index,
+    .set_index = pas_large_virtual_range_set_index);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_BITFIT_ALLOCATOR_H */
+#endif /* PAS_LARGE_VIRTUAL_RANGE_MIN_HEAP_H */
 

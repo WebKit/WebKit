@@ -50,7 +50,7 @@ struct pas_thread_local_cache_node {
     
     pas_lock page_lock;
     
-    pas_lock log_flush_lock;
+    pas_lock scavenger_lock;
     
     pas_thread_local_cache* cache;
 };

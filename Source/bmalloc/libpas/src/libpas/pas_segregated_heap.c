@@ -1328,6 +1328,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
     size_t object_size;
     pas_segregated_heap_medium_directory_tuple* medium_tuple;
     bool is_utility;
+    size_t type_alignment;
 
     pas_heap_lock_assert_held();
 
@@ -1339,8 +1340,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
         pas_log("%p(%s): being asked for directory with size = %zu, alignment = %zu.\n",
                 heap, pas_heap_config_kind_get_string(config->kind), size, alignment);
     }
-
-    PAS_ASSERT(pas_is_aligned(size, alignment));
 
     if (PAS_ENABLE_TESTING) {
         check_part_of_all_heaps_data data;
@@ -1390,6 +1389,39 @@ pas_segregated_heap_ensure_size_directory_for_size(
 
     parent_heap = pas_heap_for_segregated_heap(heap);
 
+    /* Say that the heap's type has an alignment of 128 and that someone calls something like
+       bmalloc_iso_allocate_array_by_size(&some_heap, 5163).
+       
+       Before considering what the possible behaviors could be, let's take note of a constraint: it's not
+       reasonable to require the fast path of allocation to align 5163 to 128, since that would require loading
+       the alignment from the type and doing it dynamically, which involves more cycles for the fast path than
+       we'd like.
+       
+       So what behavior do we want this to have?
+       
+       1) We could make this an error. But, since we cannot do the alignment computation on the fast path, the
+          error would only manifest if we hit a slow path.
+       
+       2) We could just silently align the size for the user. To make this work, we just have to make sure that
+          when the fast path asks for 5163 again, they will get an allocator that is aligned appropriately.
+       
+       The first option seems doubly bad: it will only manifest sometimes, and it's unnecessarily restrictive.
+       Who is to say that an array of that length is really wrong? Libpas generally takes the approach of
+       permitting the user to request a misaligned size, and it will align the size for the user.
+
+       To make the second option work, we need to ensure that the `index` is computed from the size that the
+       user thought they were requesting, and that this function gets called with size being exactly the size
+       that the allocator saw.
+       
+       Note that this size may be already aligned to the dynamically requested alignment (as opposed to the
+       type's alignment), and that's great! That behavior ensures that if we later try to allocate this size
+       without that alignment, we can get a directory that is better suited. The `alignment` we are passed here
+       is the max of the type's alignment and the requested alignment, so if the size is not aligned to
+       `alignment`, then we know it's because `alignment` is the type's alignment. */
+
+    type_alignment = pas_heap_get_type_alignment(parent_heap);
+    PAS_ASSERT(alignment >= type_alignment);
+    
     index = pas_segregated_heap_index_for_size(size, *config);
     object_size = pas_segregated_heap_size_for_index(index, *config);
 
@@ -1401,12 +1433,27 @@ pas_segregated_heap_ensure_size_directory_for_size(
 
     object_size = PAS_MAX(min_object_size_for_heap_config(config), object_size);
 
-    PAS_ASSERT(pas_is_aligned(object_size, alignment));
     PAS_ASSERT(pas_is_aligned(
                    object_size, pas_segregated_page_config_min_align(config->small_segregated_config)));
 
     alignment = PAS_MAX(alignment,
                         pas_segregated_page_config_min_align(config->small_segregated_config));
+
+    if (alignment > type_alignment) {
+        /* If the alignment is bigger than type_alignment then it means that this is a dynamically requested
+           alignment. So, we expect that the object size was already aligned to it by the allocator fast
+           path. We should never get here with a size that isn't already aligned to the dynamically requested
+           alignment! */
+        PAS_ASSERT(pas_is_aligned(object_size, alignment));
+    } else {
+        /* If the alignment is exactly the type_alignment, then it might be that we are allocating without
+           any dynamically requested alignment, or a dynamically requested alignment that is smaller than the
+           type alignment. In that case, we align the object_size here, so that in this heap, all object sizes
+           are aligned to the type's alignment. */
+        object_size = pas_round_up_to_power_of_2(object_size, alignment);
+    }
+
+    PAS_ASSERT(object_size >= size);
 
     /* If we have overflowed already then bail. */
     if ((unsigned)object_size != object_size ||

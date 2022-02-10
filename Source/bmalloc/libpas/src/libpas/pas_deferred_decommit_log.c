@@ -236,7 +236,7 @@ static void decommit_all(pas_deferred_decommit_log* log,
                         (void*)range.end);
             }
             
-            pas_page_malloc_decommit((void*)range.begin, pas_virtual_range_size(range));
+            pas_page_malloc_decommit((void*)range.begin, pas_virtual_range_size(range), range.mmap_capability);
         }
         
         PAS_ASSERT(end_index);

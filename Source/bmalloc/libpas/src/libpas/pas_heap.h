@@ -59,6 +59,7 @@ PAS_API pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
 
 /* Returns 1 for NULL heap. */
 PAS_API size_t pas_heap_get_type_size(pas_heap* heap);
+PAS_API size_t pas_heap_get_type_alignment(pas_heap* heap);
 
 /* The large heap belongs to the heap in such a way that given a large heap, we can find the
    heap. */

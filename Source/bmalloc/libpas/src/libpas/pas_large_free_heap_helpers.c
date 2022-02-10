@@ -84,7 +84,8 @@ static pas_aligned_allocation_result large_utility_aligned_allocator(size_t size
         
         pas_large_sharing_pool_boot_free(
             pas_range_create(allocation_result.begin, allocation_result.begin + aligned_size),
-            pas_physical_memory_is_locked_by_heap_lock);
+            pas_physical_memory_is_locked_by_heap_lock,
+            pas_may_mmap);
     }
 
     result.result = (void*)allocation_result.begin;
@@ -137,7 +138,8 @@ void* pas_large_free_heap_helpers_try_allocate_with_alignment(
             commit_result = pas_large_sharing_pool_allocate_and_commit(
                 pas_range_create(result.begin, result.begin + size),
                 NULL,
-                pas_physical_memory_is_locked_by_heap_lock);
+                pas_physical_memory_is_locked_by_heap_lock,
+                pas_may_mmap);
             PAS_ASSERT(commit_result);
         }
         (*num_allocated_object_bytes_ptr) += size;
@@ -168,7 +170,8 @@ void pas_large_free_heap_helpers_deallocate(
         }
         pas_large_sharing_pool_free(
             pas_range_create((uintptr_t)ptr, (uintptr_t)ptr + size),
-            pas_physical_memory_is_locked_by_heap_lock);
+            pas_physical_memory_is_locked_by_heap_lock,
+            pas_may_mmap);
     }
     pas_fast_large_free_heap_deallocate(heap,
                                         (uintptr_t)ptr, (uintptr_t)ptr + size,

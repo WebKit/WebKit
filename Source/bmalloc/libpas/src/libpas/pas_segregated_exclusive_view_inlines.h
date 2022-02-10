@@ -34,6 +34,7 @@
 #include "pas_segregated_size_directory.h"
 #include "pas_segregated_page.h"
 #include "pas_thread_local_cache.h"
+#include "pas_thread_local_cache_node.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -167,6 +168,8 @@ static PAS_ALWAYS_INLINE void pas_segregated_exclusive_view_note_eligibility(
                 break;
             }
 
+            pas_lock_testing_assert_held(&cache->node->scavenger_lock);
+
             allocator_result =
                 pas_thread_local_cache_try_get_local_allocator_for_possibly_uninitialized_but_not_unselected_index(
                     cache, page->view_cache_index);
@@ -183,9 +186,9 @@ static PAS_ALWAYS_INLINE void pas_segregated_exclusive_view_note_eligibility(
             if (verbose)
                 pas_log("Trying to push to view cache.\n");
 
-            if (pas_local_view_cache_is_full(view_cache)) {
+            if (!pas_local_view_cache_prepare_to_push(view_cache)) {
                 if (verbose)
-                    pas_log("%p, %p: Cache is full (%u).\n", cache->node, view_cache, page->object_size);
+                    pas_log("%p, %p: Cache is full or is stopped (%u).\n", cache->node, view_cache, page->object_size);
                 break;
             }
             

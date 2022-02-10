@@ -263,6 +263,17 @@ DisablePageBalancing::DisablePageBalancing()
 {
 }
 
+DecommitZeroFill::DecommitZeroFill()
+    : TestScope(
+        "decommit-zero-fill",
+        [] () {
+#if PAS_OS(DARWIN)
+            pas_page_malloc_decommit_zero_fill = true;
+#endif // PAS_OS(DARWIN)
+        })
+{
+}
+
 namespace {
 
 template<typename Func>
@@ -358,10 +369,12 @@ void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
+void addMemalignTests();
 void addMinHeapTests();
 void addPGMTests();
 void addRaceTests();
 void addRedBlackTreeTests();
+void addTLCDecommitTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
@@ -723,10 +736,12 @@ int main(int argc, char** argv)
     ADD_SUITE(LargeSharingPool);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(LotsOfHeapsAndThreads);
+    ADD_SUITE(Memalign);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
+    ADD_SUITE(TLCDecommit);
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
     

@@ -31,7 +31,10 @@
 PAS_BEGIN_EXTERN_C;
 
 enum pas_local_allocator_kind {
+    pas_local_allocator_decommitted_kind,
+    pas_local_allocator_stopped_allocator_kind,
     pas_local_allocator_allocator_kind,
+    pas_local_allocator_stopped_view_cache_kind,
     pas_local_allocator_view_cache_kind
 };
 
@@ -40,13 +43,34 @@ typedef enum pas_local_allocator_kind pas_local_allocator_kind;
 static inline const char* pas_local_allocator_kind_get_string(pas_local_allocator_kind kind)
 {
     switch (kind) {
+    case pas_local_allocator_decommitted_kind:
+        return "decommitted";
+    case pas_local_allocator_stopped_allocator_kind:
+        return "stopped_allocator";
     case pas_local_allocator_allocator_kind:
         return "allocator";
+    case pas_local_allocator_stopped_view_cache_kind:
+        return "stopped_view_cache";
     case pas_local_allocator_view_cache_kind:
         return "view_cache";
     }
     PAS_ASSERT(!"Should not be reached");
     return NULL;
+}
+
+static inline bool pas_local_allocator_kind_is_stopped(pas_local_allocator_kind kind)
+{
+    switch (kind) { 
+    case pas_local_allocator_decommitted_kind:
+    case pas_local_allocator_stopped_allocator_kind:
+    case pas_local_allocator_stopped_view_cache_kind:
+        return true;
+    case pas_local_allocator_allocator_kind:
+    case pas_local_allocator_view_cache_kind:
+        return false;
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return false;
 }
 
 PAS_END_EXTERN_C;

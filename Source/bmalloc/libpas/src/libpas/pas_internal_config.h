@@ -143,8 +143,8 @@
 #define PAS_PAGE_BALANCING_ENABLED            false
 #endif
 
-#define PAS_SMALL_SHARED_PAGE_LOG_SHIFT     0
-#define PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT    1
+#define PAS_SMALL_SHARED_PAGE_LOG_SHIFT     31
+#define PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT    31
 
 /* Must be zero; utility doesn't support partials right now (though it could if we hacked deallocation and
    added a shared page directory). */
@@ -189,7 +189,7 @@
    objects will only overlap at the header. However, FIXME: we need flex heaps to use a large heap
    that won't overlap objects in these heaps as if they were arrays. */
 #define PAS_FLEX_BOUND_FOR_PARTIAL_VIEWS                        10
-#define PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS                  10
+#define PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS                  0
 #define PAS_FLEX_BOUND_FOR_NO_VIEW_CACHE                        UINT_MAX
 #define PAS_FLEX_MAX_SEGREGATED_OBJECT_SIZE                     UINT_MAX
 #define PAS_FLEX_MAX_BITFIT_OBJECT_SIZE                         0

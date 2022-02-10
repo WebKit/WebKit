@@ -923,6 +923,10 @@ static inline bool pas_is_divisible_by(unsigned value, uint64_t magic_constant)
 enum cpp_initialization_t { cpp_initialization };
 #endif
 
+#define PAS_SYSCALL(x) do { \
+    while ((x) == -1 && errno == EAGAIN) { } \
+} while (0)
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_UTILS_H */

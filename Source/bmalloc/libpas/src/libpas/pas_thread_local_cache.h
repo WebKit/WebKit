@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "pas_allocator_index.h"
 #include "pas_allocator_scavenge_action.h"
 #include "pas_deallocator_scavenge_action.h"
+#include "pas_decommit_exclusion_range.h"
 #include "pas_fast_tls.h"
 #include "pas_internal_config.h"
 #include "pas_local_allocator.h"
@@ -38,7 +39,9 @@
 #include <pthread.h>
 
 #if defined(__has_include) && __has_include(<pthread/private.h>)
+PAS_BEGIN_EXTERN_C;
 #include <pthread/private.h>
+PAS_END_EXTERN_C;
 #define PAS_HAVE_PTHREAD_PRIVATE 1
 #else
 #define PAS_HAVE_PTHREAD_PRIVATE 0
@@ -81,6 +84,7 @@ struct pas_thread_local_cache {
     pas_thread_local_cache_node* node;
 
     unsigned* should_stop_bitvector;
+    unsigned* pages_committed; /* This is a bitvector, protected by the scavenger lock. */
     
     pthread_t thread;
     
@@ -179,6 +183,40 @@ PAS_API pas_local_allocator_result pas_thread_local_cache_get_local_allocator_sl
     pas_thread_local_cache* thread_local_cache,
     unsigned allocator_index,
     pas_lock_hold_mode heap_lock_hold_mode);
+
+static PAS_ALWAYS_INLINE uintptr_t pas_thread_local_cache_offset_of_allocator(pas_allocator_index index)
+{
+    return PAS_OFFSETOF(pas_thread_local_cache, local_allocators) + (uintptr_t)index * sizeof(uint64_t);
+}
+
+PAS_API bool pas_thread_local_cache_is_committed(pas_thread_local_cache* thread_local_cache,
+                                                 pas_allocator_index begin_allocator_index,
+                                                 pas_allocator_index end_allocator_index);
+
+/* Returns a description of what parts of the allocator are available for decommit, in the sense that they
+   are committed and are legal to decommit. The values in the range are offsets from the base of the cache.
+   
+   If this allocator is totally committed: we'll get a contiguous range with start = start of allocator, end
+   = end of allocator.
+   
+   If this allocator is partly decommitted: we'll get an inverted range with start = the first byte after the
+   last decommitted byte in the page, end = the first decommitted byte in the page.
+
+   So either pas_decommit_exclusion_range_is_contiguous() or !pas_decommit_exclusion_range_is_inverted() tells
+   us if the allocator is committed. It's impossible for the returned range to be empty. */
+PAS_API pas_decommit_exclusion_range pas_thread_local_cache_compute_decommit_exclusion_range(
+    pas_thread_local_cache* thread_local_cache,
+    pas_allocator_index begin_allocator_index,
+    pas_allocator_index end_allocator_index);
+
+/* Must hold the scavenger_lock if this is called and there is something to commit. */
+PAS_API void pas_thread_local_cache_ensure_committed(pas_thread_local_cache* thread_local_cache,
+                                                     pas_allocator_index begin_allocator_index,
+                                                     pas_allocator_index end_allocator_index);
+
+PAS_API void pas_thread_local_cache_did_recommit_accidentally(pas_thread_local_cache* thread_local_cache,
+                                                              pas_allocator_index begin_allocator_index,
+                                                              pas_allocator_index end_allocator_index);
 
 static PAS_ALWAYS_INLINE void*
 pas_thread_local_cache_get_local_allocator_direct_without_any_checks_whatsoever(
@@ -313,6 +351,9 @@ pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uniniti
         cache, allocator_index, pas_lock_is_not_held);
 }
 
+PAS_API pas_allocator_index pas_thread_local_cache_allocator_index_for_allocator(pas_thread_local_cache* cache,
+                                                                                 void* allocator);
+
 PAS_API unsigned pas_thread_local_cache_get_num_allocators(pas_thread_local_cache* cache);
 
 PAS_API void pas_thread_local_cache_stop_local_allocators(
@@ -325,6 +366,9 @@ PAS_API void pas_thread_local_cache_stop_local_allocators_if_necessary(
     pas_lock_hold_mode heap_lock_hold_mode);
 
 PAS_API void pas_thread_local_cache_flush_deallocation_log(
+    pas_thread_local_cache* thread_local_cache,
+    pas_lock_hold_mode heap_lock_hold_mode);
+PAS_API void pas_thread_local_cache_flush_deallocation_log_direct(
     pas_thread_local_cache* thread_local_cache,
     pas_lock_hold_mode heap_lock_hold_mode);
 

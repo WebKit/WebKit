@@ -38,7 +38,7 @@
 #include "pas_heap_config_kind.h"
 #include "pas_heap_ref.h"
 #include "pas_heap_ref_kind.h"
-#include "pas_allocation_result.h"
+#include "pas_mmap_capability.h"
 #include "pas_segregated_heap_lookup_kind.h"
 #include "pas_segregated_page_config.h"
 #include "pas_size_lookup_mode.h"
@@ -173,6 +173,9 @@ struct pas_heap_config {
     pas_heap_config_aligned_allocator aligned_allocator;
     bool aligned_allocator_talks_to_sharing_pool;
     pas_deallocator deallocator;
+
+    /* Tells if it's OK to call mmap on memory managed by this heap. */
+    pas_mmap_capability mmap_capability;
 
     /* This points to things that are necessary for enumeration that are specific to the heap config. */
     void* root_data;

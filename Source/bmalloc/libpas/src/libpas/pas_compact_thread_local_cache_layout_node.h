@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BITFIT_ALLOCATOR_H
-#define PAS_BITFIT_ALLOCATOR_H
+#ifndef PAS_COMPACT_THREAD_LOCAL_CACHE_LAYOUT_NODE_H
+#define PAS_COMPACT_THREAD_LOCAL_CACHE_LAYOUT_NODE_H
 
-#include "pas_utils.h"
+#include "pas_compact_tagged_ptr.h"
+#include "pas_thread_local_cache_layout_node.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_allocator;
-struct pas_bitfit_size_class;
-struct pas_bitfit_page;
-struct pas_bitfit_size_class;
-struct pas_bitfit_view;
-typedef struct pas_bitfit_allocator pas_bitfit_allocator;
-typedef struct pas_bitfit_size_class pas_bitfit_size_class;
-typedef struct pas_bitfit_page pas_bitfit_page;
-typedef struct pas_bitfit_size_class pas_bitfit_size_class;
-typedef struct pas_bitfit_view pas_bitfit_view;
-
-struct pas_bitfit_allocator {
-    pas_bitfit_size_class* size_class;
-    pas_bitfit_view* view;
-};
-
-PAS_API void pas_bitfit_allocator_construct(pas_bitfit_allocator* allocator,
-                                            pas_bitfit_size_class* size_class);
-
-PAS_API void pas_bitfit_allocator_stop(pas_bitfit_allocator* allocator);
+PAS_DEFINE_COMPACT_TAGGED_PTR(pas_thread_local_cache_layout_node,
+                              pas_compact_thread_local_cache_layout_node);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_BITFIT_ALLOCATOR_H */
+#endif /* PAS_COMPACT_THREAD_LOCAL_CACHE_LAYOUT_NODE_H */
 

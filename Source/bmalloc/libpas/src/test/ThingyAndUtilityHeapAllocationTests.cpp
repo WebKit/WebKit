@@ -3209,7 +3209,7 @@ void addAllTests()
     {
         TestScope testScope(
             "only-small",
-            [&] () {
+            [] () {
                 pas_medium_segregated_page_config_variant_is_enabled_override = false;
             });
         
@@ -3219,7 +3219,7 @@ void addAllTests()
     {
         TestScope testScope(
             "small-and-medium",
-            [&] () {
+            [] () {
             });
         
         addAllTestsImpl();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "pas_free_mode.h"
 #include "pas_heap_summary.h"
 #include "pas_large_sharing_pool_epoch_update_mode.h"
+#include "pas_mmap_capability.h"
 #include "pas_min_heap.h"
 #include "pas_page_sharing_participant.h"
 #include "pas_physical_memory_synchronization_style.h"
@@ -51,10 +52,10 @@ struct pas_large_sharing_node {
     pas_red_black_tree_node tree_node;
     
     pas_commit_mode is_committed : 1;
-
     pas_physical_memory_synchronization_style synchronization_style : 1;
+    pas_mmap_capability mmap_capability : 1;
 
-    unsigned index_in_min_heap : 30; /* it's a one-based index; it's zero to indicate that we're not in
+    unsigned index_in_min_heap : 29; /* it's a one-based index; it's zero to indicate that we're not in
                                         the min_heap. */
     
     pas_range range; /* Has to be a page range. */
@@ -145,16 +146,19 @@ PAS_API extern pas_large_sharing_pool_epoch_update_mode pas_large_sharing_pool_e
 /* This makes the memory free and also bumps the epoch. */
 PAS_API void pas_large_sharing_pool_boot_free(
     pas_range range,
-    pas_physical_memory_synchronization_style synchronization_style);
+    pas_physical_memory_synchronization_style synchronization_style,
+    pas_mmap_capability mmap_capability);
 
 PAS_API void pas_large_sharing_pool_free(
     pas_range range,
-    pas_physical_memory_synchronization_style synchronization_style);
+    pas_physical_memory_synchronization_style synchronization_style,
+    pas_mmap_capability mmap_capability);
 
 PAS_API bool pas_large_sharing_pool_allocate_and_commit(
     pas_range range,
     pas_physical_memory_transaction* transaction,
-    pas_physical_memory_synchronization_style synchronization_style);
+    pas_physical_memory_synchronization_style synchronization_style,
+    pas_mmap_capability mmap_capability);
 
 /* This doesn't actually decommit the memory. It just tells you about what memory to decommit
    using the decommit_log. It's your job to decommit everything in that log, which you can

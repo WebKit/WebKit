@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_VIRTUAL_RANGE_H
-#define PAS_VIRTUAL_RANGE_H
+#ifndef PAS_LARGE_VIRTUAL_RANGE_H
+#define PAS_LARGE_VIRTUAL_RANGE_H
 
 #include "pas_lock.h"
 #include "pas_mmap_capability.h"
@@ -33,59 +33,54 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_virtual_range;
-typedef struct pas_virtual_range pas_virtual_range;
+struct pas_large_virtual_range;
+typedef struct pas_large_virtual_range pas_large_virtual_range;
 
-PAS_API extern pas_lock pas_virtual_range_common_lock;
-
-struct pas_virtual_range {
+struct pas_large_virtual_range {
     uintptr_t begin;
     uintptr_t end;
-    pas_lock* lock_ptr;
     pas_mmap_capability mmap_capability;
 };
 
-static inline pas_virtual_range pas_virtual_range_create(uintptr_t begin,
-                                                         uintptr_t end,
-                                                         pas_lock* lock_ptr,
-                                                         pas_mmap_capability mmap_capability)
+static inline pas_large_virtual_range pas_large_virtual_range_create(uintptr_t begin,
+                                                                     uintptr_t end,
+                                                                     pas_mmap_capability mmap_capability)
 {
-    pas_virtual_range result;
+    pas_large_virtual_range result;
     result.begin = begin;
     result.end = end;
-    result.lock_ptr = lock_ptr;
     result.mmap_capability = mmap_capability;
     return result;
 }
 
-static inline pas_virtual_range pas_virtual_range_create_empty(void)
+static inline pas_large_virtual_range pas_large_virtual_range_create_empty(void)
 {
-    return pas_virtual_range_create(0, 0, NULL, pas_may_not_mmap);
+    return pas_large_virtual_range_create(0, 0, pas_may_not_mmap);
 }
 
-static inline pas_range pas_virtual_range_get_range(pas_virtual_range range)
+static inline pas_range pas_large_virtual_range_get_range(pas_large_virtual_range range)
 {
     return pas_range_create(range.begin, range.end);
 }
 
-static inline bool pas_virtual_range_is_empty(pas_virtual_range range)
+static inline bool pas_large_virtual_range_is_empty(pas_large_virtual_range range)
 {
-    return pas_range_is_empty(pas_virtual_range_get_range(range));
+    return pas_range_is_empty(pas_large_virtual_range_get_range(range));
 }
 
-static inline size_t pas_virtual_range_size(pas_virtual_range range)
+static inline size_t pas_large_virtual_range_size(pas_large_virtual_range range)
 {
-    return pas_range_size(pas_virtual_range_get_range(range));
+    return pas_range_size(pas_large_virtual_range_get_range(range));
 }
 
-static inline bool pas_virtual_range_overlaps(pas_virtual_range left,
-                                              pas_virtual_range right)
+static inline bool pas_large_virtual_range_overlaps(pas_large_virtual_range left,
+                                                    pas_large_virtual_range right)
 {
-    return pas_range_overlaps(pas_virtual_range_get_range(left),
-                              pas_virtual_range_get_range(right));
+    return pas_range_overlaps(pas_large_virtual_range_get_range(left),
+                              pas_large_virtual_range_get_range(right));
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_VIRTUAL_RANGE_H */
+#endif /* PAS_LARGE_VIRTUAL_RANGE_H */
 

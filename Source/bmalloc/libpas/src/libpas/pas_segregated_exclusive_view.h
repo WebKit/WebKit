@@ -40,6 +40,8 @@ typedef struct pas_segregated_exclusive_view pas_segregated_exclusive_view;
 typedef struct pas_segregated_page pas_segregated_page;
 typedef struct pas_thread_local_cache pas_thread_local_cache;
 
+PAS_API extern size_t pas_segregated_exclusive_view_count;
+
 struct pas_segregated_exclusive_view {
     void* page_boundary;
     

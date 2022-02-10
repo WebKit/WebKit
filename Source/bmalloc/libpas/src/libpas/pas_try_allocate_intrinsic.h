@@ -148,7 +148,8 @@ pas_try_allocate_intrinsic_impl_casual_case(
 
         allocator = (pas_local_allocator*)allocator_result.allocator;
 
-        PAS_TESTING_ASSERT(!allocator_result.did_succeed || allocator->object_size >= aligned_size);
+        PAS_TESTING_ASSERT(!allocator_result.did_succeed || allocator->object_size >= aligned_size
+                           || allocator->scavenger_data.kind == pas_local_allocator_decommitted_kind);
     
         /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
            alignment being the constant 1. */
@@ -244,7 +245,8 @@ pas_try_allocate_intrinsic_impl_inline_only(
     PAS_TESTING_ASSERT(
         !allocator_result.did_succeed
         || allocator->object_size >= aligned_size
-        || allocator->config_kind == pas_local_allocator_config_kind_unselected);
+        || allocator->config_kind == pas_local_allocator_config_kind_unselected
+        || allocator->scavenger_data.kind == pas_local_allocator_decommitted_kind);
     
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
        alignment being the constant 1. */

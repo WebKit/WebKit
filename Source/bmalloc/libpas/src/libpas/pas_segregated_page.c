@@ -409,7 +409,8 @@ bool pas_segregated_page_take_physically(
     range = pas_virtual_range_create(
         base,
         base + page_config.base.page_size,
-        commit_lock_for(page));
+        commit_lock_for(page),
+        page_config.base.heap_config_ptr->mmap_capability);
     
     return pas_deferred_decommit_log_add_maybe_locked(
         decommit_log, range, range_locked_mode, heap_lock_hold_mode);
@@ -489,7 +490,7 @@ void pas_segregated_page_commit_fully(
             pas_lock_lock(commit_lock);
         pas_compiler_fence();
 
-        pas_commit_span_construct(&commit_span);
+        pas_commit_span_construct(&commit_span, page_config.base.heap_config_ptr->mmap_capability);
 
         for (granule_index = 0; granule_index < num_granules; ++granule_index) {
             if (use_counts[granule_index] != PAS_PAGE_GRANULE_DECOMMITTED) {

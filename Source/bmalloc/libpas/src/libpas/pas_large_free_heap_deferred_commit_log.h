@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #ifndef PAS_LARGE_FREE_HEAP_DEFERRED_COMMIT_LOG_H
 #define PAS_LARGE_FREE_HEAP_DEFERRED_COMMIT_LOG_H
 
-#include "pas_range.h"
-#include "pas_range_min_heap.h"
+#include "pas_large_virtual_range.h"
+#include "pas_large_virtual_range_min_heap.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -37,7 +37,7 @@ typedef struct pas_large_free_heap_deferred_commit_log pas_large_free_heap_defer
 typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 
 struct pas_large_free_heap_deferred_commit_log {
-    pas_range_min_heap impl;
+    pas_large_virtual_range_min_heap impl;
     size_t total; /* This is accurate so long as the ranges are non-overlapping. */
 };
 
@@ -49,7 +49,7 @@ PAS_API void pas_large_free_heap_deferred_commit_log_destruct(
 
 PAS_API bool pas_large_free_heap_deferred_commit_log_add(
     pas_large_free_heap_deferred_commit_log* log,
-    pas_range range,
+    pas_large_virtual_range range,
     pas_physical_memory_transaction* transaction);
 
 PAS_API void pas_large_free_heap_deferred_commit_log_commit_all(

@@ -517,7 +517,8 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
 
             pas_deferred_decommit_log_add_already_locked(
                 decommit_log,
-                pas_virtual_range_create(base, base + page_config->base.page_size, commit_lock),
+                pas_virtual_range_create(base, base + page_config->base.page_size, commit_lock,
+                                         page_config->base.heap_config_ptr->mmap_capability),
                 heap_lock_hold_mode);
         }
         

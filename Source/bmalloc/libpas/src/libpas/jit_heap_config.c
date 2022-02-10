@@ -223,7 +223,7 @@ pas_aligned_allocation_result jit_aligned_allocator(
     aligned_size = pas_round_up_to_power_of_2(size, alignment.alignment);
 
     allocation_result = pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
-        &jit_large_fresh_memory_heap, aligned_size, alignment, false);
+        &jit_large_fresh_memory_heap, aligned_size, alignment, config, false);
     if (!allocation_result.did_succeed)
         return result;
 

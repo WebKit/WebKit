@@ -77,8 +77,7 @@ void pas_local_allocator_construct(pas_local_allocator* allocator,
             pas_compact_bitfit_directory_ptr_load_non_null(&size_class->directory)->config_kind);
 
         bitfit_allocator = pas_local_allocator_get_bitfit(allocator);
-        bitfit_allocator->size_class = size_class;
-        bitfit_allocator->view = NULL;
+        pas_bitfit_allocator_construct(bitfit_allocator, size_class);
     } else
         allocator->config_kind = pas_local_allocator_config_kind_create_normal(directory->base.page_config_kind);
     
@@ -120,6 +119,9 @@ void pas_local_allocator_move(pas_local_allocator* dst,
 
     pas_heap_lock_assert_held(); /* Needed to modify a lenient_compact_ptr. */
 
+    PAS_ASSERT(!dst->scavenger_data.is_in_use);
+    PAS_ASSERT(!src->scavenger_data.is_in_use);
+
     directory = pas_segregated_view_get_size_directory(src->view);
     
     size = pas_segregated_size_directory_local_allocator_size(directory);
@@ -158,6 +160,13 @@ static bool stop_impl(
     if (verbose)
         pas_log("stopping allocator %p\n", allocator);
 
+    if (pas_local_allocator_has_bitfit(allocator)) {
+        PAS_ASSERT(!allocator->page_ish);
+        pas_bitfit_allocator_stop(pas_local_allocator_get_bitfit(allocator));
+        return true;
+    }
+
+    /* This also stops us from doing anything when we've been decommitted. */
     if (!allocator->page_ish)
         return true;
 
@@ -200,8 +209,6 @@ static bool stop_impl(
     return true;
 }
 
-/* FIXME: This thing is meaningless with heap_lock_hold_mode = pas_lock_is_not_held unless you
-   also set is_in_use to true. Seems like maybe this should set it for you? */
 bool pas_local_allocator_stop(
     pas_local_allocator* allocator,
     pas_lock_lock_mode page_lock_mode,
@@ -210,8 +217,27 @@ bool pas_local_allocator_stop(
     static const bool verbose = false;
     
     bool result;
+    bool is_in_use;
 
-    PAS_ASSERT(!allocator->scavenger_data.is_in_use);
+    is_in_use = allocator->scavenger_data.is_in_use;
+    if (is_in_use) {
+        pas_log("allocator = %p\n", allocator);
+        pas_log("allocator->scavenger_data.kind = %s\n",
+                pas_local_allocator_kind_get_string(allocator->scavenger_data.kind));
+        pas_log("allocator->scavenger_data.is_in_use = %s\n",
+                allocator->scavenger_data.is_in_use ? "yes" : "no");
+        pas_log("at time of assert: allocator->scavenger_data.is_in_use = %s\n",
+                is_in_use ? "yes" : "no");
+        PAS_ASSERT(!"Should not be reached");
+    }
+
+    /* Doing this check before setting is_in_use guards against situations where calling stop would
+       recommit a decommitted allocator.
+    
+       This is a pretty weak optimization since in my experiments, reads cause commits. Web Template
+       Framework! */
+    if (pas_local_allocator_scavenger_data_is_stopped(&allocator->scavenger_data))
+        return true;
 
     allocator->scavenger_data.is_in_use = true;
     pas_compiler_fence();
@@ -222,6 +248,7 @@ bool pas_local_allocator_stop(
         if (verbose)
             pas_log("Did stop allocator %p\n", allocator);
         allocator->scavenger_data.should_stop_count = 0;
+        allocator->scavenger_data.kind = pas_local_allocator_stopped_allocator_kind;
     }
     
     pas_compiler_fence();

@@ -673,6 +673,11 @@ static bool dump_large_sharing_pool_node_callback(pas_large_sharing_node* node,
             stream, ", %s",
             pas_physical_memory_synchronization_style_get_string(node->synchronization_style));
     }
+    if (node->mmap_capability != pas_may_mmap) {
+        pas_stream_printf(
+            stream, ", %s",
+            pas_mmap_capability_get_string(node->mmap_capability));
+    }
 
     pas_stream_printf(stream, "\n");
 
@@ -821,6 +826,13 @@ void pas_status_reporter_dump_total_fragmentation(pas_stream* stream)
                       data.large_fragmentation);
 }
 
+void pas_status_reporter_dump_view_stats(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Number of Partial Views: %zu\n", pas_segregated_partial_view_count);
+    pas_stream_printf(stream, "    Number of Shared Views: %zu\n", pas_segregated_shared_view_count);
+    pas_stream_printf(stream, "    Number of Exclusive Views: %zu\n", pas_segregated_exclusive_view_count);
+}
+
 typedef struct {
     size_t num_directories_with_data;
     size_t num_directories_with_tlas;
@@ -894,11 +906,34 @@ void pas_status_reporter_dump_tier_up_rates(pas_stream* stream)
 
 static const char* allocator_state(pas_local_allocator* allocator)
 {
+    
     if (!pas_local_allocator_is_active(allocator))
         return "inactive";
     if (pas_segregated_view_is_partial(allocator->view))
         return "partial";
     return "exclusive";
+}
+
+static void dump_allocator_state(pas_stream* stream, pas_local_allocator* allocator)
+{
+    pas_segregated_view view;
+
+    view = allocator->view;
+    pas_stream_printf(stream, ", %s, view = %p, directory = %p, %s",
+                      pas_local_allocator_config_kind_get_string(allocator->config_kind),
+                      view, view ? pas_segregated_view_get_size_directory(view) : NULL,
+                      allocator_state(allocator));
+}
+
+static void dump_scavenger_data_state(pas_stream* stream, pas_local_allocator_scavenger_data* data)
+{
+    pas_local_allocator_kind kind;
+
+    kind = data->kind;
+    pas_stream_printf(stream, "%s", pas_local_allocator_kind_get_string(kind));
+
+    if (kind == pas_local_allocator_allocator_kind)
+        dump_allocator_state(stream, (pas_local_allocator*)data);
 }
 
 void pas_status_reporter_dump_baseline_allocators(pas_stream* stream)
@@ -914,16 +949,12 @@ void pas_status_reporter_dump_baseline_allocators(pas_stream* stream)
     
     for (index = 0; index < PAS_NUM_BASELINE_ALLOCATORS; ++index) {
         pas_local_allocator* allocator;
-        pas_segregated_view view;
 
         allocator = &pas_baseline_allocator_table[index].u.allocator;
 
-        view = allocator->view;
-        pas_stream_printf(stream,
-                          "         %zu: directory = %p, %s\n",
-                          index,
-                          view ? pas_segregated_view_get_size_directory(view) : NULL,
-                          allocator_state(allocator));
+        pas_stream_printf(stream, "         %zu: ", index);
+        dump_allocator_state(stream, allocator);
+        pas_stream_printf(stream, "\n");
     }
 }
 
@@ -966,23 +997,20 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
 
         for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
             pas_allocator_index allocator_index;
-            pas_local_allocator* allocator;
-
-            if (!pas_thread_local_cache_layout_node_represents_allocator(layout_node))
-                continue;
 
             allocator_index =
-                pas_thread_local_cache_layout_node_get_allocator_index_for_allocator(layout_node);
+                pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
 
             if (allocator_index >= cache->allocator_index_upper_bound)
                 break;
+
+            if (!pas_thread_local_cache_layout_node_is_committed(layout_node, cache))
+                continue;
             
-            allocator = pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index);
-            pas_stream_printf(stream,
-                              "            %u: directory = %p, %s\n",
-                              allocator_index,
-                              pas_segregated_view_get_size_directory(allocator->view),
-                              allocator_state(allocator));
+            pas_stream_printf(stream, "            %u: ", allocator_index);
+            dump_scavenger_data_state(
+                stream, pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index));
+            pas_stream_printf(stream, "\n");
         }
     }
 }
@@ -1090,6 +1118,7 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
 
     if (pas_status_reporter_enabled >= 3) {
         pas_status_reporter_dump_total_fragmentation(stream);
+        pas_status_reporter_dump_view_stats(stream);
         pas_status_reporter_dump_tier_up_rates(stream);
     }
 

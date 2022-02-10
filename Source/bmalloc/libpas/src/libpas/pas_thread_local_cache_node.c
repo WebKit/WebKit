@@ -69,7 +69,7 @@ pas_thread_local_cache_node* pas_thread_local_cache_node_allocate(void)
         result->next = pas_thread_local_cache_node_first;
 
         pas_lock_construct(&result->page_lock);
-        pas_lock_construct(&result->log_flush_lock);
+        pas_lock_construct(&result->scavenger_lock);
 
         if (verbose)
             pas_log("TLC page lock: %p\n", &result->page_lock);

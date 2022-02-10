@@ -1,3 +1,350 @@
+2022-01-18  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] it should be possible to decommit unused parts of a thread_local_cache (update to 78508e79fa2797680344d43b94841ae2e903b15b)
+        https://bugs.webkit.org/show_bug.cgi?id=235347
+
+        Reviewed by Yusuke Suzuki.
+
+        Libpas uses TLCs (thread_local_caches) for allocation and deallocation. Each size class in each heap
+        gets a local allocator and possibly a local view cache. Both local allocators and local view caches
+        can get quite large (100s of bytes). So, if you try to support full isoheaps (bug 231938), you end up
+        with ginormous TLCs and that accounts for a lot of the memory overhead of full isoheaps.
+
+        This change takes a big bite out of that overhead by enabling decommit of TLC pages:
+
+        - Any page within a TLC that has nothing but stopped allocators (or view caches; I'll just say
+          "allocators" to mean both "local allocators" and "local view caches", as I do in the code) can get
+          decommitted by the scavenger.
+
+        - TLC page decommit just requires holding the TLC's scavenger_lock (formerly known as the
+          log_flush_lock) and the heap_lock. You don't have to suspend the thread (but suspension could have
+          been used to stop the allocator, as before).
+
+        - Attempts to allocate using an allocator in a decommitted page are guaranteed to go down a slow
+          path that commits the page and rematerializes the allocator.
+
+        - This doesn't require any page alignment of allocators. Allocators can straddle pages.
+
+        This seems to be perf-neutral on trunk. It offers a ~1.5% memory improvement for bug 231938.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/bmalloc_heap.c:
+        (bmalloc_flex_heap_ref_get_heap):
+        (bmalloc_auxiliary_heap_ref_get_heap):
+        (bmalloc_get_heap):
+        * libpas/src/libpas/bmalloc_heap.h:
+        * libpas/src/libpas/bmalloc_heap_config.h:
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_aligned_allocator):
+        * libpas/src/libpas/jit_heap_config.h:
+        * libpas/src/libpas/minalign32_heap_config.h:
+        * libpas/src/libpas/pas_bitfit_allocator.c:
+        (pas_bitfit_allocator_construct):
+        (pas_bitfit_allocator_stop):
+        (pas_bitfit_allocator_commit_view):
+        (pas_bitfit_allocator_finish_failing):
+        * libpas/src/libpas/pas_bitfit_allocator.h:
+        * libpas/src/libpas/pas_bitfit_allocator_inlines.h:
+        (pas_bitfit_allocator_try_allocate):
+        * libpas/src/libpas/pas_bitfit_directory.c:
+        (pas_bitfit_directory_take_last_empty):
+        * libpas/src/libpas/pas_bitfit_page_config.h:
+        * libpas/src/libpas/pas_bitfit_page_config_inlines.h:
+        * libpas/src/libpas/pas_bitfit_page_inlines.h:
+        (pas_bitfit_page_allocation_commit_granules_or_reloop):
+        * libpas/src/libpas/pas_commit_span.c:
+        (pas_commit_span_construct):
+        (commit):
+        (pas_commit_span_add_unchanged_and_commit):
+        (decommit):
+        * libpas/src/libpas/pas_commit_span.h:
+        * libpas/src/libpas/pas_committed_pages_vector.c: Added.
+        (pas_committed_pages_vector_construct):
+        (pas_committed_pages_vector_destruct):
+        (pas_committed_pages_vector_count_committed):
+        (pas_count_committed_pages):
+        * libpas/src/libpas/pas_committed_pages_vector.h: Added.
+        (pas_committed_pages_vector_is_committed):
+        * libpas/src/libpas/pas_compact_tagged_ptr.h:
+        * libpas/src/libpas/pas_compact_thread_local_cache_layout_node.h: Added.
+        * libpas/src/libpas/pas_decommit_exclusion_range.h: Added.
+        (pas_decommit_exclusion_range_is_empty):
+        (pas_decommit_exclusion_range_is_contiguous):
+        (pas_decommit_exclusion_range_is_inverted):
+        (pas_decommit_exclusion_range_create_inverted):
+        * libpas/src/libpas/pas_deferred_decommit_log.c:
+        (decommit_all):
+        * libpas/src/libpas/pas_expendable_memory.c:
+        (pas_expendable_memory_state_version_next):
+        (pas_expendable_memory_construct):
+        (pas_expendable_memory_commit_if_necessary):
+        (scavenge_impl):
+        (pas_expendable_memory_scavenge):
+        * libpas/src/libpas/pas_expendable_memory.h:
+        * libpas/src/libpas/pas_free_granules.c:
+        (pas_free_granules_decommit_after_locking_range):
+        * libpas/src/libpas/pas_heap.c:
+        (pas_heap_get_type_size):
+        (pas_heap_get_type_alignment):
+        * libpas/src/libpas/pas_heap.h:
+        * libpas/src/libpas/pas_heap_config.h:
+        * libpas/src/libpas/pas_heap_config_utils.c:
+        (pas_heap_config_utils_allocate_aligned):
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_heap_ref.c:
+        (pas_ensure_heap_slow):
+        * libpas/src/libpas/pas_internal_config.h:
+        * libpas/src/libpas/pas_large_free_heap_deferred_commit_log.c:
+        (pas_large_free_heap_deferred_commit_log_construct):
+        (pas_large_free_heap_deferred_commit_log_destruct):
+        (pas_large_free_heap_deferred_commit_log_add):
+        (commit):
+        (commit_all):
+        * libpas/src/libpas/pas_large_free_heap_deferred_commit_log.h:
+        * libpas/src/libpas/pas_large_free_heap_helpers.c:
+        (large_utility_aligned_allocator):
+        (pas_large_free_heap_helpers_try_allocate_with_alignment):
+        (pas_large_free_heap_helpers_deallocate):
+        * libpas/src/libpas/pas_large_heap.c:
+        (allocate_impl):
+        (pas_large_heap_try_deallocate):
+        (pas_large_heap_try_shrink):
+        * libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.c:
+        (large_aligned_allocator):
+        (pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment):
+        * libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.h:
+        * libpas/src/libpas/pas_large_sharing_pool.c:
+        (create_node):
+        (create_and_insert):
+        (boot_tree):
+        (states_match):
+        (split_node_and_get_right_impl):
+        (try_splat_impl):
+        (try_splat):
+        (splat):
+        (pas_large_sharing_pool_boot_free):
+        (pas_large_sharing_pool_free):
+        (pas_large_sharing_pool_allocate_and_commit):
+        (pas_large_sharing_pool_decommit_least_recently_used):
+        * libpas/src/libpas/pas_large_sharing_pool.h:
+        * libpas/src/libpas/pas_large_virtual_range.h: Added.
+        (pas_large_virtual_range_create):
+        (pas_large_virtual_range_create_empty):
+        (pas_large_virtual_range_get_range):
+        (pas_large_virtual_range_is_empty):
+        (pas_large_virtual_range_size):
+        (pas_large_virtual_range_overlaps):
+        * libpas/src/libpas/pas_large_virtual_range_min_heap.h: Added.
+        (pas_large_virtual_range_compare_begin):
+        (pas_large_virtual_range_get_index):
+        (pas_large_virtual_range_set_index):
+        * libpas/src/libpas/pas_local_allocator.c:
+        (pas_local_allocator_construct):
+        (pas_local_allocator_move):
+        (stop_impl):
+        (pas_local_allocator_stop):
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_commit_if_necessary_impl):
+        (pas_local_allocator_commit_if_necessary):
+        (pas_local_allocator_bless_primordial_partial_view_before_stopping):
+        (pas_local_allocator_refill_with_known_config):
+        (pas_local_allocator_try_allocate_small_segregated_slow_impl):
+        (pas_local_allocator_try_allocate_out_of_line_cases):
+        (pas_local_allocator_try_allocate_slow_impl):
+        * libpas/src/libpas/pas_local_allocator_kind.h:
+        (pas_local_allocator_kind_get_string):
+        (pas_local_allocator_kind_is_stopped):
+        * libpas/src/libpas/pas_local_allocator_scavenger_data.c:
+        (pas_local_allocator_scavenger_data_is_stopped):
+        (pas_local_allocator_scavenger_data_commit_if_necessary_slow):
+        (pas_local_allocator_scavenger_data_stop):
+        (pas_local_allocator_scavenger_data_prepare_to_decommit):
+        (pas_local_allocator_scavenger_data_is_active): Deleted.
+        * libpas/src/libpas/pas_local_allocator_scavenger_data.h:
+        * libpas/src/libpas/pas_local_view_cache.c:
+        (pas_local_view_cache_construct):
+        (pas_local_view_cache_move):
+        (pas_local_view_cache_stop):
+        (pas_local_view_cache_did_restart):
+        * libpas/src/libpas/pas_local_view_cache.h:
+        (pas_local_view_cache_get_state):
+        (pas_local_view_cache_set_state):
+        (pas_local_view_cache_is_full):
+        (pas_local_view_cache_can_push):
+        (pas_local_view_cache_is_empty):
+        (pas_local_view_cache_prepare_to_pop):
+        (pas_local_view_cache_prepare_to_push):
+        (pas_local_view_cache_pop):
+        (pas_local_view_cache_push):
+        * libpas/src/libpas/pas_lock.h:
+        * libpas/src/libpas/pas_mmap_capability.h: Added.
+        (pas_mmap_capability_get_string):
+        * libpas/src/libpas/pas_page_malloc.c:
+        (pas_page_malloc_alignment_slow):
+        (pas_page_malloc_alignment_shift_slow):
+        (pas_page_malloc_zero_fill):
+        (commit_impl):
+        (pas_page_malloc_commit):
+        (pas_page_malloc_commit_without_mprotect):
+        (decommit_impl):
+        (pas_page_malloc_decommit):
+        (pas_page_malloc_decommit_without_mprotect):
+        (pas_page_malloc_decommit_asymmetric): Deleted.
+        * libpas/src/libpas/pas_page_malloc.h:
+        * libpas/src/libpas/pas_scavenger.c:
+        (handle_expendable_memory):
+        (scavenger_thread_main):
+        (pas_scavenger_decommit_expendable_memory):
+        (pas_scavenger_fake_decommit_expendable_memory):
+        * libpas/src/libpas/pas_scavenger.h:
+        * libpas/src/libpas/pas_segregated_exclusive_view.c:
+        (pas_segregated_exclusive_view_create):
+        * libpas/src/libpas/pas_segregated_exclusive_view.h:
+        * libpas/src/libpas/pas_segregated_exclusive_view_inlines.h:
+        (pas_segregated_exclusive_view_note_eligibility):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (medium_directory_tuple_for_index_impl):
+        (pas_segregated_heap_medium_directory_tuple_for_index):
+        (pas_segregated_heap_medium_allocator_index_for_index):
+        (recompute_size_lookup):
+        (rematerialize_size_lookup_set_medium_directory_tuple):
+        (pas_segregated_heap_ensure_allocator_index):
+        (check_size_lookup_recomputation_set_medium_directory_tuple):
+        (check_size_lookup_recomputation_dump_directory):
+        (check_size_lookup_recomputation):
+        (check_size_lookup_recomputation_if_appropriate):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        * libpas/src/libpas/pas_segregated_heap.h:
+        * libpas/src/libpas/pas_segregated_heap_inlines.h:
+        (pas_segregated_heap_touch_lookup_tables):
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_take_physically):
+        (pas_segregated_page_commit_fully):
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_log_or_deallocate):
+        * libpas/src/libpas/pas_segregated_partial_view.c:
+        (pas_segregated_partial_view_create):
+        (compute_summary):
+        * libpas/src/libpas/pas_segregated_partial_view.h:
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c:
+        (take_last_empty_consider_view):
+        * libpas/src/libpas/pas_segregated_shared_view.c:
+        (pas_segregated_shared_view_create):
+        (pas_segregated_shared_view_commit_page):
+        (compute_summary):
+        * libpas/src/libpas/pas_segregated_shared_view.h:
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (take_last_empty_consider_view):
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_get_tlc_allocator_index):
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        * libpas/src/libpas/pas_status_reporter.c:
+        (dump_large_sharing_pool_node_callback):
+        (pas_status_reporter_dump_view_stats):
+        (allocator_state):
+        (dump_allocator_state):
+        (dump_scavenger_data_state):
+        (pas_status_reporter_dump_baseline_allocators):
+        (pas_status_reporter_dump_thread_local_caches):
+        (pas_status_reporter_dump_everything):
+        * libpas/src/libpas/pas_status_reporter.h:
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (pas_thread_local_cache_size_for_allocator_index_capacity):
+        (num_pages):
+        (compute_page_indices):
+        (pages_committed_size):
+        (deallocate):
+        (allocate_cache):
+        (pas_thread_local_cache_create):
+        (pas_thread_local_cache_destroy):
+        (pas_thread_local_cache_get_local_allocator_slow):
+        (pas_thread_local_cache_is_committed):
+        (pas_thread_local_cache_compute_decommit_exclusion_range):
+        (pas_thread_local_cache_ensure_committed):
+        (pas_thread_local_cache_allocator_index_for_allocator):
+        (pas_thread_local_cache_stop_local_allocators):
+        (flush_deallocation_log_without_resetting):
+        (flush_deallocation_log_for_scavenger):
+        (flush_deallocation_log_with_mode):
+        (pas_thread_local_cache_flush_deallocation_log):
+        (pas_thread_local_cache_flush_deallocation_log_direct):
+        (suspend):
+        (resume):
+        (decommit_allocator_range):
+        (stop_allocator):
+        (pas_thread_local_cache_for_all):
+        (pas_thread_local_cache_shrink):
+        (flush_deallocation_log): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_offset_of_allocator):
+        * libpas/src/libpas/pas_thread_local_cache_layout.c:
+        (pas_thread_local_cache_layout_add_node):
+        (pas_thread_local_cache_layout_get_node_for_index):
+        * libpas/src/libpas/pas_thread_local_cache_layout.h:
+        * libpas/src/libpas/pas_thread_local_cache_layout_entry.h: Added.
+        (pas_thread_local_cache_layout_entry_create_empty):
+        (pas_thread_local_cache_layout_entry_create_deleted):
+        (pas_thread_local_cache_layout_entry_is_empty_or_deleted):
+        (pas_thread_local_cache_layout_entry_is_empty):
+        (pas_thread_local_cache_layout_entry_is_deleted):
+        (pas_thread_local_cache_layout_entry_get_key):
+        (pas_thread_local_cache_layout_key_get_hash):
+        (pas_thread_local_cache_layout_key_is_equal):
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.c:
+        (pas_thread_local_cache_layout_node_num_allocator_indices):
+        (pas_thread_local_cache_layout_node_commit_and_construct):
+        (pas_thread_local_cache_layout_node_move):
+        (pas_thread_local_cache_layout_node_is_committed):
+        (pas_thread_local_cache_layout_node_ensure_committed):
+        (pas_thread_local_cache_layout_node_prepare_to_decommit):
+        (pas_thread_local_cache_layout_num_allocator_indices): Deleted.
+        (pas_thread_local_cache_layout_node_construct): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.h:
+        * libpas/src/libpas/pas_thread_local_cache_node.c:
+        (pas_thread_local_cache_node_allocate):
+        * libpas/src/libpas/pas_thread_local_cache_node.h:
+        * libpas/src/libpas/pas_try_allocate_intrinsic.h:
+        (pas_try_allocate_intrinsic_impl_casual_case):
+        (pas_try_allocate_intrinsic_impl_inline_only):
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        (pas_try_allocate_primitive_impl_casual_case):
+        (pas_try_allocate_primitive_impl_inline_only):
+        * libpas/src/libpas/pas_utility_heap_config.h:
+        * libpas/src/libpas/pas_utils.h:
+        * libpas/src/libpas/pas_virtual_range.h:
+        (pas_virtual_range_create):
+        (pas_virtual_range_create_empty):
+        * libpas/src/test/ExpendableMemoryTests.cpp:
+        (std::testRage):
+        (std::testRematerializeAfterSearchOfDecommitted):
+        (std::testBasicSizeClass):
+        (addExpendableMemoryTests):
+        * libpas/src/test/LargeSharingPoolTests.cpp:
+        (std::testGoodCoalesceEpochUpdate):
+        * libpas/src/test/MemalignTests.cpp: Added.
+        (addMemalignTests):
+        * libpas/src/test/TLCDecommitTests.cpp: Added.
+        (std::numCommittedPagesInTLC):
+        (std::testTLCDecommit):
+        (std::testChaosThenDecommit):
+        (std::testTLCDecommitThenDestroyImpl):
+        (std::testTLCDecommitThenDestroy):
+        (std::testTLCDecommitThenDestroyInThread):
+        (std::testTLCDecommitThenFlush):
+        (std::testTLCDecommitThenDeallocate):
+        (addTLCDecommitTests):
+        * libpas/src/test/TestHarness.cpp:
+        (RuntimeConfigTestScope::RuntimeConfigTestScope):
+        (DecommitZeroFill::DecommitZeroFill):
+        (main):
+        * libpas/src/test/TestHarness.h:
+        (operator<<):
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::addAllTests):
+
 2022-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] add documentation

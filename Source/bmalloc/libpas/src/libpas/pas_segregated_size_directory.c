@@ -747,7 +747,8 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         }
         pas_page_malloc_decommit(
             pas_segregated_page_boundary(page, my_page_config),
-            my_page_config.base.page_size);
+            my_page_config.base.page_size,
+            my_page_config.base.heap_config_ptr->mmap_capability);
         decommit_log->total += my_page_config.base.page_size;
         my_page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
         pas_segregated_directory_view_did_become_eligible_at_index(directory, index);

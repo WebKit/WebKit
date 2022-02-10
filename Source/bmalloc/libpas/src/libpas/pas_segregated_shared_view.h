@@ -38,6 +38,8 @@ struct pas_segregated_shared_view;
 typedef struct pas_extended_segregated_shared_view pas_extended_segregated_shared_view;
 typedef struct pas_segregated_shared_view pas_segregated_shared_view;
 
+PAS_API extern size_t pas_segregated_shared_view_count;
+
 struct pas_segregated_shared_view {
     pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
     pas_lock commit_lock;

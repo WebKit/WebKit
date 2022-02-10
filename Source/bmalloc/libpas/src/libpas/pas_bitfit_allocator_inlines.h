@@ -53,6 +53,7 @@ pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* allocator,
 
 static PAS_ALWAYS_INLINE pas_fast_path_allocation_result
 pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
+                                  pas_local_allocator* local_allocator,
                                   size_t size,
                                   size_t alignment,
                                   pas_bitfit_page_config config)
@@ -80,7 +81,18 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
         size_t bytes_committed;
         
         if (PAS_UNLIKELY(!view)) {
+            pas_thread_local_cache* cache;
+            
             PAS_TESTING_ASSERT(!allocator->view);
+
+            cache = pas_thread_local_cache_try_get();
+            if (cache) {
+                pas_thread_local_cache_stop_local_allocators_if_necessary(
+                    cache, local_allocator, pas_lock_is_not_held);
+            }
+
+            PAS_TESTING_ASSERT(!allocator->view);
+            
             view = pas_bitfit_size_class_get_first_free_view(
                 allocator->size_class, (pas_bitfit_page_config*)config.base.page_config_ptr);
             if (!view)

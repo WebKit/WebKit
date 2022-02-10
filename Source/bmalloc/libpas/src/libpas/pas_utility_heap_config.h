@@ -155,6 +155,7 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
         .aligned_allocator = NULL, \
         .aligned_allocator_talks_to_sharing_pool = false, \
         .deallocator = NULL, \
+        .mmap_capability = pas_may_mmap, \
         .root_data = NULL, \
         .prepare_to_enumerate = NULL, \
         .for_each_shared_page_directory = pas_utility_heap_config_for_each_shared_page_directory, \

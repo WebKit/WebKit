@@ -604,7 +604,7 @@ static PAS_ALWAYS_INLINE void pas_segregated_page_log_or_deallocate(
         pas_lock* held_lock;
         held_lock = NULL;
         pas_segregated_page_deallocate(
-            begin, &held_lock, pas_segregated_deallocation_to_view_cache_mode, cache, page_config, role);
+            begin, &held_lock, pas_segregated_deallocation_direct_mode, NULL, page_config, role);
         pas_lock_switch(&held_lock, NULL);
         return;
     }

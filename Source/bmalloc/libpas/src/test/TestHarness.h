@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,12 @@ inline std::ostream& operator<<(std::ostream& out, pas_segregated_page_config_va
 inline std::ostream& operator<<(std::ostream& out, pas_object_kind kind)
 {
     out << pas_object_kind_get_string(kind);
+    return out;
+}
+
+inline std::ostream& operator<<(std::ostream& out, pas_page_kind kind)
+{
+    out << pas_page_kind_get_string(kind);
     return out;
 }
 
@@ -293,6 +299,11 @@ public:
 class DisablePageBalancing : public TestScope {
 public:
     DisablePageBalancing();
+};
+
+class DecommitZeroFill : public TestScope {
+public:
+    DecommitZeroFill();
 };
 
 bool hasScope(const std::string& filter);

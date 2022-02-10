@@ -36,6 +36,18 @@
 #include "pas_epoch.h"
 #include "pas_physical_memory_transaction.h"
 
+void pas_bitfit_allocator_construct(pas_bitfit_allocator* allocator,
+                                    pas_bitfit_size_class* size_class)
+{
+    allocator->size_class = size_class;
+    allocator->view = NULL;
+}
+
+void pas_bitfit_allocator_stop(pas_bitfit_allocator* allocator)
+{
+    allocator->view = NULL;
+}
+
 bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
                                       pas_bitfit_page_config* config,
                                       pas_lock_hold_mode commit_lock_hold_mode)
@@ -177,7 +189,7 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
         PAS_ASSERT(!view->is_owned);
 
         pas_page_malloc_commit(
-            view->page_boundary, config->base.page_size);
+            view->page_boundary, config->base.page_size, config->base.heap_config_ptr->mmap_capability);
         config->base.create_page_header(
             view->page_boundary,
             pas_page_kind_for_bitfit_variant(config->variant),
@@ -218,6 +230,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
     pas_bitfit_size_class* size_class;
     pas_bitfit_view* new_view;
     unsigned view_index;
+    pas_bitfit_view* allocator_view;
 
     PAS_UNUSED_PARAM(alignment);
 
@@ -241,7 +254,8 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
     
        NOTE: There are some aspects of this that we could do even if the view was displaced. Like,
        we could update the max_free. */
-    if (view == allocator->view && largest_available < size_class->size) {
+    allocator_view = allocator->view;
+    if ((view == allocator_view || !allocator_view) && largest_available < size_class->size) {
         unsigned index;
         pas_bitfit_size_class* current_size_class;
         pas_versioned_field first_free_value;

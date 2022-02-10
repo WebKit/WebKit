@@ -76,9 +76,22 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
 
 size_t pas_heap_get_type_size(pas_heap* heap)
 {
+    pas_heap_config_kind kind;
+    pas_heap_config* config;
     if (!heap)
         return 1;
-    return pas_heap_config_kind_get_config(heap->config_kind)->get_type_size(heap->type);
+    kind = heap->config_kind;
+    PAS_ASSERT(kind != pas_heap_config_kind_null);
+    config = pas_heap_config_kind_get_config(kind);
+    PAS_ASSERT(config);
+    return config->get_type_size(heap->type);
+}
+
+size_t pas_heap_get_type_alignment(pas_heap* heap)
+{
+    if (!heap)
+        return 1;
+    return pas_heap_config_kind_get_config(heap->config_kind)->get_type_alignment(heap->type);
 }
 
 size_t pas_heap_get_num_free_bytes(pas_heap* heap)

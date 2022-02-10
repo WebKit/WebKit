@@ -96,6 +96,11 @@ PAS_BEGIN_EXTERN_C;
         } \
     } \
     \
+    static inline bool name ## _is_null(name* ptr) \
+    { \
+        return !(*(uintptr_t*)ptr & PAS_COMPACT_TAGGED_PTR_MASK); \
+    } \
+    \
     static inline type name ## _load(name* ptr) \
     { \
         return name ## _ptr_for_offset(*(uintptr_t*)ptr & PAS_COMPACT_TAGGED_PTR_MASK); \

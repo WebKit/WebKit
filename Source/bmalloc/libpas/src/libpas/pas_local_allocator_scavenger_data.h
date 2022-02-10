@@ -65,12 +65,32 @@ static inline void pas_local_allocator_scavenger_data_did_use_for_allocation(
     data->should_stop_count = 0;
 }
 
-PAS_API bool pas_local_allocator_scavenger_data_is_active(pas_local_allocator_scavenger_data* data);
+PAS_API bool pas_local_allocator_scavenger_data_is_baseline_allocator(pas_local_allocator_scavenger_data* data);
+
+PAS_API bool pas_local_allocator_scavenger_data_is_stopped(pas_local_allocator_scavenger_data* data);
+
+enum pas_local_allocator_scavenger_data_commit_if_necessary_slow_mode {
+    /* This causes the commit_if_necessary code to always succeed and always return true. */
+    pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_in_use_with_no_locks_held_mode,
+
+    /* This causes the commit_if_necessary code to sometimes fail to acquire the heap lock, and then it will
+       return false. */
+    pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_not_in_use_with_scavenger_lock_held_mode
+};
+
+typedef enum pas_local_allocator_scavenger_data_commit_if_necessary_slow_mode pas_local_allocator_scavenger_data_commit_if_necessary_slow_mode;
+
+PAS_API void pas_local_allocator_scavenger_data_commit_if_necessary_slow(
+    pas_local_allocator_scavenger_data* data,
+    pas_local_allocator_scavenger_data_commit_if_necessary_slow_mode mode,
+    pas_local_allocator_kind expected_kind);
 
 PAS_API bool pas_local_allocator_scavenger_data_stop(
     pas_local_allocator_scavenger_data* data,
     pas_lock_lock_mode page_lock_mode,
     pas_lock_hold_mode heap_lock_hold_mode);
+
+PAS_API void pas_local_allocator_scavenger_data_prepare_to_decommit(pas_local_allocator_scavenger_data* data);
 
 PAS_END_EXTERN_C;
 

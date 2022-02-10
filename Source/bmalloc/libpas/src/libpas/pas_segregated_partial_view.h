@@ -43,6 +43,8 @@ typedef struct pas_segregated_partial_view pas_segregated_partial_view;
 typedef struct pas_segregated_shared_view pas_segregated_shared_view;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 
+PAS_API extern size_t pas_segregated_partial_view_count;
+
 struct pas_segregated_partial_view {
     unsigned inline_alloc_bits;
     

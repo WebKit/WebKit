@@ -123,7 +123,7 @@ pas_heap_config_utils_allocate_aligned(
     
     allocation_result =
         pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
-            cache, aligned_size, alignment, should_zero);
+            cache, aligned_size, alignment, config, should_zero);
     if (!allocation_result.did_succeed)
         return result;
 

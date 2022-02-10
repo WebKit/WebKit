@@ -42,6 +42,8 @@
 #include "pas_segregated_shared_view_inlines.h"
 #include "pas_shared_handle_or_page_boundary_inlines.h"
 
+size_t pas_segregated_shared_view_count = 0;
+
 pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
 {
     pas_segregated_shared_view* result;
@@ -50,6 +52,8 @@ pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
         sizeof(pas_segregated_shared_view),
         "pas_segregated_shared_view",
         pas_object_allocation);
+
+    pas_segregated_shared_view_count++;
 
     result->shared_handle_or_page_boundary = NULL;
 
@@ -167,7 +171,8 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
-        pas_page_malloc_commit(handle->page_boundary, page_config.base.page_size);
+        pas_page_malloc_commit(handle->page_boundary, page_config.base.page_size,
+                               page_config.base.heap_config_ptr->mmap_capability);
         page_config.base.create_page_header(
             handle->page_boundary,
             pas_page_kind_for_segregated_variant_and_role(
@@ -345,6 +350,9 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
     pas_page_base_add_free_range(
         &page->base, &result, pas_range_create(start_of_last_free, end_of_payload),
         pas_free_object_range);
+
+    if (view->is_in_use_for_allocation_count)
+        result.cached += page_config.base.page_size;
 
     return result;
 }

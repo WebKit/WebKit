@@ -173,6 +173,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         .aligned_allocator = jit_aligned_allocator, \
         .aligned_allocator_talks_to_sharing_pool = true, \
         .deallocator = NULL, \
+        .mmap_capability = pas_may_not_mmap, \
         .root_data = &jit_root_data, \
         .prepare_to_enumerate = jit_prepare_to_enumerate, \
         .for_each_shared_page_directory = jit_heap_config_for_each_shared_page_directory, \

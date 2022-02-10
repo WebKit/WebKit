@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,10 @@
 size_t pas_page_malloc_num_allocated_bytes;
 size_t pas_page_malloc_cached_alignment;
 size_t pas_page_malloc_cached_alignment_shift;
-bool pas_page_malloc_mprotect_decommitted = PAS_ENABLE_TESTING;
+
+#if PAS_OS(DARWIN)
+bool pas_page_malloc_decommit_zero_fill = false;
+#endif /* PAS_OS(DARWIN) */
 
 #if PAS_OS(DARWIN)
 #define PAS_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
@@ -61,13 +64,7 @@ bool pas_page_malloc_mprotect_decommitted = PAS_ENABLE_TESTING;
 #define PAS_NORESERVE 0
 #endif
 
-
-#define PAS_SYSCALL(x) do { \
-    while ((x) == -1 && errno == EAGAIN) { } \
-} while (0);
-
-
-size_t pas_page_malloc_alignment_slow(void)
+PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void)
 {
     long result = sysconf(_SC_PAGESIZE);
     PAS_ASSERT(result >= 0);
@@ -76,7 +73,7 @@ size_t pas_page_malloc_alignment_slow(void)
     return (size_t)result;
 }
 
-size_t pas_page_malloc_alignment_shift_slow(void)
+PAS_NEVER_INLINE size_t pas_page_malloc_alignment_shift_slow(void)
 {
     size_t result;
 
@@ -172,11 +169,29 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
     return result;
 }
 
-void pas_page_malloc_commit(void* ptr, size_t size)
+void pas_page_malloc_zero_fill(void* base, size_t size)
+{
+    size_t page_size;
+    void* result_ptr;
+
+    page_size = pas_page_malloc_alignment();
+    
+    PAS_ASSERT(pas_is_aligned((uintptr_t)base, page_size));
+    PAS_ASSERT(pas_is_aligned(size, page_size));
+
+    result_ptr = mmap(base,
+                      size,
+                      PROT_READ | PROT_WRITE,
+                      MAP_PRIVATE | MAP_ANON | MAP_FIXED | PAS_NORESERVE,
+                      PAS_VM_TAG,
+                      0);
+    PAS_ASSERT(result_ptr == base);
+}
+
+static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capability mmap_capability)
 {
     uintptr_t base_as_int;
     uintptr_t end_as_int;
-    int result;
 
     base_as_int = (uintptr_t)ptr;
     end_as_int = base_as_int + size;
@@ -190,27 +205,34 @@ void pas_page_malloc_commit(void* ptr, size_t size)
     if (end_as_int == base_as_int)
         return;
 
-    if (PAS_MPROTECT_DECOMMITTED) {
-        result = mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE);
-        if (result) {
-            pas_log("Could not mprotect on commit: error code %d\n", result);
-            PAS_ASSERT(!result);
-        }
-    }
+    if (PAS_MPROTECT_DECOMMITTED && do_mprotect && mmap_capability)
+        PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_READ | PROT_WRITE));
 
 #if PAS_OS(LINUX)
-    PAS_SYSCALL(madvise((void*)base_as_int, end_as_int - base_as_int, MADV_DODUMP));
+    PAS_SYSCALL(madvise(ptr, size, MADV_DODUMP));
 #endif
 }
 
+void pas_page_malloc_commit(void* ptr, size_t size, pas_mmap_capability mmap_capability)
+{
+    static const bool do_mprotect = true;
+    commit_impl(ptr, size, do_mprotect, mmap_capability);
+}
+
+void pas_page_malloc_commit_without_mprotect(void* ptr, size_t size, pas_mmap_capability mmap_capability)
+{
+    static const bool do_mprotect = false;
+    commit_impl(ptr, size, do_mprotect, mmap_capability);
+}
+
 static void decommit_impl(void* ptr, size_t size,
-                          bool is_asymmetric)
+                          bool do_mprotect,
+                          pas_mmap_capability mmap_capability)
 {
     static const bool verbose = false;
     
     uintptr_t base_as_int;
     uintptr_t end_as_int;
-    int result;
 
     if (verbose)
         pas_log("Decommitting %p...%p\n", ptr, (char*)ptr + size);
@@ -225,33 +247,33 @@ static void decommit_impl(void* ptr, size_t size,
         end_as_int == pas_round_down_to_power_of_2(end_as_int, pas_page_malloc_alignment()));
     
 #if PAS_OS(DARWIN)
-    result = madvise((void*)base_as_int, end_as_int - base_as_int, MADV_FREE_REUSABLE);
-    PAS_ASSERT(!result);
+    if (pas_page_malloc_decommit_zero_fill && mmap_capability)
+        pas_page_malloc_zero_fill(ptr, size);
+    else
+        PAS_SYSCALL(madvise(ptr, size, MADV_FREE_REUSABLE));
 #elif PAS_OS(FREEBSD)
-    PAS_SYSCALL(madvise((void*)base_as_int, end_as_int - base_as_int, MADV_FREE));
+    PAS_SYSCALL(madvise(ptr, size, MADV_FREE));
 #elif PAS_OS(LINUX)
-    PAS_SYSCALL(madvise((void*)base_as_int, end_as_int - base_as_int, MADV_DONTNEED));
-    PAS_SYSCALL(madvise((void*)base_as_int, end_as_int - base_as_int, MADV_DONTDUMP));
+    PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
+    PAS_SYSCALL(madvise(ptr, size, MADV_DONTDUMP));
 #else
-    PAS_SYSCALL(madvise((void*)base_as_int, end_as_int - base_as_int, MADV_DONTNEED));
+    PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
 #endif
 
-    if (PAS_MPROTECT_DECOMMITTED && !is_asymmetric) {
-        result = mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_NONE);
-        PAS_ASSERT(!result);
-    }
+    if (PAS_MPROTECT_DECOMMITTED && do_mprotect && mmap_capability)
+        PAS_SYSCALL(mprotect((void*)base_as_int, end_as_int - base_as_int, PROT_NONE));
 }
 
-void pas_page_malloc_decommit(void* ptr, size_t size)
+void pas_page_malloc_decommit(void* ptr, size_t size, pas_mmap_capability mmap_capability)
 {
-    static const bool is_asymmetric = false;
-    decommit_impl(ptr, size, is_asymmetric);
+    static const bool do_mprotect = true;
+    decommit_impl(ptr, size, do_mprotect, mmap_capability);
 }
 
-void pas_page_malloc_decommit_asymmetric(void* ptr, size_t size)
+void pas_page_malloc_decommit_without_mprotect(void* ptr, size_t size, pas_mmap_capability mmap_capability)
 {
-    static const bool is_asymmetric = true;
-    decommit_impl(ptr, size, is_asymmetric);
+    static const bool do_mprotect = false;
+    decommit_impl(ptr, size, do_mprotect, mmap_capability);
 }
 
 void pas_page_malloc_deallocate(void* ptr, size_t size)

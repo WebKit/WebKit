@@ -426,7 +426,8 @@ take_last_empty_consider_view(
         shared_view->is_owned = false;
         pas_page_malloc_decommit(
             pas_segregated_page_boundary(page, page_config),
-            page_config.base.page_size);
+            page_config.base.page_size,
+            page_config.base.heap_config_ptr->mmap_capability);
         page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
         decommit_log->total += page_config.base.page_size;
         goto return_taken_partial_views_after_decommit;

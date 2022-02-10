@@ -344,9 +344,14 @@ static PAS_ALWAYS_INLINE bool scavenge_impl(pas_expendable_memory* header,
            memory. So, it might happen after we have already decommitted, or decided to decommit. */
         pas_store_store_fence();
 
+        /* This currently assumes that it's legal to do decommit without later committing. It's not obvious
+           that this is a hard requirement of the algorithm; like perhaps it would be easy to add the necessary
+           commit calls. */
         if (scavenge_kind != pas_expendable_memory_scavenge_forced_fake) {
-            pas_page_malloc_decommit_asymmetric((char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
-                                                (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE);
+            pas_page_malloc_decommit_without_mprotect(
+                (char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
+                (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
+                pas_may_mmap);
         }
 
         /* At this point, any of the pages in this range could get decommitted, but it won't necessarily

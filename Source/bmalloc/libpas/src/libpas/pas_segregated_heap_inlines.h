@@ -127,7 +127,8 @@ static PAS_ALWAYS_INLINE bool pas_segregated_heap_touch_lookup_tables(
         tuples = pas_segregated_heap_medium_directory_tuple_ptr_load(
             &data[pas_depend(num_medium_directories)].medium_directories);
 
-        if (tuples) {
+        if (num_medium_directories) {
+            PAS_ASSERT(tuples);
             result |= pas_compact_expendable_memory_touch(
                 tuples,
                 num_medium_directories * sizeof(pas_segregated_heap_medium_directory_tuple),

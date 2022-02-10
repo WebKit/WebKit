@@ -42,7 +42,7 @@ void pas_local_view_cache_construct(pas_local_view_cache* cache,
     cache->capacity = capacity;
     cache->bottom_index = 0;
     cache->top_index = 0;
-    cache->is_full = false;
+    cache->state = pas_local_view_cache_not_full_state;
 
     if (PAS_ENABLE_TESTING) {
         uint8_t index;
@@ -55,6 +55,8 @@ void pas_local_view_cache_construct(pas_local_view_cache* cache,
 void pas_local_view_cache_move(pas_local_view_cache* destination,
                                pas_local_view_cache* source)
 {
+    PAS_ASSERT(!destination->scavenger_data.is_in_use);
+    PAS_ASSERT(!source->scavenger_data.is_in_use);
     memcpy(destination, source, PAS_LOCAL_VIEW_CACHE_SIZE(source->capacity));
 }
 
@@ -109,18 +111,34 @@ bool pas_local_view_cache_stop(pas_local_view_cache* cache,
 
     PAS_ASSERT(!cache->scavenger_data.is_in_use);
 
+    /* Doing this check before setting is_in_use guards against situations where calling stop would
+       recommit a decommitted view cache. */
+    if (pas_local_allocator_scavenger_data_is_stopped(&cache->scavenger_data))
+        return true;
+
     cache->scavenger_data.is_in_use = true;
     pas_compiler_fence();
 
     result = stop_impl(cache, page_lock_mode);
 
-    if (result)
+    if (result) {
+        PAS_ASSERT(pas_local_view_cache_get_state(cache) == pas_local_view_cache_not_full_state);
+        PAS_ASSERT(cache->top_index == cache->bottom_index);
+
+        pas_local_view_cache_set_state(cache, pas_local_view_cache_stopped_state);
         cache->scavenger_data.should_stop_count = 0;
+        cache->scavenger_data.kind = pas_local_allocator_stopped_view_cache_kind;
+    }
 
     pas_compiler_fence();
     cache->scavenger_data.is_in_use = false;
 
     return result;
+}
+
+void pas_local_view_cache_did_restart(pas_local_view_cache* cache)
+{
+    pas_local_view_cache_set_state(cache, pas_local_view_cache_not_full_state);
 }
 
 #endif /* LIBPAS_ENABLED */
