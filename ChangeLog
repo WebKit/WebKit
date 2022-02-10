@@ -1,3 +1,9 @@
+2022-02-10  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, update my (Tim Nguyen) status to reviewer
+
+        * metadata/contributors.json:
+
 2022-02-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         SharedMemoryUnix should use SHM_ANON when available
