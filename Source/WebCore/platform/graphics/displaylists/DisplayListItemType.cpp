@@ -134,10 +134,6 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(FillEllipse);
     case ItemType::FlushContext:
         return sizeof(FlushContext);
-    case ItemType::GetPixelBuffer:
-        return sizeof(GetPixelBuffer);
-    case ItemType::PutPixelBuffer:
-        return sizeof(PutPixelBuffer);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return sizeof(PaintFrameForMedia);
@@ -212,7 +208,6 @@ bool isDrawingItem(ItemType type)
     case ItemType::SetState:
     case ItemType::SetStrokeThickness:
     case ItemType::Translate:
-    case ItemType::GetPixelBuffer:
         return false;
     case ItemType::BeginTransparencyLayer:
     case ItemType::ClearRect:
@@ -247,7 +242,6 @@ bool isDrawingItem(ItemType type)
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
 #endif
-    case ItemType::PutPixelBuffer:
     case ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeArc:
@@ -304,8 +298,6 @@ bool isInlineItem(ItemType type)
     case ItemType::FillRectWithGradient:
     case ItemType::FillRectWithRoundedHole:
     case ItemType::FillRoundedRect:
-    case ItemType::GetPixelBuffer:
-    case ItemType::PutPixelBuffer:
     case ItemType::SetLineDash:
     case ItemType::SetState:
     case ItemType::StrokePath:

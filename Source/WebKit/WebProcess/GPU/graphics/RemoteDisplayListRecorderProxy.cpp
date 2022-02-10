@@ -60,16 +60,6 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteDisplayList
 {
 }
 
-void RemoteDisplayListRecorderProxy::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
-{
-    send(Messages::RemoteDisplayListRecorder::GetPixelBuffer(sourceRect, outputFormat));
-}
-
-void RemoteDisplayListRecorderProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-{
-    send(Messages::RemoteDisplayListRecorder::PutPixelBuffer(srcRect, destPoint, pixelBuffer, destFormat));
-}
-
 void RemoteDisplayListRecorderProxy::convertToLuminanceMask()
 {
     send(Messages::RemoteDisplayListRecorder::ConvertToLuminanceMask());

@@ -64,16 +64,6 @@ RecorderImpl::~RecorderImpl()
         LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
-void RecorderImpl::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
-{
-    append<GetPixelBuffer>(outputFormat, sourceRect);
-}
-
-void RecorderImpl::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-{
-    append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
-}
-
 bool RecorderImpl::canAppendItemOfType(ItemType type) const
 {
     return !m_delegate || m_delegate->canAppendItemOfType(type);

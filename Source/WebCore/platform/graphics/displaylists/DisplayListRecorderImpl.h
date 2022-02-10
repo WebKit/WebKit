@@ -54,8 +54,6 @@ public:
         virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     };
 
-    void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect) final;
-    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
     void convertToLuminanceMask() final { }
     void transformToColorSpace(const DestinationColorSpace&) final { }
     void flushContext(GraphicsContextFlushIdentifier identifier) final { append<FlushContext>(identifier); }

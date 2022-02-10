@@ -80,8 +80,6 @@ enum class ItemType : uint8_t {
     FillPath,
     FillEllipse,
     FlushContext,
-    GetPixelBuffer,
-    PutPixelBuffer,
 #if ENABLE(VIDEO)
     PaintFrameForMedia,
 #endif

@@ -298,10 +298,6 @@ void DisplayList::append(ItemHandle item)
         return append<FillEllipse>(item.get<FillEllipse>());
     case ItemType::FlushContext:
         return append<FlushContext>(item.get<FlushContext>());
-    case ItemType::GetPixelBuffer:
-        return append<GetPixelBuffer>(item.get<GetPixelBuffer>());
-    case ItemType::PutPixelBuffer:
-        return append<PutPixelBuffer>(item.get<PutPixelBuffer>());
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());
