@@ -99,10 +99,10 @@
 
 #define PAS_ALLOCATOR_INDEX_BYTES        4
 
-#ifdef PAS_BMALLOC
-#define PAS_USE_SPINLOCKS                1
-#else
+#if PAS_OS(DARWIN)
 #define PAS_USE_SPINLOCKS                0
+#else
+#define PAS_USE_SPINLOCKS                1
 #endif
 
 #endif /* PAS_CONFIG_H */
