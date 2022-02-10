@@ -1,3 +1,23 @@
+2022-02-10  Tim Nguyen  <ntim@apple.com>
+
+        Add webkit-pdfjs-viewer scheme for PDF.js resources
+        https://bugs.webkit.org/show_bug.cgi?id=236062
+
+        Reviewed by Youenn Fablet.
+
+        The code handling the scheme is under WebCore::BundleResourceLoader.
+        It reads files from the pdfjs/ sub-folder in the WebCore.framework resources folder.
+        Right now, this sub-folder does not exist yet, but this scheme can be tested by manually populating it.
+
+        Bug 235981 will take care of populating this folder at build-time.
+
+        Note: This scheme can only be loaded inside a PDFDocument <iframe>
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::tryLoadingUsingPDFJSHandler):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2022-02-10  Aditya Keerthi  <akeerthi@apple.com>
 
         An element with both -webkit-user-select: all and -webkit-user-drag: element does not get the nice drag snapshot that you get if you just have -webkit-user-drag: element

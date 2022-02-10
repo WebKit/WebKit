@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -61,6 +62,10 @@
 #if USE(QUICK_LOOK)
 #include "LegacyPreviewLoader.h"
 #include "PreviewConverter.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include "BundleResourceLoader.h"
 #endif
 
 #undef RESOURCELOADER_RELEASE_LOG
@@ -233,6 +238,13 @@ void ResourceLoader::start()
         loadDataURL();
         return;
     }
+
+#if PLATFORM(COCOA)
+    if (isPDFJSResourceLoad()) {
+        BundleResourceLoader::loadResourceFromBundle(*this, "pdfjs/");
+        return;
+    }
+#endif
 
 #if USE(SOUP)
     if (m_request.url().protocolIs("resource")) {
@@ -854,6 +866,19 @@ bool ResourceLoader::isQuickLookResource() const
     return !!m_previewLoader;
 }
 #endif
+
+bool ResourceLoader::isPDFJSResourceLoad() const
+{
+#if PLATFORM(COCOA)
+    if (!m_request.url().protocolIs("webkit-pdfjs-viewer"))
+        return false;
+
+    auto* document = frame() && frame()->ownerElement() ? &frame()->ownerElement()->document() : nullptr;
+    return document ? document->isPDFDocument() : false;
+#else
+    return false;
+#endif
+}
 
 } // namespace WebCore
 

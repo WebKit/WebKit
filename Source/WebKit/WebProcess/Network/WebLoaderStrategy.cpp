@@ -231,6 +231,9 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
+    if (tryLoadingUsingPDFJSHandler(resourceLoader, trackingParameters))
+        return;
+
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader, trackingParameters)) {
         WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be scheduled with the NetworkProcess");
 
@@ -266,6 +269,18 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     WEBLOADERSTRATEGY_RELEASE_LOG("tryLoadingUsingURLSchemeHandler: URL will be handled by a UIProcess URL scheme handler");
 
     handler->startNewTask(resourceLoader, webFrame);
+    return true;
+}
+
+bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)
+{
+    if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"))
+        return false;
+
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a PDFJS resource.", resourceLoader.url().string().utf8().data());
+    WEBLOADERSTRATEGY_RELEASE_LOG("tryLoadingUsingPDFJSHandler: URL will be scheduled with the PDFJS url scheme handler");
+
+    startLocalLoad(resourceLoader);
     return true;
 }
 

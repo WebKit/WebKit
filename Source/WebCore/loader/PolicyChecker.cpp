@@ -169,6 +169,13 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
 
     loader->setLastCheckedRequest(ResourceRequest(request));
 
+    // Only the PDFDocument iframe is allowed to navigate to webkit-pdfjs-viewer URLs
+    bool isInPDFDocumentFrame = m_frame.ownerElement() && m_frame.ownerElement()->document().isPDFDocument();
+    if (isInPDFDocumentFrame && request.url().protocolIs("webkit-pdfjs-viewer")) {
+        POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: continuing because PDFJS URL");
+        return function(WTFMove(request), formState, NavigationPolicyDecision::ContinueLoad);
+    }
+
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url())) {

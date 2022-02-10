@@ -143,6 +143,9 @@ static Span<const ASCIILiteral> builtinSecureSchemes()
 #if PLATFORM(GTK) || PLATFORM(WPE)
         "resource"_s,
 #endif
+#if PLATFORM(COCOA)
+        "webkit-pdfjs-viewer"_s,
+#endif
     };
     return schemes;
 }

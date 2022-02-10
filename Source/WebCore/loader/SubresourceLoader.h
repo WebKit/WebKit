@@ -52,7 +52,7 @@ public:
     CachedResource* cachedResource() const override { return m_resource; };
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
-    SecurityOrigin* origin() { return m_origin.get(); }
+    SecurityOrigin* origin() const { return m_origin.get(); }
 #if PLATFORM(IOS_FAMILY)
     void startLoading() override;
 

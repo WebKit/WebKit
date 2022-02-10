@@ -94,8 +94,7 @@ Ref<DocumentParser> PDFDocument::createParser()
 
 void PDFDocument::createDocumentStructure()
 {
-    // FIXME: Replace about:blank with actual viewer URL
-    auto viewerURL = "about:blank?file=";
+    auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=";
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
     rootElement->insertedByParser();
