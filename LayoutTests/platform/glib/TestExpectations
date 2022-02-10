@@ -631,16 +631,6 @@ webkit.org/b/223884 imported/w3c/web-platform-tests/css/css-values/ic-unit-013.h
 webkit.org/b/233897 imported/w3c/web-platform-tests/css/motion/offset-distance-002.html [ ImageOnlyFailure ]
 webkit.org/b/233897 imported/w3c/web-platform-tests/css/motion/offset-distance-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/2d-rotate-001.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-009.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/skew-test1.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transform-background-001.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transform-background-002.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
-webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/transforms-skewX.html [ ImageOnlyFailure ]
 webkit.org/b/234819 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html [ ImageOnlyFailure ]
 
 webkit.org/b/233827 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html [ ImageOnlyFailure Pass ]

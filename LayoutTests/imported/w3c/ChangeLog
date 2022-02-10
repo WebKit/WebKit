@@ -1,3 +1,26 @@
+2022-02-10  Martin Robinson  <mrobinson@webkit.org>
+
+        [macOS arm64] imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=235084
+        <rdar://problem/87421733>
+
+        Reviewed by Simon Fraser.
+
+        Update pixel tolerances for some tests from the WPT transforms suite,
+        fixing them on Mac and on Glib-based ports.
+
+        * web-platform-tests/css/css-transforms/2d-rotate-001.html:
+        * web-platform-tests/css/css-transforms/group/svg-transform-nested-009.html:
+        * web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html:
+        * web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html:
+        * web-platform-tests/css/css-transforms/skew-test1.html:
+        * web-platform-tests/css/css-transforms/transform-background-001.html:
+        * web-platform-tests/css/css-transforms/transform-background-002.html:
+        * web-platform-tests/css/css-transforms/transform-table-009.html:
+        * web-platform-tests/css/css-transforms/transform-table-010.html:
+        * web-platform-tests/css/css-transforms/transform-table-011.html:
+        * web-platform-tests/css/css-transforms/transforms-skewX.html:
+
 2022-02-10  Manuel Rego Casasnovas  <rego@igalia.com>
 
         :focus-visible with click on radio/checkbox labels is broken
