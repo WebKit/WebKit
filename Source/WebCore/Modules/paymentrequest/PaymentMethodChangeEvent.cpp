@@ -42,14 +42,14 @@ EventInterface PaymentMethodChangeEvent::eventInterface() const
 PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomString& type, Init&& eventInit)
     : PaymentRequestUpdateEvent { type, eventInit }
     , m_methodName { WTFMove(eventInit.methodName) }
-    , m_methodDetails { JSValueInWrappedObject { eventInit.methodDetails.get() } }
+    , m_methodDetails { std::in_place_type_t<JSValueInWrappedObject>(), eventInit.methodDetails.get() }
 {
 }
 
 PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomString& type, const String& methodName, MethodDetailsFunction&& methodDetailsFunction)
     : PaymentRequestUpdateEvent { type }
     , m_methodName { methodName }
-    , m_methodDetails { WTFMove(methodDetailsFunction) }
+    , m_methodDetails { std::in_place_type_t<MethodDetailsFunction>(), WTFMove(methodDetailsFunction) }
 {
 }
 

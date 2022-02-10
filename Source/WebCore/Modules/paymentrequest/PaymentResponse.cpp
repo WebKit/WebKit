@@ -60,7 +60,7 @@ PaymentResponse::~PaymentResponse()
 void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
 {
     m_detailsFunction = WTFMove(detailsFunction);
-    m_cachedDetails = { };
+    m_cachedDetails.clear();
 }
 
 void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
