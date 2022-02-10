@@ -26,6 +26,7 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
+    TaggedWrapper,
 ] interface DOMMatrixReadOnly {
     [CallWith=CurrentScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 

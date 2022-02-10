@@ -1,3 +1,35 @@
+2022-02-10  Gavin Phillips  <gavin.p@apple.com>
+
+        Introduce SignedPtrTraits which enables Ref pointers to be protected with PtrTags.
+        https://bugs.webkit.org/show_bug.cgi?id=235588
+        rdar://88023849
+
+        Reviewed by Mark Lam.
+
+        Create and adopt SignedPtrTraits which can be used to apply and verify PtrTag signatures
+        to pointers stored in and tracked by WTF:Ref.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SignedPtr.h: Added.
+        (WTF::SignedPtr::SignedPtr):
+        (WTF::SignedPtr::get const):
+        (WTF::SignedPtr::set):
+        (WTF::SignedPtr::clear):
+        (WTF::SignedPtr::operator-> const):
+        (WTF::SignedPtr::operator* const):
+        (WTF::SignedPtr::operator! const):
+        (WTF::SignedPtr::operator UnspecifiedBoolType const):
+        (WTF::SignedPtr::operator bool const):
+        (WTF::SignedPtr::operator=):
+        (WTF::SignedPtr::exchange):
+        (WTF::SignedPtr::swap):
+        (WTF::SignedPtrTraits::exchange):
+        (WTF::SignedPtrTraits::swap):
+        (WTF::SignedPtrTraits::unwrap):
+        (WTF::SignedPtrTraits::hashTableDeletedValue):
+        (WTF::SignedPtrTraits::isHashTableDeletedValue):
+        
 2022-02-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Turn on Shared Workers by default

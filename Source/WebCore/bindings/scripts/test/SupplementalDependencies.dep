@@ -112,6 +112,7 @@ JSTestStringifierOperationImplementedAs.h:
 JSTestStringifierOperationNamedToString.h: 
 JSTestStringifierReadOnlyAttribute.h: 
 JSTestStringifierReadWriteAttribute.h: 
+JSTestTaggedWrapper.h: 
 JSTestTypedefs.h: 
 JSTestVoidCallbackFunction.h: 
 JSWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl

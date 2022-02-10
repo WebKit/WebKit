@@ -32,6 +32,7 @@
     Exposed=(Window,Worker),
     JSGenerateToJSObject,
     JSCustomMarkFunction,
+    TaggedWrapper,
     // CallTracer=InspectorCanvasCallTracer, // FIXME: OffscreenCanvas.
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;

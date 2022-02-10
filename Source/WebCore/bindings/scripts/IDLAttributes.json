@@ -489,6 +489,9 @@
         "SuppressToJSObject": {
             "contextsAllowed": ["interface"]
         },
+        "TaggedWrapper": {
+            "contextsAllowed": ["interface"]
+        },
         "Transferable": {
             "contextsAllowed": ["interface"],
             "standard": {

@@ -510,8 +510,9 @@ sub GetParentClassName
 
     return $interface->extendedAttributes->{JSLegacyParent} if $interface->extendedAttributes->{JSLegacyParent};
     return "JSDOMObject" unless NeedsImplementationClass($interface);
-    return "JSDOMWrapper<" . GetImplClassName($interface) . ">" unless $interface->parentType;
-    return "JS" . $interface->parentType->name;
+    return "JS" . $interface->parentType->name if $interface->parentType;
+    return "JSDOMWrapper<" . GetImplClassName($interface) . ", SignedPtrTraits<" . GetImplClassName($interface) . ", " . GetImplClassPtrTag($interface) . ">>" if HasTaggedWrapperForInterface($interface);
+    return "JSDOMWrapper<" . GetImplClassName($interface) . ">";
 }
 
 sub GetCallbackClassName
@@ -2228,6 +2229,13 @@ sub GetImplClassName
     return $interface->type->name;
 }
 
+sub GetImplClassPtrTag
+{
+    my $interface = shift;
+
+    return $interface->type->name . "PtrTag";
+}
+
 sub IsClassNameWordBoundary
 {
     my ($name, $i) = @_;
@@ -2875,8 +2883,12 @@ sub GenerateHeader
 
     my $exportMacro = GetExportMacroForJSClass($interface);
 
-    # Class declaration
-    push(@headerContent, "class $exportMacro$className : public $parentClassName {\n");
+    # Tag & Class declaration
+    assert("Interface " . GetImplClassName($interface) . " marked as TaggedWrapper but extends another interface.") if HasTaggedWrapperForInterface($interface) and $interface->parentType;
+    if (HasTaggedWrapperForInterface($interface)) {
+        push(@headerContent, "WTF_DECLARE_PTRTAG(" . GetImplClassPtrTag($interface) . ")\n");
+    }
+    push(@headerContent, "class $exportMacro$className : public " . $parentClassName . " {\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
@@ -3928,6 +3940,12 @@ sub GetSkipVTableValidationForInterface
 {
     my $interface = shift;
     return $interface->extendedAttributes->{SkipVTableValidation};
+}
+
+sub HasTaggedWrapperForInterface
+{
+    my $interface = shift;
+    return $interface->extendedAttributes->{TaggedWrapper};
 }
 
 # URL becomes url, but SetURL becomes setURL.

@@ -524,6 +524,7 @@
 		83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
 		83F2BADE1CF9524E003E99C3 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
 		83FBA93119DF459700F30ADB /* TypeCasts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCasts.h; sourceTree = "<group>"; };
+		862A8D32278DE74A0014120C /* SignedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignedPtr.h; sourceTree = "<group>"; };
 		86F46F5F1A2840EE00CCBF22 /* RefCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounter.h; sourceTree = "<group>"; };
 		93156C8D262C982200EAE27B /* SortedArrayMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SortedArrayMap.h; sourceTree = "<group>"; };
 		93241657243BC2E50032FAAE /* VectorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VectorCocoa.h; sourceTree = "<group>"; };
@@ -1317,6 +1318,7 @@
 				A8A47308151A825B004123FF /* SHA1.cpp */,
 				A8A47309151A825B004123FF /* SHA1.h */,
 				0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */,
+				862A8D32278DE74A0014120C /* SignedPtr.h */,
 				A8A4730A151A825B004123FF /* SimpleStats.h */,
 				795212021F42588800BD6421 /* SingleRootGraph.h */,
 				A8A4730B151A825B004123FF /* SinglyLinkedList.h */,

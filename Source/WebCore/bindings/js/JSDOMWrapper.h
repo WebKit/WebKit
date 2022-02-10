@@ -24,6 +24,7 @@
 #include "JSDOMGlobalObject.h"
 #include "NodeConstants.h"
 #include <JavaScriptCore/JSDestructibleObject.h>
+#include <wtf/SignedPtr.h>
 
 namespace WebCore {
 
@@ -68,21 +69,23 @@ protected:
     WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);
 };
 
-template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
+template<typename ImplementationClass, typename PtrTraits = RawPtrTraits<ImplementationClass>>
+class JSDOMWrapper : public JSDOMObject {
 public:
-    typedef JSDOMObject Base;
-    typedef ImplementationClass DOMWrapped;
-    
-    ImplementationClass& wrapped() const { return m_wrapped; }
-    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper<ImplementationClass>, m_wrapped); }
+    using Base = JSDOMObject;
+    using DOMWrapped = ImplementationClass;
 
+    ImplementationClass& wrapped() const { return m_wrapped; }
+    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper, m_wrapped); }
+    constexpr static bool hasCustomPtrTraits() { return !std::is_same_v<PtrTraits, RawPtrTraits<ImplementationClass>>; };
+    
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
         , m_wrapped(WTFMove(impl)) { }
 
 private:
-    Ref<ImplementationClass> m_wrapped;
+    Ref<ImplementationClass, PtrTraits> m_wrapped;
 };
 
 template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
