@@ -507,6 +507,14 @@ GraphicsContext::ClipToDrawingCommandsResult Recorder::clipToDrawingCommands(con
     return ClipToDrawingCommandsResult::Success;
 }
 
+RefPtr<ImageBuffer> Recorder::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const
+{
+    if (renderingMethod == RenderingMethod::Default)
+        renderingMethod = RenderingMethod::DisplayList;
+
+    return GraphicsContext::createImageBuffer(size, colorSpace, renderingMode, renderingMethod);
+}
+
 #if ENABLE(VIDEO)
 void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {

@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2011 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -152,9 +153,16 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
         return true;
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
+
+    // Ignore 2D rotation, as it doesn't affect the size of the mask.
+    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
+
+    // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
+    ImageBuffer::sizeNeedsClamping(objectBoundingBox.size(), scale);
+
     if (!clipperData.isValidForGeometry(objectBoundingBox, clippedContentBounds, absoluteTransform)) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        auto maskImage = SVGRenderingContext::createImageBuffer(clippedContentBounds, absoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, hostWindow());
+        auto maskImage = context.createImageBuffer(clippedContentBounds, scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated);
         if (!maskImage)
             return false;
 
@@ -185,7 +193,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
     if (!clipperData.imageBuffer)
         return false;
 
-    SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, clippedContentBounds, clipperData.imageBuffer, true);
+    SVGRenderingContext::clipToImageBuffer(context, clippedContentBounds, scale, clipperData.imageBuffer, true);
     return true;
 }
 

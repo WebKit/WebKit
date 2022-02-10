@@ -73,7 +73,7 @@ void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
     // FIXME: Using an intermediate buffer is not needed if there are no composite operations.
     auto clipBounds = ctx->clipBounds();
 
-    auto image = ImageBuffer::createCompatibleBuffer(clipBounds.size(), *ctx);
+    auto image = ctx->createCompatibleImageBuffer(clipBounds.size());
     if (!image)
         return;
 

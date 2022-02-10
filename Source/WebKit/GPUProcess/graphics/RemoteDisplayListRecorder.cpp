@@ -202,7 +202,7 @@ void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
 
 void RemoteDisplayListRecorder::beginClipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace)
 {
-    m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(destination.size(), colorSpace, drawingContext());
+    m_maskImageBuffer = drawingContext().createCompatibleImageBuffer(destination.size(), colorSpace);
 }
 
 void RemoteDisplayListRecorder::endClipToDrawingCommands(const FloatRect& destination)

@@ -60,15 +60,11 @@ public:
     void prepareToRenderSVGContent(RenderElement&, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
-    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const DestinationColorSpace&, RenderingMode, const HostWindow* = nullptr);
-    static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, const DestinationColorSpace&, RenderingMode, const HostWindow* = nullptr);
-
     static void renderSubtreeToContext(GraphicsContext&, RenderElement&, const AffineTransform&);
-    static void clipToImageBuffer(GraphicsContext&, const AffineTransform& absoluteTransform, const FloatRect& targetRect, RefPtr<ImageBuffer>&, bool safeToClear);
+    static void clipToImageBuffer(GraphicsContext&, const FloatRect& targetRect, const FloatSize& scale, RefPtr<ImageBuffer>&, bool safeToClear);
 
     static float calculateScreenFontSizeScalingFactor(const RenderObject&);
     static AffineTransform calculateTransformationToOutermostCoordinateSystem(const RenderObject&);
-    static void clear2DRotation(AffineTransform&);
 
     static IntRect calculateImageBufferRect(const FloatRect& targetRect, const AffineTransform& absoluteTransform)
     {

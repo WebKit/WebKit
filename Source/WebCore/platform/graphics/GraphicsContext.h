@@ -416,6 +416,14 @@ public:
 
     // Images, Patterns, and Media
 
+    IntSize compatibleImageBufferSize(const FloatSize&) const;
+
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, RenderingMethod = RenderingMethod::Default) const;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatRect&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, RenderingMethod = RenderingMethod::Default) const;
+
+    virtual RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), RenderingMethod = RenderingMethod::Default) const;
+    virtual RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), RenderingMethod = RenderingMethod::Default) const;
+
     virtual void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
 
     WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
@@ -545,6 +553,8 @@ private:
 protected:
     void fillEllipseAsPath(const FloatRect&);
     void strokeEllipseAsPath(const FloatRect&);
+
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode, RenderingMethod) const;
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,15 +44,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
 
-    // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
-    struct CompatibleBufferDescription {
-        Ref<ImageBuffer> imageBuffer;
-        FloatRect inflatedRectInUserCoordinates;
-    };
-    static std::optional<CompatibleBufferDescription> createCompatibleBuffer(const FloatRect& rectInUserCoordinates, const GraphicsContext&);
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, const GraphicsContext&);
+    RefPtr<ImageBuffer> clone() const;
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
@@ -61,15 +53,7 @@ public:
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
     static FloatRect clampedRect(const FloatRect&);
 
-    static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
-    struct CompatibleBufferInfo {
-        IntSize physicalSizeInDeviceCoordinates;
-        FloatRect inflatedRectInUserCoordinates;
-        FloatSize scale;
-    };
-    static CompatibleBufferInfo compatibleBufferInfo(const FloatRect&, const GraphicsContext&);
-    
-    WEBCORE_EXPORT virtual ~ImageBuffer() = default;
+    virtual ~ImageBuffer() = default;
 
     virtual void setBackend(std::unique_ptr<ImageBufferBackend>&&) = 0;
     virtual void clearBackend() = 0;
@@ -112,9 +96,6 @@ public:
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
     virtual RefPtr<Image> filteredImage(Filter&) = 0;
-
-    // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
-    RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, const DestinationColorSpace&, const GraphicsContext&);
 
     virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { }) = 0;
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;

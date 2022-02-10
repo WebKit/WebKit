@@ -227,52 +227,6 @@ AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinat
     return absoluteTransform;
 }
 
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const HostWindow* hostWindow)
-{
-    IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
-    // Don't create empty ImageBuffers.
-    if (paintRect.isEmpty())
-        return nullptr;
-
-    FloatSize scale(1, 1);
-    FloatSize clampedSize = paintRect.size();
-    if (ImageBuffer::sizeNeedsClamping(clampedSize, scale))
-        clampedSize = clampedSize * scale;
-
-    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, hostWindow);
-    if (!imageBuffer)
-        return nullptr;
-
-    AffineTransform transform;
-    transform.scale(scale).translate(-paintRect.location()).multiply(absoluteTransform);
-
-    GraphicsContext& imageContext = imageBuffer->context();
-    imageContext.concatCTM(transform);
-
-    return imageBuffer;
-}
-
-RefPtr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const HostWindow* hostWindow)
-{
-    IntSize clampedSize = roundedIntSize(clampedRect.size());
-    FloatSize unclampedSize = roundedIntSize(targetRect.size());
-
-    // Don't create empty ImageBuffers.
-    if (clampedSize.isEmpty())
-        return nullptr;
-
-    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, hostWindow);
-    if (!imageBuffer)
-        return nullptr;
-
-    GraphicsContext& imageContext = imageBuffer->context();
-
-    // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
-    imageContext.scale(unclampedSize / targetRect.size());
-
-    return imageBuffer;
-}
-
 void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, RenderElement& item, const AffineTransform& subtreeContentTransformation)
 {
     // Rendering into a buffer implies we're being used for masking, clipping, patterns or filters. In each of these
@@ -289,12 +243,15 @@ void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, Rende
     contentTransformation = savedContentTransformation;
 }
 
-void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, RefPtr<ImageBuffer>& imageBuffer, bool safeToClear)
+void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const FloatRect& targetRect, const FloatSize& scale, RefPtr<ImageBuffer>& imageBuffer, bool safeToClear)
 {
     if (!imageBuffer)
         return;
 
-    FloatRect absoluteTargetRect = calculateImageBufferRect(targetRect, absoluteTransform);
+    AffineTransform absoluteTransform;
+    absoluteTransform.scale(scale.width(), scale.height());
+
+    auto absoluteTargetRect = calculateImageBufferRect(targetRect, absoluteTransform);
 
     // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the absolute coordinate space as well.
@@ -306,14 +263,6 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const Affi
     // resulting image buffer as the parent resource already caches the result.
     if (safeToClear && !currentContentTransformation().isIdentity())
         imageBuffer = nullptr;
-}
-
-void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
-{
-    AffineTransform::DecomposedType decomposition;
-    transform.decompose(decomposition);
-    decomposition.angle = 0;
-    transform.recompose(decomposition);
 }
 
 bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
@@ -333,7 +282,7 @@ bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
 
     // Create a new buffer and paint the foreground into it.
     if (!imageBuffer) {
-        imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), DestinationColorSpace::SRGB(), m_paintInfo->context());
+        imageBuffer = m_paintInfo->context().createCompatibleImageBuffer(expandedIntSize(boundingBox.size()));
         if (!imageBuffer)
             return false;
     }

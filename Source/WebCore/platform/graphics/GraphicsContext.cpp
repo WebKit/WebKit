@@ -551,6 +551,93 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.clear();
 }
 
+static IntSize scaledImageBufferSize(const FloatSize& size, const FloatSize& scale)
+{
+    // Enlarge the buffer size if the context's transform is scaling it so we need a higher
+    // resolution than one pixel per unit.
+    return expandedIntSize(size * scale);
+}
+
+static IntRect scaledImageBufferRect(const FloatRect& rect, const FloatSize& scale)
+{
+    auto scaledRect = rect;
+    scaledRect.scale(scale);
+    return enclosingIntRect(scaledRect);
+}
+
+static FloatSize clampingScaleForImageBufferSize(const FloatSize& size)
+{
+    FloatSize clampingScale(1, 1);
+    ImageBuffer::sizeNeedsClamping(size, clampingScale);
+    return clampingScale;
+}
+
+IntSize GraphicsContext::compatibleImageBufferSize(const FloatSize& size) const
+{
+    return scaledImageBufferSize(size, scaleFactor());
+}
+
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const
+{
+    if (renderingMethod == RenderingMethod::DisplayList)
+        return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::Yes, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+
+    return ImageBuffer::create(size, renderingMode, 1, colorSpace, PixelFormat::BGRA8);
+}
+
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, const FloatSize& scale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, RenderingMethod renderingMethod) const
+{
+    auto expandedScaledSize = scaledImageBufferSize(size, scale);
+    if (expandedScaledSize.isEmpty())
+        return nullptr;
+
+    auto clampingScale = clampingScaleForImageBufferSize(expandedScaledSize);
+
+    auto imageBuffer = createImageBuffer(expandedScaledSize * clampingScale, colorSpace, renderingMode.value_or(this->renderingMode()), renderingMethod);
+    if (!imageBuffer)
+        return nullptr;
+
+    imageBuffer->context().scale(clampingScale);
+
+    // 'expandedScaledSize' is mapped to 'size'. So use 'expandedScaledSize / size'
+    // not 'scale' because they are not necessarily equal.
+    imageBuffer->context().scale(expandedScaledSize / size);
+    return imageBuffer;
+}
+
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatRect& rect, const FloatSize& scale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, RenderingMethod renderingMethod) const
+{
+    auto expandedScaledRect = scaledImageBufferRect(rect, scale);
+    if (expandedScaledRect.isEmpty())
+        return nullptr;
+
+    auto clampingScale = clampingScaleForImageBufferSize(expandedScaledRect.size());
+
+    auto imageBuffer = createImageBuffer(expandedScaledRect.size() * clampingScale, colorSpace, renderingMode.value_or(this->renderingMode()), renderingMethod);
+    if (!imageBuffer)
+        return nullptr;
+
+    imageBuffer->context().scale(clampingScale);
+    
+    // 'rect' is mapped to a rectangle inside expandedScaledRect.
+    imageBuffer->context().translate(-expandedScaledRect.location());
+    
+    // The size of this rectangle is not necessarily equal to expandedScaledRect.size().
+    // So use 'scale' not 'expandedScaledRect.size() / rect.size()'.
+    imageBuffer->context().scale(scale);
+    return imageBuffer;
+}
+
+RefPtr<ImageBuffer> GraphicsContext::createCompatibleImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMethod renderingMethod) const
+{
+    return createImageBuffer(size, scaleFactor(), colorSpace, renderingMode(), renderingMethod);
+}
+
+RefPtr<ImageBuffer> GraphicsContext::createCompatibleImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, RenderingMethod renderingMethod) const
+{
+    return createImageBuffer(rect, scaleFactor(), colorSpace, renderingMode(), renderingMethod);
+}
+
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
     return drawImage(image, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imagePaintingOptions);
@@ -668,7 +755,7 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
 
 GraphicsContext::ClipToDrawingCommandsResult GraphicsContext::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(destination.size(), colorSpace, *this);
+    auto imageBuffer = createCompatibleImageBuffer(destination.size(), colorSpace);
     if (!imageBuffer)
         return ClipToDrawingCommandsResult::FailedToCreateImageBuffer;
 

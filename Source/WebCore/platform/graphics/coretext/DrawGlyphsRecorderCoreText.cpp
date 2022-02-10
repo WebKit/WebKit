@@ -374,14 +374,19 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
 void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     FloatPoint penPosition = startPoint;
+
     for (unsigned i = 0; i < numGlyphs; ++i) {
         auto bounds = font.boundsForGlyph(glyphs[i]);
-        if (auto imageBufferDescription = ImageBuffer::createCompatibleBuffer(bounds, m_owner)) {
-            FontCascade::drawGlyphs(imageBufferDescription->imageBuffer->context(), font, glyphs + i, advances + i, 1, FloatPoint(), smoothingMode);
-            auto destinationRect = imageBufferDescription->inflatedRectInUserCoordinates;
+
+        // Create a local ImageBuffer because decoding the SVG fonts has to happen in WebProcess.
+        if (auto imageBuffer = m_owner.createCompatibleImageBuffer(bounds, DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
+            FontCascade::drawGlyphs(imageBuffer->context(), font, glyphs + i, advances + i, 1, FloatPoint(), smoothingMode);
+
+            FloatRect destinationRect = enclosingIntRect(bounds);
             destinationRect.moveBy(penPosition);
-            m_owner.drawImageBuffer(imageBufferDescription->imageBuffer, destinationRect);
+            m_owner.drawImageBuffer(*imageBuffer, destinationRect);
         }
+
         penPosition.move(size(advances[i]));
     }
 }

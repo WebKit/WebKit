@@ -154,7 +154,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
 {
     auto& destinationContext = paintInfo.context();
 
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(paintRect.size(), destinationContext);
+    auto imageBuffer = destinationContext.createCompatibleImageBuffer(paintRect.size());
     if (!imageBuffer)
         return false;
 

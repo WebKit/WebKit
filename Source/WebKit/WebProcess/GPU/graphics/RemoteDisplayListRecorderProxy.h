@@ -144,6 +144,10 @@ private:
 
     std::unique_ptr<WebCore::GraphicsContext> createNestedContext(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform& initialCTM) final;
 
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, WebCore::RenderingMethod) const final;
+    RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace& = WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod = WebCore::RenderingMethod::Default) const final;
+    RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace& = WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod = WebCore::RenderingMethod::Default) const final;
+
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<WebCore::ImageBuffer> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;

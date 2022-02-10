@@ -154,7 +154,7 @@ std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdenti
         if (m_maskImageBuffer)
             return { StopReplayReason::InvalidItemOrExtent, std::nullopt };
         auto& clipItem = item.get<BeginClipToDrawingCommands>();
-        m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(clipItem.destination().size(), clipItem.colorSpace(), m_context);
+        m_maskImageBuffer = m_context.createCompatibleImageBuffer(clipItem.destination().size(), clipItem.colorSpace());
         if (!m_maskImageBuffer)
             return { StopReplayReason::OutOfMemory, std::nullopt };
         return { std::nullopt, std::nullopt };

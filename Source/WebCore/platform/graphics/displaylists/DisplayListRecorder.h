@@ -185,6 +185,8 @@ protected:
     const ContextState& currentState() const;
     ContextState& currentState();
 
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode, RenderingMethod) const override;
+
 private:
     bool hasPlatformContext() const final { return false; }
     PlatformGraphicsContext* platformContext() const final { return nullptr; }

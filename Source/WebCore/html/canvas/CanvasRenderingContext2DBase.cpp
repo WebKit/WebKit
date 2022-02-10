@@ -1611,7 +1611,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         repaintEntireCanvas = true;
     } else if (state().globalComposite == CompositeOperator::Copy) {
         if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = buffer->copyRectToBuffer(srcRect, colorSpace(), *c)) {
+            if (auto copy = c->createCompatibleImageBuffer(srcRect.size(), colorSpace())) {
+                copy->context().drawImageBuffer(*buffer, -srcRect.location());
                 clearCanvas();
                 c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, { state().globalComposite, state().globalBlend });
             }

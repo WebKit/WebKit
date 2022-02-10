@@ -37,4 +37,10 @@ enum class RenderingPurpose : uint8_t {
 enum class ShouldUseDisplayList : bool { No, Yes };
 enum class RenderingMode : bool { Unaccelerated, Accelerated };
 
+enum class RenderingMethod : uint8_t {
+    Default,
+    Local,
+    DisplayList
+};
+
 } // namespace WebCore

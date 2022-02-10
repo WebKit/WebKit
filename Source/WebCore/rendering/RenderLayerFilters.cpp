@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,19 +129,16 @@ GraphicsContext* RenderLayerFilters::inputContext()
     return m_sourceImage ? &m_sourceImage->context() : nullptr;
 }
 
-void RenderLayerFilters::allocateBackingStoreIfNeeded()
+void RenderLayerFilters::allocateBackingStoreIfNeeded(GraphicsContext& context)
 {
     auto& filter = *m_filter;
     auto logicalSize = filter.scaledByFilterScale(m_filterRegion.size());
 
-    if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize) {
-        m_sourceImage = ImageBuffer::create(logicalSize, filter.renderingMode(), ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, m_layer.renderer().hostWindow());
-        if (auto context = inputContext())
-            context->scale(filter.filterScale());
-    }
+    if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize)
+        m_sourceImage = context.createImageBuffer(m_filterRegion.size(), filter.filterScale(), DestinationColorSpace::SRGB(), filter.renderingMode());
 }
 
-GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
+GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     if (!m_filter)
         return nullptr;
@@ -193,7 +190,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     resetDirtySourceRect();
 
     filter.setFilterRegion(m_filterRegion);
-    allocateBackingStoreIfNeeded();
+    allocateBackingStoreIfNeeded(context);
 
     auto* sourceGraphicsContext = inputContext();
     if (!sourceGraphicsContext)

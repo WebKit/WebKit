@@ -232,14 +232,15 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
 
     // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
     if (m_pdfImageCachingPolicy == PDFImageCachingPolicy::BelowMemoryLimit) {
-        IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
+        auto scaledSize = context.compatibleImageBufferSize(cachedImageSize);
         if (s_allDecodedDataSize + scaledSize.unclampedArea() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
             destroyDecodedData();
             return;
         }
     }
 
-    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(cachedImageSize, context);
+    // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
+    m_cachedImageBuffer = context.createCompatibleImageBuffer(cachedImageSize, DestinationColorSpace::SRGB(), RenderingMethod::Local);
     if (!m_cachedImageBuffer) {
         destroyDecodedData();
         return;
@@ -292,7 +293,7 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
             // scalar = sqrt(max number of pixels / (width * height))
             auto scalar = std::min(1.f, std::sqrt(static_cast<float>(s_maxCachedImageArea) / (dstRect.width() * dstRect.height())));
             FloatRect localDestinationRect(FloatPoint(), dstRect.size() * scalar);
-            if (auto imageBuffer = ImageBuffer::createCompatibleBuffer(localDestinationRect.size(), context)) {
+            if (auto imageBuffer = context.createCompatibleImageBuffer(localDestinationRect.size(), DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
                 auto& bufferContext = imageBuffer->context();
                 transformContextForPainting(bufferContext, localDestinationRect, srcRect);
                 drawPDFPage(bufferContext);

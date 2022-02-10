@@ -177,6 +177,38 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
+static inline IntRect scaledImageBufferRect(const FloatRect& rect, const FloatSize& scale)
+{
+    auto scaledRect = rect;
+    scaledRect.scale(scale);
+    return enclosingIntRect(scaledRect);
+}
+
+static inline FloatSize clampingScaleForImageBufferSize(const FloatSize& size)
+{
+    FloatSize clampingScale(1, 1);
+    ImageBuffer::sizeNeedsClamping(size, clampingScale);
+    return clampingScale;
+}
+
+static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& rect, const FloatSize& scale, HostWindow* hostWindow)
+{
+    auto scaledRect = scaledImageBufferRect(rect, scale);
+    if (scaledRect.isEmpty())
+        return nullptr;
+
+    auto clampingScale = clampingScaleForImageBufferSize(scaledRect.size());
+
+    auto imageBuffer = ImageBuffer::create(scaledRect.size() * clampingScale, RenderingMode::Unaccelerated, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, hostWindow);
+    if (!imageBuffer)
+        return nullptr;
+
+    imageBuffer->context().scale(clampingScale);
+    imageBuffer->context().translate(-scaledRect.location());
+    imageBuffer->context().scale(scale);
+    return imageBuffer;
+}
+
 std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect() const
 {
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
@@ -195,11 +227,12 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     if (!absoluteTransform.isInvertible())
         return { };
 
-    auto shearFreeAbsoluteTransform = AffineTransform(absoluteTransform.xScale(), 0, 0, absoluteTransform.yScale(), 0, 0);
-
+    // Ignore 2D rotation, as it doesn't affect the image size.
+    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
     auto imageRect = renderer->repaintRectInLocalCoordinates();
 
-    auto imageBuffer = SVGRenderingContext::createImageBuffer(imageRect, shearFreeAbsoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, renderer->hostWindow());
+    // FIXME: Replace this call with GraphicsContext::createImageBuffer() once the destination GraphicsContext is passed to this function.
+    auto imageBuffer = createImageBuffer(imageRect, scale, renderer->hostWindow());
     if (!imageBuffer)
         return { };
 

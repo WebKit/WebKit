@@ -347,7 +347,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
     }
 
     if (!m_cachedImage) {
-        auto buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(tileRect.size()), DestinationColorSpace::SRGB(), ctxt);
+        auto buffer = ctxt.createCompatibleImageBuffer(expandedIntSize(tileRect.size()));
         if (!buffer)
             return;
 
