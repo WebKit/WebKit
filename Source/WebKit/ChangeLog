@@ -1,3 +1,13 @@
+2022-02-10  Elliott Williams  <emw@apple.com>
+
+        Use of unversioned 'python' in Mac builds causing failures in 12.3
+        https://bugs.webkit.org/show_bug.cgi?id=236327
+
+        Reviewed by Jonathan Bedard.
+
+        * WebKit.xcodeproj/project.pbxproj: python -> python3 in "Replace WebKitAdditions in
+        Framework Headers" phase.
+
 2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ImageBuffer::get/putPixelBuffer should not go through DisplayList
