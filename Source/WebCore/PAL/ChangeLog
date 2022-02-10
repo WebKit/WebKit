@@ -1,3 +1,16 @@
+2022-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some WebKitAdditions extension points in VisionKitCore SPI and softlinking headers
+        https://bugs.webkit.org/show_bug.cgi?id=236403
+        rdar://88709972
+
+        Reviewed by Aditya Keerthi.
+
+        Add new WebKitAdditions header includes.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
 2022-02-09  Antoine Quint  <graouts@webkit.org>
 
         [model] improve sizing on macOS

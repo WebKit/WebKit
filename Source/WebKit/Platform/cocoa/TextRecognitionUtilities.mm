@@ -30,8 +30,10 @@
 
 #import "Logging.h"
 #import <WebCore/TextRecognitionResult.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
+#import <wtf/WorkQueue.h>
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;

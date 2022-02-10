@@ -58,6 +58,7 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 #endif
 
 }
