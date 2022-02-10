@@ -1,3 +1,93 @@
+2022-02-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r288434. rdar://problem/56436745
+
+    texImage2d fails to set same video frame to multiple textures
+    https://bugs.webkit.org/show_bug.cgi?id=203148
+    <rdar://problem/56436745>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-01-24
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    WebGL optimizes repeated video uploads to same texture, due to this being
+    usual practice among pages. Reason is that there are no API to know when the
+    video frame updates.
+    The algorithm was:
+     - If the IOSurface is the same as in the last call
+     - If the texture contents has not changed since we last modified this texture
+     then skip the upload.
+    However, this logic skips errorneously if the "last call" updates some other texture.
+    Fix and test the above.
+    
+    There are other issues for the current algorithm. This patch fixes some other theoretical ones:
+     - If the texture is deleted and new one gets assigned the same texture id and the content
+       seed would clash
+     - Video was uploaded to a different level
+    
+    The previous implementation was keeping per-texture seed value map in the context
+    (GraphicsContextGLANGLE) and per-teture seed value map in the texture upload helper
+    (GraphicsContextGLCVCocoa) and last uploaded IOSurface seed in the upload helper (not per
+    texture).
+    
+    The implementation in this patch keeps per-texture known content description in the texture
+    upload helper and invalidates this when each texture changes. The known content description
+    is the parameter list of the texture upload call.
+    
+    Test: webgl/pending/conformance/textures/misc/tex-image-video-repeated.html
+    
+    * platform/graphics/GraphicsContextGLState.h:
+    (WebCore::GraphicsContextGLState::setBoundTexture):
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLANGLE::texImage2D):
+    (WebCore::GraphicsContextGLANGLE::texSubImage2D):
+    (WebCore::GraphicsContextGLANGLE::compressedTexImage2D):
+    (WebCore::GraphicsContextGLANGLE::compressedTexSubImage2D):
+    (WebCore::GraphicsContextGLANGLE::texStorage2D):
+    (WebCore::GraphicsContextGLANGLE::texStorage3D):
+    (WebCore::GraphicsContextGLANGLE::texImage2DDirect):
+    (WebCore::GraphicsContextGLANGLE::framebufferTexture2D):
+    (WebCore::GraphicsContextGLANGLE::createTexture):
+    (WebCore::GraphicsContextGLANGLE::deleteTexture):
+    (WebCore::GraphicsContextGLANGLE::invalidateKnownTextureContent):
+    (WebCore::GraphicsContextGLANGLE::textureSeed): Deleted.
+    * platform/graphics/angle/GraphicsContextGLANGLE.h:
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.h:
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+    (WebCore::GraphicsContextGLCocoa::invalidateKnownTextureContent):
+    * platform/graphics/cv/GraphicsContextGLCVCocoa.cpp:
+    (WebCore::GraphicsContextGLCVCocoa::TextureContent::operator== const):
+    (WebCore::GraphicsContextGLCVCocoa::copyVideoSampleToTexture):
+    (WebCore::GraphicsContextGLCVCocoa::invalidateKnownTextureContent):
+    * platform/graphics/cv/GraphicsContextGLCVCocoa.h:
+    
+    LayoutTests:
+    
+    Add a test for testing the bug in which some video texture uploads
+    were skipped errorneously.
+    
+    * webgl/pending/conformance/textures/misc/tex-image-video-repeated.html: Added.
+    * webgl/pending/conformance/textures/misc/tex-image-video-repeated-expected.txt: Added.
+    * webgl/pending/resources/webgl_test_files/conformance/textures/misc/tex-image-video-repeated.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288434 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            texImage2d fails to set same video frame to multiple textures
+            https://bugs.webkit.org/show_bug.cgi?id=203148
+            <rdar://problem/56436745>
+
+            Reviewed by Darin Adler.
+
+            Add a test for testing the bug in which some video texture uploads
+            were skipped errorneously.
+
+            * webgl/pending/conformance/textures/misc/tex-image-video-repeated.html: Added.
+            * webgl/pending/conformance/textures/misc/tex-image-video-repeated-expected.txt: Added.
+            * webgl/pending/resources/webgl_test_files/conformance/textures/misc/tex-image-video-repeated.html: Added.
+
 2022-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287055. rdar://problem/86488039
