@@ -1,5 +1,16 @@
 2022-02-10  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/url from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236377
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/url from upstream 012f446eafc392c7.
+
+        * web-platform-tests/url/*: Updated.
+
+2022-02-10  Chris Dumez  <cdumez@apple.com>
+
         Resync web-platform-tests/eventsource from upstream
         https://bugs.webkit.org/show_bug.cgi?id=236374
 

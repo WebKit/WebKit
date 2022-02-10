@@ -5113,6 +5113,7 @@ webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-dec
 
 # Test is crashing in Debug builds since import.
 webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
+webkit.org/b/236442 [ Debug ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
 
 # Test is crashing since import.
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html [ Skip ]

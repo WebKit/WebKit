@@ -1,4 +1,0 @@
-
-PASS getAll() basics
-PASS getAll() multiples
-

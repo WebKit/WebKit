@@ -1,5 +1,0 @@
-
-PASS ForEach Check
-PASS For-of Check
-PASS empty
-

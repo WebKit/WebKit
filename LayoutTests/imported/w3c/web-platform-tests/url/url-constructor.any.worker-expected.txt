@@ -276,6 +276,10 @@ PASS Parsing: <https://%EF%BF%BD> against <about:blank>
 PASS Parsing: <https://x/�?�#�> against <about:blank>
 PASS Parsing: <http://a.b.c.xn--pokxncvks> against <about:blank>
 PASS Parsing: <http://10.0.0.xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.c.XN--pokxncvks> against <about:blank>
+PASS Parsing: <http://a.b.c.Xn--pokxncvks> against <about:blank>
+PASS Parsing: <http://10.0.0.XN--pokxncvks> against <about:blank>
+PASS Parsing: <http://10.0.0.xN--pokxncvks> against <about:blank>
 PASS Parsing: <http://Ｇｏ.com> against <http://other.com/>
 PASS Parsing: <http://％４１.com> against <http://other.com/>
 PASS Parsing: <http://%ef%bc%85%ef%bc%94%ef%bc%91.com> against <http://other.com/>
@@ -346,16 +350,11 @@ PASS Parsing: <data:/../> against <about:blank>
 PASS Parsing: <javascript:/../> against <about:blank>
 PASS Parsing: <mailto:/../> against <about:blank>
 PASS Parsing: <sc://ñ.test/> against <about:blank>
-PASS Parsing: <sc://\0/> against <about:blank>
-PASS Parsing: <sc:// /> against <about:blank>
 PASS Parsing: <sc://%/> against <about:blank>
 PASS Parsing: <sc://@/> against <about:blank>
 PASS Parsing: <sc://te@s:t@/> against <about:blank>
 PASS Parsing: <sc://:/> against <about:blank>
 PASS Parsing: <sc://:12/> against <about:blank>
-PASS Parsing: <sc://[/> against <about:blank>
-PASS Parsing: <sc://\/> against <about:blank>
-PASS Parsing: <sc://]/> against <about:blank>
 PASS Parsing: <x> against <sc://ñ>
 PASS Parsing: <sc:\../> against <about:blank>
 PASS Parsing: <sc::a@example.net> against <about:blank>
@@ -363,24 +362,96 @@ PASS Parsing: <wow:%NBD> against <about:blank>
 PASS Parsing: <wow:%1G> against <about:blank>
 PASS Parsing: <wow:￿> against <about:blank>
 PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
-PASS Parsing: <http://a<b> against <about:blank>
-PASS Parsing: <http://a>b> against <about:blank>
-PASS Parsing: <http://a^b> against <about:blank>
-PASS Parsing: <non-special://a<b> against <about:blank>
-PASS Parsing: <non-special://a>b> against <about:blank>
-PASS Parsing: <non-special://a^b> against <about:blank>
-PASS Parsing: <foo://ho\0st/> against <about:blank>
-PASS Parsing: <foo://ho|st/> against <about:blank>
+PASS Parsing: <sc://a\0b/> against <about:blank>
+PASS Parsing: <sc://a b/> against <about:blank>
+PASS Parsing: <sc://a<b> against <about:blank>
+PASS Parsing: <sc://a>b> against <about:blank>
+PASS Parsing: <sc://a[b/> against <about:blank>
+PASS Parsing: <sc://a\b/> against <about:blank>
+PASS Parsing: <sc://a]b/> against <about:blank>
+PASS Parsing: <sc://a^b> against <about:blank>
+PASS Parsing: <sc://a|b/> against <about:blank>
 PASS Parsing: <foo://ho	st/> against <about:blank>
 PASS Parsing: <foo://ho
 st/> against <about:blank>
 PASS Parsing: <foo://ho\rst/> against <about:blank>
+PASS Parsing: <http://a\0b/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://a b/> against <about:blank>
+PASS Parsing: <http://a%b/> against <about:blank>
+PASS Parsing: <http://a<b> against <about:blank>
+PASS Parsing: <http://a>b> against <about:blank>
+PASS Parsing: <http://a[b/> against <about:blank>
+PASS Parsing: <http://a]b/> against <about:blank>
+PASS Parsing: <http://a^b> against <about:blank>
+PASS Parsing: <http://a|b/> against <about:blank>
+PASS Parsing: <http://ab/> against <about:blank>
+PASS Parsing: <http://ho	st/> against <about:blank>
+PASS Parsing: <http://ho
+st/> against <about:blank>
+PASS Parsing: <http://ho\rst/> against <about:blank>
 PASS Parsing: <http://ho%00st/> against <about:blank>
+PASS Parsing: <http://ho%01st/> against <about:blank>
+PASS Parsing: <http://ho%02st/> against <about:blank>
+PASS Parsing: <http://ho%03st/> against <about:blank>
+PASS Parsing: <http://ho%04st/> against <about:blank>
+PASS Parsing: <http://ho%05st/> against <about:blank>
+PASS Parsing: <http://ho%06st/> against <about:blank>
+PASS Parsing: <http://ho%07st/> against <about:blank>
+PASS Parsing: <http://ho%08st/> against <about:blank>
 PASS Parsing: <http://ho%09st/> against <about:blank>
 PASS Parsing: <http://ho%0Ast/> against <about:blank>
+PASS Parsing: <http://ho%0Bst/> against <about:blank>
+PASS Parsing: <http://ho%0Cst/> against <about:blank>
 PASS Parsing: <http://ho%0Dst/> against <about:blank>
+PASS Parsing: <http://ho%0Est/> against <about:blank>
+PASS Parsing: <http://ho%0Fst/> against <about:blank>
+PASS Parsing: <http://ho%10st/> against <about:blank>
+PASS Parsing: <http://ho%11st/> against <about:blank>
+PASS Parsing: <http://ho%12st/> against <about:blank>
+PASS Parsing: <http://ho%13st/> against <about:blank>
+PASS Parsing: <http://ho%14st/> against <about:blank>
+PASS Parsing: <http://ho%15st/> against <about:blank>
+PASS Parsing: <http://ho%16st/> against <about:blank>
+PASS Parsing: <http://ho%17st/> against <about:blank>
+PASS Parsing: <http://ho%18st/> against <about:blank>
+PASS Parsing: <http://ho%19st/> against <about:blank>
+PASS Parsing: <http://ho%1Ast/> against <about:blank>
+PASS Parsing: <http://ho%1Bst/> against <about:blank>
+PASS Parsing: <http://ho%1Cst/> against <about:blank>
+PASS Parsing: <http://ho%1Dst/> against <about:blank>
+PASS Parsing: <http://ho%1Est/> against <about:blank>
+PASS Parsing: <http://ho%1Fst/> against <about:blank>
 PASS Parsing: <http://ho%20st/> against <about:blank>
 PASS Parsing: <http://ho%23st/> against <about:blank>
+PASS Parsing: <http://ho%25st/> against <about:blank>
 PASS Parsing: <http://ho%2Fst/> against <about:blank>
 PASS Parsing: <http://ho%3Ast/> against <about:blank>
 PASS Parsing: <http://ho%3Cst/> against <about:blank>
@@ -391,8 +462,9 @@ PASS Parsing: <http://ho%5Bst/> against <about:blank>
 PASS Parsing: <http://ho%5Cst/> against <about:blank>
 PASS Parsing: <http://ho%5Dst/> against <about:blank>
 PASS Parsing: <http://ho%7Cst/> against <about:blank>
-PASS Parsing: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
-PASS Parsing: <sc://!"$&'()*+,-.;=_`{}~/> against <about:blank>
+PASS Parsing: <http://ho%7Fst/> against <about:blank>
+PASS Parsing: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
+FAIL Parsing: <sc://!"$%&'()*+,-.;=_`{}~/> against <about:blank> Type error
 PASS Parsing: <ftp://example.com%80/> against <about:blank>
 PASS Parsing: <ftp://example.com%A0/> against <about:blank>
 PASS Parsing: <https://example.com%80/> against <about:blank>
