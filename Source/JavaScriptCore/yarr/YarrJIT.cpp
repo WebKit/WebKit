@@ -4265,7 +4265,8 @@ public:
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
             && !m_containsNestedSubpatterns
 #endif
-            && !m_pattern.m_containsBackreferences;
+            && !m_pattern.m_containsBackreferences
+            && !m_pattern.m_saveInitialStartValue;
 
         generateTryReadUnicodeCharacterHelper();
 

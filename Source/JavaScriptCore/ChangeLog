@@ -1,3 +1,44 @@
+2022-02-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r289450. rdar://problem/88483574
+
+    [JSC] YarrJIT inlining should be disabled when we have DotStarEnclosure
+    https://bugs.webkit.org/show_bug.cgi?id=236332
+    rdar://88483574
+    
+    Reviewed by Michael Saboff.
+    
+    JSTests:
+    
+    * stress/yarr-inlining-dot-star-enclosure.js: Added.
+    (test):
+    
+    Source/JavaScriptCore:
+    
+    YarrJITRegisters::initialStart can be used when m_pattern.m_saveInitialStartValue is true while
+    it is not defined in YarrJIT inlining. As a result, we emit broken code using InvalidGPRReg.
+    This patch makes canInline false when m_pattern.m_saveInitialStartValue is true.
+    
+    * yarr/YarrJIT.cpp:
+    * yarr/YarrJITRegisters.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289450 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] YarrJIT inlining should be disabled when we have DotStarEnclosure
+            https://bugs.webkit.org/show_bug.cgi?id=236332
+            rdar://88483574
+
+            Reviewed by Michael Saboff.
+
+            YarrJITRegisters::initialStart can be used when m_pattern.m_saveInitialStartValue is true while
+            it is not defined in YarrJIT inlining. As a result, we emit broken code using InvalidGPRReg.
+            This patch makes canInline false when m_pattern.m_saveInitialStartValue is true.
+
+            * yarr/YarrJIT.cpp:
+            * yarr/YarrJITRegisters.h:
+
 2022-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289076. rdar://problem/88269480
