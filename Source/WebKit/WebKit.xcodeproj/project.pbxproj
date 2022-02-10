@@ -893,6 +893,7 @@
 		4671FF1F23217EFF001B64C7 /* WebResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */; };
 		467E43E82243FF7D00B13924 /* WebProcessDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */; };
 		46809A7C23D9225E00C297D0 /* WebCookieCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 46809A7A23D9225300C297D0 /* WebCookieCache.h */; };
+		4691CB9B27B2DD2D00B29AAF /* RemoteWorkerType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
 		46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */; };
 		46BEB6D722FB9BD700269867 /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6D522FB9BD600269867 /* StorageArea.h */; };
@@ -4276,6 +4277,7 @@
 		468386682763FAB100CF9182 /* WebSharedWorkerServerConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServerConnection.cpp; sourceTree = "<group>"; };
 		4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebLockRegistry.h; sourceTree = "<group>"; };
 		4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebLockRegistry.cpp; sourceTree = "<group>"; };
+		4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerType.h; sourceTree = "<group>"; };
 		46943DCB2763F834004B610E /* WebSharedWorkerObjectConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerObjectConnection.messages.in; sourceTree = "<group>"; };
 		469DE802273ECC5D00930276 /* ProcessLauncherCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessLauncherCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
@@ -7275,6 +7277,7 @@
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
 				5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */,
 				5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */,
+				4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */,
 				7203449B26A6C476000A5F54 /* RenderingUpdateID.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
@@ -13389,6 +13392,7 @@
 				A55BA8251BA25CFB007CD33D /* RemoteWebInspectorUIProxyMessages.h in Headers */,
 				46C5B7CE27AADDD3000C5B47 /* RemoteWorkerFrameLoaderClient.h in Headers */,
 				46C5B7CF27AADDD6000C5B47 /* RemoteWorkerLibWebRTCProvider.h in Headers */,
+				4691CB9B27B2DD2D00B29AAF /* RemoteWorkerType.h in Headers */,
 				5CB7AFE723C6820700E49CF3 /* ResourceLoadInfo.h in Headers */,
 				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,

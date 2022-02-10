@@ -3696,7 +3696,7 @@ void WebPageProxy::setUserAgent(String&& userAgent)
 
     // We update the service worker there at the moment to be sure we use values used by actual web pages.
     // FIXME: Refactor this when we have a better User-Agent story.
-    process().processPool().updateWorkerUserAgent(m_userAgent);
+    process().processPool().updateRemoteWorkerUserAgent(m_userAgent);
 
     if (!hasRunningProcess())
         return;

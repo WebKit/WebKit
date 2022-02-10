@@ -36,6 +36,7 @@
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "RemoteWorkerInitializationData.h"
+#include "RemoteWorkerType.h"
 #include "ResponsivenessTimer.h"
 #include "SpeechRecognitionServer.h"
 #include "UserContentControllerIdentifier.h"
@@ -136,13 +137,9 @@ public:
 
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class CaptivePortalMode : bool { Disabled, Enabled };
-    enum class WorkerType : uint32_t {
-        ServiceWorker = 1 << 0,
-        SharedWorker = 1 << 1
-    };
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, CaptivePortalMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
-    static Ref<WebProcessProxy> createForWorkers(WorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
+    static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
     ~WebProcessProxy();
 
@@ -165,8 +162,8 @@ public:
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
-    void enableWorkers(WorkerType, const UserContentControllerIdentifier&);
-    void disableWorkers(OptionSet<WorkerType>);
+    void enableRemoteWorkers(RemoteWorkerType, const UserContentControllerIdentifier&);
+    void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
     void setWebsiteDataStore(WebsiteDataStore&);
@@ -366,15 +363,15 @@ public:
 
     void updateAudibleMediaAssertions();
 
-    void setWorkerUserAgent(const String&);
-    void updateWorkerPreferencesStore(const WebPreferencesStore&);
+    void setRemoteWorkerUserAgent(const String&);
+    void updateRemoteWorkerPreferencesStore(const WebPreferencesStore&);
     void establishSharedWorkerContext(const WebPreferencesStore&, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
-    void updateWorkerProcessAssertion(WorkerType);
+    void registerRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
+    void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
+    void updateRemoteWorkerProcessAssertion(RemoteWorkerType);
 #if ENABLE(SERVICE_WORKER)
     void establishServiceWorkerContext(const WebPreferencesStore&, const WebCore::RegistrableDomain&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->remoteWorkerPageProxyID == pageProxyID; }
-    void registerServiceWorkerClientProcess(WebProcessProxy&);
-    void unregisterServiceWorkerClientProcess(WebProcessProxy&);
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
     void startServiceWorkerBackgroundProcessing();

@@ -37,6 +37,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
+#include "RemoteWorkerType.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
@@ -378,7 +379,7 @@ void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& top
 
     if (contextConnection) {
         auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
-        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
     }
 }
 
@@ -403,7 +404,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
     if (isDeletedOrigin) {
         if (auto* contextConnection = server().contextConnectionForRegistrableDomain(RegistrableDomain { clientOrigin.clientOrigin })) {
             auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
-            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::UnregisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
         }
     }
 }
@@ -544,7 +545,7 @@ void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection
     connection.setThrottleState(computeThrottleState(connection.registrableDomain()));
 
     if (hasMatchingClient(connection.registrableDomain()))
-        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
 }
 
 void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)

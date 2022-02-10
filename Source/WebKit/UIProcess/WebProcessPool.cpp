@@ -546,7 +546,7 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
     if (serviceWorkerPageIdentifier) {
         // This is a service worker for a service worker page so we need to make sure we use use the page's WebProcess for the service worker.
         if ((serviceWorkerProcessProxy = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))) {
-            serviceWorkerProcessProxy->enableWorkers(WebProcessProxy::WorkerType::ServiceWorker, processPool->userContentControllerIdentifierForWorkers());
+            serviceWorkerProcessProxy->enableRemoteWorkers(RemoteWorkerType::ServiceWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
             if (serviceWorkerProcessProxy->isInProcessCache()) {
                 processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
                 ASSERT(!serviceWorkerProcessProxy->isInProcessCache());
@@ -564,7 +564,7 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
                 continue;
 
             serviceWorkerProcessProxy = process.ptr();
-            serviceWorkerProcessProxy->enableWorkers(WebProcessProxy::WorkerType::ServiceWorker, processPool->userContentControllerIdentifierForWorkers());
+            serviceWorkerProcessProxy->enableRemoteWorkers(RemoteWorkerType::ServiceWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
 
             if (serviceWorkerProcessProxy->isInProcessCache()) {
                 processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
@@ -577,7 +577,7 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
     }
 
     if (!serviceWorkerProcessProxy) {
-        auto newProcessProxy = WebProcessProxy::createForWorkers(WebProcessProxy::WorkerType::ServiceWorker, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
+        auto newProcessProxy = WebProcessProxy::createForRemoteWorkers(RemoteWorkerType::ServiceWorker, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
         serviceWorkerProcessProxy = newProcessProxy.ptr();
 
         WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishServiceWorkerContextConnectionToNetworkProcess creating a new service worker process (proces=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
@@ -586,18 +586,18 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
         processPool->m_processes.append(WTFMove(newProcessProxy));
     }
 
-    workerProcesses().add(*serviceWorkerProcessProxy);
+    remoteWorkerProcesses().add(*serviceWorkerProcessProxy);
 
-    serviceWorkerProcessProxy->establishServiceWorkerContext(processPool->m_workerPreferences ? processPool->m_workerPreferences.value() : processPool->m_defaultPageGroup->preferences().store(), registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
-    if (!processPool->m_workerUserAgent.isNull())
-        serviceWorkerProcessProxy->setWorkerUserAgent(processPool->m_workerUserAgent);
+    serviceWorkerProcessProxy->establishServiceWorkerContext(processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store(), registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
+    if (!processPool->m_remoteWorkerUserAgent.isNull())
+        serviceWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
 }
 #endif
 
-void WebProcessPool::removeFromWorkerProcesses(WebProcessProxy& process)
+void WebProcessPool::removeFromRemoteWorkerProcesses(WebProcessProxy& process)
 {
-    ASSERT(workerProcesses().contains(process));
-    workerProcesses().remove(process);
+    ASSERT(remoteWorkerProcesses().contains(process));
+    remoteWorkerProcesses().remove(process);
 }
 
 void WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -623,7 +623,7 @@ void WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WebC
             continue;
 
         sharedWorkerProcessProxy = process.ptr();
-        sharedWorkerProcessProxy->enableWorkers(WebProcessProxy::WorkerType::SharedWorker, processPool->userContentControllerIdentifierForWorkers());
+        sharedWorkerProcessProxy->enableRemoteWorkers(RemoteWorkerType::SharedWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
 
         if (sharedWorkerProcessProxy->isInProcessCache()) {
             processPool->webProcessCache().removeProcess(*sharedWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
@@ -635,7 +635,7 @@ void WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WebC
     }
 
     if (!sharedWorkerProcessProxy) {
-        auto newProcessProxy = WebProcessProxy::createForWorkers(WebProcessProxy::WorkerType::SharedWorker, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
+        auto newProcessProxy = WebProcessProxy::createForRemoteWorkers(RemoteWorkerType::SharedWorker, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
         sharedWorkerProcessProxy = newProcessProxy.ptr();
 
         WEBPROCESSPOOL_RELEASE_LOG_STATIC(SharedWorker, "establishSharedWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, PID=%d)", sharedWorkerProcessProxy, sharedWorkerProcessProxy->processIdentifier());
@@ -644,11 +644,11 @@ void WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WebC
         processPool->m_processes.append(WTFMove(newProcessProxy));
     }
 
-    workerProcesses().add(*sharedWorkerProcessProxy);
+    remoteWorkerProcesses().add(*sharedWorkerProcessProxy);
 
-    sharedWorkerProcessProxy->establishSharedWorkerContext(processPool->m_workerPreferences ? processPool->m_workerPreferences.value() : processPool->m_defaultPageGroup->preferences().store(), registrableDomain, WTFMove(completionHandler));
-    if (!processPool->m_workerUserAgent.isNull())
-        sharedWorkerProcessProxy->setWorkerUserAgent(processPool->m_workerUserAgent);
+    sharedWorkerProcessProxy->establishSharedWorkerContext(processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store(), registrableDomain, WTFMove(completionHandler));
+    if (!processPool->m_remoteWorkerUserAgent.isNull())
+        sharedWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
 }
 
 void WebProcessPool::windowServerConnectionStateChanged()
@@ -1054,7 +1054,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
     m_backForwardCache->removeEntriesForProcess(process);
 
     if (process.isRunningWorkers())
-        removeFromWorkerProcesses(process);
+        removeFromRemoteWorkerProcesses(process);
 
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(&process);
 
@@ -1114,12 +1114,12 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
     return createNewWebProcess(&websiteDataStore, captivePortalMode);
 }
 
-UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForWorkers()
+UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForRemoteWorkers()
 {
-    if (!m_userContentControllerForWorkers)
-        m_userContentControllerForWorkers = WebUserContentControllerProxy::create();
+    if (!m_userContentControllerForRemoteWorkers)
+        m_userContentControllerForRemoteWorkers = WebUserContentControllerProxy::create();
 
-    return m_userContentControllerForWorkers->identifier();
+    return m_userContentControllerForRemoteWorkers->identifier();
 }
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
@@ -1165,13 +1165,13 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 
-    if (!m_workerPreferences) {
-        m_workerPreferences = page->preferencesStore();
-        for (auto& workerProcess : workerProcesses())
-            workerProcess.updateWorkerPreferencesStore(*m_workerPreferences);
+    if (!m_remoteWorkerPreferences) {
+        m_remoteWorkerPreferences = page->preferencesStore();
+        for (auto& workerProcess : remoteWorkerProcesses())
+            workerProcess.updateRemoteWorkerPreferencesStore(*m_remoteWorkerPreferences);
     }
     if (userContentController)
-        m_userContentControllerForWorkers = userContentController;
+        m_userContentControllerForRemoteWorkers = userContentController;
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
 #if PLATFORM(IOS_FAMILY)
@@ -1194,13 +1194,13 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     return page;
 }
 
-void WebProcessPool::updateWorkerUserAgent(const String& userAgent)
+void WebProcessPool::updateRemoteWorkerUserAgent(const String& userAgent)
 {
-    if (m_workerUserAgent == userAgent)
+    if (m_remoteWorkerUserAgent == userAgent)
         return;
-    m_workerUserAgent = userAgent;
-    for (auto& workerProcess : workerProcesses())
-        workerProcess.setWorkerUserAgent(m_workerUserAgent);
+    m_remoteWorkerUserAgent = userAgent;
+    for (auto& workerProcess : remoteWorkerProcesses())
+        workerProcess.setRemoteWorkerUserAgent(m_remoteWorkerUserAgent);
 }
 
 void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier pageID, WebsiteDataStore& dataStore)
@@ -1581,12 +1581,12 @@ void WebProcessPool::terminateServiceWorkers()
 #if ENABLE(SERVICE_WORKER)
     Ref protectedThis { *this };
     Vector<Ref<WebProcessProxy>> serviceWorkerProcesses;
-    workerProcesses().forEach([&](auto& process) {
+    remoteWorkerProcesses().forEach([&](auto& process) {
         if (process.isRunningServiceWorkers())
             serviceWorkerProcesses.append(process);
     });
     for (auto& serviceWorkerProcess : serviceWorkerProcesses)
-        serviceWorkerProcess->disableWorkers(WebProcessProxy::WorkerType::ServiceWorker);
+        serviceWorkerProcess->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
 #endif
 }
 
@@ -1814,7 +1814,7 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 #endif
 }
 
-WeakHashSet<WebProcessProxy>& WebProcessPool::workerProcesses()
+WeakHashSet<WebProcessProxy>& WebProcessPool::remoteWorkerProcesses()
 {
     static NeverDestroyed<WeakHashSet<WebProcessProxy>> processes;
     return processes;
@@ -1833,13 +1833,13 @@ void WebProcessPool::updateProcessAssertions()
 
     // Check on next run loop since the web process proxy tokens are probably being updated.
     callOnMainRunLoop([] {
-        workerProcesses().forEach([](auto& workerProcess) {
+        remoteWorkerProcesses().forEach([](auto& workerProcess) {
 #if ENABLE(SERVICE_WORKER)
             if (workerProcess.isRunningServiceWorkers())
-                workerProcess.updateWorkerProcessAssertion(WebProcessProxy::WorkerType::ServiceWorker);
+                workerProcess.updateRemoteWorkerProcessAssertion(RemoteWorkerType::ServiceWorker);
 #endif
             if (workerProcess.isRunningSharedWorkers())
-                workerProcess.updateWorkerProcessAssertion(WebProcessProxy::WorkerType::SharedWorker);
+                workerProcess.updateRemoteWorkerProcessAssertion(RemoteWorkerType::SharedWorker);
         });
     });
 }
@@ -1848,7 +1848,7 @@ bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
 {
 #if ENABLE(SERVICE_WORKER)
     // FIXME: This is inefficient.
-    return WTF::anyOf(workerProcesses(), [pageID](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [pageID](auto& process) {
         return process.hasServiceWorkerPageProxy(pageID);
     });
 #endif
@@ -2177,7 +2177,7 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
 size_t WebProcessPool::serviceWorkerProxiesCount() const
 {
     unsigned count = 0;
-    workerProcesses().forEach([&](auto& process) {
+    remoteWorkerProcesses().forEach([&](auto& process) {
         if (process.isRunningServiceWorkers())
             ++count;
     });
@@ -2186,14 +2186,14 @@ size_t WebProcessPool::serviceWorkerProxiesCount() const
 
 bool WebProcessPool::hasServiceWorkerForegroundActivityForTesting() const
 {
-    return WTF::anyOf(workerProcesses(), [](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [](auto& process) {
         return process.hasServiceWorkerForegroundActivityForTesting();
     });
 }
 
 bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
 {
-    return WTF::anyOf(workerProcesses(), [](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [](auto& process) {
         return process.hasServiceWorkerBackgroundActivityForTesting();
     });
 }

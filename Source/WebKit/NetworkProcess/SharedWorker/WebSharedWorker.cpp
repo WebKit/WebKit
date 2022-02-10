@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebSharedWorker.h"
 
+#include "WebSharedWorkerServer.h"
+#include "WebSharedWorkerServerToContextConnection.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -39,8 +41,9 @@ static HashMap<WebCore::SharedWorkerIdentifier, WebSharedWorker*>& allWorkers()
     return allWorkers;
 }
 
-WebSharedWorker::WebSharedWorker(const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
-    : m_identifier(WebCore::SharedWorkerIdentifier::generate())
+WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
+    : m_server(server)
+    , m_identifier(WebCore::SharedWorkerIdentifier::generate())
     , m_key(key)
     , m_workerOptions(workerOptions)
 {
@@ -50,6 +53,11 @@ WebSharedWorker::WebSharedWorker(const WebCore::SharedWorkerKey& key, const WebC
 
 WebSharedWorker::~WebSharedWorker()
 {
+    if (auto* connection = contextConnection()) {
+        for (auto& sharedWorkerObjectIdentifier : m_sharedWorkerObjects.keys())
+            connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
+    }
+
     ASSERT(allWorkers().get(m_identifier) == this);
     allWorkers().remove(m_identifier);
 }
@@ -62,6 +70,37 @@ WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier
 WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
 {
     return WebCore::RegistrableDomain { url() };
+}
+
+void WebSharedWorker::didCreateContextConnection(WebSharedWorkerServerToContextConnection& contextConnection)
+{
+    for (auto& sharedWorkerObjectIdentifier : m_sharedWorkerObjects.keys())
+        contextConnection.addSharedWorkerObject(sharedWorkerObjectIdentifier);
+}
+
+void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort& port)
+{
+    m_sharedWorkerObjects.add(sharedWorkerObjectIdentifier, port);
+    if (auto* connection = contextConnection())
+        connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
+}
+
+void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    m_sharedWorkerObjects.remove(sharedWorkerObjectIdentifier);
+    if (auto* connection = contextConnection())
+        connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
+}
+
+void WebSharedWorker::forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>& apply) const
+{
+    for (auto& [sharedWorkerObjectIdentifier, port] : m_sharedWorkerObjects)
+        apply(sharedWorkerObjectIdentifier, port);
+}
+
+WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
+{
+    return m_server.contextConnectionForRegistrableDomain(registrableDomain());
 }
 
 } // namespace WebKit

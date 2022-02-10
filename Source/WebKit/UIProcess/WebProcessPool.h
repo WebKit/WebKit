@@ -374,7 +374,7 @@ public:
     void networkProcessDidTerminate(NetworkProcessProxy&, NetworkProcessProxy::TerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
-    void removeFromWorkerProcesses(WebProcessProxy&);
+    void removeFromRemoteWorkerProcesses(WebProcessProxy&);
 
 #if ENABLE(SERVICE_WORKER)
     static void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
@@ -384,8 +384,8 @@ public:
 #endif
     void serviceWorkerProcessCrashed(WebProcessProxy&);
 
-    void updateWorkerUserAgent(const String& userAgent);
-    UserContentControllerIdentifier userContentControllerIdentifierForWorkers();
+    void updateRemoteWorkerUserAgent(const String& userAgent);
+    UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();
     static void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
@@ -621,11 +621,11 @@ private:
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
-    static WeakHashSet<WebProcessProxy>& workerProcesses();
+    static WeakHashSet<WebProcessProxy>& remoteWorkerProcesses();
 
-    std::optional<WebPreferencesStore> m_workerPreferences;
-    RefPtr<WebUserContentControllerProxy> m_userContentControllerForWorkers;
-    String m_workerUserAgent;
+    std::optional<WebPreferencesStore> m_remoteWorkerPreferences;
+    RefPtr<WebUserContentControllerProxy> m_userContentControllerForRemoteWorkers;
+    String m_remoteWorkerUserAgent;
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessProxy> m_gpuProcess;

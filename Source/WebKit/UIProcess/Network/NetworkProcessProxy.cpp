@@ -529,7 +529,7 @@ void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProc
 void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 {
     if (RefPtr process = WebProcessProxy::processForIdentifier(processIdentifier)) {
-        process->disableWorkers(WebProcessProxy::WorkerType::ServiceWorker);
+        process->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
         process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
     }
 }
@@ -1420,36 +1420,36 @@ void NetworkProcessProxy::establishSharedWorkerContextConnectionToNetworkProcess
     WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), sessionID, WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier sharedWorkerProcessIdentifier)
+{
+    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    auto* sharedWorkerProcess = WebProcessProxy::processForIdentifier(sharedWorkerProcessIdentifier);
+    if (!webProcess || !sharedWorkerProcess)
+        return;
+
+    sharedWorkerProcess->registerRemoteWorkerClientProcess(workerType, *webProcess);
+}
+
+void NetworkProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier sharedWorkerProcessIdentifier)
+{
+    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    auto* sharedWorkerProcess = WebProcessProxy::processForIdentifier(sharedWorkerProcessIdentifier);
+    if (!webProcess || !sharedWorkerProcess)
+        return;
+
+    sharedWorkerProcess->unregisterRemoteWorkerClientProcess(workerType, *webProcess);
+}
+
+void NetworkProcessProxy::remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType workerType, WebCore::ProcessIdentifier identifier)
+{
+    if (auto* process = WebProcessProxy::processForIdentifier(identifier))
+        process->disableRemoteWorkers(workerType);
+}
+
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::serviceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
-{
-    if (auto* process = WebProcessProxy::processForIdentifier(identifier))
-        process->disableWorkers(WebProcessProxy::WorkerType::ServiceWorker);
-}
-
-void NetworkProcessProxy::registerServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
-{
-    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
-    auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier);
-    if (!webProcess || !serviceWorkerProcess)
-        return;
-
-    serviceWorkerProcess->registerServiceWorkerClientProcess(*webProcess);
-}
-
-void NetworkProcessProxy::unregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
-{
-    auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
-    auto* serviceWorkerProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
-    if (!webProcess || !serviceWorkerProcess)
-        return;
-
-    serviceWorkerProcess->unregisterServiceWorkerClientProcess(*webProcess);
 }
 
 void NetworkProcessProxy::startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
@@ -1464,12 +1464,6 @@ void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessI
         serviceWorkerProcess->endServiceWorkerBackgroundProcessing();
 }
 #endif
-
-void NetworkProcessProxy::sharedWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
-{
-    if (auto* process = WebProcessProxy::processForIdentifier(identifier))
-        process->disableWorkers(WebProcessProxy::WorkerType::SharedWorker);
-}
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)
 {

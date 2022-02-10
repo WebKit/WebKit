@@ -53,7 +53,7 @@ PAL::SessionID WebSharedWorkerServer::sessionID()
 void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
     auto& sharedWorker = m_sharedWorkers.ensure(sharedWorkerKey, [&] {
-        return makeUnique<WebSharedWorker>(sharedWorkerKey, workerOptions);
+        return makeUnique<WebSharedWorker>(*this, sharedWorkerKey, workerOptions);
     }).iterator->value;
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: sharedWorkerObjectIdentifier=%{private}s, sharedWorkerIdentifier=%" PRIu64, sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker->identifier().toUInt64());
 
@@ -64,16 +64,16 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
         return;
     }
 
-    sharedWorker->sharedWorkerObjects().add(sharedWorkerObjectIdentifier, port);
+    sharedWorker->addSharedWorkerObject(sharedWorkerObjectIdentifier, port);
 
-    if (sharedWorker->sharedWorkerObjects().size() > 1) {
-        RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A shared worker with this URL already exists (now shared by %u shared worker objects)", sharedWorker->sharedWorkerObjects().size());
+    if (sharedWorker->sharedWorkerObjectsCount() > 1) {
+        RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A shared worker with this URL already exists (now shared by %u shared worker objects)", sharedWorker->sharedWorkerObjectsCount());
         if (sharedWorker->didFinishFetching()) {
             if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
                 serverConnection->notifyWorkerObjectOfLoadCompletion(sharedWorkerObjectIdentifier, { });
         }
         if (sharedWorker->isRunning()) {
-            auto* contextConnection = m_contextConnections.get(sharedWorker->registrableDomain());
+            auto* contextConnection = sharedWorker->contextConnection();
             ASSERT(contextConnection);
             if (contextConnection)
                 contextConnection->postConnectEvent(*sharedWorker, port);
@@ -96,10 +96,10 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
 {
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::didFinishFetchingSharedWorkerScript sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p, success=%d", sharedWorker.identifier().toUInt64(), &sharedWorker, fetchResult.error.isNull());
 
-    for (auto sharedWorkerObjectIdentifier : sharedWorker.sharedWorkerObjects().keys()) {
+    sharedWorker.forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
         if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
             serverConnection->notifyWorkerObjectOfLoadCompletion(sharedWorkerObjectIdentifier, fetchResult.error);
-    }
+    });
 
     if (!fetchResult.error.isNull()) {
         m_sharedWorkers.remove(sharedWorker.key());
@@ -108,14 +108,11 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
 
     sharedWorker.setFetchResult(WTFMove(fetchResult));
 
-    auto registrableDomain = sharedWorker.registrableDomain();
-    auto* contextConnection = contextConnectionForRegistrableDomain(registrableDomain);
-    if (!contextConnection) {
-        createContextConnection(registrableDomain);
+    if (auto* contextConnection = sharedWorker.contextConnection()) {
+        contextConnection->launchSharedWorker(sharedWorker);
         return;
     }
-
-    contextConnection->launchSharedWorker(sharedWorker);
+    createContextConnection(sharedWorker.registrableDomain());
 }
 
 bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain& registrableDomain) const
@@ -144,7 +141,6 @@ void WebSharedWorkerServer::createContextConnection(const WebCore::RegistrableDo
 
         ASSERT(m_pendingContextConnectionDomains.contains(registrableDomain));
         m_pendingContextConnectionDomains.remove(registrableDomain);
-
         if (m_contextConnections.contains(registrableDomain))
             return;
 
@@ -174,7 +170,7 @@ void WebSharedWorkerServer::removeContextConnection(WebSharedWorkerServerToConte
 
     m_contextConnections.remove(registrableDomain);
 
-    if (needsContextConnectionForRegistrableDomain(registrableDomain))
+    if (contextConnection.hasSharedWorkerObjects())
         createContextConnection(registrableDomain);
 }
 
@@ -183,7 +179,11 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::contextConnectionCreated(%p) webProcessIdentifier=%" PRIu64, &contextConnection, contextConnection.webProcessIdentifier().toUInt64());
     auto& registrableDomain = contextConnection.registrableDomain();
     for (auto& sharedWorker : m_sharedWorkers.values()) {
-        if (sharedWorker->didFinishFetching() && registrableDomain.matches(sharedWorker->url()))
+        if (!registrableDomain.matches(sharedWorker->url()))
+            continue;
+
+        sharedWorker->didCreateContextConnection(contextConnection);
+        if (sharedWorker->didFinishFetching())
             contextConnection.launchSharedWorker(*sharedWorker);
     }
 }
@@ -195,8 +195,8 @@ void WebSharedWorkerServer::sharedWorkerObjectIsGoingAway(const WebCore::SharedW
     if (!sharedWorker)
         return;
 
-    sharedWorker->sharedWorkerObjects().remove(sharedWorkerObjectIdentifier);
-    if (!sharedWorker->sharedWorkerObjects().isEmpty())
+    sharedWorker->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
+    if (sharedWorker->sharedWorkerObjectsCount())
         return;
 
     shutDownSharedWorker(sharedWorkerKey);
@@ -209,13 +209,13 @@ void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey&
     if (!sharedWorker)
         return;
 
-    auto* contextConnection = contextConnectionForRegistrableDomain(sharedWorker->registrableDomain());
+    auto* contextConnection = sharedWorker->contextConnection();
     if (!contextConnection)
         return;
 
     contextConnection->terminateSharedWorker(*sharedWorker);
 
-    if (!needsContextConnectionForRegistrableDomain(sharedWorker->registrableDomain()))
+    if (!contextConnection->hasSharedWorkerObjects())
         contextConnection->connectionIsNoLongerNeeded();
 }
 
@@ -235,10 +235,10 @@ void WebSharedWorkerServer::removeConnection(WebCore::ProcessIdentifier processI
 
     Vector<std::pair<WebCore::SharedWorkerKey, WebCore::SharedWorkerObjectIdentifier>> sharedWorkerObjectsGoingAway;
     for (auto& sharedWorker : m_sharedWorkers.values()) {
-        for (auto& sharedWorkerObjectIdentifier : sharedWorker->sharedWorkerObjects().keys()) {
+        sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
             if (sharedWorkerObjectIdentifier.processIdentifier() == processIdentifier)
                 sharedWorkerObjectsGoingAway.append(std::make_pair(sharedWorker->key(), sharedWorkerObjectIdentifier));
-        }
+        });
     }
     for (auto& [sharedWorkerKey, sharedWorkerObjectIdentifier] : sharedWorkerObjectsGoingAway)
         sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
@@ -256,10 +256,10 @@ void WebSharedWorkerServer::postExceptionToWorkerObject(WebCore::SharedWorkerIde
     if (!sharedWorker)
         return;
 
-    for (auto sharedWorkerObjectIdentifier : sharedWorker->sharedWorkerObjects().keys()) {
+    sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
         if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
             serverConnection->postExceptionToWorkerObject(sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL);
-    }
+    });
 }
 
 } // namespace WebKit

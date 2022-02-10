@@ -56,6 +56,7 @@
 #include "PingLoad.h"
 #include "PreconnectTask.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
+#include "RemoteWorkerType.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -1254,7 +1255,7 @@ void NetworkConnectionToWebProcess::unregisterSharedWorkerConnection()
 void NetworkConnectionToWebProcess::sharedWorkerServerToContextConnectionIsNoLongerNeeded()
 {
     CONNECTION_RELEASE_LOG(SharedWorker, "sharedWorkerServerToContextConnectionIsNoLongerNeeded:");
-    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::SharedWorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::SharedWorker, webProcessIdentifier() }, 0);
 
     m_sharedWorkerContextConnection = nullptr;
 }
@@ -1305,7 +1306,7 @@ void NetworkConnectionToWebProcess::closeSWContextConnection()
 void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLongerNeeded()
 {
     CONNECTION_RELEASE_LOG(ServiceWorker, "serviceWorkerServerToContextConnectionNoLongerNeeded: WebProcess no longer useful for running service workers");
-    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::ServiceWorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::ServiceWorker, webProcessIdentifier() }, 0);
 
     m_swContextConnection = nullptr;
 }

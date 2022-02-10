@@ -28,6 +28,9 @@
 
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
+#include "NetworkProcess.h"
+#include "NetworkProcessProxyMessages.h"
+#include "RemoteWorkerType.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
@@ -91,8 +94,9 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();
     send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult() });
-    for (auto& port : sharedWorker.sharedWorkerObjects().values())
+    sharedWorker.forEachSharedWorkerObject([&](auto, auto& port) {
         postConnectEvent(sharedWorker, port);
+    });
 }
 
 void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedWorker& sharedWorker, const WebCore::TransferredMessagePort& port)
@@ -105,6 +109,29 @@ void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSh
 {
     CONTEXT_CONNECTION_RELEASE_LOG("terminateSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     send(Messages::WebSharedWorkerContextManagerConnection::TerminateSharedWorker { sharedWorker.identifier() });
+}
+
+void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    auto& sharedWorkerObjects = m_sharedWorkerObjects.ensure(sharedWorkerObjectIdentifier.processIdentifier(), [] { return HashSet<WebCore::SharedWorkerObjectIdentifier> { }; }).iterator->value;
+    sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
+
+    if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier() && sharedWorkerObjects.size() == 1)
+        m_connection.networkProcess().send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
+}
+
+void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    auto it = m_sharedWorkerObjects.find(sharedWorkerObjectIdentifier.processIdentifier());
+    if (it == m_sharedWorkerObjects.end())
+        return;
+    it->value.remove(sharedWorkerObjectIdentifier);
+    if (!it->value.isEmpty())
+        return;
+
+    m_sharedWorkerObjects.remove(it);
+    if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier())
+        m_connection.networkProcess().send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
 }
 
 #undef CONTEXT_CONNECTION_RELEASE_LOG

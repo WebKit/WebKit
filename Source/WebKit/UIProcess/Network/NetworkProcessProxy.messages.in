@@ -54,14 +54,13 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
 #if ENABLE(SERVICE_WORKER)
     EstablishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> () Async
-    ServiceWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
-    RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
-    UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     EndServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 #endif
     EstablishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
-    SharedWorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+    RemoteWorkerContextConnectionNoLongerNeeded(enum:uint32_t WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier identifier)
+    RegisterRemoteWorkerClientProcess(enum:uint32_t WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
+    UnregisterRemoteWorkerClientProcess(enum:uint32_t WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
 
     SetWebProcessHasUploads(WebCore::ProcessIdentifier processID, bool hasUpload)
 

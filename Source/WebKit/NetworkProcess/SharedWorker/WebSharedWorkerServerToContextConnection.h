@@ -30,6 +30,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 
 namespace WebCore {
@@ -61,8 +62,12 @@ public:
     void terminateSharedWorker(const WebSharedWorker&);
 
     void connectionIsNoLongerNeeded();
+    bool hasSharedWorkerObjects() const { return !m_sharedWorkerObjects.isEmpty(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
+    void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
 private:
     // IPC messages.
@@ -75,6 +80,7 @@ private:
     NetworkConnectionToWebProcess& m_connection;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::RegistrableDomain m_registrableDomain;
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
 };
 
 } // namespace WebKit

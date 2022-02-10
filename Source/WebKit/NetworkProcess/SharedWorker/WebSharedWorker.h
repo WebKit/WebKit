@@ -39,10 +39,13 @@ class RegistrableDomain;
 
 namespace WebKit {
 
+class WebSharedWorkerServer;
+class WebSharedWorkerServerToContextConnection;
+
 class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebSharedWorker(const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+    WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
     ~WebSharedWorker();
 
     static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
@@ -53,7 +56,14 @@ public:
     const WebCore::ClientOrigin& origin() const { return m_key.origin; }
     const URL& url() const { return m_key.url; }
     WebCore::RegistrableDomain registrableDomain() const;
-    HashMap<WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort>& sharedWorkerObjects() { return m_sharedWorkerObjects; }
+    WebSharedWorkerServerToContextConnection* contextConnection() const;
+
+    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&);
+    void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
+    unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
+    void forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
+
+    void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
 
     bool isRunning() const { return m_isRunning; }
     void markAsRunning() { m_isRunning = true; }
@@ -68,6 +78,7 @@ private:
     WebSharedWorker(const WebSharedWorker&) = delete;
     WebSharedWorker& operator=(const WebSharedWorker&) = delete;
 
+    WebSharedWorkerServer& m_server;
     WebCore::SharedWorkerIdentifier m_identifier;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
