@@ -1,3 +1,10 @@
+2022-02-10  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Update fuzzy data based on EWS results to support b231828.
+        * css3/color-filters/color-filter-color-property-list-item.html:
+
 2022-02-10  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/service-workers from upstream
