@@ -1,3 +1,33 @@
+2022-02-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Mark several WPT SVG import filter tests as failure
+
+        Unreviewed test gardening.
+
+        r289510 updated the baselines of these tests, but this was not the
+        right fix. These tests were passing in WPE until r288412. The tests
+        should be marked as a failure in WPE TestExpectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-04-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-05-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-conv-03-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-conv-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-01-b-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-02-b-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-03-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-04-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual-expected.png: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual-expected.txt: Removed.
+
 2022-02-09  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/browsers from upstream
