@@ -38,31 +38,67 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/UUID.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
 
 typedef NS_ENUM(NSInteger, WKSCFrameStatus) {
-    WKSCFrameStatusFrameComplete,
-    WKSCFrameStatusFrameIdle,
-    WKSCFrameStatusFrameBlank,
-    WKSCFrameStatusFrameSuspended,
-    WKSCFrameStatusFrameStarted,
-    WKSCFrameStatusFrameStopped
+    WKSCFrameStatusComplete,
+    WKSCFrameStatusIdle,
+    WKSCFrameStatusBlank,
+    WKSCFrameStatusSuspended,
+    WKSCFrameStatusStarted,
+    WKSCFrameStatusStopped
 };
+
+typedef NS_ENUM(NSInteger, WKSCStreamOutputType) {
+    WKSCStreamOutputTypeScreen
+};
+
+@protocol WKSCStreamOutput;
+@interface SCStream (SCStream_New)
+- (instancetype)initWithFilter:(SCContentFilter *)contentFilter configuration:(SCStreamConfiguration *)streamConfig delegate:(id<SCStreamDelegate>)delegate;
+- (void)startCaptureWithCompletionHandler:(void (^)(NSError * error))completionHandler;
+- (void)stopCaptureWithCompletionHandler:(void (^)(NSError *error))completionHandler;
+- (void)updateConfiguration:(SCStreamConfiguration *)streamConfig completionHandler:(void (^)(NSError * error))completionHandler;
+- (BOOL)addStreamOutput:(id<WKSCStreamOutput>)output type:(WKSCStreamOutputType)type sampleHandlerQueue:(dispatch_queue_t)sampleHandlerQueue error:(NSError **)error;
+@end
+
+@protocol WKSCStreamOutput <NSObject>
+@optional
+- (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(WKSCStreamOutputType)type;
+@end
+
+@interface SCStreamConfiguration (SCStreamConfiguration_New)
+@property (nonatomic, assign) CMTime minimumFrameInterval;
+@end
+
+@interface SCStream (SCStream_Deprecated)
+- (instancetype)initWithFilter:(SCContentFilter *)contentFilter captureOutputProperties:(SCStreamConfiguration *)streamConfig delegate:(id<SCStreamDelegate>)delegate;
+- (void)startCaptureWithFrameHandler:(void (^)(SCStream *stream, CMSampleBufferRef sampleBuffer))frameHandler completionHandler:(void (^)(NSError *error))completionHandler;
+- (void)stopWithCompletionHandler:(void (^)(NSError * error))completionHandler;
+- (void)updateStreamConfiguration:(SCStreamConfiguration *)streamConfig completionHandler:(void (^)(NSError *error))completionHandler;
+@end
+
+@interface SCStreamConfiguration (SCStreamConfiguration_Deprecated)
+@property (nonatomic, assign) float minimumFrameTime;
+@end
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
 using namespace WebCore;
-@interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate> {
+@interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate, WKSCStreamOutput> {
     WeakPtr<ScreenCaptureKitCaptureSource> _callback;
 }
 
 - (instancetype)initWithCallback:(WeakPtr<ScreenCaptureKitCaptureSource>&&)callback;
 - (void)disconnect;
 - (void)stream:(SCStream *)stream didStopWithError:(NSError *)error;
+- (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(WKSCStreamOutputType)type;
 @end
 
 @implementation WebCoreScreenCaptureKitHelper
@@ -72,6 +108,7 @@ using namespace WebCore;
     if (!self)
         return self;
 
+    _callback = WTFMove(callback);
     return self;
 }
 
@@ -89,6 +126,17 @@ using namespace WebCore;
         strongSelf->_callback->streamFailedWithError(WTFMove(error), "-[SCStreamDelegate stream:didStopWithError:] called"_s);
     });
 }
+
+- (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(WKSCStreamOutputType)type
+{
+    callOnMainRunLoop([strongSelf = RetainPtr { self }, sampleBuffer = RetainPtr { sampleBuffer }]() mutable {
+        if (!strongSelf->_callback)
+            return;
+
+        strongSelf->_callback->streamDidOutputSampleBuffer(WTFMove(sampleBuffer), ScreenCaptureKitCaptureSource::SampleType::Video);
+    });
+}
+
 @end
 
 #pragma clang diagnostic pop
@@ -128,6 +176,7 @@ ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(const CaptureDevice
     : DisplayCaptureSourceCocoa::Capturer()
     , m_captureDevice(device)
     , m_deviceID(deviceID)
+    , m_useNewAPI([PAL::getSCStreamClass() instancesRespondToSelector:@selector(stopCaptureWithCompletionHandler:)])
 {
 }
 
@@ -160,15 +209,20 @@ void ScreenCaptureKitCaptureSource::stop()
     m_isRunning = false;
 
     if (m_contentStream) {
-        [m_contentStream stopWithCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
+        auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
             if (!error)
                 return;
 
             callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
                 if (weakThis)
-                    weakThis->streamFailedWithError(WTFMove(error), "-[SCStream stopWithCompletionHandler:] failed"_s);
+                    weakThis->streamFailedWithError(WTFMove(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
             });
-        }).get()];
+        });
+
+        if (m_useNewAPI)
+            [m_contentStream stopCaptureWithCompletionHandler:stopHandler.get()];
+        else
+            [m_contentStream stopWithCompletionHandler:stopHandler.get()];
     }
 }
 
@@ -247,8 +301,12 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     [m_streamConfiguration setColorSpaceName:kCGColorSpaceLinearSRGB];
     [m_streamConfiguration setColorMatrix:kCGDisplayStreamYCbCrMatrix_SMPTE_240M_1995];
 
-    if (m_frameRate)
-        [m_streamConfiguration setMinimumFrameTime:1 / m_frameRate];
+    if (m_frameRate) {
+        if (m_useNewAPI)
+            [m_streamConfiguration setMinimumFrameInterval:PAL::CMTimeMakeWithSeconds(1 / m_frameRate, 1000)];
+        else
+            [m_streamConfiguration setMinimumFrameTime:1 / m_frameRate];
+    }
 
     if (m_width && m_height) {
         [m_streamConfiguration setWidth:m_width];
@@ -270,7 +328,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
 
     m_contentFilter = switchOn(m_content.value(),
         [] (const RetainPtr<SCDisplay> display) -> RetainPtr<SCContentFilter> {
-            return adoptNS([PAL::allocSCContentFilterInstance() initWithDisplay:display.get() excludingWindows:nil]);
+            return adoptNS([PAL::allocSCContentFilterInstance() initWithDisplay:display.get() excludingWindows:@[]]);
         },
         [] (const RetainPtr<SCWindow> window)  -> RetainPtr<SCContentFilter> {
             return adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:window.get()]);
@@ -285,10 +343,23 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         m_captureHelper = ([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
 
-    m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_contentFilter.get() captureOutputProperties:streamConfiguration().get() delegate:m_captureHelper.get()]);
+    if (m_useNewAPI)
+        m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_contentFilter.get() configuration:streamConfiguration().get() delegate:m_captureHelper.get()]);
+    else
+        m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_contentFilter.get() captureOutputProperties:streamConfiguration().get() delegate:m_captureHelper.get()]);
+
     if (!m_contentStream) {
         streamFailedWithError(nil, "Failed to allocate SLContentStream"_s);
         return;
+    }
+
+    if (m_useNewAPI) {
+        NSError *error;
+        SEL selector = @selector(addStreamOutput:type:sampleHandlerQueue:error:);
+        if (!wtfObjCMsgSend<BOOL>(m_contentStream.get(), selector, m_captureHelper.get(), WKSCStreamOutputTypeScreen, captureQueue(), &error)) {
+            streamFailedWithError(WTFMove(error), "-[SCStream addStreamOutput:type:sampleHandlerQueue:error:] failed"_s);
+            return;
+        }
     }
 
     auto completionHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
@@ -301,7 +372,10 @@ void ScreenCaptureKitCaptureSource::startContentStream()
         });
     });
 
-    [m_contentStream startCaptureWithFrameHandler:frameAvailableHandler() completionHandler:completionHandler.get()];
+    if (m_useNewAPI)
+        [m_contentStream startCaptureWithCompletionHandler:completionHandler.get()];
+    else
+        [m_contentStream startCaptureWithFrameHandler:frameAvailableHandler() completionHandler:completionHandler.get()];
 
     m_isRunning = true;
 }
@@ -339,7 +413,7 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
 {
     ASSERT(m_contentStream);
 
-    [m_contentStream updateStreamConfiguration:streamConfiguration().get() completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
+    auto completionHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
         if (!error)
             return;
 
@@ -347,8 +421,12 @@ void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
             if (weakThis)
                 weakThis->streamFailedWithError(WTFMove(error), "-[SCStream updateStreamConfiguration:] failed"_s);
         });
-    }).get()];
+    });
 
+    if (m_useNewAPI)
+        [m_contentStream updateConfiguration:streamConfiguration().get() completionHandler:completionHandler.get()];
+    else
+        [m_contentStream updateStreamConfiguration:streamConfiguration().get() completionHandler:completionHandler.get()];
 }
 
 void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourceSettings& settings)
@@ -360,10 +438,11 @@ void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourc
     m_height = settings.height();
     m_frameRate = settings.frameRate();
 
-    if (m_contentStream) {
-        m_streamConfiguration = nullptr;
-        updateStreamConfiguration();
-    }
+    if (!m_contentStream)
+        return;
+
+    m_streamConfiguration = nullptr;
+    updateStreamConfiguration();
 }
 
 ScreenCaptureKitCaptureSource::SCContentStreamUpdateCallback ScreenCaptureKitCaptureSource::frameAvailableHandler()
@@ -371,50 +450,73 @@ ScreenCaptureKitCaptureSource::SCContentStreamUpdateCallback ScreenCaptureKitCap
     if (m_frameAvailableHandler)
         return m_frameAvailableHandler.get();
 
-    m_frameAvailableHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (SCStream *, CMSampleBufferRef sampleBuffer) mutable {
-        if (!weakThis)
-            return;
-
-        if (!sampleBuffer) {
-            RunLoop::main().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
-                if (weakThis)
-                    RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::frameAvailableHandler: NULL sample buffer!");
-            });
-            return;
-        }
-
-        auto attachments = (__bridge NSArray *)PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
-        WKSCFrameStatus status = WKSCFrameStatusFrameStopped;
-        [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
-            auto statusNumber = (NSNumber *)attachment[PAL::SCStreamFrameInfoStatusKey];
-            if (!statusNumber)
-                return;
-
-            status = (WKSCFrameStatus)[statusNumber integerValue];
-            *stop = YES;
-        }).get()];
-
-        switch (status) {
-        case WKSCFrameStatusFrameStarted:
-        case WKSCFrameStatusFrameComplete:
-            break;
-        case WKSCFrameStatusFrameIdle:
-        case WKSCFrameStatusFrameBlank:
-        case WKSCFrameStatusFrameSuspended:
-        case WKSCFrameStatusFrameStopped:
-            return;
-        }
-
-        RunLoop::main().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
-            if (!weakThis)
-                return;
-
-            weakThis->m_intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get()), true, true));
-            weakThis->m_currentFrame = WTFMove(sampleBuffer);
+    m_frameAvailableHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }] (SCStream *, CMSampleBufferRef sampleBuffer) mutable {
+        RunLoop::main().dispatch([this, weakThis, sampleBuffer = RetainPtr { sampleBuffer }]() mutable {
+            if (weakThis)
+                streamDidOutputSampleBuffer(WTFMove(sampleBuffer), SampleType::Video);
         });
     });
 
     return m_frameAvailableHandler.get();
+}
+
+void ScreenCaptureKitCaptureSource::streamDidOutputSampleBuffer(RetainPtr<CMSampleBufferRef> sampleBuffer, SampleType)
+{
+    ASSERT(isMainThread());
+
+    if (!sampleBuffer) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::streamDidOutputSampleBuffer: NULL sample buffer!");
+        return;
+    }
+
+    static NSString* frameInfoKey;
+    if (!frameInfoKey) {
+        if (m_useNewAPI) {
+            if (PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoStatus())
+                frameInfoKey = PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatus();
+        } else {
+            if (PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoStatusKey())
+                frameInfoKey = PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatusKey();
+        }
+        ASSERT(frameInfoKey);
+        if (!frameInfoKey)
+            RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::streamDidOutputSampleBuffer: unable to load status key!");
+    }
+    if (!frameInfoKey)
+        return;
+
+    auto attachments = (__bridge NSArray *)PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), false);
+    WKSCFrameStatus status = WKSCFrameStatusStopped;
+    [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
+        auto statusNumber = (NSNumber *)attachment[frameInfoKey];
+        if (!statusNumber)
+            return;
+
+        status = (WKSCFrameStatus)[statusNumber integerValue];
+        *stop = YES;
+    }).get()];
+
+    switch (status) {
+    case WKSCFrameStatusStarted:
+    case WKSCFrameStatusComplete:
+        break;
+    case WKSCFrameStatusIdle:
+    case WKSCFrameStatusBlank:
+    case WKSCFrameStatusSuspended:
+    case WKSCFrameStatusStopped:
+        return;
+    }
+
+    m_intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get()), true, true));
+    m_currentFrame = WTFMove(sampleBuffer);
+}
+
+dispatch_queue_t ScreenCaptureKitCaptureSource::captureQueue()
+{
+    if (!m_captureQueue)
+        m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
+
+    return m_captureQueue.get();
 }
 
 CaptureDevice::DeviceType ScreenCaptureKitCaptureSource::deviceType() const
@@ -532,7 +634,7 @@ void forEachNSWindow(const Function<bool(NSDictionary *info, unsigned windowID, 
         if (windowLayer)
             return;
 
-        // Skip windows that aren't on screen
+        // Skip windows that aren't on screen.
         if (![(NSNumber *)windowInfo[(__bridge NSString *)kCGWindowIsOnscreen] integerValue])
             return;
 

@@ -68,6 +68,8 @@ public:
     WEBCORE_EXPORT static void windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>&);
 
     void streamFailedWithError(RetainPtr<NSError>&&, const String&);
+    enum class SampleType { Video };
+    void streamDidOutputSampleBuffer(RetainPtr<CMSampleBufferRef>, SampleType);
 
 private:
 
@@ -92,6 +94,8 @@ private:
     using SCContentStreamUpdateCallback = void (^)(SCStream *, CMSampleBufferRef);
     SCContentStreamUpdateCallback frameAvailableHandler();
 
+    dispatch_queue_t captureQueue();
+
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     std::optional<Content> m_content;
 
@@ -110,6 +114,7 @@ private:
     uint32_t m_height { 0 };
     float m_frameRate { 0 };
     bool m_isRunning { false };
+    bool m_useNewAPI { false };
     static bool m_enabled;
 };
 

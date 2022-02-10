@@ -1,3 +1,14 @@
+2022-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Support both versions of ScreenCaptureKit API
+        https://bugs.webkit.org/show_bug.cgi?id=236422
+        <rdar://problem/88726849>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/mac/ScreenCaptureKitSoftLink.h:
+        * pal/mac/ScreenCaptureKitSoftLink.mm:
+
 2022-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some WebKitAdditions extension points in VisionKitCore SPI and softlinking headers
