@@ -336,9 +336,7 @@ bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult,
     VM& vm = context->vm();
     JSLockHolder lock(vm);
 
-    m_keyWrapper = { };
-    m_primaryKeyWrapper = { };
-    m_valueWrapper = { };
+    clearWrappers();
 
     if (!getResult.isDefined()) {
         m_keyData = { };

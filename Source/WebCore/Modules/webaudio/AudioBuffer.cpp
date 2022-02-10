@@ -159,7 +159,7 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 
     if (globalObject.worldIsNormal()) {
         if (!m_channelWrappers[channelIndex])
-            m_channelWrappers[channelIndex] = { constructJSArray() };
+            m_channelWrappers[channelIndex].setWeakly(constructJSArray());
         return static_cast<JSC::JSValue>(m_channelWrappers[channelIndex]);
     }
     return constructJSArray();
@@ -168,6 +168,8 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 template<typename Visitor>
 void AudioBuffer::visitChannelWrappers(Visitor& visitor)
 {
+    // FIXME: AudioBuffer::releaseMemory can clear this buffer while visiting it from concurrent GC thread.
+    // https://bugs.webkit.org/show_bug.cgi?id=236279
     for (auto& channelWrapper : m_channelWrappers)
         channelWrapper.visit(visitor);
 }
