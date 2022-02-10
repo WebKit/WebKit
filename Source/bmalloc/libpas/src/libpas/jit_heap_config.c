@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "pas_enumerable_page_malloc.h"
 #include "pas_heap_config_inlines.h"
 #include "pas_root.h"
+#include "pas_segregated_page_config_inlines.h"
 #include "pas_stream.h"
 
 #if defined(PAS_BMALLOC)
@@ -102,9 +103,9 @@ pas_large_heap_physical_page_sharing_cache jit_large_fresh_memory_heap = {
     .provider_arg = NULL
 };
 
-pas_page_header_table jit_small_bitfit_page_header_table =
+pas_page_header_table jit_small_page_header_table =
     PAS_PAGE_HEADER_TABLE_INITIALIZER(JIT_SMALL_PAGE_SIZE);
-pas_page_header_table jit_medium_bitfit_page_header_table =
+pas_page_header_table jit_medium_page_header_table =
     PAS_PAGE_HEADER_TABLE_INITIALIZER(JIT_MEDIUM_PAGE_SIZE);
 
 pas_heap_runtime_config jit_heap_runtime_config = {
@@ -114,15 +115,15 @@ pas_heap_runtime_config jit_heap_runtime_config = {
     .is_part_of_heap = true,
     .directory_size_bound_for_partial_views = 0,
     .directory_size_bound_for_baseline_allocators = 0,
-    .directory_size_bound_for_no_view_cache = UINT_MAX,
-    .max_segregated_object_size = 0,
+    .directory_size_bound_for_no_view_cache = 0,
+    .max_segregated_object_size = 2000,
     .max_bitfit_object_size = UINT_MAX,
-    .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity
+    .view_cache_capacity_for_object_size = pas_heap_runtime_config_aggressive_view_cache_capacity
 };
 
 jit_heap_config_root_data jit_root_data = {
-    .small_bitfit_page_header_table = &jit_small_bitfit_page_header_table,
-    .medium_bitfit_page_header_table = &jit_medium_bitfit_page_header_table
+    .small_page_header_table = &jit_small_page_header_table,
+    .medium_page_header_table = &jit_medium_page_header_table
 };
 
 void jit_heap_config_activate(void)
@@ -142,6 +143,50 @@ pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, v
     return (pas_page_base*)pas_ptr_hash_map_get(&data->page_header_table, boundary).value;
 }
 
+void* jit_small_segregated_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role)
+{
+    PAS_ASSERT(role == pas_segregated_page_exclusive_role);
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
+    return (void*)allocate_from_fresh(
+        JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE)).begin;
+}
+
+pas_page_base* jit_small_segregated_create_page_header(
+    void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode)
+{
+    pas_page_base* result;
+    PAS_ASSERT(kind == pas_small_exclusive_segregated_page_kind);
+    pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
+    result = pas_page_header_table_add(
+        &jit_small_page_header_table,
+        JIT_SMALL_PAGE_SIZE,
+        pas_segregated_page_header_size(JIT_HEAP_CONFIG.small_segregated_config,
+                                        pas_segregated_page_exclusive_role),
+        boundary);
+    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
+    return result;
+}
+
+void jit_small_destroy_page_header(pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode)
+{
+    pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
+    pas_page_header_table_remove(&jit_small_page_header_table,
+                                 JIT_SMALL_PAGE_SIZE,
+                                 page);
+    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
+}
+
+pas_segregated_shared_page_directory* jit_small_segregated_shared_page_directory_selector(
+    pas_segregated_heap* heap, pas_segregated_size_directory* directory)
+{
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(directory);
+    PAS_ASSERT(!"Not implemented");
+    return NULL;
+}
+
 void* jit_small_bitfit_allocate_page(
     pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
@@ -157,22 +202,12 @@ pas_page_base* jit_small_bitfit_create_page_header(
     pas_page_base* result;
     PAS_ASSERT(kind == pas_small_bitfit_page_kind);
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    result = pas_page_header_table_add(&jit_small_bitfit_page_header_table,
+    result = pas_page_header_table_add(&jit_small_page_header_table,
                                        JIT_SMALL_PAGE_SIZE,
                                        pas_bitfit_page_header_size(JIT_HEAP_CONFIG.small_bitfit_config),
                                        boundary);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     return result;
-}
-
-void jit_small_bitfit_destroy_page_header(
-    pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode)
-{
-    pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    pas_page_header_table_remove(&jit_small_bitfit_page_header_table,
-                                 JIT_SMALL_PAGE_SIZE,
-                                 page);
-    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 }
 
 void* jit_medium_bitfit_allocate_page(
@@ -190,7 +225,7 @@ pas_page_base* jit_medium_bitfit_create_page_header(
     pas_page_base* result;
     PAS_ASSERT(kind == pas_medium_bitfit_page_kind);
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    result = pas_page_header_table_add(&jit_medium_bitfit_page_header_table,
+    result = pas_page_header_table_add(&jit_medium_page_header_table,
                                        JIT_MEDIUM_PAGE_SIZE,
                                        pas_bitfit_page_header_size(JIT_HEAP_CONFIG.medium_bitfit_config),
                                        boundary);
@@ -198,11 +233,11 @@ pas_page_base* jit_medium_bitfit_create_page_header(
     return result;
 }
 
-void jit_medium_bitfit_destroy_page_header(
+void jit_medium_destroy_page_header(
     pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    pas_page_header_table_remove(&jit_medium_bitfit_page_header_table,
+    pas_page_header_table_remove(&jit_medium_page_header_table,
                                  JIT_MEDIUM_PAGE_SIZE,
                                  page);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
@@ -269,14 +304,14 @@ void* jit_prepare_to_enumerate(pas_enumerator* enumerator)
             result,
             enumerator,
             (pas_page_header_table*)pas_enumerator_read(
-                enumerator, root_data->small_bitfit_page_header_table, sizeof(pas_page_header_table))))
+                enumerator, root_data->small_page_header_table, sizeof(pas_page_header_table))))
         return NULL;
     
     if (!pas_basic_heap_config_enumerator_data_add_page_header_table(
             result,
             enumerator,
             (pas_page_header_table*)pas_enumerator_read(
-                enumerator, root_data->medium_bitfit_page_header_table, sizeof(pas_page_header_table))))
+                enumerator, root_data->medium_page_header_table, sizeof(pas_page_header_table))))
         return NULL;
     
     return result;
@@ -331,6 +366,8 @@ void jit_heap_config_add_fresh_memory(pas_range range)
         &jit_fresh_memory_heap, range.begin, range.end, pas_zero_mode_is_all_zero, &config);
 }
 
+PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
+    jit_small_segregated_page_config, JIT_HEAP_CONFIG.small_segregated_config);
 PAS_BITFIT_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
     jit_small_bitfit_page_config, JIT_HEAP_CONFIG.small_bitfit_config);
 PAS_BITFIT_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(

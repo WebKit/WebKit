@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,9 +86,10 @@ void* jit_heap_try_allocate(size_t size)
 
 void jit_heap_shrink(void* object, size_t new_size)
 {
-    bool result;
-    result = pas_try_shrink(object, new_size, JIT_HEAP_CONFIG);
-    PAS_ASSERT(result);
+    /* NOTE: the shrink call will fail (return false) for segregated allocations, and that's fine because we
+       only use segregated allocations for smaller sizes (so the amount of potential memory savings from
+       shrinking is small). */
+    pas_try_shrink(object, new_size, JIT_HEAP_CONFIG);
 }
 
 size_t jit_heap_get_size(void* object)

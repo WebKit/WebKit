@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ enum pas_segregated_page_config_kind_and_role {
 
 typedef enum pas_segregated_page_config_kind_and_role pas_segregated_page_config_kind_and_role;
 
-#define PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_NUM_BITS 5u
+#define PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_NUM_BITS 6u
 #define PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK \
     ((1u << PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_NUM_BITS) - 1u)
 

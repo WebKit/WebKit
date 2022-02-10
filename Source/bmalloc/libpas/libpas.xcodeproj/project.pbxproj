@@ -554,6 +554,7 @@
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
 		2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E8902728A893002162D0 /* bmalloc_type.c */; };
+		2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C16DADF279E07290042E919 /* ViewCacheTests.cpp */; };
 		2C340000275815D0005565CB /* pas_segregated_page_config_kind_and_role.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */; };
 		2C34000227581687005565CB /* pas_page_base_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34000127581687005565CB /* pas_page_base_config.c */; };
 		2C34FFFA27571D2F005565CB /* pas_page_base_and_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */; };
@@ -1255,6 +1256,7 @@
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
 		2C11E8902728A893002162D0 /* bmalloc_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_type.c; sourceTree = "<group>"; };
+		2C16DADF279E07290042E919 /* ViewCacheTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewCacheTests.cpp; sourceTree = "<group>"; };
 		2C34000127581687005565CB /* pas_page_base_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_page_base_config.c; sourceTree = "<group>"; };
 		2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_and_kind.h; sourceTree = "<group>"; };
 		2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h; sourceTree = "<group>"; };
@@ -1416,6 +1418,7 @@
 				2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */,
 				0F8700DE25B14C68000E1ABF /* TSDTests.cpp */,
 				0F53181222C9609D003F7B6A /* UtilsTests.cpp */,
+				2C16DADF279E07290042E919 /* ViewCacheTests.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -2643,6 +2646,7 @@
 				0FDEA461228B651B0085E340 /* BitfieldVectorTests.cpp in Sources */,
 				0F53181122C954ED003F7B6A /* BitvectorTests.cpp in Sources */,
 				0F31A66823E8B336002C0CA3 /* CartesianTreeTests.cpp in Sources */,
+				2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */,
 				0FC682382129D4EE003C6A13 /* CoalignTests.cpp in Sources */,
 				2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */,
 				0FC682312129CB46003C6A13 /* ExtendedGCDTests.cpp in Sources */,

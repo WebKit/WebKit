@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 
 #if USE(LIBPAS_JIT_HEAP)
 #include <bmalloc/jit_heap.h>
+#include <bmalloc/jit_heap_config.h>
 #else
 #include <wtf/MetaAllocator.h>
 #endif
@@ -83,6 +84,10 @@ extern "C" {
 namespace JSC {
 
 using namespace WTF;
+
+#if USE(LIBPAS_JIT_HEAP)
+static constexpr size_t minimumPoolSizeForSegregatedHeap = 256 * MB;
+#endif
 
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
 static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * MB;
@@ -353,6 +358,11 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 #endif // ENABLE(JUMP_ISLANDS)
     }
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
+
+#if USE(LIBPAS_JIT_HEAP)
+    if (reservation.size < minimumPoolSizeForSegregatedHeap)
+        jit_heap_runtime_config.max_segregated_object_size = 0;
+#endif
 
     auto tryCreatePageReservation = [] (size_t reservationSize) {
 #if OS(LINUX)
@@ -770,7 +780,7 @@ private:
             RELEASE_ASSERT(!m_start);
             RELEASE_ASSERT(!m_end);
             m_start = reinterpret_cast<uintptr_t>(start);
-            m_end = m_start + sizeInBytes; 
+            m_end = m_start + sizeInBytes;
             jit_heap_add_fresh_memory(pas_range_create(m_start, m_end));
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,14 @@
 #include "pas_allocation_result.h"
 #include "pas_bitvector.h"
 #include "pas_config.h"
+#include "pas_heap_runtime_config.h"
 #include "pas_local_allocator_refill_mode.h"
 #include "pas_lock.h"
-#include "pas_segregated_page_config_kind.h"
 #include "pas_page_base_config.h"
 #include "pas_page_granule_use_count.h"
 #include "pas_page_sharing_mode.h"
 #include "pas_segregated_deallocation_logging_mode.h"
+#include "pas_segregated_page_config_kind.h"
 #include "pas_segregated_page_config_variant.h"
 #include "pas_segregated_page_role.h"
 #include "pas_segregated_view.h"
@@ -222,9 +223,17 @@ PAS_API extern bool pas_medium_segregated_page_config_variant_is_enabled_overrid
 #define PAS_SEGREGATED_PAGE_CONFIG_GOOD_MAX_OBJECT_SIZE(object_payload_size, min_num_objects) \
     ((object_payload_size) / (min_num_objects))
 
-static inline bool pas_segregated_page_config_is_enabled(pas_segregated_page_config config)
+static inline bool pas_segregated_page_config_is_enabled(pas_segregated_page_config config,
+                                                         pas_heap_runtime_config* runtime_config)
 {
     if (!config.base.is_enabled)
+        return false;
+    /* Doing this check here is not super necessary, but it's sort of nice for cases where we have a heap
+       that sometimes uses bitfit exclusively or sometimes uses segregated exclusively and that's selected
+       by selecting or mutating runtime_configs. This is_enabled function is only called as part of the math
+       that sets up size classes, at least for now, so the implications of not doing this check are rather
+       tiny. */
+    if (!runtime_config->max_segregated_object_size)
         return false;
     switch (config.variant) {
     case pas_small_segregated_page_config_variant:

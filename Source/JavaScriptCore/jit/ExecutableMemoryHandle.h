@@ -28,7 +28,6 @@
 #if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 #include <wtf/MetaAllocatorPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <bmalloc/jit_heap.h>
 #else
 #include <wtf/MetaAllocatorHandle.h>
 #endif

@@ -378,6 +378,7 @@ void addTLCDecommitTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
+void addViewCacheTests();
 
 void testSucceeded()
 {
@@ -744,6 +745,7 @@ int main(int argc, char** argv)
     ADD_SUITE(TLCDecommit);
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
+    ADD_SUITE(ViewCache);
     
     string filter;
     

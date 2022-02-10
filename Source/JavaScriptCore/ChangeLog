@@ -1,3 +1,15 @@
+2022-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] jit_heap should support the segregated heap
+        https://bugs.webkit.org/show_bug.cgi?id=235497
+
+        Reviewed by Yusuke Suzuki.
+
+        Disable the jit_heap segregated heap if the executable pool size is too small.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+
 2022-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use local variable pointer for concurrently load value

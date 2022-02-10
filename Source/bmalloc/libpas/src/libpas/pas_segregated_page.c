@@ -243,7 +243,6 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
         if (pas_segregated_size_directory_view_cache_capacity(directory)) {
             PAS_ASSERT(directory->view_cache_index);
-            PAS_ASSERT(directory->view_cache_index < (pas_allocator_index)UINT_MAX);
             page->view_cache_index = directory->view_cache_index;
         } else
             PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);

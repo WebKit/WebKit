@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -306,6 +306,23 @@ pas_heap_config_bitfit_page_config_for_variant(
     }
     PAS_ASSERT(!"Should not reach here");
     return config.small_bitfit_config;
+}
+
+static PAS_ALWAYS_INLINE size_t pas_heap_config_segregated_heap_min_align_shift(pas_heap_config config)
+{
+    size_t result;
+    result = SIZE_MAX;
+    if (config.small_bitfit_config.base.is_enabled)
+        result = PAS_MIN(result, config.small_bitfit_config.base.min_align_shift);
+    if (config.small_segregated_config.base.is_enabled)
+        result = PAS_MIN(result, config.small_segregated_config.base.min_align_shift);
+    PAS_ASSERT(result != SIZE_MAX);
+    return result;
+}
+
+static PAS_ALWAYS_INLINE size_t pas_heap_config_segregated_heap_min_align(pas_heap_config config)
+{
+    return (size_t)1 << pas_heap_config_segregated_heap_min_align_shift(config);
 }
 
 /* Returns true if we were the first to active it. Must hold the heap lock to call this. This is

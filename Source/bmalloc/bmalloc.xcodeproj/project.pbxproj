@@ -38,9 +38,9 @@
 		0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5167731FAD6852008236A8 /* bmalloc.cpp */; };
 		0F516EE52456184F004E2B8D /* pas_internal_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE42456184F004E2B8D /* pas_internal_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F516EE924561AE9004E2B8D /* iso_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE824561AE8004E2B8D /* iso_heap_innards.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F5193EE266C42AD00483A2C /* jit_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193E8266C42AC00483A2C /* jit_heap_config.h */; };
+		0F5193EE266C42AD00483A2C /* jit_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193E8266C42AC00483A2C /* jit_heap_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5193EF266C42AD00483A2C /* jit_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193E9266C42AC00483A2C /* jit_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F5193F0266C42AD00483A2C /* jit_heap_config_root_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193EA266C42AC00483A2C /* jit_heap_config_root_data.h */; };
+		0F5193F0266C42AD00483A2C /* jit_heap_config_root_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5193EA266C42AC00483A2C /* jit_heap_config_root_data.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5193F1266C42AD00483A2C /* jit_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F5193EB266C42AC00483A2C /* jit_heap_config.c */; };
 		0F5193F2266C42AD00483A2C /* jit_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F5193EC266C42AC00483A2C /* jit_heap.c */; };
 		0F5193F3266C42AD00483A2C /* pas_basic_heap_config_enumerator_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F5193ED266C42AD00483A2C /* pas_basic_heap_config_enumerator_data.c */; };

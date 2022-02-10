@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,8 @@ pas_bitfit_heap* pas_bitfit_heap_create(pas_segregated_heap* segregated_heap,
 }
 
 pas_bitfit_variant_selection pas_bitfit_heap_select_variant(size_t requested_object_size,
-                                                            pas_heap_config* config)
+                                                            pas_heap_config* config,
+                                                            pas_heap_runtime_config* runtime_config)
 {
     static const bool verbose = false;
     
@@ -79,7 +80,7 @@ pas_bitfit_variant_selection pas_bitfit_heap_select_variant(size_t requested_obj
         size_t object_size;
 
         page_config = *pas_heap_config_bitfit_page_config_ptr_for_variant(config, variant);
-        if (!pas_bitfit_page_config_is_enabled(page_config))
+        if (!pas_bitfit_page_config_is_enabled(page_config, runtime_config))
             continue;
 
         if (verbose)
@@ -125,7 +126,8 @@ pas_bitfit_variant_selection pas_bitfit_heap_select_variant(size_t requested_obj
 void pas_bitfit_heap_construct_and_insert_size_class(pas_bitfit_heap* heap,
                                                      pas_bitfit_size_class* size_class,
                                                      unsigned object_size,
-                                                     pas_heap_config* config)
+                                                     pas_heap_config* config,
+                                                     pas_heap_runtime_config* runtime_config)
 {
     static const bool verbose = false;
     
@@ -139,7 +141,7 @@ void pas_bitfit_heap_construct_and_insert_size_class(pas_bitfit_heap* heap,
                 heap, size_class, object_size);
     }
 
-    best = pas_bitfit_heap_select_variant(object_size, config);
+    best = pas_bitfit_heap_select_variant(object_size, config, runtime_config);
 
     pas_heap_lock_assert_held();
     if (verbose) {

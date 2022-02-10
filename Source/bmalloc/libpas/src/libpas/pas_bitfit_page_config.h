@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "pas_bitfit_page_config_variant.h"
 #include "pas_bitvector.h"
 #include "pas_fast_path_allocation_result.h"
+#include "pas_heap_runtime_config.h"
 #include "pas_page_base_config.h"
 #include "pas_page_malloc.h"
 #include "pas_utils.h"
@@ -135,9 +136,17 @@ PAS_API extern bool pas_marge_bitfit_page_config_variant_is_enabled_override;
     PAS_API void lower_case_page_config_name ## _specialized_page_shrink_with_page( \
         pas_bitfit_page* page, uintptr_t begin, size_t new_size)
 
-static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config config)
+static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config config,
+                                                     pas_heap_runtime_config* runtime_config)
 {
     if (!config.base.is_enabled)
+        return false;
+    /* Doing this check here is not super necessary, but it's sort of nice for cases where we have a heap
+       that sometimes uses bitfit exclusively or sometimes uses segregated exclusively and that's selected
+       by selecting or mutating runtime_configs. This is_enabled function is only called as part of the math
+       that sets up size classes, at least for now, so the implications of not doing this check are rather
+       tiny. */
+    if (!runtime_config->max_bitfit_object_size)
         return false;
     switch (config.variant) {
     case pas_small_bitfit_page_config_variant:

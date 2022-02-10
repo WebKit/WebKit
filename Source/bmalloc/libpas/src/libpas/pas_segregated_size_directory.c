@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,7 +130,7 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
         bitfit_size_class = pas_segregated_size_directory_get_bitfit_size_class(result);
         
         pas_bitfit_heap_construct_and_insert_size_class(
-            bitfit_heap, bitfit_size_class, object_size, heap_config);
+            bitfit_heap, bitfit_size_class, object_size, heap_config, heap->runtime_config);
     }
     
     pas_compact_atomic_segregated_size_directory_ptr_store(&result->next_for_heap, NULL);

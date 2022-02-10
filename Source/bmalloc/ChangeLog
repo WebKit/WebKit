@@ -1,3 +1,111 @@
+2022-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] jit_heap should support the segregated heap
+        https://bugs.webkit.org/show_bug.cgi?id=235497
+
+        Reviewed by Yusuke Suzuki.
+
+        One of the things that libpas provides is a fast implementation of executable memory allocation, which
+        libpas calls "jit_heap". The initial implementation of this only used libpas's bitfit and large
+        algorithms. Bitfit was used for smaller objects and large was used for larger objects. The libpas
+        segregated heap was disabled in jit_heap. This made sense because:
+
+        - Bitfit and large support the shrink() call, where we shrink an allocation in-place. Executable
+          allocation supports this to aid branch compaction (we compact code after we copy it into its final
+          resting place, which is after we allocate the memory - so after we finish compaction, we can only
+          shrink the allocation in-place or not at all).
+
+        - Segregated heaps have some virtual address space overheads, and memory overheads, that the bitfit
+          and large heaps don't have. This happens because segreated heaps will dedicate each page to objects
+          of exactly one size forever.
+
+        However, segregated heaps are substantially faster than bitfit heaps. They are faster under serial
+        allocation thanks to the fact that no locks need to be acquired for a typical allocation or
+        deallocation. They are even more faster under parallel allocation thanks to thread-local caching.
+
+        This patch enables segregated heaps for the smallest jit_heap allocations (<=2000 bytes). The cutoff
+        threshold is runtime configurable, so it's possible to disable segregated heaps at runtime by setting
+        the cutoff to 0.
+
+        With the 2000 threshold, this appears to be a 0.3% Speedometer2 speed-up.
+
+        While there is a theoretical possibility of memory overhead, I haven't seen it. If we are using jump
+        islands then the virtual memory overhead of segregated heaps will just mean that we use jump islands
+        more frequently, which would manifest as a performance regression -- but I've not seen any such
+        regression. So, this disables the segregated heap if the JIT pool size is too small (see changes to
+        ExecutableAllocator.cpp in JSC).
+
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/jit_heap.c:
+        (jit_heap_shrink):
+        * libpas/src/libpas/jit_heap_config.c:
+        (jit_small_segregated_allocate_page):
+        (jit_small_segregated_create_page_header):
+        (jit_small_destroy_page_header):
+        (jit_small_segregated_shared_page_directory_selector):
+        (jit_small_bitfit_allocate_page):
+        (jit_small_bitfit_create_page_header):
+        (jit_medium_bitfit_create_page_header):
+        (jit_medium_destroy_page_header):
+        (jit_prepare_to_enumerate):
+        (jit_small_bitfit_destroy_page_header): Deleted.
+        (jit_medium_bitfit_destroy_page_header): Deleted.
+        * libpas/src/libpas/jit_heap_config.h:
+        (jit_small_page_header_for_boundary):
+        (jit_small_boundary_for_page_header):
+        (jit_medium_page_header_for_boundary):
+        (jit_medium_boundary_for_page_header):
+        (jit_heap_config_page_header):
+        (jit_small_bitfit_page_header_for_boundary): Deleted.
+        (jit_small_bitfit_boundary_for_page_header): Deleted.
+        (jit_medium_bitfit_page_header_for_boundary): Deleted.
+        (jit_medium_bitfit_boundary_for_page_header): Deleted.
+        * libpas/src/libpas/jit_heap_config_root_data.h:
+        * libpas/src/libpas/pas_bitfit_heap.c:
+        (pas_bitfit_heap_select_variant):
+        (pas_bitfit_heap_construct_and_insert_size_class):
+        * libpas/src/libpas/pas_bitfit_heap.h:
+        * libpas/src/libpas/pas_bitfit_page_config.h:
+        (pas_bitfit_page_config_is_enabled):
+        * libpas/src/libpas/pas_heap_config.h:
+        (pas_heap_config_segregated_heap_min_align_shift):
+        (pas_heap_config_segregated_heap_min_align):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (min_align_for_heap):
+        (min_object_size_for_heap):
+        (max_segregated_object_size_for_heap):
+        (max_bitfit_object_size_for_heap):
+        (max_object_size_for_heap):
+        (pas_segregated_heap_ensure_allocator_index):
+        (pas_segregated_heap_ensure_size_directory_for_size):
+        (min_object_size_for_heap_config): Deleted.
+        (max_segregated_object_size_for_heap_config): Deleted.
+        (max_bitfit_object_size_for_heap_config): Deleted.
+        (max_object_size_for_heap_config): Deleted.
+        * libpas/src/libpas/pas_segregated_heap.h:
+        (pas_segregated_heap_index_for_size):
+        (pas_segregated_heap_size_for_index):
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_construct):
+        * libpas/src/libpas/pas_segregated_page_config.h:
+        (pas_segregated_page_config_is_enabled):
+        * libpas/src/libpas/pas_segregated_page_config_kind.def:
+        * libpas/src/libpas/pas_segregated_page_config_kind_and_role.h:
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_create):
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::addAllTests):
+        * libpas/src/test/JITHeapTests.cpp:
+        (std::testAllocationSize):
+        (addJITHeapTests):
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+        * libpas/src/test/ViewCacheTests.cpp: Added.
+        (std::setupConfig):
+        (std::testDisableViewCacheUsingBoundForNoViewCache):
+        (std::testEnableViewCacheAtSomeBoundForNoViewCache):
+        (addViewCacheTests):
+
 2022-01-18  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] it should be possible to decommit unused parts of a thread_local_cache (update to 78508e79fa2797680344d43b94841ae2e903b15b)

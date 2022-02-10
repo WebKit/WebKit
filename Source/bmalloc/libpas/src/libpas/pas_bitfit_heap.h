@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,12 @@ PAS_BEGIN_EXTERN_C;
 
 struct pas_bitfit_heap;
 struct pas_heap_config;
+struct pas_heap_runtime_config;
 struct pas_segregated_size_directory;
 struct pas_segregated_heap;
 typedef struct pas_bitfit_heap pas_bitfit_heap;
 typedef struct pas_heap_config pas_heap_config;
+typedef struct pas_heap_runtime_config pas_heap_runtime_config;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
 
@@ -61,12 +63,15 @@ typedef struct {
 } pas_bitfit_variant_selection;
 
 PAS_API pas_bitfit_variant_selection
-pas_bitfit_heap_select_variant(size_t object_size, pas_heap_config* config);
+pas_bitfit_heap_select_variant(size_t object_size,
+                               pas_heap_config* config,
+                               pas_heap_runtime_config* runtime_config);
 
 PAS_API void pas_bitfit_heap_construct_and_insert_size_class(pas_bitfit_heap* heap,
                                                              pas_bitfit_size_class* size_class,
                                                              unsigned object_size,
-                                                             pas_heap_config* config);
+                                                             pas_heap_config* config,
+                                                             pas_heap_runtime_config* runtime_config);
 
 PAS_API pas_heap_summary pas_bitfit_heap_compute_summary(pas_bitfit_heap* heap);
 

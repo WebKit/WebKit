@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,14 +155,17 @@ PAS_API pas_bitfit_heap* pas_segregated_heap_get_bitfit(pas_segregated_heap* hea
 static PAS_ALWAYS_INLINE size_t
 pas_segregated_heap_index_for_size(size_t size, pas_heap_config config)
 {
-    return (size + pas_segregated_page_config_min_align(config.small_segregated_config) - 1)
-        >> config.small_segregated_config.base.min_align_shift;
+    size_t min_align_shift;
+    size_t min_align;
+    min_align_shift = pas_heap_config_segregated_heap_min_align_shift(config);
+    min_align = (size_t)1 << min_align_shift;
+    return (size + min_align - 1) >> min_align_shift;
 }
 
 static PAS_ALWAYS_INLINE size_t
 pas_segregated_heap_size_for_index(size_t index, pas_heap_config config)
 {
-    return index << config.small_segregated_config.base.min_align_shift;
+    return index << pas_heap_config_segregated_heap_min_align_shift(config);
 }
 
 /* These functions help with dealing with pas_heap_ref::allocator_index. Can pass a NULL cached_index, in which

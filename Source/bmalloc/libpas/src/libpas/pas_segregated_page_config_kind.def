@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,3 +104,7 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(hotbit_medium_segregated,
                                        HOTBIT_HEAP_CONFIG.medium_segregated_config)
 #endif
 
+#if PAS_ENABLE_JIT
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(jit_small_segregated,
+                                       JIT_HEAP_CONFIG.small_segregated_config)
+#endif
