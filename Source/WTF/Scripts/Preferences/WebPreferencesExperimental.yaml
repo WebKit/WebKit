@@ -1294,7 +1294,7 @@ SharedWorkerEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
   type: bool
