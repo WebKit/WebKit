@@ -1,0 +1,28 @@
+<style>
+#grid {
+  width: 200px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 0px;
+  overflow: hidden;
+}
+
+#flex {
+  width: 200px;
+  display: flex;
+  flex-direction: row;
+}
+
+.item {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<div id=grid><div class=item></div><div class=item></div></div>
+<div id=flex><div class=item></div><div class=item></div></div>
+<script>
+  document.body.offsetHeight;
+  grid.style.gridGap = "200px";
+  flex.style.gap = "200px";
+</script>

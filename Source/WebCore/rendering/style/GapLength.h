@@ -56,9 +56,14 @@ public:
     bool isNormal() const { return m_isNormal; }
     const Length& length() const { ASSERT(!m_isNormal); return m_length; }
 
-    bool operator==(const GapLength& o) const
+    bool operator==(const GapLength& other) const
     {
-        return m_isNormal == o.m_isNormal && m_length == o.m_length;
+        return m_isNormal == other.m_isNormal && m_length == other.m_length;
+    }
+
+    bool operator!=(const GapLength& other) const
+    {
+        return !(*this == other);
     }
 
 private:
