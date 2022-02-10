@@ -170,12 +170,13 @@ std::optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem
     return std::nullopt;
 }
 
-bool DragDropInteractionState::anyActiveDragSourceIs(WebCore::DragSourceAction action) const
+bool DragDropInteractionState::anyActiveDragSourceContainsSelection() const
 {
     for (auto& source : m_activeDragSources) {
-        if (source.action.contains(action))
+        if (source.containsSelection)
             return true;
     }
+
     return false;
 }
 
@@ -357,6 +358,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
         item.title.isEmpty() ? nil : (NSString *)item.title,
         item.url.isEmpty() ? nil : (NSURL *)item.url,
         true, // We assume here that drag previews need to be updated until proven otherwise in updatePreviewsForActiveDragSources().
+        item.containsSelection,
         ++currentDragSourceItemIdentifier
     }};
 }

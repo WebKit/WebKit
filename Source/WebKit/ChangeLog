@@ -1,3 +1,23 @@
+2022-02-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        An element with both -webkit-user-select: all and -webkit-user-drag: element does not get the nice drag snapshot that you get if you just have -webkit-user-drag: element
+        https://bugs.webkit.org/show_bug.cgi?id=187656
+        <rdar://problem/42177956>
+
+        Reviewed by Wenson Hsieh.
+
+        Plumb `DragItem`'s `containsSelection` into the `DragDropInteractionState`
+        so that UIKit text interaction can be suppressed whenever the element
+        being dragged also contains the current selection.
+
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::DragDropInteractionState::anyActiveDragSourceContainsSelection const):
+        (WebKit::DragDropInteractionState::stageDragItem):
+        (WebKit::DragDropInteractionState::anyActiveDragSourceIs const): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+
 2022-02-10  Megan Gardner  <megan_gardner@apple.com>
 
         Mail attachment switched to TIFF and balloons in size after markup.

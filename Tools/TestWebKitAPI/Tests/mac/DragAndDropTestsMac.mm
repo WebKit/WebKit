@@ -58,6 +58,18 @@ TEST(DragAndDropTests, NumberOfValidItemsForDrop)
     EXPECT_EQ(1U, numberOfValidItemsForDrop);
 }
 
+TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 320, 500)]);
+
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"contenteditable-user-select-user-drag"];
+
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    EXPECT_WK_STREQ(@"Text", [webView stringByEvaluatingJavaScript:@"document.getElementById(\"editor\").textContent"]);
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 TEST(DragAndDropTests, DropColor)
 {

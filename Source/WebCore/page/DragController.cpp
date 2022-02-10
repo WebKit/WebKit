@@ -804,7 +804,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 
         UserDrag dragMode = renderer->style().userDrag();
         if (m_dragSourceAction.contains(DragSourceAction::DHTML) && dragMode == UserDrag::Element) {
-            state.type.add(DragSourceAction::DHTML);
+            state.type = DragSourceAction::DHTML;
             return element;
         }
         if (dragMode == UserDrag::Auto) {
@@ -1092,6 +1092,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         dragItem.imageAnchorPoint = dragImageAnchorPointForSelectionDrag(src, mouseDraggedPoint);
         dragItem.image = WTFMove(dragImage);
         dragItem.data = WTFMove(pasteboardWriterData);
+        dragItem.containsSelection = true;
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceAction::Selection);
 
@@ -1188,6 +1189,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         dragItem.imageAnchorPoint = dragImage ? anchorPointForLinkDragImage(dragImage.get()) : FloatPoint();
         dragItem.image = WTFMove(dragImage);
         dragItem.data = WTFMove(pasteboardWriterData);
+        dragItem.containsSelection = true;
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceAction::Selection);
 
@@ -1374,6 +1376,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     ASSERT(state.type.hasExactlyOneBitSet());
     item.sourceAction = state.type.toSingleValue();
     item.promisedAttachmentInfo = WTFMove(promisedAttachmentInfo);
+    item.containsSelection = frame.selection().contains(eventPos);
 
     auto eventPositionInRootViewCoordinates = frame.view()->contentsToRootView(eventPos);
     auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);

@@ -1,3 +1,24 @@
+2022-02-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        An element with both -webkit-user-select: all and -webkit-user-drag: element does not get the nice drag snapshot that you get if you just have -webkit-user-drag: element
+        https://bugs.webkit.org/show_bug.cgi?id=187656
+        <rdar://problem/42177956>
+
+        Reviewed by Wenson Hsieh.
+
+        Added API tests on iOS and macOS to verify that dragging and dropping an
+        element with "-webkit-user-select: all" and "-webkit-user-drag: element"
+        does not paste the selection.
+
+        On iOS, the size of the lift preview is also tested.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/contenteditable-user-select-user-drag.html: Added.
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        (TEST):
+
 2022-02-10  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting 247040@main.

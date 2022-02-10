@@ -48,6 +48,7 @@ struct DragItem final {
     String title;
     URL url;
     IntRect dragPreviewFrameInRootViewCoordinates;
+    bool containsSelection { false };
 
     PasteboardWriterData data;
     PromisedAttachmentInfo promisedAttachmentInfo;
@@ -62,7 +63,7 @@ void DragItem::encode(Encoder& encoder) const
     // FIXME(173815): We should encode and decode PasteboardWriterData and platform drag image data
     // here too, as part of moving off of the legacy dragging codepath.
     encoder << sourceAction;
-    encoder << imageAnchorPoint << eventPositionInContentCoordinates << dragLocationInContentCoordinates << dragLocationInWindowCoordinates << title << url << dragPreviewFrameInRootViewCoordinates;
+    encoder << imageAnchorPoint << eventPositionInContentCoordinates << dragLocationInContentCoordinates << dragLocationInWindowCoordinates << title << url << dragPreviewFrameInRootViewCoordinates << containsSelection;
     bool hasIndicatorData = image.hasIndicatorData();
     encoder << hasIndicatorData;
     if (hasIndicatorData)
@@ -92,6 +93,8 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(result.url))
         return false;
     if (!decoder.decode(result.dragPreviewFrameInRootViewCoordinates))
+        return false;
+    if (!decoder.decode(result.containsSelection))
         return false;
     bool hasIndicatorData;
     if (!decoder.decode(hasIndicatorData))
