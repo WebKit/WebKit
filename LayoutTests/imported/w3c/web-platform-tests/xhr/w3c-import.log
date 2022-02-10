@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/xhr/FormData-append.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/xhr/README.md
 /LayoutTests/imported/w3c/web-platform-tests/xhr/XMLHttpRequest-withCredentials.any.js
@@ -26,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-headers-received.window.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-loading.window.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-open.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-readystatechange.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-unsent.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-during-upload.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/abort-event-abort.any.js
@@ -64,7 +64,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-credential-sync.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-headers-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-headers-sync.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-allow-headers-returns-star.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-header-lowercase.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-header-returns-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-header-sorted.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-headers-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/access-control-preflight-request-invalid-status-301.htm
@@ -85,7 +87,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/allow-lists-starting-with-comma.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/anonymous-mode-unsupported.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/close-worker-with-xhr-in-progress.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/content-type-unmodified.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/cookies.http.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/cors-expose-star.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/cors-upload.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/data-uri.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/event-abort.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/event-error-order.sub.html
@@ -104,13 +109,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/firing-events-http-content-length.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/folder.txt
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-blob.htm
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-delete.htm
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-foreach.html
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-get.htm
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-has.htm
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata-set.htm
-/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/formdata.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getallresponseheaders-cookies.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getallresponseheaders-status.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/getallresponseheaders.htm
@@ -127,8 +126,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/json.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/loadstart-and-state.html
-/LayoutTests/imported/w3c/web-platform-tests/xhr/no-utf16-json.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-abort.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-setrequestheader.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-after-stop.window.js
@@ -166,6 +165,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-url-worker-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-url-worker-simple.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/open-user-password-non-same-origin.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/over-1-meg.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/overridemimetype-blob.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/overridemimetype-done-state.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/overridemimetype-edge-cases.window.js
@@ -179,6 +179,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/progress-events-response-data-gzip.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/progressevent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/progressevent-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/request-content-length.any.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/response-body-errors.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/response-data-arraybuffer.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/response-data-blob.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/response-data-deflate.htm
@@ -278,14 +280,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/status-error.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/status.h2.window.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/sync-no-progress.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/sync-xhr-and-window-onload.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/sync-xhr-supported-by-feature-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/template-element.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/thrown-error-in-events.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-cors-async.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html
 /LayoutTests/imported/w3c/web-platform-tests/xhr/timeout-sync.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.js
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xmlhttprequest-basic.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xmlhttprequest-eventtarget.htm
 /LayoutTests/imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-sync.htm

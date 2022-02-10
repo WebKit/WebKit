@@ -229,7 +229,9 @@ imported/w3c/web-platform-tests/workers/shared-worker-options-mismatch.html [ Sk
 imported/w3c/web-platform-tests/workers/shared-worker-parse-error-failure.html [ Skip ]
 imported/w3c/web-platform-tests/workers/shared-worker-partitioned.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-sharedworker-failure.html [ Skip ]
+imported/w3c/web-platform-tests/xhr/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/open-url-redirected-sharedworker-origin.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip ]
 
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]

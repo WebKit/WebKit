@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: abort() after a timeout should not fire "abort" event
-

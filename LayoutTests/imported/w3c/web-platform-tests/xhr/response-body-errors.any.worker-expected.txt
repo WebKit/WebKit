@@ -1,0 +1,4 @@
+
+PASS Synchronous XMLHttpRequest should throw on bad chunk
+PASS Asynchronous XMLHttpRequest should clear response on bad chunk
+
