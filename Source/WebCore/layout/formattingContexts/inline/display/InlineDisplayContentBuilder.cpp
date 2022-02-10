@@ -461,6 +461,8 @@ struct IsFirstLastIndex {
 using IsFirstLastIndexesMap = HashMap<const Box*, IsFirstLastIndex>;
 void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInInlineDirectionVisualOrder, InlineLayoutUnit lineBoxTop, const DisplayBoxTree& displayBoxTree, DisplayBoxes& boxes, const LineBox& lineBox, const IsFirstLastIndexesMap& isFirstLastIndexesMap)
 {
+    auto writingMode = root().style().writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
     // Non-inline box display boxes just need a horizontal adjustment while
     // inline box type of display boxes need
     // 1. horizontal adjustment and margin/border/padding start offsetting on the first box
@@ -476,13 +478,13 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
 
             auto borderBoxLeft = LayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
             boxGeometry.setLogicalLeft(borderBoxLeft);
-            displayBox.setLeft(borderBoxLeft);
+            setLeftForWritingMode(displayBox, borderBoxLeft, writingMode);
 
             contentRightInInlineDirectionVisualOrder += boxGeometry.marginBoxWidth();
         } else {
             auto wordSpacingMargin = displayBox.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
-            displayBox.setLeft(contentRightInInlineDirectionVisualOrder + wordSpacingMargin);
-            contentRightInInlineDirectionVisualOrder += displayBox.width() + wordSpacingMargin;
+            setLeftForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder + wordSpacingMargin, writingMode);
+            contentRightInInlineDirectionVisualOrder += (isHorizontalWritingMode ? displayBox.width() : displayBox.height()) + wordSpacingMargin;
         }
         return;
     }
@@ -494,15 +496,15 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto isLastBox = isFirstLastIndexes.last && *isFirstLastIndexes.last == displayBoxNodeIndex;
     auto beforeInlineBoxContent = [&] {
         auto logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-        auto visualRect = InlineRect { lineBoxTop + logicalRect.top(), contentRightInInlineDirectionVisualOrder, { }, logicalRect.height() };
+        auto visualRect = flipLogicalRectToVisualForWritingMode({ lineBoxTop + logicalRect.top(), contentRightInInlineDirectionVisualOrder, { }, logicalRect.height() }, writingMode);
+        displayBox.setRect(visualRect, visualRect);
+
         auto shouldApplyLeftSide = (isLeftToRightDirection && isFirstBox) || (!isLeftToRightDirection && isLastBox);
         if (!shouldApplyLeftSide)
-            return displayBox.setRect(visualRect, visualRect);
+            return;
 
         contentRightInInlineDirectionVisualOrder += marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-        auto visualRectWithMarginLeft = visualRect;
-        visualRectWithMarginLeft.setLeft(contentRightInInlineDirectionVisualOrder);
-        displayBox.setRect(visualRectWithMarginLeft, visualRectWithMarginLeft);
+        setLeftForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
         contentRightInInlineDirectionVisualOrder += borderLeftInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
     beforeInlineBoxContent();
@@ -513,10 +515,10 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto afterInlineBoxContent = [&] {
         auto shouldApplyRightSide = (isLeftToRightDirection && isLastBox) || (!isLeftToRightDirection && isFirstBox);
         if (!shouldApplyRightSide)
-            return displayBox.setRight(contentRightInInlineDirectionVisualOrder);
+            return setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
 
         contentRightInInlineDirectionVisualOrder += borderRightInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingRightInInlineDirection(boxGeometry, isLeftToRightDirection);
-        displayBox.setRight(contentRightInInlineDirectionVisualOrder);
+        setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
         contentRightInInlineDirectionVisualOrder += marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
     afterInlineBoxContent();
@@ -542,7 +544,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     ancestorStack.push({ }, root());
 
     auto writingMode = root().style().writingMode();
-    auto contentStartInInlineDirectionVisualOrder = (WebCore::isHorizontalWritingMode(writingMode) ? displayLine.left() : displayLine.top()) + displayLine.contentLogicalOffset();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    auto contentStartInInlineDirectionVisualOrder = (isHorizontalWritingMode ? displayLine.left() : displayLine.top()) + displayLine.contentLogicalOffset();
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
 
@@ -560,11 +563,13 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
                 auto visualRect = flipLogicalRectToVisualForWritingModeWithinLine(logicalRect, lineBox.logicalRect(), writingMode);
-                if (WebCore::isHorizontalWritingMode(writingMode))
+                if (isHorizontalWritingMode) {
                     visualRect.setLeft(contentRightInInlineDirectionVisualOrder);
-                else
+                    visualRect.moveVertically(displayLine.top());
+                } else {
                     visualRect.setTop(contentRightInInlineDirectionVisualOrder);
-                visualRect.moveVertically(displayLine.top());
+                    visualRect.moveHorizontally(displayLine.left());
+                }
                 return visualRect;
             };
 
@@ -800,6 +805,22 @@ InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWit
     return logicalRect;
 }
 
+InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingMode(const InlineRect& logicalRect, WritingMode writingMode) const
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        return logicalRect;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft:
+        // See InlineFormattingGeometry for more info.
+        return { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return logicalRect;
+}
+
 InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, const InlineDisplay::Line& displayLine, WritingMode writingMode) const
 {
     switch (writingMode) {
@@ -820,6 +841,38 @@ InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingM
         break;
     }
     return rootInlineBoxLogicalRect;
+}
+
+void InlineDisplayContentBuilder::setLeftForWritingMode(InlineDisplay::Box& displayBox, InlineLayoutUnit logicalLeft, WritingMode writingMode) const
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        displayBox.setLeft(logicalLeft);
+        break;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft:
+        displayBox.setTop(logicalLeft);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void InlineDisplayContentBuilder::setRightForWritingMode(InlineDisplay::Box& displayBox, InlineLayoutUnit logicalRight, WritingMode writingMode) const
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        displayBox.setRight(logicalRight);
+        break;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft:
+        displayBox.setBottom(logicalRight);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMode(const InlineLayoutPoint& logicalPoint, InlineLayoutUnit horizontalOffset, WritingMode writingMode) const

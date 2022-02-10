@@ -131,7 +131,19 @@ struct Box {
     {
         auto offset = physicalRight - right();
         m_physicalRect.shiftMaxXEdgeTo(physicalRight);
-        m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxY() + offset);
+        m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxX() + offset);
+    }
+    void setTop(float physicalTop)
+    {
+        auto offset = physicalTop - top();
+        m_physicalRect.setY(physicalTop);
+        m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.y() + offset);
+    }
+    void setBottom(float physicalBottom)
+    {
+        auto offset = physicalBottom - bottom();
+        m_physicalRect.shiftMaxYEdgeTo(physicalBottom);
+        m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.maxY() + offset);
     }
     void setRect(const FloatRect& rect, const FloatRect& inkOverflow)
     {
