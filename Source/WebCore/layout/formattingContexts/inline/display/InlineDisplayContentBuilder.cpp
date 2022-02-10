@@ -473,13 +473,12 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
             auto& boxGeometry = formattingState().boxGeometry(layoutBox);
             auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-            auto boxMarginRight = marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
 
             auto borderBoxLeft = LayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
             boxGeometry.setLogicalLeft(borderBoxLeft);
             displayBox.setLeft(borderBoxLeft);
 
-            contentRightInInlineDirectionVisualOrder += boxMarginLeft + displayBox.width() + boxMarginRight;
+            contentRightInInlineDirectionVisualOrder += boxGeometry.marginBoxWidth();
         } else {
             auto wordSpacingMargin = displayBox.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
             displayBox.setLeft(contentRightInInlineDirectionVisualOrder + wordSpacingMargin);
@@ -501,7 +500,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             return displayBox.setRect(visualRect, visualRect);
 
         contentRightInInlineDirectionVisualOrder += marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-        auto visualRectWithMarginLeft = InlineRect { visualRect.top(), contentRightInInlineDirectionVisualOrder, visualRect.width(), visualRect.height() };
+        auto visualRectWithMarginLeft = visualRect;
+        visualRectWithMarginLeft.setLeft(contentRightInInlineDirectionVisualOrder);
         displayBox.setRect(visualRectWithMarginLeft, visualRectWithMarginLeft);
         contentRightInInlineDirectionVisualOrder += borderLeftInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
