@@ -171,6 +171,7 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_status_reporter.c
     libpas/src/libpas/pas_stream.c
     libpas/src/libpas/pas_string_stream.c
+    libpas/src/libpas/pas_thread_suspend_lock.c
     libpas/src/libpas/pas_thread_local_cache.c
     libpas/src/libpas/pas_thread_local_cache_layout.c
     libpas/src/libpas/pas_thread_local_cache_layout_node.c
@@ -613,6 +614,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_status_reporter.h
     libpas/src/libpas/pas_stream.h
     libpas/src/libpas/pas_string_stream.h
+    libpas/src/libpas/pas_thread_suspend_lock.h
     libpas/src/libpas/pas_thread_local_cache.h
     libpas/src/libpas/pas_thread_local_cache_layout.h
     libpas/src/libpas/pas_thread_local_cache_layout_node.h

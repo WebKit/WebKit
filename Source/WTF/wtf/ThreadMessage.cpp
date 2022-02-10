@@ -31,21 +31,18 @@
 
 namespace WTF {
 
-MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
+MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
 {
-    static Lock messageLock;
-    Locker locker { messageLock };
-
-    auto result = thread.suspend();
+    auto result = thread.suspend(locker);
     if (!result)
         return MessageStatus::ThreadExited;
 
     PlatformRegisters registers;
-    thread.getRegisters(registers);
+    thread.getRegisters(locker, registers);
 
     message(registers);
 
-    thread.resume();
+    thread.resume(locker);
     return MessageStatus::MessageRan;
 }
 

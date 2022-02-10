@@ -40,6 +40,7 @@
 #include "pas_segregated_page.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
+#include "pas_thread_suspend_lock.h"
 #include <unistd.h>
 #if PAS_OS(DARWIN)
 #include <mach/thread_act.h>
@@ -630,8 +631,7 @@ static void resume(pas_thread_local_cache* cache)
 #endif
 
 bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_action,
-                                    pas_deallocator_scavenge_action deallocator_action,
-                                    pas_lock_hold_mode heap_lock_hold_mode)
+                                    pas_deallocator_scavenge_action deallocator_action)
 {
     static const bool verbose = false;
     
@@ -641,6 +641,10 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
     /* Set this to true if we encounter a situation where we think that more memory could
        be returned if this was called again. */
     result = false;
+
+    /* The thread suspend lock ensures that thread suspention can be done only from one thread at a time.
+       This avoids dead-lock where multiple threads suspend / resume each other. */
+    pas_thread_suspend_lock_lock();
 
     /* The heap lock protects two things:
        
@@ -655,7 +659,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
          B) are the thread that owns the cache and you hold the heap lock.
          
          C) you hold the heap lock and you have checked that the is_in_use bit is not set. */
-    pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
+    pas_heap_lock_lock();
     
     for (node = pas_thread_local_cache_node_first; node; node = node->next) {
         pas_thread_local_cache* cache;
@@ -788,7 +792,8 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         pas_lock_unlock(&node->log_flush_lock);
     }
     
-    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
+    pas_heap_lock_unlock();
+    pas_thread_suspend_lock_unlock();
 
     return result;
 }

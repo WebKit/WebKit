@@ -40,13 +40,13 @@ enum class MessageStatus {
 // This method allows us to send a message which will be run in a signal handler on the desired thread.
 // There are several caveates to this method however, This function uses signals so your message should
 // be sync signal safe.
-WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(Thread&, const ThreadMessage&);
+WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(const ThreadSuspendLocker&, Thread&, const ThreadMessage&);
 
 template<typename Functor>
-MessageStatus sendMessage(Thread& targetThread, const Functor& func)
+MessageStatus sendMessage(const ThreadSuspendLocker& locker, Thread& targetThread, const Functor& func)
 {
     auto lambda = scopedLambdaRef<void(PlatformRegisters&)>(func);
-    return sendMessageScoped(targetThread, lambda);
+    return sendMessageScoped(locker, targetThread, lambda);
 }
 
 } // namespace WTF
