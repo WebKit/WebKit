@@ -1,3 +1,0 @@
-
-PASS serviceworkers take priority over appcaches
-

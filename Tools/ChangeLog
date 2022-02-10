@@ -1,3 +1,15 @@
+2022-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/service-workers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236380
+
+        Reviewed by Youenn Fablet.
+
+        Fix import of WPT tests with `global=serviceworker-module`.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+
 2022-02-10  Aditya Keerthi  <akeerthi@apple.com>
 
         An element with both -webkit-user-select: all and -webkit-user-drag: element does not get the nice drag snapshot that you get if you just have -webkit-user-drag: element

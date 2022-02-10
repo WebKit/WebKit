@@ -190,12 +190,14 @@ class TestImporter(object):
             if self._tests_options:
                 self.remove_slow_from_w3c_tests_options()
 
-        self.globalToSuffixes = dict(
-            window=('html',),
-            worker=('worker.html', 'serviceworker.html', 'sharedworker.html'),
-            dedicatedworker=('worker.html',),
-            serviceworker=('serviceworker.html',),
-            sharedworker=('sharedworker.html',))
+        self.globalToSuffixes = {
+            'window': ('html',),
+            'worker': ('worker.html', 'serviceworker.html', 'sharedworker.html'),
+            'dedicatedworker': ('worker.html',),
+            'serviceworker': ('serviceworker.html',),
+            'serviceworker-module': ('serviceworker-module.html',),
+            'sharedworker': ('sharedworker.html',)
+        }
 
     def do_import(self):
         if not self.source_directory:

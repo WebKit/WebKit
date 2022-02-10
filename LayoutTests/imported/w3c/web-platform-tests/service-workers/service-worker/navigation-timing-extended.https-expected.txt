@@ -1,0 +1,3 @@
+
+FAIL Service worker controlled navigation timing assert_greater_than: fetchStart should be marked once the worker is activated expected a number greater than 1644429738285 but got 1644429737832
+

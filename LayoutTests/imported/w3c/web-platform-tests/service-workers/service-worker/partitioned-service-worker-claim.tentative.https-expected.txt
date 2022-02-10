@@ -1,0 +1,4 @@
+This test creates a iframe in a first-party context and then registers a service worker (such that the iframe client is unclaimed). A third-party iframe is then created which has its SW call clients.claim() and then the test checks that the 1p iframe was not claimed int he process. Finally the test has its SW call clients.claim() and confirms the 1p iframe is claimed.
+
+PASS ServiceWorker's clients.claim() is partitioned
+

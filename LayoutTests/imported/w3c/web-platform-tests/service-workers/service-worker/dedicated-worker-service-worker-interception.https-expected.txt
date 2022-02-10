@@ -1,7 +1,0 @@
-
-Harness Error (FAIL), message = SyntaxError: Unexpected string literal './service-worker-interception-network-worker.js'. import call expects one or two arguments.
-
-FAIL Top-level module loading should be intercepted by a service worker. assert_equals: expected "LOADED_FROM_SERVICE_WORKER" but got "LOADED_FROM_NETWORK"
-TIMEOUT Static import should be intercepted by a service worker. Test timed out
-NOTRUN Dynamic import should be intercepted by a service worker.
-

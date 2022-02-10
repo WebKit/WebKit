@@ -1,3 +1,0 @@
-
-PASS fetch() should be intercepted after the client is claimed.
-

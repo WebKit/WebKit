@@ -1,3 +1,15 @@
+2022-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/service-workers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236380
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt:
+        * tests-options.json:
+
 2022-02-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Unskip App Privacy Report tests in open source now that EWS is updated
