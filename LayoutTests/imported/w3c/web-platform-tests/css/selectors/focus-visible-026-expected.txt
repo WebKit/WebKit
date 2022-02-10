@@ -1,0 +1,5 @@
+ label
+
+PASS ":focus-visible" should be a valid selector
+PASS :focus-visible does NOT match when a checkbox is focused via click on the associated label
+

@@ -157,7 +157,7 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
 
         document().updateLayoutIgnorePendingStylesheets();
         if (control->isMouseFocusable())
-            control->focus();
+            control->focus({ { }, { }, { }, FocusTrigger::Click, { } });
 
         processingClick = false;
 

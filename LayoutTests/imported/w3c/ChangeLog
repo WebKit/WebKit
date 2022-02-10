@@ -1,3 +1,15 @@
+2022-02-10  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        :focus-visible with click on radio/checkbox labels is broken
+        https://bugs.webkit.org/show_bug.cgi?id=236331
+
+        Reviewed by Antti Koivisto.
+
+        Added new WPT test to cover this case.
+
+        * web-platform-tests/css/selectors/focus-visible-026-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-026.html: Added.
+
 2022-02-09  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/html/browsers from upstream
