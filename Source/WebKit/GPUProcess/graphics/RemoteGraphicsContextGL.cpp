@@ -42,6 +42,10 @@
 #include <WebCore/GraphicsContextGLCV.h>
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "RemoteVideoFrameObjectHeap.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -68,6 +72,9 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
+#if ENABLE(MEDIA_STREAM)
+    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
+#endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
 {
@@ -222,6 +229,14 @@ void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentif
     assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
+
+#if ENABLE(MEDIA_STREAM)
+void RemoteGraphicsContextGL::paintCompositedResultsToMediaSample(RemoteVideoFrameWriteReference&& write)
+{
+    assertIsCurrent(m_streamThread);
+    m_videoFrameObjectHeap->addVideoFrame(WTFMove(write), m_context->paintCompositedResultsToMediaSample());
+}
+#endif
 
 void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&& pixelBuffer, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {

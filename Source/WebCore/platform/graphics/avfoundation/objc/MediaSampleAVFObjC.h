@@ -54,13 +54,12 @@ public:
     MediaTime duration() const override;
 
     AtomString trackID() const override { return m_id; }
-    void setTrackID(const String& id) override { m_id = id; }
 
     size_t sizeInBytes() const override;
     FloatSize presentationSize() const override;
 
     SampleFlags flags() const override;
-    PlatformSample platformSample() override;
+    PlatformSample platformSample() const override;
     std::optional<ByteRange> byteRange() const override;
     WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
@@ -97,3 +96,7 @@ protected:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSampleAVFObjC)
+    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSample().type == WebCore::PlatformSample::CMSampleBufferType; }
+SPECIALIZE_TYPE_TRAITS_END()

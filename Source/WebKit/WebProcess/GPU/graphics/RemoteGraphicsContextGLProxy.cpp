@@ -35,6 +35,10 @@
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "RemoteVideoFrameProxy.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -117,6 +121,21 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
         return;
     }
 }
+
+#if ENABLE(MEDIA_STREAM)
+RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxy::paintCompositedResultsToMediaSample()
+{
+    if (isContextLost())
+        return nullptr;
+    auto mediaSample = RemoteVideoFrameProxy::create(*m_gpuProcessConnection);
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToMediaSample(mediaSample->write()));
+    if (!sendResult) {
+        markContextLost();
+        return nullptr;
+    }
+    return mediaSample;
+}
+#endif
 
 bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {

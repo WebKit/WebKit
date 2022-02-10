@@ -1,3 +1,13 @@
+2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP
+        https://bugs.webkit.org/show_bug.cgi?id=236099
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/generate-gpup-webgl:
+        * TestWebKitAPI/Tests/WebCore/SampleMap.cpp:
+
 2022-02-09  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Link commit URL to pull request
