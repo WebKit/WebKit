@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -190,6 +190,8 @@ private:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
     bool aspectRatioPrefersInline(const RenderBox& child, bool blockFlowIsColumnAxis);
+
+    Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems();
 
     Grid m_grid;
 
