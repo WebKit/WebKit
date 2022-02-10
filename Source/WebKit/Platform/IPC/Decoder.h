@@ -97,8 +97,7 @@ public:
                 return false;
             }
         } else {
-            std::optional<T> optional;
-            *this >> optional;
+            std::optional<T> optional { decode<T>() };
             if (UNLIKELY(!optional)) {
                 markInvalid();
                 return false;
@@ -111,19 +110,28 @@ public:
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
     {
+        t = decode<T>();
+        return *this;
+    }
+
+    // The preferred decode() function. Can decode T which is not default constructible when T
+    // has a  modern decoder, e.g decoding function that returns std::optional.
+    template<typename T>
+    std::optional<T> decode()
+    {
         using Impl = ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>;
         if constexpr(HasModernDecoder<T, Impl>::value) {
-            t = Impl::decode(*this);
+            std::optional<T> t { Impl::decode(*this) };
             if (UNLIKELY(!t))
                 markInvalid();
+            return t;
         } else {
-            T v;
-            if (LIKELY(Impl::decode(*this, v)))
-                t = WTFMove(v);
-            else
-                markInvalid();
+            std::optional<T> t { T { } };
+            if (LIKELY(Impl::decode(*this, *t)))
+                return t;
+            markInvalid();
+            return std::nullopt;
         }
-        return *this;
     }
 
     template<typename T>

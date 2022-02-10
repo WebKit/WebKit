@@ -188,8 +188,7 @@ struct CodingType<std::tuple<Ts...>> {
 template<typename T, typename C, typename MF>
 void handleMessage(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -200,8 +199,7 @@ void handleMessage(Connection& connection, Decoder& decoder, C* object, MF funct
 template<typename T, typename C, typename MF>
 void handleMessageWantsConnection(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -212,8 +210,7 @@ void handleMessageWantsConnection(Connection& connection, Decoder& decoder, C* o
 template<typename T, typename C, typename MF>
 bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, C* object, MF function)
 {
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return false;
 
@@ -229,8 +226,7 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 template<typename T, typename C, typename MF>
 bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, C* object, MF function)
 {
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return false;
     
@@ -250,8 +246,7 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
     if (UNLIKELY(!decoder.decode(syncRequestID)))
         return;
 
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -266,13 +261,11 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
 template<typename T, typename C, typename MF>
 void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    std::optional<uint64_t> listenerID;
-    decoder >> listenerID;
-    if (!listenerID)
+    auto listenerID = decoder.decode<uint64_t>();
+    if (UNLIKELY(!listenerID))
         return;
 
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -288,13 +281,11 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
 template<typename T, typename C, typename MF>
 void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    std::optional<uint64_t> listenerID;
-    decoder >> listenerID;
-    if (!listenerID)
+    auto listenerID = decoder.decode<uint64_t>();
+    if (UNLIKELY(!listenerID))
         return;
 
-    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
-    decoder >> arguments;
+    auto arguments = decoder.decode<typename CodingType<typename T::Arguments>::Type>();
     if (UNLIKELY(!arguments))
         return;
 

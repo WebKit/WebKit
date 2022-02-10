@@ -1,3 +1,40 @@
+2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Non-default constructible types cannot be decoded with IPC::Decoder
+        https://bugs.webkit.org/show_bug.cgi?id=236246
+
+        Reviewed by Antti Koivisto.
+
+        Add yet another decode function: std::optional<T> Decoder::decode<T>();
+
+        Consider the pattern:
+          std::optional<T> t;
+          decoder >> t;
+          if (!t)
+            ....
+
+        The above neccessitates default construction of T, since it contains
+          std::optional<T> t;
+          t =  ...; assignment. This assignment cannot be elided.
+        Better pattern is:
+          auto t = decoder.decode<T>();
+
+        This is significant with for types with const members:
+          struct T {
+              const uint64_t version;
+          };
+
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessage):
+        (IPC::handleMessageWantsConnection):
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+
 2022-02-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         SharedMemoryUnix should use SHM_ANON when available
