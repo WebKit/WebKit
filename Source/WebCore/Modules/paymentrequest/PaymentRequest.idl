@@ -27,7 +27,6 @@
     ActiveDOMObject,
     Conditional=PAYMENT_REQUEST,
     EnabledBySetting=PaymentRequestEnabled,
-    EnabledForContext,
     SecureContext,
     Exposed=Window
 ] interface PaymentRequest : EventTarget {

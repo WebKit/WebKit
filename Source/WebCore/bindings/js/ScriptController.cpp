@@ -691,23 +691,12 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeUserAgentScriptInWorldInternal(world, { script, URL { }, false, std::nullopt, forceUserGesture });
-}
-
-ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
-{
-    auto& document = *m_frame.document();
-    auto allowed = shouldAllowUserAgentScripts(document);
-    if (!allowed)
-        return makeUnexpected(allowed.error());
-
-    document.setHasEvaluatedUserAgentScripts();
-    return executeScriptInWorld(world, WTFMove(parameters));
+    return executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture });
 }
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
 {
-    auto result = executeUserAgentScriptInWorldInternal(world, WTFMove(parameters));
+    auto result = executeScriptInWorld(world, WTFMove(parameters));
     
     if (parameters.runAsAsyncFunction == RunAsAsyncFunction::No || !result || !result.value().isObject()) {
         resolveCompletionHandler(result);
@@ -765,17 +754,6 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     arguments.append(rejectHandler);
 
     call(&globalObject, thenFunction, callData, result.value(), arguments);
-}
-
-Expected<void, ExceptionDetails> ScriptController::shouldAllowUserAgentScripts(Document& document) const
-{
-#if ENABLE(APPLE_PAY)
-    if (auto page = m_frame.page())
-        return page->paymentCoordinator().shouldAllowUserAgentScripts(document);
-#else
-    UNUSED_PARAM(document);
-#endif
-    return { };
 }
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)

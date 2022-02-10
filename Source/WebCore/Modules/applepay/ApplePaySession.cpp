@@ -369,7 +369,7 @@ ExceptionOr<bool> ApplePaySession::canMakePayments(Document& document)
     if (!page)
         return Exception { InvalidAccessError };
 
-    return page->paymentCoordinator().canMakePayments(document);
+    return page->paymentCoordinator().canMakePayments();
 }
 
 ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Ref<DeferredPromise>&& passedPromise)
@@ -385,7 +385,7 @@ ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(Document& docum
             return Exception { InvalidAccessError };
 
         auto& paymentCoordinator = page->paymentCoordinator();
-        bool canMakePayments = paymentCoordinator.canMakePayments(document);
+        bool canMakePayments = paymentCoordinator.canMakePayments();
 
         RunLoop::main().dispatch([promise, canMakePayments]() mutable {
             promise->resolve<IDLBoolean>(canMakePayments);

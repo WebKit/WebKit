@@ -75,9 +75,6 @@ public:
     const MockPaymentContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
     const MockPaymentContactFields& requiredShippingContactFields() const { return m_requiredShippingContactFields; }
 
-    bool supportsUnrestrictedApplePay() const final { return m_supportsUnrestrictedApplePay; }
-    void setSupportsUnrestrictedApplePay(bool supports) { m_supportsUnrestrictedApplePay = supports; }
-    
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration installmentConfiguration() const { return m_installmentConfiguration; }
 #endif
@@ -133,7 +130,6 @@ private:
     HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
     MockPaymentContactFields m_requiredBillingContactFields;
     MockPaymentContactFields m_requiredShippingContactFields;
-    bool m_supportsUnrestrictedApplePay { true };
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration m_installmentConfiguration;
 #endif

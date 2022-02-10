@@ -694,8 +694,6 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     if (!UserContentURLPattern::matchesPatterns(document->url(), script.allowlist(), script.blocklist()))
         return;
-    if (!m_script->shouldAllowUserAgentScripts(*document))
-        return;
 
     document->setAsRunningUserScripts();
     loader().client().willInjectUserScript(world);

@@ -109,9 +109,4 @@ void WebPaymentCoordinatorClient::paymentCoordinatorDestroyed()
     delete this;
 }
 
-bool WebPaymentCoordinatorClient::supportsUnrestrictedApplePay() const
-{
-    return false;
-}
-
 #endif

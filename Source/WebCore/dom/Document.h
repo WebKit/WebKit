@@ -1597,14 +1597,8 @@ public:
     void setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&&);
 #endif
 
-    WEBCORE_EXPORT bool hasEvaluatedUserAgentScripts() const;
     WEBCORE_EXPORT bool isRunningUserScripts() const;
     WEBCORE_EXPORT void setAsRunningUserScripts();
-    void setHasEvaluatedUserAgentScripts();
-#if ENABLE(APPLE_PAY)
-    WEBCORE_EXPORT bool isApplePayActive() const;
-    WEBCORE_EXPORT void setApplePayIsActive();
-#endif
 
     void frameWasDisconnectedFromOwner();
 
@@ -2227,15 +2221,11 @@ private:
     HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 #endif
     unsigned m_numberOfRejectedSyncXHRs { 0 };
-    bool m_hasEvaluatedUserAgentScripts { false };
     bool m_isRunningUserScripts { false };
     bool m_mayBeDetachedFromFrame { true };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
     bool m_hasLoadedThirdPartyScript { false };
     bool m_hasLoadedThirdPartyFrame { false };
-#if ENABLE(APPLE_PAY)
-    bool m_hasStartedApplePaySession { false };
-#endif
     bool m_hasVisuallyNonEmptyCustomContent { false };
 
     bool m_visibilityHiddenDueToDismissal { false };

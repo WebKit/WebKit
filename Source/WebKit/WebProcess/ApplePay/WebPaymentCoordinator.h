@@ -80,10 +80,6 @@ private:
 
     bool isWebPaymentCoordinator() const override { return true; }
 
-    bool supportsUnrestrictedApplePay() const override;
-
-    String userAgentScriptsBlockedErrorMessage() const final;
-
     void getSetupFeatures(const WebCore::ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const WebCore::ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
     void endApplePaySetup() final;

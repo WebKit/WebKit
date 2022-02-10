@@ -304,9 +304,9 @@ void ApplePayPaymentHandler::hide()
     paymentCoordinator().abortPaymentSession();
 }
 
-void ApplePayPaymentHandler::canMakePayment(Document& document, Function<void(bool)>&& completionHandler)
+void ApplePayPaymentHandler::canMakePayment(Document&, Function<void(bool)>&& completionHandler)
 {
-    completionHandler(paymentCoordinator().canMakePayments(document));
+    completionHandler(paymentCoordinator().canMakePayments());
 }
 
 ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShippingMethods() const

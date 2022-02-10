@@ -60,7 +60,6 @@ public:
     using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
 
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
-    static bool enabledForContext(ScriptExecutionContext&);
     ~PaymentRequest();
 
     void show(Document&, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&&);

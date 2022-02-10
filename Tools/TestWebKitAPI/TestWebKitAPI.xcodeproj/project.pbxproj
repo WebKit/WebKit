@@ -820,7 +820,6 @@
 		A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		A1798B872243449B000764BD /* apple-pay-availability.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1798B862243446B000764BD /* apple-pay-availability.html */; };
 		A1798B8922435E29000764BD /* apple-pay-availability-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1798B8822435D2E000764BD /* apple-pay-availability-in-iframe.html */; };
-		A1798B8B224361A4000764BD /* apple-pay-active-session.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1798B8A2243611A000764BD /* apple-pay-active-session.html */; };
 		A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17991861E1C994E00A505ED /* SharedBuffer.mm */; };
 		A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17991891E1CA24100A505ED /* SharedBufferTest.cpp */; };
 		A17EAC55208305A00084B41B /* find.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17EAC542083056E0084B41B /* find.pdf */; };
@@ -1222,7 +1221,6 @@
 				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
 				C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */,
 				F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */,
-				A1798B8B224361A4000764BD /* apple-pay-active-session.html in Copy Resources */,
 				A1FB503D22A1CBE200D4D979 /* apple-pay-availability-existing-object.html in Copy Resources */,
 				A1798B8922435E29000764BD /* apple-pay-availability-in-iframe.html in Copy Resources */,
 				A1798B872243449B000764BD /* apple-pay-availability.html in Copy Resources */,
@@ -2656,7 +2654,6 @@
 		A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugInWithInternals.mm; sourceTree = "<group>"; };
 		A1798B862243446B000764BD /* apple-pay-availability.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability.html"; sourceTree = "<group>"; };
 		A1798B8822435D2E000764BD /* apple-pay-availability-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability-in-iframe.html"; sourceTree = "<group>"; };
-		A1798B8A2243611A000764BD /* apple-pay-active-session.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-active-session.html"; sourceTree = "<group>"; };
 		A17991861E1C994E00A505ED /* SharedBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedBuffer.mm; sourceTree = "<group>"; };
 		A17991891E1CA24100A505ED /* SharedBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferTest.cpp; sourceTree = "<group>"; };
 		A179918A1E1CA24100A505ED /* SharedBufferTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferTest.h; sourceTree = "<group>"; };
@@ -4036,7 +4033,6 @@
 				46C1EA9725758805005E409E /* alert.html */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
-				A1798B8A2243611A000764BD /* apple-pay-active-session.html */,
 				A1FB503C22A1C24400D4D979 /* apple-pay-availability-existing-object.html */,
 				A1798B8822435D2E000764BD /* apple-pay-availability-in-iframe.html */,
 				A1798B862243446B000764BD /* apple-pay-availability.html */,

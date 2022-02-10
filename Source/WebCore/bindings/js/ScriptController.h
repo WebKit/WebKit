@@ -106,8 +106,6 @@ public:
     JSC::JSValue evaluateIgnoringException(const ScriptSourceCode&);
     JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
 
-    Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
-
     // This asserts that URL argument is a JavaScript URL.
     void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
 
@@ -172,7 +170,6 @@ public:
     void reportExceptionFromScriptError(LoadableScript::Error, bool);
 
 private:
-    ValueOrException executeUserAgentScriptInWorldInternal(DOMWrapperWorld&, RunJavaScriptParameters&&);
     ValueOrException executeScriptInWorld(DOMWrapperWorld&, RunJavaScriptParameters&&);
     ValueOrException callInWorld(RunJavaScriptParameters&&, DOMWrapperWorld&);
     

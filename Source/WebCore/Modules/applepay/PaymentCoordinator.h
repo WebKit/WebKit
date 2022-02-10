@@ -61,7 +61,7 @@ public:
     PaymentCoordinatorClient& client() { return m_client; }
 
     bool supportsVersion(Document&, unsigned version) const;
-    bool canMakePayments(Document&);
+    bool canMakePayments();
     void canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
     void openPaymentSetup(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
 
@@ -91,16 +91,11 @@ public:
 
     std::optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 
-    bool shouldEnableApplePayAPIs(Document&) const;
-    WEBCORE_EXPORT Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
-
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
 
 private:
-    bool setApplePayIsActiveIfAllowed(Document&) const;
-
     PaymentCoordinatorClient& m_client;
     RefPtr<PaymentSession> m_activeSession;
 };

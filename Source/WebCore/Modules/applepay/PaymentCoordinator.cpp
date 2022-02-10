@@ -66,18 +66,11 @@ bool PaymentCoordinator::supportsVersion(Document&, unsigned version) const
     return supportsVersion;
 }
 
-bool PaymentCoordinator::canMakePayments(Document& document)
+bool PaymentCoordinator::canMakePayments()
 {
     auto canMakePayments = m_client.canMakePayments();
     PAYMENT_COORDINATOR_RELEASE_LOG("canMakePayments() -> %d", canMakePayments);
-
-    if (!canMakePayments)
-        return false;
-
-    if (!setApplePayIsActiveIfAllowed(document))
-        return false;
-
-    return true;
+    return canMakePayments;
 }
 
 void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
@@ -91,7 +84,7 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const
         if (!canMakePayments)
             return completionHandler(false);
 
-        if (!document || !setApplePayIsActiveIfAllowed(*document))
+        if (!document)
             return completionHandler(false);
 
         completionHandler(true);
@@ -107,9 +100,6 @@ void PaymentCoordinator::openPaymentSetup(Document& document, const String& merc
 bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
-
-    if (!setApplePayIsActiveIfAllowed(document))
-        return false;
 
     Vector<URL> linkIconURLs;
     for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
@@ -283,49 +273,6 @@ std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, uns
         return std::nullopt;
 
     return m_client.validatedPaymentNetwork(paymentNetwork);
-}
-
-bool PaymentCoordinator::shouldEnableApplePayAPIs(Document& document) const
-{
-    if (m_client.supportsUnrestrictedApplePay())
-        return true;
-
-    bool shouldEnableAPIs = true;
-    document.page()->userContentProvider().forEachUserScript([&](DOMWrapperWorld&, const UserScript&) {
-        shouldEnableAPIs = false;
-    });
-
-    if (!shouldEnableAPIs)
-        PAYMENT_COORDINATOR_RELEASE_LOG("shouldEnableApplePayAPIs() -> false (user scripts)");
-
-    return shouldEnableAPIs;
-}
-
-bool PaymentCoordinator::setApplePayIsActiveIfAllowed(Document& document) const
-{
-    auto hasEvaluatedUserAgentScripts = document.hasEvaluatedUserAgentScripts();
-    auto isRunningUserScripts = document.isRunningUserScripts();
-    auto supportsUnrestrictedApplePay = m_client.supportsUnrestrictedApplePay();
-
-    if (!supportsUnrestrictedApplePay && (hasEvaluatedUserAgentScripts || isRunningUserScripts)) {
-        ASSERT(!document.isApplePayActive());
-        PAYMENT_COORDINATOR_RELEASE_LOG("setApplePayIsActiveIfAllowed() -> false (hasEvaluatedUserAgentScripts: %d, isRunningUserScripts: %d)", hasEvaluatedUserAgentScripts, isRunningUserScripts);
-        return false;
-    }
-
-    document.setApplePayIsActive();
-    return true;
-}
-
-Expected<void, ExceptionDetails> PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
-{
-    if (m_client.supportsUnrestrictedApplePay() || !document.isApplePayActive())
-        return { };
-
-    ASSERT(!document.hasEvaluatedUserAgentScripts());
-    ASSERT(!document.isRunningUserScripts());
-    PAYMENT_COORDINATOR_RELEASE_LOG_ERROR("shouldAllowUserAgentScripts() -> false (active session)");
-    return makeUnexpected(ExceptionDetails { m_client.userAgentScriptsBlockedErrorMessage() });
 }
 
 void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)

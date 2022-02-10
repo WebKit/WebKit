@@ -824,9 +824,6 @@ public:
     void setQuickLookPassword(const String&);
 
     void setAsRunningUserScripts(Document&);
-#if ENABLE(APPLE_PAY)
-    void setApplePayIsActive(Document&);
-#endif
 
 #if ENABLE(WEBGL)
     enum class SimulatedWebGLContextEvent {

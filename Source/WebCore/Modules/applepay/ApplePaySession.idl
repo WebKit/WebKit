@@ -27,7 +27,6 @@
     ActiveDOMObject,
     Conditional=APPLE_PAY,
     EnabledBySetting=ApplePayEnabled,
-    EnabledForContext,
     Exposed=Window
 ] interface ApplePaySession : EventTarget {
     [CallWith=CurrentDocument] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);

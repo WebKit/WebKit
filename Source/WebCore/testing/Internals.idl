@@ -885,7 +885,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setQuickLookPassword(DOMString password);
 
     [CallWith=CurrentDocument] undefined setAsRunningUserScripts();
-    [CallWith=CurrentDocument, Conditional=APPLE_PAY] undefined setApplePayIsActive();
 
     undefined disableTileSizeUpdateDelay();
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);

@@ -158,21 +158,6 @@ void WebPaymentCoordinator::paymentCoordinatorDestroyed()
     delete this;
 }
 
-bool WebPaymentCoordinator::supportsUnrestrictedApplePay() const
-{
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-    static bool hasEntitlement = WebProcess::singleton().parentProcessHasEntitlement("com.apple.private.WebKit.UnrestrictedApplePay");
-    return hasEntitlement;
-#else
-    return true;
-#endif
-}
-
-String WebPaymentCoordinator::userAgentScriptsBlockedErrorMessage() const
-{
-    return "Unable to run user agent scripts because this document has previously accessed Apple Pay. Documents can be prevented from accessing Apple Pay by adding a WKUserScript to the WKWebView's WKUserContentController."_s;
-}
-
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)

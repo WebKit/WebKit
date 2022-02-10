@@ -349,11 +349,6 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     return request;
 }
 
-bool PaymentRequest::enabledForContext(ScriptExecutionContext& context)
-{
-    return PaymentHandler::enabledForContext(context);
-}
-
 PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption)
     : ActiveDOMObject { document }
     , m_options { WTFMove(options) }

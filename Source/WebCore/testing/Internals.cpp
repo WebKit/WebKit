@@ -5325,13 +5325,6 @@ void Internals::setAsRunningUserScripts(Document& document)
     document.setAsRunningUserScripts();
 }
 
-#if ENABLE(APPLE_PAY)
-void Internals::setApplePayIsActive(Document& document)
-{
-    document.setApplePayIsActive();
-}
-#endif
-
 #if ENABLE(WEBGL)
 void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext& context)
 {
