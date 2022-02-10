@@ -361,7 +361,8 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             wasmCalleesLocker.emplace(Wasm::CalleeRegistry::singleton().getLock());
 #endif
 
-        auto didSuspend = m_jscExecutionThread->suspend();
+        ThreadSuspendLocker threadSuspendLocker;
+        auto didSuspend = m_jscExecutionThread->suspend(threadSuspendLocker);
         if (didSuspend) {
             // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
             // may be holding the malloc lock.
@@ -373,7 +374,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             void* llintPC;
             {
                 PlatformRegisters registers;
-                m_jscExecutionThread->getRegisters(registers);
+                m_jscExecutionThread->getRegisters(threadSuspendLocker, registers);
                 machineFrame = MachineContext::framePointer(registers);
                 callFrame = static_cast<CallFrame*>(machineFrame);
                 auto instructionPointer = MachineContext::instructionPointer(registers);
@@ -419,7 +420,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                 wasValidWalk = walker.wasValidWalk();
             }
 
-            m_jscExecutionThread->resume();
+            m_jscExecutionThread->resume(threadSuspendLocker);
 
             auto startTime = MonotonicTime::now();
             // We can now use data structures that malloc, and do other interesting things, again.

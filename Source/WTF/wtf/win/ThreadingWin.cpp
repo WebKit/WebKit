@@ -98,8 +98,6 @@
 
 namespace WTF {
 
-static Lock globalSuspendLock;
-
 Thread::~Thread()
 {
     // It is OK because FLSAlloc's callback will be called even before there are some open handles.
@@ -211,10 +209,9 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-auto Thread::suspend() -> Expected<void, PlatformSuspendError>
+auto Thread::suspend(const ThreadSuspendLocker&) -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
-    Locker locker { globalSuspendLock };
     DWORD result = SuspendThread(m_handle);
     if (result != (DWORD)-1)
         return { };
@@ -222,15 +219,13 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 }
 
 // During resume, suspend or resume should not be executed from the other threads.
-void Thread::resume()
+void Thread::resume(const ThreadSuspendLocker&)
 {
-    Locker locker { globalSuspendLock };
     ResumeThread(m_handle);
 }
 
-size_t Thread::getRegisters(PlatformRegisters& registers)
+size_t Thread::getRegisters(const ThreadSuspendLocker&, PlatformRegisters& registers)
 {
-    Locker locker { globalSuspendLock };
     registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(m_handle, &registers);
     return sizeof(CONTEXT);

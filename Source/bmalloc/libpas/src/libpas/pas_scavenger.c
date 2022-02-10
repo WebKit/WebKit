@@ -197,8 +197,7 @@ static void* scavenger_thread_main(void* arg)
         
         should_go_again |=
             pas_thread_local_cache_for_all(pas_allocator_scavenge_request_stop_action,
-                                           pas_deallocator_scavenge_flush_log_if_clean_action,
-                                           pas_lock_is_not_held);
+                                           pas_deallocator_scavenge_flush_log_if_clean_action);
 
         pas_heap_lock_lock();
         should_go_again |= pas_compact_expendable_memory_scavenge(pas_expendable_memory_scavenge_periodic);
@@ -472,8 +471,7 @@ void pas_scavenger_clear_all_caches(void)
     pas_scavenger_clear_all_caches_except_remote_tlcs();
     
     pas_thread_local_cache_for_all(pas_allocator_scavenge_force_stop_action,
-                                   pas_deallocator_scavenge_flush_log_action,
-                                   pas_lock_is_not_held);
+                                   pas_deallocator_scavenge_flush_log_action);
 }
 
 void pas_scavenger_decommit_expendable_memory(void)

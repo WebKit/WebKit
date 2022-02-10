@@ -1,3 +1,90 @@
+2022-02-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r289159. rdar://problem/88366590
+
+    Thread suspend and resume should take a global lock to avoid deadlock
+    https://bugs.webkit.org/show_bug.cgi?id=236159
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/bmalloc:
+    
+    Introduce pas_thread_suspend_lock and take it when suspending and resuming threads.
+    
+    * CMakeLists.txt:
+    * bmalloc.xcodeproj/project.pbxproj:
+    * libpas/src/libpas/pas_scavenger.c:
+    (scavenger_thread_main):
+    (pas_scavenger_clear_all_caches):
+    * libpas/src/libpas/pas_thread_local_cache.c:
+    (pas_thread_local_cache_for_all):
+    * libpas/src/libpas/pas_thread_local_cache.h:
+    * libpas/src/libpas/pas_thread_suspend_lock.c: Copied from Source/WTF/wtf/ThreadMessage.cpp.
+    * libpas/src/libpas/pas_thread_suspend_lock.h: Copied from Source/WTF/wtf/ThreadMessage.cpp.
+    
+    Source/JavaScriptCore:
+    
+    * heap/MachineStackMarker.cpp:
+    (JSC::MachineThreads::tryCopyOtherThreadStack):
+    (JSC::MachineThreads::tryCopyOtherThreadStacks):
+    * heap/MachineStackMarker.h:
+    * runtime/SamplingProfiler.cpp:
+    (JSC::SamplingProfiler::takeSample):
+    * runtime/VMTraps.cpp:
+    * wasm/WasmMachineThreads.cpp:
+    (JSC::Wasm::resetInstructionCacheOnAllThreads):
+    
+    Source/WTF:
+    
+    This patch introduces a global lock which should be taken while suspending and resuming a thread.
+    It is possible that two different threads suspend and resume threads. And if threads suspend
+    each other without critical section, it can cause a dead lock.
+    
+    To avoid this problem, we introduce a global lock which should be taken when suspending and resuming
+    threads. Since libpas is also using thread suspension, we expose a global pas_thread_suspend_lock
+    when libpas is used, and we use this lock in WTF's Thread suspension code.
+    
+    * wtf/ThreadMessage.cpp:
+    (WTF::sendMessageScoped):
+    * wtf/ThreadMessage.h:
+    (WTF::sendMessage):
+    * wtf/Threading.cpp:
+    (WTF::ThreadSuspendLocker::ThreadSuspendLocker):
+    (WTF::ThreadSuspendLocker::~ThreadSuspendLocker):
+    * wtf/Threading.h:
+    * wtf/posix/ThreadingPOSIX.cpp:
+    (WTF::Thread::suspend):
+    (WTF::Thread::resume):
+    (WTF::Thread::getRegisters):
+    * wtf/win/ThreadingWin.cpp:
+    (WTF::Thread::suspend):
+    (WTF::Thread::resume):
+    (WTF::Thread::getRegisters):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+    (runThreadMessageTest):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289159 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Thread suspend and resume should take a global lock to avoid deadlock
+            https://bugs.webkit.org/show_bug.cgi?id=236159
+
+            Reviewed by Geoffrey Garen.
+
+            * heap/MachineStackMarker.cpp:
+            (JSC::MachineThreads::tryCopyOtherThreadStack):
+            (JSC::MachineThreads::tryCopyOtherThreadStacks):
+            * heap/MachineStackMarker.h:
+            * runtime/SamplingProfiler.cpp:
+            (JSC::SamplingProfiler::takeSample):
+            * runtime/VMTraps.cpp:
+            * wasm/WasmMachineThreads.cpp:
+            (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
 2022-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289354. rdar://problem/88611690

@@ -331,8 +331,7 @@ PAS_API void pas_thread_local_cache_flush_deallocation_log(
 /* Returns true if it's possible that we'll be able to return more memory if this was called
    again. */
 PAS_API bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_action,
-                                            pas_deallocator_scavenge_action deallocator_action,
-                                            pas_lock_hold_mode heap_lock_hold_mode);
+                                            pas_deallocator_scavenge_action deallocator_action);
 
 PAS_API PAS_NEVER_INLINE void pas_thread_local_cache_append_deallocation_slow(
     pas_thread_local_cache* thread_local_cache,
