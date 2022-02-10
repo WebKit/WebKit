@@ -2011,6 +2011,7 @@
 		E5DEFA6826F8F42600AB68DB /* PhotosUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */; };
 		EB36B16827A7B4500050E00D /* PushService.h in Headers */ = {isa = PBXBuildFile; fileRef = EB36B16627A7B4500050E00D /* PushService.h */; };
 		EB36B16927A7B4500050E00D /* PushService.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB36B16727A7B4500050E00D /* PushService.mm */; };
+		EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.sb in Resources */ = {isa = PBXBuildFile; fileRef = EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */; };
 		EBA8D3AB27A5E31300CB7900 /* ApplePushServiceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */; };
 		EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */; };
 		EBA8D3B327A5E33F00CB7900 /* MockPushServiceConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */; };
@@ -6506,6 +6507,8 @@
 		EB0D312E275AE13300863D8F /* com.apple.webkit.webpushd.ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.ios.plist; sourceTree = "<group>"; };
 		EB36B16627A7B4500050E00D /* PushService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushService.h; sourceTree = "<group>"; };
 		EB36B16727A7B4500050E00D /* PushService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushService.mm; sourceTree = "<group>"; };
+		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.sb.in; sourceTree = "<group>"; };
+		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */ = {isa = PBXFileReference; lastKnownFileType = file; name = com.apple.WebKit.webpushd.sb; path = DerivedSources/WebKit/com.apple.WebKit.webpushd.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePushServiceSPI.h; sourceTree = "<group>"; };
 		EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePushServiceConnection.mm; sourceTree = "<group>"; };
 		EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPushServiceConnection.h; sourceTree = "<group>"; };
@@ -10160,6 +10163,7 @@
 		5C157A0A2717C9F100ED5280 /* webpushd */ = {
 			isa = PBXGroup;
 			children = (
+				EB7D252827B316A6009CB586 /* mac */,
 				517B5F63275A8D5C002DC22D /* webpushtool */,
 				5160E954274B887100567388 /* AppBundleRequest.h */,
 				5160E953274B887100567388 /* AppBundleRequest.mm */,
@@ -12094,6 +12098,7 @@
 				7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */,
 				572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */,
 				E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */,
+				EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
@@ -12740,6 +12745,14 @@
 				AAB145E4223F931200E489D8 /* PrefetchCache.h */,
 			);
 			path = cache;
+			sourceTree = "<group>";
+		};
+		EB7D252827B316A6009CB586 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.sb.in */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		F638955A133BF57D008941D5 /* mac */ = {
@@ -13431,6 +13444,7 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
+				5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,
@@ -14643,6 +14657,7 @@
 				E17AE2C316B9C63A001C42F2 /* com.apple.WebKit.GPUProcess.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
 				572EBBC42536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb in Resources */,
+				EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,

@@ -1,3 +1,40 @@
+2022-02-10  Ben Nham  <nham@apple.com>
+
+        Apply default sandbox to webpushd on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=236342
+
+        Reviewed by Per Arne Vollan.
+
+        This applies a default sandbox profile that allows and logs all operations by webpushd on
+        the Mac. In future patches we'll tighten the sandbox based on the sandbox logs that we
+        receive.
+
+        To do this, I refactored the sandbox initialization logic in AuxiliaryProcess so that it can
+        be called without creating an AuxiliaryProcess instance. This probably should be refactored
+        further (e.g. since webpushd isn't an AuxiliaryProcess, but rather a system daemon). But I
+        wanted to keep the amount of refactoring low for now while we're still figuring things out.
+
+        We also do not currently support compiling and caching the sandbox profiles. We'll add that
+        support later.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::applySandboxProfileForDaemon):
+        * Shared/AuxiliaryProcess.h:
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::getUserDirectorySuffix):
+        (WebKit::populateSandboxInitializationParameters):
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        (WebKit::AuxiliaryProcess::applySandboxProfileForDaemon):
+        * WebKit.xcodeproj/project.pbxproj:
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::applySandbox):
+        (WebKit::WebPushDaemonMain):
+        * webpushd/mac/com.apple.WebKit.webpushd.sb.in: Added.
+
 2022-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support `WebPageProxy::replaceSelectionWithPasteboardData()` on iOS

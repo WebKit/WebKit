@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPushDaemonMain.h"
 
+#import "AuxiliaryProcess.h"
 #import "DaemonConnection.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
@@ -71,10 +72,21 @@ using WebPushD::connectionRemoved;
 
 namespace WebKit {
 
+static void applySandbox()
+{
+#if PLATFORM(MAC)
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+    auto profilePath = makeString(String([bundle resourcePath]), "/com.apple.WebKit.webpushd.sb");
+    AuxiliaryProcess::applySandboxProfileForDaemon(profilePath, "com.apple.webkit.webpushd"_s);
+#endif
+}
+
 int WebPushDaemonMain(int argc, char** argv)
 {
     @autoreleasepool {
         WTF::initializeMainThread();
+
+        applySandbox();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
         WTF::logChannels().initializeLogChannelsIfNecessary();

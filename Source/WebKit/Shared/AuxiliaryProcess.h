@@ -87,6 +87,8 @@ public:
     void setQOS(int latencyQOS, int throughputQOS);
 #endif
 
+    static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
+
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
 
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }

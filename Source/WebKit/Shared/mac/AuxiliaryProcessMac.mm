@@ -637,24 +637,26 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #endif // USE(CACHE_COMPILED_SANDBOX)
 }
 
-static void initializeSandboxParameters(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParameters& parameters)
 {
-    // Verify user directory suffix.
-    if (sandboxParameters.userDirectorySuffix().isNull()) {
-        auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
-        if (userDirectorySuffix != parameters.extraInitializationData.end()) {
-            String suffix = userDirectorySuffix->value;
-            auto firstPathSeparator = suffix.find("/");
-            if (firstPathSeparator != notFound)
-                suffix.truncate(firstPathSeparator);
-            sandboxParameters.setUserDirectorySuffix(suffix);
-        } else {
-            String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
-            if (clientIdentifier.isNull())
-                clientIdentifier = parameters.clientIdentifier;
-            sandboxParameters.setUserDirectorySuffix(makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier));
-        }
+    auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
+    if (userDirectorySuffix != parameters.extraInitializationData.end()) {
+        String suffix = userDirectorySuffix->value;
+        auto firstPathSeparator = suffix.find("/");
+        if (firstPathSeparator != notFound)
+            suffix.truncate(firstPathSeparator);
+        return suffix;
     }
+
+    String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
+    if (clientIdentifier.isNull())
+        clientIdentifier = parameters.clientIdentifier;
+    return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
+}
+
+static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
+{
+    RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
 
     String osSystemMarketingVersion = systemMarketingVersion();
     Vector<String> osVersionParts = osSystemMarketingVersion.split('.');
@@ -714,7 +716,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
     TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
 
 #if USE(CACHE_COMPILED_SANDBOX)
-    // This must be called before initializeSandboxParameters so that the path does not include the user directory suffix.
+    // This must be called before populateSandboxInitializationParameters so that the path does not include the user directory suffix.
     // We don't want the user directory suffix because we want all processes of the same type to use the same cache directory.
     String dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
 #else
@@ -727,7 +729,10 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #endif
     sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 
-    initializeSandboxParameters(parameters, sandboxParameters);
+    if (sandboxParameters.userDirectorySuffix().isNull())
+        sandboxParameters.setUserDirectorySuffix(getUserDirectorySuffix(parameters));
+
+    populateSandboxInitializationParameters(sandboxParameters);
 
     if (!applySandbox(parameters, sandboxParameters, dataVaultParentDirectory)) {
         WTFLogAlways("%s: Unable to apply sandbox\n", getprogname());
@@ -742,6 +747,24 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
             exit(EX_NOPERM);
         }
     }
+}
+
+void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)
+{
+    TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
+
+    SandboxInitializationParameters parameters { };
+    parameters.setOverrideSandboxProfilePath(profilePath);
+    parameters.setUserDirectorySuffix(userDirectorySuffix);
+    populateSandboxInitializationParameters(parameters);
+
+    String profileOrProfilePath;
+    bool isProfilePath;
+    getSandboxProfileOrProfilePath(parameters, profileOrProfilePath, isProfilePath);
+    RELEASE_ASSERT(!profileOrProfilePath.isEmpty());
+
+    bool success = compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, parameters);
+    RELEASE_ASSERT(success);
 }
 
 #if USE(APPKIT)
