@@ -1,3 +1,56 @@
+2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ImageBuffer::get/putPixelBuffer should not go through DisplayList
+        https://bugs.webkit.org/show_bug.cgi?id=236305
+
+        Reviewed by Geoffrey Garen.
+
+        Move code that carries out RemoteImageBufferProxy GetPixelBuffer, PutPixelBuffer
+        from the display list playback to RemoteImageBuffer implementation
+        in RemoteRenderingBackend, the same place that hosts other
+        RemoteImageBuffer function invocations.
+
+        This makes it possible in the future to mark GetPixelBuffer as a read operation
+        depending on the previous write operations. Previously GetPixelBuffer was recorded
+        to the display list before the display list was flushed, which is semantically wrong
+        and in practice would cause inverted references.
+
+        Simplify the protocol to implement the GetPixelBuffer. Previously it was:
+         - If GPUP does not have the semaphore and the shm, ask for GPUP to send them,  sync
+         - Else if GPUP does not have the semaphore, ask for GPUP to send it, sync
+         - Else if GPUP does not have the shm send, ask for GPUP to send it, sync
+         - Send the GetPixelBuffer message via stream async
+         - Wait for the semaphore
+
+        After it is:
+         - If GPUP does not have the shm send GetPixelBuffer with the shm, sync
+         - Else send the GetPixelBuffer via stream sync
+
+        There's no point in sending a semaphore, the stream sync message is
+        just a wait on the stream semaphore. Also, since semaphores
+        might have spurious wakeups, it is not enough of a protocol to wait a
+        plain semaphore.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        * GPUProcess/graphics/RemoteDisplayListRecorder.messages.in:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory):
+        (WebKit::RemoteRenderingBackend::putPixelBufferForImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::getPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::putPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::updateSharedMemoryForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2022-02-10  Devin Rousso  <drousso@apple.com>
 
         Permit simultaneous Apple Pay and script injection

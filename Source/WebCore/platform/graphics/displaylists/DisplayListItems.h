@@ -1968,127 +1968,6 @@ private:
     FloatRect m_rect;
 };
 
-class GetPixelBuffer {
-public:
-    static constexpr ItemType itemType = ItemType::GetPixelBuffer;
-    static constexpr bool isInlineItem = false;
-    static constexpr bool isDrawingItem = false;
-
-    GetPixelBuffer(PixelBufferFormat outputFormat, const IntRect& srcRect)
-        : m_srcRect(srcRect)
-        , m_outputFormat(WTFMove(outputFormat))
-    {
-    }
-
-    // Explicit destructor added to force non-trivial destructor on all platforms
-    // as the encoding logic currently hardcodes which display list item types need
-    // out of line treatment rather than using the isInlineItem constant.
-    ~GetPixelBuffer() { }
-
-    const PixelBufferFormat& outputFormat() const { return m_outputFormat; }
-    IntRect srcRect() const { return m_srcRect; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GetPixelBuffer> decode(Decoder&);
-
-private:
-    IntRect m_srcRect;
-    PixelBufferFormat m_outputFormat;
-};
-
-template<class Encoder>
-void GetPixelBuffer::encode(Encoder& encoder) const
-{
-    encoder << m_srcRect;
-    encoder << m_outputFormat;
-}
-
-template<class Decoder>
-std::optional<GetPixelBuffer> GetPixelBuffer::decode(Decoder& decoder)
-{
-    std::optional<IntRect> srcRect;
-    decoder >> srcRect;
-    if (!srcRect)
-        return std::nullopt;
-
-    std::optional<PixelBufferFormat> outputFormat;
-    decoder >> outputFormat;
-    if (!outputFormat)
-        return std::nullopt;
-
-    return {{ WTFMove(*outputFormat), *srcRect }};
-}
-
-class PutPixelBuffer {
-public:
-    static constexpr ItemType itemType = ItemType::PutPixelBuffer;
-    static constexpr bool isInlineItem = false;
-    static constexpr bool isDrawingItem = true;
-
-    WEBCORE_EXPORT PutPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
-    WEBCORE_EXPORT PutPixelBuffer(PixelBuffer&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
-
-    PutPixelBuffer(const PutPixelBuffer&);
-    PutPixelBuffer(PutPixelBuffer&&) = default;
-    PutPixelBuffer& operator=(const PutPixelBuffer&);
-    PutPixelBuffer& operator=(PutPixelBuffer&&) = default;
-
-    void swap(PutPixelBuffer&);
-
-    const PixelBuffer& pixelBuffer() const { return m_pixelBuffer; }
-    IntRect srcRect() const { return m_srcRect; }
-    IntPoint destPoint() const { return m_destPoint; }
-    AlphaPremultiplication destFormat() const { return m_destFormat; }
-
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
-    std::optional<FloatRect> globalBounds() const { return {{ m_destPoint, m_srcRect.size() }}; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PutPixelBuffer> decode(Decoder&);
-
-private:
-    IntRect m_srcRect;
-    IntPoint m_destPoint;
-    PixelBuffer m_pixelBuffer;
-    AlphaPremultiplication m_destFormat;
-};
-
-template<class Encoder>
-void PutPixelBuffer::encode(Encoder& encoder) const
-{
-    encoder << m_pixelBuffer;
-    encoder << m_srcRect;
-    encoder << m_destPoint;
-    encoder << m_destFormat;
-}
-
-template<class Decoder>
-std::optional<PutPixelBuffer> PutPixelBuffer::decode(Decoder& decoder)
-{
-    std::optional<PixelBuffer> pixelBuffer;
-    std::optional<IntRect> srcRect;
-    std::optional<IntPoint> destPoint;
-    std::optional<AlphaPremultiplication> destFormat;
-
-    decoder >> pixelBuffer;
-    if (!pixelBuffer)
-        return std::nullopt;
-
-    decoder >> srcRect;
-    if (!srcRect)
-        return std::nullopt;
-
-    decoder >> destPoint;
-    if (!destPoint)
-        return std::nullopt;
-
-    decoder >> destFormat;
-    if (!destFormat)
-        return std::nullopt;
-
-    return {{ WTFMove(*pixelBuffer), *srcRect, *destPoint, *destFormat }};
-}
-
 #if ENABLE(VIDEO)
 class PaintFrameForMedia {
 public:
@@ -2423,8 +2302,6 @@ using DisplayListItem = std::variant
     , FillRectWithRoundedHole
     , FillRoundedRect
     , FlushContext
-    , GetPixelBuffer
-    , PutPixelBuffer
     , Restore
     , Rotate
     , Save
@@ -2527,8 +2404,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::FlushContext,
-    WebCore::DisplayList::ItemType::GetPixelBuffer,
-    WebCore::DisplayList::ItemType::PutPixelBuffer,
 #if ENABLE(VIDEO)
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
 #endif

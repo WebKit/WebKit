@@ -195,11 +195,6 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::FlushContext:
         get<FlushContext>().apply(context);
         return;
-    case ItemType::GetPixelBuffer:
-    case ItemType::PutPixelBuffer:
-        // Should already be handled by the delegate.
-        ASSERT_NOT_REACHED();
-        return;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         get<PaintFrameForMedia>().apply(context);
@@ -295,12 +290,6 @@ void ItemHandle::destroy()
         return;
     case ItemType::FillRoundedRect:
         get<FillRoundedRect>().~FillRoundedRect();
-        return;
-    case ItemType::GetPixelBuffer:
-        get<GetPixelBuffer>().~GetPixelBuffer();
-        return;
-    case ItemType::PutPixelBuffer:
-        get<PutPixelBuffer>().~PutPixelBuffer();
         return;
     case ItemType::SetLineDash:
         get<SetLineDash>().~SetLineDash();
@@ -528,10 +517,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<FillRectWithRoundedHole>(itemOffset, *this);
     case ItemType::FillRoundedRect:
         return copyInto<FillRoundedRect>(itemOffset, *this);
-    case ItemType::GetPixelBuffer:
-        return copyInto<GetPixelBuffer>(itemOffset, *this);
-    case ItemType::PutPixelBuffer:
-        return copyInto<PutPixelBuffer>(itemOffset, *this);
     case ItemType::SetLineDash:
         return copyInto<SetLineDash>(itemOffset, *this);
     case ItemType::SetState:

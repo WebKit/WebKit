@@ -431,16 +431,6 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
     handleItem(DisplayList::FillEllipse(rect));
 }
 
-void RemoteDisplayListRecorder::getPixelBuffer(const IntRect& srcRect, const PixelBufferFormat& outputFormat)
-{
-    m_renderingBackend->populateGetPixelBufferSharedMemory(m_imageBuffer->getPixelBuffer(outputFormat, srcRect));
-}
-
-void RemoteDisplayListRecorder::putPixelBuffer(const IntRect& srcRect, const IntPoint& destPoint, const PixelBuffer& pixelBuffer, AlphaPremultiplication destFormat)
-{
-    m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
-}
-
 void RemoteDisplayListRecorder::convertToLuminanceMask()
 {
     m_imageBuffer->convertToLuminanceMask();

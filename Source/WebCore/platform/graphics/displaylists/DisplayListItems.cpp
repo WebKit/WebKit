@@ -759,61 +759,6 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const GetPixelBuffer& item)
-{
-    ts.dumpProperty("outputFormat", item.outputFormat());
-    ts.dumpProperty("srcRect", item.srcRect());
-    return ts;
-}
-
-PutPixelBuffer::PutPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-    : m_srcRect(srcRect)
-    , m_destPoint(destPoint)
-    , m_pixelBuffer(pixelBuffer.deepClone()) // This copy is actually required to preserve the semantics of putPixelBuffer().
-    , m_destFormat(destFormat)
-{
-}
-
-PutPixelBuffer::PutPixelBuffer(PixelBuffer&& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-    : m_srcRect(srcRect)
-    , m_destPoint(destPoint)
-    , m_pixelBuffer(WTFMove(pixelBuffer))
-    , m_destFormat(destFormat)
-{
-}
-
-PutPixelBuffer::PutPixelBuffer(const PutPixelBuffer& other)
-    : m_srcRect(other.m_srcRect)
-    , m_destPoint(other.m_destPoint)
-    , m_pixelBuffer(other.m_pixelBuffer.deepClone())
-    , m_destFormat(other.m_destFormat)
-{
-}
-
-PutPixelBuffer& PutPixelBuffer::operator=(const PutPixelBuffer& other)
-{
-    PutPixelBuffer copy { other };
-    swap(copy);
-    return *this;
-}
-
-void PutPixelBuffer::swap(PutPixelBuffer& other)
-{
-    std::swap(m_srcRect, other.m_srcRect);
-    std::swap(m_destPoint, other.m_destPoint);
-    std::swap(m_pixelBuffer, other.m_pixelBuffer);
-    std::swap(m_destFormat, other.m_destFormat);
-}
-
-static TextStream& operator<<(TextStream& ts, const PutPixelBuffer& item)
-{
-    ts.dumpProperty("pixelBufferSize", item.pixelBuffer().size());
-    ts.dumpProperty("srcRect", item.srcRect());
-    ts.dumpProperty("destPoint", item.destPoint());
-    ts.dumpProperty("destFormat", item.destFormat());
-    return ts;
-}
-
 #if ENABLE(VIDEO)
 PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
     : m_identifier(player.identifier())
@@ -1106,8 +1051,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::FlushContext: ts << "flush-context"; break;
-    case ItemType::GetPixelBuffer: ts << "get-pixel-buffer"; break;
-    case ItemType::PutPixelBuffer: ts << "put-pixel-buffer"; break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
 #endif
@@ -1277,12 +1220,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::FlushContext:
         ts << item.get<FlushContext>();
-        break;
-    case ItemType::GetPixelBuffer:
-        ts << item.get<GetPixelBuffer>();
-        break;
-    case ItemType::PutPixelBuffer:
-        ts << item.get<PutPixelBuffer>();
         break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:

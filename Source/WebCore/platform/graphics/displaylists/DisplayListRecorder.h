@@ -36,18 +36,13 @@
 
 namespace WebCore {
 
-enum class AlphaPremultiplication : uint8_t;
-
-class FloatPoint;
 class FloatPoint;
 class FloatRect;
 class Font;
 class GlyphBuffer;
 class Image;
-class PixelBuffer;
 class SourceImage;
 
-struct GraphicsContextState;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -59,8 +54,6 @@ public:
     WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    virtual void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect) = 0;
-    virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
     virtual void convertToLuminanceMask() = 0;
     virtual void transformToColorSpace(const DestinationColorSpace&) = 0;
     virtual void flushContext(GraphicsContextFlushIdentifier) = 0;

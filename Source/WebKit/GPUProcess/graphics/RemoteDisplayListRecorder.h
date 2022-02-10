@@ -109,8 +109,6 @@ public:
 #endif
     void fillPath(const WebCore::Path&);
     void fillEllipse(const WebCore::FloatRect&);
-    void getPixelBuffer(const WebCore::IntRect& srcRect, const WebCore::PixelBufferFormat& outputFormat);
-    void putPixelBuffer(const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, const WebCore::PixelBuffer&, WebCore::AlphaPremultiplication destFormat);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
     void paintFrameForMedia(WebCore::MediaPlayerIdentifier, const WebCore::FloatRect& destination);
