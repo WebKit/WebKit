@@ -146,6 +146,11 @@ static int createSharedMemory()
     }
 #endif
 
+#if HAVE(SHM_ANON)
+    do {
+        fileDescriptor = shm_open(SHM_ANON, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    } while (fileDescriptor == -1 && errno == EINTR);
+#else
     CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
         String name = String("/WK2SharedMemory.") + String::number(static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
@@ -158,6 +163,7 @@ static int createSharedMemory()
 
     if (fileDescriptor != -1)
         shm_unlink(tempName.data());
+#endif
 
     return fileDescriptor;
 }

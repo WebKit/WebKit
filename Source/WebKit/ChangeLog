@@ -1,3 +1,17 @@
+2022-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        SharedMemoryUnix should use SHM_ANON when available
+        https://bugs.webkit.org/show_bug.cgi?id=236416
+
+        Reviewed by Don Olmstead.
+
+        FreeBSD is able to use shm_open(SHM_ANON, ...) to create an anonymous shared memory object which is subject to RAII:
+        https://www.freebsd.org/cgi/man.cgi?query=shm_open
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::createSharedMemory):
+        Make use of SHM_ANON if we have it.
+
 2022-02-09  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Move ImageBuffer::createCompatibleImageBuffer() and SVGRenderingContext::createImageBuffer to GraphicsContext
