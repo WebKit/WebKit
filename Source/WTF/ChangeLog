@@ -1,3 +1,17 @@
+2022-02-10  Elliott Williams  <emw@apple.com>
+
+        Reland native Xcode build phases for "Copy WTF Headers", again
+        https://bugs.webkit.org/show_bug.cgi?id=235744
+
+        Reviewed by Alexey Proskuryakov.
+
+        Changes since revert of r289490:
+
+        Some WTF headers were never tracked in WTF.xcodeproj, causing builds to fail (but only after
+        a build directory was cleaned and stale headers removed). 
+
+        * WTF.xcodeproj/project.pbxproj: Add file references for missing headers.
+
 2022-02-10  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r289485.
