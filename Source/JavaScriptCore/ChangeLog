@@ -1,3 +1,57 @@
+2022-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use local variable pointer for concurrently load value
+        https://bugs.webkit.org/show_bug.cgi?id=236387
+
+        Reviewed by Saam Barati.
+
+        Consistently using local pointer to load member fields in
+
+            1. WriteBarrierStructureID
+            2. JSString's fiber
+            3. Weak
+            4. WriteBarrier<SomeKindOfCell>
+
+        to encourage compilers not to load the field twice.
+
+        * heap/Weak.cpp:
+        (JSC::weakClearSlowCase):
+        * heap/Weak.h:
+        (JSC::Weak::isHashTableEmptyValue const):
+        (JSC::Weak::unsafeImpl const):
+        (JSC::Weak::clear):
+        (JSC::Weak::impl const):
+        * heap/WeakInlines.h:
+        (JSC::Weak<T>::isHashTableDeletedValue const):
+        (JSC:: const):
+        (JSC::Weak<T>::operator const):
+        (JSC::Weak<T>::get const):
+        (JSC::Weak<T>::leakImpl):
+        * runtime/JSString.cpp:
+        (JSC::JSString::dumpToStream):
+        (JSC::JSString::estimatedSize):
+        (JSC::JSString::visitChildrenImpl):
+        * runtime/JSString.h:
+        (JSC::JSString::fiberConcurrently const):
+        (JSC::JSString::is8Bit const):
+        (JSC::JSString::length const):
+        (JSC::JSString::tryGetValueImpl const):
+        (JSC::JSString::isSubstring const):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::get const):
+        (JSC::WriteBarrierBase::operator* const):
+        (JSC::WriteBarrierBase::operator-> const):
+        (JSC::WriteBarrierBase::operator bool const):
+        (JSC::WriteBarrierBase::operator! const):
+        (JSC::WriteBarrierBase::unvalidatedGet const):
+        (JSC::WriteBarrierBase::cell const):
+        (JSC::WriteBarrierStructureID::get const):
+        (JSC::WriteBarrierStructureID::operator* const):
+        (JSC::WriteBarrierStructureID::operator-> const):
+        (JSC::WriteBarrierStructureID::operator bool const):
+        (JSC::WriteBarrierStructureID::operator! const):
+        (JSC::WriteBarrierStructureID::unvalidatedGet const):
+
 2022-02-09  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified build fixes after r289247

@@ -237,6 +237,8 @@ protected:
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
     bool isSubstring() const;
 
+    uintptr_t fiberConcurrently() const { return m_fiber; }
+
     mutable uintptr_t m_fiber;
 
 private:
@@ -695,7 +697,7 @@ JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
 // is in the middle of converting JSRopeString to JSString.
 ALWAYS_INLINE bool JSString::is8Bit() const
 {
-    uintptr_t pointer = m_fiber;
+    uintptr_t pointer = fiberConcurrently();
     if (pointer & isRopeInPointer) {
         // Do not load m_fiber twice. We should use the information in pointer.
         // Otherwise, JSRopeString may be converted to JSString between the first and second accesses.
@@ -709,7 +711,7 @@ ALWAYS_INLINE bool JSString::is8Bit() const
 // when we resolve a JSRopeString.
 ALWAYS_INLINE unsigned JSString::length() const
 {
-    uintptr_t pointer = m_fiber;
+    uintptr_t pointer = fiberConcurrently();
     if (pointer & isRopeInPointer)
         return jsCast<const JSRopeString*>(this)->length();
     return bitwise_cast<StringImpl*>(pointer)->length();
@@ -723,7 +725,7 @@ inline const StringImpl* JSString::getValueImpl() const
 
 inline const StringImpl* JSString::tryGetValueImpl() const
 {
-    uintptr_t pointer = m_fiber;
+    uintptr_t pointer = fiberConcurrently();
     if (pointer & isRopeInPointer)
         return nullptr;
     return bitwise_cast<StringImpl*>(pointer);
@@ -1073,7 +1075,7 @@ ALWAYS_INLINE StringViewWithUnderlyingString JSString::viewWithUnderlyingString(
 
 inline bool JSString::isSubstring() const
 {
-    return m_fiber & JSRopeString::isSubstringInPointer;
+    return fiberConcurrently() & JSRopeString::isSubstringInPointer;
 }
 
 } // namespace JSC
