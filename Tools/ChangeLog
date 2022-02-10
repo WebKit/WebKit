@@ -1,3 +1,17 @@
+2022-02-10  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting 247040@main.
+        https://bugs.webkit.org/show_bug.cgi?id=236399
+        <rdar://problem/88707207>
+
+        Broke EWS links after merging.
+
+        Reverted changeset:
+
+        [EWS] Link commit URL to pull request
+        https://bugs.webkit.org/show_bug.cgi?id=236399
+        <rdar://problem/88707207>
+
 2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP

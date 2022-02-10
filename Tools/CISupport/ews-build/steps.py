@@ -91,15 +91,13 @@ class GitHub(object):
         return '{}/pull/{}'.format(repository_url, pr_number)
 
     @classmethod
-    def commit_url(cls, sha, repository_url=None, pr_number=None):
+    def commit_url(cls, sha, repository_url=None):
         if not repository_url:
             repository_url = '{}{}'.format(GITHUB_URL, GITHUB_PROJECTS[0])
         if repository_url not in GitHub.repository_urls():
             return ''
         if not sha:
             return ''
-        if pr_number:
-            return '{}/pull/{}/commits/{}'.format(repository_url, pr_number, sha)
         return '{}/commit/{}'.format(repository_url, sha)
 
     @classmethod
@@ -330,7 +328,7 @@ class ConfigureBuild(buildstep.BuildStep):
                 display_name = '{} ({})'.format(display_name, github_username)
             self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
         if revision:
-            self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url, pr_number))
+            self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url))
 
 
 class CheckOutSource(git.Git):
