@@ -309,6 +309,10 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
 {
     auto proxy = adoptNS([allocASCAgentProxyInstance() init]);
 
+#if PLATFORM(IOS)
+    [proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([handler = WTFMove(handler), proxy = WTFMove(proxy)](id <ASCCredentialProtocol> credential, NSError *error) mutable {
+        callOnMainRunLoop([handler = WTFMove(handler), proxy = WTFMove(proxy), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
+#elif PLATFORM(MAC)
     RetainPtr<NSWindow> window = m_webPageProxy.platformWindow();
     [proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), window = WTFMove(window), proxy = WTFMove(proxy)](NSXPCListenerEndpoint *daemonEndpoint, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), window = WTFMove(window), proxy = WTFMove(proxy), daemonEndpoint = retainPtr(daemonEndpoint), error = retainPtr(error)] () mutable {
@@ -319,7 +323,10 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
             }
 
             weakThis->m_presenter = adoptNS([allocASCAuthorizationRemotePresenterInstance() init]);
-            [weakThis->m_presenter presentWithWindow:window.get() daemonEndpoint:daemonEndpoint.get() completionHandler:makeBlockPtr([handler = WTFMove(handler), proxy = WTFMove(proxy)](id <ASCCredentialProtocol> credential, NSError *error) mutable {
+            [weakThis->m_presenter presentWithWindow:window.get() daemonEndpoint:daemonEndpoint.get() completionHandler:makeBlockPtr([handler = WTFMove(handler), proxy = WTFMove(proxy)](id <ASCCredentialProtocol> credentialNotRetain, NSError *errorNotRetain) mutable {
+                auto credential = retainPtr(credentialNotRetain);
+                auto error = retainPtr(errorNotRetain);
+#endif
                 AuthenticatorResponseData response = { };
                 AuthenticatorAttachment attachment;
                 ExceptionData exceptionData = { };
@@ -328,21 +335,21 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                     attachment = AuthenticatorAttachment::Platform;
                     response.isAuthenticatorAttestationResponse = true;
 
-                    ASCPlatformPublicKeyCredentialRegistration *registrationCredential = credential;
+                    ASCPlatformPublicKeyCredentialRegistration *registrationCredential = credential.get();
                     response.rawId = toArrayBuffer(registrationCredential.credentialID);
                     response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
                 } else if ([credential isKindOfClass:getASCSecurityKeyPublicKeyCredentialRegistrationClass()]) {
                     attachment = AuthenticatorAttachment::CrossPlatform;
                     response.isAuthenticatorAttestationResponse = true;
 
-                    ASCSecurityKeyPublicKeyCredentialRegistration *registrationCredential = credential;
+                    ASCSecurityKeyPublicKeyCredentialRegistration *registrationCredential = credential.get();
                     response.rawId = toArrayBuffer(registrationCredential.credentialID);
                     response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
                 } else if ([credential isKindOfClass:getASCPlatformPublicKeyCredentialAssertionClass()]) {
                     attachment = AuthenticatorAttachment::Platform;
                     response.isAuthenticatorAttestationResponse = false;
 
-                    ASCPlatformPublicKeyCredentialAssertion *assertionCredential = credential;
+                    ASCPlatformPublicKeyCredentialAssertion *assertionCredential = credential.get();
                     response.rawId = toArrayBuffer(assertionCredential.credentialID);
                     response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
                     response.signature = toArrayBuffer(assertionCredential.signature);
@@ -351,7 +358,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                     attachment = AuthenticatorAttachment::CrossPlatform;
                     response.isAuthenticatorAttestationResponse = false;
 
-                    ASCSecurityKeyPublicKeyCredentialAssertion *assertionCredential = credential;
+                    ASCSecurityKeyPublicKeyCredentialAssertion *assertionCredential = credential.get();
                     response.rawId = toArrayBuffer(assertionCredential.credentialID);
                     response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
                     response.signature = toArrayBuffer(assertionCredential.signature);
@@ -360,13 +367,13 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                     attachment = (AuthenticatorAttachment) 0;
                     ExceptionCode exceptionCode;
                     NSString *errorMessage = nil;
-                    if ([error.domain isEqualToString:WKErrorDomain]) {
-                        exceptionCode = toExceptionCode(error.code);
-                        errorMessage = error.userInfo[NSLocalizedDescriptionKey];
+                    if ([error.get().domain isEqualToString:WKErrorDomain]) {
+                        exceptionCode = toExceptionCode(error.get().code);
+                        errorMessage = error.get().userInfo[NSLocalizedDescriptionKey];
                     } else {
                         exceptionCode = NotAllowedError;
 
-                        if ([error.domain isEqualToString:ASCAuthorizationErrorDomain] && error.code == ASCAuthorizationErrorUserCanceled)
+                        if ([error.get().domain isEqualToString:ASCAuthorizationErrorDomain] && error.get().code == ASCAuthorizationErrorUserCanceled)
                             errorMessage = @"This request has been cancelled by the user.";
                         else
                             errorMessage = @"Operation failed.";
@@ -376,7 +383,9 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
                 }
 
                 handler(response, attachment, exceptionData);
+#if PLATFORM(MAC)
             }).get()];
+#endif
         });
     }).get()];
 }
