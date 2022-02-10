@@ -84,6 +84,9 @@ public:
     bool isEmpty() const;
 
     RefPtr<WebCore::FragmentedSharedBuffer> enclosingImageData() const;
+#if PLATFORM(COCOA)
+    NSData *enclosingImageNSData() const;
+#endif
     std::optional<uint64_t> fileSizeForDisplay() const;
 
     void setHasEnclosingImage(bool hasEnclosingImage) { m_hasEnclosingImage = hasEnclosingImage; }

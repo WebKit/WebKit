@@ -149,7 +149,8 @@
         
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WeakPtr weakPage = _menuProxy->page();
-        [itemProvider loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeData completionHandler:[weakPage, attachmentID = _attachmentID](NSData *data, NSError *error) {
+        NSString *itemUTI = itemProvider.registeredTypeIdentifiers.firstObject;
+        [itemProvider loadDataRepresentationForTypeIdentifier:itemUTI completionHandler:[weakPage, attachmentID = _attachmentID, itemUTI](NSData *data, NSError *error) {
             RefPtr webPage = weakPage.get();
             
             if (!webPage)
@@ -163,7 +164,7 @@
                 return;
             
             auto attachment = wrapper(apiAttachment);
-            [attachment setData:data newContentType:String(NSPasteboardTypeTIFF)];
+            [attachment setData:data newContentType:itemUTI];
             webPage->didInvalidateDataForAttachment(*apiAttachment.get());
         }];
         ALLOW_DEPRECATED_DECLARATIONS_END

@@ -1,3 +1,30 @@
+2022-02-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Mail attachment switched to TIFF and balloons in size after markup.
+        https://bugs.webkit.org/show_bug.cgi?id=236405
+        rdar://87358910
+
+        Reviewed by Wenson Hsieh.
+
+        When pulling data from the webprocess to pass to the Sharing Service
+        for markup, we would convert it to TIFF format. This would cause files
+        to increase in size, and lose their original formatting, as well as outright
+        break PDFs. Instead we should be pulling the data from the attachment, which
+        already exists in the UI process and is the source of truth for that data anyways.
+        This allows us to give the correct type to the sharing service, and we should
+        take the data back as the same original type when getting the data back from
+        markup. 
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::enclosingImageData const):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::enclosingImageNSData const):
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
 2022-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Refactor the XDGDBusProxy launcher to simplify it and fix some issues

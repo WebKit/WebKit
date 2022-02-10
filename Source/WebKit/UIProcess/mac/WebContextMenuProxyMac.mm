@@ -212,17 +212,23 @@ void WebContextMenuProxyMac::setupServicesMenu()
     bool hasControlledImage = m_context.controlledImage();
     NSArray *items = nil;
     if (hasControlledImage) {
-        RefPtr<ShareableBitmap> image = m_context.controlledImage();
-        if (!image)
-            return;
+        auto attachment = page()->attachmentForIdentifier(m_context.controlledImageAttachmentID());
+        RetainPtr<NSItemProvider> itemProvider;
+        if (attachment)
+            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->enclosingImageNSData() typeIdentifier:attachment->utiType()]);
+        else {
+            RefPtr<ShareableBitmap> image = m_context.controlledImage();
+            if (!image)
+                return;
+            auto cgImage = image->makeCGImage();
+            auto nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image->size()]);
 
-        auto cgImage = image->makeCGImage();
-        auto nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image->size()]);
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        auto itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:[nsImage TIFFRepresentation] typeIdentifier:(__bridge NSString *)kUTTypeTIFF]);
-ALLOW_DEPRECATED_DECLARATIONS_END
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:[nsImage TIFFRepresentation] typeIdentifier:(__bridge NSString *)kUTTypeTIFF]);
+            ALLOW_DEPRECATED_DECLARATIONS_END
+        }
         items = @[ itemProvider.get() ];
+        
     } else if (!m_context.controlledSelectionData().isEmpty()) {
         auto selectionData = adoptNS([[NSData alloc] initWithBytes:static_cast<const void*>(m_context.controlledSelectionData().data()) length:m_context.controlledSelectionData().size()]);
         auto selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);

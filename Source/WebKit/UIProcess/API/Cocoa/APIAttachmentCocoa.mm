@@ -154,6 +154,19 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
     return WebCore::SharedBuffer::create(data);
 }
 
+NSData *Attachment::enclosingImageNSData() const
+{
+    if (!m_hasEnclosingImage)
+        return nil;
+
+    auto fileWrapper = this->fileWrapper();
+
+    if (![fileWrapper isRegularFile])
+        return nil;
+
+    return fileWrapper.regularFileContents;
+}
+
 bool Attachment::isEmpty() const
 {
     return !m_fileWrapper && !m_fileWrapperGenerator;
