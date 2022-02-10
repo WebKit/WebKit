@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL '' from frame with URL 'http://localhost:8800/html/browsers/sandboxing/resources/executor.html?pipe=|header(Content-Security-Policy,%20sandbox%20allow-scripts%20allow-popups%20allow-same-origin%20allow-popups-to-escape-sandbox'. The frame attempting navigation is sandboxed, and is not allowed to navigate this popup.
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT One pending navigation Test timed out
-NOTRUN No pending navigation
-

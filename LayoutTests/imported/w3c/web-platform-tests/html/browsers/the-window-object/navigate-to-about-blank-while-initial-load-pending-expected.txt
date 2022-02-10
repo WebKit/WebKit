@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Navigating to about:blank while window.open initial load pending. Test timed out
-

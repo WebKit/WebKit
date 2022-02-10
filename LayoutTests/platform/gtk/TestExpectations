@@ -1114,8 +1114,6 @@ webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
 
 webkit.org/b/213386 fast/images/low-memory-decode.html [ Timeout ]
 
-webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_noupdate.https.html [ Timeout Pass ]
-
 webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
 
 webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Failure Pass ]

@@ -1,3 +1,14 @@
+2022-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/html/browsers from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236370
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/html/browsers from upstream 012f446eafc392c7.
+
+        * web-platform-tests/html/browsers/*: Updated.
+
 2022-02-09  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

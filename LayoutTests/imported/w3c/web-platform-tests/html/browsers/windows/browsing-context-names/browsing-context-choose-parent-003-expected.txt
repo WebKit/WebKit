@@ -1,3 +1,0 @@
-
-PASS _parent should reuse window.parent context
-

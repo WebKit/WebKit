@@ -531,7 +531,10 @@ imported/w3c/web-platform-tests/geolocation-API/watchPosition_permission_deny.ht
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/events.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/focus.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/timers.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_3.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigates-multiple-frames.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Skip ]
@@ -547,7 +550,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documen
 imported/w3c/web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-remove-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/offline/appcache/appcache-iframe.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/ [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_feature_policy.tentative.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-document-open.html [ Skip ]
@@ -604,7 +606,6 @@ imported/w3c/web-platform-tests/workers/WorkerLocation-origin.sub.window.html [ 
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update.https.html [ Skip ]
 imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html [ Skip ]
@@ -863,7 +864,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update_error.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/subresource-integrity [ DumpJSConsoleLogInStdErr ]
 
@@ -1473,7 +1473,6 @@ webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Fa
 
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
 # These MathML WPT tests fail.
 webkit.org/b/180013 mathml/non-core/lengths-2.html [ ImageOnlyFailure ]

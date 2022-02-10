@@ -1,3 +1,0 @@
-
-FAIL originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
-

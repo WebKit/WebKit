@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/echo-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/event-recorder.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/helper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/inflight-fetch-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/slow.py
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/resources/worker-helper.js

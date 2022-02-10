@@ -16,3 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/README.md
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/timers.html

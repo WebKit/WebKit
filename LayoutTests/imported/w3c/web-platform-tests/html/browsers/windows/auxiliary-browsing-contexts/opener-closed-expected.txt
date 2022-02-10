@@ -1,3 +1,0 @@
-
-PASS An auxiliary browsing context should report `null` for `window.opener` when that browsing context is discarded
-

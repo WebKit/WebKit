@@ -1,4 +1,0 @@
-
-PASS self.applicationCache must not exist
-PASS ApplicationCache must not be exposed
-
