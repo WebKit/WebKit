@@ -1,3 +1,16 @@
+2022-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r289485.
+
+        Internal SDKs not quiiiite ready yet
+
+        Reverted changeset:
+
+        "Move Safe Browsing knowledge into SafariSafeBrowsing
+        framework"
+        https://bugs.webkit.org/show_bug.cgi?id=231692
+        https://commits.webkit.org/r289485
+
 2022-02-10  Ben Nham  <nham@apple.com>
 
         Apply default sandbox to webpushd on Mac
