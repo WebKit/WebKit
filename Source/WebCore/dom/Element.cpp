@@ -3432,6 +3432,15 @@ void Element::removeFromTopLayer()
         layer.establishesTopLayerWillChange();
     });
 
+    // We need to call Styleable::fromRenderer() while this document is still contained
+    // in Document::topLayerElements().
+    if (auto* renderer = this->renderer()) {
+        if (auto backdrop = renderer->backdropRenderer()) {
+            if (auto styleable = Styleable::fromRenderer(*backdrop))
+                styleable->cancelDeclarativeAnimations();
+        }
+    }
+
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
