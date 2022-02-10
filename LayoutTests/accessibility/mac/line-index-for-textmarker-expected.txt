@@ -188,6 +188,7 @@ textarea:
 181 7 9
 182 8 9
 183 9 9
+
 contenteditable:
 0 a 0
 1 b 0
@@ -373,6 +374,7 @@ contenteditable:
 181 7 2
 182 8 2
 183 9 2
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

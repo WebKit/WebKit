@@ -1,3 +1,17 @@
+2022-02-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make accessibility/mac/line-index-for-textmarker.html run faster.
+        https://bugs.webkit.org/show_bug.cgi?id=236451
+        <rdar://problem/88763847>
+
+        Reviewed by Chris Fleizach.
+
+        The main cause of slowness seems to be the high number of calls to
+        debug(). So now it builds the output string and call debug() just once.
+
+        * accessibility/mac/line-index-for-textmarker-expected.txt:
+        * accessibility/mac/line-index-for-textmarker.html:
+
 2022-02-10  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
