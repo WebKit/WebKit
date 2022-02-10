@@ -1,3 +1,15 @@
+2022-02-10  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Add or update fuzzy data based on EWS results to support b231828.
+        * css3/color-filters/color-filter-color-property-list-item.html:
+        * css3/color-filters/color-filter-text-decoration-shadow.html:
+        * css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html:
+        * css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-remove.html:
+        * fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html:
+        * fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html:
+
 2022-02-10  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/eventsource from upstream

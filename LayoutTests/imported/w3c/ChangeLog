@@ -1,3 +1,10 @@
+2022-02-10  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Add fuzzy data based on EWS results to support b231828.
+        * web-platform-tests/css/motion/offset-rotate-004.html:
+
 2022-02-10  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/url from upstream
