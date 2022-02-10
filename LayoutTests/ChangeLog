@@ -1,3 +1,13 @@
+2022-02-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unskip App Privacy Report tests in open source now that EWS is updated
+        https://bugs.webkit.org/show_bug.cgi?id=232251
+
+        Unreviewed. Unskip iOS 15 tests now that EWS is updated.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2022-02-10  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
