@@ -69,9 +69,6 @@ struct GraphicsContextGLState {
     {
         boundTextureMap.set(textureUnit, std::make_pair(texture, target));
     }
-
-    using TextureSeedCount = HashCountedSet<GCGLuint, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
-    TextureSeedCount textureSeedCount;
 };
 
 }

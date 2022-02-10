@@ -355,8 +355,6 @@ public:
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
 
-    unsigned textureSeed(GCGLuint texture);
-
     constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
 #if PLATFORM(COCOA)
     constexpr static EGLNativeDisplayType lowPowerDisplay = EGL_CAST(EGLNativeDisplayType, -1);
@@ -405,6 +403,8 @@ protected:
 
     // Platform specific behavior for releaseResources();
     static void platformReleaseThreadResources();
+
+    virtual void invalidateKnownTextureContent(GCGLuint);
 
     GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };

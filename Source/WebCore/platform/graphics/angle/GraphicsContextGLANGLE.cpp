@@ -359,8 +359,8 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
     if (!makeContextCurrent())
         return;
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, pixels.bufSize, pixels.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
-    }
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
+}
 
 void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset)
 {
@@ -374,7 +374,7 @@ void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
 
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     GL_TexSubImage2DRobustANGLE(target, level, xoff, yoff, width, height, format, type, pixels.bufSize, pixels.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
@@ -388,7 +388,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
         return;
 
     GL_CompressedTexImage2DRobustANGLE(target, level, internalformat, width, height, border, imageSize, data.bufSize, data.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, GCGLintptr offset)
@@ -402,7 +402,7 @@ void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level,
         return;
 
     GL_CompressedTexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, imageSize, data.bufSize, data.data);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset)
@@ -852,7 +852,7 @@ void GraphicsContextGLANGLE::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
         return;
 
     GL_TexStorage2D(target, levels, internalformat, width, height);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth)
@@ -861,7 +861,7 @@ void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
         return;
 
     GL_TexStorage3D(target, levels, internalformat, width, height, depth);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
@@ -1000,7 +1000,7 @@ void GraphicsContextGLANGLE::texImage2DDirect(GCGLenum target, GCGLint level, GC
     if (!makeContextCurrent())
         return;
     GL_TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
@@ -1151,7 +1151,7 @@ void GraphicsContextGLANGLE::framebufferTexture2D(GCGLenum target, GCGLenum atta
         return;
 
     GL_FramebufferTexture2D(target, attachment, textarget, texture, level);
-    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
 void GraphicsContextGLANGLE::frontFace(GCGLenum mode)
@@ -2093,7 +2093,7 @@ PlatformGLObject GraphicsContextGLANGLE::createTexture()
 
     GLuint o = 0;
     GL_GenTextures(1, &o);
-    m_state.textureSeedCount.add(o);
+    invalidateKnownTextureContent(o);
     return o;
 }
 
@@ -2155,7 +2155,7 @@ void GraphicsContextGLANGLE::deleteTexture(PlatformGLObject texture)
         return keyValue.value.first == texture;
     });
     GL_DeleteTextures(1, &texture);
-    m_state.textureSeedCount.removeAll(texture);
+    invalidateKnownTextureContent(texture);
 }
 
 void GraphicsContextGLANGLE::synthesizeGLError(GCGLenum error)
@@ -2993,9 +2993,8 @@ std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResultsForPaint
     return readCompositedResults();
 }
 
-unsigned GraphicsContextGLANGLE::textureSeed(GCGLuint texture)
+void GraphicsContextGLANGLE::invalidateKnownTextureContent(GCGLuint)
 {
-    return m_state.textureSeedCount.count(texture);
 }
 
 }

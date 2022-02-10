@@ -444,6 +444,18 @@ static const GLfloat* YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange ran
     return iterator->second;
 }
 
+inline bool GraphicsContextGLCVCocoa::TextureContent::operator==(const TextureContent& other) const
+{
+    return surface == other.surface
+        && surfaceSeed == other.surfaceSeed
+        && level == other.level
+        && internalFormat == other.internalFormat
+        && format == other.format
+        && type == other.type
+        && unpackFlipY == other.unpackFlipY
+        && ImageOrientation::Orientation(orientation) == ImageOrientation::Orientation(other.orientation);
+}
+
 std::unique_ptr<GraphicsContextGLCVCocoa> GraphicsContextGLCVCocoa::create(GraphicsContextGLCocoa& context)
 {
     std::unique_ptr<GraphicsContextGLCVCocoa> cv { new GraphicsContextGLCVCocoa(context) };
@@ -593,11 +605,9 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const MediaSampleVideoFr
         return false;
 
     auto orientation = videoFrame.orientation();
-    auto newSurfaceSeed = IOSurfaceGetSeed(surface);
-    if (ImageOrientation::Orientation(orientation) == ImageOrientation::Orientation(m_lastSurfaceOrientation)
-        && unpackFlipY == m_lastUnpackFlipY
-        && newSurfaceSeed == m_lastSurfaceSeed
-        && lastTextureSeed(outputTexture) == m_owner.textureSeed(outputTexture)) {
+    TextureContent content { reinterpret_cast<intptr_t>(surface), IOSurfaceGetSeed(surface), level, internalFormat, format, type, unpackFlipY, orientation };
+    auto it = m_knownContent.find(outputTexture);
+    if (it != m_knownContent.end() && it->value == content) {
         // If the texture hasn't been modified since the last time we copied to it, and the
         // image hasn't been modified since the last time it was copied, this is a no-op.
         return true;
@@ -746,13 +756,14 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const MediaSampleVideoFr
     // Do the actual drawing.
     GL_DrawArrays(GL_TRIANGLES, 0, 6);
 
-    m_lastUnpackFlipY = unpackFlipY;
-    m_lastSurface = surface;
-    m_lastSurfaceSeed = newSurfaceSeed;
-    m_lastSurfaceOrientation = orientation;
-    m_lastTextureSeed.set(outputTexture, m_owner.textureSeed(outputTexture));
+    m_knownContent.set(outputTexture, content);
     autoClearTextureOnError.release();
     return true;
+}
+
+void GraphicsContextGLCVCocoa::invalidateKnownTextureContent(GCGLuint texture)
+{
+    m_knownContent.remove(texture);
 }
 
 }
