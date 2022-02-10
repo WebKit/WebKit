@@ -27,6 +27,7 @@
 #include "Permissions.h"
 
 #include "Exception.h"
+#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPermissionDescriptor.h"
@@ -60,6 +61,20 @@ Navigator* Permissions::navigator()
 
 Permissions::~Permissions() = default;
 
+static bool isAllowedByFeaturePolicy(const Document& document, PermissionName name)
+{
+    switch (name) {
+    case PermissionName::Camera:
+        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::No);
+    case PermissionName::Geolocation:
+        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Geolocation, document, LogFeaturePolicyFailure::No);
+    case PermissionName::Microphone:
+        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
+    default:
+        return true;
+    }
+}
+
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
     // FIXME: support permissions in WorkerNavigator.
@@ -84,6 +99,13 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
     auto parameterDescriptor = convert<IDLDictionary<PermissionDescriptor>>(*context->globalObject(), permissionDescriptorValue.get());
     if (UNLIKELY(scope.exception())) {
         promise.reject(Exception { ExistingExceptionError });
+        return;
+    }
+
+    if (is<Document>(context) && !isAllowedByFeaturePolicy(downcast<Document>(*context), parameterDescriptor.name)) {
+        context->postTask([parameterDescriptor, promise = WTFMove(promise)](auto& context) mutable {
+            promise.resolve(PermissionStatus::create(context, PermissionState::Denied, parameterDescriptor));
+        });
         return;
     }
 

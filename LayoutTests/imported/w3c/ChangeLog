@@ -1,3 +1,12 @@
+2022-02-10  Youenn Fablet  <youenn@apple.com>
+
+        Check for feature policy when querying permission state
+        https://bugs.webkit.org/show_bug.cgi?id=236299
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub-expected.txt:
+
 2022-02-10  Chris Dumez  <cdumez@apple.com>
 
         Fail synchronously when constructing a SharedWorker with an URL that is not same-origin
