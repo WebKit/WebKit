@@ -4434,7 +4434,7 @@ size_t ComputedStyleExtractor::getLayerCount(CSSPropertyID property)
     return layerCount;
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::getFillLayerPropertyShorthandValue(CSSPropertyID property, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty)
+Ref<CSSValue> ComputedStyleExtractor::getFillLayerPropertyShorthandValue(CSSPropertyID property, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty)
 {
     ASSERT(property == CSSPropertyBackground || property == CSSPropertyMask);
     size_t layerCount = getLayerCount(property);
@@ -4482,7 +4482,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::getFillLayerPropertyShorthandValue(CSSP
 }
 
 
-RefPtr<CSSValue> ComputedStyleExtractor::getBackgroundShorthandValue()
+Ref<CSSValue> ComputedStyleExtractor::getBackgroundShorthandValue()
 {
     static const CSSPropertyID propertiesBeforeSlashSeparator[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition };
     static const CSSPropertyID propertiesAfterSlashSeparator[] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
@@ -4490,7 +4490,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::getBackgroundShorthandValue()
     return getFillLayerPropertyShorthandValue(CSSPropertyBackground, StylePropertyShorthand(CSSPropertyBackground, propertiesBeforeSlashSeparator), StylePropertyShorthand(CSSPropertyBackground, propertiesAfterSlashSeparator), CSSPropertyBackgroundColor);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::getMaskShorthandValue()
+Ref<CSSValue> ComputedStyleExtractor::getMaskShorthandValue()
 {
     static const CSSPropertyID propertiesBeforeSlashSeperator[2] = { CSSPropertyMaskImage, CSSPropertyMaskPosition };
     static const CSSPropertyID propertiesAfterSlashSeperator[6] = { CSSPropertyMaskSize, CSSPropertyMaskRepeat, CSSPropertyMaskOrigin, CSSPropertyMaskClip, CSSPropertyMaskComposite, CSSPropertyMaskMode };
