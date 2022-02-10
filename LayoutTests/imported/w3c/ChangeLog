@@ -1,3 +1,14 @@
+2022-02-10  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Nullptr crash with non-function :has
+        https://bugs.webkit.org/show_bug.cgi?id=236431
+        rdar://87061239
+
+        Reviewed by Cameron McCormack.
+
+        * web-platform-tests/css/selectors/parsing/parse-has-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-has.html:
+
 2022-02-10  Martin Robinson  <mrobinson@webkit.org>
 
         [macOS arm64] imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html is consistently failing
