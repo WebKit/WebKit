@@ -42,7 +42,7 @@ namespace BundleResourceLoader {
 
 static WorkQueue& loadQueue()
 {
-    static auto& queue = WorkQueue::create("org.WebCore.BundleResourceLoader", WorkQueue::QOS::Utility).leakRef();
+    static auto& queue = WorkQueue::create("org.WebKit.BundleResourceLoader", WorkQueue::QOS::Utility).leakRef();
     return queue;
 }
 
