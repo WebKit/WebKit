@@ -41,32 +41,32 @@ using WTF::Range;
 namespace WebCore {
 namespace Layout {
 
-static inline LayoutUnit marginLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit marginLeftInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.marginStart() : boxGeometry.marginEnd();
 }
 
-static inline LayoutUnit marginRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit marginRightInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.marginEnd() : boxGeometry.marginStart();
 }
 
-static inline LayoutUnit borderLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit borderLeftInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.borderStart() : boxGeometry.borderEnd();
 }
 
-static inline LayoutUnit borderRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit borderRightInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.borderEnd() : boxGeometry.borderStart();
 }
 
-static inline LayoutUnit paddingLeft(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit paddingLeftInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.paddingStart().value_or(0_lu) : boxGeometry.paddingEnd().value_or(0_lu);
 }
 
-static inline LayoutUnit paddingRight(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
+static inline LayoutUnit paddingRightInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
     return isLeftToRightDirection ? boxGeometry.paddingEnd().value_or(0_lu) : boxGeometry.paddingStart().value_or(0_lu);
 }
@@ -472,8 +472,8 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox()) {
             auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
             auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-            auto boxMarginLeft = marginLeft(boxGeometry, isLeftToRightDirection);
-            auto boxMarginRight = marginRight(boxGeometry, isLeftToRightDirection);
+            auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
+            auto boxMarginRight = marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
 
             auto borderBoxLeft = LayoutUnit { contentRightInInlineDirectionVisualOrder + boxMarginLeft };
             boxGeometry.setLogicalLeft(borderBoxLeft);
@@ -500,10 +500,10 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         if (!shouldApplyLeftSide)
             return displayBox.setRect(visualRect, visualRect);
 
-        contentRightInInlineDirectionVisualOrder += marginLeft(boxGeometry, isLeftToRightDirection);
+        contentRightInInlineDirectionVisualOrder += marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
         auto visualRectWithMarginLeft = InlineRect { visualRect.top(), contentRightInInlineDirectionVisualOrder, visualRect.width(), visualRect.height() };
         displayBox.setRect(visualRectWithMarginLeft, visualRectWithMarginLeft);
-        contentRightInInlineDirectionVisualOrder += borderLeft(boxGeometry, isLeftToRightDirection) + paddingLeft(boxGeometry, isLeftToRightDirection);
+        contentRightInInlineDirectionVisualOrder += borderLeftInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
     beforeInlineBoxContent();
 
@@ -515,9 +515,9 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         if (!shouldApplyRightSide)
             return displayBox.setRight(contentRightInInlineDirectionVisualOrder);
 
-        contentRightInInlineDirectionVisualOrder += borderRight(boxGeometry, isLeftToRightDirection) + paddingRight(boxGeometry, isLeftToRightDirection);
+        contentRightInInlineDirectionVisualOrder += borderRightInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingRightInInlineDirection(boxGeometry, isLeftToRightDirection);
         displayBox.setRight(contentRightInInlineDirectionVisualOrder);
-        contentRightInInlineDirectionVisualOrder += marginRight(boxGeometry, isLeftToRightDirection);
+        contentRightInInlineDirectionVisualOrder += marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
     afterInlineBoxContent();
 
@@ -599,10 +599,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
 
                 auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
-                auto boxMarginLeft = marginLeft(boxGeometry, isLeftToRightDirection);
+                auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
                 visualRect.moveHorizontally(boxMarginLeft);
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
-                contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRight(boxGeometry, isLeftToRightDirection);
+                contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
