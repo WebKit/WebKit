@@ -6,21 +6,13 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (99,42) size 586x376
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="default"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="all_specified_relative"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="all_specified_absolute"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="width_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="width_height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="x_y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
-          [feImage image-size="0.00x0.00"]
       RenderSVGText {text} at (104,25) size 271x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 271x19
           chunk 1 (middle anchor) text run 1 at (105.00,40.00) startOffset 0 endOffset 36 width 270.00: "primitiveUnits = \"objectBoundingBox\""

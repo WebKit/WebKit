@@ -6,9 +6,6 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (133,133) size 534x267
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="dissolve"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feComposite operation="ARITHMETIC" k1="0.00" k2="1.00" k3="0.00" k4="0.00"]
-            [SourceGraphic]
-            [feImage image-size="0.00x0.00"]
       RenderSVGImage {image} at (133,133) size 534x267 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,80.00)}]
         [filter="dissolve"] RenderSVGResourceFilter {filter} at (0,0) size 320x160
     RenderSVGContainer {g} at (16,518) size 380x60

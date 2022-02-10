@@ -6,21 +6,13 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (99,165) size 586x253
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="default"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="all_specified_relative"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="all_specified_absolute"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="width_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="width_height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="x_y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
       RenderSVGContainer {g} at (99,165) size 586x253 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,100.00)}]
         RenderSVGRect {rect} at (100,166) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
           [filter="default"] RenderSVGResourceFilter {filter} at (0,0) size 50x50

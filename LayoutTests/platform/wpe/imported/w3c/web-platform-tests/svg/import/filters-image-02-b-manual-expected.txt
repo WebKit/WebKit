@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (116,54) size 568x380
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="feimage"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="0.00x0.00"]
       RenderSVGRect {rect} at (116,100) size 251x334 [fill={[type=SOLID] [color=#FF0000]}] [x=70.00] [y=60.00] [width=150.00] [height=200.00]
         [filter="feimage"] RenderSVGResourceFilter {filter} at (70,60) size 150x200
       RenderSVGImage {image} at (433,100) size 251x334

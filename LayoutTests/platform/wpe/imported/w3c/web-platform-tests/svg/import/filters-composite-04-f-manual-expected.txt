@@ -6,21 +6,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (166,133) size 451x317
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="dissolve1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feComposite operation="ARITHMETIC" k1="0.00" k2="0.50" k3="0.50" k4="0.00"]
-            [SourceGraphic]
-            [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="dissolve2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feComposite operation="ARITHMETIC" k1="0.00" k2="0.10" k3="0.90" k4="0.00"]
-            [SourceGraphic]
-            [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="dissolve3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feComposite operation="ARITHMETIC" k1="0.00" k2="0.75" k3="0.25" k4="0.00"]
-            [SourceGraphic]
-            [feImage image-size="0.00x0.00"]
         RenderSVGResourceFilter {filter} [id="dissolve4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feComposite operation="ARITHMETIC" k1="0.00" k2="0.25" k3="0.75" k4="0.00"]
-            [SourceGraphic]
-            [feImage image-size="0.00x0.00"]
       RenderSVGImage {image} at (166,133) size 201x134 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,80.00)}]
         [filter="dissolve1"] RenderSVGResourceFilter {filter} at (0,0) size 120x80
       RenderSVGImage {image} at (416,133) size 201x134 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,80.00)}]
