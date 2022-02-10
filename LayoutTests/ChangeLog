@@ -1,3 +1,14 @@
+2022-02-10  Youenn Fablet  <youenn@apple.com>
+
+        Settling of a fetch promise should be delayed in case page is entering page cache
+        https://bugs.webkit.org/show_bug.cgi?id=236292
+        <rdar://88452971>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/navigation/fetch-pagecache-expected.txt: Added.
+        * http/tests/navigation/fetch-pagecache.html: Added.
+
 2022-02-10  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Nullptr crash with non-function :has

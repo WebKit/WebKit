@@ -237,12 +237,6 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, const String& initiator)
 {
-    if (request.signal().aborted()) {
-        responseCallback(Exception { AbortError, "Request signal is aborted"_s });
-        // FIXME: Cancel request body if it is a stream.
-        return;
-    }
-
     if (request.isReadableStreamBody()) {
         responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported"_s });
         return;
@@ -355,7 +349,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
     m_response.updateContentType();
 
     if (auto responseCallback = WTFMove(m_responseCallback))
-        responseCallback(m_response);
+        responseCallback(Ref { m_response });
 }
 
 void FetchResponse::BodyLoader::didReceiveData(const SharedBuffer& buffer)
