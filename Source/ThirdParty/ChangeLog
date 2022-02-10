@@ -1,3 +1,914 @@
+2022-02-10  Tim Nguyen  <ntim@apple.com>
+
+        Import PDF.js v2.12.313 to the WebKit repo
+        https://bugs.webkit.org/show_bug.cgi?id=236452
+
+        Reviewed by Brent Fulgham.
+
+        Add bundle from https://mozilla.github.io/pdf.js/getting_started/#download (Modern browsers version)
+
+        Delete the following:
+        - Sourcemaps (.js.map files)
+        - Example PDF file (compressed.tracemonkey-pldi-09.pdf)
+
+        * pdfjs/LICENSE: Added.
+        * pdfjs/build/pdf.js: Added.
+        (webpackUniversalModuleDefinition):
+        (return.):
+        (return):
+        * pdfjs/build/pdf.sandbox.js: Added.
+        (webpackUniversalModuleDefinition):
+        (return.):
+        * pdfjs/build/pdf.worker.js: Added.
+        (webpackUniversalModuleDefinition):
+        (return.):
+        (return):
+        * pdfjs/web/cmaps/78-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/78-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/78-H.bcmap: Added.
+        * pdfjs/web/cmaps/78-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/78-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/78-V.bcmap: Added.
+        * pdfjs/web/cmaps/78ms-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/78ms-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/83pv-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/90ms-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/90ms-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/90msp-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/90msp-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/90pv-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/90pv-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/Add-H.bcmap: Added.
+        * pdfjs/web/cmaps/Add-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/Add-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/Add-V.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-0.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-1.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-3.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-4.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-5.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-6.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-CNS1-UCS2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-0.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-1.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-3.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-4.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-5.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-GB1-UCS2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-0.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-1.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-3.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-4.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-5.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-6.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Japan1-UCS2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Korea1-0.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Korea1-1.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Korea1-2.bcmap: Added.
+        * pdfjs/web/cmaps/Adobe-Korea1-UCS2.bcmap: Added.
+        * pdfjs/web/cmaps/B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/B5pc-H.bcmap: Added.
+        * pdfjs/web/cmaps/B5pc-V.bcmap: Added.
+        * pdfjs/web/cmaps/CNS-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/CNS-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/CNS1-H.bcmap: Added.
+        * pdfjs/web/cmaps/CNS1-V.bcmap: Added.
+        * pdfjs/web/cmaps/CNS2-H.bcmap: Added.
+        * pdfjs/web/cmaps/CNS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/ETHK-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/ETHK-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/ETen-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/ETen-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/ETenms-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/ETenms-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/Ext-H.bcmap: Added.
+        * pdfjs/web/cmaps/Ext-RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/Ext-RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/Ext-V.bcmap: Added.
+        * pdfjs/web/cmaps/GB-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GB-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/GB-H.bcmap: Added.
+        * pdfjs/web/cmaps/GB-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBK-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBK-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBK2K-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBK2K-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBKp-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBKp-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBT-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBT-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBT-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBT-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBTpc-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBTpc-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/GBpc-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/GBpc-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/H.bcmap: Added.
+        * pdfjs/web/cmaps/HKdla-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKdla-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/HKdlb-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKdlb-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/HKgccs-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKgccs-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/HKm314-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKm314-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/HKm471-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKm471-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/HKscs-B5-H.bcmap: Added.
+        * pdfjs/web/cmaps/HKscs-B5-V.bcmap: Added.
+        * pdfjs/web/cmaps/Hankaku.bcmap: Added.
+        * pdfjs/web/cmaps/Hiragana.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-Johab-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-Johab-V.bcmap: Added.
+        * pdfjs/web/cmaps/KSC-V.bcmap: Added.
+        * pdfjs/web/cmaps/KSCms-UHC-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSCms-UHC-HW-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSCms-UHC-HW-V.bcmap: Added.
+        * pdfjs/web/cmaps/KSCms-UHC-V.bcmap: Added.
+        * pdfjs/web/cmaps/KSCpc-EUC-H.bcmap: Added.
+        * pdfjs/web/cmaps/KSCpc-EUC-V.bcmap: Added.
+        * pdfjs/web/cmaps/Katakana.bcmap: Added.
+        * pdfjs/web/cmaps/LICENSE: Added.
+        * pdfjs/web/cmaps/NWP-H.bcmap: Added.
+        * pdfjs/web/cmaps/NWP-V.bcmap: Added.
+        * pdfjs/web/cmaps/RKSJ-H.bcmap: Added.
+        * pdfjs/web/cmaps/RKSJ-V.bcmap: Added.
+        * pdfjs/web/cmaps/Roman.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UCS2-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UCS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF16-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF16-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF8-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniCNS-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UCS2-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UCS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF16-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF16-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF8-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniGB-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UCS2-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UCS2-HW-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UCS2-HW-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UCS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF16-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF16-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF8-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF16-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF16-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF8-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJIS2004-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISPro-UCS2-HW-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISPro-UCS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISPro-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISX0213-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISX0213-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISX02132004-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniJISX02132004-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UCS2-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UCS2-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF16-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF16-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF32-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF32-V.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF8-H.bcmap: Added.
+        * pdfjs/web/cmaps/UniKS-UTF8-V.bcmap: Added.
+        * pdfjs/web/cmaps/V.bcmap: Added.
+        * pdfjs/web/cmaps/WP-Symbol.bcmap: Added.
+        * pdfjs/web/debugger.js: Added.
+        (FontInspector.FontInspectorClosure.removeSelection):
+        (FontInspector.FontInspectorClosure.resetSelection):
+        (FontInspector.FontInspectorClosure.selectFont):
+        (FontInspector.FontInspectorClosure.textLayerClick):
+        (FontInspector.FontInspectorClosure.return.init):
+        (FontInspector.FontInspectorClosure.return.cleanup):
+        (FontInspector.FontInspectorClosure.return.get active):
+        (FontInspector.FontInspectorClosure.return.set active):
+        (FontInspector.FontInspectorClosure.return.properties):
+        (FontInspector.FontInspectorClosure.return.fontAdded):
+        (FontInspector):
+        (StepperManager.StepperManagerClosure.return.init):
+        (StepperManager.StepperManagerClosure.return.cleanup):
+        (StepperManager.StepperManagerClosure.return.create):
+        (StepperManager.StepperManagerClosure.return.selectStepper):
+        (StepperManager.StepperManagerClosure.return.saveBreakPoints):
+        (StepperManager):
+        (const.Stepper.StepperClosure.c):
+        (const.Stepper.StepperClosure.simplifyArgs):
+        (const.Stepper.StepperClosure.Stepper):
+        (const.Stepper.StepperClosure.Stepper.prototype.init):
+        (const.Stepper.StepperClosure.Stepper.prototype.updateOperatorList.cboxOnClick):
+        (const.Stepper.StepperClosure.Stepper.prototype.updateOperatorList):
+        (const.Stepper.StepperClosure.Stepper.prototype.getNextBreakPoint):
+        (const.Stepper.StepperClosure.Stepper.prototype.breakIt):
+        (const.Stepper.StepperClosure.Stepper.prototype.goTo):
+        (const.Stepper):
+        (Stats.Stats):
+        (Stats.Stats.getStatIndex):
+        (Stats):
+        (window.PDFBug):
+        * pdfjs/web/images/annotation-check.svg: Added.
+        * pdfjs/web/images/annotation-comment.svg: Added.
+        * pdfjs/web/images/annotation-help.svg: Added.
+        * pdfjs/web/images/annotation-insert.svg: Added.
+        * pdfjs/web/images/annotation-key.svg: Added.
+        * pdfjs/web/images/annotation-newparagraph.svg: Added.
+        * pdfjs/web/images/annotation-noicon.svg: Added.
+        * pdfjs/web/images/annotation-note.svg: Added.
+        * pdfjs/web/images/annotation-paragraph.svg: Added.
+        * pdfjs/web/images/findbarButton-next.svg: Added.
+        * pdfjs/web/images/findbarButton-previous.svg: Added.
+        * pdfjs/web/images/grab.cur: Added.
+        * pdfjs/web/images/grabbing.cur: Added.
+        * pdfjs/web/images/loading-dark.svg: Added.
+        * pdfjs/web/images/loading-icon.gif: Added.
+        * pdfjs/web/images/loading.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-documentProperties.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-firstPage.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-handTool.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-lastPage.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-rotateCcw.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-rotateCw.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-scrollHorizontal.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-scrollPage.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-scrollVertical.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-scrollWrapped.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-selectTool.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-spreadEven.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-spreadNone.svg: Added.
+        * pdfjs/web/images/secondaryToolbarButton-spreadOdd.svg: Added.
+        * pdfjs/web/images/shadow.png: Added.
+        * pdfjs/web/images/toolbarButton-bookmark.svg: Added.
+        * pdfjs/web/images/toolbarButton-currentOutlineItem.svg: Added.
+        * pdfjs/web/images/toolbarButton-download.svg: Added.
+        * pdfjs/web/images/toolbarButton-menuArrow.svg: Added.
+        * pdfjs/web/images/toolbarButton-openFile.svg: Added.
+        * pdfjs/web/images/toolbarButton-pageDown.svg: Added.
+        * pdfjs/web/images/toolbarButton-pageUp.svg: Added.
+        * pdfjs/web/images/toolbarButton-presentationMode.svg: Added.
+        * pdfjs/web/images/toolbarButton-print.svg: Added.
+        * pdfjs/web/images/toolbarButton-search.svg: Added.
+        * pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg: Added.
+        * pdfjs/web/images/toolbarButton-sidebarToggle.svg: Added.
+        * pdfjs/web/images/toolbarButton-viewAttachments.svg: Added.
+        * pdfjs/web/images/toolbarButton-viewLayers.svg: Added.
+        * pdfjs/web/images/toolbarButton-viewOutline.svg: Added.
+        * pdfjs/web/images/toolbarButton-viewThumbnail.svg: Added.
+        * pdfjs/web/images/toolbarButton-zoomIn.svg: Added.
+        * pdfjs/web/images/toolbarButton-zoomOut.svg: Added.
+        * pdfjs/web/images/treeitem-collapsed.svg: Added.
+        * pdfjs/web/images/treeitem-expanded.svg: Added.
+        * pdfjs/web/locale/ach/viewer.properties: Added.
+        * pdfjs/web/locale/af/viewer.properties: Added.
+        * pdfjs/web/locale/an/viewer.properties: Added.
+        * pdfjs/web/locale/ar/viewer.properties: Added.
+        * pdfjs/web/locale/ast/viewer.properties: Added.
+        * pdfjs/web/locale/az/viewer.properties: Added.
+        * pdfjs/web/locale/be/viewer.properties: Added.
+        * pdfjs/web/locale/bg/viewer.properties: Added.
+        * pdfjs/web/locale/bn/viewer.properties: Added.
+        * pdfjs/web/locale/bo/viewer.properties: Added.
+        * pdfjs/web/locale/br/viewer.properties: Added.
+        * pdfjs/web/locale/brx/viewer.properties: Added.
+        * pdfjs/web/locale/bs/viewer.properties: Added.
+        * pdfjs/web/locale/ca/viewer.properties: Added.
+        * pdfjs/web/locale/cak/viewer.properties: Added.
+        * pdfjs/web/locale/ckb/viewer.properties: Added.
+        * pdfjs/web/locale/cs/viewer.properties: Added.
+        * pdfjs/web/locale/cy/viewer.properties: Added.
+        * pdfjs/web/locale/da/viewer.properties: Added.
+        * pdfjs/web/locale/de/viewer.properties: Added.
+        * pdfjs/web/locale/dsb/viewer.properties: Added.
+        * pdfjs/web/locale/el/viewer.properties: Added.
+        * pdfjs/web/locale/en-CA/viewer.properties: Added.
+        * pdfjs/web/locale/en-GB/viewer.properties: Added.
+        * pdfjs/web/locale/en-US/viewer.properties: Added.
+        * pdfjs/web/locale/eo/viewer.properties: Added.
+        * pdfjs/web/locale/es-AR/viewer.properties: Added.
+        * pdfjs/web/locale/es-CL/viewer.properties: Added.
+        * pdfjs/web/locale/es-ES/viewer.properties: Added.
+        * pdfjs/web/locale/es-MX/viewer.properties: Added.
+        * pdfjs/web/locale/et/viewer.properties: Added.
+        * pdfjs/web/locale/eu/viewer.properties: Added.
+        * pdfjs/web/locale/fa/viewer.properties: Added.
+        * pdfjs/web/locale/ff/viewer.properties: Added.
+        * pdfjs/web/locale/fi/viewer.properties: Added.
+        * pdfjs/web/locale/fr/viewer.properties: Added.
+        * pdfjs/web/locale/fy-NL/viewer.properties: Added.
+        * pdfjs/web/locale/ga-IE/viewer.properties: Added.
+        * pdfjs/web/locale/gd/viewer.properties: Added.
+        * pdfjs/web/locale/gl/viewer.properties: Added.
+        * pdfjs/web/locale/gn/viewer.properties: Added.
+        * pdfjs/web/locale/gu-IN/viewer.properties: Added.
+        * pdfjs/web/locale/he/viewer.properties: Added.
+        * pdfjs/web/locale/hi-IN/viewer.properties: Added.
+        * pdfjs/web/locale/hr/viewer.properties: Added.
+        * pdfjs/web/locale/hsb/viewer.properties: Added.
+        * pdfjs/web/locale/hu/viewer.properties: Added.
+        * pdfjs/web/locale/hy-AM/viewer.properties: Added.
+        * pdfjs/web/locale/hye/viewer.properties: Added.
+        * pdfjs/web/locale/ia/viewer.properties: Added.
+        * pdfjs/web/locale/id/viewer.properties: Added.
+        * pdfjs/web/locale/is/viewer.properties: Added.
+        * pdfjs/web/locale/it/viewer.properties: Added.
+        * pdfjs/web/locale/ja/viewer.properties: Added.
+        * pdfjs/web/locale/ka/viewer.properties: Added.
+        * pdfjs/web/locale/kab/viewer.properties: Added.
+        * pdfjs/web/locale/kk/viewer.properties: Added.
+        * pdfjs/web/locale/km/viewer.properties: Added.
+        * pdfjs/web/locale/kn/viewer.properties: Added.
+        * pdfjs/web/locale/ko/viewer.properties: Added.
+        * pdfjs/web/locale/lij/viewer.properties: Added.
+        * pdfjs/web/locale/lo/viewer.properties: Added.
+        * pdfjs/web/locale/locale.properties: Added.
+        * pdfjs/web/locale/lt/viewer.properties: Added.
+        * pdfjs/web/locale/ltg/viewer.properties: Added.
+        * pdfjs/web/locale/lv/viewer.properties: Added.
+        * pdfjs/web/locale/meh/viewer.properties: Added.
+        * pdfjs/web/locale/mk/viewer.properties: Added.
+        * pdfjs/web/locale/mr/viewer.properties: Added.
+        * pdfjs/web/locale/ms/viewer.properties: Added.
+        * pdfjs/web/locale/my/viewer.properties: Added.
+        * pdfjs/web/locale/nb-NO/viewer.properties: Added.
+        * pdfjs/web/locale/ne-NP/viewer.properties: Added.
+        * pdfjs/web/locale/nl/viewer.properties: Added.
+        * pdfjs/web/locale/nn-NO/viewer.properties: Added.
+        * pdfjs/web/locale/oc/viewer.properties: Added.
+        * pdfjs/web/locale/pa-IN/viewer.properties: Added.
+        * pdfjs/web/locale/pl/viewer.properties: Added.
+        * pdfjs/web/locale/pt-BR/viewer.properties: Added.
+        * pdfjs/web/locale/pt-PT/viewer.properties: Added.
+        * pdfjs/web/locale/rm/viewer.properties: Added.
+        * pdfjs/web/locale/ro/viewer.properties: Added.
+        * pdfjs/web/locale/ru/viewer.properties: Added.
+        * pdfjs/web/locale/sat/viewer.properties: Added.
+        * pdfjs/web/locale/sc/viewer.properties: Added.
+        * pdfjs/web/locale/scn/viewer.properties: Added.
+        * pdfjs/web/locale/sco/viewer.properties: Added.
+        * pdfjs/web/locale/si/viewer.properties: Added.
+        * pdfjs/web/locale/sk/viewer.properties: Added.
+        * pdfjs/web/locale/sl/viewer.properties: Added.
+        * pdfjs/web/locale/son/viewer.properties: Added.
+        * pdfjs/web/locale/sq/viewer.properties: Added.
+        * pdfjs/web/locale/sr/viewer.properties: Added.
+        * pdfjs/web/locale/sv-SE/viewer.properties: Added.
+        * pdfjs/web/locale/szl/viewer.properties: Added.
+        * pdfjs/web/locale/ta/viewer.properties: Added.
+        * pdfjs/web/locale/te/viewer.properties: Added.
+        * pdfjs/web/locale/tg/viewer.properties: Added.
+        * pdfjs/web/locale/th/viewer.properties: Added.
+        * pdfjs/web/locale/tl/viewer.properties: Added.
+        * pdfjs/web/locale/tr/viewer.properties: Added.
+        * pdfjs/web/locale/trs/viewer.properties: Added.
+        * pdfjs/web/locale/uk/viewer.properties: Added.
+        * pdfjs/web/locale/ur/viewer.properties: Added.
+        * pdfjs/web/locale/uz/viewer.properties: Added.
+        * pdfjs/web/locale/vi/viewer.properties: Added.
+        * pdfjs/web/locale/wo/viewer.properties: Added.
+        * pdfjs/web/locale/xh/viewer.properties: Added.
+        * pdfjs/web/locale/zh-CN/viewer.properties: Added.
+        * pdfjs/web/locale/zh-TW/viewer.properties: Added.
+        * pdfjs/web/standard_fonts/FoxitDingbats.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitFixed.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitFixedBold.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitFixedBoldItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitFixedItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSans.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSansBold.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSansBoldItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSansItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSerif.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSerifBold.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSerifBoldItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSerifItalic.pfb: Added.
+        * pdfjs/web/standard_fonts/FoxitSymbol.pfb: Added.
+        * pdfjs/web/standard_fonts/LICENSE_FOXIT: Added.
+        * pdfjs/web/standard_fonts/LICENSE_LIBERATION: Added.
+        * pdfjs/web/standard_fonts/LiberationSans-Bold.ttf: Added.
+        * pdfjs/web/standard_fonts/LiberationSans-BoldItalic.ttf: Added.
+        * pdfjs/web/standard_fonts/LiberationSans-Italic.ttf: Added.
+        * pdfjs/web/standard_fonts/LiberationSans-Regular.ttf: Added.
+        * pdfjs/web/viewer.css: Added.
+        (.textLayer):
+        (.textLayer span,):
+        (.textLayer span.markedContent):
+        (.textLayer .highlight):
+        (.textLayer .highlight.appended):
+        (.textLayer .highlight.begin):
+        (.textLayer .highlight.end):
+        (.textLayer .highlight.middle):
+        (.textLayer .highlight.selected):
+        (.textLayer ::-moz-selection):
+        (.textLayer ::selection):
+        (.textLayer br::-moz-selection):
+        (.textLayer br::selection):
+        (.textLayer .endOfContent):
+        (.textLayer .endOfContent.active):
+        (:root):
+        (.annotationLayer section):
+        (.annotationLayer .linkAnnotation > a,):
+        (.annotationLayer .buttonWidgetAnnotation.pushButton > canvas):
+        (.annotationLayer .linkAnnotation > a:hover,):
+        (.annotationLayer .textAnnotation img):
+        (.annotationLayer .textWidgetAnnotation input,):
+        (.annotationLayer .choiceWidgetAnnotation select option):
+        (.annotationLayer .buttonWidgetAnnotation.radioButton input):
+        (.annotationLayer .textWidgetAnnotation textarea):
+        (.annotationLayer .textWidgetAnnotation input[disabled],):
+        (.annotationLayer .textWidgetAnnotation input:hover,):
+        (.annotationLayer .textWidgetAnnotation input:focus,):
+        (.annotationLayer .textWidgetAnnotation input :focus,):
+        (.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before,):
+        (.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:before):
+        (.annotationLayer .buttonWidgetAnnotation.checkBox input:checked:after):
+        (.annotationLayer .buttonWidgetAnnotation.radioButton input:checked:before):
+        (.annotationLayer .textWidgetAnnotation input.comb):
+        (.annotationLayer .textWidgetAnnotation input.comb:focus):
+        (.annotationLayer .buttonWidgetAnnotation.checkBox input,):
+        (.annotationLayer .popupWrapper):
+        (.annotationLayer .popup):
+        (.annotationLayer .popup > *):
+        (.annotationLayer .popup h1):
+        (.annotationLayer .popupDate):
+        (.annotationLayer .popupContent):
+        (.annotationLayer .richText > *):
+        (.annotationLayer .highlightAnnotation,):
+        (.xfaLayer .highlight):
+        (.xfaLayer .highlight.appended):
+        (.xfaLayer .highlight.begin):
+        (.xfaLayer .highlight.end):
+        (.xfaLayer .highlight.middle):
+        (.xfaLayer .highlight.selected):
+        (.xfaLayer ::-moz-selection):
+        (.xfaLayer ::selection):
+        (.xfaPage):
+        (.xfaContentarea):
+        (.xfaPrintOnly):
+        (.xfaLayer):
+        (.xfaLayer *):
+        (.xfaLayer div):
+        (.xfaLayer svg):
+        (.xfaLayer svg *):
+        (.xfaLayer a):
+        (.xfaRich li):
+        (.xfaFont):
+        (.xfaCaption):
+        (.xfaCaptionForCheckButton):
+        (.xfaLabel):
+        (.xfaLeft):
+        (.xfaRight):
+        (.xfaLeft > .xfaCaption,):
+        (.xfaTop):
+        (.xfaBottom):
+        (.xfaTop > .xfaCaption,):
+        (.xfaBorder):
+        (.xfaWrapped):
+        (.xfaTextfield:focus,):
+        (.xfaCheckbox:focus,):
+        (.xfaTextfield,):
+        (.xfaTop > .xfaTextfield,):
+        (.xfaButton):
+        (.xfaLink):
+        (.xfaCheckbox,):
+        (.xfaRich):
+        (.xfaImage):
+        (.xfaLrTb,):
+        (.xfaLr):
+        (.xfaRl):
+        (.xfaTb > div):
+        (.xfaPosition):
+        (.xfaArea):
+        (.xfaValignMiddle):
+        (.xfaTable):
+        (.xfaTable .xfaRow):
+        (.xfaTable .xfaRlRow):
+        (.xfaTable .xfaRlRow > div):
+        (.xfaNonInteractive input,):
+        (@media print .xfaTextfield,):
+        (@media print .xfaSelect):
+        (@media screen and (forced-colors: active) :root):
+        (.pdfViewer):
+        (.pdfViewer .canvasWrapper):
+        (.pdfViewer .page):
+        (.pdfViewer .dummyPage):
+        (.pdfViewer.removePageBorders .page):
+        (.pdfViewer.singlePageView):
+        (.pdfViewer.singlePageView .page):
+        (.pdfViewer.scrollHorizontal,):
+        (.pdfViewer.removePageBorders,):
+        (.spread .page,):
+        (.pdfViewer.removePageBorders .spread .page,):
+        (.pdfViewer .page canvas):
+        (.pdfViewer .page canvas[hidden]):
+        (.pdfViewer .page .loadingIcon):
+        (.pdfViewer .page .loadingIcon.notVisible):
+        (.pdfViewer.enablePermissions .textLayer span):
+        (.pdfPresentationMode .pdfViewer):
+        (.pdfPresentationMode .spread):
+        (.pdfPresentationMode .pdfViewer .page):
+        (@media (prefers-color-scheme: dark) :root):
+        (*):
+        (html):
+        (body):
+        (body,):
+        (.hidden):
+        ([hidden]):
+        (#viewerContainer.pdfPresentationMode:-webkit-full-screen):
+        (#viewerContainer.pdfPresentationMode:fullscreen):
+        (.pdfPresentationMode:-webkit-full-screen a:not(.internalLink)):
+        (.pdfPresentationMode:fullscreen a:not(.internalLink)):
+        (.pdfPresentationMode:-webkit-full-screen .textLayer span):
+        (.pdfPresentationMode:fullscreen .textLayer span):
+        (.pdfPresentationMode.pdfPresentationModeControls > *,):
+        (#outerContainer):
+        (#sidebarContainer):
+        (html[dir="ltr"] #sidebarContainer):
+        (html[dir="rtl"] #sidebarContainer):
+        (#outerContainer.sidebarResizing #sidebarContainer):
+        (#outerContainer.sidebarMoving #sidebarContainer,):
+        (html[dir="ltr"] #outerContainer.sidebarOpen #sidebarContainer):
+        (html[dir="rtl"] #outerContainer.sidebarOpen #sidebarContainer):
+        (#mainContainer):
+        (#sidebarContent):
+        (html[dir="ltr"] #sidebarContent):
+        (html[dir="rtl"] #sidebarContent):
+        (#viewerContainer):
+        (#viewerContainer:not(.pdfPresentationMode)):
+        (#outerContainer.sidebarResizing #viewerContainer):
+        (html[dir="ltr"]):
+        (html[dir="rtl"]):
+        (.toolbar):
+        (#toolbarContainer):
+        (#toolbarSidebar):
+        (html[dir="ltr"] #toolbarSidebar):
+        (html[dir="rtl"] #toolbarSidebar):
+        (html[dir="ltr"] #toolbarSidebar .toolbarButton):
+        (html[dir="rtl"] #toolbarSidebar .toolbarButton):
+        (html[dir="ltr"] #toolbarSidebarRight .toolbarButton):
+        (html[dir="rtl"] #toolbarSidebarRight .toolbarButton):
+        (#sidebarResizer):
+        (html[dir="ltr"] #sidebarResizer):
+        (html[dir="rtl"] #sidebarResizer):
+        (#toolbarContainer,):
+        (#toolbarViewer):
+        (#loadingBar):
+        (html[dir="ltr"] #loadingBar):
+        (html[dir="rtl"] #loadingBar):
+        (html[dir="ltr"] #outerContainer.sidebarOpen #loadingBar):
+        (html[dir="rtl"] #outerContainer.sidebarOpen #loadingBar):
+        (#outerContainer.sidebarResizing #loadingBar):
+        (#loadingBar .progress):
+        (@-webkit-keyframes progressIndeterminate):
+        (100%):
+        (@keyframes progressIndeterminate):
+        (#loadingBar .progress.indeterminate):
+        (#loadingBar .progress.indeterminate .glimmer):
+        (.findbar,):
+        (.findbar):
+        (.findbar > div):
+        (.findbar.wrapContainers > div):
+        (.findbar.wrapContainers > div#findbarMessageContainer):
+        (html[dir="ltr"] .findbar):
+        (html[dir="rtl"] .findbar):
+        (.findbar .splitToolbarButton):
+        (html[dir="ltr"] .findbar .splitToolbarButton):
+        (html[dir="rtl"] .findbar .splitToolbarButton):
+        (.findbar .splitToolbarButton > .toolbarButton):
+        (.findbar .splitToolbarButton > .toolbarButton::before):
+        (.findbar .splitToolbarButton > .findNext):
+        (html[dir="ltr"] .findbar .splitToolbarButton > .findNext):
+        (html[dir="rtl"] .findbar .splitToolbarButton > .findNext):
+        (.findbar input[type="checkbox"]):
+        (.findbar label):
+        (.findbar label:hover,):
+        (html[dir="ltr"] #findInput):
+        (html[dir="rtl"] #findInput):
+        (.findbar .toolbarField[type="checkbox"]:checked + .toolbarLabel):
+        (#findInput):
+        (#findInput::-moz-placeholder):
+        (#findInput::placeholder):
+        (#findInput[data-status="pending"]):
+        (html[dir="rtl"] #findInput[data-status="pending"]):
+        (#findInput[data-status="notFound"]):
+        (.secondaryToolbar):
+        (html[dir="ltr"] .secondaryToolbar):
+        (html[dir="rtl"] .secondaryToolbar):
+        (#secondaryToolbarButtonContainer):
+        (.doorHanger,):
+        (.doorHanger:after,):
+        (.doorHanger:after):
+        (.doorHangerRight:after):
+        (.doorHanger:before,):
+        (html[dir="ltr"] .doorHanger:after,):
+        (html[dir="ltr"] .doorHanger:before,):
+        (html[dir="rtl"] .doorHanger:after,):
+        (html[dir="rtl"] .doorHanger:before,):
+        (#findResultsCount):
+        (#findMsg):
+        (#findMsg:empty):
+        (#toolbarViewerMiddle):
+        (html[dir="ltr"] #toolbarViewerLeft,):
+        (html[dir="ltr"] #toolbarViewerRight,):
+        (html[dir="ltr"] #toolbarViewerLeft > *,):
+        (html[dir="rtl"] #toolbarViewerLeft > *,):
+        (.splitToolbarButton):
+        (html[dir="ltr"] .splitToolbarButton > .toolbarButton):
+        (html[dir="rtl"] .splitToolbarButton > .toolbarButton):
+        (.toolbarButton,):
+        (.overlayButton:hover,):
+        (.overlayButton:hover > span,):
+        (.toolbarButton > span):
+        (.toolbarButton[disabled],):
+        (.splitToolbarButton.toggled .toolbarButton):
+        (.splitToolbarButton > .toolbarButton:hover,):
+        (.splitToolbarButton > .toolbarButton):
+        (html[dir="ltr"] .splitToolbarButton > .toolbarButton:first-child,):
+        (html[dir="ltr"] .splitToolbarButton > .toolbarButton:last-child,):
+        (.splitToolbarButtonSeparator):
+        (.findbar .splitToolbarButtonSeparator):
+        (html[dir="ltr"] .splitToolbarButtonSeparator):
+        (html[dir="rtl"] .splitToolbarButtonSeparator):
+        (html[dir="ltr"] #toolbarViewerLeft > .toolbarButton:first-child,):
+        (html[dir="ltr"] #toolbarViewerRight > .toolbarButton:last-child,):
+        (.toolbarButton:hover,):
+        (.secondaryToolbarButton:hover,):
+        (.toolbarButton.toggled,):
+        (.secondaryToolbarButton.toggled::before):
+        (.toolbarButton.toggled::before):
+        (.toolbarButton.toggled:hover:active,):
+        (.dropdownToolbarButton):
+        (.dropdownToolbarButton::after):
+        (html[dir="ltr"] .dropdownToolbarButton::after):
+        (html[dir="rtl"] .dropdownToolbarButton::after):
+        (.dropdownToolbarButton > select):
+        (html[dir="ltr"] .dropdownToolbarButton > select):
+        (html[dir="rtl"] .dropdownToolbarButton > select):
+        (.dropdownToolbarButton > select:hover,):
+        (.dropdownToolbarButton > select > option):
+        (#customScaleOption):
+        (#pageWidthOption):
+        (.toolbarButtonSpacer):
+        (.toolbarButton::before,):
+        (.dropdownToolbarButton:hover::after,):
+        (.toolbarButton::before):
+        (.toolbarButton:hover::before,):
+        (.secondaryToolbarButton::before):
+        (html[dir="ltr"] .secondaryToolbarButton::before):
+        (html[dir="rtl"] .secondaryToolbarButton::before):
+        (.toolbarButton#sidebarToggle::before):
+        (html[dir="rtl"] .toolbarButton#sidebarToggle::before):
+        (.toolbarButton#secondaryToolbarToggle::before):
+        (html[dir="rtl"] .toolbarButton#secondaryToolbarToggle::before):
+        (.toolbarButton.findPrevious::before):
+        (.toolbarButton.findNext::before):
+        (.toolbarButton.pageUp::before):
+        (.toolbarButton.pageDown::before):
+        (.toolbarButton.zoomOut::before):
+        (.toolbarButton.zoomIn::before):
+        (.toolbarButton.presentationMode::before,):
+        (.toolbarButton.print::before,):
+        (.toolbarButton.openFile::before,):
+        (.toolbarButton.download::before,):
+        (.secondaryToolbarButton.bookmark):
+        (.bookmark[href="#"]):
+        (.toolbarButton.bookmark::before,):
+        (#viewThumbnail.toolbarButton::before):
+        (#viewOutline.toolbarButton::before):
+        (html[dir="rtl"] #viewOutline.toolbarButton::before):
+        (#viewAttachments.toolbarButton::before):
+        (#viewLayers.toolbarButton::before):
+        (#currentOutlineItem.toolbarButton::before):
+        (html[dir="rtl"] #currentOutlineItem.toolbarButton::before):
+        (#viewFind.toolbarButton::before):
+        (.toolbarButton.pdfSidebarNotification::after):
+        (html[dir="ltr"] .toolbarButton.pdfSidebarNotification::after):
+        (html[dir="rtl"] .toolbarButton.pdfSidebarNotification::after):
+        (.secondaryToolbarButton):
+        (html[dir="ltr"] .secondaryToolbarButton):
+        (html[dir="rtl"] .secondaryToolbarButton):
+        (html[dir="ltr"] .secondaryToolbarButton > span):
+        (html[dir="rtl"] .secondaryToolbarButton > span):
+        (.secondaryToolbarButton.firstPage::before):
+        (.secondaryToolbarButton.lastPage::before):
+        (.secondaryToolbarButton.rotateCcw::before):
+        (.secondaryToolbarButton.rotateCw::before):
+        (.secondaryToolbarButton.selectTool::before):
+        (.secondaryToolbarButton.handTool::before):
+        (.secondaryToolbarButton.scrollPage::before):
+        (.secondaryToolbarButton.scrollVertical::before):
+        (.secondaryToolbarButton.scrollHorizontal::before):
+        (.secondaryToolbarButton.scrollWrapped::before):
+        (.secondaryToolbarButton.spreadNone::before):
+        (.secondaryToolbarButton.spreadOdd::before):
+        (.secondaryToolbarButton.spreadEven::before):
+        (.secondaryToolbarButton.documentProperties::before):
+        (.verticalToolbarSeparator):
+        (html[dir="ltr"] .verticalToolbarSeparator):
+        (html[dir="rtl"] .verticalToolbarSeparator):
+        (.horizontalToolbarSeparator):
+        (.toolbarField):
+        (.toolbarField[type="checkbox"]):
+        (html[dir="ltr"] .toolbarField[type="checkbox"]):
+        (html[dir="rtl"] .toolbarField[type="checkbox"]):
+        (.toolbarField.pageNumber):
+        (.toolbarField.pageNumber.visiblePageIsLoading):
+        (.toolbarField.pageNumber::-webkit-inner-spin-button,):
+        (.toolbarField:focus):
+        (.toolbarLabel):
+        (html[dir="ltr"] #numPages.toolbarLabel):
+        (html[dir="rtl"] #numPages.toolbarLabel):
+        (#thumbnailView):
+        (#thumbnailView > a:active,):
+        (.thumbnail):
+        (html[dir="ltr"] .thumbnail):
+        (html[dir="rtl"] .thumbnail):
+        (#thumbnailView > a:last-of-type > .thumbnail):
+        (#thumbnailView > a:last-of-type > .thumbnail:not([data-loaded])):
+        (.thumbnail:not([data-loaded])):
+        (.thumbnailImage):
+        (.thumbnailSelectionRing):
+        (a:focus > .thumbnail > .thumbnailSelectionRing > .thumbnailImage,):
+        (a:focus > .thumbnail > .thumbnailSelectionRing,):
+        (.thumbnail.selected > .thumbnailSelectionRing > .thumbnailImage):
+        (.thumbnail.selected > .thumbnailSelectionRing):
+        (#outlineView,):
+        (html[dir="ltr"] .treeWithDeepNesting > .treeItem,):
+        (html[dir="rtl"] .treeWithDeepNesting > .treeItem,):
+        (.treeItem > a):
+        (html[dir="ltr"] .treeItem > a):
+        (html[dir="rtl"] .treeItem > a):
+        (#layersView .treeItem > a > *):
+        (html[dir="ltr"] #layersView .treeItem > a > label):
+        (html[dir="rtl"] #layersView .treesItem > a > label):
+        (.treeItemToggler):
+        (.treeItemToggler::before):
+        (.treeItemToggler.treeItemsHidden::before):
+        (html[dir="rtl"] .treeItemToggler.treeItemsHidden::before):
+        (.treeItemToggler.treeItemsHidden ~ .treeItems):
+        (html[dir="ltr"] .treeItemToggler):
+        (html[dir="rtl"] .treeItemToggler):
+        (html[dir="ltr"] .treeItemToggler::before):
+        (html[dir="rtl"] .treeItemToggler::before):
+        (.treeItem.selected > a):
+        (.treeItemToggler:hover,):
+        (::-moz-selection):
+        (::selection):
+        (#errorWrapper):
+        (#errorMessageLeft):
+        (#errorMessageRight):
+        (#errorMoreInfo):
+        (.overlayButton):
+        (#overlayContainer):
+        (#overlayContainer > *):
+        (#overlayContainer > .container):
+        (#overlayContainer > .container > .dialog):
+        (.dialog > .row):
+        (.dialog > .row > *):
+        (.dialog .toolbarField):
+        (.dialog .separator):
+        (.dialog .buttonRow):
+        (.dialog :link):
+        (#passwordOverlay > .dialog):
+        (#passwordOverlay .toolbarField):
+        (#documentPropertiesOverlay > .dialog):
+        (#documentPropertiesOverlay .row > *):
+        (html[dir="ltr"] #documentPropertiesOverlay .row > *):
+        (html[dir="rtl"] #documentPropertiesOverlay .row > *):
+        (#documentPropertiesOverlay .row > span):
+        (#documentPropertiesOverlay .row > p):
+        (#documentPropertiesOverlay .buttonRow):
+        (.clearBoth):
+        (.fileInput):
+        (#PDFBug):
+        (#PDFBug .controls):
+        (#PDFBug .panels):
+        (#PDFBug .panels > div):
+        (#PDFBug button.active):
+        (.debuggerShowText):
+        (.debuggerHideText:hover):
+        (#PDFBug .stats):
+        (#PDFBug .stats .title):
+        (#PDFBug table):
+        (#PDFBug table.showText):
+        (#PDFBug table.showText,):
+        (#PDFBug table.showText td.advance):
+        (#viewer.textLayer-visible .textLayer):
+        (#viewer.textLayer-visible .canvasWrapper):
+        (#viewer.textLayer-visible .canvasWrapper canvas):
+        (#viewer.textLayer-visible .textLayer span):
+        (#viewer.textLayer-hover .textLayer span:hover):
+        (#viewer.textLayer-shadow .textLayer span):
+        (.grab-to-pan-grab):
+        (.grab-to-pan-grab:active,):
+        (@page):
+        (#printContainer):
+        (@media print body):
+        (@media print #sidebarContainer,):
+        (@media print #viewerContainer):
+        (@media print #mainContainer,):
+        (@media print .page):
+        (@media print .page[data-loaded]):
+        (@media print .fileInput):
+        (@media print body[data-pdfjsprinting] #outerContainer):
+        (@media print body[data-pdfjsprinting] #printContainer):
+        (@media print #printContainer):
+        (@media print #printContainer > .printedPage):
+        (@media print #printContainer > .xfaPrintedPage .xfaPage):
+        (@media print #printContainer > .xfaPrintedPage):
+        (@media print #printContainer > .printedPage canvas,):
+        (.visibleLargeView,):
+        (@media all and (max-width: 900px) #toolbarViewerMiddle):
+        (@media all and (max-width: 840px) #sidebarContainer):
+        (@media all and (max-width: 840px) html[dir="ltr"] #outerContainer.sidebarOpen #viewerContainer):
+        (@media all and (max-width: 840px) html[dir="rtl"] #outerContainer.sidebarOpen #viewerContainer):
+        (@media all and (max-width: 840px) #outerContainer .hiddenLargeView,):
+        (@media all and (max-width: 840px) #outerContainer .visibleLargeView,):
+        (@media all and (max-width: 770px) #outerContainer .hiddenLargeView):
+        (@media all and (max-width: 770px) #outerContainer .visibleLargeView):
+        (@media all and (max-width: 700px) #outerContainer .hiddenMediumView):
+        (@media all and (max-width: 700px) #outerContainer .visibleMediumView):
+        (@media all and (max-width: 640px) .hiddenSmallView,):
+        (@media all and (max-width: 640px) .visibleSmallView):
+        (@media all and (max-width: 640px) .toolbarButtonSpacer):
+        (@media all and (max-width: 640px) html[dir="ltr"] .findbar):
+        (@media all and (max-width: 640px) html[dir="rtl"] .findbar):
+        (@media all and (max-width: 535px) #scaleSelectContainer):
+        * pdfjs/web/viewer.html: Added.
+        * pdfjs/web/viewer.js: Added.
+        (exports.checkOnBlobSupport):
+        (exports.checkCanvasSizeLimitation):
+        (exports.AppOptions):
+        (exports.AppOptions.get const):
+        (exports.AppOptions.getAll):
+        (exports.AppOptions.set userOptions):
+        (exports.AppOptions.remove):
+        (exports.AppOptions._hasUserOptions):
+        (__webpack_require__.DefaultExternalServices):
+        (__webpack_require__.DefaultExternalServices.updateFindControlState):
+        (__webpack_require__.DefaultExternalServices.updateFindMatchesCount):
+        (__webpack_require__.DefaultExternalServices.initPassiveLoading):
+        (__webpack_require__.DefaultExternalServices.async fallback):
+        (__webpack_require__.DefaultExternalServices.reportTelemetry):
+        (__webpack_require__.DefaultExternalServices.createDownloadManager):
+        (__webpack_require__.DefaultExternalServices.createPreferences):
+        (__webpack_require__.DefaultExternalServices.createL10n):
+        (__webpack_require__.DefaultExternalServices.createScripting):
+        (__webpack_require__.DefaultExternalServices.get supportsIntegratedFind):
+        (__webpack_require__.DefaultExternalServices.get supportsDocumentFonts):
+        (__webpack_require__.DefaultExternalServices.get supportedMouseWheelZoomModifierKeys):
+        (__webpack_require__.DefaultExternalServices.get isInAutomation):
+        (__webpack_require__.const.PDFViewerApplication.async initialize):
+        (__webpack_require__.const.PDFViewerApplication.async _readPreferences):
+        (__webpack_require__.const.PDFViewerApplication.async _parseHashParameters):
+        (__webpack_require__.const.PDFViewerApplication.async _initializeL10n):
+        (__webpack_require__.const.PDFViewerApplication._forceCssTheme):
+        (__webpack_require__.const.PDFViewerApplication.async _initializeViewerComponents):
+        (__webpack_require__.const.PDFViewerApplication.run):
+        (__webpack_require__.const.PDFViewerApplication.get initialized):
+        (__webpack_require__.const.PDFViewerApplication.get initializedPromise):
+        (__webpack_require__.const.PDFViewerApplication.zoomIn):
+        (__webpack_require__.const.PDFViewerApplication.zoomOut):
+        (__webpack_require__.const.PDFViewerApplication.zoomReset):
+        (__webpack_require__.const.PDFViewerApplication.get pagesCount):
+        (__webpack_require__.const.PDFViewerApplication.get page):
+        (__webpack_require__.const.PDFViewerApplication.set page):
+        (__webpack_require__.const.PDFViewerApplication.get supportsPrinting):
+        (__webpack_require__.const.PDFViewerApplication.get supportsFullscreen):
+        (__webpack_require__.const.PDFViewerApplication.get supportsIntegratedFind):
+        (__webpack_require__.const.PDFViewerApplication.get supportsDocumentFonts):
+        (__webpack_require__.const.PDFViewerApplication.get loadingBar):
+        (__webpack_require__.const.PDFViewerApplication.get supportedMouseWheelZoomModifierKeys):
+        (__webpack_require__.const.PDFViewerApplication.initPassiveLoading):
+        (__webpack_require__.const.PDFViewerApplication.setTitleUsingUrl):
+        (__webpack_require__.const.PDFViewerApplication.setTitle):
+        (__webpack_require__.const.PDFViewerApplication.get _docFilename):
+        (__webpack_require__.const.PDFViewerApplication._hideViewBookmark):
+        (__webpack_require__.const.PDFViewerApplication._cancelIdleCallbacks):
+        (__webpack_require__.const.PDFViewerApplication.async close):
+        (__webpack_require__.const.PDFViewerApplication.async open):
+        (__webpack_require__.const.PDFViewerApplication._ensureDownloadComplete):
+        (__webpack_require__.const.PDFViewerApplication.async download):
+        (__webpack_require__.const.PDFViewerApplication.):
+        (__webpack_require__.):
+        (__webpack_require__):
+
 2022-02-02  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Users of libgtest.a depend on headers from gtest.framework
