@@ -1,3 +1,16 @@
+2022-02-10  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Scrollbars painted incorrectly if theme enables steppers (steppers misplaced on vertical scrollbars, horizontal scrollbars very broken) 
+        https://bugs.webkit.org/show_bug.cgi?id=234871
+
+        Reviewed by Carlos Garcia Campos.
+
+        Actually use the scrollbar orientation when creating its contents,
+        instead of always using vertical.
+
+        * platform/gtk/RenderThemeScrollbar.cpp:
+        (WebCore::RenderThemeScrollbar::RenderThemeScrollbar):
+
 2022-02-05  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 21.08.10 and GStreamer 1.20 releases
