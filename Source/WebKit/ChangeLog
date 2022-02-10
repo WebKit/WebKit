@@ -1,3 +1,59 @@
+2022-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support `WebPageProxy::replaceSelectionWithPasteboardData()` on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236406
+
+        Reviewed by Tim Horton.
+
+        In preparation for an upcoming patch, make `WebPageProxy::replaceSelectionWithPasteboardData()` (as well as all
+        downstream codepaths) available on all Cocoa platforms. This is currently macOS-specific, and only used for
+        service controls (i.e. inserting content via sharing picker API).
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+
+        Move WebPasteboardOverrides.cpp from SourcesCocoa to Sources, now that there are non-Cocoa-specific codepaths in
+        WebPlatformStrategies that exercise this class.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::replaceSelectionWithPasteboardData):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::replaceSelectionWithPasteboardData): Deleted.
+
+        Move this into WebPageProxyCocoa.mm.
+
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp:
+        (WebKit::WebPasteboardOverrides::overriddenInfo):
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPasteboardItemsCount):
+        (WebKit::WebPlatformStrategies::allPasteboardItemInfo):
+        (WebKit::WebPlatformStrategies::informationForItemAtIndex):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+
+        Add additional support for returning canned data from `WebPasteboardOverrides::sharedPasteboardOverrides()` in
+        pasteboard reading codepaths that are exercised by `WebCore::Pasteboard` on iOS.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::replaceSelectionPasteboardName):
+        (WebKit::WebPage::replaceSelectionWithPasteboardData):
+        (WebKit::WebPage::readSelectionFromPasteboard):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::readSelectionFromPasteboard): Deleted.
+
+        Delete this unimplemented method stub.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::replaceSelectionPasteboardName): Deleted.
+
+        Move this into WebPageCocoa.mm.
+
+        (WebKit::WebPage::replaceSelectionWithPasteboardData): Deleted.
+        (WebKit::WebPage::readSelectionFromPasteboard): Deleted.
+
 2022-02-10  Tim Nguyen  <ntim@apple.com>
 
         Add webkit-pdfjs-viewer scheme for PDF.js resources

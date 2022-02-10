@@ -861,6 +861,11 @@ void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, Comple
     ModalContainerControlClassifier::sharedClassifier().classify(WTFMove(texts), WTFMove(completion));
 }
 
+void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
+{
+    send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

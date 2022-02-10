@@ -263,4 +263,13 @@ String Editor::platformContentTypeForBlobType(const String& type) const
     return type;
 }
 
+void Editor::readSelectionFromPasteboard(const String& pasteboardName)
+{
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
+    if (m_document.selection().selection().isContentRichlyEditable())
+        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
+    else
+        pasteAsPlainTextWithPasteboard(pasteboard);
+}
+
 }

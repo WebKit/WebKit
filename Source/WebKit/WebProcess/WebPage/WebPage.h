@@ -964,7 +964,7 @@ public:
     void requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&);
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(SERVICE_CONTROLS)
+#if PLATFORM(COCOA)
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
 

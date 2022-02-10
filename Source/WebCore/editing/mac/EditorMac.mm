@@ -184,15 +184,6 @@ void Editor::platformPasteFont()
     client()->setInsertionPasteboard(String());
 }
 
-void Editor::readSelectionFromPasteboard(const String& pasteboardName)
-{
-    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
-    if (m_document.selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
-    else
-        pasteAsPlainTextWithPasteboard(pasteboard);
-}
-
 static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
 {
     // This is only supported for single-Node fragments.
