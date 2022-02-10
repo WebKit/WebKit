@@ -1,3 +1,20 @@
+2022-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Fail synchronously when constructing a SharedWorker with an URL that is not same-origin
+        https://bugs.webkit.org/show_bug.cgi?id=236419
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/workers/constructors/SharedWorker/same-origin-expected.txt:
+        Rebaseline test that is now fully passing. I have verified that it is passing in both
+        Blink and Gecko too.
+
+        * web-platform-tests/workers/shared-worker-in-data-url-context.window-expected.txt:
+        Even though this looks like a regression, this actually aligns our behavior with both
+        Blink & Gecko (who also fail this check). Note that the load fails no matter what.
+        However, the test expects it to fail asynchronously instead of synchronously in this
+        case.
+
 2022-02-10  Rob Buis  <rbuis@igalia.com>
 
         Incorrect abspos layout when toggling contain

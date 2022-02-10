@@ -1,13 +1,5 @@
-CONSOLE MESSAGE: Cannot load unsupported:.
-CONSOLE MESSAGE: Cannot load javascript:"".
-CONSOLE MESSAGE: Cannot load about:blank.
-CONSOLE MESSAGE: Cannot load http://www.opera.com/.
-CONSOLE MESSAGE: Cannot load http://localhost:81/.
-CONSOLE MESSAGE: Cannot load https://localhost:80/.
-CONSOLE MESSAGE: Cannot load https://localhost:8000/.
-CONSOLE MESSAGE: Cannot load http://localhost:8012/.
 
-FAIL unsupported_scheme assert_throws_dom: function "() => { new SharedWorker('unsupported:', ''); }" did not throw
+PASS unsupported_scheme
 PASS data_url
 PASS javascript_url
 PASS about_blank
