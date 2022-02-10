@@ -64,7 +64,7 @@ private:
     cmsHPROFILE colorProfile() const override;
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
     String plartformAccessibilityBusAddress() const override;
 #endif
 

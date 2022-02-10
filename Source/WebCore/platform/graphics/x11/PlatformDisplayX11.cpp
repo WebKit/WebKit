@@ -217,7 +217,7 @@ cmsHPROFILE PlatformDisplayX11::colorProfile() const
 }
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
 String PlatformDisplayX11::plartformAccessibilityBusAddress() const
 {
     Atom atspiBusAtom = XInternAtom(m_display, "AT_SPI_BUS", False);

@@ -293,7 +293,7 @@ cmsHPROFILE PlatformDisplay::colorProfile() const
 }
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
 const String& PlatformDisplay::accessibilityBusAddress() const
 {
     if (m_accessibilityBusAddress)

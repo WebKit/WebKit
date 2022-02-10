@@ -90,7 +90,7 @@ public:
     virtual cmsHPROFILE colorProfile() const;
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
     void setAccessibilityBusAddress(String&& address) { m_accessibilityBusAddress = WTFMove(address); }
     const String& accessibilityBusAddress() const;
 #endif
@@ -117,7 +117,7 @@ protected:
     mutable LCMSProfilePtr m_iccProfile;
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
     virtual String plartformAccessibilityBusAddress() const { return { }; }
 
     mutable std::optional<String> m_accessibilityBusAddress;

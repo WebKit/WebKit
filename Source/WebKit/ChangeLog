@@ -1,3 +1,46 @@
+2022-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Refactor the XDGDBusProxy launcher to simplify it and fix some issues
+        https://bugs.webkit.org/show_bug.cgi?id=236437
+
+        Reviewed by Adrian Perez de Castro.
+
+        This patch moves the XDGDBusProxy launcher implementation to its own file and fixes the following issues:
+
+          - r289369 introduced an issue with old versions of bwrap that fails to mount over an existing file, so we need
+            to ensure we only bind the original socket for the a11y socket and not the session bus one.
+          - bindA11y is GTK specific for some reason, which means WPE doesn't have a11y under the sandbox.
+          - The names of the socket paths for a11y and session bus use the same pattern dbus-proxy-XXXXXX, it helps to
+            use a different one.
+          - The code to get the a11y DBus address is now duplicated in PlatformDisplay, we can just use the
+            PlatformDisplay to get the address.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::argumentsToFileDescriptor):
+        (WebKit::bindDBusSession):
+        (WebKit::bindA11y):
+        (WebKit::bubblewrapSpawn):
+        (WebKit::argsToFd): Deleted.
+        (WebKit::XDGDBusProxyLauncher::setAddress): Deleted.
+        (WebKit::XDGDBusProxyLauncher::isRunning const): Deleted.
+        (WebKit::XDGDBusProxyLauncher::path const): Deleted.
+        (WebKit::XDGDBusProxyLauncher::proxyPath const): Deleted.
+        (WebKit::XDGDBusProxyLauncher::setPermissions): Deleted.
+        (WebKit::XDGDBusProxyLauncher::launch): Deleted.
+        (WebKit::XDGDBusProxyLauncher::makeProxyPath): Deleted.
+        (WebKit::XDGDBusProxyLauncher::dbusAddressToPath): Deleted.
+        (): Deleted.
+        * UIProcess/Launcher/glib/BubblewrapLauncher.h:
+        * UIProcess/Launcher/glib/XDGDBusProxy.cpp: Added.
+        (WebKit::XDGDBusProxy::XDGDBusProxy):
+        (WebKit::XDGDBusProxy::makeProxy const):
+        (WebKit::XDGDBusProxy::launch const):
+        * UIProcess/Launcher/glib/XDGDBusProxy.h: Added.
+        (WebKit::XDGDBusProxy::proxyPath const):
+        (WebKit::XDGDBusProxy::path const):
+
 2022-02-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP
