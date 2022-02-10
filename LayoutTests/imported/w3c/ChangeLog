@@ -1,3 +1,13 @@
+2022-02-10  Rob Buis  <rbuis@igalia.com>
+
+        Incorrect abspos layout when toggling contain
+        https://bugs.webkit.org/show_bug.cgi?id=236261
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/contain-layout-020-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-layout-020.html: Added.
+
 2022-02-10  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Nullptr crash with non-function :has
