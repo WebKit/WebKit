@@ -1,3 +1,14 @@
+2022-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Check for MAP_ALIGNED support
+        https://bugs.webkit.org/show_bug.cgi?id=236522
+
+        Reviewed by Keith Miller.
+
+        Add a symbol check for MAP_ALIGNED in the CMake.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2022-02-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use ld.lld by default for development builds where available

@@ -1,3 +1,17 @@
+2022-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Check for MAP_ALIGNED support
+        https://bugs.webkit.org/show_bug.cgi?id=236522
+
+        Reviewed by Keith Miller.
+
+        Use the HAVE(MAP_ALIGNED) check in tryReserveUncommittedAligned. Mark unused parameters in
+        the function. Also define MAP_NORESERVE if its undefined which seems to be the case in
+        FreeBSD.
+
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::tryReserveUncommittedAligned):
+
 2022-02-11  Elliott Williams  <emw@apple.com>
 
         Fix headers in install builds and add untracked headers
