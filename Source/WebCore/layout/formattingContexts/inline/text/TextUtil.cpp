@@ -121,7 +121,8 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
             if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont) {
                 auto isNonSpacingMark = U_MASK(u_charType(character)) & U_GC_MN_MASK;
-                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph))
+                // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
+                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
                     fallbackFonts.add(glyphData.font);
             }
         };

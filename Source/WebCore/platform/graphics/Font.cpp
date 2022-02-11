@@ -165,15 +165,11 @@ void Font::platformGlyphInit()
     } else
         m_fontMetrics.setIdeogramWidth(platformData().size());
 
-    m_spaceWidth = widthForGlyph(m_spaceGlyph);
+    m_spaceWidth = widthForGlyph(m_spaceGlyph, SyntheticBoldInclusion::Exclude); // spaceWidth() handles adding in the synthetic bold.
     auto amountToAdjustLineGap = std::min(m_fontMetrics.floatLineGap(), 0.0f);
     m_fontMetrics.setLineGap(m_fontMetrics.floatLineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.floatLineSpacing() - amountToAdjustLineGap);
     determinePitch();
-    // Nasty hack to determine if we should round or ceil space widths.
-    // If the font is monospace or fake monospace we ceil to ensure that
-    // every character and the space are the same width. Otherwise we round.
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(m_spaceWidth) : roundf(m_spaceWidth);
 }
 
 Font::~Font()

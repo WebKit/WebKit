@@ -693,7 +693,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const CGGlyph* glyphs = complexTextRun.glyphs();
         const FloatSize* advances = complexTextRun.baseAdvances();
 
-        float spaceWidth = font.spaceWidth();
+        // Lower in this function, synthetic bold is blanket-applied to everything, so no need to double-apply it here.
+        float spaceWidth = font.spaceWidth(Font::SyntheticBoldInclusion::Exclude);
         const UChar* cp = complexTextRun.characters();
         FloatPoint glyphOrigin;
         unsigned lastCharacterIndex = m_run.ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
@@ -714,8 +715,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGGlyph glyph = glyphs[i];
             FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[i].height()) : advances[i];
 
-            if (ch == '\t' && m_run.allowTabs())
-                advance.setWidth(m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalAdvance.width()));
+            if (ch == tabCharacter && m_run.allowTabs())
+                advance.setWidth(m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalAdvance.width(), Font::SyntheticBoldInclusion::Exclude));
             else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.setWidth(0);
                 glyph = font.spaceGlyph();
@@ -844,7 +845,8 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
 
     // Synthesize a run of missing glyphs.
     m_glyphs.fill(0, m_glyphCount);
-    m_baseAdvances.fill(FloatSize(m_font.widthForGlyph(0), 0), m_glyphCount);
+    // Synthetic bold will be handled later in adjustGlyphsAndAdvances().
+    m_baseAdvances.fill(FloatSize(m_font.widthForGlyph(0, Font::SyntheticBoldInclusion::Exclude), 0), m_glyphCount);
 }
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)

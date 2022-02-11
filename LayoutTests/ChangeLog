@@ -1,3 +1,24 @@
+2022-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tab characters and ch units do not obey synthetic bold width adjustments correctly
+        https://bugs.webkit.org/show_bug.cgi?id=236172
+
+        Reviewed by Alan Bujtas.
+
+        3 new tests. Also, the changes in ignored-properties-001-expected.txt are a revert of the rebaseline in
+        r281687. That rebaseline was wrong, so this undoes it.
+
+        * fast/text/ch-unit-synthetic-bold-expected.html: Added.
+        * fast/text/ch-unit-synthetic-bold.html: Added.
+        * fast/text/tab-width-synthetic-bold-complex-expected.html: Added.
+        * fast/text/tab-width-synthetic-bold-complex.html: Added.
+        * fast/text/tab-width-synthetic-bold-expected.html: Added.
+        * fast/text/tab-width-synthetic-bold.html: Added.
+        * platform/ios/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+
 2022-02-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Remove several stale WPT offscreen canvas tests

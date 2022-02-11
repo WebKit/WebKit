@@ -306,7 +306,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         const Font& font = glyphData.font ? *glyphData.font : primaryFont;
 
         previousWidth = width;
-        width = font.widthForGlyph(glyph);
+        width = font.widthForGlyph(glyph, Font::SyntheticBoldInclusion::Exclude); // We apply synthetic bold after shaping, in applyCSSVisibilityRules().
 
         if (&font != lastFontData)
             commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, lastFontData, font, primaryFont, character, widthOfCurrentFontRange, width, charactersTreatedAsSpace);
@@ -314,7 +314,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             widthOfCurrentFontRange += width;
 
         if (FontCascade::treatAsSpace(character))
-            charactersTreatedAsSpace.constructAndAppend(currentCharacterIndex, character == space, previousWidth, character == tabCharacter ? width : font.spaceWidth());
+            charactersTreatedAsSpace.constructAndAppend(currentCharacterIndex, character == space, previousWidth, character == tabCharacter ? width : font.spaceWidth(Font::SyntheticBoldInclusion::Exclude));
 
         if (m_accountForGlyphBounds) {
             bounds = font.boundsForGlyph(glyph);
@@ -354,7 +354,8 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
 
     if (character == tabCharacter && m_run.allowTabs()) {
         auto& font = glyphBuffer.fontAt(trailingGlyphIndex);
-        auto newWidth = m_font.tabWidth(font, m_run.tabSize(), position);
+        // Synthetic bold will be handled in applyCSSVisibilityRules() later.
+        auto newWidth = m_font.tabWidth(font, m_run.tabSize(), position, Font::SyntheticBoldInclusion::Exclude);
         auto currentWidth = width(glyphBuffer.advanceAt(trailingGlyphIndex));
         rightAdditionalWidth += newWidth - currentWidth;
     }

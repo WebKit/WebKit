@@ -168,8 +168,7 @@ public:
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
     const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
-    float tabWidth(const Font&, const TabSize&, float) const;
-    float tabWidth(const TabSize& tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }
+    float tabWidth(const Font&, const TabSize&, float, Font::SyntheticBoldInclusion) const;
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
@@ -373,13 +372,20 @@ inline FontSelector* FontCascade::fontSelector() const
     return m_fonts ? m_fonts->fontSelector() : nullptr;
 }
 
-inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position) const
+inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position, Font::SyntheticBoldInclusion syntheticBoldInclusion) const
 {
     float baseTabWidth = tabSize.widthInPixels(font.spaceWidth());
+    float result = 0;
     if (!baseTabWidth)
-        return letterSpacing();
-    float tabDeltaWidth = baseTabWidth - fmodf(position, baseTabWidth);
-    return (tabDeltaWidth < font.spaceWidth() / 2) ? baseTabWidth : tabDeltaWidth;
+        result = letterSpacing();
+    else {
+        float tabDeltaWidth = baseTabWidth - fmodf(position, baseTabWidth);
+        result = (tabDeltaWidth < font.spaceWidth() / 2) ? baseTabWidth : tabDeltaWidth;
+    }
+    // If our caller passes in SyntheticBoldInclusion::Exclude, that means they're going to apply synthetic bold themselves later.
+    // However, regardless of that, the space characters that are fed into the width calculation need to have their correct width, including the synthetic bold.
+    // So, we've already got synthetic bold applied, so if we're supposed to exclude it, we need to subtract it out here.
+    return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
 }
