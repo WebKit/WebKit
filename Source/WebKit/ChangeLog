@@ -1,5 +1,14 @@
 2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, non-unified build fixes in WKPaymentAuthorizationDelegate
+
+        Include several missing headers.
+
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+
+2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Add support for a "markup image" item in the callout bar when selecting a single image
         https://bugs.webkit.org/show_bug.cgi?id=236415
         rdar://88714333

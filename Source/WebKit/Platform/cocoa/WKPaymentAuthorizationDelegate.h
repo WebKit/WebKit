@@ -28,6 +28,7 @@
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakPtr.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;

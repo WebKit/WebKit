@@ -28,10 +28,15 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
+#import "PaymentAuthorizationPresenter.h"
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
+#import <wtf/RunLoop.h>
+#import <wtf/URL.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
 
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
