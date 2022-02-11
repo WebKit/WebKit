@@ -51,6 +51,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
 class RemoteMediaPlayerManager;
+class RemoteVideoFrameObjectHeapProxy;
 class SampleBufferDisplayLayerManager;
 class WebPage;
 struct GPUProcessConnectionInitializationParameters;
@@ -77,6 +78,7 @@ public:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
     void resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
+    RemoteVideoFrameObjectHeapProxy& remoteVideoFrameObjectHeapProxy();
 #endif
 
     RemoteMediaPlayerManager& mediaPlayerManager();
@@ -140,6 +142,7 @@ private:
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_remoteVideoFrameObjectHeapProxy;
 #endif
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;

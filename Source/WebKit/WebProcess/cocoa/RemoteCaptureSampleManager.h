@@ -33,11 +33,13 @@
 #include "RemoteRealtimeAudioSource.h"
 #include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -46,6 +48,7 @@ class RemoteVideoSample;
 }
 
 namespace WebKit {
+class RemoteVideoFrameObjectHeapProxy;
 
 class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,6 +63,7 @@ public:
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     void didUpdateSourceConnection(IPC::Connection*);
+    void setRemoteVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -70,7 +74,7 @@ private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
+    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameIdentifier>, WebCore::VideoSampleMetadata);
 
     void setConnection(IPC::Connection*);
 
@@ -106,6 +110,7 @@ private:
         explicit RemoteVideo(Source&&);
 
         void videoSampleAvailable(WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
+        void videoFrameAvailable(Ref<WebCore::MediaSample>&&, WebCore::IntSize, WebCore::VideoSampleMetadata);
 
     private:
         Source m_source;
@@ -115,10 +120,12 @@ private:
     bool m_isRegisteredToParentProcessConnection { false };
     Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;
-
     // background thread member
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteVideo>> m_videoSources;
+
+    Lock m_remoteVideoFrameObjectHeapProxyLock;
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_remoteVideoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_remoteVideoFrameObjectHeapProxyLock);
 };
 
 } // namespace WebKit

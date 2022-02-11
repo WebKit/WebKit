@@ -30,6 +30,8 @@
 #include "GPUProcessConnection.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include <WebCore/VideoFrame.h>
+#include <wtf/Function.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace IPC {
 class Connection;
@@ -54,6 +56,7 @@ public:
         bool isMirrored { false };
         VideoRotation rotation { VideoRotation::None };
         WebCore::IntSize size;
+        uint32_t pixelFormat { 0 };
 
         template<typename Encoder> void encode(Encoder&) const;
         template<typename Decoder> static std::optional<Properties> decode(Decoder&);
@@ -61,7 +64,15 @@ public:
 
     static Properties properties(WebKit::RemoteVideoFrameReference&&, const WebCore::MediaSample&);
 
-    static RefPtr<RemoteVideoFrameProxy> create(IPC::Connection&, Properties&&);
+#if PLATFORM(COCOA)
+    using PixelBufferResultCallback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
+#else
+    using PixelBufferResultCallback = Function<void()>;
+#endif
+    // PixelBufferCallback should always complete but it might not be called on the same thread it was created.
+    using PixelBufferCallback = Function<void(const RemoteVideoFrameProxy&, PixelBufferResultCallback&&)>;
+
+    static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, Properties, PixelBufferCallback&&);
 
     // Called by the end-points that capture creation messages that are sent from GPUP but
     // whose destinations were released in WP before message was processed.
@@ -75,20 +86,26 @@ public:
 
     WebCore::IntSize size() const;
 
+#if PLATFORM(COCOA)
+    CVPixelBufferRef pixelBuffer() const final;
+#endif
+
+private:
+    RemoteVideoFrameProxy(IPC::Connection&, Properties, PixelBufferCallback&&);
+
     // WebCore::VideoFrame overrides.
     MediaTime presentationTime() const final;
     VideoRotation videoRotation() const final;
     bool videoMirrored() const final;
+    WebCore::FloatSize presentationSize() const final { return m_size; }
     std::optional<WebCore::MediaSampleVideoFrame> videoFrame() const final;
+    uint32_t videoPixelFormat() const final;
     // FIXME: When VideoFrame is not MediaSample, these will not be needed.
     WebCore::PlatformSample platformSample() const final;
-    uint32_t videoPixelFormat() const final;
 
-private:
-    RemoteVideoFrameProxy(IPC::Connection&, Properties&&);
-    static void release(IPC::Connection&, RemoteVideoFrameWriteReference&&);
-
-    static inline Seconds defaultSendTimeout = 30_s;
+#if PLATFORM(COCOA)
+    void getPixelBuffer();
+#endif
 
     const Ref<IPC::Connection> m_connection;
     RemoteVideoFrameReferenceTracker m_referenceTracker;
@@ -96,6 +113,11 @@ private:
     const bool m_isMirrored;
     const VideoRotation m_rotation;
     const WebCore::IntSize m_size;
+    uint32_t m_pixelFormat { 0 };
+    mutable Lock m_pixelBufferLock;
+    RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    BinarySemaphore m_semaphore;
+    PixelBufferCallback m_pixelBufferCallback;
 };
 
 template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const
@@ -103,7 +125,8 @@ template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encode
     encoder << presentationTime
         << isMirrored
         << rotation
-        << size;
+        << size
+        << pixelFormat;
 }
 
 template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> RemoteVideoFrameProxy::Properties::decode(Decoder& decoder)
@@ -113,13 +136,15 @@ template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> Remo
     std::optional<bool> isMirrored;
     std::optional<VideoRotation> videoRotation;
     std::optional<WebCore::IntSize> size;
+    std::optional<uint32_t> pixelFormat;
     decoder >> presentationTime
         >> isMirrored
         >> videoRotation
-        >> size;
+        >> size
+        >> pixelFormat;
     if (!decoder.isValid())
         return std::nullopt;
-    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *videoRotation, *size };
+    return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *videoRotation, *size, *pixelFormat };
 }
 
 }

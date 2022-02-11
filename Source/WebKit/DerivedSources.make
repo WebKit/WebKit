@@ -205,6 +205,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/media/RemoteRemoteCommandListener \
 	WebProcess/GPU/media/SourceBufferPrivateRemote \
 	WebProcess/GPU/media/ios/RemoteMediaSessionHelper \
+	WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor \
 	WebProcess/WebStorage/StorageAreaMap \
 	WebProcess/UserContent/WebUserContentController \
 	WebProcess/Inspector/WebInspectorInterruptDispatcher \

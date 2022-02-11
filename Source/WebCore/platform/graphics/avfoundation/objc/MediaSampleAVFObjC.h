@@ -72,6 +72,7 @@ public:
     bool videoMirrored() const override { return m_mirrored; }
     WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
     WEBCORE_EXPORT std::optional<MediaSampleVideoFrame> videoFrame() const final;
+    WEBCORE_EXPORT CVPixelBufferRef pixelBuffer() const final;
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
     bool isHomogeneous() const;

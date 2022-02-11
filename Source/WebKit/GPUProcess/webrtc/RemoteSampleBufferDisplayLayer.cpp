@@ -37,7 +37,7 @@
 #include <WebCore/RemoteVideoSample.h>
 
 namespace WebKit {
-static constexpr Seconds defaultTimeout { 30_s };
+static constexpr Seconds defaultTimeout { 1_s };
 
 using namespace WebCore;
 
@@ -123,13 +123,13 @@ void RemoteSampleBufferDisplayLayer::enqueueSample(RemoteVideoFrameReadReference
 {
     auto mediaSample = m_videoFrameObjectHeap->retire(WTFMove(sample), defaultTimeout);
     if (!mediaSample) {
-        ASSERT_IS_TESTING_IPC();
+        // In case of GPUProcess crash, we might enqueue previous GPUProcess samples, ignore them.
         return;
     }
-    if (!is<MediaSampleAVFObjC>(mediaSample)) {
-        ASSERT_IS_TESTING_IPC();
+    ASSERT(is<MediaSampleAVFObjC>(mediaSample));
+    if (!is<MediaSampleAVFObjC>(mediaSample))
         return;
-    }
+
     auto& avfMediaSample = downcast<MediaSampleAVFObjC>(*mediaSample);
     MediaSampleAVFObjC::setAsDisplayImmediately(avfMediaSample);
     m_sampleBufferDisplayLayer->enqueueSample(avfMediaSample);

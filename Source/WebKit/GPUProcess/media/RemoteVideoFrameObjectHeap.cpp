@@ -29,7 +29,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
+#include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
+
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebKit {
 
@@ -53,6 +56,8 @@ RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
 void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection)
 {
     assertIsCurrent(m_consumeThread);
+    m_sharedVideoFrameWriter.disable();
+
     if (auto* gpuConnectionToWebProcess = std::exchange(m_gpuConnectionToWebProcess, nullptr)) {
         gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName());
         // Clients might hold on to the ref after this happens. They should also stop themselves, but if they do not,
@@ -63,10 +68,35 @@ void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectH
     }
 }
 
+RemoteVideoFrameIdentifier RemoteVideoFrameObjectHeap::createRemoteVideoFrame(Ref<WebCore::MediaSample>&& frame)
+{
+    auto identifier = RemoteVideoFrameIdentifier::generateThreadSafe();
+    add(identifier, WTFMove(frame));
+    return identifier;
+}
+
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
     assertIsCurrent(m_consumeThread);
     retireRemove(WTFMove(write));
+}
+
+void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
+{
+    auto identifier = read.identifier();
+    auto mediaSample = retire(WTFMove(read), 0_s);
+
+    if (!mediaSample)
+        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
+
+    auto platformSample = mediaSample->platformSample();
+    ASSERT(platformSample.type == PlatformSample::CMSampleBufferType);
+
+    m_sharedVideoFrameWriter.write(static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(platformSample.sample.cmSampleBuffer)),
+        [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+        [&](auto& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { handle }, 0); }
+    );
+    m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier }, 0);
 }
 
 }

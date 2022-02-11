@@ -384,6 +384,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextureViewMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyProcessorMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyProcessorMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoFrameObjectHeapProxyProcessorMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoTrackProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoTrackProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteVideoTrackProxyMessagesReplies.h

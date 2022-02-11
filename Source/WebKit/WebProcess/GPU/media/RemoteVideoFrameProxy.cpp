@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
+#include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 
 namespace WebKit {
 
@@ -39,33 +40,41 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
         mediaSample.presentationTime(),
         mediaSample.videoMirrored(),
         mediaSample.videoRotation(),
-        expandedIntSize(mediaSample.presentationSize())
+        expandedIntSize(mediaSample.presentationSize()),
+        mediaSample.videoPixelFormat()
     };
 }
 
-RefPtr<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameProxy::Properties&& properties)
+Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, Properties properties, PixelBufferCallback&& callback)
 {
-    return adoptRef(new RemoteVideoFrameProxy(connection, WTFMove(properties)));
+    return adoptRef(*new RemoteVideoFrameProxy(connection, WTFMove(properties), WTFMove(callback)));
+}
+
+static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
+{
+    connection.send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(reference), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Properties&& properties)
 {
-    release(connection, { { properties.reference.identifier(), properties.reference.version() }, 0 });
+    releaseRemoteVideoFrameProxy(connection, { { properties.reference.identifier(), properties.reference.version() }, 0 });
 }
 
-RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Properties&& properties)
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Properties properties, PixelBufferCallback&& callback)
     : m_connection(connection)
     , m_referenceTracker(properties.reference)
     , m_presentationTime(properties.presentationTime)
     , m_isMirrored(properties.isMirrored)
     , m_rotation(properties.rotation)
     , m_size(properties.size)
+    , m_pixelFormat(properties.pixelFormat)
+    , m_pixelBufferCallback(WTFMove(callback))
 {
 }
 
 RemoteVideoFrameProxy::~RemoteVideoFrameProxy()
 {
-    release(m_connection.get(), write());
+    releaseRemoteVideoFrameProxy(m_connection, write());
 }
 
 RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
@@ -105,9 +114,7 @@ bool RemoteVideoFrameProxy::videoMirrored() const
 
 uint32_t RemoteVideoFrameProxy::videoPixelFormat() const
 {
-    // FIXME: Remove from the base class.
-    ASSERT_NOT_REACHED();
-    return 0;
+    return m_pixelFormat;
 }
 
 std::optional<WebCore::MediaSampleVideoFrame> RemoteVideoFrameProxy::videoFrame() const
@@ -115,10 +122,29 @@ std::optional<WebCore::MediaSampleVideoFrame> RemoteVideoFrameProxy::videoFrame(
     return std::nullopt;
 }
 
-void RemoteVideoFrameProxy::release(IPC::Connection& connection, RemoteVideoFrameWriteReference&& releaseWrite)
+#if PLATFORM(COCOA)
+void RemoteVideoFrameProxy::getPixelBuffer()
 {
-    connection.send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(WTFMove(releaseWrite)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    ASSERT(m_pixelBufferLock.isHeld());
+    std::exchange(m_pixelBufferCallback, { })(*this, [this](auto pixelBuffer) {
+        m_pixelBuffer = WTFMove(pixelBuffer);
+        if (!m_pixelBuffer) {
+            // some code paths do not like empty pixel buffers.
+            m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
+        }
+        m_semaphore.signal();
+    });
+    m_semaphore.wait();
 }
+
+CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
+{
+    Locker lock(m_pixelBufferLock);
+    if (!m_pixelBuffer && m_pixelBufferCallback)
+        const_cast<RemoteVideoFrameProxy*>(this)->getPixelBuffer();
+    return m_pixelBuffer.get();
+}
+#endif
 
 }
 #endif

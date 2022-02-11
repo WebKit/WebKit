@@ -1,3 +1,23 @@
+2022-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Support remote video frames in WebRTC video pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=236356
+
+        Reviewed by Kimmo Kinnunen.
+
+        Introduce a way for ObjCFrameBuffer to not directly own a CVPixelBufferRef but a pointer
+        that can be used to get a CVPixelBufferRef. This is used to allow remote frames to be sent over to libwebrtc.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.h:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.h:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.mm:
+
 2022-02-03  Michael Saboff  <msaboff@apple.com>
 
         WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path

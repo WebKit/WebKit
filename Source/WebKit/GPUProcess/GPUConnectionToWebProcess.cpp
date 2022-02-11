@@ -206,19 +206,20 @@ private:
         m_process.setTCCIdentity();
     }
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+
     void startProducingData(RealtimeMediaSource::Type type) final
     {
         if (type != RealtimeMediaSource::Type::Audio)
             return;
         m_process.startCapturingAudio();
     }
-#endif
 
     const ProcessIdentity& resourceOwner() const final
     {
         return m_process.webProcessIdentity();
     }
+
+    RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.videoFrameObjectHeap(); }
 
     GPUConnectionToWebProcess& m_process;
 };
@@ -237,14 +238,17 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
     , m_remoteMediaPlayerManagerProxy(makeUniqueRef<RemoteMediaPlayerManagerProxy>(*this))
     , m_sessionID(sessionID)
-#if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
-#endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_captureOrigin(SecurityOrigin::createUnique())
+#endif
+#if ENABLE(MEDIA_STREAM)
+    , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(*this))
+#endif
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
 #endif
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
@@ -257,9 +261,6 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     gpuProcess.audioSessionManager().session().setRoutingArbitrationClient(m_routingArbitrator.get());
-#endif
-#if ENABLE(MEDIA_STREAM)
-    m_videoFrameObjectHeap = RemoteVideoFrameObjectHeap::create(*this);
 #endif
 
     if (!parameters.overrideLanguages.isEmpty())

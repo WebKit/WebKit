@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
+#include "RemoteVideoFrameObjectHeap.h"
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageTransferSessionVT.h>
@@ -42,6 +43,7 @@
 
 namespace WebKit {
 using namespace WebCore;
+static constexpr Seconds mediaRecorderDefaultTimeout { 1_s };
 
 std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options)
 {
@@ -55,6 +57,7 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_writer(WTFMove(writer))
+    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
 {
     if (recordAudio)
         m_ringBuffer = makeUnique<CARingBuffer>();
@@ -86,10 +89,16 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
     m_writer->appendAudioSampleBuffer(*m_audioBufferList, m_description, time, numberOfFrames);
 }
 
-void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remoteSample)
+void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remoteSample, std::optional<RemoteVideoFrameReadReference> sampleReference)
 {
     RefPtr<MediaSample> sample;
-    if (!remoteSample.surface()) {
+    if (sampleReference) {
+        sample = m_videoFrameObjectHeap->retire(WTFMove(*sampleReference), mediaRecorderDefaultTimeout);
+        if (!sample) {
+            // In case of GPUProcess crash, we might enqueue previous GPUProcess samples, ignore them.
+            return;
+        }
+    } else if (!remoteSample.surface()) {
         auto pixelBuffer = m_sharedVideoFrameReader.read();
         if (!pixelBuffer)
             return;

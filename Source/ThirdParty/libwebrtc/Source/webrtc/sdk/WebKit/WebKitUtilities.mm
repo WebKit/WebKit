@@ -52,6 +52,20 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef
     return new rtc::RefCountedObject<ObjCFrameBuffer>(frameBuffer);
 }
 
+rtc::scoped_refptr<webrtc::VideoFrameBuffer> toWebRTCVideoFrameBuffer(void* pointer, GetBufferCallback getBufferCallback, ReleaseBufferCallback releaseBufferCallback, int width, int height)
+{
+    return new rtc::RefCountedObject<ObjCFrameBuffer>(ObjCFrameBuffer::BufferProvider { pointer, getBufferCallback, releaseBufferCallback }, width, height);
+}
+
+void* videoFrameBufferProvider(const VideoFrame& frame)
+{
+    auto buffer = frame.video_frame_buffer();
+    if (buffer->type() != VideoFrameBuffer::Type::kNative)
+        return nullptr;
+
+    return static_cast<ObjCFrameBuffer*>(buffer.get())->frame_buffer_provider();
+}
+
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
     RTC_DCHECK(pixel_buffer);
     RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);

@@ -14,15 +14,26 @@
 #import <CoreVideo/CoreVideo.h>
 
 #include "common_video/include/video_frame_buffer.h"
+#include "rtc_base/synchronization/mutex.h"
 
 @protocol RTCVideoFrameBuffer;
 
 namespace webrtc {
 
+typedef CVPixelBufferRef (*GetBufferCallback)(void*);
+typedef void (*ReleaseBufferCallback)(void*);
+
 class ObjCFrameBuffer : public VideoFrameBuffer {
  public:
   explicit ObjCFrameBuffer(id<RTCVideoFrameBuffer>);
   ~ObjCFrameBuffer() override;
+
+  struct BufferProvider {
+    void *pointer { nullptr };
+    GetBufferCallback getBuffer { nullptr };
+    ReleaseBufferCallback releaseBuffer { nullptr };
+  };
+  ObjCFrameBuffer(BufferProvider, int width, int height);
 
   Type type() const override;
 
@@ -32,11 +43,14 @@ class ObjCFrameBuffer : public VideoFrameBuffer {
   rtc::scoped_refptr<I420BufferInterface> ToI420() override;
 
   id<RTCVideoFrameBuffer> wrapped_frame_buffer() const;
+  void* frame_buffer_provider() { return frame_buffer_provider_.pointer; }
 
  private:
   id<RTCVideoFrameBuffer> frame_buffer_;
+  BufferProvider frame_buffer_provider_;
   int width_;
   int height_;
+  mutable webrtc::Mutex mutex_;
 };
 
 id<RTCVideoFrameBuffer> ToObjCVideoFrameBuffer(

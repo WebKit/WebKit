@@ -61,7 +61,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     if (!m_didInitializeCallback) {
         // We initialize only once since callbacks are used in background threads.
         auto* page = m_webPage.corePage();
-        LibWebRTCCodecs::setCallbacks(page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled());
+        LibWebRTCCodecs::setCallbacks(page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), page && page->settings().webRTCRemoteVideoFrameEnabled());
         m_didInitializeCallback = true;
     }
 #endif

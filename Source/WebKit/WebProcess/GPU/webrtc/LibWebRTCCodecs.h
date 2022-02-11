@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "SharedVideoFrame.h"
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
@@ -60,13 +61,15 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebKit {
 
+class RemoteVideoFrameObjectHeapProxy;
+
 class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecs> create();
     ~LibWebRTCCodecs();
 
-    static void setCallbacks(bool useGPUProcess);
+    static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
 
     enum class Type { H264, H265, VP9 };
     struct Decoder {
@@ -128,7 +131,7 @@ private:
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
-    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
+    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameIdentifier>);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
@@ -149,6 +152,7 @@ private:
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_remoteVideoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;
@@ -158,6 +162,7 @@ private:
     size_t m_pixelBufferPoolHeight { 0 };
     bool m_supportVP9VTB { false };
     std::optional<WTFLogLevel> m_loggingLevel;
+    bool m_useRemoteFrames { false };
 };
 
 } // namespace WebKit

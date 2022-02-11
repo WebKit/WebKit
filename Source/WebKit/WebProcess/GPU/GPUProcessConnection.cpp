@@ -45,6 +45,7 @@
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteRemoteCommandListenerMessages.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "SampleBufferDisplayLayerMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
@@ -162,6 +163,13 @@ SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerM
 void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().reset(identifier);
+}
+
+RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::remoteVideoFrameObjectHeapProxy()
+{
+    if (!m_remoteVideoFrameObjectHeapProxy)
+        m_remoteVideoFrameObjectHeapProxy = RemoteVideoFrameObjectHeapProxy::create(*this);
+    return *m_remoteVideoFrameObjectHeapProxy;
 }
 #endif
 

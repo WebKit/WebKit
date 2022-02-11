@@ -48,7 +48,6 @@ private:
     WEBCORE_EXPORT MediaTime duration() const final;
     WEBCORE_EXPORT AtomString trackID() const final;
     WEBCORE_EXPORT size_t sizeInBytes() const final;
-    WEBCORE_EXPORT WebCore::FloatSize presentationSize() const final;
     WEBCORE_EXPORT void offsetTimestampsBy(const MediaTime&) final;
     WEBCORE_EXPORT void setTimestamps(const MediaTime&, const MediaTime&) final;
     WEBCORE_EXPORT bool isDivisable() const final;

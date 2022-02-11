@@ -28,6 +28,8 @@
 
 #include "Logging.h"
 #include "RemoteCaptureSampleManagerMessages.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#include "RemoteVideoFrameProxy.h"
 #include "SharedRingBufferStorage.h"
 #include "WebProcess.h"
 #include <WebCore/ImageTransferSessionVT.h>
@@ -133,6 +135,12 @@ void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection* conn
     setConnection(connection);
 }
 
+void RemoteCaptureSampleManager::setRemoteVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy* proxy)
+{
+    Locker lock(m_remoteVideoFrameObjectHeapProxyLock);
+    m_remoteVideoFrameObjectHeapProxy = proxy;
+}
+
 void RemoteCaptureSampleManager::dispatchToThread(Function<void()>&& callback)
 {
     m_queue->dispatch(WTFMove(callback));
@@ -150,13 +158,33 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, std::optional<RemoteVideoFrameIdentifier> remoteIdentifier, VideoSampleMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
+
+    RefPtr<MediaSample> videoFrame;
+    // We always create RemoteVideoFrameProxy so that we can release the corresponding GPUProcess IOSurface right away if there is no video source.
+    if (remoteIdentifier) {
+        RemoteVideoFrameProxy::Properties properties { { *remoteIdentifier, 0 }, sample.time(), sample.mirrored(), sample.rotation(), sample.size(), sample.videoFormat() };
+        
+        // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
+        Locker lock(m_remoteVideoFrameObjectHeapProxyLock);
+        videoFrame = RemoteVideoFrameProxy::create(*m_connection, properties, [proxy = m_remoteVideoFrameObjectHeapProxy](auto& frame, auto&& callback) {
+            if (!proxy) {
+                callback({ });
+                return;
+            }
+            proxy->getVideoFrameBuffer(frame, WTFMove(callback));
+        });
+    }
 
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
+        return;
+    }
+    if (videoFrame) {
+        iterator->value->videoFrameAvailable(videoFrame.releaseNonNull(), sample.size(), metadata);
         return;
     }
     iterator->value->videoSampleAvailable(WTFMove(sample), metadata);
@@ -247,10 +275,15 @@ void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSa
         ASSERT_NOT_REACHED();
         return;
     }
+    videoFrameAvailable(sampleRef.releaseNonNull(), remoteSample.size(), metadata);
+}
+
+void RemoteCaptureSampleManager::RemoteVideo::videoFrameAvailable(Ref<MediaSample>&& sample, IntSize size, VideoSampleMetadata metadata)
+{
     switchOn(m_source, [&](Ref<RemoteRealtimeVideoSource>& source) {
-        source->videoSampleAvailable(*sampleRef, remoteSample.size(), metadata);
+        source->videoSampleAvailable(sample.get(), size, metadata);
     }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->remoteVideoSampleAvailable(*sampleRef, metadata);
+        source->remoteVideoSampleAvailable(sample.get(), metadata);
     });
 }
 

@@ -756,6 +756,7 @@ WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
 WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
+WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
 
@@ -887,6 +888,7 @@ RemoteExternalTextureMessageReceiver.cpp
 RemoteGPUMessageReceiver.cpp
 RemoteGPUProxyMessageReceiver.cpp
 RemoteVideoFrameObjectHeapMessageReceiver.cpp
+RemoteVideoFrameObjectHeapProxyProcessorMessageReceiver.cpp
 RemotePipelineLayoutMessageReceiver.cpp
 RemoteQuerySetMessageReceiver.cpp
 RemoteQueueMessageReceiver.cpp

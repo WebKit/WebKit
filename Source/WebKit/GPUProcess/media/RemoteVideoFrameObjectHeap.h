@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 #include "RemoteVideoFrameIdentifier.h"
+#include "SharedVideoFrame.h"
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/MediaSample.h>
 #include <wtf/ThreadAssertions.h>
@@ -44,7 +45,10 @@ public:
     static Ref<RemoteVideoFrameObjectHeap> create(GPUConnectionToWebProcess&);
     ~RemoteVideoFrameObjectHeap();
 
+    RemoteVideoFrameIdentifier createRemoteVideoFrame(Ref<WebCore::MediaSample>&&);
+
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection);
+
 private:
     RemoteVideoFrameObjectHeap(GPUConnectionToWebProcess&);
 
@@ -53,10 +57,12 @@ private:
 
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
+    void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
 
     GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_LOCK(m_consumeThread);
     const Ref<IPC::Connection> m_connection;
     ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };
 
 

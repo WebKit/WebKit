@@ -29,6 +29,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "MediaSample.h"
 #include "RealtimeIncomingVideoSource.h"
 
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
@@ -49,6 +50,8 @@ private:
     RealtimeIncomingVideoSourceCocoa(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
     RetainPtr<CVPixelBufferRef> pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType);
+    RefPtr<MediaSample> toVideoFrame(const webrtc::VideoFrame&, MediaSample::VideoRotation);
+    RefPtr<MediaSample> createMediaSampleFromCVPixelBuffer(CVPixelBufferRef, MediaSample::VideoRotation, int64_t);
 
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;

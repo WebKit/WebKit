@@ -54,6 +54,7 @@ public:
     CVPixelBufferRef imageBuffer() const { return m_imageBuffer.get(); }
 
     void setOwnershipIdentity(const ProcessIdentity&);
+    void clearIOSurface() { m_ioSurface = nullptr; }
 
     const MediaTime& time() const { return m_time; }
     uint32_t videoFormat() const { return m_videoFormat; }

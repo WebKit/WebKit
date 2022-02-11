@@ -34,6 +34,7 @@
 #include <wtf/text/AtomString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct _GstSample GstSample;
 typedef struct OpaqueMTPluginByteSource *MTPluginByteSourceRef;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
@@ -109,6 +110,9 @@ public:
     virtual uint32_t videoPixelFormat() const { return 0; }
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     virtual std::optional<MediaSampleVideoFrame> videoFrame() const { return std::nullopt; };
+#endif
+#if PLATFORM(COCOA)
+    virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
 #endif
 
     bool isSync() const { return flags() & IsSync; }

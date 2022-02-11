@@ -4075,6 +4075,10 @@
 		411B89C727B2B75C00F9EBD3 /* WKQueryPermissionResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKQueryPermissionResultCallback.h; sourceTree = "<group>"; };
 		411B89C827B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKQueryPermissionResultCallback.cpp; sourceTree = "<group>"; };
 		411B89CB27B2B89600F9EBD3 /* QueryPermissionResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryPermissionResultCallback.h; sourceTree = "<group>"; };
+		411B89E427B5D58200F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteVideoFrameObjectHeapProxyProcessor.messages.in; sourceTree = "<group>"; };
+		411B89E527B5D58300F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeapProxyProcessor.h; sourceTree = "<group>"; };
+		411B89E627B5D58400F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoFrameObjectHeapProxyProcessor.cpp; sourceTree = "<group>"; };
+		411B89F527B6B4C700F9EBD3 /* RemoteVideoFrameObjectHeapProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeapProxy.h; sourceTree = "<group>"; };
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
 		41287D4D225C161F009A3E26 /* WebSocketTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTask.h; sourceTree = "<group>"; };
@@ -4176,7 +4180,6 @@
 		41C3B89426493B7C004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in; sourceTree = "<group>"; };
 		41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
 		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
-		41CB840325CABF7C0010E2B1 /* MediaRecorderPrivate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaRecorderPrivate.mm; sourceTree = "<group>"; };
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerSoftUpdateLoader.h; sourceTree = "<group>"; };
 		41D5C6D9238EB20E00B9B3CB /* ServiceWorkerSoftUpdateLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerSoftUpdateLoader.cpp; sourceTree = "<group>"; };
@@ -9285,9 +9288,12 @@
 				4176E89723C361BD003E83FE /* MediaRecorderIdentifier.h */,
 				4176E89423C34E26003E83FE /* MediaRecorderPrivate.cpp */,
 				4176E89523C34E27003E83FE /* MediaRecorderPrivate.h */,
-				41CB840325CABF7C0010E2B1 /* MediaRecorderPrivate.mm */,
 				4176E89323C34D6F003E83FE /* MediaRecorderProvider.cpp */,
 				4176E89223C34D6E003E83FE /* MediaRecorderProvider.h */,
+				411B89F527B6B4C700F9EBD3 /* RemoteVideoFrameObjectHeapProxy.h */,
+				411B89E627B5D58400F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.cpp */,
+				411B89E527B5D58300F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.h */,
+				411B89E427B5D58200F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.messages.in */,
 				4172198C23B612E800AE5686 /* RTCDecoderIdentifier.h */,
 				4158649A23BE092400A0A61E /* RTCEncoderIdentifier.h */,
 				41FCD6B723CDE53D00C62567 /* SampleBufferDisplayLayer.cpp */,
@@ -13453,7 +13459,6 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
-				5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,

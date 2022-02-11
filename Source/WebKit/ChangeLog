@@ -1,3 +1,66 @@
+2022-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Support remote video frames in WebRTC video pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=236356
+
+        Reviewed by Kimmo Kinnunen.
+
+        Allow receiving remote samples from camera or HW decoders.
+        In that case, we create remote video frames and allow piping them to our existing pipeline.
+        We update MediaRecorder and LibWebRTC HW encoders to deal with this.
+        Since we have a code path that requires getting access to the raw pixels, we introduce RemoteVideoFrameObjectHeapProxy
+        to allow getting that data through shared memory asynchronously.
+        RemoteVideoFrameProxy will then use a semaphore to block on the async IPC result.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * Shared/ThreadSafeObjectHeap.h:
+        * Sources.txt:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        * WebProcess/GPU/media/RemoteVideoFrameIdentifier.h:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        * WebProcess/GPU/media/RemoteVideoFrameProxyIdentifier.h: Added.
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxy.h: Added.
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp: Added.
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.h: Added.
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.messages.in: Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, non-unified build fixes in WKPaymentAuthorizationDelegate

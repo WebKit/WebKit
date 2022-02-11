@@ -37,6 +37,7 @@
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH264.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH265.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.h"
+#import "sdk/objc/native/src/objc_frame_buffer.h"
 
 @interface WK_RTCLocalVideoH264H265VP9Decoder : NSObject
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
@@ -173,9 +174,21 @@ RemoteVideoDecoder::~RemoteVideoDecoder()
     videoDecoderCallbacks().releaseCallback(m_internalDecoder);
 }
 
-void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef pixelBuffer, uint32_t timeStampRTP)
+void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, CVPixelBufferRef pixelBuffer)
 {
     auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(pixelBufferToFrame(pixelBuffer))
+        .set_timestamp_rtp(timeStampRTP)
+        .set_timestamp_ms(0)
+        .set_rotation((VideoRotation)RTCVideoRotation_0)
+        .build();
+    videoFrame.set_timestamp(timeStamp);
+
+    static_cast<DecodedImageCallback*>(callback)->Decoded(videoFrame);
+}
+
+void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, void* pointer, GetBufferCallback getBufferCallback, ReleaseBufferCallback releaseBufferCallback, int width, int height)
+{
+    auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(toWebRTCVideoFrameBuffer(pointer, getBufferCallback, releaseBufferCallback, width, height))
         .set_timestamp_rtp(timeStampRTP)
         .set_timestamp_ms(0)
         .set_rotation((VideoRotation)RTCVideoRotation_0)

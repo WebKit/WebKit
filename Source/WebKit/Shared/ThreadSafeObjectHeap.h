@@ -52,6 +52,8 @@ public:
     using WriteReference = typename ObjectIdentifierReferenceTracker<Identifier>::WriteReference;
     using Reference = typename ObjectIdentifierReferenceTracker<Identifier>::Reference;
 
+    void add(Identifier, HeldType&&);
+
     // Waits until a write creates the reference and then retires the read or
     // times out.
     HeldType retire(ReadReference&&, IPC::Timeout);
@@ -185,6 +187,15 @@ void ThreadSafeObjectHeap<Identifier, HeldType>::clear()
 {
     Locker locker { m_objectsLock };
     m_objects.clear();
+}
+
+template<typename Identifier, typename HeldType>
+void ThreadSafeObjectHeap<Identifier, HeldType>::add(Identifier identifier, HeldType&& object)
+{
+    Reference reference { identifier, 0 };
+    Locker locker { m_objectsLock };
+    ASSERT(!m_objects.contains(reference));
+    m_objects.add(reference, ReferenceState { WTFMove(object) });
 }
 
 }

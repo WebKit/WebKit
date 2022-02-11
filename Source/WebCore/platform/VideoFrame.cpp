@@ -58,12 +58,6 @@ size_t VideoFrame::sizeInBytes() const
     return 0;
 }
 
-WebCore::FloatSize VideoFrame::presentationSize() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 void VideoFrame::offsetTimestampsBy(const MediaTime&)
 {
     ASSERT_NOT_REACHED();

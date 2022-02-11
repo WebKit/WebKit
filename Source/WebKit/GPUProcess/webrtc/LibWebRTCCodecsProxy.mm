@@ -32,21 +32,27 @@
 #import "GPUProcess.h"
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"
+#import "RemoteVideoFrameIdentifier.h"
+#import "RemoteVideoFrameObjectHeap.h"
 #import "SharedVideoFrame.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/CVUtilities.h>
 #import <WebCore/LibWebRTCProvider.h>
+#import <WebCore/MediaSampleAVFObjC.h>
 #import <WebCore/RemoteVideoSample.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
 #import <webrtc/sdk/WebKit/WebKitEncoder.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MediaTime.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
+
 namespace WebKit {
 
 LibWebRTCCodecsProxy::LibWebRTCCodecsProxy(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
     , m_queue(connection.gpuProcess().libWebRTCCodecsQueue())
+    , m_videoFrameObjectHeap(connection.videoFrameObjectHeap())
 {
     m_gpuConnectionToWebProcess.connection().addThreadMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName(), this);
 }
@@ -75,39 +81,52 @@ void LibWebRTCCodecsProxy::close()
     });
 }
 
-static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp)> createDecoderCallback(RTCDecoderIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp)> createDecoderCallback(RTCDecoderIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, bool useRemoteFrames)
 {
-    return [connection = Ref { gpuConnectionToWebProcess.connection() }, resourceOwner = gpuConnectionToWebProcess.webProcessIdentity(), identifier] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
-        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1))) {
-            if (resourceOwner)
-                sample->setOwnershipIdentity(resourceOwner);
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
+    return [connection = Ref { gpuConnectionToWebProcess.connection() }, resourceOwner = gpuConnectionToWebProcess.webProcessIdentity(), videoFrameObjectHeap = Ref { gpuConnectionToWebProcess.videoFrameObjectHeap() }, identifier, useRemoteFrames] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp)  mutable {
+        auto sample = WebCore::MediaSampleAVFObjC::createImageSample(pixelBuffer, WebCore::MediaSample::VideoRotation::None, false, MediaTime(timeStampNs, 1), { });
+        if (!sample)
+            return;
+
+        auto remoteSample = WebCore::RemoteVideoSample::create(*sample);
+        if (!remoteSample)
+            return;
+
+        if (resourceOwner)
+            remoteSample->setOwnershipIdentity(resourceOwner);
+
+        std::optional<RemoteVideoFrameIdentifier> remoteIdentifier;
+        if (useRemoteFrames) {
+            remoteIdentifier = videoFrameObjectHeap->createRemoteVideoFrame(sample.releaseNonNull());
+            remoteSample->clearIOSurface();
         }
+
+        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *remoteSample, remoteIdentifier }, 0);
     };
 }
 
-void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
+    m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess, useRemoteFrames)).get()));
 }
 
-void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
+    m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess, useRemoteFrames)).get()));
 }
 
-void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
+    m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess, useRemoteFrames)).get()));
 }
 
 void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
@@ -211,15 +230,25 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::MediaSample::
 
 // For performance reasons, this function accesses m_encoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
 // and m_encoders only get modified on this queue.
-void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
+void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame, std::optional<RemoteVideoFrameReadReference> sampleReference)
 {
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    if (sampleReference) {
+        auto sample = m_videoFrameObjectHeap->retire(WTFMove(*sampleReference), 0_s);
+        if (!sample)
+            return;
+
+        auto platformSample = sample->platformSample();
+        ASSERT(platformSample.type == WebCore::PlatformSample::CMSampleBufferType);
+        pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(platformSample.sample.cmSampleBuffer));
+    }
+
     ASSERT(findEncoderWithoutLock(identifier));
     auto* encoder = findEncoderWithoutLock(identifier);
     if (!encoder)
         return;
 
 #if !PLATFORM(MACCATALYST)
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
     if (sample.surface()) {
         if (auto buffer = WebCore::createCVPixelBuffer(sample.surface()))
             pixelBuffer = WTFMove(*buffer);

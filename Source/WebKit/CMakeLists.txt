@@ -284,6 +284,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/media/SourceBufferPrivateRemote
 
     WebProcess/GPU/webrtc/LibWebRTCCodecs
+    WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor
     WebProcess/GPU/webrtc/SampleBufferDisplayLayer
 
     WebProcess/Geolocation/WebGeolocationManager

@@ -1021,6 +1021,19 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebCore:
       default: false
 
+WebRTCRemoteVideoFrameEnabled:
+  type: bool
+  humanReadableName: "WebRTC Remote Video Frame"
+  humanReadableDescription: "Enable WebRTC Remote Video Frame"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebSQLEnabled:
   type: bool
   humanReadableName: "Enable WebSQL"

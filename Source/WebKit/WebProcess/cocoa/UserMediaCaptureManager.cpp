@@ -70,8 +70,9 @@ const char* UserMediaCaptureManager::supplementName()
     return "UserMediaCaptureManager";
 }
 
-void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess)
+void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldUseGPUProcessRemoteFrames)
 {
+    m_shouldUseGPUProcessRemoteFrames = shouldUseGPUProcessRemoteFrames;
     // FIXME(rdar://84278146): Adopt AVCaptureSession attribution API for camera access in the web process if shouldCaptureVideoInGPUProcess is false.
     MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!shouldCaptureAudioInUIProcess && !shouldCaptureAudioInGPUProcess);
     MockRealtimeMediaSourceCenter::singleton().setMockVideoCaptureEnabled(!shouldCaptureVideoInUIProcess && !shouldCaptureVideoInGPUProcess);
@@ -230,14 +231,21 @@ void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool va
     m_shouldCaptureInGPUProcess = value;
 }
 
+void UserMediaCaptureManager::VideoFactory::setShouldCaptureInGPUProcess(bool value)
+{
+    m_shouldCaptureInGPUProcess = value;
+}
+
 CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
+    if (m_shouldCaptureInGPUProcess)
+        m_manager.m_remoteCaptureSampleManager.setRemoteVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().remoteVideoFrameObjectHeapProxy());
 
-    bool shouldUseIOSurface = false;
+    bool shouldUseIOSurface = !m_manager.m_shouldUseGPUProcessRemoteFrames;
     return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess), shouldUseIOSurface));
 }
 

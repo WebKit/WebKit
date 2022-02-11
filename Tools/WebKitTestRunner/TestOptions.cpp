@@ -125,6 +125,7 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+            { "WebRTCRemoteVideoFrameEnabled", false },
             { "WebRTCMDNSICECandidatesEnabled", false },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)

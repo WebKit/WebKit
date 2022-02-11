@@ -83,8 +83,8 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample,
         break;
     }
 
-    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
+    // FIXME: Optimize the case of PlatformSample::RemoteVideoFrameProxyType.
+    auto pixelBuffer = sample.pixelBuffer();
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     RetainPtr<CVPixelBufferRef> convertedBuffer = pixelBuffer;

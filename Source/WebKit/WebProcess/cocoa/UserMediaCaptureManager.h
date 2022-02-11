@@ -57,7 +57,7 @@ public:
     static const char* supplementName();
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess);
+    void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldUseGPUProcessRemoteFrames);
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
@@ -65,6 +65,7 @@ public:
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     RemoteCaptureSampleManager& remoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
+    bool shouldUseGPUProcessRemoteFrames() const { return m_shouldUseGPUProcessRemoteFrames; }
 
 private:
     // WebCore::RealtimeMediaSource factories
@@ -85,7 +86,7 @@ private:
     class VideoFactory : public WebCore::VideoCaptureFactory {
     public:
         explicit VideoFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
-        void setShouldCaptureInGPUProcess(bool value) { m_shouldCaptureInGPUProcess = value; }
+        void setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
@@ -137,6 +138,7 @@ private:
     VideoFactory m_videoFactory;
     DisplayFactory m_displayFactory;
     RemoteCaptureSampleManager m_remoteCaptureSampleManager;
+    bool m_shouldUseGPUProcessRemoteFrames { false };
 };
 
 } // namespace WebKit

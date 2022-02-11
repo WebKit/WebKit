@@ -71,7 +71,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 
 #if ENABLE(MEDIA_STREAM)
     if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
-        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess);
+        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, m_page->settings().webRTCRemoteVideoFrameEnabled());
 #endif
 }
 

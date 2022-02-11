@@ -84,7 +84,7 @@ void RemoteRealtimeVideoSource::createRemoteMediaSource()
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())
             WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
-    });
+    }, m_manager.shouldUseGPUProcessRemoteFrames());
 }
 
 RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()

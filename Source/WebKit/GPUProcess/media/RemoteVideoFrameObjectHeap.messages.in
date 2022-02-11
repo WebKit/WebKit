@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 messages -> RemoteVideoFrameObjectHeap NotRefCounted {
+    GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference identifier)
     ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference identifier)
 }
 #endif

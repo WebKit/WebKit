@@ -556,4 +556,9 @@ std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment
     return { { CheckedSize(byteOffset), singleSizeEntry } };
 }
 
+CVPixelBufferRef MediaSampleAVFObjC::pixelBuffer() const
+{
+    return static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+}
+
 }

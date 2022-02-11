@@ -142,6 +142,7 @@ void SampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     if (m_paused)
         return;
+
     if (is<RemoteVideoFrameProxy>(sample)) {
         auto& remoteSample = downcast<RemoteVideoFrameProxy>(sample);
         m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSample { remoteSample.read() }, m_identifier);

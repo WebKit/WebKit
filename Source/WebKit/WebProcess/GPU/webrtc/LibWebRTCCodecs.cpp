@@ -32,6 +32,8 @@
 #include "LibWebRTCCodecsMessages.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#include "RemoteVideoFrameProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
@@ -132,17 +134,17 @@ static inline String formatNameFromWebRTCCodecType(webrtc::VideoCodecType type)
     }
 }
 
-static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection)
+static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames)
 {
     switch (decoder.type) {
     case LibWebRTCCodecs::Type::H264:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateH264Decoder { decoder.identifier }, 0);
+        connection.send(Messages::LibWebRTCCodecsProxy::CreateH264Decoder { decoder.identifier, useRemoteFrames }, 0);
         break;
     case LibWebRTCCodecs::Type::H265:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateH265Decoder { decoder.identifier }, 0);
+        connection.send(Messages::LibWebRTCCodecsProxy::CreateH265Decoder { decoder.identifier, useRemoteFrames }, 0);
         break;
     case LibWebRTCCodecs::Type::VP9:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateVP9Decoder { decoder.identifier }, 0);
+        connection.send(Messages::LibWebRTCCodecsProxy::CreateVP9Decoder { decoder.identifier, useRemoteFrames }, 0);
         break;
     }
 }
@@ -184,6 +186,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
     gpuConnection.addClient(*this);
     m_connection = &gpuConnection.connection();
+    m_remoteVideoFrameObjectHeapProxy = &gpuConnection.remoteVideoFrameObjectHeapProxy();
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
 
     if (m_loggingLevel)
@@ -228,7 +231,7 @@ LibWebRTCCodecs::~LibWebRTCCodecs()
     ASSERT_NOT_REACHED();
 }
 
-void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
+void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
 {
     ASSERT(isMainRunLoop());
 
@@ -239,7 +242,7 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
     }
 
     // Let's create WebProcess libWebRTCCodecs since it may be called from various threads.
-    WebProcess::singleton().libWebRTCCodecs();
+    WebProcess::singleton().libWebRTCCodecs().m_useRemoteFrames = useRemoteFrames;
 
 #if ENABLE(VP9)
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(WebProcess::singleton().ensureGPUProcessConnection().hasVP9HardwareDecoder());
@@ -259,7 +262,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
     ensureGPUProcessConnectionAndDispatchToThread([this, decoder = WTFMove(decoder)]() mutable {
         Locker locker { m_connectionLock };
         decoder->connection = m_connection;
-        createRemoteDecoder(*decoder, *m_connection);
+        createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames);
 
         auto decoderIdentifier = decoder->identifier;
         ASSERT(!m_decoders.contains(decoderIdentifier));
@@ -315,10 +318,23 @@ void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
         decoder->hasError = true;
 }
 
-void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample)
+void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample, std::optional<RemoteVideoFrameIdentifier> remoteFrameIdentifier)
 {
     ASSERT(!isMainRunLoop());
 
+    RefPtr<RemoteVideoFrameProxy> remoteVideoFrame;
+    // We always create RemoteVideoFrameProxy so that we can release the corresponding GPUProcess IOSurface right away if there is no video source.
+    if (remoteFrameIdentifier) {
+        Locker locker { m_connectionLock };
+        RemoteVideoFrameProxy::Properties properties { { *remoteFrameIdentifier, 0 }, remoteSample.time(), remoteSample.mirrored(), remoteSample.rotation(), remoteSample.size(), remoteSample.videoFormat() };
+        remoteVideoFrame = RemoteVideoFrameProxy::create(*m_connection, properties, [proxy = m_remoteVideoFrameObjectHeapProxy](auto& frame, auto&& callback) {
+            if (!proxy) {
+                callback({ });
+                return;
+            }
+            proxy->getVideoFrameBuffer(frame, WTFMove(callback));
+        });
+    }
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
     if (!decoder)
@@ -332,6 +348,14 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (!decoder->decodedImageCallback)
         return;
 
+    if (remoteVideoFrame) {
+        webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), remoteVideoFrame.leakRef(),
+            [](auto* pointer) { return static_cast<RemoteVideoFrameProxy*>(pointer)->pixelBuffer(); },
+            [](auto* pointer) { static_cast<RemoteVideoFrameProxy*>(pointer)->deref(); },
+            remoteSample.size().width(), remoteSample.size().height());
+        return;
+    }
+
     if (!remoteSample.surface())
         return;
     auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
@@ -340,7 +364,7 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
         return;
     }
 
-    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, pixelBuffer.get(), remoteSample.time().toDouble());
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), pixelBuffer.get());
 }
 
 static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
@@ -438,20 +462,31 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!encoder.connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    auto buffer = adoptCF(webrtc::pixelBufferFromFrame(frame));
-    if (!buffer) {
-        // buffer is not native, we need to copy to shared video frame.
-        if (!copySharedVideoFrame(encoder, frame))
-            return WEBRTC_VIDEO_CODEC_ERROR;
+    std::optional<RemoteVideoFrameReadReference> remoteVideoFrameReadReference;
+    if (auto provider = webrtc::videoFrameBufferProvider(frame)) {
+        auto& mediaSample = *static_cast<MediaSample*>(provider);
+        if (is<RemoteVideoFrameProxy>(mediaSample))
+            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(mediaSample).read();
     }
+
+    RetainPtr<CVPixelBufferRef> buffer;
+    if (!remoteVideoFrameReadReference) {
+        buffer = adoptCF(webrtc::pixelBufferFromFrame(frame));
+        if (!buffer) {
+            // buffer is not native, we need to copy to shared video frame.
+            if (!copySharedVideoFrame(encoder, frame))
+                return WEBRTC_VIDEO_CODEC_ERROR;
+        }
+    }
+
     auto sample = RemoteVideoSample::create(buffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()), RemoteVideoSample::ShouldCheckForIOSurface::No);
-    if (!sample->surface()) {
+    if (buffer && !sample->surface()) {
         // buffer is not IOSurface, we need to copy to shared video frame.
         if (!copySharedVideoFrame(encoder, buffer.get()))
             return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
+    encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame, remoteVideoFrameReadReference }, 0);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -526,7 +561,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
     ensureGPUProcessConnectionOnMainThreadWithLock();
     dispatchToThread([this, connection = m_connection]() {
         for (auto& decoder : m_decoders.values()) {
-            createRemoteDecoder(*decoder, *connection);
+            createRemoteDecoder(*decoder, *connection, m_useRemoteFrames);
             decoder->connection = connection.get();
         }
 

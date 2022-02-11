@@ -30,6 +30,7 @@
 
 #if PLATFORM(COCOA)
 #include "ImageTransferSessionVT.h"
+#include "MediaSampleAVFObjC.h"
 #endif
 
 namespace WebCore {
@@ -169,6 +170,14 @@ void RealtimeVideoSource::sourceStopped()
 #if PLATFORM(COCOA)
 RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 {
+    if (sample.platformSample().type != PlatformSample::CMSampleBufferType) {
+        // FIXME: Support more efficiently downsampling of remote video frames by downsampling in GPUProcess.
+        auto newSample = MediaSampleAVFObjC::createImageSample(sample.pixelBuffer(), sample.videoRotation(), sample.videoMirrored(), sample.presentationTime(), { });
+        if (!newSample)
+            return nullptr;
+        return adaptVideoSample(*newSample);
+    }
+    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
         m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat(), m_shouldUseIOSurface);
 

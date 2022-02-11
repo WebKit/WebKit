@@ -68,9 +68,9 @@ void RemoteRealtimeMediaSourceProxy::stopProducingData()
     connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 
-void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const String& deviceIDHashSalt, CreateCallback&& callback)
+void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const String& deviceIDHashSalt, CreateCallback&& callback, bool shouldUseRemoteFrame)
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints), WTFMove(callback));
+    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints, shouldUseRemoteFrame), WTFMove(callback));
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)

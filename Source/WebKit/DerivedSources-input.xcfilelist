@@ -196,6 +196,8 @@ $(PROJECT_DIR)/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxy.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/RemoteWebInspectorUI.messages.in
