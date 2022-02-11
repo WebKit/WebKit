@@ -271,7 +271,7 @@ class TestDoPullRequest(testing.PathTestCase):
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
-        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n    Found 1 commit...\n")
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
 
     def test_staged(self):
@@ -287,8 +287,8 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(
             '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
             """Creating the local development branch 'eng/pr-branch'...
-Creating commit...
     Found 1 commit...
+Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
@@ -310,9 +310,9 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
             """Creating the local development branch 'eng/pr-branch'...
+    Found 1 commit...
     Adding modified.txt...
 Creating commit...
-    Found 1 commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
@@ -338,8 +338,8 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                'Creating commit...',
                 '    Found 1 commit...',
+                'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -373,8 +373,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Amending commit...",
                 '    Found 1 commit...',
+                "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -408,9 +408,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Creating commit...",
                 '    Found 1 commit...',
-                '    Found 2 commits...',
+                'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
@@ -452,8 +451,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Amending commit...",
                 '    Found 1 commit...',
+                "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -484,8 +483,8 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                'Creating commit...',
                 '    Found 1 commit...',
+                'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -521,8 +520,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Amending commit...",
                 '    Found 1 commit...',
+                "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
@@ -558,9 +557,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Creating commit...",
                 '    Found 1 commit...',
-                '    Found 2 commits...',
+                'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
@@ -604,8 +602,8 @@ Rebased 'eng/pr-branch' on 'main!'
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                "Amending commit...",
                 '    Found 1 commit...',
+                "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",

@@ -883,6 +883,8 @@ nothing to commit, working tree clean
         return mocks.ProcessCompletion(returncode=0)
 
     def move_branch(self, to_be_moved, moved_to):
+        if moved_to.startswith('remotes/'):
+            moved_to = moved_to.split('/', 2)[-1]
         if moved_to == self.default_branch:
             return mocks.ProcessCompletion(returncode=0)
         if to_be_moved != self.default_branch:

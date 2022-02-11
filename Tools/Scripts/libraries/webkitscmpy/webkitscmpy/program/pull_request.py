@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -138,11 +138,21 @@ class PullRequest(Command):
             sys.stderr.write("Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch))
             return 1
 
+        # FIXME: Source remote will not always be origin
+        source_remote = 'origin'
+        branch_point = Branch.branch_point(repository)
+        if run([
+            repository.executable(), 'branch', '-f',
+            branch_point.branch,
+            'remotes/{}/{}'.format(source_remote, branch_point.branch),
+        ], cwd=repository.root_path).returncode:
+            sys.stderr.write("Failed to match '{}' to it's remote '{}'\n".format(branch_point.branch, source_remote))
+            return 1
+
         result = cls.create_commit(args, repository, **kwargs)
         if result:
             return result
 
-        branch_point = Branch.branch_point(repository)
         if args.rebase or (args.rebase is None and repository.config().get('pull.rebase')):
             log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
             if repository.pull(rebase=True, branch=branch_point.branch):
@@ -150,12 +160,14 @@ class PullRequest(Command):
                 return 1
             log.info("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
             branch_point = Branch.branch_point(repository)
+        else:
+            branch_point = Branch.branch_point(repository)
 
-        rmt = repository.remote()
+        rmt = repository.remote(name=source_remote)
         if not rmt:
             sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
             return 1
-        target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
+        target = 'fork' if isinstance(rmt, remote.GitHub) else source_remote
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to push '{}' to '{}' (alias of '{}')\n".format(repository.branch, target, repository.url(name=target)))
@@ -163,7 +175,7 @@ class PullRequest(Command):
             sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
             return 1
 
-        if args.history or (target != 'origin' and args.history is None and args.technique == 'overwrite'):
+        if args.history or (target != source_remote and args.history is None and args.technique == 'overwrite'):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))
             count = max([
                 int(regex.match(branch).group('count')) if regex.match(branch) else 0 for branch in
