@@ -4203,7 +4203,7 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(UploadTestResults())
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectHidden(False)
@@ -4214,7 +4214,27 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
-        self.expectUploadedFile('public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip')
+        self.expectUploadedFile('public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/1234-12.zip')
+
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
+        return self.runStep()
+
+    def test_success_hash(self):
+        self.setupStep(UploadTestResults())
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('change_id', '8f75a5fa')
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '12')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            Expect('uploadFile', dict(workersrc='layout-test-results.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
+            + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
+            + 0,
+        )
+        self.expectUploadedFile('public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/8f75a5fa-12.zip')
 
         self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
         return self.runStep()
@@ -4223,7 +4243,7 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(UploadTestResults(identifier='clean-tree'))
         self.setProperty('configuration', 'release')
         self.setProperty('architecture', 'x86_64')
-        self.setProperty('patch_id', '271211')
+        self.setProperty('change_id', '37be32c5')
         self.setProperty('buildername', 'iOS-12-Simulator-WK2-Tests-EWS')
         self.setProperty('buildnumber', '120')
         self.expectHidden(False)
@@ -4234,7 +4254,7 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
-        self.expectUploadedFile('public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r271211-120-clean-tree.zip')
+        self.expectUploadedFile('public_html/results/iOS-12-Simulator-WK2-Tests-EWS/37be32c5-120-clean-tree.zip')
 
         self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
         return self.runStep()
@@ -4251,16 +4271,16 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(ExtractTestResults())
         self.setProperty('configuration', 'release')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
                                               '-o',
-                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/1234-12.zip',
                                               '-d',
-                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/1234-12',
                                               ])
             + 0,
         )
@@ -4271,41 +4291,41 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_success_with_identifier(self):
         self.setupStep(ExtractTestResults(identifier='rerun'))
         self.setProperty('configuration', 'release')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.setProperty('buildername', 'iOS-12-Simulator-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
                                               '-o',
-                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun.zip',
+                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/1234-12-rerun.zip',
                                               '-d',
-                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun',
+                                              'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/1234-12-rerun',
                                               ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
-        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/iOS-12-Simulator-WK2-Tests-EWS/r1234-12/results.html')])
+        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/iOS-12-Simulator-WK2-Tests-EWS/1234-12/results.html')])
         return self.runStep()
 
     def test_failure(self):
         self.setupStep(ExtractTestResults())
         self.setProperty('configuration', 'debug')
-        self.setProperty('patch_id', '1234')
+        self.setProperty('change_id', '1234')
         self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
         self.setProperty('buildnumber', '12')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['unzip',
                                               '-q',
                                               '-o',
-                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/1234-12.zip',
                                               '-d',
-                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/1234-12',
                                               ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='failed (2) (failure)')
-        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12/results.html')])
+        self.expectAddedURLs([call('view layout test results', 'https://ews-build.s3-us-west-2.amazonaws.com/macOS-Sierra-Release-WK2-Tests-EWS/1234-12/results.html')])
         return self.runStep()
 
 

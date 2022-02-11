@@ -312,7 +312,7 @@ class ConfigureBuild(buildstep.BuildStep):
         owners = self.getProperty('owners', [])
         revision = self.getProperty('github.head.sha')
 
-        self.setProperty('change_id', revision, 'ConfigureBuild')
+        self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
 
         if title:
             self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
@@ -3763,7 +3763,7 @@ class UploadTestResults(transfer.FileUpload):
         if identifier and not identifier.startswith('-'):
             identifier = '-{}'.format(identifier)
         kwargs['workersrc'] = self.workersrc
-        kwargs['masterdest'] = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
+        kwargs['masterdest'] = Interpolate('public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
         kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
@@ -3780,8 +3780,8 @@ class ExtractTestResults(master.MasterShellCommand):
         if identifier and not identifier.startswith('-'):
             identifier = '-{}'.format(identifier)
 
-        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
-        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}'.format(identifier))
+        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
+        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s{}'.format(identifier))
         self.command = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
 
         master.MasterShellCommand.__init__(self, command=self.command, logEnviron=False)

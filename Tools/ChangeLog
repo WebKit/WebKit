@@ -1,3 +1,17 @@
+2022-02-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support PRs in UploadTestResults and ExtractTestResults
+        https://bugs.webkit.org/show_bug.cgi?id=236446
+        <rdar://problem/88756592>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (ConfigureBuild.add_pr_details): Shorten hash to 8 characters.
+        (UploadTestResults.__init__): Use change_id instead of patch_id.
+        (ExtractTestResults.__init__): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP
