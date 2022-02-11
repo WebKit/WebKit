@@ -1,3 +1,0 @@
-
-FAIL perspective and rotate3d work together ctx.perspective is not a function. (In 'ctx.perspective(100)', 'ctx.perspective' is undefined)
-

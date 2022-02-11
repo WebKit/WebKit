@@ -1,3 +1,0 @@
-
-PASS translate() function with three arguments modifies the underlying matrix appropriately
-

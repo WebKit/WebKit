@@ -1,3 +1,17 @@
+2022-02-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Remove several stale WPT offscreen canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=236474
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        r287846 re-sync WPT html/ tests, including offscreen canvas tests.
+        Some already imported offscreen canvas tests are no longer part of WPT tests. 
+        These tests were marked as Failure but should have actually be removed
+        instead. Two of these tests needed to update their baseline.
+
+        * platform/gtk/TestExpectations:
+
 2022-02-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] additive animations should prevent other animations from running accelerated

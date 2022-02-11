@@ -1,3 +1,45 @@
+2022-02-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Several WPT offscreen canvas tests are failing after r287846
+        https://bugs.webkit.org/show_bug.cgi?id=236474
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.coordinatespace.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.coordinatespace.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.missingargs.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.missingargs.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.voidreturn.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.voidreturn.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.combined.3d.transforms.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.combined.3d.transforms.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.x.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.x.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.y.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.y.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.z.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.z.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotateAxis.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotateAxis.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.3d.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.3d.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.3d.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.3d.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.3d.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.3d.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.3d.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.3d.worker.html: Removed.
+
 2022-02-10  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Web animations- Composite operation accumulation support for transform properties
