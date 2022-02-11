@@ -24,7 +24,6 @@ const createDiv = test => {
 
 const animationReadyToAnimateAccelerated = async animation => {
     await animation.ready;
-    // Wait two frames for the potential accelerated animation to be committed.
     await new Promise(requestAnimationFrame);
     await new Promise(requestAnimationFrame);
     await new Promise(requestAnimationFrame);
