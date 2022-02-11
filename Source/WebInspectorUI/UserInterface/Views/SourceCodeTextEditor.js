@@ -1400,7 +1400,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (!breakpoint)
             return;
 
-        breakpoint.cycleToNextMode();
+        breakpoint.disabled = !breakpoint.disabled;
     }
 
     textEditorUpdatedFormatting(textEditor)

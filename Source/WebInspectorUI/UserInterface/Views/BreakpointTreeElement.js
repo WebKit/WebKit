@@ -83,13 +83,13 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     onenter()
     {
-        this._breakpoint.cycleToNextMode();
+        this._breakpoint.disabled = !this._breakpoint.disabled;
         return true;
     }
 
     onspace()
     {
-        this._breakpoint.cycleToNextMode();
+        this._breakpoint.disabled = !this._breakpoint.disabled;
         return true;
     }
 
@@ -215,7 +215,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     _statusImageElementClicked(event)
     {
-        this._breakpoint.cycleToNextMode();
+        this._breakpoint.disabled = !this._breakpoint.disabled;
     }
 };
 

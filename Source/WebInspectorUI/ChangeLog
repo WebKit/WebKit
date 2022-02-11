@@ -1,3 +1,28 @@
+2022-02-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: click to re-enable breakpoint clears automatic continue
+        https://bugs.webkit.org/show_bug.cgi?id=236465
+
+        Reviewed by Patrick Angle.
+
+        This is not very convenient for developers as it means that they have to click more than
+        once when re-enabling an auto-continue breakpoint (i.e. once to enable it (which currently
+        disables auto-continue), and once to re-enable auto-continue). Separating these behaviors is
+        preferable because it's unlikely that a developer would want to disable auto-continue when
+        re-enabling a breakpoint if they've taken the time to previously configure auto-continue.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.onenter):
+        (WI.BreakpointTreeElement.prototype.onspace):
+        (WI.BreakpointTreeElement.prototype._statusImageElementClicked):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorBreakpointClicked):
+        Replace `cycleToNextNode` with `disabled = !disabled`.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint.prototype.cycleToNextMode): Deleted.
+        Remove this method now that it's no longer used.
+
 2022-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Flexbox] Show flex badge next to flex containers in DOM Tree

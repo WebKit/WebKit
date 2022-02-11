@@ -191,33 +191,6 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         });
     }
 
-    cycleToNextMode()
-    {
-        if (this.disabled) {
-            if (this.editable) {
-                // When cycling, clear auto-continue when going from disabled to enabled.
-                this.autoContinue = false;
-            }
-
-            this.disabled = false;
-            return;
-        }
-
-        if (this.editable) {
-            if (this.autoContinue) {
-                this.disabled = true;
-                return;
-            }
-
-            if (this.actions.length) {
-                this.autoContinue = true;
-                return;
-            }
-        }
-
-        this.disabled = true;
-    }
-
     addAction(action, {precedingAction} = {})
     {
         console.assert(this.editable, this);
