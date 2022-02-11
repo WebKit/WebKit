@@ -180,16 +180,6 @@ void RemoteDisplayListRecorderProxy::recordClipPath(const Path& path, WindRule r
     send(Messages::RemoteDisplayListRecorder::ClipPath(path, rule));
 }
 
-void RemoteDisplayListRecorderProxy::recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
-{
-    send(Messages::RemoteDisplayListRecorder::BeginClipToDrawingCommands(destination, colorSpace));
-}
-
-void RemoteDisplayListRecorderProxy::recordEndClipToDrawingCommands(const FloatRect& destination)
-{
-    send(Messages::RemoteDisplayListRecorder::EndClipToDrawingCommands(destination));
-}
-
 void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
 {
     std::optional<RenderingResourceIdentifier> identifier;
@@ -450,11 +440,6 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)
 void RemoteDisplayListRecorderProxy::flushContext(GraphicsContextFlushIdentifier identifier)
 {
     send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));
-}
-
-std::unique_ptr<GraphicsContext> RemoteDisplayListRecorderProxy::createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM)
-{
-    return makeUnique<RemoteDisplayListRecorderProxy>(*this, initialClip, initialCTM);
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const

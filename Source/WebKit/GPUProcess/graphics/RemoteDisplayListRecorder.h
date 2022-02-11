@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,8 +78,6 @@ public:
     void clipToImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
     void clipOutToPath(const WebCore::Path&);
     void clipPath(const WebCore::Path&, WebCore::WindRule);
-    void beginClipToDrawingCommands(const WebCore::FloatRect& destination, const WebCore::DestinationColorSpace&);
-    void endClipToDrawingCommands(const WebCore::FloatRect& destination);
     void drawGlyphs(WebCore::DisplayList::DrawGlyphs&&);
     void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, IPC::FilterReference);
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
@@ -158,7 +156,6 @@ private:
     QualifiedRenderingResourceIdentifier m_imageBufferIdentifier;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
-    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
 };
 
 } // namespace WebKit

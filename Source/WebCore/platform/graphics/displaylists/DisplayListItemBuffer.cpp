@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,12 +108,6 @@ void ItemHandle::apply(GraphicsContext& context)
         return;
     case ItemType::ClipPath:
         get<ClipPath>().apply(context);
-        return;
-    case ItemType::BeginClipToDrawingCommands:
-        ASSERT_NOT_REACHED();
-        return;
-    case ItemType::EndClipToDrawingCommands:
-        ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawFilteredImageBuffer:
         get<DrawFilteredImageBuffer>().apply(context);
@@ -311,9 +305,6 @@ void ItemHandle::destroy()
         static_assert(std::is_trivially_destructible<ApplyStrokePattern>::value);
         return;
 #endif
-    case ItemType::BeginClipToDrawingCommands:
-        get<BeginClipToDrawingCommands>().~BeginClipToDrawingCommands();
-        return;
     case ItemType::BeginTransparencyLayer:
         static_assert(std::is_trivially_destructible<BeginTransparencyLayer>::value);
         return;
@@ -355,9 +346,6 @@ void ItemHandle::destroy()
         return;
     case ItemType::DrawRect:
         static_assert(std::is_trivially_destructible<DrawRect>::value);
-        return;
-    case ItemType::EndClipToDrawingCommands:
-        static_assert(std::is_trivially_destructible<EndClipToDrawingCommands>::value);
         return;
     case ItemType::EndTransparencyLayer:
         static_assert(std::is_trivially_destructible<EndTransparencyLayer>::value);
@@ -531,8 +519,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
     case ItemType::ApplyStrokePattern:
         return copyInto<ApplyStrokePattern>(itemOffset, *this);
 #endif
-    case ItemType::BeginClipToDrawingCommands:
-        return copyInto<BeginClipToDrawingCommands>(itemOffset, *this);
     case ItemType::BeginTransparencyLayer:
         return copyInto<BeginTransparencyLayer>(itemOffset, *this);
     case ItemType::ClearRect:
@@ -555,8 +541,6 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<DrawLine>(itemOffset, *this);
     case ItemType::DrawRect:
         return copyInto<DrawRect>(itemOffset, *this);
-    case ItemType::EndClipToDrawingCommands:
-        return copyInto<EndClipToDrawingCommands>(itemOffset, *this);
     case ItemType::EndTransparencyLayer:
         return copyInto<EndTransparencyLayer>(itemOffset, *this);
     case ItemType::FillEllipse:

@@ -96,7 +96,6 @@ private:
     void clipPath(const WebCore::Path&, WebCore::WindRule) override;
     WebCore::IntRect clipBounds() const override;
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
-    WebCore::GraphicsContext::ClipToDrawingCommandsResult clipToDrawingCommands(const WebCore::FloatRect& destination, const WebCore::DestinationColorSpace&, Function<void(WebCore::GraphicsContext&)>&&) override;
 #if ENABLE(VIDEO)
     void paintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) override;
 #endif

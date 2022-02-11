@@ -1106,12 +1106,6 @@ void CairoOperationRecorder::append(std::unique_ptr<PaintingOperation>&& command
     m_commandList.append(WTFMove(command));
 }
 
-GraphicsContext::ClipToDrawingCommandsResult CairoOperationRecorder::clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&)
-{
-    // FIXME: Not implemented.
-    return ClipToDrawingCommandsResult::Success;
-}
-
 #if ENABLE(VIDEO)
 void CairoOperationRecorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {

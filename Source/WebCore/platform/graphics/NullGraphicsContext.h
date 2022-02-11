@@ -131,8 +131,6 @@ private:
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
-
-    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&) final { return ClipToDrawingCommandsResult::Success; }
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final { }
 
     void fillRect(const FloatRect&, Gradient&) final { }

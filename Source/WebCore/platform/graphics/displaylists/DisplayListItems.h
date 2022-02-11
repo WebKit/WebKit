@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -816,74 +816,6 @@ std::optional<ClipPath> ClipPath::decode(Decoder& decoder)
 
     return {{ WTFMove(*path), *windRule }};
 }
-
-class BeginClipToDrawingCommands {
-public:
-    static constexpr ItemType itemType = ItemType::BeginClipToDrawingCommands;
-    static constexpr bool isInlineItem = false;
-    static constexpr bool isDrawingItem = false;
-
-    BeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
-        : m_destination(destination)
-        , m_colorSpace(WTFMove(colorSpace))
-    {
-    }
-
-    // Explicit destructor added to force non-trivial destructor on all platforms
-    // as the encoding logic currently hardcodes which display list item types need
-    // out of line treatment rather than using the isInlineItem constant.
-    ~BeginClipToDrawingCommands() { }
-
-    const FloatRect& destination() const { return m_destination; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<BeginClipToDrawingCommands> decode(Decoder&);
-
-private:
-    FloatRect m_destination;
-    DestinationColorSpace m_colorSpace;
-};
-
-template<class Encoder>
-void BeginClipToDrawingCommands::encode(Encoder& encoder) const
-{
-    encoder << m_destination;
-    encoder << m_colorSpace;
-}
-
-template<class Decoder>
-std::optional<BeginClipToDrawingCommands> BeginClipToDrawingCommands::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> destination;
-    decoder >> destination;
-    if (!destination)
-        return std::nullopt;
-
-    std::optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return std::nullopt;
-
-    return {{ *destination, WTFMove(*colorSpace) }};
-}
-
-class EndClipToDrawingCommands {
-public:
-    static constexpr ItemType itemType = ItemType::EndClipToDrawingCommands;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = false;
-
-    EndClipToDrawingCommands(const FloatRect& destination)
-        : m_destination(destination)
-    {
-    }
-
-    const FloatRect& destination() const { return m_destination; }
-
-private:
-    FloatRect m_destination;
-};
 
 class DrawFilteredImageBuffer {
 public:
@@ -2268,7 +2200,6 @@ private:
 
 using DisplayListItem = std::variant
     < ApplyDeviceScaleFactor
-    , BeginClipToDrawingCommands
     , BeginTransparencyLayer
     , ClearRect
     , ClearShadow
@@ -2291,7 +2222,6 @@ using DisplayListItem = std::variant
     , DrawPath
     , DrawPattern
     , DrawRect
-    , EndClipToDrawingCommands
     , EndTransparencyLayer
     , FillCompositedRect
     , FillEllipse
@@ -2375,8 +2305,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::ClipToImageBuffer,
     WebCore::DisplayList::ItemType::ClipOutToPath,
     WebCore::DisplayList::ItemType::ClipPath,
-    WebCore::DisplayList::ItemType::BeginClipToDrawingCommands,
-    WebCore::DisplayList::ItemType::EndClipToDrawingCommands,
     WebCore::DisplayList::ItemType::DrawGlyphs,
     WebCore::DisplayList::ItemType::DrawImageBuffer,
     WebCore::DisplayList::ItemType::DrawNativeImage,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,13 +61,11 @@ public:
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
 private:
-    GraphicsContext& context() const;
     std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
     const DisplayList& m_displayList;
     const ResourceHeap& m_resourceHeap;
-    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
 };
 
 }

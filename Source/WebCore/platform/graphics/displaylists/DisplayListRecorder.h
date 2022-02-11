@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,8 +82,6 @@ protected:
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
     virtual void recordClipOutToPath(const Path&) = 0;
     virtual void recordClipPath(const Path&, WindRule) = 0;
-    virtual void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) = 0;
-    virtual void recordEndClipToDrawingCommands(const FloatRect& destination) = 0;
     virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
     virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
@@ -136,8 +134,6 @@ protected:
     virtual bool recordResourceUse(ImageBuffer&) = 0;
     virtual bool recordResourceUse(const SourceImage&) = 0;
     virtual bool recordResourceUse(Font&) = 0;
-
-    virtual std::unique_ptr<GraphicsContext> createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM) = 0;
 
     struct ContextState {
         AffineTransform ctm;
@@ -264,7 +260,6 @@ private:
     WEBCORE_EXPORT void clipPath(const Path&, WindRule) final;
     WEBCORE_EXPORT IntRect clipBounds() const final;
     WEBCORE_EXPORT void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
-    WEBCORE_EXPORT GraphicsContext::ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&) final;
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;

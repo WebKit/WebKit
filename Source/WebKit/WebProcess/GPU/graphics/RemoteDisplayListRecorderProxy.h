@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,8 +87,6 @@ private:
     void recordClipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
     void recordClipOutToPath(const WebCore::Path&) final;
     void recordClipPath(const WebCore::Path&, WebCore::WindRule) final;
-    void recordBeginClipToDrawingCommands(const WebCore::FloatRect& destination, WebCore::DestinationColorSpace) final;
-    void recordEndClipToDrawingCommands(const WebCore::FloatRect& destination) final;
     void recordDrawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&) final;
     void recordDrawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned count, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
@@ -139,8 +137,6 @@ private:
     bool recordResourceUse(WebCore::ImageBuffer&) final;
     bool recordResourceUse(const WebCore::SourceImage&) final;
     bool recordResourceUse(WebCore::Font&) final;
-
-    std::unique_ptr<WebCore::GraphicsContext> createNestedContext(const WebCore::FloatRect& initialClip, const WebCore::AffineTransform& initialCTM) final;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, WebCore::RenderingMethod) const final;
     RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace& = WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod = WebCore::RenderingMethod::Default) const final;

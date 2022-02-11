@@ -50,7 +50,7 @@ RemoteResourceCache& RemoteDisplayListRecorder::resourceCache()
 
 GraphicsContext& RemoteDisplayListRecorder::drawingContext()
 {
-    return m_maskImageBuffer ? m_maskImageBuffer->context() : m_imageBuffer->context();
+    return m_imageBuffer->context();
 }
 
 void RemoteDisplayListRecorder::startListeningForIPC()
@@ -198,22 +198,6 @@ void RemoteDisplayListRecorder::clipOutToPath(const Path& path)
 void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
 {
     handleItem(DisplayList::ClipPath(path, rule));
-}
-
-void RemoteDisplayListRecorder::beginClipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace)
-{
-    m_maskImageBuffer = drawingContext().createCompatibleImageBuffer(destination.size(), colorSpace);
-}
-
-void RemoteDisplayListRecorder::endClipToDrawingCommands(const FloatRect& destination)
-{
-    auto maskImageBuffer = std::exchange(m_maskImageBuffer, { });
-    if (!maskImageBuffer) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    drawingContext().clipToImageBuffer(*maskImageBuffer, destination);
 }
 
 void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, IPC::FilterReference filterReference)

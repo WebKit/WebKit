@@ -461,10 +461,6 @@ public:
     WEBCORE_EXPORT virtual void clipOutRoundedRect(const FloatRoundedRect&);
     virtual void clipPath(const Path&, WindRule = WindRule::EvenOdd) = 0;
     WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&);
-
-    enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };
-    WEBCORE_EXPORT virtual ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&);
-
     WEBCORE_EXPORT virtual IntRect clipBounds() const;
 
     // Text

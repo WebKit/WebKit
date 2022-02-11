@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,23 +49,9 @@ RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState&
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
 }
 
-RecorderImpl::RecorderImpl(RecorderImpl& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : Recorder(parent, state, initialClip, initialCTM)
-    , m_displayList(parent.m_displayList)
-    , m_isNested(true)
-{
-}
-
 RecorderImpl::~RecorderImpl()
 {
     ASSERT(stateStack().size() == 1); // If this fires, it indicates mismatched save/restore.
-    if (!m_isNested)
-        LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
-}
-
-std::unique_ptr<GraphicsContext> RecorderImpl::createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM)
-{
-    return makeUnique<RecorderImpl>(*this, GraphicsContextState { }, initialClip, initialCTM);
 }
 
 void RecorderImpl::recordSave()
@@ -171,16 +157,6 @@ void RecorderImpl::recordClipOutToPath(const Path& path)
 void RecorderImpl::recordClipPath(const Path& path, WindRule rule)
 {
     append<ClipPath>(path, rule);
-}
-
-void RecorderImpl::recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
-{
-    append<BeginClipToDrawingCommands>(destination, colorSpace);
-}
-
-void RecorderImpl::recordEndClipToDrawingCommands(const FloatRect& destination)
-{
-    append<EndClipToDrawingCommands>(destination);
 }
 
 void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)

@@ -753,17 +753,6 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-GraphicsContext::ClipToDrawingCommandsResult GraphicsContext::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
-{
-    auto imageBuffer = createCompatibleImageBuffer(destination.size(), colorSpace);
-    if (!imageBuffer)
-        return ClipToDrawingCommandsResult::FailedToCreateImageBuffer;
-
-    drawingFunction(imageBuffer->context());
-    clipToImageBuffer(*imageBuffer, destination);
-    return ClipToDrawingCommandsResult::Success;
-}
-
 void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
 {
     imageBuffer.clipToMask(*this, destinationRect);

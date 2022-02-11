@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,6 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsRecorder::DeconstructDrawGlyphs = DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
-    RecorderImpl(RecorderImpl& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
-
     WEBCORE_EXPORT virtual ~RecorderImpl();
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
@@ -68,8 +66,6 @@ private:
     void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
     void recordClipOutToPath(const Path&) final;
     void recordClipPath(const Path&, WindRule) final;
-    void recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace) final;
-    void recordEndClipToDrawingCommands(const FloatRect& destination) final;
     void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
@@ -123,8 +119,6 @@ private:
     bool recordResourceUse(const SourceImage&) final;
     bool recordResourceUse(Font&) final;
 
-    std::unique_ptr<GraphicsContext> createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM) final;
-
     template<typename T, class... Args>
     void append(Args&&... args)
     {
@@ -147,7 +141,6 @@ private:
     FloatRect extentFromLocalBounds(const FloatRect&) const;
 
     DisplayList& m_displayList;
-    bool m_isNested { false };
 };
 
 }

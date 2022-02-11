@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -484,27 +484,6 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
 {
     recordResourceUse(imageBuffer);
     recordClipToImageBuffer(imageBuffer, destRect);
-}
-
-GraphicsContext::ClipToDrawingCommandsResult Recorder::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
-{
-    auto initialClip = FloatRect(FloatPoint(), destination.size());
-
-    // The initial CTM matches ImageBuffer's initial CTM.
-    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    FloatSize scaleFactor(transform.xScale(), transform.yScale());
-    auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
-    AffineTransform initialCTM;
-    initialCTM.scale(1, -1);
-    initialCTM.translate(0, -scaledSize.height());
-    initialCTM.scale(scaledSize / destination.size());
-
-    auto nestedContext = createNestedContext(initialClip, initialCTM);
-    recordBeginClipToDrawingCommands(destination, colorSpace);
-    drawingFunction(*nestedContext);
-    recordEndClipToDrawingCommands(destination);
-
-    return ClipToDrawingCommandsResult::Success;
 }
 
 RefPtr<ImageBuffer> Recorder::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const
