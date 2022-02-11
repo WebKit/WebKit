@@ -37,18 +37,20 @@ class XDGDBusProxy {
 public:
     enum class Type { SessionBus, AccessibilityBus };
     XDGDBusProxy(Type, bool = false);
+    ~XDGDBusProxy();
 
     const CString& proxyPath() const { return m_proxyPath; }
     const CString& path() const { return m_path; }
 
 private:
     CString makeProxy() const;
-    void launch(bool) const;
+    int launch(bool) const;
 
     Type m_type;
     CString m_dbusAddress;
     CString m_proxyPath;
     CString m_path;
+    int m_syncFD { -1 };
 };
 
 } // namespace WebKit

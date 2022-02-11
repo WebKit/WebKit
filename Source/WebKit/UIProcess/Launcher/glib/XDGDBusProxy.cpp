@@ -74,7 +74,13 @@ XDGDBusProxy::XDGDBusProxy(Type type, bool allowPortals)
         m_path = CString(path, pathEnd - path);
     }
 
-    launch(allowPortals);
+    m_syncFD = launch(allowPortals);
+}
+
+XDGDBusProxy::~XDGDBusProxy()
+{
+    if (m_syncFD != -1)
+        close(m_syncFD);
 }
 
 CString XDGDBusProxy::makeProxy() const
@@ -106,7 +112,7 @@ CString XDGDBusProxy::makeProxy() const
     return proxySocketTemplate.get();
 }
 
-void XDGDBusProxy::launch(bool allowPortals) const
+int XDGDBusProxy::launch(bool allowPortals) const
 {
     int syncFds[2];
     if (pipe(syncFds) == -1)
@@ -203,6 +209,8 @@ void XDGDBusProxy::launch(bool allowPortals) const
     char out;
     if (read(syncFds[0], &out, 1) != 1)
         g_error("Failed to fully launch dbus-proxy: %s", g_strerror(errno));
+
+    return syncFds[0];
 }
 
 } // namespace WebKit

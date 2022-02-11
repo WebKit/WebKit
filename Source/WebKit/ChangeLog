@@ -1,3 +1,20 @@
+2022-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] BubblewrapLauncher leaks D-Bus proxy sockets
+        https://bugs.webkit.org/show_bug.cgi?id=201771
+
+        Reviewed by Michael Catanzaro.
+
+        xdg-dbus-proxy removes the socket when the sync fd is closed by the application. In most of the cases the
+        xdg-dbus-proxy process is killed before the sync fd is closed and the socket file is leaked. We should
+        explicitly close the sync fd.
+
+        * UIProcess/Launcher/glib/XDGDBusProxy.cpp:
+        (WebKit::XDGDBusProxy::XDGDBusProxy): Save the sync fd.
+        (WebKit::XDGDBusProxy::~XDGDBusProxy): Close the sync fd is needed.
+        (WebKit::XDGDBusProxy::launch const): Return the sync fd.
+        * UIProcess/Launcher/glib/XDGDBusProxy.h:
+
 2022-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Separate out setVolatile() from setNonVolatile() on IOSurface-backed buffers
