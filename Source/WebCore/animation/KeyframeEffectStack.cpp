@@ -185,4 +185,18 @@ void KeyframeEffectStack::addInvalidCSSAnimationName(const String& name)
     m_invalidCSSAnimationNames.add(name);
 }
 
+bool KeyframeEffectStack::containsEffectThatPreventsAccelerationOfEffect(const KeyframeEffect& potentiallyAcceleratedEffect)
+{
+    ensureEffectsAreSorted();
+
+    for (auto& effect : m_effects) {
+        if (effect.get() == &potentiallyAcceleratedEffect)
+            continue;
+        if (effect->preventsAcceleration())
+            return true;
+    }
+
+    return false;
+}
+
 } // namespace WebCore

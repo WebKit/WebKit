@@ -168,6 +168,8 @@ public:
 
     void keyframesRuleDidChange();
 
+    bool preventsAcceleration() const;
+
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
 private:
@@ -208,6 +210,8 @@ private:
 #if ENABLE(FILTERS_LEVEL_2)
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
+    void computeHasImplicitKeyframeForAcceleratedProperty();
+    void computeHasKeyframeComposingAcceleratedProperty();
 
     // AnimationEffect
     bool isKeyframeEffect() const final { return true; }
@@ -245,6 +249,8 @@ private:
     bool m_colorFilterFunctionListsMatch { false };
     bool m_inTargetEffectStack { false };
     bool m_someKeyframesUseStepsTimingFunction { false };
+    bool m_hasImplicitKeyframeForAcceleratedProperty { false };
+    bool m_hasKeyframeComposingAcceleratedProperty { false };
 };
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2022-02-10  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] accelerated animations should not run accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=236447
+        <rdar://problem/88756985>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test which runs through all the various scenarios where additivity
+        should or should not prevent other animations from running accelerated.
+
+        * webanimations/accelerated-animations-and-composite-expected.txt: Added.
+        * webanimations/accelerated-animations-and-composite.html: Added.
+
 2022-02-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Make accessibility/mac/line-index-for-textmarker.html run faster.

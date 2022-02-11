@@ -4838,6 +4838,8 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     Vector<std::pair<String, double>> animations;
 
     for (auto& animation : m_animations) {
+        if (animation.m_pendingRemoval)
+            continue;
         if (auto caAnimation = animatedLayer(animation.m_property)->animationForKey(animation.animationIdentifier()))
             animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed() });
         else

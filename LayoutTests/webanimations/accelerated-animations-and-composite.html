@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const createDiv = test => {
+    const div = document.createElement("div");
+    test.add_cleanup(() => div.remove());
+    return document.body.appendChild(div);
+}
+
+const animationReadyToAnimateAccelerated = async animation => {
+    await animation.ready;
+    // Wait two frames for the potential accelerated animation to be committed.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+}
+
+const duration = 1000 * 1000; // 1000s.
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate(
+        { transform: "translateX(100px)" },
+        { composite: "add", duration }
+    );
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'composite' to 'add' should prevent acceleration");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate(
+        [{ offset: 1, composite: "add", transform: "translateX(100px)" }],
+        { duration }
+    );
+    await animationReadyToAnimateAccelerated(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'composite' to 'add' on a keyframe should prevent acceleration");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+    // First add a replace animation that could be accelerated by itself.
+    animations.push(target.animate(
+        { transform: "translateX(100px)" },
+        { duration }
+    ));
+    // Then, add a composing animation that prevents the whole stack to be accelerated.
+    animations.push(target.animate(
+        { transform: "translateY(100px)" },
+        { composite: "add", duration }
+    ));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'composite' to 'add' on an animation further up the stack should prevent lower animations in the stack from being accelerated");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+    // First add a composing animation that cannot be run accelerated on its own.
+    animations.push(target.animate(
+        { transform: "translateX(100px)" },
+        { composite: "add", duration }
+    ));
+    // Then, add a replace animation that should be accelerated since it completely obliterates
+    // the previous composing animation.
+    animations.push(target.animate(
+        { transform: ["none", "translateY(100px)"] },
+        { duration }
+    ));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Setting 'composite' to 'add' on an animation lower down the stack should allow replace animations further up the stack to be accelerated");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+    // First add a composing animation that cannot be run accelerated on its own.
+    animations.push(target.animate(
+        { transform: "translateX(100px)" },
+        { composite: "add", duration }
+    ));
+    // Then, add a replace animation that should be accelerated except it can't because
+    // it contains an implicit keyframe derived from the output of the previous animation.
+    animations.push(target.animate(
+        { transform: "translateX(100px)" },
+        { duration }
+    ));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'composite' to 'add' on an animation lower down the stack should prevent replace animations with an implicity keyframe further up the stack to be accelerated");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animations = [];
+    // First add a composing animation that cannot be run accelerated on its own.
+    animations.push(target.animate(
+        { marginLeft: "100px" },
+        { composite: "add", duration }
+    ));
+    // Then, add a replace animation with an implicit keyframes that can be accelerated
+    // since there are no other composing animations below it in the stack that target
+    // that property.
+    animations.push(target.animate(
+        { transform: "translateX(100px)" },
+        { duration }
+    ));
+    await Promise.all(animations.map(animation => animationReadyToAnimateAccelerated(animation)));
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Setting 'composite' to 'add' on an animation lower down the stack targeting a property that isn't accelerated should allow replace animations with implicit keyframes further up the stack to be accelerated");
+
+</script>
+</body>

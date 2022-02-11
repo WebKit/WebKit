@@ -57,6 +57,8 @@ public:
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
+    bool containsEffectThatPreventsAccelerationOfEffect(const KeyframeEffect&);
+
     void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
 
     void clearInvalidCSSAnimationNames();
