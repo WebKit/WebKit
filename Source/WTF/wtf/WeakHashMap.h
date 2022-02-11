@@ -221,7 +221,7 @@ public:
     void set(const T& key, V&& value)
     {
         amortizedCleanupIfNeeded();
-        m_map.set(makeKeyImpl(key), WTFMove(value));
+        m_map.set(makeKeyImpl(key), std::forward<V>(value));
     }
 
     iterator find(const KeyType& key)
