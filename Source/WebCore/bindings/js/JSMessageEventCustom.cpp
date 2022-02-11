@@ -55,8 +55,8 @@ JSC::JSValue JSMessageEvent::ports(JSC::JSGlobalObject& lexicalGlobalObject) con
 JSC::JSValue JSMessageEvent::data(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedData(), [this, &lexicalGlobalObject] {
-        return WTF::switchOn(wrapped().data(), [] (JSC::JSValue data) {
-            return data ? data : JSC::jsNull();
+        return WTF::switchOn(wrapped().data(), [] (const JSValueInWrappedObject& data) {
+            return data.getValue(JSC::jsNull());
         }, [this, &lexicalGlobalObject] (const Ref<SerializedScriptValue>& data) {
             // FIXME: Is it best to handle errors by returning null rather than throwing an exception?
             return data->deserialize(lexicalGlobalObject, globalObject(), wrapped().ports(), SerializationErrorMode::NonThrowing);

@@ -114,7 +114,7 @@ bool History::stateChanged() const
 JSValueInWrappedObject& History::cachedState()
 {
     if (m_cachedState && stateChanged())
-        m_cachedState = { };
+        m_cachedState.clear();
     return m_cachedState;
 }
 
