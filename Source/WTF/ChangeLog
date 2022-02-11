@@ -1,3 +1,13 @@
+2022-02-10  Tim Horton  <timothy_horton@apple.com>
+
+        Don't prefer text selection in images if it is not available
+        https://bugs.webkit.org/show_bug.cgi?id=236462
+        <rdar://problem/88407336>
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-10  Keith Miller  <keith_miller@apple.com>
 
         tryReserveUncommittedAligned should explicitly take the alignment requested

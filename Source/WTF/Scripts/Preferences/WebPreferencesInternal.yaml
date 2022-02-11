@@ -705,10 +705,13 @@ PreferInlineTextSelectionInImages:
   condition: ENABLE(IMAGE_ANALYSIS)
   defaultValue:
     WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
       default: true
     WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
       default: true
     WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
       default: true
 
 ReplayCGDisplayListsIntoBackingStore:
