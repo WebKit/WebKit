@@ -25,14 +25,18 @@
 #include "config.h"
 #include "PDFDocument.h"
 
+#include "AddEventListenerOptions.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
+#include "EventListener.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLScriptElement.h"
 #include "RawDataDocumentParser.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
@@ -44,12 +48,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PDFDocument);
 
 using namespace HTMLNames;
 
-PDFDocument::PDFDocument(Frame& frame, const URL& url)
-    : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::PDF })
-    , m_viewerRendered(false)
-{
-
-}
+/* PDFDocumentParser: this receives the PDF bytes */
 
 class PDFDocumentParser final : public RawDataDocumentParser {
 public:
@@ -87,6 +86,44 @@ void PDFDocumentParser::finish()
     document().finishedParsing();
 }
 
+/* PDFDocumentEventListener: event listener for the PDFDocument iframe */
+
+class PDFDocumentEventListener final : public EventListener {
+public:
+    static Ref<PDFDocumentEventListener> create(PDFDocument& document) { return adoptRef(*new PDFDocumentEventListener(document)); }
+
+private:
+    explicit PDFDocumentEventListener(PDFDocument& document)
+        : EventListener(PDFDocumentEventListenerType)
+        , m_document(document)
+    {
+    }
+
+    bool operator==(const EventListener&) const override;
+    void handleEvent(ScriptExecutionContext&, Event&) override;
+
+    WeakPtr<PDFDocument> m_document;
+};
+
+void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
+{
+    if (event.type() == eventNames().loadEvent)
+        m_document->injectContentScript();
+}
+
+bool PDFDocumentEventListener::operator==(const EventListener& other) const
+{
+    // All PDFDocumentEventListenerType objects compare as equal; OK since there is only one per document.
+    return other.type() == PDFDocumentEventListenerType;
+}
+
+/* PDFDocument */
+
+PDFDocument::PDFDocument(Frame& frame, const URL& url)
+    : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::PDF })
+{
+}
+
 Ref<DocumentParser> PDFDocument::createParser()
 {
     return PDFDocumentParser::create(*this);
@@ -110,18 +147,32 @@ void PDFDocument::createDocumentStructure()
     iframe->setAttribute(styleAttr, AtomString("width: 100%; height: 100%; border: 0; display: block;", AtomString::ConstructFromLiteral));
     body->appendChild(iframe);
 
-    m_viewerRendered = true;
+    auto listener = PDFDocumentEventListener::create(*this);
+    iframe->addEventListener("load", listener.copyRef(), false);
+
+    m_iFrame = iframe.ptr();
 }
 
 void PDFDocument::updateDuringParsing()
 {
-    if (!m_viewerRendered)
+    if (!m_iFrame)
         createDocumentStructure();
 }
 
 void PDFDocument::finishedParsing()
 {
-    ASSERT(m_viewerRendered);
+    ASSERT(m_iFrame);
+}
+
+void PDFDocument::injectContentScript()
+{
+    ASSERT(m_iFrame);
+    auto script = HTMLScriptElement::create(scriptTag, *this, false, false);
+    script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js");
+
+    auto* document = m_iFrame->contentDocument();
+    ASSERT(document && document->body());
+    document->body()->appendChild(script);
 }
 
 }

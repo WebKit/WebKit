@@ -1,0 +1,215 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+body {
+    /* PDF.js variables */
+    --body-bg-color: rgb(128, 128, 128);
+    --scrollbar-color: auto;
+    --scrollbar-bg-color: auto;
+
+    /* Variables from WKPDFHUDView.mm */
+    --layerVerticalOffset: 40px;
+    --layerCornerRadius: 12px;
+    --layerGrayComponent: 0%;
+    --layerAlpha: 0.75;
+    --layerImageScale: 1.5;
+    --layerSeperatorControllerSize: 1.5px;
+    --layerControllerHorizontalMargin: calc(10px * var(--layerImageScale));
+    --layerImageVerticalMargin: 12px;
+    --controlLayerNormalAlpha: 0.75;
+    --controlLayerDownAlpha: 0.45;
+
+    --layerFadeInTimeInterval: 0.25s;
+    --layerFadeOutTimeInterval: 0.5s;
+    --initialHideTimeInterval: 3s;
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+#loadingBar {
+    display: none !important;
+}
+
+#toolbarContainer {
+    display: contents;
+}
+
+#toolbarViewer {
+    position: fixed;
+    display: inline-flex;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    height: auto;
+    margin: auto;
+
+    bottom: var(--layerVerticalOffset);
+    padding: var(--layerImageVerticalMargin) var(--layerControllerHorizontalMargin);
+    gap: var(--layerControllerHorizontalMargin);
+
+    background-color: hsla(0, 0%, var(--layerGrayComponent), var(--layerAlpha));
+    transition: var(--layerFadeInTimeInterval) opacity;
+    opacity: 0;
+    border-radius: var(--layerCornerRadius);
+    animation-name: fade-out;
+    animation-delay: var(--initialHideTimeInterval);
+    animation-duration: var(--layerFadeOutTimeInterval);
+    animation-fill-mode: backwards;
+}
+
+#toolbarViewer:hover {
+    transition: var(--layerFadeOutTimeInterval) opacity;
+    opacity: 1;
+}
+
+#toolbarViewerMiddle,
+#toolbarViewerRight,
+#toolbarViewerMiddle > .splitToolbarButton {
+    display: contents;
+}
+
+#toolbarViewerLeft,
+#toolbarViewerMiddle > *:not(.splitToolbarButton),
+#toolbarViewerRight > *:not(#download) {
+    display: none !important;
+}
+
+#toolbarViewer .toolbarButton {
+    width: calc(20px * var(--layerImageScale));
+    height: calc(20px * var(--layerImageScale));
+    padding: 0;
+    background-color: transparent;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: var(--controlLayerNormalAlpha);
+}
+
+#toolbarViewer .toolbarButton:active {
+    opacity: var(--controlLayerDownAlpha);
+}
+
+#toolbarViewer .toolbarButton::before {
+    display: none !important;
+}
+
+#zoomOut {
+    order: 1;
+    background-image: url("./minus.magnifyingglass@2x.png");
+}
+
+#zoomIn {
+    order: 2;
+    background-image: url("./plus.magnifyingglass@2x.png");
+}
+
+#zoomOut + .splitToolbarButtonSeparator {
+    order: 3;
+    background-color: white;
+    opacity: 0.45;
+    width: var(--layerSeperatorControllerSize);
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+
+#download {
+    order: 4;
+    background-image: url("./arrow.down.circle@2x.png");
+    display: block !important;
+}
+
+#viewerContainer {
+    top: 0;
+}
+
+/* Restyle the findbar */
+
+#findbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row-reverse;
+    background: var(--body-bg-color);
+    border-radius: 0;
+    box-shadow: none;
+
+    --main-color: rgba(249, 249, 250, 1);
+
+    --field-color: inherit;
+    --field-bg-color: rgba(0, 0, 0, 0.1);
+    --field-border-color: rgba(255,255,255,0.45);
+    --findbar-nextprevious-btn-bg-color: transparent;
+
+    --toggled-btn-color: rgba(255, 255, 255, 1);
+    --toggled-btn-bg-color: rgba(0, 0, 0, 0.3);
+    --button-hover-color: rgba(102, 102, 103, 1);
+    --toggled-hover-active-btn-color: rgba(0, 0, 0, 0.4);
+
+    --toolbar-icon-bg-color: rgba(255, 255, 255, 1);
+    --toolbar-icon-hover-bg-color: rgba(255, 255, 255, 1);
+}
+
+#findbar:not(.hidden) ~ #viewerContainer {
+    top: 32px;
+}
+
+#findbar::before,
+#findbar::after {
+    display: none;
+}
+
+#findbarOptionsTwoContainer {
+    display: contents;
+}
+
+#findResultsCount,
+#findMsg {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+#findbar .splitToolbarButton > .toolbarButton::before {
+    rotate: -90deg;
+    top: 4px;
+}
+
+#findInput:focus {
+    border-color: rgba(0, 103, 244, 0.48);
+    outline: 2px solid rgba(0, 103, 244, 0.48);
+}
+
+#findInput[data-status="notFound"] {
+    background: var(--field-bg-color);
+    color: var(--field-color);
+}

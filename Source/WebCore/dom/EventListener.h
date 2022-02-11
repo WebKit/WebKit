@@ -38,14 +38,15 @@ class EventTarget;
 class EventListener : public RefCounted<EventListener>, public CanMakeWeakPtr<EventListener> {
 public:
     enum Type {
-        JSEventListenerType, 
-        ImageEventListenerType, 
+        JSEventListenerType,
+        ImageEventListenerType,
         ObjCEventListenerType,
         CPPEventListenerType,
         ConditionEventListenerType,
         GObjectEventListenerType,
         NativeEventListenerType,
         SVGTRefTargetEventListenerType,
+        PDFDocumentEventListenerType,
     };
 
     virtual ~EventListener() = default;
