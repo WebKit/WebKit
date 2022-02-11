@@ -1,3 +1,16 @@
+2022-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r287684) Microsoft teams meeting URLs fail to open the app
+        https://bugs.webkit.org/show_bug.cgi?id=236516
+        <rdar://88678598>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a quirk for Microsoft teams.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2022-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Introduce a RemoteLayerBackingStoreCollection subclass for GPU Process-based rendering
