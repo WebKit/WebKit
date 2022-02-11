@@ -107,8 +107,12 @@ private:
 
 void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (event.type() == eventNames().loadEvent)
-        m_document->injectContentScript();
+    auto* iframe = dynamicDowncast<HTMLIFrameElement>(event.target());
+    ASSERT(iframe, "Should have event target");
+
+    if (event.type() == eventNames().loadEvent) {
+        m_document->injectContentScript(*iframe->contentDocument());
+    }
 }
 
 bool PDFDocumentEventListener::operator==(const EventListener& other) const
@@ -150,29 +154,27 @@ void PDFDocument::createDocumentStructure()
     auto listener = PDFDocumentEventListener::create(*this);
     iframe->addEventListener("load", listener.copyRef(), false);
 
-    m_iFrame = iframe.ptr();
+    m_viewerRendered = true;
 }
 
 void PDFDocument::updateDuringParsing()
 {
-    if (!m_iFrame)
+    if (!m_viewerRendered)
         createDocumentStructure();
 }
 
 void PDFDocument::finishedParsing()
 {
-    ASSERT(m_iFrame);
+    ASSERT(m_viewerRendered);
 }
 
-void PDFDocument::injectContentScript()
+void PDFDocument::injectContentScript(Document& contentDocument)
 {
-    ASSERT(m_iFrame);
-    auto script = HTMLScriptElement::create(scriptTag, *this, false, false);
-    script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js");
+    ASSERT(contentDocument.body());
 
-    auto* document = m_iFrame->contentDocument();
-    ASSERT(document && document->body());
-    document->body()->appendChild(script);
+    auto script = HTMLScriptElement::create(scriptTag, contentDocument, false, false);
+    script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js");
+    contentDocument.body()->appendChild(script);
 }
 
 }

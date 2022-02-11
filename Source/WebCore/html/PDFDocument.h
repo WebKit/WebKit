@@ -40,7 +40,7 @@ public:
 
     void updateDuringParsing();
     void finishedParsing();
-    void injectContentScript();
+    void injectContentScript(Document& contentDocument);
 
 private:
     PDFDocument(Frame&, const URL&);
@@ -48,7 +48,7 @@ private:
     Ref<DocumentParser> createParser() override;
 
     void createDocumentStructure();
-    RefPtr<HTMLIFrameElement> m_iFrame;
+    bool m_viewerRendered { false };
 };
 
 } // namespace WebCore
