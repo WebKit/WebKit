@@ -21,12 +21,17 @@ if (WTF_CPU_ARM)
     CHECK_CXX_SOURCE_COMPILES("${ARM_THUMB2_TEST_SOURCE}" ARM_THUMB2_DETECTED)
 endif ()
 
-# Use ld.lld when building with LTO
+# Use ld.lld when building with LTO, or for debug builds, if available.
+# FIXME: With CMake 3.22+ full conditional syntax can be used in
+#        cmake_dependent_option()
+if (LTO_MODE OR DEVELOPER_MODE)
+    set(TRY_USE_LD_LLD ON)
+endif ()
 CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
-                       "LTO_MODE;NOT WIN32" OFF)
+                       "TRY_USE_LD_LLD;NOT WIN32" OFF)
 if (USE_LD_LLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
-    if ("${LD_VERSION}" MATCHES "LLD")
+    if (LD_VERSION MATCHES "^LLD ")
         string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
         string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
         string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
