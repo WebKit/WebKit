@@ -1,5 +1,20 @@
 2022-02-11  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Reset target branch when landing fails
+        https://bugs.webkit.org/show_bug.cgi?id=236110
+        <rdar://problem/88463164>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.revert_branch): Move branch to specified remote's representation of the branch.
+        (Land.main): If we fail to land a change after moving a branch's local ref to include that
+        change, we should return that local ref to what the branch's remote reports.
+
+2022-02-11  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Enable WPE and WinCairo queues for PRs
         https://bugs.webkit.org/show_bug.cgi?id=236517
         <rdar://problem/88823117>
