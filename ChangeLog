@@ -1,3 +1,9 @@
+2022-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add an alternate email address.
+
+        * metadata/contributors.json:
+
 2022-02-10  Elliott Williams  <emw@apple.com>
 
         [Xcode] Perform a full build when analyzing
