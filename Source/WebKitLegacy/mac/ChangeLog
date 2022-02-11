@@ -1,3 +1,10 @@
+2022-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build with the latest iOS SDK.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+
 2022-02-10  Devin Rousso  <drousso@apple.com>
 
         Permit simultaneous Apple Pay and script injection
