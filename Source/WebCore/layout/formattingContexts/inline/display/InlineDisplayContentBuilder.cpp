@@ -330,7 +330,9 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
-            auto visualRect = flipLogicalRectToVisualForWritingModeWithinLine(logicalRect, lineBox.logicalRect(), writingMode);
+            auto isContentRun = !lineRun.isInlineBoxStart() && !lineRun.isInlineBoxEnd() && !lineRun.isLineSpanningInlineBoxStart();
+            auto visualRect = isContentRun ? flipLogicalRectToVisualForWritingModeWithinLine(logicalRect, lineBox.logicalRect(), writingMode)
+                : flipLogicalRectToVisualForWritingMode(logicalRect, writingMode);
             visualRect.moveBy(contentStartInVisualOrder);
             return visualRect;
         };
