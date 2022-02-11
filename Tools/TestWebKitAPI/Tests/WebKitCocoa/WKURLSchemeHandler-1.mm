@@ -1606,7 +1606,7 @@ TEST(URLSchemeHandler, Ranges)
         auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
         auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
         auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).value_or(0);
-        auto rangeEnd = rangeEndString == "*" ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto rangeEnd = rangeEndString.isEmpty() ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
         auto contentLength = rangeEnd - rangeBegin + 1;
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
