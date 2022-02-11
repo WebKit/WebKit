@@ -39,7 +39,7 @@ bool MatrixTransformOperation::operator==(const TransformOperation& other) const
 Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
     auto createOperation = [] (TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context) {
-        to.blend(from, context.progress);
+        to.blend(from, context.progress, context.compositeOperation);
         return MatrixTransformOperation::create(to);
     };
 

@@ -178,20 +178,20 @@ PASS transform: translate
 PASS transform: rotate
 PASS transform: scale
 PASS transform: skew
-FAIL transform: rotate on translate assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(0, 1, -1, 0, 0, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(0, 1, -1, 0, 0, 0) expected 100 +/- 0.0001 but got 0
-FAIL transform: translate on rotate assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+PASS transform: rotate on translate
+PASS transform: translate on rotate
 PASS transform: rotate and translate on rotate
 PASS transform: rotate on rotate and translate
-FAIL transform: matrix assert_approx_equals: expected matrix(0, 1, -1, 0, 100, 0) but got matrix(1, 0, 0, 1, 100, 0): The value should be matrix(0, 1, -1, 0, 100, 0) at 0ms but got matrix(1, 0, 0, 1, 100, 0) expected 0 +/- 0.0001 but got 1
+PASS transform: matrix
 PASS transform: rotate3d
-FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) at 0ms but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.5
-FAIL transform: none assert_equals: dimension of the matrix: The value should be matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1) at 0ms but got matrix(1, 0, 0, 1, 0, 0) expected 16 but got 6
+PASS transform: matrix3d
+PASS transform: none
 PASS transform: non-invertible matrices (non-invertible onto invertible)
 PASS transform: non-invertible matrices (invertible onto non-invertible)
-FAIL transform: non-invertible matrices in matched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(-1, -1, 0, 0, 100, 100) but got matrix(0, 0, 1, 1, 150, 100): The value should be matrix(-1, -1, 0, 0, 100, 100) at 0ms but got matrix(0, 0, 1, 1, 150, 100) expected -1 +/- 0.0001 but got 0
-FAIL transform: non-invertible matrices in matched transform lists (invertible onto non-invertible) assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(0, 1, -1, 0, 350, 0): The value should be matrix(0, -1, 1, 0, 250, 0) at 0ms but got matrix(0, 1, -1, 0, 350, 0) expected -1 +/- 0.0001 but got 1
-FAIL transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 1, 1, 100, 100) but got matrix(1, 1, 1, 1, 150, 100): The value should be matrix(1, 1, 1, 1, 100, 100) at 0ms but got matrix(1, 1, 1, 1, 150, 100) expected 100 +/- 0.0001 but got 150
-FAIL transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible) assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(-2, 0, 0, -2, 350, 0): The value should be matrix(-2, 0, 0, -2, 250, 0) at 0ms but got matrix(-2, 0, 0, -2, 350, 0) expected 250 +/- 0.0001 but got 350
+PASS transform: non-invertible matrices in matched transform lists (non-invertible onto invertible)
+PASS transform: non-invertible matrices in matched transform lists (invertible onto non-invertible)
+PASS transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible)
+PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible)
 PASS transform-box (type: discrete) has testAccumulation function
 PASS transform-box: "border-box" onto "fill-box"
 PASS transform-box: "fill-box" onto "border-box"

@@ -74,16 +74,22 @@ bool TransformOperations::affectedByTransformOrigin() const
     return false;
 }
 
-TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const BlendingContext& context) const
+TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const BlendingContext& context, const LayoutSize& boxSize) const
 {
     TransformOperations result;
 
-    unsigned fromSize = from.operations().size();
-    unsigned toSize = operations().size();
-    unsigned size = std::max(fromSize, toSize);
-    for (unsigned i = 0; i < size; i++) {
-        RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : nullptr;
-        RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : nullptr;
+    unsigned fromOperationCount = from.operations().size();
+    unsigned toOperationCount = operations().size();
+    unsigned maxOperationCount = std::max(fromOperationCount, toOperationCount);
+    
+    if (context.compositeOperation == CompositeOperation::Accumulate && (!from.isInvertible(boxSize) || !isInvertible(boxSize)))
+        return blendByUsingMatrixInterpolation(from, context, boxSize);
+    
+    for (unsigned i = 0; i < maxOperationCount; i++) {
+        RefPtr<TransformOperation> fromOperation = (i < fromOperationCount) ? from.operations()[i].get() : nullptr;
+        RefPtr<TransformOperation> toOperation = (i < toOperationCount) ? operations()[i].get() : nullptr;
+        if (fromOperation && toOperation && !fromOperation->sharedPrimitiveType(toOperation.get()))
+            return blendByUsingMatrixInterpolation(from, context, boxSize);
         RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), context) : (fromOperation ? RefPtr<TransformOperation>(fromOperation->blend(nullptr, context, true)) : nullptr);
         if (blendedOperation)
             result.operations().append(blendedOperation);
@@ -99,18 +105,16 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     return result;
 }
 
-TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const TransformOperations& from, const BlendingContext& context, const LayoutSize& size) const
+TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const TransformOperations& from, const BlendingContext& context, const LayoutSize& boxSize) const
 {
     TransformOperations result;
 
     // Convert the TransformOperations into matrices
     TransformationMatrix fromTransform;
     TransformationMatrix toTransform;
-    from.apply(size, fromTransform);
-    apply(size, toTransform);
-
-    toTransform.blend(fromTransform, context.progress);
-
+    from.apply(boxSize, fromTransform);
+    apply(boxSize, toTransform);
+    toTransform.blend(fromTransform, context.progress, context.compositeOperation);
     // Append the result
     result.operations().append(Matrix3DTransformOperation::create(toTransform));
 
@@ -123,7 +127,7 @@ TransformOperations TransformOperations::blend(const TransformOperations& from, 
         return *this;
 
     if (from.size() && from.operationsMatch(*this))
-        return blendByMatchingOperations(from, context);
+        return blendByMatchingOperations(from, context, size);
 
     return blendByUsingMatrixInterpolation(from, context, size);
 }

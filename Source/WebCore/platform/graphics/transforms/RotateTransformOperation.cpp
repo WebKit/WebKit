@@ -39,9 +39,11 @@ bool RotateTransformOperation::operator==(const TransformOperation& other) const
 
 Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (blendToIdentity)
+    if (blendToIdentity) {
+        if (context.compositeOperation == CompositeOperation::Accumulate)
+            return RotateTransformOperation::create(m_x, m_y, m_z, m_angle, type());
         return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * context.progress, type());
-
+    }
     auto outputType = sharedPrimitiveType(from);
     if (!outputType)
         return *this;

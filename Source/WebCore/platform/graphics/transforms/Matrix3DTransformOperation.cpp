@@ -39,7 +39,7 @@ bool Matrix3DTransformOperation::operator==(const TransformOperation& other) con
 
 static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context)
 {
-    to.blend(from, context.progress);
+    to.blend(from, context.progress, context.compositeOperation);
     return Matrix3DTransformOperation::create(to);
 }
 
