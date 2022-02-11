@@ -132,6 +132,7 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     if (shouldIgnoreRequestToFulfill())
         return;
 
+    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
@@ -166,6 +167,7 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     if (shouldIgnoreRequestToFulfill())
         return;
 
+    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
