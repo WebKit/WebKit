@@ -351,7 +351,7 @@
       "builderNames": [
             "Bindings-Tests-EWS", "iOS-15-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
-            "watchOS-8-Simulator-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS"
+            "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
     },
     {
