@@ -12,9 +12,9 @@ FAIL name(a) size(width: 32px) for .a-size > .b-size > span assert_equals: expec
 FAIL name(b) size(width: 16px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
 PASS name(c) size(width) for .a-size > .b-size > span
 FAIL name(a) size(width: 16px) for .a-size > .a-size > span assert_equals: expected "true" but got ""
-FAIL a size(width: 32px) for .a-size > .b-size > span assert_equals: expected "true" but got ""
+PASS a size(width: 32px) for .a-size > .b-size > span
 PASS b size(width: 16px) for .a-size > .b-size > span
-FAIL c size(width) for .a-size > .b-size > span assert_equals: expected "" but got "true"
+PASS c size(width) for .a-size > .b-size > span
 PASS a size(width: 16px) for .a-size > .a-size > span
 PASS a size(width: 32px) for .a-size > .a > span
 FAIL name(a) type(inline-size) size(width: 8px) for .a-size > .b-size > .a-inline > span assert_equals: expected "true" but got ""

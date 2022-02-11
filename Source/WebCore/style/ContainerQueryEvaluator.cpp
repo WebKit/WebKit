@@ -64,8 +64,20 @@ bool ContainerQueryEvaluator::evaluate(const ContainerQuery& containerQuery) con
     if (m_containers.isEmpty())
         return false;
 
-    // FIXME: Match the container selector.
-    auto* renderer = m_containers.last()->renderer();
+    auto rendererForContainerSelector = [&]() -> RenderBox* {
+        for (auto& container : makeReversedRange(m_containers)) {
+            auto* renderer = dynamicDowncast<RenderBox>(container->renderer());
+            if (!renderer)
+                return nullptr;
+            if (containerQuery.containerName.isEmpty())
+                return renderer;
+            if (renderer->style().containerNames().contains(containerQuery.containerName))
+                return renderer;
+        }
+        return nullptr;
+    };
+
+    auto* renderer = rendererForContainerSelector();
     if (!renderer)
         return false;
 
@@ -74,9 +86,6 @@ bool ContainerQueryEvaluator::evaluate(const ContainerQuery& containerQuery) con
 
     auto evaluateSize = [&](const MediaQueryExpression& expression, Comparator comparator, auto&& sizeGetter)
     {
-        if (!is<RenderBox>(renderer))
-            return false;
-
         std::optional<LayoutUnit> expressionSize;
 
         if (comparator != Comparator::True) {
@@ -85,7 +94,7 @@ bool ContainerQueryEvaluator::evaluate(const ContainerQuery& containerQuery) con
                 return false;
         }
 
-        auto size = sizeGetter(downcast<RenderBox>(*renderer));
+        auto size = sizeGetter(*renderer);
 
         switch (comparator) {
         case Comparator::Lesser:

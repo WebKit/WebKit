@@ -1,3 +1,13 @@
+2022-02-11  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Implement container name matching
+        https://bugs.webkit.org/show_bug.cgi?id=236495
+
+        Reviewed by Tim Nguyen.
+
+        * web-platform-tests/css/css-contain/container-queries/container-name-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-selection-expected.txt:
+
 2022-02-11  Andreu Botella  <andreu@andreubotella.com>
 
         Clicking on an <input type="image"> will submit the form with null submitter
