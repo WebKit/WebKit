@@ -117,7 +117,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
     if (graphicsContext.paintingDisabled())
         return false;
 
-    if (!scrollbar.enabled())
+    if (!scrollbar.enabled() && usesOverlayScrollbars())
         return true;
 
     IntRect rect = scrollbar.frameRect();
