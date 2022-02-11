@@ -151,6 +151,15 @@ bool imageAnalysisQueueSystemFeatureEnabled()
 #endif
 }
 
+bool isImageAnalysisMarkupSystemFeatureEnabled()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return true;
+#else
+    return false;
+#endif
+}
+
 #endif
 
 bool isLiveTextAvailableAndEnabled()

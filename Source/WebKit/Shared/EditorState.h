@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h"
 #include "IdentifierTypes.h"
 #include <WebCore/Color.h>
+#include <WebCore/ElementContext.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/WritingDirection.h>
@@ -124,6 +125,7 @@ struct EditorState {
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
+        std::optional<WebCore::ElementContext> selectedEditableImage;
 #endif
 #if PLATFORM(MAC)
         WebCore::IntRect selectionBoundingRect;

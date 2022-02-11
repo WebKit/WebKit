@@ -320,6 +320,25 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
             postLayoutData.wordAtSelection = selectedText.left(maxSelectedTextLength);
+            auto findSelectedEditableImageElement = [&] {
+                RefPtr<HTMLImageElement> foundImage;
+                if (!result.isContentEditable)
+                    return foundImage;
+
+                for (TextIterator iterator { *selectedRange, { } }; !iterator.atEnd(); iterator.advance()) {
+                    if (foundImage) {
+                        foundImage = nullptr;
+                        break;
+                    }
+                    foundImage = dynamicDowncast<HTMLImageElement>(iterator.node());
+                    if (!foundImage)
+                        break;
+                }
+                return foundImage;
+            };
+
+            if (auto imageElement = findSelectedEditableImageElement())
+                postLayoutData.selectedEditableImage = contextForElement(*imageElement);
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
         postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isHTMLSpace>();

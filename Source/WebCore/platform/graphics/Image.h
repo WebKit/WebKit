@@ -151,7 +151,7 @@ public:
     ImageObserver* imageObserver() const { return m_imageObserver; }
     void setImageObserver(ImageObserver* observer) { m_imageObserver = observer; }
     URL sourceURL() const;
-    String mimeType() const;
+    WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };

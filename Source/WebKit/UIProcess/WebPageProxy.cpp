@@ -8834,6 +8834,16 @@ void WebPageProxy::startImageAnalysis(const String& identifier)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+void WebPageProxy::requestImageBitmap(const ElementContext& elementContext, CompletionHandler<void(const ShareableBitmap::Handle&, const String&)>&& completion)
+{
+    if (!hasRunningProcess()) {
+        completion({ }, { });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::RequestImageBitmap(elementContext), WTFMove(completion));
+}
+
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermissionRequestManager()
 {

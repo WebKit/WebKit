@@ -2044,6 +2044,8 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
+    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmap::Handle&, const String& sourceMIMEType)>&&);
+
 #if PLATFORM(MAC)
     bool isQuarantinedAndNotUserApproved(const String&);
 #endif

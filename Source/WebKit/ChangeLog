@@ -1,3 +1,128 @@
+2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for a "markup image" item in the callout bar when selecting a single image
+        https://bugs.webkit.org/show_bug.cgi?id=236415
+        rdar://88714333
+
+        Reviewed by Aditya Keerthi.
+
+        This patch introduces support for a new "Markup Image" callout menu item, which is only shown when the user has
+        selected exactly one image. If the image is suitable for "Markup Image" (that is, the relevant VisionKit API
+        returns a non-null image), then we show a new item in the callout bar which, when activated, replaces the
+        current selection with the image returned by the aforementioned VisionKit API.
+
+        See below for more details.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::isImageAnalysisMarkupSystemFeatureEnabled):
+
+        Add a new helper method to return whether or not the corresponding system feature flag is enabled.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Add an optional `ElementContext` that's populated only if the user's selection spans a single HTMLImageElement.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView didMoveToWindow]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestImageBitmap):
+
+        Add a new async IPC message that allows the UI process to grab a ShareableBitmap handle (along with the MIME
+        type of the source image) given an ElementContext that identifies an image element.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Cache the last result from requesting "Image Markup" data from VisionKit in `_imageAnalysisMarkupResults`, and
+        use this information when invoking the new selector, `-performImageAnalysisMarkup:`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::transcode):
+
+        Add a helper method that takes a CGImageRef, transcodes it to the given uniform type identifier, and finally
+        returns a blob of image data. Used by the two new call sites for Image Markup below, as well as an existing call
+        site for Visual Look Up in `-provideDataForItem:`
+
+        (-[WKContentView targetForAction:withSender:]):
+
+        Add a check for the new Image Markup action selector.
+
+        (-[WKContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:]):
+
+        Use this existing UIKit delegate hook to defer callout bar presentation only in the case where a single image
+        element is selected, such that we only show the callout bar in this scenario once VisionKit has determined
+        whether or not the "Image Markup" action is suitable for the data of the selected image.
+
+        The initial purpose of this delegate hook was to allow WebKit to defer callout bar presentation for a short,
+        hard-coded delay to wait for the web page to layout out or add clickable items that might underlap the callout
+        bar; as such, we still perform this logic with a hard-coded delay of 250 ms (including whatever time was taken
+        during image analysis).
+
+        (-[WKContentView updateImageAnalysisMarkupMenuItems:]):
+
+        Append the new menu item only if the system feature flag is enabled, and we've selected an editable image. Note
+        that this intentionally does not consult `_imageAnalysisMarkupResults` to ensure that the state of additional
+        menu items in the shared menu controller is consistent between Markup Image and Quick Note, and updated in the
+        same lifecycle as editor state updates.
+
+        (-[WKContentView canPerformImageAnalysisMarkup]):
+
+        This is consulted when we're actually about to show the callout bar action for "Image Markup" (importantly,
+        after callout bar presentation deferral), and depends on the state of `_imageAnalysisMarkupResults`.
+
+        (-[WKContentView performImageAnalysisMarkup:]):
+
+        Add logic to handle the new action by calling into WebPageProxy to (basically) paste the modified image data
+        after transcoding it to match the image element's original source type. After #236406, this codepath is now
+        available on all Cocoa platforms (as opposed to macOS-only).
+
+        (-[WKContentView doAfterComputingImageAnalysisResultsForMarkup:]):
+
+        Use the new `requestImageBitmap` IPC message to grab a bitmap for the currently selected image, call out to
+        VisionKit to perform image analysis, and then cache the resulting image. After all of this is done, we proceed
+        with showing the callout bar.
+
+        In a followup, we should enforce some (reasonable) upper bound on the amount of time by which the callout bar
+        can be delayed.
+
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView setUpAdditionalMenuControllerActions]):
+
+        Refactor existing logic for supplying additional callout bar menu items, such that we update items as needed for
+        both Quick Note as well as Image Markup. Note that we need to preserve any existing menu items in the shared
+        UIMenuController, since the WebKit client (e.g. Mail) may have already supplied custom menu items. This
+        currently doees not affect Quick Note since the only internal client that enables Quick Note is Safari, which
+        does not attempt to add any of its own items; however, "Markup Image" needs to be available in Mail on iOS as
+        well, which does use custom menu items.
+
+        (findMenuItemWithAction):
+        (-[WKContentView updateAppHighlightMenuItems:]):
+
+        Make this adjust the given mutable array of UIMenuItems, which are then combined with any markup menu items
+        when setting custom items on the shared menu controller.
+
+        (-[WKContentView provideDataForItem:]):
+
+        Adjust this to use the new `transcode` helper function, declared above.
+
+        (-[WKContentView _setUpImageAnalysis]):
+        (-[WKContentView _tearDownImageAnalysis]):
+        (-[WKContentView setUpAppHighlightMenusIfNeeded]): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestImageBitmap):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
+        Compute and populate the new `selectedEditableImage` element context; to achieve this, we use `TextIterator` to
+        scan for an image element, and bail immediately if we either find anything that is not an image, or find more
+        than one image.
+
 2022-02-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP

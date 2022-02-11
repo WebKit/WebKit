@@ -1528,9 +1528,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
 
-#if ENABLE(APP_HIGHLIGHTS)
-    [_contentView setUpAppHighlightMenusIfNeeded];
-#endif
+    [_contentView setUpAdditionalMenuControllerActions];
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque

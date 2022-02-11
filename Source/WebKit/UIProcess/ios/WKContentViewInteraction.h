@@ -245,6 +245,12 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
+struct ImageAnalysisMarkupData {
+    WebCore::ElementContext element;
+    RetainPtr<CGImageRef> image;
+    String preferredMIMEType;
+};
+
 enum class ProceedWithTextSelectionInImage : bool {
     No,
     Yes
@@ -531,6 +537,9 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 #endif // USE(QUICK_LOOK)
 #endif // ENABLE(IMAGE_ANALYSIS)
     uint32_t _fullscreenVideoExtractionRequestIdentifier;
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    std::optional<WebKit::ImageAnalysisMarkupData> _imageAnalysisMarkupData;
+#endif
 }
 
 @end
@@ -773,9 +782,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-- (void)setUpAppHighlightMenusIfNeeded;
-#endif
+- (void)setUpAdditionalMenuControllerActions;
 
 #if ENABLE(IMAGE_ANALYSIS)
 - (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;

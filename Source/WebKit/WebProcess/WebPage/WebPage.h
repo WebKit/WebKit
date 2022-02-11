@@ -1440,6 +1440,8 @@ public:
     void startImageAnalysis(const String& identifier);
 #endif
 
+    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmap::Handle&, const String& sourceMIMEType)>&&);
+
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif

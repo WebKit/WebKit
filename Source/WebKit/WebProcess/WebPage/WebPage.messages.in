@@ -128,6 +128,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ClearServiceWorkerEntitlementOverride() -> () Async
 #endif
 
+    RequestImageBitmap(struct WebCore::ElementContext elementContext) -> (WebKit::ShareableBitmap::Handle image, String sourceMIMEType) Async
+
     SetControlledByAutomation(bool controlled)
 
     ConnectInspector(String targetId, Inspector::FrontendChannel::ConnectionType connectionType)

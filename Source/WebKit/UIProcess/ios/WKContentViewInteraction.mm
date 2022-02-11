@@ -127,6 +127,7 @@
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextRecognitionResult.h>
 #import <WebCore/TouchAction.h>
+#import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreCALayerExtras.h>
@@ -371,6 +372,20 @@ private:
     WeakObjCPtr<WKContentView> m_view;
     bool m_shouldPreventTextSelection { false };
 };
+
+static RetainPtr<NSData> transcode(CGImageRef image, CFStringRef typeIdentifier)
+{
+    if (!image)
+        return nil;
+
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto destination = adoptCF(CGImageDestinationCreateWithData((__bridge CFMutableDataRef)data.get(), typeIdentifier, 1, nil));
+    CGImageDestinationAddImage(destination.get(), image, nil);
+    if (!CGImageDestinationFinalize(destination.get()))
+        return nil;
+
+    return data;
+}
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
@@ -4072,6 +4087,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (action == @selector(createHighlightForNewQuickNoteWithRange:))
         return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
 #endif
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (action == @selector(performImageAnalysisMarkup:))
+        return self.canPerformImageAnalysisMarkup ? self : nil;
+#endif
     return [_webView targetForAction:action withSender:sender];
 }
 
@@ -4597,35 +4616,167 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if ([self _shouldSuppressSelectionCommands] || self.webView._editable) {
+    if ([self _shouldSuppressSelectionCommands]) {
         completionHandler(@[ ]);
         return;
     }
 
-    if (_focusedElementInformation.elementType != WebKit::InputType::ContentEditable && _focusedElementInformation.elementType != WebKit::InputType::TextArea) {
-        completionHandler(@[ ]);
-        return;
-    }
-
-    // Give the page some time to present custom editing UI before attempting to detect and evade it.
-    auto delayBeforeShowingCalloutBar = 0.25_s;
-    WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
-        if (!weakSelf) {
-            completion(@[ ]);
-            return;
-        }
-
+    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completionHandler)] {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf->_page) {
+        if (!strongSelf) {
             completion(@[ ]);
             return;
         }
 
-        strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
-            completion(createNSArray(rects).get());
+        if ([strongSelf webView]._editable) {
+            completion(@[ ]);
+            return;
+        }
+
+        auto focusedElementType = strongSelf->_focusedElementInformation.elementType;
+        if (focusedElementType != WebKit::InputType::ContentEditable && focusedElementType != WebKit::InputType::TextArea) {
+            completion(@[ ]);
+            return;
+        }
+
+        // Give the page some time to present custom editing UI before attempting to detect and evade it.
+        auto delayBeforeShowingCalloutBar = std::max(0_s, 0.25_s - (ApproximateTime::now() - startTime));
+        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion, weakSelf] () mutable {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf) {
+                completion(@[ ]);
+                return;
+            }
+
+            if (!strongSelf->_page) {
+                completion(@[ ]);
+                return;
+            }
+
+            strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
+                completion(createNSArray(rects).get());
+            });
+        });
+    };
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    [self doAfterComputingImageAnalysisResultsForMarkup:WTFMove(requestRectsToEvadeIfNeeded)];
+#else
+    requestRectsToEvadeIfNeeded();
+#endif
+}
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+- (void)updateImageAnalysisMarkupMenuItems:(NSMutableArray<UIMenuItem *> *)updatedItems
+{
+    auto currentItem = findMenuItemWithAction(updatedItems, @selector(performImageAnalysisMarkup:));
+    auto& editorState = _page->editorState();
+    if (!WebKit::isImageAnalysisMarkupSystemFeatureEnabled() || !self.window || editorState.isMissingPostLayoutData || !editorState.postLayoutData().selectedEditableImage) {
+        if (currentItem)
+            [updatedItems removeObject:currentItem];
+    } else if (!currentItem)
+        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WEB_UI_STRING("Markup Image", "Image analysis markup menu item") action:@selector(performImageAnalysisMarkup:)]).get()];
+}
+
+- (BOOL)canPerformImageAnalysisMarkup
+{
+    if (!WebKit::isImageAnalysisMarkupSystemFeatureEnabled())
+        return NO;
+
+    if (!_imageAnalysisMarkupData)
+        return NO;
+
+    auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
+    return !_page->editorState().isMissingPostLayoutData && elementContext == _page->editorState().postLayoutData().selectedEditableImage;
+}
+
+- (void)performImageAnalysisMarkup:(id)sender
+{
+    if (!self.canPerformImageAnalysisMarkup)
+        return;
+
+    auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
+    auto targetType = RetainPtr { UTTypeTIFF.identifier };
+    if (!preferredMIMEType.isEmpty()) {
+        NSString *preferredTypeIdentifier = [UTType typeWithMIMEType:preferredMIMEType conformingToType:UTTypeImage].identifier;
+        if (WebCore::isSupportedImageType(preferredTypeIdentifier))
+            targetType = preferredTypeIdentifier;
+    }
+
+    if (auto data = WebKit::transcode(image.get(), (__bridge CFStringRef)targetType.get()); [data length])
+        _page->replaceSelectionWithPasteboardData({ String { targetType.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+}
+
+- (void)doAfterComputingImageAnalysisResultsForMarkup:(CompletionHandler<void()>&&)completion
+{
+    if (_page->editorState().isMissingPostLayoutData) {
+        completion();
+        return;
+    }
+
+    auto elementToAnalyze = _page->editorState().postLayoutData().selectedEditableImage;
+    if (_imageAnalysisMarkupData && _imageAnalysisMarkupData->element == elementToAnalyze) {
+        completion();
+        return;
+    }
+
+    _imageAnalysisMarkupData = std::nullopt;
+
+    if (!elementToAnalyze) {
+        completion();
+        return;
+    }
+
+    _page->requestImageBitmap(*elementToAnalyze, [context = *elementToAnalyze, completion = WTFMove(completion), weakSelf = WeakObjCPtr<WKContentView>(self)](auto& imageData, auto& sourceMIMEType) mutable {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf) {
+            completion();
+            return;
+        }
+
+        auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
+        if (!imageBitmap) {
+            completion();
+            return;
+        }
+
+        auto cgImage = imageBitmap->makeCGImage();
+        if (!cgImage) {
+            completion();
+            return;
+        }
+
+        // FIXME: Check to see if we can avoid this extra transcoding step once VisionKit starts using `mediaanalysisd` for this.
+        auto tiffData = WebKit::transcode(cgImage.get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        if (![tiffData length]) {
+            completion();
+            return;
+        }
+
+        RetainPtr transcodedImage = [UIImage imageWithData:tiffData.get()];
+        if (!transcodedImage) {
+            completion();
+            return;
+        }
+
+        WebKit::requestImageAnalysisMarkup([transcodedImage CGImage], [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result) mutable {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf) {
+                completion();
+                return;
+            }
+
+            if (result)
+                strongSelf->_imageAnalysisMarkupData = { { context, { result }, sourceMIMEType } };
+            else
+                strongSelf->_imageAnalysisMarkupData = std::nullopt;
+            completion();
         });
     });
 }
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
@@ -7313,10 +7464,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)_selectionChanged
 {
     _autocorrectionContextNeedsUpdate = YES;
-#if ENABLE(APP_HIGHLIGHTS)
-    [self setUpAppHighlightMenusIfNeeded];
-#endif
 
+    [self setUpAdditionalMenuControllerActions];
     [self _updateSelectionAssistantSuppressionState];
 
     _cachedSelectedTextRange = nil;
@@ -9602,21 +9751,51 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
+- (void)setUpAdditionalMenuControllerActions
+{
+    auto updatedItems = adoptNS(UIMenuController.sharedMenuController.menuItems.mutableCopy ?: [NSMutableArray<UIMenuItem *> new]);
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    [self updateImageAnalysisMarkupMenuItems:updatedItems.get()];
+#endif
+#if ENABLE(APP_HIGHLIGHTS)
+    [self updateAppHighlightMenuItems:updatedItems.get()];
+#endif
+    UIMenuController.sharedMenuController.menuItems = updatedItems.get();
+}
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) || ENABLE(APP_HIGHLIGHTS)
+
+static UIMenuItem *findMenuItemWithAction(NSArray<UIMenuItem *> *items, SEL action)
+{
+    for (UIMenuItem *item in items) {
+        if (item.action == action)
+            return item;
+    }
+    return nil;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) || ENABLE(APP_HIGHLIGHTS)
+
 #if ENABLE(APP_HIGHLIGHTS)
 
-- (void)setUpAppHighlightMenusIfNeeded
+- (void)updateAppHighlightMenuItems:(NSMutableArray<UIMenuItem *> *)updatedItems
 {
-    if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
+    auto currentQuickNoteItem = findMenuItemWithAction(updatedItems, @selector(createHighlightForCurrentQuickNoteWithRange:));
+    auto newQuickNoteItem = findMenuItemWithAction(updatedItems, @selector(createHighlightForNewQuickNoteWithRange:));
+
+    if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange) {
+        if (currentQuickNoteItem)
+            [updatedItems removeObject:currentQuickNoteItem];
+        if (newQuickNoteItem)
+            [updatedItems removeObject:newQuickNoteItem];
         return;
-    
-    for (UIMenuItem *menuItem in [[UIMenuController sharedMenuController] menuItems]) {
-        if ([menuItem action] == @selector(createHighlightForCurrentQuickNoteWithRange:) || [menuItem action] == @selector(createHighlightForNewQuickNoteWithRange:))
-            return;
     }
-    
-    auto addHighlightCurrentQuickNoteItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() action:@selector(createHighlightForCurrentQuickNoteWithRange:)]);
-    auto addHighlightNewQuickNoteItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote() action:@selector(createHighlightForNewQuickNoteWithRange:)]);
-    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentQuickNoteItem.get(), addHighlightNewQuickNoteItem.get() ]];
+
+    if (!currentQuickNoteItem)
+        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() action:@selector(createHighlightForCurrentQuickNoteWithRange:)]).get()];
+
+    if (!newQuickNoteItem)
+        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote() action:@selector(createHighlightForNewQuickNoteWithRange:)]).get()];
 }
 
 - (void)createHighlightForCurrentQuickNoteWithRange:(id)sender
@@ -10315,14 +10494,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (NSData *)provideDataForItem:(QLItem *)item
 {
     ASSERT(_visualSearchPreviewImage);
-
-    auto data = adoptCF(CFDataCreateMutable(NULL, 0));
-    auto destination = adoptCF(CGImageDestinationCreateWithData(data.get(), (__bridge CFStringRef)UTTypeTIFF.identifier, 1, NULL));
-    CGImageDestinationAddImage(destination.get(), [_visualSearchPreviewImage CGImage], nil);
-    if (!CGImageDestinationFinalize(destination.get()))
-        return nil;
-
-    return data.bridgingAutorelease();
+    return WebKit::transcode([_visualSearchPreviewImage CGImage], (__bridge CFStringRef)UTTypeTIFF.identifier).autorelease();
 }
 
 #pragma mark - WKActionSheetAssistantDelegate
@@ -10385,6 +10557,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    _imageAnalysisMarkupData = std::nullopt;
+#endif
 }
 
 - (void)_tearDownImageAnalysis
@@ -10410,6 +10585,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _contextMenuForMachineReadableCode.clear();
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    _imageAnalysisMarkupData = std::nullopt;
+#endif
 }
 
 - (void)_cancelImageAnalysis

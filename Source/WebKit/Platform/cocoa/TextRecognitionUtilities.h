@@ -50,6 +50,7 @@ namespace WebKit {
 bool isLiveTextAvailableAndEnabled();
 bool textRecognitionEnhancementsSystemFeatureEnabled();
 bool imageAnalysisQueueSystemFeatureEnabled();
+bool isImageAnalysisMarkupSystemFeatureEnabled();
 
 WebCore::TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *);
 
