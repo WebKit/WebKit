@@ -69,6 +69,7 @@ public:
 
     WebCore::FloatSize size() const { return m_size; }
     float scale() const { return m_scale; }
+    WebCore::PixelFormat pixelFormat() const;
     Type type() const { return m_type; }
     bool isOpaque() const { return m_isOpaque; }
     unsigned bytesPerPixel() const;
@@ -110,8 +111,6 @@ private:
     void swapToValidFrontBuffer();
 
     bool supportsPartialRepaint();
-
-    WebCore::PixelFormat pixelFormat() const;
 
     PlatformCALayerRemote* m_layer;
 

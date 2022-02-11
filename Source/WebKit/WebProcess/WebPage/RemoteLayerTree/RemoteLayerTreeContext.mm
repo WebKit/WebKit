@@ -29,8 +29,8 @@
 #import "GenericCallback.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
-#import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -43,8 +43,11 @@ using namespace WebCore;
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)
-    , m_currentTransaction(nullptr)
 {
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
+        m_backingStoreCollection = makeUnique<RemoteLayerWithRemoteRenderingBackingStoreCollection>(*this);
+    else
+        m_backingStoreCollection = makeUnique<RemoteLayerBackingStoreCollection>(*this);
 }
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()

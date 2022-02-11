@@ -29,6 +29,10 @@
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 
+namespace WebCore {
+class ImageBuffer;
+}
+
 namespace WebKit {
 
 class RemoteLayerBackingStore;
@@ -39,7 +43,8 @@ class RemoteLayerBackingStoreCollection {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerBackingStoreCollection();
+    RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
+    virtual ~RemoteLayerBackingStoreCollection();
 
     void backingStoreWasCreated(RemoteLayerBackingStore&);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
@@ -56,6 +61,11 @@ public:
 
     void scheduleVolatilityTimer();
 
+    virtual RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&);
+
+protected:
+    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+
 private:
     enum class VolatilityMarkingBehavior : uint8_t {
         IgnoreReachability              = 1 << 0,
@@ -65,6 +75,8 @@ private:
 
     bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
     void volatilityTimerFired();
+
+    RemoteLayerTreeContext& m_layerTreeContext;
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;

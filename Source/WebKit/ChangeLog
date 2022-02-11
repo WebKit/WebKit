@@ -1,3 +1,40 @@
+2022-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Introduce a RemoteLayerBackingStoreCollection subclass for GPU Process-based rendering
+        https://bugs.webkit.org/show_bug.cgi?id=236468
+
+        Reviewed by Tim Horton.
+
+        Add RemoteLayerWithRemoteRenderingBackingStoreCollection, a subclass of RemoteLayerBackingStoreCollection
+        which is instantiated by RemoteLayerTreeContext when DOM rendering in GPU process is enabled.
+
+        Delegate buffer allocation to this now polymorphic class; RemoteLayerBackingStore no longer
+        consults shouldUseRemoteRenderingFor().
+
+        RemoteLayerWithRemoteRenderingBackingStoreCollection needs a back pointer to RemoteLayerTreeContext
+        to get to the RemoteRenderingBackendProxy.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::backingStoreCollection const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        (WebKit::RemoteLayerBackingStoreCollection::layerTreeContext const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection):
+        (WebKit::RemoteLayerBackingStoreCollection::allocateBufferForBackingStore):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h: Added.
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm: Added.
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::RemoteLayerWithRemoteRenderingBackingStoreCollection):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::remoteRenderingBackendProxy):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::backingStoreCollection):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+
 2022-02-11  Per Arne Vollan  <pvollan@apple.com>
 
         The GPU process should not check in with Launch Services

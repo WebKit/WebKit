@@ -80,7 +80,7 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
 RemoteLayerBackingStoreCollection* RemoteLayerBackingStore::backingStoreCollection() const
 {
     if (auto* context = m_layer->context())
-        context->backingStoreCollection();
+        return &context->backingStoreCollection();
 
     return nullptr;
 }
@@ -241,22 +241,8 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         return;
     }
 
-    bool shouldUseRemoteRendering = WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM);
-
-    switch (m_type) {
-    case Type::IOSurface:
-        if (shouldUseRemoteRendering)
-            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Accelerated, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat());
-        else
-            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
-        break;
-    case Type::Bitmap:
-        if (shouldUseRemoteRendering)
-            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Unaccelerated, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat());
-        else
-            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
-        break;
-    }
+    if (auto* collection = backingStoreCollection())
+        m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_includeDisplayList == IncludeDisplayList::Yes)
