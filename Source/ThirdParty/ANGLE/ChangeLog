@@ -1,3 +1,21 @@
+2022-02-11  Kyle Piddington  <kpiddington@apple.com>
+
+        Cocoa2d-HTLM5 game apepars to use wrong vertex buffer data
+        https://bugs.webkit.org/show_bug.cgi?id=236427
+        <rdar://problem/87136345>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Render encoder appears to carry stale state when a vertex array's element
+        buffer is updated, but no other parts of the buffer are updated. Reassign
+        vertex buffer bindings in this case, which clears up corruption
+        (Squished rendering elements, incorrect UV's)
+
+        * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::syncState):
+        (rx::VertexArrayMtl::setupDraw):
+
 2022-02-03  Michael Saboff  <msaboff@apple.com>
 
         WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path

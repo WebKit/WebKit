@@ -151,7 +151,7 @@ class VertexArrayMtl : public VertexArrayImpl
     mtl::BufferPool mDynamicIndexData;
 
     std::vector<uint32_t> mEmulatedInstanceAttribs;
-
+    bool mElementArrayDirty = true;
     bool mVertexArrayDirty = true;
 };
 }  // namespace rx
