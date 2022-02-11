@@ -2924,6 +2924,14 @@ class TestCheckOutSpecificRevision(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Checked out required revision (skipped)')
         return self.runStep()
 
+    def test_skip_pr(self):
+        self.setupStep(CheckOutSpecificRevision())
+        self.setProperty('github.number', '1234')
+        self.setProperty('ews_revision', '1a3425cb92dbcbca12a10aa9514f1b77c76dc26')
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='Checked out required revision (skipped)')
+        return self.runStep()
+
 
 class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3079,6 +3087,8 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.sha', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1')
+        self.setProperty('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
         self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
         self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
         self.expectRemoteCommands(
@@ -3107,6 +3117,16 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 command=['git', 'checkout', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['git', 'rebase', '--onto', '59dab0396721db221c264aad3c0cea37ef0d297b', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1', 'eng/pull-request-branch'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
@@ -3117,6 +3137,8 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.sha', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1')
+        self.setProperty('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
         self.assertEqual(CheckOutPullRequest.flunkOnFailure, True)
         self.assertEqual(CheckOutPullRequest.haltOnFailure, True)
         self.expectRemoteCommands(
@@ -3137,7 +3159,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 command=['git', 'fetch', 'Contributor'],
             ) + 1,
         )
-        self.expectOutcome(result=FAILURE, state_string='Failed to checkout branch from PR 1234')
+        self.expectOutcome(result=FAILURE, state_string='Failed to checkout and rebase branch from PR 1234')
         return self.runStep()
 
     def test_skipped(self):
@@ -3201,7 +3223,7 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(RevertPullRequestChanges())
-        self.setProperty('github.base.sha', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
         self.setProperty('github.number', 1234)
         self.expectHidden(False)
         self.expectRemoteCommands(
@@ -3222,7 +3244,7 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(RevertPullRequestChanges())
-        self.setProperty('github.base.sha', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('ews_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
         self.setProperty('github.number', 1234)
         self.expectHidden(False)
         self.expectRemoteCommands(
@@ -4535,6 +4557,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Style-EWS')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['git', 'rebase', '--abort'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4554,6 +4578,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['git', 'rebase', '--abort'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4573,6 +4599,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['git', 'rebase', '--abort'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 128
@@ -4593,6 +4621,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('basename', 'safari-612-branch')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['git', 'rebase', '--abort'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -5063,7 +5093,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_pull_request(self):
         self.setupStep(ShowIdentifier())
-        self.setProperty('github.base.sha', '51a6aec9f664')
+        self.setProperty('got_revision', '51a6aec9f664')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,
@@ -5080,7 +5110,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def test_prioritized(self):
         self.setupStep(ShowIdentifier())
         self.setProperty('ews_revision', '51a6aec9f664')
-        self.setProperty('github.base.sha', '9f66451a6aec')
+        self.setProperty('got_revision', '9f66451a6aec')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=300,

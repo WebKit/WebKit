@@ -355,6 +355,10 @@ class CheckOutSource(git.Git):
         else:
             return {'step': 'Cleaned and updated working directory'}
 
+    def run(self):
+        self.branch = self.getProperty('github.base.ref', self.branch)
+        return super(CheckOutSource, self).run()
+
 
 class CleanUpGitIndexLock(shell.ShellCommand):
     name = 'clean-git-index-lock'
@@ -399,7 +403,7 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         super(CheckOutSpecificRevision, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
-        return self.getProperty('ews_revision', False)
+        return self.getProperty('ews_revision', False) and not self.getProperty('github.number', False)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -450,7 +454,7 @@ class ShowIdentifier(shell.ShellCommand):
 
         revision = 'HEAD'
         # Note that these properties are delibrately in priority order.
-        for property_ in ['ews_revision', 'github.base.sha', 'got_revision']:
+        for property_ in ['ews_revision', 'got_revision']:
             candidate = self.getProperty(property_)
             if candidate:
                 revision = candidate
@@ -622,15 +626,23 @@ class CheckOutPullRequest(steps.ShellSequence):
 
         remote = self.getProperty('github.head.repo.full_name', 'origin').split('/')[0]
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
-        branch = self.getProperty('github.head.ref', 'main')
+        pr_branch = self.getProperty('github.head.ref', 'main')
+        base_hash = self.getProperty('github.base.sha')
+        rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
 
-        for command in [
+        commands = [
             ['/bin/sh', '-c', 'git remote add {} {}{}.git & true'.format(remote, GITHUB_URL, project)],
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
             ['git', 'fetch', remote],
-            ['git', 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
-            ['git', 'checkout', branch],
-        ]:
+            ['git', 'branch', '-f', pr_branch, 'remotes/{}/{}'.format(remote, pr_branch)],
+            ['git', 'checkout', pr_branch],
+        ]
+        if rebase_target_hash and base_hash and rebase_target_hash != base_hash:
+            commands += [
+                ['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
+                ['git', 'rebase', '--onto', rebase_target_hash, base_hash, pr_branch],
+            ]
+        for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
         return super(CheckOutPullRequest, self).run()
@@ -639,7 +651,7 @@ class CheckOutPullRequest(steps.ShellSequence):
         if self.results == SKIPPED:
             return {'step': 'No pull request to checkout'}
         if self.results != SUCCESS:
-            return {'step': 'Failed to checkout branch from PR {}'.format(self.getProperty('github.number'))}
+            return {'step': 'Failed to checkout and rebase branch from PR {}'.format(self.getProperty('github.number'))}
         return super(CheckOutPullRequest, self).getResultSummary()
 
 
@@ -1482,7 +1494,7 @@ class RevertPullRequestChanges(steps.ShellSequence):
         self.commands = []
         for command in [
             ['git', 'clean', '-f', '-d'],
-            ['git', 'checkout', self.getProperty('github.base.sha')],
+            ['git', 'checkout', self.getProperty('ews_revision') or self.getProperty('got_revision')],
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
         return super(RevertPullRequestChanges, self).run()
@@ -1512,7 +1524,7 @@ class Trigger(trigger.Trigger):
             property_names += ['patch_id', 'bug_id', 'owner']
         if pull_request:
             property_names += [
-                'github.base.sha', 'github.head.ref', 'github.head.sha',
+                'github.base.ref', 'github.base.sha', 'github.head.ref', 'github.head.sha',
                 'github.head.repo.full_name', 'github.number', 'github.title',
                 'repository', 'project', 'owners',
             ]
@@ -1521,7 +1533,7 @@ class Trigger(trigger.Trigger):
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
-        if self.include_revision and patch:
+        if self.include_revision:
             properties_to_pass['ews_revision'] = properties.Property('got_revision')
         return properties_to_pass
 
@@ -3896,6 +3908,7 @@ class CleanGitRepo(steps.ShellSequence):
         branch = self.getProperty('basename', self.default_branch)
         self.commands = []
         for command in [
+            ['git', 'rebase', '--abort'],
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
             ['git', 'fetch', self.git_remote],  # Avoid updating the working copy to a stale revision.
             ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote
