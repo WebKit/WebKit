@@ -52,10 +52,6 @@ public:
     void graphicsLayerDidEnterContext(GraphicsLayerCARemote&);
     void graphicsLayerWillLeaveContext(GraphicsLayerCARemote&);
 
-    void backingStoreWasCreated(RemoteLayerBackingStore&);
-    void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
-    bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
-
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 
     float deviceScaleFactor() const;

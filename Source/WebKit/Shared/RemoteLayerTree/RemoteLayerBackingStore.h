@@ -44,6 +44,7 @@ typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 namespace WebKit {
 
 class PlatformCALayerRemote;
+class RemoteLayerBackingStoreCollection;
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
@@ -103,6 +104,8 @@ public:
     void clearBackingStore();
 
 private:
+    RemoteLayerBackingStoreCollection* backingStoreCollection() const;
+
     void drawInContext(WebCore::GraphicsContext&);
     void swapToValidFrontBuffer();
 

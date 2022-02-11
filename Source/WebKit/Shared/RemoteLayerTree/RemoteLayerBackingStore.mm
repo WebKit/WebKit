@@ -61,8 +61,9 @@ RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
 {
     if (!m_layer)
         return;
-    if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWasCreated(*this);
+
+    if (auto* collection = backingStoreCollection())
+        collection->backingStoreWasCreated(*this);
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
@@ -72,8 +73,16 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
     if (!m_layer)
         return;
 
-    if (RemoteLayerTreeContext* context = m_layer->context())
-        context->backingStoreWillBeDestroyed(*this);
+    if (auto* collection = backingStoreCollection())
+        collection->backingStoreWillBeDestroyed(*this);
+}
+
+RemoteLayerBackingStoreCollection* RemoteLayerBackingStore::backingStoreCollection() const
+{
+    if (auto* context = m_layer->context())
+        context->backingStoreCollection();
+
+    return nullptr;
 }
 
 void RemoteLayerBackingStore::ensureBackingStore(Type type, WebCore::FloatSize size, float scale, bool deepColor, bool isOpaque, IncludeDisplayList includeDisplayList)
@@ -276,8 +285,8 @@ bool RemoteLayerBackingStore::display()
     m_lastDisplayTime = MonotonicTime::now();
 
     bool needToEncodeBackingStore = false;
-    if (RemoteLayerTreeContext* context = m_layer->context())
-        needToEncodeBackingStore = context->backingStoreWillBeDisplayed(*this);
+    if (auto* collection = backingStoreCollection())
+        needToEncodeBackingStore = collection->backingStoreWillBeDisplayed(*this);
 
     if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer)) {
         m_layer->owner()->platformCALayerLayerDisplay(m_layer);

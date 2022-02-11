@@ -120,21 +120,6 @@ void RemoteLayerTreeContext::graphicsLayerWillLeaveContext(GraphicsLayerCARemote
     m_liveGraphicsLayers.remove(&layer);
 }
 
-void RemoteLayerTreeContext::backingStoreWasCreated(RemoteLayerBackingStore& backingStore)
-{
-    m_backingStoreCollection.backingStoreWasCreated(backingStore);
-}
-
-void RemoteLayerTreeContext::backingStoreWillBeDestroyed(RemoteLayerBackingStore& backingStore)
-{
-    m_backingStoreCollection.backingStoreWillBeDestroyed(backingStore);
-}
-
-bool RemoteLayerTreeContext::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
-{
-    return m_backingStoreCollection.backingStoreWillBeDisplayed(backingStore);
-}
-
 Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
     return adoptRef(*new GraphicsLayerCARemote(layerType, client, *this));
