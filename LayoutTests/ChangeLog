@@ -1,3 +1,21 @@
+2022-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix MIME type check for classic worker script fetches
+        https://bugs.webkit.org/show_bug.cgi?id=236411
+
+        Reviewed by Alex Christensen.
+
+        Fix existing layout tests to make sure that worker scripts are served with a JavaScript mime type.
+
+        * http/tests/resourceLoadStatistics/resources/script-revealing-cookies.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-blocked.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker.py:
+        * http/tests/workers/resources/subworker-encoded.py:
+
 2022-02-11  Antoine Quint  <graouts@webkit.org>
 
         [model] rewrite http/tests/model/model-document.html using testharness.js

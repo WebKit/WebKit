@@ -160,7 +160,8 @@ void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& respon
 // https://w3c.github.io/ServiceWorker/#update-algorithm, steps 9.7 to 9.17
 ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceResponse& response)
 {
-    auto error = WorkerScriptLoader::validateWorkerResponse(response, FetchOptions::Destination::Serviceworker);
+    auto source = m_jobData.workerType == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
+    auto error = WorkerScriptLoader::validateWorkerResponse(response, source, FetchOptions::Destination::Serviceworker);
     if (!error.isNull())
         return error;
 

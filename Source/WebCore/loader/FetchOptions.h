@@ -107,6 +107,7 @@ inline bool isScriptLikeDestination(FetchOptions::Destination destination)
         || destination == FetchOptions::Destination::Paintworklet
         || destination == FetchOptions::Destination::Script
         || destination == FetchOptions::Destination::Serviceworker
+        || destination == FetchOptions::Destination::Sharedworker
         || destination == FetchOptions::Destination::Worker;
 }
 

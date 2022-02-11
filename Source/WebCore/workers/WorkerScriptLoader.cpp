@@ -52,13 +52,14 @@ WorkerScriptLoader::WorkerScriptLoader()
 
 WorkerScriptLoader::~WorkerScriptLoader() = default;
 
-std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
+std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
 
     m_url = url;
     m_lastRequestURL = url;
+    m_source = source;
     m_destination = FetchOptions::Destination::Script;
     m_isCOEPEnabled = scriptExecutionContext->settingsValues().crossOriginEmbedderPolicyEnabled;
 
@@ -114,11 +115,12 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     return std::nullopt;
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode)
 {
     m_client = &client;
     m_url = scriptRequest.url();
     m_lastRequestURL = scriptRequest.url();
+    m_source = source;
     m_destination = fetchOptions.destination;
     m_isCOEPEnabled = scriptExecutionContext.settingsValues().crossOriginEmbedderPolicyEnabled;
 
@@ -163,7 +165,13 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const
     return request;
 }
 
-ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, FetchOptions::Destination destination)
+static ResourceError constructJavaScriptMIMETypeError(const ResourceResponse& response)
+{
+    auto message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
+    return { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::AccessControl };
+}
+
+ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, Source source, FetchOptions::Destination destination)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
         return { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
@@ -173,9 +181,23 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
         return { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
     }
 
-    if (shouldBlockResponseDueToMIMEType(response, destination)) {
-        auto message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
-        return { errorDomainWebKitInternal, 0, response.url(), WTFMove(message), ResourceError::Type::General };
+    switch (source) {
+    case Source::ClassicWorkerScript:
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-worker-script (Step 5)
+        // This is the result a dedicated / shared / service worker script fetch.
+        if (response.url().protocolIsInHTTPFamily() && !MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType()))
+            return constructJavaScriptMIMETypeError(response);
+        break;
+    case Source::ClassicWorkerImport:
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-worker-imported-script (Step 5).
+        // This is the result of an importScripts() call.
+        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType()))
+            return constructJavaScriptMIMETypeError(response);
+        break;
+    case Source::ModuleScript:
+        if (shouldBlockResponseDueToMIMEType(response, destination))
+            return constructJavaScriptMIMETypeError(response);
+        break;
     }
 
     return { };
@@ -188,7 +210,7 @@ void WorkerScriptLoader::redirectReceived(const URL& redirectURL)
 
 void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
-    m_error = validateWorkerResponse(response, m_destination);
+    m_error = validateWorkerResponse(response, m_source, m_destination);
     if (!m_error.isNull()) {
         m_failed = true;
         return;

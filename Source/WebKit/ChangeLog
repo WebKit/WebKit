@@ -1,3 +1,13 @@
+2022-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix MIME type check for classic worker script fetches
+        https://bugs.webkit.org/show_bug.cgi?id=236411
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::processResponse):
+
 2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Apple TV build

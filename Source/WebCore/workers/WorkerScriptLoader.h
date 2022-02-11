@@ -60,8 +60,10 @@ public:
         return adoptRef(*new WorkerScriptLoader);
     }
 
-    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode);
+    enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
+
+    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode);
 
     void notifyError();
 
@@ -90,7 +92,7 @@ public:
 
     void cancel();
 
-    WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, FetchOptions::Destination);
+    WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, Source, FetchOptions::Destination);
 
 private:
     friend class RefCounted<WorkerScriptLoader>;
@@ -111,6 +113,7 @@ private:
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
     String m_responseMIMEType;
+    Source m_source;
     FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;

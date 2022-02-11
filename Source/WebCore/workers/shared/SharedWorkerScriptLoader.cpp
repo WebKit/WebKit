@@ -48,7 +48,8 @@ void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&)>
     ASSERT(!m_completionHandler);
     m_completionHandler = WTFMove(completionHandler);
 
-    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
+    auto source = m_options.type == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
+    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse&)

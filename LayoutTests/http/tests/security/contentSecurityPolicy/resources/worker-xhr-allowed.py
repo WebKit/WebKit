@@ -5,7 +5,7 @@ from utils import determine_content_security_policy_header
 
 determine_content_security_policy_header()
 sys.stdout.write(
-    'Content-Type: text/html\r\n\r\n'
+    'Content-Type: text/javascript\r\n\r\n'
     'var isAsynchronous = false;\n'
     'var xhr = new XMLHttpRequest;\n'
     'try {\n'
