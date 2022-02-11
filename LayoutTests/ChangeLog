@@ -1,3 +1,13 @@
+2022-02-11  Antoine Quint  <graouts@webkit.org>
+
+        [model] rewrite http/tests/model/model-document.html using testharness.js
+        https://bugs.webkit.org/show_bug.cgi?id=236494
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/model/model-document-expected.txt:
+        * http/tests/model/model-document.html:
+
 2022-02-11  Alan Bujtas  <zalan@apple.com>
 
         css/css-writing-modes/direction-propagation-body-contain-root.html asserts
