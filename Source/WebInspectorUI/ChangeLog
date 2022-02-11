@@ -1,3 +1,77 @@
+2022-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Flexbox] Show flex badge next to flex containers in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=235924
+
+        Reviewed by Patrick Angle.
+
+        Elements with `display: flex` and `display: inline-flex` should include a "flex" badge.
+        Clicking the badge should toggle the overlay for the corresponding element.
+
+        * UserInterface/Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js:
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        * UserInterface/Controllers/GridOverlayDiagnosticEventRecorder.js:
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        (WI.GridOverlayDiagnosticEventRecorder):
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showOverlay):
+        (WI.OverlayManager.prototype.hideOverlay):
+        (WI.OverlayManager.prototype.hasVisibleGridOverlays):
+        (WI.OverlayManager.prototype.hasVisibleOverlay):
+        (WI.OverlayManager.prototype.toggleOverlay):
+        (WI.OverlayManager.prototype.getColorForNode):
+        (WI.OverlayManager.prototype.setColorForNode):
+        (WI.OverlayManager.prototype._handleLayoutContextTypeChanged):
+        (WI.OverlayManager.prototype._handleGridSettingChanged):
+        (WI.OverlayManager.prototype._handleMainResourceDidChange):
+        (WI.OverlayManager.prototype.showGridOverlay): Deleted.
+        (WI.OverlayManager.prototype.hideGridOverlay): Deleted.
+        (WI.OverlayManager.prototype.isGridOverlayVisible): Deleted.
+        (WI.OverlayManager.prototype.toggleGridOverlay): Deleted.
+        (WI.OverlayManager.prototype.getGridColorForNode): Deleted.
+        (WI.OverlayManager.prototype.setGridColorForNode): Deleted.
+        Remove grid-specific methods (such as showGridOverlay) and introduce methods that work with
+        both Grid and Flexbox (such as showOverlay).
+
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.attached):
+        (WI.CSSGridSection.prototype.detached):
+        (WI.CSSGridSection.prototype._handleToggleAllCheckboxChanged):
+        (WI.CSSGridSection.prototype.layout):
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection.prototype._updateToggleAllCheckbox):
+        (WI.CSSGridSection):
+        * UserInterface/Views/DOMTreeElement.css:
+        (.tree-outline.dom .layout-badge):
+        (.tree-outline.dom .layout-badge.activated):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .layout-badge):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .layout-badge):
+        (.tree-outline.dom .badge-css-grid): Deleted.
+        (.tree-outline.dom .badge-css-grid.activated): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid): Deleted.
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .badge-css-grid): Deleted.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.onattach):
+        (WI.DOMTreeElement.prototype.ondetach):
+        (WI.DOMTreeElement.prototype.updateTitle):
+        (WI.DOMTreeElement.prototype._updateLayoutBadge):
+        (WI.DOMTreeElement.prototype._layoutBadgeClicked):
+        (WI.DOMTreeElement.prototype._updateLayoutBadgeStatus):
+        (WI.DOMTreeElement.prototype._handleLayoutContextTypeChanged):
+        (WI.DOMTreeElement.prototype._updateGridBadge): Deleted.
+        (WI.DOMTreeElement.prototype._gridBadgeClicked): Deleted.
+        (WI.DOMTreeElement.prototype._gridBadgeDoubleClicked): Deleted.
+        (WI.DOMTreeElement.prototype._updateGridBadgeStatus): Deleted.
+        Renamed `_gridBadgeElement` to `_layoutBadgeElement`. We can't have both "flex" and "grid" badge on the same element,
+        so I called it "layoutBadge". I didn't call it simply "badge" because we may have other badges in the future.
+
 2022-02-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Flexbox] Add setting to guard Flexbox Inspector feature
