@@ -1,3 +1,12 @@
+2022-02-11  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Enable GStreamer webrtcdsp support
+        https://bugs.webkit.org/show_bug.cgi?id=236175
+
+        Reviewed by Martin Robinson.
+
+        * elements/sdk/gst-plugins-bad.bst: Enable webrtcdsp, needed for VAD handling.
+
 2022-02-05  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 21.08.10 and GStreamer 1.20 releases

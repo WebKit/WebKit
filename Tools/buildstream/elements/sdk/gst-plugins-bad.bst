@@ -111,7 +111,6 @@ variables:
     -Dwasapi=disabled
     -Dwasapi2=disabled
     -Dwebp=disabled
-    -Dwebrtcdsp=disabled
     -Dwildmidi=disabled
     -Dwinks=disabled
     -Dwinscreencap=disabled
