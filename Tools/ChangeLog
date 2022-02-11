@@ -1,3 +1,13 @@
+2022-02-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Enable WPE and WinCairo queues for PRs
+        https://bugs.webkit.org/show_bug.cgi?id=236517
+        <rdar://problem/88823117>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json:
+
 2022-02-11  Youenn Fablet  <youenn@apple.com>
 
         Support remote video frames in WebRTC video pipeline
