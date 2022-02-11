@@ -1,3 +1,10 @@
+2022-02-11  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Update fuzzy data based on EWS results to support b231828.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1.html:
+
 2022-02-11  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Implement container name matching

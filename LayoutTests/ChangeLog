@@ -3,6 +3,14 @@
         Unreviewed gardening.
 
         Update fuzzy data based on EWS results to support b231828.
+        * css3/color-filters/color-filter-text-decoration-shadow.html:
+        * fast/text/system-font-fallback.html:
+
+2022-02-11  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Update fuzzy data based on EWS results to support b231828.
         * css3/blending/background-blend-mode-body-transparent-color-and-image.html:
         * css3/calc/border-radius.html:
         * svg/gradients/spreadMethodDiagonal3.svg:
