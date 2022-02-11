@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,6 +42,15 @@ class Land(Command):
     REVIEWED_BY_RE = re.compile('Reviewed by (?P<approver>.+)')
     REMOTE = 'origin'
     MIRROR_TIMEOUT = 60
+
+    @classmethod
+    def revert_branch(cls, repository, remote, branch):
+        if run(
+            [repository.executable(), 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
+            cwd=repository.root_path,
+        ).returncode:
+            return False
+        return True
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -154,7 +163,7 @@ class Land(Command):
 
         if run([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to move '{}' ref\n".format(target))
-            return 1
+            return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
         if identifier_template:
             repository.checkout(target)
@@ -162,9 +171,10 @@ class Land(Command):
                 identifier=True, remote=cls.REMOTE, number=len(commits),
             ), repository, identifier_template=identifier_template):
                 sys.stderr.write("Failed to embed identifiers to '{}'\n".format(target))
-                return 1
+                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             if run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source, target))
+                cls.revert_branch(repository, cls.REMOTE, target)
                 return -1
 
         # Need to compute the remote source
@@ -173,10 +183,10 @@ class Land(Command):
         if canonical_svn:
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
-                return 1
+                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             if run([repository.executable(), 'svn', 'dcommit'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to commit '{}' to Subversion remote\n".format(target))
-                return 1
+                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             run([repository.executable(), 'reset', 'HEAD~{}'.format(len(commits)), '--hard'], cwd=repository.root_path)
 
             # Verify the mirror processed our change
@@ -218,7 +228,7 @@ class Land(Command):
 
             if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
-                return 1
+                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             repository.checkout(target)
 
         commit = repository.commit(branch=target, include_log=False)
