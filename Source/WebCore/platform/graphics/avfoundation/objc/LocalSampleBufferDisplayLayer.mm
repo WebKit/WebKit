@@ -334,9 +334,6 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
 {
     ASSERT(!isMainThread());
-    // FIXME: Local playback of RemoteVideoFrameProxy is not implemented.
-    if (!is<MediaSampleAVFObjC>(sample))
-        return;
 
     auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);

@@ -106,11 +106,6 @@ struct RemoteRenderingBackendCreationParameters;
 class RemoteWCLayerTreeHost;
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-class RemoteVideoFrameObjectHeap;
-#endif
-
-
 class GPUConnectionToWebProcess
     : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
     , public WebCore::NowPlayingManager::Client
@@ -146,7 +141,6 @@ public:
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }
     bool allowsVideoCapture() const { return m_allowsVideoCapture; }
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
-    RemoteVideoFrameObjectHeap& videoFrameObjectHeap() const;
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -311,7 +305,6 @@ private:
     bool m_allowsAudioCapture { false };
     bool m_allowsVideoCapture { false };
     bool m_allowsDisplayCapture { false };
-    IPC::ScopedActiveMessageReceiveQueue<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #endif
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_presentingApplicationAuditToken;

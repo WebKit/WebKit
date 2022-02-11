@@ -52,7 +52,6 @@ public:
 
 private:
     SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
-    void disconnectGPUProcessConnectionIfNeeded();
 
     // WebCore::SampleBufferDisplayLayer
     void initialize(bool hideRootLayer, WebCore::IntSize, CompletionHandler<void(bool)>&&) final;
@@ -77,7 +76,6 @@ private:
     void setDidFail(bool);
     bool copySharedVideoFrame(CVPixelBufferRef);
 
-    GPUProcessConnection* m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
     Ref<IPC::Connection> m_connection;
     SampleBufferDisplayLayerIdentifier m_identifier;

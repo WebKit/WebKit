@@ -30,7 +30,6 @@
 #include "Connection.h"
 #include "Decoder.h"
 
-#include <atomic>
 #include <dlfcn.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -49,8 +48,6 @@ struct SendMessageContext {
     IPC::Connection& connection;
     std::atomic<bool>& shouldStop;
 };
-
-static std::atomic<unsigned> ongoingIPCTests { 0 };
 }
 
 extern "C" {
@@ -118,9 +115,7 @@ void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driver
     if (!m_testQueue)
         m_testQueue = WorkQueue::create("IPC testing work queue");
     m_testQueue->dispatch([connection = Ref { connection }, &shouldStop = m_shouldStop, driverName = WTFMove(driverName)]() mutable {
-        ongoingIPCTests++;
         runMessageTesting(connection, shouldStop, WTFMove(driverName));
-        ongoingIPCTests--;
     });
 }
 
@@ -137,11 +132,6 @@ void IPCTester::stopIfNeeded()
         m_testQueue->dispatchSync([] { });
         m_testQueue = nullptr;
     }
-}
-
-bool isTestingIPC()
-{
-    return ongoingIPCTests;
 }
 
 }

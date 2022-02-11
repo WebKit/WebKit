@@ -54,10 +54,6 @@
 #include "WCContentBufferIdentifier.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "RemoteVideoFrameIdentifier.h"
-#endif
-
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -65,9 +61,6 @@ class MachSendRight;
 #endif
 
 namespace WebKit {
-#if ENABLE(MEDIA_STREAM)
-class RemoteVideoFrameObjectHeap;
-#endif
 
 // GPU process side implementation of that receives messages about GraphicsContextGL calls
 // and issues real GraphicsContextGL calls based on the received messages.
@@ -115,9 +108,6 @@ protected:
     void synthesizeGLError(uint32_t error);
     void paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
-#if ENABLE(MEDIA_STREAM)
-    void paintCompositedResultsToMediaSample(RemoteVideoFrameWriteReference&&);
-#endif
     void copyTextureFromMedia(WebCore::MediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
 
@@ -140,9 +130,6 @@ protected:
     RefPtr<PlatformGraphicsContextGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
-#if ENABLE(MEDIA_STREAM)
-    Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
-#endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     NO_UNIQUE_ADDRESS ThreadAssertion m_streamThread;
     WebCore::ProcessIdentifier m_webProcessIdentifier;

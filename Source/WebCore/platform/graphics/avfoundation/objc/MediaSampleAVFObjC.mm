@@ -153,7 +153,7 @@ size_t MediaSampleAVFObjC::sizeInBytes() const
     return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get());
 }
 
-PlatformSample MediaSampleAVFObjC::platformSample() const
+PlatformSample MediaSampleAVFObjC::platformSample()
 {
     PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
     return sample;

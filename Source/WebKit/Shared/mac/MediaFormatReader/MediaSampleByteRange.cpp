@@ -66,7 +66,7 @@ AtomString MediaSampleByteRange::trackID() const
     return AtomString::number(m_trackID);
 }
 
-PlatformSample MediaSampleByteRange::platformSample() const
+PlatformSample MediaSampleByteRange::platformSample()
 {
     return {
         PlatformSample::ByteRangeSampleType,
