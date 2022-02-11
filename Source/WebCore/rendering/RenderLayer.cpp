@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
- * Copyright (c) 2020 Igalia S.L.
+ * Copyright (c) 2020, 2021, 2022 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -1330,9 +1330,14 @@ void RenderLayer::updateTransform()
     }
     
     if (hasTransform) {
-        auto& renderBox = downcast<RenderBox>(renderer());
         m_transform->makeIdentity();
-        renderBox.style().applyTransform(*m_transform, snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(renderBox.style().transformBox())), renderBox.document().deviceScaleFactor()));
+
+        // FIXME: [LBSE] Upstream reference box computation for RenderSVGModelObject derived renderers
+        FloatRect referenceBox;
+        if (is<RenderBox>(renderer()))
+            referenceBox = snapRectToDevicePixels(downcast<RenderBox>(renderer()).referenceBox(transformBoxToCSSBoxType(renderer().style().transformBox())), renderer().document().deviceScaleFactor());
+
+        renderer().applyTransform(*m_transform, referenceBox);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());
     }
 
@@ -1348,6 +1353,7 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
     if (!m_transform)
         return { };
 
+    // FIXME: [LBSE] Upstream transform support for RenderSVGModelObject derived renderers
     if (!is<RenderBox>(renderer()))
         return { };
 
@@ -1787,6 +1793,7 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
 
 TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRect) const
 {
+    // FIXME: [LBSE] Upstream transform support for RenderSVGModelObject derived renderers
     if (!is<RenderBox>(renderer()))
         return { };
 
@@ -1821,9 +1828,7 @@ FloatPoint RenderLayer::perspectiveOrigin() const
 {
     if (!renderer().hasTransformRelatedProperty())
         return { };
-
-    auto borderBox = downcast<RenderBox>(renderer()).borderBoxRect();
-    return floatPointForLengthPoint(renderer().style().perspectiveOrigin(), borderBox.size());
+    return floatPointForLengthPoint(renderer().style().perspectiveOrigin(), rendererBorderBoxRect().size());
 }
 
 static inline bool isContainerForPositioned(RenderLayer& layer, PositionType position, bool establishesTopLayer)

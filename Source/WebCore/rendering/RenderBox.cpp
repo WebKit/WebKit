@@ -669,6 +669,11 @@ void RenderBox::updateLayerTransform()
         layer()->updateTransform();
 }
 
+void RenderBox::applyTransform(TransformationMatrix& t, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    style().applyTransform(t, boundingBox, options);
+}
+
 LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logicalWidth, LayoutUnit availableWidth, RenderBlock& cb, RenderFragmentContainer* fragment, AllowIntrinsic allowIntrinsic) const
 {
     const RenderStyle& styleToUse = style();

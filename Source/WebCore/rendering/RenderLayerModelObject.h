@@ -77,6 +77,8 @@ public:
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 #endif
 
+    virtual void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
+
 protected:
     RenderLayerModelObject(Element&, RenderStyle&&, BaseTypeFlags);
     RenderLayerModelObject(Document&, RenderStyle&&, BaseTypeFlags);

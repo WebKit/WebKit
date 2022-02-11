@@ -981,7 +981,20 @@ private:
         if (is<RenderSVGModelObject>(renderer()))
             return downcast<RenderSVGModelObject>(renderer()).layoutLocation();
 #endif
+
         return LayoutPoint();
+    }
+
+    LayoutRect rendererBorderBoxRect() const
+    {
+        if (is<RenderBox>(renderer()))
+            return downcast<RenderBox>(renderer()).borderBoxRect();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (is<RenderSVGModelObject>(renderer()))
+            return downcast<RenderSVGModelObject>(renderer()).borderBoxRectEquivalent();
+#endif
+
+        return LayoutRect();
     }
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);

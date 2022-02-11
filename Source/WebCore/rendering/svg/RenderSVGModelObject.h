@@ -58,8 +58,7 @@ public:
 
     inline SVGElement& element() const;
 
-    // FIXME: [LBSE] Mark final, add applyTransform to RenderLayerModelObject
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const;
+    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
 
     // Mimic the RenderBox accessors - by sharing the same terminology the painting / hit testing / layout logic is
     // similar to read compared to non-SVG renderers such as RenderBox & friends.

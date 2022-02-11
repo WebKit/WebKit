@@ -608,12 +608,10 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
     return clipRect;
 }
 
-void RenderSVGRoot::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGRoot::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    UNUSED_PARAM(transform);
-    UNUSED_PARAM(style);
-    UNUSED_PARAM(boundingBox);
-    UNUSED_PARAM(options);
+    RenderReplaced::applyTransform(transform, boundingBox, options);
+
     // FIXME: [LBSE] Upstream SVGRenderSupport changes
     // SVGRenderSupport::applyTransform(*this, transform, style, boundingBox, std::nullopt, std::nullopt, options);
 }

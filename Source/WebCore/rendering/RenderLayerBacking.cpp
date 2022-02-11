@@ -604,20 +604,6 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_graphicsLayer);
 }
 
-static LayoutRect rendererBorderBoxRect(const RenderLayerModelObject& renderer)
-{
-    if (is<RenderBox>(renderer))
-        return downcast<RenderBox>(renderer).borderBoxRect();
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGModelObject>(renderer))
-        return downcast<RenderSVGModelObject>(renderer).borderBoxRectEquivalent();
-#endif
-
-    ASSERT_NOT_REACHED();
-    return LayoutRect();
-}
-
 static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
 {
     return renderBox.paddingBoxRect();
@@ -651,14 +637,13 @@ void RenderLayerBacking::updateOpacity(const RenderStyle& style)
     m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
 }
 
-void RenderLayerBacking::updateTransform(const RenderStyle& style)
+void RenderLayerBacking::updateTransform(const RenderStyle&)
 {
     // FIXME: This could use m_owningLayer.transform(), but that currently has transform-origin
     // baked into it, and we don't want that.
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
-        auto& renderBox = downcast<RenderBox>(renderer());
-        style.applyTransform(t, snapRectToDevicePixels(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
+        renderer().applyTransform(t, snapRectToDevicePixels(m_owningLayer.rendererBorderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
@@ -683,7 +668,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     }
 
     const auto deviceScaleFactor = this->deviceScaleFactor();
-    auto borderBoxRect = rendererBorderBoxRect(renderer());
+    auto borderBoxRect = m_owningLayer.rendererBorderBoxRect();
     auto transformOrigin = computeTransformOriginForPainting(borderBoxRect);
     auto layerOffset = roundPointToDevicePixels(toLayoutPoint(offsetFromParentGraphicsLayer), deviceScaleFactor);
     auto anchor = FloatPoint3D {
@@ -1396,7 +1381,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         auto computeMasksToBoundsRect = [&] {
             if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
-                auto contentsClippingRect = FloatRoundedRect(renderer().style().getRoundedInnerBorderFor(rendererBorderBoxRect(renderer())));
+                auto contentsClippingRect = FloatRoundedRect(renderer().style().getRoundedInnerBorderFor(m_owningLayer.rendererBorderBoxRect()));
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
                 return contentsClippingRect;
             }
@@ -3748,16 +3733,16 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     bool didAnimate = false;
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(rendererBorderBoxRect(renderer())).size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
@@ -3992,7 +3977,7 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
 
     auto applyTransformOperation = [&](TransformOperation* operation) {
         if (operation)
-            operation->apply(matrix, snappedIntRect(rendererBorderBoxRect(renderer())).size());
+            operation->apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
     };
 
     if (property == AnimatedPropertyTranslate)
@@ -4002,7 +3987,7 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     else if (property == AnimatedPropertyRotate)
         applyTransformOperation(renderer().style().rotate());
     else if (property == AnimatedPropertyTransform)
-        renderer().style().transform().apply(snappedIntRect(rendererBorderBoxRect(renderer())).size(), matrix);
+        renderer().style().transform().apply(snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), matrix);
     else
         ASSERT_NOT_REACHED();
 
