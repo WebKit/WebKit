@@ -42,7 +42,7 @@ Reviewed by NOBODY (OOPS!).
         return ''
 
 def main(file_name=None, source=None, sha=None):
-    if source and source != 'commit':
+    if source not in (None, 'commit', 'template'):
         return 0
 
     with open(file_name, 'w') as commit_message_file:
