@@ -1,0 +1,4 @@
+
+
+PASS <model> in standalone document is interactive.
+

@@ -106,7 +106,7 @@ void ModelDocumentParser::createDocumentStructure()
 
     auto modelElement = HTMLModelElement::create(HTMLNames::modelTag, document);
     m_modelElement = modelElement.ptr();
-    modelElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
+    modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
 
     auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
     sourceElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());

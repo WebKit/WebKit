@@ -1,3 +1,16 @@
+2022-02-11  Antoine Quint  <graouts@webkit.org>
+
+        [model] standalone model documents should be interactive
+        https://bugs.webkit.org/show_bug.cgi?id=236493
+
+        Reviewed by Dean Jackson.
+
+        Add a test that checks that the <model> element created for standalone
+        documents has the "interactive" attribute.
+
+        * http/tests/model/model-document-interactive-expected.txt: Added.
+        * http/tests/model/model-document-interactive.html: Added.
+
 2022-02-11  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
