@@ -1349,6 +1349,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/UserAgent.h
     platform/UserInterfaceLayoutDirection.h
     platform/ValidationBubble.h
+    platform/VideoFrame.h
     platform/VideoFrameMetadata.h
     platform/VideoSampleMetadata.h
     platform/WebGLStateTracker.h

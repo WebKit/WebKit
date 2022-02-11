@@ -49,9 +49,10 @@ struct PlatformSample {
         CMSampleBufferType,
         GStreamerSampleType,
         ByteRangeSampleType,
+        RemoteVideoFrameProxyType, // FIXME: To be removed when VideoFrame is not MediaSample.
     } type;
     union {
-        MockSampleBox* mockSampleBox;
+        const MockSampleBox* mockSampleBox;
         CMSampleBufferRef cmSampleBuffer;
         GstSample* gstSample;
         std::pair<MTPluginByteSourceRef, CMFormatDescriptionRef> byteRangeSample;
@@ -66,7 +67,6 @@ public:
     virtual MediaTime decodeTime() const = 0;
     virtual MediaTime duration() const = 0;
     virtual AtomString trackID() const = 0;
-    virtual void setTrackID(const String&) = 0;
     virtual size_t sizeInBytes() const = 0;
     virtual FloatSize presentationSize() const = 0;
     virtual void offsetTimestampsBy(const MediaTime&) = 0;
@@ -90,7 +90,7 @@ public:
         HasSyncInfo = 1 << 3,
     };
     virtual SampleFlags flags() const = 0;
-    virtual PlatformSample platformSample() = 0;
+    virtual PlatformSample platformSample() const = 0;
 
     struct ByteRange {
         size_t byteOffset { 0 };

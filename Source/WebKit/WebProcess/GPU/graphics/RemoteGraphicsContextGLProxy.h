@@ -65,6 +65,9 @@ public:
     void notifyMarkContextChanged() final;
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final;
+#endif
     void synthesizeGLError(GCGLenum error) final;
     GCGLenum getError() final;
     bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;

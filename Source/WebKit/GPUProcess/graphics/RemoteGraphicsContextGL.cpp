@@ -42,6 +42,10 @@
 #include <WebCore/GraphicsContextGLCV.h>
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "RemoteVideoFrameObjectHeap.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -68,6 +72,9 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
+#if ENABLE(MEDIA_STREAM)
+    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
+#endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
     , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
 {
@@ -222,6 +229,21 @@ void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentif
     assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
+
+#if ENABLE(MEDIA_STREAM)
+void RemoteGraphicsContextGL::paintCompositedResultsToMediaSample(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+{
+    assertIsCurrent(m_streamThread);
+    std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
+    if (auto videoFrame = m_context->paintCompositedResultsToMediaSample()) {
+        auto write = RemoteVideoFrameWriteReference::generateForAdd();
+        auto newFrameReference = write.retiredReference();
+        result = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), *videoFrame);
+        m_videoFrameObjectHeap->retire(WTFMove(write), WTFMove(videoFrame), std::nullopt);
+    }
+    completionHandler(WTFMove(result));
+}
+#endif
 
 void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&& pixelBuffer, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {

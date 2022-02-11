@@ -987,6 +987,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
     if (m_imagePainter.cgImage || !m_imagePainter.mediaSample)
         return;
 
+    // FIXME: Does not currently support RemoteVideoFrameProxy.
+    if (!is<MediaSampleAVFObjC>(*m_imagePainter.mediaSample))
+        return;
+
     if (!m_imagePainter.pixelBufferConformer)
         m_imagePainter.pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
 

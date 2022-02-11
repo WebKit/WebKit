@@ -53,7 +53,6 @@ public:
     MediaTime decodeTime() const override { return m_dts; }
     MediaTime duration() const override { return m_duration; }
     AtomString trackID() const override { return m_trackId; }
-    void setTrackID(const String& trackId) override { m_trackId = trackId; }
     size_t sizeInBytes() const override { return m_size; }
     FloatSize presentationSize() const override { return m_presentationSize; }
     void offsetTimestampsBy(const MediaTime&) override;
@@ -62,7 +61,7 @@ public:
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&, UseEndTime) override  { return { nullptr, nullptr }; }
     Ref<MediaSample> createNonDisplayingCopy() const override;
     SampleFlags flags() const override { return m_flags; }
-    PlatformSample platformSample() override;
+    PlatformSample platformSample() const override;
     std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     void dump(PrintStream&) const override;
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;

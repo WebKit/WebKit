@@ -141,6 +141,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "RemoteVideoFrameObjectHeap.h"
 #include <WebCore/SecurityOrigin.h>
 #endif
 
@@ -257,6 +258,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     gpuProcess.audioSessionManager().session().setRoutingArbitrationClient(m_routingArbitrator.get());
 #endif
+#if ENABLE(MEDIA_STREAM)
+    m_videoFrameObjectHeap = RemoteVideoFrameObjectHeap::create(*this);
+#endif
 
     if (!parameters.overrideLanguages.isEmpty())
         overrideUserPreferredLanguages(parameters.overrideLanguages);
@@ -300,7 +304,9 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
         m_audioSessionProxy = nullptr;
     }
 #endif
-
+#if ENABLE(MEDIA_STREAM)
+    m_videoFrameObjectHeap.reset();
+#endif
     // RemoteRenderingBackend objects ref their GPUConnectionToWebProcess so we need to make sure
     // to break the reference cycle by destroying them.
     m_remoteRenderingBackendMap.clear();
@@ -941,6 +947,12 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString() const
 {
 }
 #endif
+
+RemoteVideoFrameObjectHeap& GPUConnectionToWebProcess::videoFrameObjectHeap() const
+{
+    return *m_videoFrameObjectHeap.get();
+}
+
 #endif // ENABLE(MEDIA_STREAM)
 
 #if PLATFORM(MAC)

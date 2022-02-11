@@ -25,13 +25,20 @@
 
 #pragma once
 
-#if ENABLE(IPC_TESTING_API)
 
 #include "MessageReceiver.h"
 #include <atomic>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
+
+#define ASSERT_IS_TESTING_IPC() ASSERT(isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
+
+#if ENABLE(IPC_TESTING_API)
+
+// Function to check when asserting IPC-related failures, so that IPC testing skips the assertions
+// and exposes bugs underneath.
+bool isTestingIPC();
 
 class IPCTester final : public IPC::MessageReceiver {
 public:
@@ -52,6 +59,13 @@ private:
     std::atomic<bool> m_shouldStop { false };
 };
 
+#else
+
+constexpr inline bool isTestingIPC()
+{
+    return false;
 }
 
 #endif
+
+}

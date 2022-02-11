@@ -1,3 +1,192 @@
+2022-02-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP
+        https://bugs.webkit.org/show_bug.cgi?id=236099
+
+        Reviewed by Youenn Fablet.
+
+        Changes after revert:
+         - For now, create the RemoteVideoFrame in GPUP using synchronous message. This way
+           RemoteVideoFrameProxy does not need to receive messages. It cannot easily do that,
+           as it is referenced in multiple threads and thus we cannot remove the message destination
+           for the instance from GPUProcess instance, as that operation is main thread only.
+           The type cannot be DestructionThread::Main, as we do not (yet) control the base class
+           (MediaSample).
+
+        WebContent process:
+        Add WebKit::RemoteVideoFrameProxy, WebContent process side proxy object that
+        WebCore::MediaPlayerPrivateMediaStreamAVFObjC can use.
+
+        RemoteVideoFrameProxy can be sent to the GPUP and the the SampleBufferDisplayLayer. So
+        the captured content shows in compositing through video element.
+
+        At the moment MediaPlayerPrivateMediaStreamAVFObjC cannot paint RemoteVideoFrameProxy to the
+        document CSS painted content, Context2D or WebGL canvas.
+
+        GPUP:
+        RemoteVideoFrameObjectHeap is a mapping
+        RemoteVideoFrameIdentifier -> MediaSample. Currently all objects
+        map to normal MediaSampleAVFObjC.
+
+        Add an example implementation where a remote MediaSample is returned by IPC:
+        RemoteGraphicsContextGL::paintCompositedResultsToMediaSample().
+
+        The GPUP object pointed by RemoteVideoFrameIdentifier is:
+        - created in RemoteGraphicsContextGL::paintCompositedResultsToMediaSample() in RemoteGraphicsContextGL thread
+        - consumed in RemoteSampleBufferDisplayLayer::enqueueSample in RemoteSampleBufferDisplayLayerManager thread
+        - released in RemoteVideoFrameObjectHeap::releaseVideoFrame in GPUP main thread
+        All of these messages are asynchronous and can arrive to their destination in any order.
+        For example, request to release the video frame can happen before the message to create the video frame has been
+        received.
+
+        To solve the ordering issue, introduce readers-writers reference counting method via following classes:
+         - ObjectIdentifierReadReference
+         - ObjectIdentifierWriteReference
+         - ObjectIdentifierReferenceTracker
+
+        ObjectIdentifier identifies the object.
+        ObjectIdentifierWriteReference identifies a new version of the content pointed by the identifier.
+        Pseudocode examples:
+          WriteReference { identifier = 1, pendingReads = 0, version = 0 } means:
+            "End the life-time of identifier 1, version 0. Create version = 1"
+            This is how initial object is assigned to the reference.
+          WriteReference { identifier = 1, pendingReads = 77, version = 32 } means
+            "End the life-time of identifier 1, version 32 when all 77 reads have completed. Create version = 33"
+
+        ObjectIdentifierReadReference declares a read dependency to a specific version of the content pointed by the identifier.
+        Pseudocode examples:
+           ReadReference { identifier = 1, version = 32 } means
+           "Complete one read of identifier 1, version 32".
+
+        Creates, updates and destructions are WriteReferences.
+        Reads are ReadReferences.
+
+        The ObjectIdentifierReferenceTracker creates write and read references in the Proxy -using process (WebContent process).
+
+        The added ThreadSafeObjectHeap resolves the read and write references in the real object process (GPUP in this case).
+        Reads and writes are blocking the requesting thread appropriately:
+         - Read of unknown version of the identifier blocks until the write creates the version
+         - Write of new version of the identifier blocks until the reads have retired, or creates parallel, new version
+           of the content in case of copy-on-write schemes.
+
+        In this commit objects pointed by RemoteVideoFrameIdentifier are immutable until destroyed, so there is no update or
+        copy-on-write scheme here.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::videoFrameObjectHeap const):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToMediaSample):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp: Added.
+        (WebKit::RemoteVideoFrameObjectHeap::create):
+        (WebKit::RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap):
+        (WebKit::RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap):
+        (WebKit::RemoteVideoFrameObjectHeap::stopListeningForIPC):
+        (WebKit::RemoteVideoFrameObjectHeap::releaseVideoFrame):
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h: Copied from Source/WebKit/Shared/IPCTester.h.
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in: Copied from Source/WebKit/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in.
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::create):
+        (WebKit::RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer):
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSample):
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSampleCV):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/IPCTester.cpp:
+        (WebKit::IPCTester::startMessageTesting):
+        (WebKit::isTestingIPC):
+        * Shared/IPCTester.h:
+        (WebKit::isTestingIPC):
+        * Shared/ObjectIdentifierReferenceTracker.h: Added.
+        (WebKit::ObjectIdentifierReference::ObjectIdentifierReference):
+        (WebKit::ObjectIdentifierReference::identifier const):
+        (WebKit::ObjectIdentifierReference::version const):
+        (WebKit::ObjectIdentifierReference::operator== const):
+        (WebKit::ObjectIdentifierReference::isHashTableDeletedValue const):
+        (WebKit::ObjectIdentifierReference::encode const):
+        (WebKit::ObjectIdentifierReference::decode):
+        (WebKit::ObjectIdentifierReadReference::ObjectIdentifierReadReference):
+        (WebKit::ObjectIdentifierReadReference::identifier const):
+        (WebKit::ObjectIdentifierReadReference::version const):
+        (WebKit::ObjectIdentifierReadReference::reference const):
+        (WebKit::ObjectIdentifierReadReference::encode const):
+        (WebKit::ObjectIdentifierReadReference::decode):
+        (WebKit::ObjectIdentifierWriteReference::generateForAdd):
+        (WebKit::ObjectIdentifierWriteReference::ObjectIdentifierWriteReference):
+        (WebKit::ObjectIdentifierWriteReference::identifier const):
+        (WebKit::ObjectIdentifierWriteReference::version const):
+        (WebKit::ObjectIdentifierWriteReference::pendingReads const):
+        (WebKit::ObjectIdentifierWriteReference::reference const):
+        (WebKit::ObjectIdentifierWriteReference::retiredReference const):
+        (WebKit::ObjectIdentifierWriteReference::encode const):
+        (WebKit::ObjectIdentifierWriteReference::decode):
+        (WebKit::ObjectIdentifierReferenceTracker::ObjectIdentifierReferenceTracker):
+        (WebKit::ObjectIdentifierReferenceTracker::read const):
+        (WebKit::ObjectIdentifierReferenceTracker::write const):
+        (WebKit::ObjectIdentifierReferenceTracker::identifier const):
+        (WebKit::add):
+        (WebKit::operator<<):
+        (WTF::DefaultHash<WebKit::ObjectIdentifierReference<T>>::hash):
+        (WTF::DefaultHash<WebKit::ObjectIdentifierReference<T>>::equal):
+        * Shared/ThreadSafeObjectHeap.h: Added.
+        (WebKit::ThreadSafeObjectHeap::ReferenceState::ReferenceState):
+        (WebKit::HeldType>::retire):
+        (WebKit::HeldType>::retireRemove):
+        (WebKit::HeldType>::clear):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::platformSample const):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::paintCompositedResultsToMediaSample):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm:
+        * WebProcess/GPU/media/RemoteVideoFrameIdentifier.h: Copied from Source/WebKit/Shared/IPCTester.h.
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp: Added.
+        (WebKit::RemoteVideoFrameProxy::properties):
+        (WebKit::RemoteVideoFrameProxy::create):
+        (WebKit::RemoteVideoFrameProxy::releaseUnused):
+        (WebKit::RemoteVideoFrameProxy::RemoteVideoFrameProxy):
+        (WebKit::RemoteVideoFrameProxy::~RemoteVideoFrameProxy):
+        (WebKit::RemoteVideoFrameProxy::identifier const):
+        (WebKit::RemoteVideoFrameProxy::write const):
+        (WebKit::RemoteVideoFrameProxy::read const):
+        (WebKit::RemoteVideoFrameProxy::presentationTime const):
+        (WebKit::RemoteVideoFrameProxy::platformSample const):
+        (WebKit::RemoteVideoFrameProxy::videoRotation const):
+        (WebKit::RemoteVideoFrameProxy::videoMirrored const):
+        (WebKit::RemoteVideoFrameProxy::videoPixelFormat const):
+        (WebKit::RemoteVideoFrameProxy::videoFrame const):
+        (WebKit::RemoteVideoFrameProxy::release):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h: Added.
+        (WebKit::RemoteVideoFrameProxy::Properties::encode const):
+        (WebKit::RemoteVideoFrameProxy::Properties::decode):
+        (isType):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::~SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::enqueueSample):
+        (WebKit::SampleBufferDisplayLayer::gpuProcessConnectionDidClose):
+        (WebKit::SampleBufferDisplayLayer::disconnectGPUProcessConnectionIfNeeded):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
 2022-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Fix memory leak in WebKitDirectoryInputStream

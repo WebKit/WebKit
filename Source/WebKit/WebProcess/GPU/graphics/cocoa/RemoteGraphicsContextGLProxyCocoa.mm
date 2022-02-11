@@ -34,7 +34,6 @@
 #import <WebCore/CVUtilities.h>
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/MediaSampleAVFObjC.h>
 #import <WebCore/PlatformCALayer.h>
 
 namespace WebKit {
@@ -99,9 +98,6 @@ public:
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
-#if ENABLE(MEDIA_STREAM)
-    RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final;
-#endif
 private:
     RemoteGraphicsContextGLProxyCocoa(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
         : RemoteGraphicsContextGLProxy(gpuProcessConnection, attributes, renderingBackend)
@@ -113,20 +109,6 @@ private:
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
-
-#if ENABLE(MEDIA_STREAM)
-RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxyCocoa::paintCompositedResultsToMediaSample()
-{
-    if (!m_displayBuffer)
-        return nullptr;
-    // FIXME: Implement remote MediaSample.
-    auto surface = WebCore::IOSurface::createFromSendRight(m_displayBuffer.copySendRight(), WebCore::DestinationColorSpace::SRGB());
-    auto pixelBuffer = WebCore::createCVPixelBuffer(surface->surface());
-    if (!pixelBuffer)
-        return nullptr;
-    return WebCore::MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer), WebCore::MediaSampleAVFObjC::VideoRotation::UpsideDown, true);
-}
-#endif
 
 void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {

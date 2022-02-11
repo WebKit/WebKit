@@ -1,3 +1,15 @@
+2022-02-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Introduce a RemoteMediaSampleProxy to represent captured video frames used in Media Streams and present in GPUP
+        https://bugs.webkit.org/show_bug.cgi?id=236099
+
+        Reviewed by Youenn Fablet.
+
+        Captured WebGL to another context2d or WebGL not implemented yet, mark few tests as timing out.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Tab characters and ch units do not obey synthetic bold width adjustments correctly
