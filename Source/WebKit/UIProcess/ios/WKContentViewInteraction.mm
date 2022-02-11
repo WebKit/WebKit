@@ -136,7 +136,6 @@
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -176,6 +175,10 @@
 
 #if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
+#endif
+
+#if HAVE(AVKIT)
+#import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>

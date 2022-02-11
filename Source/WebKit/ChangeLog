@@ -1,3 +1,11 @@
+2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Apple TV build
+
+        Don't try to import `AVKitSPI.h` on Apple TV.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2022-02-11  Chris Dumez  <cdumez@apple.com>
 
         Regression(r287684) Microsoft teams meeting URLs fail to open the app
