@@ -1,3 +1,13 @@
+2022-02-11  Alan Bujtas  <zalan@apple.com>
+
+        css/css-writing-modes/direction-propagation-body-contain-root.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=234763
+        <rdar://problem/87243336>
+
+        Unreviewed gardening.
+
+        * TestExpectations: it looks to have progressed.
+
 2022-02-11  Antoine Quint  <graouts@webkit.org>
 
         [model] standalone model documents should be interactive

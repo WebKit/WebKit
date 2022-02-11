@@ -4308,7 +4308,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-pro
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-054.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-055.html [ ImageOnlyFailure ]
 webkit.org/b/234762 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-003.html [ ImageOnlyFailure ]
-webkit.org/b/234763 [ Debug ] imported/w3c/web-platform-tests/css/css-writing-modes/direction-propagation-body-contain-root.html [ Crash ]
 
 # New failures after updating WPT import of css/css-text on 2020-07
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-button-001.html [ ImageOnlyFailure ]
