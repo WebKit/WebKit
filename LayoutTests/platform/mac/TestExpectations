@@ -2438,3 +2438,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 # <rdar://problem/87944426>
 [ Catalina BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
 [ Catalina BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
+
+#rdar://80333071
+[ BigSur+ ] compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
