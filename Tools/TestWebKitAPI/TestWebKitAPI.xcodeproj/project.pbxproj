@@ -54,6 +54,7 @@
 		074994421EA5034B000DA44F /* ondevicechange.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */; };
 		074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAC5 /* getUserMediaAudioVideoCapture.html */; };
 		074994521EA5034B000DA44E /* getUserMedia2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */; };
+		074994521EA5034B000DA46E /* getUserMediaPermission.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4198524F27AD7B70005477B7 /* getUserMediaPermission.html */; };
 		075A9CF526177218006DFA3A /* MediaSessionCoordinatorTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */; };
 		076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076E507E1F45031E006E9F5A /* Logging.cpp */; };
 		077A5AF3230638A600A7105C /* AccessibilityTestPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */; };
@@ -1367,6 +1368,7 @@
 				074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */,
 				074994521EA5034B000DA44E /* getUserMedia2.html in Copy Resources */,
 				074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */,
+				074994521EA5034B000DA46E /* getUserMediaPermission.html in Copy Resources */,
 				F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */,
 				573255A522139BC700396AE8 /* helloworld.webarchive in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
@@ -1971,6 +1973,7 @@
 		41882F0221010A70002FF288 /* ProcessPreWarming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessPreWarming.mm; sourceTree = "<group>"; };
 		418FCBD52707066100F96ECA /* PushAPI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushAPI.mm; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
+		4198524F27AD7B70005477B7 /* getUserMediaPermission.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMediaPermission.html; sourceTree = "<group>"; };
 		41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia2.html; sourceTree = "<group>"; };
 		41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = STUNMessageParsingTest.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
@@ -4702,6 +4705,7 @@
 				4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */,
 				41BAF4E225AC9DB800D82F32 /* getUserMedia2.html */,
 				4A410F4D19AF7BEF002EBAC5 /* getUserMediaAudioVideoCapture.html */,
+				4198524F27AD7B70005477B7 /* getUserMediaPermission.html */,
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */,
 				CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */,

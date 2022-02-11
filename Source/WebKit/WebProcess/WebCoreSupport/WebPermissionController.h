@@ -43,8 +43,7 @@ private:
     explicit WebPermissionController(WebPage&);
 
     // WebCore::PermissionController
-    WebCore::PermissionState query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&) final;
-    void request(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, CompletionHandler<void(WebCore::PermissionState)>&&) final;
+    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
 
@@ -62,7 +61,7 @@ private:
     struct PermissionRequest {
         WebCore::ClientOrigin origin;
         WebCore::PermissionDescriptor descriptor;
-        CompletionHandler<void(WebCore::PermissionState)> completionHandler;
+        CompletionHandler<void(std::optional<WebCore::PermissionState>)> completionHandler;
         bool isWaitingForReply { false };
     };
     Deque<PermissionRequest> m_requests;

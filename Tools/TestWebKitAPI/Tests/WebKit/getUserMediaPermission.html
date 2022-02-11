@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            let stream = null;
+
+            function stop()
+            {
+                stream.getTracks().forEach(track => { track.stop() });
+            }
+
+            function captureAudio()
+            {
+                navigator.mediaDevices.getUserMedia({audio: true}).then(s => stream = s);
+            }
+
+            function captureVideo()
+            {
+                navigator.mediaDevices.getUserMedia({video: true}).then(s => stream = s);
+            }
+
+            function checkPermission(name, expected) {
+                navigator.permissions.query({ name }).then((status) => {
+                    window.webkit.messageHandlers.gum.postMessage(expected == status.state  ? "PASS" : ("FAILED, expected " + expected + " but got " + status.state));
+                }, error => window.webkit.messageHandlers.gum.postMessage("Permission query failed with " + error));
+            }
+
+        </script>
+    <head>
+
+    <body onload="window.webkit.messageHandlers.gum.postMessage('PASS')">
+    </body>
+</html>

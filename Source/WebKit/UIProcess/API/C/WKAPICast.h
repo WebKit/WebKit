@@ -79,6 +79,7 @@ class DownloadProxy;
 class GeolocationPermissionRequest;
 class MediaKeySystemPermissionCallback;
 class NotificationPermissionRequest;
+class QueryPermissionResultCallback;
 class SpeechRecognitionPermissionCallback;
 class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
@@ -136,6 +137,7 @@ WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorUIProxy)
 WK_ADD_API_MAPPING(WKMediaKeySystemPermissionCallbackRef, MediaKeySystemPermissionCallback)
+WK_ADD_API_MAPPING(WKQueryPermissionResultCallbackRef, QueryPermissionResultCallback)
 WK_ADD_API_MAPPING(WKMessageListenerRef, API::MessageListener)
 WK_ADD_API_MAPPING(WKNavigationActionRef, API::NavigationAction)
 WK_ADD_API_MAPPING(WKNavigationDataRef, API::NavigationData)

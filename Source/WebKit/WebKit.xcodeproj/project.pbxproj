@@ -838,6 +838,8 @@
 		410F0D4C2701EFF900F96DFC /* GPUProcessConnectionInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 410F0D4B2701EFEA00F96DFC /* GPUProcessConnectionInitializationParameters.h */; };
 		411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		411B22641E371BA6004F7363 /* LibWebRTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B22621E371244004F7363 /* LibWebRTCNetwork.h */; };
+		411B89C927B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B89C727B2B75C00F9EBD3 /* WKQueryPermissionResultCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		411B89CC27B2B89800F9EBD3 /* QueryPermissionResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B89CB27B2B89600F9EBD3 /* QueryPermissionResultCallback.h */; };
 		41287D4E225D1ECB009A3E26 /* WebSocketTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */; };
 		413075AC1DE85F370039EC69 /* NetworkRTCMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4130759B1DE84FB00039EC69 /* NetworkRTCMonitor.h */; };
 		413075AD1DE85F580039EC69 /* LibWebRTCSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A01DE85EE70039EC69 /* LibWebRTCSocket.h */; };
@@ -4070,6 +4072,9 @@
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
+		411B89C727B2B75C00F9EBD3 /* WKQueryPermissionResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKQueryPermissionResultCallback.h; sourceTree = "<group>"; };
+		411B89C827B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKQueryPermissionResultCallback.cpp; sourceTree = "<group>"; };
+		411B89CB27B2B89600F9EBD3 /* QueryPermissionResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryPermissionResultCallback.h; sourceTree = "<group>"; };
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
 		41287D4D225C161F009A3E26 /* WebSocketTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTask.h; sourceTree = "<group>"; };
@@ -11041,6 +11046,7 @@
 				83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */,
 				4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */,
 				4683569A21E81CC7006E27A3 /* ProvisionalPageProxy.h */,
+				411B89CB27B2B89600F9EBD3 /* QueryPermissionResultCallback.h */,
 				1A0C227C2451130A00ED614D /* QuickLookThumbnailingSoftLink.h */,
 				1A0C227D2451130A00ED614D /* QuickLookThumbnailingSoftLink.mm */,
 				1AEE57232409F142002005D6 /* QuickLookThumbnailLoader.h */,
@@ -11397,6 +11403,8 @@
 				512F58F312A88A5400629530 /* WKProtectionSpace.cpp */,
 				512F58F412A88A5400629530 /* WKProtectionSpace.h */,
 				518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */,
+				411B89C827B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.cpp */,
+				411B89C727B2B75C00F9EBD3 /* WKQueryPermissionResultCallback.h */,
 				33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */,
 				33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */,
 				1ADE46B01954EC61000F7985 /* WKSessionStateRef.cpp */,
@@ -13342,6 +13350,7 @@
 				EB36B16827A7B4500050E00D /* PushService.h in Headers */,
 				EBA8D3B527A5E33F00CB7900 /* PushServiceConnection.h in Headers */,
 				A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */,
+				411B89CC27B2B89800F9EBD3 /* QueryPermissionResultCallback.h in Headers */,
 				1A0C227E2451130A00ED614D /* QuickLookThumbnailingSoftLink.h in Headers */,
 				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
 				93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */,
@@ -14098,6 +14107,7 @@
 				512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */,
 				5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */,
 				518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */,
+				411B89C927B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.h in Headers */,
 				F4D5F51F206087A10038BBA8 /* WKQuickboardViewControllerDelegate.h in Headers */,
 				F4975CF22624B80A003C626E /* WKQuickLookPreviewController.h in Headers */,
 				1AD01BCD1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h in Headers */,

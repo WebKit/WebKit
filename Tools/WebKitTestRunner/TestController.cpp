@@ -63,6 +63,7 @@
 #include <WebKit/WKPluginInformation.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
+#include <WebKit/WKQueryPermissionResultCallback.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKSpeechRecognitionPermissionCallback.h>
@@ -357,6 +358,11 @@ void TestController::completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermi
 void TestController::setIsMediaKeySystemPermissionGranted(bool granted)
 {
     m_isMediaKeySystemPermissionGranted = granted;
+}
+
+static void queryPermission(WKStringRef, WKSecurityOriginRef, WKQueryPermissionResultCallbackRef callback)
+{
+    WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
 void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
@@ -733,8 +739,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV16 pageUIClient = {
-        { 16, m_mainWebView.get() },
+    WKPageUIClientV18 pageUIClient = {
+        { 18, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -809,7 +815,9 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         shouldAllowDeviceOrientationAndMotionAccess,
         runWebAuthenticationPanel,
         decidePolicyForSpeechRecognitionPermissionRequest,
-        decidePolicyForMediaKeySystemPermissionRequest
+        decidePolicyForMediaKeySystemPermissionRequest,
+        nullptr, // requestWebAuthenticationNoGesture
+        queryPermission
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

@@ -33,6 +33,7 @@
 #include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/ModalContainerTypes.h>
+#include <WebCore/PermissionState.h>
 #include <wtf/CompletionHandler.h>
 
 #if PLATFORM(COCOA)
@@ -221,6 +222,8 @@ public:
     virtual void decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler) { page.requestSpeechRecognitionPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler)); }
 
     virtual void decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, const WTF::String& keySystem, CompletionHandler<void(bool)>&& completionHandler) { page.requestMediaKeySystemPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler)); }
+
+    virtual void queryPermission(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) { completionHandler({ }); }
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
     virtual void requestPermissionOnXRSessionFeatures(WebKit::WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler) { completionHandler(granted); }    

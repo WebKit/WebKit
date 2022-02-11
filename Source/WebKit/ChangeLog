@@ -1,3 +1,41 @@
+2022-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Add support to query camera and microphone permissions
+        https://bugs.webkit.org/show_bug.cgi?id=236138
+
+        Reviewed by Eric Carlson.
+
+        Add new SPI to query for permission (without requesting anything to user).
+        Use this to implement camera/microphone permission.
+        In case of permisssion persistently denied, only expose it if web page already called getUserMedia.
+        In case of permission not persistently set, compute the permission state according past getUserMedia requests.
+        Also add geolocation mapping as applications might want to support it and it makes existing WPT tests happy.
+        Add C API as well so that WTR can control permission querying.
+
+        Covered by API test.
+
+        * Headers.cmake:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Sources.txt:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/C/WKSpeechRecognitionPermissionCallback.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebPermissionController.cpp:
+        * WebProcess/WebCoreSupport/WebPermissionController.h:
+
 2022-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] BubblewrapLauncher leaks D-Bus proxy sockets

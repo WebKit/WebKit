@@ -24,6 +24,7 @@
 #include "APIUIClient.h"
 #include "DeviceIdHashSaltStorage.h"
 #include "Logging.h"
+#include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "UserMediaProcessManager.h"
 #include "WebAutomationSession.h"
@@ -339,7 +340,7 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
             continue;
         if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
             continue;
-        if (grantedRequest->frameID() != frameID)
+        if (frameID && grantedRequest->frameID() != frameID)
             continue;
 
         if (grantedRequest->requiresVideoCapture())
@@ -671,6 +672,35 @@ void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRe
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *frame, WTFMove(apiRequestingOrigin), WTFMove(apiTopOrigin), request.get());
 }
 
+bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForCamera(const ClientOrigin& origin) const
+{
+    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
+        return true;
+
+    return !anyOf(m_deniedRequests, [](auto& request) { return request.isVideoDenied; })
+        && !anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresVideoCapture(); })
+        && !anyOf(m_grantedRequests, [](auto& request) { return request->requiresVideoCapture(); });
+}
+
+bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrophone(const ClientOrigin& origin) const
+{
+    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
+        return true;
+
+    return !anyOf(m_deniedRequests, [](auto& request) { return request.isAudioDenied; })
+        && !anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresAudioCapture(); })
+        && !anyOf(m_grantedRequests, [](auto& request) { return request->requiresAudioCapture(); });
+}
+
+bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForCamera(const ClientOrigin& origin) const
+{
+    return searchForGrantedRequest({ }, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), false, true);
+}
+
+bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForMicrophone(const ClientOrigin& origin) const
+{
+    return searchForGrantedRequest({ }, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), true, false);
+}
 
 #if !PLATFORM(COCOA)
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&& callback)

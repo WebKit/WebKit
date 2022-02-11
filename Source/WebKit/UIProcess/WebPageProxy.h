@@ -2206,7 +2206,7 @@ private:
 
     void requestGeolocationPermissionForFrame(GeolocationIdentifier, FrameInfoData&&);
     void revokeGeolocationAuthorizationToken(const String& authorizationToken);
-    void requestPermission(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, CompletionHandler<void(WebCore::PermissionState)>&&);
+    void queryPermission(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, CompletionHandler<void(std::optional<WebCore::PermissionState>, bool shouldCache)>&&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void sendMessageToWebView(UserMessage&&);

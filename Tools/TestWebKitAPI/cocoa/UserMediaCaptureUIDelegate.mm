@@ -72,6 +72,19 @@
     _getDisplayMediaDecision = decision;
 }
 
+- (void)_webView:(WKWebView *)webView queryPermission:(NSString*) name forOrigin:(WKSecurityOrigin *)origin completionHandler:(void (^)(WKPermissionDecision state))completionHandler {
+    if ([name isEqualToString:@"camera"]) {
+        completionHandler(_videoDecision);
+        return;
+    }
+    if ([name isEqualToString:@"microphone"]) {
+        completionHandler(_audioDecision);
+        return;
+    }
+    ASSERT_NOT_REACHED();
+    completionHandler(WKPermissionDecisionDeny);
+}
+
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     ++_numberOfPrompts;
     _wasPrompted = true;

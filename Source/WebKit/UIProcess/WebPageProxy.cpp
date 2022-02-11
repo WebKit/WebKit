@@ -8640,10 +8640,46 @@ void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizati
     m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
 }
 
-void WebPageProxy::requestPermission(const ClientOrigin&, const PermissionDescriptor&, CompletionHandler<void(PermissionState)>&& completionHandler)
+void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>, bool shouldCache)>&& completionHandler)
 {
-    // FIXME: Show a prompt for user input.
-    completionHandler(PermissionState::Granted);
+    bool shouldChangeDeniedToPrompt = true;
+    bool shouldChangePromptToGrant = false;
+    String name;
+    if (descriptor.name == PermissionName::Camera) {
+#if ENABLE(MEDIA_STREAM)
+        name = "camera"_s;
+        shouldChangeDeniedToPrompt = userMediaPermissionRequestManager().shouldChangeDeniedToPromptForCamera(clientOrigin);
+        shouldChangePromptToGrant = userMediaPermissionRequestManager().shouldChangePromptToGrantForCamera(clientOrigin);
+#endif
+    } else if (descriptor.name == PermissionName::Microphone) {
+#if ENABLE(MEDIA_STREAM)
+        name = "microphone"_s;
+        shouldChangeDeniedToPrompt = userMediaPermissionRequestManager().shouldChangeDeniedToPromptForMicrophone(clientOrigin);
+        shouldChangePromptToGrant = userMediaPermissionRequestManager().shouldChangePromptToGrantForMicrophone(clientOrigin);
+#endif
+    } else if (descriptor.name == PermissionName::Geolocation) {
+#if ENABLE(GEOLOCATION)
+        name = "geolocation"_s;
+#endif
+    }
+
+    if (name.isNull()) {
+        completionHandler({ }, false);
+        return;
+    }
+
+    auto origin = API::SecurityOrigin::create(clientOrigin.topOrigin);
+    m_uiClient->queryPermission(name, origin, [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        if (!result) {
+            completionHandler({ }, false);
+            return;
+        }
+        if (*result == PermissionState::Denied && shouldChangeDeniedToPrompt)
+            result = PermissionState::Prompt;
+        else if (*result == PermissionState::Prompt && shouldChangePromptToGrant)
+            result = PermissionState::Granted;
+        completionHandler(*result, false);
+    });
 }
 
 #if ENABLE(MEDIA_STREAM)

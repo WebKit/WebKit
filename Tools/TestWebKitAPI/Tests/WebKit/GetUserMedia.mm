@@ -972,6 +972,91 @@ TEST(WebKit, InvalidDeviceIdHashSalts)
     [delegate waitUntilPrompted];
 }
 
+
+static _WKExperimentalFeature *permissionsAPIEnabledExperimentalFeature()
+{
+    static RetainPtr<_WKExperimentalFeature> theFeature;
+    if (theFeature)
+        return theFeature.get();
+
+    NSArray *features = [WKPreferences _experimentalFeatures];
+    for (_WKExperimentalFeature *feature in features) {
+        if ([feature.key isEqual:@"PermissionsAPIEnabled"]) {
+            theFeature = feature;
+            break;
+        }
+    }
+    return theFeature.get();
+}
+
+TEST(WebKit2, CapturePermission)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:permissionsAPIEnabledExperimentalFeature()];
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView loadTestPageNamed:@"getUserMediaPermission"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [delegate setAudioDecision:WKPermissionDecisionPrompt];
+    [delegate setVideoDecision:WKPermissionDecisionPrompt];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [delegate setAudioDecision:WKPermissionDecisionGrant];
+    [delegate setVideoDecision:WKPermissionDecisionGrant];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'granted')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'granted')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Although Deny, we expect prompt is exposed since we do not trust the page to call getUserMedia.
+    [delegate setAudioDecision:WKPermissionDecisionDeny];
+    [delegate setVideoDecision:WKPermissionDecisionDeny];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Now that we getUserMedia has been called, we can go with deny.
+    [webView stringByEvaluatingJavaScript:@"captureVideo()"];
+    [delegate waitUntilPrompted];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"captureAudio()"];
+    [delegate waitUntilPrompted];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

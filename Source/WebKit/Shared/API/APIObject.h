@@ -187,6 +187,7 @@ public:
 #endif
 
         MediaKeySystemPermissionCallback,
+        QueryPermissionResultCallback,
 
         // Bundle types
         Bundle,

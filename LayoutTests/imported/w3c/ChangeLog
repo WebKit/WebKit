@@ -1,3 +1,13 @@
+2022-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Add support to query camera and microphone permissions
+        https://bugs.webkit.org/show_bug.cgi?id=236138
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/permissions/nfc-permission-expected.txt:
+        * web-platform-tests/permissions/test-background-fetch-permission-expected.txt:
+
 2022-02-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Several WPT offscreen canvas tests are failing after r287846

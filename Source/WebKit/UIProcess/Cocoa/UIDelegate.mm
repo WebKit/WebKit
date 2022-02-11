@@ -1742,6 +1742,43 @@ void UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest(Web
     }).get()];
 }
 
+void UIDelegate::UIClient::queryPermission(const String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& callback)
+{
+    if (!m_uiDelegate) {
+        callback(WebCore::PermissionState::Prompt);
+        return;
+    }
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate) {
+        callback(WebCore::PermissionState::Prompt);
+        return;
+    }
+
+    if (![delegate respondsToSelector:@selector(_webView:queryPermission:forOrigin:completionHandler:)]) {
+        callback(WebCore::PermissionState::Prompt);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:queryPermission:forOrigin:completionHandler:));
+    [delegate _webView:m_uiDelegate->m_webView.get().get() queryPermission:permissionName forOrigin:wrapper(origin) completionHandler:makeBlockPtr([callback = WTFMove(callback), checker = WTFMove(checker)](WKPermissionDecision permissionState) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        switch (permissionState) {
+        case WKPermissionDecisionPrompt:
+            callback(WebCore::PermissionState::Prompt);
+            break;
+        case WKPermissionDecisionGrant:
+            callback(WebCore::PermissionState::Granted);
+            break;
+        case WKPermissionDecisionDeny:
+            callback(WebCore::PermissionState::Denied);
+            break;
+        }
+    }).get()];
+}
+
 void UIDelegate::UIClient::didEnableInspectorBrowserDomain(WebPageProxy&)
 {
     if (!m_uiDelegate)

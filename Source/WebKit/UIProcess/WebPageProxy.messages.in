@@ -609,7 +609,7 @@ messages -> WebPageProxy {
     ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success) Async
 #endif
 
-    requestPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (enum:uint8_t WebCore::PermissionState state) Async
+    QueryPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (std::optional<WebCore::PermissionState> state, bool shouldCache) Async
 
 #if ENABLE(APPLE_PAY_AMS_UI)
     StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result) Async

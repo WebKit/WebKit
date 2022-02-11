@@ -65,6 +65,7 @@
 #include "NotificationPermissionRequest.h"
 #include "PageClient.h"
 #include "PrintInfo.h"
+#include "QueryPermissionResultCallback.h"
 #include "SpeechRecognitionPermissionRequest.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
@@ -118,7 +119,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14, WKPageUIClientV15, WKPageUIClientV16, WKPageUIClientV17, WKPageUIClientV18> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2189,6 +2190,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             }
 
             m_client.decidePolicyForMediaKeySystemPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(API::String::create(keySystem).ptr()), toAPI(MediaKeySystemPermissionCallback::create(WTFMove(completionHandler)).ptr()));
+        }
+
+        void queryPermission(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) final
+        {
+            if (!m_client.queryPermission) {
+                completionHandler({ });
+                return;
+            }
+            m_client.queryPermission(toAPI(API::String::create(permissionName).ptr()), toAPI(&origin), toAPI(QueryPermissionResultCallback::create(WTFMove(completionHandler)).ptr()));
         }
     };
 

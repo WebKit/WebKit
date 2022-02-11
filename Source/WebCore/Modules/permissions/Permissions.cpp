@@ -111,8 +111,19 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
 
     auto* origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
-    auto permissionState = m_controller->query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor });
-    promise.resolve(PermissionStatus::create(*context, permissionState, parameterDescriptor));
+    m_controller->query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor }, [this, protectedThis = Ref { *this }, parameterDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
+        auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+        if (!context || !context->globalObject())
+            return;
+
+        context->postTask([parameterDescriptor, promise = WTFMove(promise),  permissionState = WTFMove(permissionState)](auto& context) mutable {
+            if (!permissionState) {
+                promise.reject(Exception { NotSupportedError });
+                return;
+            }
+            promise.resolve(PermissionStatus::create(context, *permissionState, parameterDescriptor));
+        });
+    });
 }
 
 } // namespace WebCore
