@@ -88,8 +88,11 @@ public:
 
     virtual bool isInUse() const = 0;
     virtual void releaseGraphicsContext() = 0;
-    virtual VolatilityState setVolatile(bool) = 0;
     virtual void releaseBufferToPool() = 0;
+
+    // Returns true on success.
+    virtual bool setVolatile() = 0;
+    virtual VolatilityState setNonVolatile() = 0;
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() = 0;
 

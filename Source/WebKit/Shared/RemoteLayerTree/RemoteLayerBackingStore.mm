@@ -526,8 +526,7 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType bufferType, bool is
 
         buffer.imageBuffer->releaseGraphicsContext();
 
-        if (!buffer.imageBuffer->isInUse()) {
-            buffer.imageBuffer->setVolatile(true);
+        if (buffer.imageBuffer->setVolatile()) {
             buffer.isVolatile = true;
             return true;
         }
@@ -540,7 +539,7 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType bufferType, bool is
         if (!buffer.imageBuffer || !buffer.isVolatile)
             return false;
 
-        auto previousState = buffer.imageBuffer->setVolatile(false);
+        auto previousState = buffer.imageBuffer->setNonVolatile();
         buffer.isVolatile = false;
 
         return previousState == WebCore::VolatilityState::Empty;

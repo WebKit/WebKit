@@ -68,8 +68,10 @@ protected:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
-    VolatilityState setVolatile(bool) override;
     void releaseBufferToPool() override;
+
+    bool setVolatile() override;
+    VolatilityState setNonVolatile() override;
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 

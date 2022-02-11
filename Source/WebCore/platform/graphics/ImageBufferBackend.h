@@ -116,8 +116,11 @@ public:
 
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
-    virtual VolatilityState setVolatile(bool) { return VolatilityState::Valid; }
     virtual void releaseBufferToPool() { }
+
+    // Returns true on success.
+    virtual bool setVolatile() { return true; }
+    virtual VolatilityState setNonVolatile() { return VolatilityState::Valid; }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 

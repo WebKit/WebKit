@@ -1,5 +1,26 @@
 2022-02-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Separate out setVolatile() from setNonVolatile() on IOSurface-backed buffers
+        https://bugs.webkit.org/show_bug.cgi?id=236475
+
+        Reviewed by Tim Horton.
+
+        setVolatile(true) and setVolatile(false) are quite different in their needs, so
+        separate them out into separate functions.
+        
+        setVolatile(true) can be done asynchronously (as a future patch will). The
+        return value tells if you succeeded in making the surfaced volatile, i.e. if it
+        was not in-use.
+        
+        setVolatile(false) has to be synchronous, and the return value tells you whether
+        you need to repaint the entire surface.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+
+2022-02-10  Simon Fraser  <simon.fraser@apple.com>
+
         Have RemoteLayerBackingStore talk to RemoteLayerBackingStoreCollection directly
         https://bugs.webkit.org/show_bug.cgi?id=236463
 

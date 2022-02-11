@@ -289,10 +289,18 @@ protected:
             return backend->releaseGraphicsContext();
     }
 
-    VolatilityState setVolatile(bool isVolatile) override
+    bool setVolatile() override
     {
         if (auto* backend = ensureBackendCreated())
-            return backend->setVolatile(isVolatile);
+            return backend->setVolatile();
+            
+        return true; // Just claim we succeedded.
+    }
+
+    VolatilityState setNonVolatile() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->setNonVolatile();
         return VolatilityState::Valid;
     }
 

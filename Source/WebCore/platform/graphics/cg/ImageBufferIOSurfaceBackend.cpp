@@ -234,9 +234,18 @@ void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
     return m_surface->releaseGraphicsContext();
 }
 
-VolatilityState ImageBufferIOSurfaceBackend::setVolatile(bool isVolatile)
+bool ImageBufferIOSurfaceBackend::setVolatile()
 {
-    return m_surface->setVolatile(isVolatile);
+    if (m_surface->isInUse())
+        return false;
+
+    m_surface->setVolatile(true);
+    return true;
+}
+
+VolatilityState ImageBufferIOSurfaceBackend::setNonVolatile()
+{
+    return m_surface->setVolatile(false);
 }
 
 void ImageBufferIOSurfaceBackend::releaseBufferToPool()
