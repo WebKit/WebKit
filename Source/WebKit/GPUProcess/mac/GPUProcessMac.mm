@@ -34,6 +34,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ScreenProperties.h>
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
@@ -53,7 +54,9 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
     [userDefaults registerDefaults:@{ @"pluginformatreader_unsigned": @YES }];
 #endif
 
-    launchServicesCheckIn();
+#if HAVE(CSCHECKFIXDISABLE)
+    _CSCheckFixDisable();
+#endif
 }
 
 void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)

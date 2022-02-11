@@ -1,3 +1,16 @@
+2022-02-11  Per Arne Vollan  <pvollan@apple.com>
+
+        The GPU process should not check in with Launch Services
+        https://bugs.webkit.org/show_bug.cgi?id=236457
+
+        Reviewed by Geoffrey Garen.
+
+        Since the GPU process is not an application in the normal sense, there is no need to call _LSApplicationCheckIn.
+        The function _CSCheckFixDisable should still be called.
+
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::initializeProcess):
+
 2022-02-11  Youenn Fablet  <youenn@apple.com>
 
         Support remote video frames in WebRTC video pipeline
