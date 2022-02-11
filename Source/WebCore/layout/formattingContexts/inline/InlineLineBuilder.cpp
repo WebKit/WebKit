@@ -342,6 +342,14 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
                 hasOpaqueRun = true;
                 continue;
             }
+
+            // bidiLevels are required to be less than the MAX + 1, otherwise
+            // ubidi_reorderVisual will silently fail.
+            if (lineRuns[i].bidiLevel() > UBIDI_MAX_EXPLICIT_LEVEL + 1) {
+                ASSERT(lineRuns[i].bidiLevel() == UBIDI_DEFAULT_LTR);
+                continue;
+            }
+
             runLevels.append(lineRuns[i].bidiLevel());
             runIndexOffsetMap.append(accumulatedOffset);
         }
