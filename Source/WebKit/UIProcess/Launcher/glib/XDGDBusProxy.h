@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2018, 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,31 @@
 #pragma once
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
-
-#include "ProcessLauncher.h"
-
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GSubprocess GSubprocess;
-typedef struct _GSubprocessLauncher GSubprocessLauncher;
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
-GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher*, const ProcessLauncher::LaunchOptions&, char** argv, GError**);
-int argumentsToFileDescriptor(const Vector<CString>&, const char*);
+class XDGDBusProxy {
+    WTF_MAKE_NONCOPYABLE(XDGDBusProxy); WTF_MAKE_FAST_ALLOCATED;
+public:
+    enum class Type { SessionBus, AccessibilityBus };
+    XDGDBusProxy(Type, bool = false);
 
+    const CString& proxyPath() const { return m_proxyPath; }
+    const CString& path() const { return m_path; }
+
+private:
+    CString makeProxy() const;
+    void launch(bool) const;
+
+    Type m_type;
+    CString m_dbusAddress;
+    CString m_proxyPath;
+    CString m_path;
 };
 
-#endif
+} // namespace WebKit
+
+#endif // ENABLE(BUBBLEWRAP_SANDBOX)

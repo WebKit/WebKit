@@ -20,6 +20,7 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
+#include "XDGDBusProxy.h"
 #include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
 #include <glib.h>
@@ -41,12 +42,6 @@
 
 #if PLATFORM(GTK)
 #include "WaylandCompositor.h"
-#endif
-
-#if PLATFORM(GTK)
-#define BASE_DIRECTORY "webkitgtk"
-#elif PLATFORM(WPE)
-#define BASE_DIRECTORY "wpe"
 #endif
 
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
@@ -109,8 +104,7 @@ static int createSealedMemFdWithData(const char* name, gconstpointer data, size_
     return fd;
 }
 
-static int
-argsToFd(const Vector<CString>& args, const char *name)
+int argumentsToFileDescriptor(const Vector<CString>& args, const char* name)
 {
     GString* buffer = g_string_new(nullptr);
 
@@ -166,138 +160,6 @@ static int createFlatpakInfo()
     return createSealedMemFdWithData("flatpak-info", data->get(), size);
 }
 
-class XDGDBusProxyLauncher {
-public:
-    void setAddress(const char* dbusAddress)
-    {
-        if (!dbusAddress || !g_str_has_prefix(dbusAddress, "unix:"))
-            return;
-
-        GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
-        m_proxyPath = makeProxyPath(appRunDir.get());
-
-        m_socket = dbusAddress;
-        m_path = dbusAddressToPath(dbusAddress);
-    }
-
-    bool isRunning() const { return m_isRunning; };
-    const CString& path() const { return m_path; };
-    const CString& proxyPath() const { return m_proxyPath; };
-
-    void setPermissions(Vector<CString>&& permissions)
-    {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
-        m_permissions = WTFMove(permissions);
-    };
-
-    void launch(bool enableLogging)
-    {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
-
-        if (m_socket.isNull() || m_proxyPath.isNull())
-            return;
-
-        int syncFds[2];
-        if (pipe(syncFds) == -1)
-            g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
-        setCloseOnExec(syncFds[0]);
-
-        GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
-
-        Vector<CString> proxyArgs = {
-            m_socket, m_proxyPath,
-            "--filter",
-            syncFdStr.get(),
-        };
-
-        if (enableLogging)
-            proxyArgs.append("--log");
-
-        proxyArgs.appendVector(m_permissions);
-
-        int proxyFd = argsToFd(proxyArgs, "dbus-proxy");
-        GUniquePtr<char> proxyArgsStr(g_strdup_printf("--args=%d", proxyFd));
-
-        // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
-        // xdg-dbus-proxy's mount namespace. Portals may use this as a trusted way to get the
-        // sandboxed process's application ID, and will break if it's missing.
-        Vector<CString> args = {
-            DBUS_PROXY_EXECUTABLE,
-            proxyArgsStr.get(),
-        };
-
-        int nargs = args.size() + 1;
-        int i = 0;
-        char** argv = g_newa(char*, nargs);
-        for (const auto& arg : args)
-            argv[i++] = const_cast<char*>(arg.data());
-        argv[i] = nullptr;
-
-        GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-        g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
-        g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
-
-        // We are purposefully leaving syncFds[0] open here.
-        // xdg-dbus-proxy will exit() itself once that is closed on our exit
-
-        ProcessLauncher::LaunchOptions launchOptions;
-        launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
-        if (!m_path.isNull())
-            launchOptions.extraSandboxPaths.add(m_path, SandboxPermission::ReadOnly);
-        GUniqueOutPtr<GError> error;
-        GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
-        if (!process.get())
-            g_error("Failed to start dbus proxy: %s", error->message);
-
-        char out;
-        // We need to ensure the proxy has created the socket.
-        // FIXME: This is more blocking IO.
-        if (read(syncFds[0], &out, 1) != 1)
-            g_error("Failed to fully launch dbus-proxy %s", g_strerror(errno));
-
-        m_isRunning = true;
-    };
-
-private:
-    static CString makeProxyPath(const char* appRunDir)
-    {
-        if (g_mkdir_with_parents(appRunDir, 0700) == -1) {
-            g_warning("Failed to mkdir for dbus proxy (%s): %s", appRunDir, g_strerror(errno));
-            return { };
-        }
-
-        GUniquePtr<char> proxySocketTemplate(g_build_filename(appRunDir, "dbus-proxy-XXXXXX", nullptr));
-        int fd;
-        if ((fd = g_mkstemp(proxySocketTemplate.get())) == -1) {
-            g_warning("Failed to make socket file for dbus proxy: %s", g_strerror(errno));
-            return { };
-        }
-
-        close(fd);
-        return CString(proxySocketTemplate.get());
-    };
-
-    static CString dbusAddressToPath(const char* address)
-    {
-        const char* path = strstr(address, "path=");
-        if (!path)
-            return { };
-
-        path += strlen("path=");
-        const char* pathEnd = path;
-        while (*pathEnd && *pathEnd != ',')
-            pathEnd++;
-
-        return CString(path, pathEnd - path);
-    }
-
-    CString m_socket;
-    CString m_path;
-    CString m_proxyPath;
-    bool m_isRunning { false };
-    Vector<CString> m_permissions;
-};
-
 enum class BindFlags {
     ReadOnly,
     ReadWrite,
@@ -319,14 +181,13 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
     args.appendVector(Vector<CString>({ bindType, path, path }));
 }
 
-static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
+static void bindDBusSession(Vector<CString>& args, bool allowPortals)
 {
-    if (!proxy.isRunning())
-        proxy.setAddress(g_getenv("DBUS_SESSION_BUS_ADDRESS"));
+    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::SessionBus, allowPortals);
 
-    if (!proxy.proxyPath().isNull() && !proxy.path().isNull()) {
+    if (!proxy->proxyPath().isNull() && !proxy->path().isNull()) {
         args.appendVector(Vector<CString>({
-            "--bind", proxy.proxyPath(), proxy.path(),
+            "--bind", proxy->proxyPath(), proxy->path(),
         }));
     }
 }
@@ -463,60 +324,19 @@ static void bindGtkData(Vector<CString>& args)
     bindIfExists(args, themeHomeData.get());
     bindIfExists(args, iconHomeData.get());
 }
+#endif
 
+#if ENABLE(ACCESSIBILITY)
 static void bindA11y(Vector<CString>& args)
 {
-    static XDGDBusProxyLauncher proxy;
+    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::AccessibilityBus);
 
-    if (!proxy.isRunning()) {
-        // FIXME: Avoid blocking IO... (It is at least a one-time cost)
-        GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
-        if (!sessionBus.get())
-            return;
-
-        GRefPtr<GDBusMessage> msg = adoptGRef(g_dbus_message_new_method_call(
-            "org.a11y.Bus", "/org/a11y/bus", "org.a11y.Bus", "GetAddress"));
-        g_dbus_message_set_body(msg.get(), g_variant_new("()"));
-        GRefPtr<GDBusMessage> reply = adoptGRef(g_dbus_connection_send_message_with_reply_sync(
-            sessionBus.get(), msg.get(),
-            G_DBUS_SEND_MESSAGE_FLAGS_NONE,
-            30000,
-            nullptr,
-            nullptr,
-            nullptr));
-
-        if (reply.get()) {
-            GUniqueOutPtr<GError> error;
-            if (g_dbus_message_to_gerror(reply.get(), &error.outPtr())) {
-                if (!g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN))
-                    g_warning("Can't find a11y bus: %s", error->message);
-            } else {
-                GUniqueOutPtr<char> a11yAddress;
-                g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                proxy.setAddress(a11yAddress.get());
-            }
-        }
-
-        proxy.setPermissions({
-            "--sloppy-names",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetKeystrokeListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
-        });
-
-        proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"));
-    }
-
-    if (!proxy.proxyPath().isNull()) {
-        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy.proxyPath().data()));
-        args.appendVector(Vector<CString>({
-            "--ro-bind", proxy.proxyPath(), proxy.proxyPath(),
+    if (!proxy->proxyPath().isNull()) {
+        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy->proxyPath().data()));
+        args.appendVector(Vector<CString> {
+            "--ro-bind", proxy->proxyPath(), proxy->proxyPath(),
             "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get(),
-        }));
+        });
     }
 }
 #endif
@@ -903,8 +723,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     }
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-        static XDGDBusProxyLauncher proxy;
-
 #if PLATFORM(WAYLAND) && USE(EGL)
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
             bindWayland(sandboxArgs);
@@ -925,7 +743,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 sandboxArgs.appendVector(Vector<CString>({ "--bind-try", extraPath.utf8(), extraPath.utf8() }));
         }
 
-        bindDBusSession(sandboxArgs, proxy);
+        bindDBusSession(sandboxArgs, flatpakInfoFd != -1);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
         bindSndio(sandboxArgs);
@@ -934,23 +752,12 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         bindOpenGL(sandboxArgs);
         // FIXME: This is also fixed by Pipewire once in use.
         bindV4l(sandboxArgs);
-#if PLATFORM(GTK)
+#if ENABLE(ACCESSIBILITY)
         bindA11y(sandboxArgs);
+#endif
+#if PLATFORM(GTK)
         bindGtkData(sandboxArgs);
 #endif
-
-        if (!proxy.isRunning()) {
-            Vector<CString> permissions = {
-                // GStreamers plugin install helper.
-                "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
-            };
-            if (flatpakInfoFd != -1) {
-                // xdg-desktop-portal used by GTK and us.
-                permissions.append("--talk=org.freedesktop.portal.Desktop");
-            }
-            proxy.setPermissions(WTFMove(permissions));
-            proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"));
-        }
     } else {
         // Only X11 users need this for XShm which is only the Web process.
         sandboxArgs.append("--unshare-ipc");
@@ -976,7 +783,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     g_subprocess_launcher_take_fd(launcher, seccompFd, seccompFd);
     sandboxArgs.appendVector(Vector<CString>({ "--seccomp", fdStr.get() }));
 
-    int bwrapFd = argsToFd(sandboxArgs, "bwrap");
+    int bwrapFd = argumentsToFileDescriptor(sandboxArgs, "bwrap");
     GUniquePtr<char> bwrapFdStr(g_strdup_printf("%d", bwrapFd));
     g_subprocess_launcher_take_fd(launcher, bwrapFd, bwrapFd);
 

@@ -232,6 +232,7 @@ UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
 UIProcess/Launcher/glib/FlatpakLauncher.cpp @no-unify
+UIProcess/Launcher/glib/XDGDBusProxy.cpp @no-unify
 
 UIProcess/linux/MemoryPressureMonitor.cpp
 

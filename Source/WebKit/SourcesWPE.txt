@@ -207,6 +207,7 @@ UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
 UIProcess/Launcher/glib/FlatpakLauncher.cpp
+UIProcess/Launcher/glib/XDGDBusProxy.cpp
 
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
