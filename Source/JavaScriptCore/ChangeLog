@@ -1,3 +1,18 @@
+2022-02-10  Keith Miller  <keith_miller@apple.com>
+
+        tryReserveUncommittedAligned should explicitly take the alignment requested
+        https://bugs.webkit.org/show_bug.cgi?id=236460
+
+        Reviewed by Yusuke Suzuki.
+
+        When reducing the size of VA space reserved for Structures, we
+        didn't take care to ensure the alignment matched the required
+        alignment for our bit mask. To fix this we need to pass the
+        original alignment to the allocator as a new parameter.
+
+        * heap/StructureAlignedMemoryAllocator.cpp:
+        (JSC::StructureMemoryManager::StructureMemoryManager):
+
 2022-01-24  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] jit_heap should support the segregated heap
