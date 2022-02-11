@@ -60,6 +60,15 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/GraphicsContextCocoa.mm>
+#else
+static RetainPtr<CGColorRef> grammarColor(bool useDarkMode)
+{
+    return cachedCGColor(useDarkMode ? SRGBA<uint8_t> { 50, 215, 75, 217 } : SRGBA<uint8_t> { 25, 175, 50, 191 });
+}
+#endif
+
 static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset, const Color& color)
 {
 #if USE(APPKIT)
@@ -170,9 +179,8 @@ static RetainPtr<CGColorRef> colorForMarkerLineStyle(DocumentMarkerLineStyle::Mo
     case DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives:
     case DocumentMarkerLineStyle::Mode::AutocorrectionReplacement:
         return cachedCGColor(useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 });
-    // Green
     case DocumentMarkerLineStyle::Mode::Grammar:
-        return cachedCGColor(useDarkMode ? SRGBA<uint8_t> { 50, 215, 75, 217 } : SRGBA<uint8_t> { 25, 175, 50, 191 });
+        return grammarColor(useDarkMode);
     }
 }
 

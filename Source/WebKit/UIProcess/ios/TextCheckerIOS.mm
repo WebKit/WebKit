@@ -44,7 +44,11 @@ static TextCheckerState& mutableState()
     static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = TextChecker::isContinuousSpellCheckingAllowed();
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+        initialState.isGrammarCheckingEnabled = [UITextChecker respondsToSelector:@selector(grammarCheckingEnabled)] && [UITextChecker grammarCheckingEnabled];
+#else
         initialState.isGrammarCheckingEnabled = false;
+#endif
         return initialState;
     }();
     return state;
@@ -73,9 +77,16 @@ bool TextChecker::setContinuousSpellCheckingEnabled(bool enabled)
     return true;
 }
 
-void TextChecker::setGrammarCheckingEnabled(bool)
+void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 {
-    notImplemented();
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+    if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
+        return;
+
+    mutableState().isGrammarCheckingEnabled = isGrammarCheckingEnabled;
+#else
+    UNUSED_PARAM(isGrammarCheckingEnabled);
+#endif
 }
 
 void TextChecker::setAutomaticSpellingCorrectionEnabled(bool)
@@ -189,7 +200,7 @@ static RetainPtr<UITextChecker> textCheckerFor(SpellDocumentTag spellDocumentTag
     return addResult.iterator->value;
 }
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t /* insertionPoint */, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
 {
     Vector<TextCheckingResult> results;
     if (!checkingTypes.contains(TextCheckingType::Spelling))
@@ -208,19 +219,72 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 
     auto stringToCheck = text.createNSStringWithoutCopying();
     auto range = NSMakeRange(0, [stringToCheck length]);
-    NSUInteger offsetSoFar = 0;
-    do {
-        auto misspelledRange = [textChecker rangeOfMisspelledWordInString:stringToCheck.get() range:range startingAt:offsetSoFar wrap:NO languages:keyboardLanguages];
-        if (misspelledRange.location == NSNotFound)
-            break;
 
-        TextCheckingResult result;
-        result.type = TextCheckingType::Spelling;
-        result.range = misspelledRange;
-        results.append(WTFMove(result));
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+    if ([textChecker respondsToSelector:@selector(checkString:range:types:languages:options:)]) {
+        NSTextCheckingTypes types = 0;
+        if (checkingTypes.contains(TextCheckingType::Spelling))
+            types |= NSTextCheckingTypeSpelling;
+        if (checkingTypes.contains(TextCheckingType::Grammar))
+            types |= NSTextCheckingTypeGrammar;
+        NSDictionary *options = @{
+            @"InsertionPoint" : @(insertionPoint)
+        };
+        NSArray *incomingResults = [textChecker checkString:stringToCheck.get() range:range types:types languages:keyboardLanguages options:options];
+        for (NSTextCheckingResult *incomingResult in incomingResults) {
+            NSTextCheckingType resultType = [incomingResult resultType];
+            ASSERT(incomingResult.range.location != NSNotFound);
+            ASSERT(incomingResult.range.length > 0);
+            auto resultRange = incomingResult.range;
+            if (resultType == NSTextCheckingTypeSpelling && checkingTypes.contains(TextCheckingType::Spelling)) {
+                TextCheckingResult result;
+                result.type = TextCheckingType::Spelling;
+                result.range = resultRange;
+                results.append(result);
+            } else if (resultType == NSTextCheckingTypeGrammar && checkingTypes.contains(TextCheckingType::Grammar)) {
+                TextCheckingResult result;
+                NSArray *details = [incomingResult grammarDetails];
+                result.type = TextCheckingType::Grammar;
+                result.range = resultRange;
+                for (NSDictionary *incomingDetail in details) {
+                    ASSERT(incomingDetail);
+                    GrammarDetail detail;
+                    
+                    NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:@"NSGrammarRange"];
+                    ASSERT(detailRangeAsNSValue);
+                    
+                    NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+                    ASSERT(detailNSRange.location != NSNotFound);
+                    ASSERT(detailNSRange.length > 0);
+                    
+                    detail.range = detailNSRange;
+                    detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
+                    NSArray *guesses = [incomingDetail objectForKey:@"NSGrammarCorrections"];
+                    
+                    for (NSString *guess in guesses)
+                        detail.guesses.append(guess);
+                    result.details.append(detail);
+                }
+                results.append(result);
+            }
+        }
+    } else
+#endif
+    {
+        NSUInteger offsetSoFar = 0;
+        do {
+            auto misspelledRange = [textChecker rangeOfMisspelledWordInString:stringToCheck.get() range:range startingAt:offsetSoFar wrap:NO languages:keyboardLanguages];
+            if (misspelledRange.location == NSNotFound)
+                break;
 
-        offsetSoFar = misspelledRange.location + misspelledRange.length;
-    } while (offsetSoFar < [stringToCheck length]);
+            TextCheckingResult result;
+            result.type = TextCheckingType::Spelling;
+            result.range = misspelledRange;
+            results.append(WTFMove(result));
+
+            offsetSoFar = misspelledRange.location + misspelledRange.length;
+        } while (offsetSoFar < [stringToCheck length]);
+    }
     return results;
 }
 

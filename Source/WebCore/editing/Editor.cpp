@@ -2522,7 +2522,23 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
 
     auto adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
     auto adjacentWordRange = adjacentWords.toNormalizedRange();
-    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWordRange, adjacentWordRange, adjacentWordRange);
+
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+    if (isGrammarCheckingEnabled()) {
+        textCheckingOptions.add(TextCheckingType::Grammar);
+        auto sentenceStart = startOfSentence(wordStart);
+        auto sentenceEnd = endOfSentence(wordStart);
+        VisibleSelection fullSentence(sentenceStart, sentenceEnd);
+        auto fullSentenceRange = fullSentence.toNormalizedRange();
+        if (!fullSentenceRange)
+            return;
+
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWordRange, adjacentWordRange, fullSentenceRange);
+    } else
+#endif
+    {
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWordRange, adjacentWordRange, adjacentWordRange);
+    }
 #else
 #if !USE(AUTOMATIC_TEXT_REPLACEMENT)
     UNUSED_PARAM(doReplacement);

@@ -1,3 +1,16 @@
+2022-02-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable grammar checking on Mac Catalyst.
+        https://bugs.webkit.org/show_bug.cgi?id=236479
+
+        Reviewed by Devin Rousso.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::mutableState):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::checkTextOfParagraph):
+
 2022-02-11  Chris Dumez  <cdumez@apple.com>
 
         Fix MIME type check for classic worker script fetches

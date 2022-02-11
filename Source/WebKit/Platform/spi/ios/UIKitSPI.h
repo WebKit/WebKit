@@ -1496,6 +1496,13 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif
 
+#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+@interface UITextChecker ()
++ (BOOL)grammarCheckingEnabled;
+- (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes languages:(NSArray<NSString *> *)languagesArray options:(NSDictionary<NSString *, id> *)options;
+@end
+#endif
+
 @protocol UITextInputInternal <UITextInputPrivate>
 @optional
 @property (nonatomic, readonly) CGRect _selectionClipRect;
