@@ -1,3 +1,16 @@
+2022-02-11  Andreu Botella  <andreu@andreubotella.com>
+
+        Clicking on an <input type="image"> will submit the form with null submitter
+        https://bugs.webkit.org/show_bug.cgi?id=236324
+
+        Add a test to make sure that when the form is submitted through an <input type="image">
+        control, the `submitter` field of the submit event is that control.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html:
+
 2022-02-11  Youenn Fablet  <youenn@apple.com>
 
         Add support to query camera and microphone permissions
