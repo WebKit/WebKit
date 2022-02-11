@@ -41,8 +41,7 @@ class CSSTokenizerInputStream {
 public:
     explicit CSSTokenizerInputStream(const String& input);
 
-    // Gets the char in the stream replacing NUL characters with a unicode
-    // replacement character. Will return (NUL) kEndOfFileMarker when at the
+    // Gets the char in the stream. Will return (NUL) kEndOfFileMarker when at the
     // end of the stream.
     UChar nextInputChar() const
     {
