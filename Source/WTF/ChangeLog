@@ -1,3 +1,27 @@
+2022-02-11  Elliott Williams  <emw@apple.com>
+
+        Fix headers in install builds and add untracked headers
+        https://bugs.webkit.org/show_bug.cgi?id=235744
+
+        Reviewed by Alexey Proskuryakov.
+        Relands native Xcode build phases for "Copy WTF Headers", again.
+
+        Adds a slash prefix, so that PRIVATE_HEADERS_FOLDER_PATH is always an absolute path.
+        Otherwise, when WTF_INSTALL_PATH_PREFIX is not set, it's relative and incorrectoly copied
+        into the INSTALL_PATH (/usr/local/lib).
+
+        Uses separate path variables for Copy Files phases that create header subdirectories. Unlike
+        the native "Headers" phase, copying to "/usr/local/include" is not automatically relative to
+        the SYMROOT or DSTROOT, respective of build action type.
+
+        Adds SignedPtr.h to WTF's Headers phase. It was added recently and missed integration in
+        r289256.
+
+        Sets INSTALLHDRS_COPY_PHASE so that nested header directories are copied during installhdrs.
+
+        * Configurations/WTF.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+
 2022-02-11  Youenn Fablet  <youenn@apple.com>
 
         Support remote video frames in WebRTC video pipeline
