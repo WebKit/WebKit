@@ -902,6 +902,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         "call " GLOBAL_REFERENCE(function) "\n" \
         "popq %rcx\n" \
         "ret\n" \
+        ".previous\n" \
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
@@ -927,6 +928,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         "addl $20, %esp\n" \
         "popl %ebx\n" \
         "ret\n" \
+        ".previous\n" \
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
@@ -948,6 +950,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         "movsd (%esp), %xmm0 \n" \
         "addl $20, %esp\n" \
         "ret\n" \
+        ".previous\n" \
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
@@ -972,6 +975,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         "vmov d0, r0, r1\n" \
         "pop {lr}\n" \
         "bx lr\n" \
+        ".previous\n" \
     ); \
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
@@ -989,7 +993,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
         HIDE_SYMBOL(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "b " GLOBAL_REFERENCE(function) "\n" \
-        ".previous" \
+        ".previous\n" \
     ); \
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \

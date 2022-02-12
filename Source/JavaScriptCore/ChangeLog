@@ -1,3 +1,14 @@
+2022-02-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] REGRESSION(r289611): Debug builds fail linking binaries with ld.lld
+        https://bugs.webkit.org/show_bug.cgi?id=236506
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/ThunkGenerators.cpp: Use .previous in inline assembler for thunks in order to ensure
+        that mixed emission of assembler code and variable definitions correctly puts each of them
+        in their rightful sections in the output object code.
+
 2022-02-11  Don Olmstead  <don.olmstead@sony.com>
 
         Allow structureHeapAddressSize to be set during build
