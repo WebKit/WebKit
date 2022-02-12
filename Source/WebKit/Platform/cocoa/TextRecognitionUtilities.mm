@@ -28,6 +28,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#import "CocoaImage.h"
 #import "Logging.h"
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>

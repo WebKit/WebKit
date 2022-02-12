@@ -1,3 +1,16 @@
+2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a "Copy Cropped Image" context menu item when long pressing images
+        https://bugs.webkit.org/show_bug.cgi?id=236511
+        rdar://88817219
+
+        Reviewed by Devin Rousso.
+
+        Add a compile-time flag to guard availability of the UniformTypeIdentifiers framework. See WebKit/ChangeLog for
+        more information.
+
+        * wtf/PlatformHave.h:
+
 2022-02-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Check for MAP_ALIGNED support

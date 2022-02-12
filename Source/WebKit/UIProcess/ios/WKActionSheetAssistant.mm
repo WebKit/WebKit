@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
-#import "TCCSoftLink.h"
+#import "TextRecognitionUtilities.h"
 #import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
@@ -61,6 +61,8 @@
 SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
 #endif
+
+#import "TCCSoftLink.h"
 
 OBJC_CLASS DDAction;
 
@@ -397,7 +399,7 @@ static bool isJavaScriptURL(NSURL *url)
         if (!targetURL)
             targetURL = alternateURL;
         auto elementBounds = _positionInformation->bounds;
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() userInfo:userInfo]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() imageMIMEType:_positionInformation->imageMIMEType userInfo:userInfo]);
         if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
             return;
         auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
@@ -551,14 +553,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }
 
-#if ENABLE(IMAGE_ANALYSIS)
     if (elementInfo.type == _WKActivatedElementTypeImage || [elementInfo image]) {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        if (WebKit::isImageAnalysisMarkupSystemFeatureEnabled()) {
+            // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
+            [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage assistant:self]];
+        }
+#endif
+#if ENABLE(IMAGE_ANALYSIS)
         if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeShowTextActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeShowTextActionForElement:elementInfo])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeImageExtraction assistant:self]];
         if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeLookUpImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeLookUpImageActionForElement:elementInfo])
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage assistant:self]];
-    }
 #endif
+    }
 
     return defaultActions;
 }
@@ -582,6 +590,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (WebKit::isImageAnalysisMarkupSystemFeatureEnabled()) {
+        // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage assistant:self]];
+    }
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS)
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeShowTextActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeShowTextActionForElement:elementInfo])
@@ -614,7 +628,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:(NSURL*)_positionInformation->imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get()]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:(NSURL*)_positionInformation->imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get() imageMIMEType:_positionInformation->imageMIMEType]);
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [_delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
         _needsLinkIndicator = NO;
         return;
@@ -1031,6 +1045,11 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_ANALYSIS)
         [delegate actionSheetAssistant:self lookUpImage:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
+#endif
+        break;
+    case _WKElementActionTypeCopyCroppedImage:
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        [delegate actionSheetAssistant:self copyCroppedImage:element.image sourceMIMEType:element.imageMIMEType];
 #endif
         break;
     default:

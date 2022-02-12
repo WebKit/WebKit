@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DocumentEditingContext.h"
 #import "InputViewUpdateDeferrer.h"
@@ -375,20 +376,6 @@ private:
     WeakObjCPtr<WKContentView> m_view;
     bool m_shouldPreventTextSelection { false };
 };
-
-static RetainPtr<NSData> transcode(CGImageRef image, CFStringRef typeIdentifier)
-{
-    if (!image)
-        return nil;
-
-    auto data = adoptNS([[NSMutableData alloc] init]);
-    auto destination = adoptCF(CGImageDestinationCreateWithData((__bridge CFMutableDataRef)data.get(), typeIdentifier, 1, nil));
-    CGImageDestinationAddImage(destination.get(), image, nil);
-    if (!CGImageDestinationFinalize(destination.get()))
-        return nil;
-
-    return data;
-}
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
@@ -2629,7 +2616,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (![uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)])
         return;
 
-    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
+    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [uiDelegate _webView:self.webView showCustomSheetForElement:element.get()];
     ALLOW_DEPRECATED_DECLARATIONS_END
@@ -4700,15 +4687,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
 
     auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
-    auto targetType = RetainPtr { UTTypeTIFF.identifier };
-    if (!preferredMIMEType.isEmpty()) {
-        NSString *preferredTypeIdentifier = [UTType typeWithMIMEType:preferredMIMEType conformingToType:UTTypeImage].identifier;
-        if (WebCore::isSupportedImageType(preferredTypeIdentifier))
-            targetType = preferredTypeIdentifier;
-    }
-
-    if (auto data = WebKit::transcode(image.get(), (__bridge CFStringRef)targetType.get()); [data length])
-        _page->replaceSelectionWithPasteboardData({ String { targetType.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+    if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
+        _page->replaceSelectionWithPasteboardData({ String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
 }
 
 - (void)doAfterComputingImageAnalysisResultsForMarkup:(CompletionHandler<void()>&&)completion
@@ -4750,20 +4730,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             return;
         }
 
-        // FIXME: Check to see if we can avoid this extra transcoding step once VisionKit starts using `mediaanalysisd` for this.
-        auto tiffData = WebKit::transcode(cgImage.get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
-        if (![tiffData length]) {
-            completion();
-            return;
-        }
-
-        RetainPtr transcodedImage = [UIImage imageWithData:tiffData.get()];
-        if (!transcodedImage) {
-            completion();
-            return;
-        }
-
-        WebKit::requestImageAnalysisMarkup([transcodedImage CGImage], [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result) mutable {
+        WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
@@ -10880,6 +10847,30 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
+{
+    auto changeCount = UIPasteboard.generalPasteboard.changeCount;
+    WebKit::requestImageAnalysisMarkup(image.CGImage, [changeCount, weakSelf = WeakObjCPtr<WKContentView>(self), originalImage = RetainPtr { image }, sourceMIMEType = RetainPtr { sourceMIMEType }](CGImageRef result) mutable {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        auto [data, type] = WebKit::transcodeWithPreferredMIMEType(result ?: [originalImage CGImage], (__bridge CFStringRef)sourceMIMEType.get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        if (!data)
+            return;
+
+        [UIPasteboard _performAsDataOwner:[strongSelf _dataOwnerForCopy] block:[data = WTFMove(data), type = WTFMove(type), changeCount] {
+            auto pasteboard = UIPasteboard.generalPasteboard;
+            if (changeCount == pasteboard.changeCount)
+                [pasteboard setData:data.get() forPasteboardType:(__bridge NSString *)type.get()];
+        }];
+    });
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
 #else
@@ -11967,7 +11958,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
         *type = UIPreviewItemTypeAttachment;
-        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
+        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
         NSUInteger index = [uiDelegate _webView:self.webView indexIntoAttachmentListForElement:element.get()];
         if (index != NSNotFound) {
             BOOL sourceIsManaged = NO;
@@ -12004,7 +11995,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
         // Treat animated images like a link preview
         if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
-            RetainPtr<_WKActivatedElementInfo> animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+            auto animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType]);
 
             if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
                 RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
@@ -12014,7 +12005,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             }
         }
 
-        RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType]);
 
         auto actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
@@ -12059,7 +12050,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             imageInfo = userInfo;
         }
 
-        RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() userInfo:imageInfo.get()]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType userInfo:imageInfo.get()]);
         _page->startInteractionWithPositionInformation(_positionInformation);
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN

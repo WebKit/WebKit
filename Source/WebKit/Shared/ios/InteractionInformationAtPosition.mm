@@ -56,6 +56,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << adjustedPointForNodeRespondingToClickEvents;
     encoder << url;
     encoder << imageURL;
+    encoder << imageMIMEType;
     encoder << title;
     encoder << idAttribute;
     encoder << bounds;
@@ -147,6 +148,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.imageURL))
+        return false;
+
+    if (!decoder.decode(result.imageMIMEType))
         return false;
 
     if (!decoder.decode(result.title))

@@ -6591,6 +6591,7 @@
 		F4DBC0BD276AA6A70001D169 /* _WKModalContainerInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKModalContainerInfo.mm; sourceTree = "<group>"; };
 		F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKModalContainerInfoInternal.h; sourceTree = "<group>"; };
 		F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TapHandlingResult.h; path = ios/TapHandlingResult.h; sourceTree = "<group>"; };
+		F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaImage.mm; sourceTree = "<group>"; };
 		F4EB4AFC269CD23600D297AE /* OSStateSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSStateSPI.h; sourceTree = "<group>"; };
 		F4F59AD32065A5C9006CAA46 /* WKSelectMenuListViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSelectMenuListViewController.mm; path = ios/forms/WKSelectMenuListViewController.mm; sourceTree = "<group>"; };
 		F4F59AD42065A5CA006CAA46 /* WKSelectMenuListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSelectMenuListViewController.h; path = ios/forms/WKSelectMenuListViewController.h; sourceTree = "<group>"; };
@@ -9352,6 +9353,7 @@
 			isa = PBXGroup;
 			children = (
 				4482734624528F6000A95493 /* CocoaImage.h */,
+				F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */,
 				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */,

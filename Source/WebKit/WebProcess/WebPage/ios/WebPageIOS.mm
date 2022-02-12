@@ -2845,6 +2845,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     auto& [renderImage, image] = *rendererAndImage;
     info.isImage = true;
     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
 
@@ -2911,6 +2912,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
                     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+                    info.imageMIMEType = image.mimeType();
                     info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
                 }
             }

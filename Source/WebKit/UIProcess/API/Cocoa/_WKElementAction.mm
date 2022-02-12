@@ -63,6 +63,7 @@ static UIActionIdentifier const WKElementActionTypeDownloadIdentifier = @"WKElem
 UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier = @"WKElementActionTypeToggleShowLinkPreviews";
 static UIActionIdentifier const WKElementActionTypeImageExtractionIdentifier = @"WKElementActionTypeImageExtraction";
 static UIActionIdentifier const WKElementActionTypeRevealImageIdentifier = @"WKElementActionTypeRevealImage";
+static UIActionIdentifier const WKElementActionTypeCopyCroppedImageIdentifier = @"WKElementActionTypeCopyCroppedImage";
 
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
@@ -177,6 +178,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         };
 #endif
         break;
+    case _WKElementActionTypeCopyCroppedImage:
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        title = WEB_UI_STRING("Copy Cropped Image", "Title for Copy Cropped Image");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
+        };
+#endif
+        break;
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;
@@ -255,6 +264,8 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 #else
         return nil;
 #endif
+    case _WKElementActionTypeCopyCroppedImage:
+        return [UIImage systemImageNamed:@"person.fill.viewfinder"];
     }
 }
 
@@ -289,6 +300,8 @@ static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementAction
         return WKElementActionTypeImageExtractionIdentifier;
     case _WKElementActionTypeRevealImage:
         return WKElementActionTypeRevealImageIdentifier;
+    case _WKElementActionTypeCopyCroppedImage:
+        return WKElementActionTypeCopyCroppedImageIdentifier;
     }
 }
 
@@ -322,6 +335,8 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeImageExtraction;
     if ([identifier isEqualToString:WKElementActionTypeRevealImageIdentifier])
         return _WKElementActionTypeRevealImage;
+    if ([identifier isEqualToString:WKElementActionTypeCopyCroppedImageIdentifier])
+        return _WKElementActionTypeCopyCroppedImage;
     return _WKElementActionTypeCustom;
 }
 
