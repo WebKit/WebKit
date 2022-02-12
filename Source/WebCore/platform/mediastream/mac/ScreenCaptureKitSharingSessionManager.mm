@@ -264,7 +264,7 @@ RetainPtr<SCContentSharingSession> ScreenCaptureKitSharingSessionManager::takeSh
     RetainPtr<SCContentSharingSession> session = m_pendingCaptureSessions[index];
     m_pendingCaptureSessions.remove(index);
 
-    return WTFMove(session);
+    return session;
 }
 
 
