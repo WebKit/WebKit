@@ -1326,6 +1326,14 @@ MaxParseDuration:
     WebCore:
       default: -1
 
+MediaAudioCodecIDsAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"aac ,zaac,qaac,caac,.mp3"'
+
 MediaCapabilitiesEnabled:
   type: bool
   defaultValue:
@@ -1335,6 +1343,30 @@ MediaCapabilitiesEnabled:
       default: true
     WebCore:
       default: false
+
+MediaCaptionFormatTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"c608,wvtt"'
+
+MediaCodecTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"mp4a.40,avc1"'
+
+MediaContainerTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,vnd.apple.mpegURL"'
 
 MediaContentTypesRequiringHardwareSupport:
   type: String
@@ -1454,6 +1486,14 @@ MediaUserGestureInheritsFromDocument:
       default: false
     WebCore:
       default: false
+
+MediaVideoCodecIDsAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"avc1,zavc,qavc,cavc"'
 
 MenuItemElementEnabled:
   type: bool

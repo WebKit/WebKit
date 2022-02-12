@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/ContentType.h>
+#include <WebCore/FourCC.h>
 #include <WebCore/PlatformTextTrack.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,12 @@ struct RemoteMediaPlayerProxyConfiguration {
     String sourceApplicationIdentifier;
     String networkInterfaceName;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
+    std::optional<Vector<String>> allowedMediaContainerTypes;
+    std::optional<Vector<String>> allowedMediaCodecTypes;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaVideoCodecIDs;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
+
     Vector<String> preferredAudioCharacteristics;
 #if ENABLE(AVF_CAPTIONS)
     Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
@@ -58,6 +65,11 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << sourceApplicationIdentifier;
         encoder << networkInterfaceName;
         encoder << mediaContentTypesRequiringHardwareSupport;
+        encoder << allowedMediaContainerTypes;
+        encoder << allowedMediaCodecTypes;
+        encoder << allowedMediaVideoCodecIDs;
+        encoder << allowedMediaAudioCodecIDs;
+        encoder << allowedMediaCaptionFormatTypes;
         encoder << preferredAudioCharacteristics;
 #if ENABLE(AVF_CAPTIONS)
         encoder << outOfBandTrackData;
@@ -70,86 +82,27 @@ struct RemoteMediaPlayerProxyConfiguration {
     }
 
     template <class Decoder>
-    static std::optional<RemoteMediaPlayerProxyConfiguration> decode(Decoder& decoder)
+    static bool decode(Decoder& decoder, RemoteMediaPlayerProxyConfiguration& configuration)
     {
-        std::optional<String> referrer;
-        decoder >> referrer;
-        if (!referrer)
-            return std::nullopt;
-
-        std::optional<String> userAgent;
-        decoder >> userAgent;
-        if (!userAgent)
-            return std::nullopt;
-
-        std::optional<String> sourceApplicationIdentifier;
-        decoder >> sourceApplicationIdentifier;
-        if (!sourceApplicationIdentifier)
-            return std::nullopt;
-
-        std::optional<String> networkInterfaceName;
-        decoder >> networkInterfaceName;
-        if (!networkInterfaceName)
-            return std::nullopt;
-
-        std::optional<Vector<WebCore::ContentType>> mediaContentTypesRequiringHardwareSupport;
-        decoder >> mediaContentTypesRequiringHardwareSupport;
-        if (!mediaContentTypesRequiringHardwareSupport)
-            return std::nullopt;
-
-        std::optional<Vector<String>> preferredAudioCharacteristics;
-        decoder >> preferredAudioCharacteristics;
-        if (!preferredAudioCharacteristics)
-            return std::nullopt;
-
+        return decoder.decode(configuration.referrer)
+            && decoder.decode(configuration.userAgent)
+            && decoder.decode(configuration.sourceApplicationIdentifier)
+            && decoder.decode(configuration.networkInterfaceName)
+            && decoder.decode(configuration.mediaContentTypesRequiringHardwareSupport)
+            && decoder.decode(configuration.allowedMediaContainerTypes)
+            && decoder.decode(configuration.allowedMediaCodecTypes)
+            && decoder.decode(configuration.allowedMediaVideoCodecIDs)
+            && decoder.decode(configuration.allowedMediaAudioCodecIDs)
+            && decoder.decode(configuration.allowedMediaCaptionFormatTypes)
+            && decoder.decode(configuration.preferredAudioCharacteristics)
 #if ENABLE(AVF_CAPTIONS)
-        std::optional<Vector<WebCore::PlatformTextTrackData>> outOfBandTrackData;
-        decoder >> outOfBandTrackData;
-        if (!outOfBandTrackData)
-            return std::nullopt;
+            && decoder.decode(configuration.outOfBandTrackData)
 #endif
-
-        std::optional<WebCore::SecurityOriginData> documentSecurityOrigin;
-        decoder >> documentSecurityOrigin;
-        if (!documentSecurityOrigin)
-            return std::nullopt;
-
-        std::optional<uint64_t> logIdentifier;
-        decoder >> logIdentifier;
-        if (!logIdentifier)
-            return std::nullopt;
-
-        std::optional<bool> shouldUsePersistentCache;
-        decoder >> shouldUsePersistentCache;
-        if (!shouldUsePersistentCache)
-            return std::nullopt;
-
-        std::optional<bool> isVideo;
-        decoder >> isVideo;
-        if (!isVideo)
-            return std::nullopt;
-
-        std::optional<bool> renderingCanBeAccelerated;
-        decoder >> renderingCanBeAccelerated;
-        if (!renderingCanBeAccelerated)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*referrer),
-            WTFMove(*userAgent),
-            WTFMove(*sourceApplicationIdentifier),
-            WTFMove(*networkInterfaceName),
-            WTFMove(*mediaContentTypesRequiringHardwareSupport),
-            WTFMove(*preferredAudioCharacteristics),
-#if ENABLE(AVF_CAPTIONS)
-            WTFMove(*outOfBandTrackData),
-#endif
-            WTFMove(*documentSecurityOrigin),
-            *logIdentifier,
-            *shouldUsePersistentCache,
-            *isVideo,
-            *renderingCanBeAccelerated,
-        }};
+            && decoder.decode(configuration.documentSecurityOrigin)
+            && decoder.decode(configuration.logIdentifier)
+            && decoder.decode(configuration.shouldUsePersistentCache)
+            && decoder.decode(configuration.isVideo)
+            && decoder.decode(configuration.renderingCanBeAccelerated);
     }
 };
 

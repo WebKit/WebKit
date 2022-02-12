@@ -329,6 +329,8 @@ protected:
     void setNeedsRenderingModeChanged();
     void renderingModeChanged();
 
+    bool loadingMetadata() const { return m_loadingMetadata; }
+
 private:
     MediaPlayer* m_player;
 

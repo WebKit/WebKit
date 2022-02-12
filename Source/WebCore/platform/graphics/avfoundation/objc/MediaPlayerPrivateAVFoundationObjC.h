@@ -350,6 +350,9 @@ private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
     void checkNewVideoFrameMetadata();
 
+    std::optional<bool> allTracksArePlayable() const;
+    bool trackIsPlayable(AVAssetTrack*) const;
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -447,7 +450,9 @@ private:
     bool m_cachedCanPlayFastForward { false };
     bool m_cachedCanPlayFastReverse { false };
     mutable bool m_cachedAssetIsLoaded { false };
+    mutable bool m_cachedTracksAreLoaded { false };
     mutable std::optional<bool> m_cachedAssetIsPlayable;
+    mutable std::optional<bool> m_cachedTracksArePlayable;
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
     mutable std::optional<bool> m_tracksArePlayable;

@@ -38,10 +38,12 @@
 #import "CDMSessionAVFoundationObjC.h"
 #import "CVUtilities.h"
 #import "ColorSpaceCG.h"
+#import "ContentTypeUtilities.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
 #import "ExtensionsGL.h"
 #import "FloatConversion.h"
+#import "FourCC.h"
 #import "GraphicsContext.h"
 #import "ImageRotationSessionVT.h"
 #import "InbandChapterTrackPrivateAVFObjC.h"
@@ -66,6 +68,7 @@
 #import "SharedBuffer.h"
 #import "SourceBufferParserWebM.h"
 #import "TextTrackRepresentation.h"
+#import "UTIUtilities.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
@@ -948,6 +951,38 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
             [options setObject:@NO forKey:AVURLAssetUsesNoPersistentCacheKey];
     }
 
+    auto allowedMediaContainerTypes = player()->allowedMediaContainerTypes();
+    if (allowedMediaContainerTypes && PAL::canLoad_AVFoundation_AVURLAssetAllowableTypeCategoriesKey()) {
+        auto nsTypes = adoptNS([[NSMutableArray alloc] init]);
+        for (auto type : *allowedMediaContainerTypes)
+            [nsTypes addObject:(NSString *)UTIFromMIMEType(type)];
+        [options setObject:nsTypes.get() forKey:AVURLAssetAllowableTypeCategoriesKey];
+    }
+
+    auto allowedMediaAudioCodecIDs = player()->allowedMediaAudioCodecIDs();
+    if (allowedMediaAudioCodecIDs && PAL::canLoad_AVFoundation_AVURLAssetAllowableAudioCodecTypesKey()) {
+        auto nsTypes = adoptNS([[NSMutableArray alloc] init]);
+        for (auto type : *allowedMediaAudioCodecIDs)
+            [nsTypes addObject:@(type.value)];
+        [options setObject:nsTypes.get() forKey:AVURLAssetAllowableAudioCodecTypesKey];
+    }
+
+    auto allowedMediaVideoCodecIDs = player()->allowedMediaVideoCodecIDs();
+    if (allowedMediaVideoCodecIDs && PAL::canLoad_AVFoundation_AVURLAssetAllowableVideoCodecTypesKey()) {
+        auto nsTypes = adoptNS([[NSMutableArray alloc] init]);
+        for (auto type : *allowedMediaVideoCodecIDs)
+            [nsTypes addObject:@(type.value)];
+        [options setObject:nsTypes.get() forKey:AVURLAssetAllowableVideoCodecTypesKey];
+    }
+
+    auto allowedMediaCaptionFormatTypes = player()->allowedMediaCaptionFormatTypes();
+    if (allowedMediaCaptionFormatTypes && PAL::canLoad_AVFoundation_AVURLAssetAllowableCaptionFormatsKey()) {
+        auto nsTypes = adoptNS([[NSMutableArray alloc] init]);
+        for (auto type : *allowedMediaCaptionFormatTypes)
+            [nsTypes addObject:@(type.value)];
+        [options setObject:nsTypes.get() forKey:AVURLAssetAllowableCaptionFormatsKey];
+    }
+
     if (willUseWebMFormatReader)
         registerFormatReaderIfNecessary();
 
@@ -1783,6 +1818,76 @@ void MediaPlayerPrivateAVFoundationObjC::setAsset(RetainPtr<id>&& asset)
     processChapterTracks();
 }
 
+std::optional<bool> MediaPlayerPrivateAVFoundationObjC::allTracksArePlayable() const
+{
+    if (m_avPlayerItem) {
+        for (AVPlayerItemTrack *track in [m_avPlayerItem tracks]) {
+            if (!trackIsPlayable(track.assetTrack))
+                return false;
+        }
+
+        return true;
+    }
+
+    if (!m_avAsset || [m_avAsset statusOfValueForKey:@"tracks" error:NULL] != AVKeyValueStatusLoaded)
+        return std::nullopt;
+
+    for (AVAssetTrack *assetTrack : [m_avAsset tracks]) {
+        if (!trackIsPlayable(assetTrack))
+            return false;
+    }
+    return true;
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::trackIsPlayable(AVAssetTrack* track) const
+{
+    if (player()->shouldCheckHardwareSupport() && !assetTrackMeetsHardwareDecodeRequirements(track, player()->mediaContentTypesRequiringHardwareSupport()))
+        return false;
+
+    auto description = retainPtr((__bridge CMFormatDescriptionRef)track.formatDescriptions.firstObject);
+    if (!description)
+        return false;
+
+    auto mediaType = PAL::CMFormatDescriptionGetMediaType(description.get());
+    auto codecType = FourCC { PAL::CMFormatDescriptionGetMediaSubType(description.get()) };
+    switch (PAL::CMFormatDescriptionGetMediaType(description.get())) {
+    case kCMMediaType_Video: {
+        auto& allowedMediaVideoCodecIDs = player()->allowedMediaVideoCodecIDs();
+        if (allowedMediaVideoCodecIDs && !allowedMediaVideoCodecIDs->contains(codecType)) {
+            ERROR_LOG(LOGIDENTIFIER, "Video track with codec type '", codecType, "' not contained in allowed codec list; blocking");
+            return false;
+        }
+        return true;
+    }
+    case kCMMediaType_Audio: {
+        auto& allowedMediaAudioCodecIDs = player()->allowedMediaAudioCodecIDs();
+        if (allowedMediaAudioCodecIDs && !allowedMediaAudioCodecIDs->contains(codecType)) {
+            ERROR_LOG(LOGIDENTIFIER, "Audio track with codec type '", codecType, "' not contained in allowed codec list; blocking");
+            return false;
+        }
+        return true;
+    }
+    case kCMMediaType_Text:
+    case kCMMediaType_ClosedCaption:
+    case kCMMediaType_Subtitle: {
+        auto& allowedMediaCaptionFormatTypes = player()->allowedMediaCaptionFormatTypes();
+        if (allowedMediaCaptionFormatTypes && !allowedMediaCaptionFormatTypes->contains(codecType)) {
+            ERROR_LOG(LOGIDENTIFIER, "Text track with codec type '", codecType, "' not contained in allowed codec list; blocking");
+            return false;
+        }
+        return true;
+    }
+    case kCMMediaType_Muxed:
+    case kCMMediaType_TimeCode:
+    case kCMMediaType_Metadata:
+        // No-op
+        return true;
+    }
+
+    ERROR_LOG(LOGIDENTIFIER, "Track with unuexpected media type '", FourCC(mediaType), "' not contained in allowed codec list; ignoring");
+    return true;
+}
+
 MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::assetStatus() const
 {
     if (!m_avAsset)
@@ -1808,23 +1913,21 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
         m_cachedAssetIsLoaded = true;
     }
 
-    if (!player()->shouldCheckHardwareSupport())
-        m_tracksArePlayable = true;
+    // m_loadingMetadata will be false until all tracks' properties have finished loading.
+    // See: beginLoadingMetadata().
+    if (loadingMetadata())
+        return MediaPlayerAVAssetStatusLoading;
 
-    if (!m_tracksArePlayable) {
-        m_tracksArePlayable = true;
-        for (AVAssetTrack *track in [m_avAsset tracks]) {
-            if (!assetTrackMeetsHardwareDecodeRequirements(track, player()->mediaContentTypesRequiringHardwareSupport())) {
-                m_tracksArePlayable = false;
-                break;
-            }
-        }
+    if (!m_cachedTracksArePlayable) {
+        m_cachedTracksArePlayable = allTracksArePlayable();
+        if (!m_cachedTracksArePlayable)
+            return MediaPlayerAVAssetStatusLoading;
     }
 
     if (!m_cachedAssetIsPlayable)
         m_cachedAssetIsPlayable = [[m_avAsset valueForKey:@"playable"] boolValue];
 
-    if (*m_cachedAssetIsPlayable && m_tracksArePlayable.value())
+    if (*m_cachedAssetIsPlayable && *m_cachedTracksArePlayable)
         return MediaPlayerAVAssetStatusPlayable;
 
     return MediaPlayerAVAssetStatusLoaded;
@@ -1928,6 +2031,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCod
     if (parameters.isMediaStream)
         return MediaPlayer::SupportsType::IsNotSupported;
 #endif
+
+    if (!contentTypeMeetsContainerAndCodecTypeRequirements(parameters.type, parameters.allowedMediaContainerTypes, parameters.allowedMediaCodecTypes))
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     auto supported = AVAssetMIMETypeCache::singleton().canDecodeType(parameters.type.raw());
     if (supported != MediaPlayer::SupportsType::IsSupported)
@@ -3734,7 +3840,7 @@ NSArray* itemKVOProperties()
 
 NSArray* assetTrackMetadataKeyNames()
 {
-    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", @"enabled", @"preferredTransform", @"naturalSize", nil];
+    static NSArray* keys = [[NSArray alloc] initWithObjects:@"totalSampleDataLength", @"mediaType", @"enabled", @"preferredTransform", @"naturalSize", @"formatDescriptions", nil];
     return keys;
 }
 

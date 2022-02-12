@@ -1089,6 +1089,12 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     ContentType contentType(mimeType);
     parameters.type = contentType;
     parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
+    parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
+    parameters.allowedMediaCodecTypes = allowedMediaCodecTypes();
+    parameters.allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs();
+    parameters.allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs();
+    parameters.allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes();
+
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters);
     String canPlay;
 
@@ -7405,6 +7411,31 @@ bool HTMLMediaElement::mediaPlayerShouldCheckHardwareSupport() const
         return false;
 
     return true;
+}
+
+const std::optional<Vector<String>>& HTMLMediaElement::allowedMediaContainerTypes() const
+{
+    return document().settings().allowedMediaContainerTypes();
+}
+
+const std::optional<Vector<String>>& HTMLMediaElement::allowedMediaCodecTypes() const
+{
+    return document().settings().allowedMediaCodecTypes();
+}
+
+const std::optional<Vector<FourCC>>& HTMLMediaElement::allowedMediaVideoCodecIDs() const
+{
+    return document().settings().allowedMediaVideoCodecIDs();
+}
+
+const std::optional<Vector<FourCC>>& HTMLMediaElement::allowedMediaAudioCodecIDs() const
+{
+    return document().settings().allowedMediaAudioCodecIDs();
+}
+
+const std::optional<Vector<FourCC>>& HTMLMediaElement::allowedMediaCaptionFormatTypes() const
+{
+    return document().settings().allowedMediaCaptionFormatTypes();
 }
 
 void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()

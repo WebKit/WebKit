@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "DeprecatedGlobalSettings.h"
+#include "FourCC.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LegacyCDMSession.h"
@@ -176,6 +177,18 @@ static const Vector<WebCore::ContentType>& nullContentTypeVector()
     return vector;
 }
 
+static const std::optional<Vector<String>>& nullOptionalStringVector()
+{
+    static NeverDestroyed<std::optional<Vector<String>>> vector;
+    return vector;
+}
+
+static const std::optional<Vector<FourCC>>& nullOptionalFourCCVector()
+{
+    static NeverDestroyed<std::optional<Vector<FourCC>>> vector;
+    return vector;
+}
+
 class NullMediaPlayerClient : public MediaPlayerClient {
 private:
 #if !RELEASE_LOG_DISABLED
@@ -197,6 +210,12 @@ private:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final { return nullptr; }
 #endif
+
+    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final { return nullOptionalStringVector(); }
+    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final { return nullOptionalStringVector(); }
+    const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const final { return nullOptionalFourCCVector(); }
+    const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const final { return nullOptionalFourCCVector(); }
+    const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final { return nullOptionalFourCCVector(); }
 };
 
 const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardwareSupport() const
@@ -529,6 +548,11 @@ const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFact
 #if ENABLE(MEDIA_STREAM)
     parameters.isMediaStream = !!m_mediaStream;
 #endif
+    parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
+    parameters.allowedMediaCodecTypes = allowedMediaCodecTypes();
+    parameters.allowedMediaVideoCodecIDs = allowedMediaVideoCodecIDs();
+    parameters.allowedMediaAudioCodecIDs = allowedMediaAudioCodecIDs();
+    parameters.allowedMediaCaptionFormatTypes = allowedMediaCaptionFormatTypes();
 
     if (m_activeEngineIdentifier) {
         if (current)
@@ -1655,6 +1679,31 @@ const Vector<ContentType>& MediaPlayer::mediaContentTypesRequiringHardwareSuppor
 bool MediaPlayer::shouldCheckHardwareSupport() const
 {
     return client().mediaPlayerShouldCheckHardwareSupport();
+}
+
+const std::optional<Vector<String>>& MediaPlayer::allowedMediaContainerTypes() const
+{
+    return client().allowedMediaContainerTypes();
+}
+
+const std::optional<Vector<String>>& MediaPlayer::allowedMediaCodecTypes() const
+{
+    return client().allowedMediaCodecTypes();
+}
+
+const std::optional<Vector<FourCC>>& MediaPlayer::allowedMediaVideoCodecIDs() const
+{
+    return client().allowedMediaVideoCodecIDs();
+}
+
+const std::optional<Vector<FourCC>>& MediaPlayer::allowedMediaAudioCodecIDs() const
+{
+    return client().allowedMediaAudioCodecIDs();
+}
+
+const std::optional<Vector<FourCC>>& MediaPlayer::allowedMediaCaptionFormatTypes() const
+{
+    return client().allowedMediaCaptionFormatTypes();
 }
 
 void MediaPlayer::applicationWillResignActive()

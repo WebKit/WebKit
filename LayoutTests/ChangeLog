@@ -1,3 +1,19 @@
+2022-02-12  Jer Noble  <jer.noble@apple.com>
+
+        Add settings to restrict media containers and codecs when in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=236245
+
+        Reviewed by Eric Carlson.
+
+        * media/media-allowed-codecs-expected.txt: Added.
+        * media/media-allowed-codecs.html: Added.
+        * media/media-allowed-containers-expected.txt: Added.
+        * media/media-allowed-containers.html: Added.
+        * media/media-source/media-source-allowed-codecs-expected.txt: Added.
+        * media/media-source/media-source-allowed-codecs.html: Added.
+        * media/media-source/media-source-allowed-containers-expected.txt: Added.
+        * media/media-source/media-source-allowed-containers.html: Added.
+
 2022-02-12  Rob Buis  <rbuis@igalia.com>
 
         Suppress style invalidation when matching :checked

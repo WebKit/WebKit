@@ -4116,6 +4116,12 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         settings.setMathMLEnabled(false);
 #endif
         settings.setPdfJSViewerEnabled(true);
+
+        settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
+        settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
+        settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInCaptivePortalModeKey()));
+        settings.setAllowedMediaAudioCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaAudioCodecIDsAllowedInCaptivePortalModeKey()));
+        settings.setAllowedMediaCaptionFormatTypes(store.getStringValueForKey(WebPreferencesKey::mediaCaptionFormatTypesAllowedInCaptivePortalModeKey()));
     }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

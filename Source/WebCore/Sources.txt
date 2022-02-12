@@ -2003,6 +2003,7 @@ platform/graphics/ColorSerialization.cpp
 platform/graphics/ColorSpace.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
+platform/graphics/ContentTypeUtilities.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
 platform/graphics/DestinationColorSpace.cpp
 platform/graphics/DisplayRefreshMonitor.cpp

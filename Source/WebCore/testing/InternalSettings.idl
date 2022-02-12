@@ -95,4 +95,10 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
 
     // AudioContext
     undefined setDefaultAudioContextSampleRate(float sampleRate);
+
+    undefined setAllowedMediaContainerTypes(DOMString? types);
+    undefined setAllowedMediaCodecTypes(DOMString? types);
+    undefined setAllowedMediaVideoCodecIDs(DOMString? types);
+    undefined setAllowedMediaAudioCodecIDs(DOMString? types);
+    undefined setAllowedMediaCaptionFormatTypes(DOMString? types);
 };

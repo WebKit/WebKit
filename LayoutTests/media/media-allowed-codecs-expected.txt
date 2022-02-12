@@ -1,0 +1,33 @@
+RUN(internals.settings.setAllowedMediaVideoCodecIDs(null))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs(null))
+RUN(internals.settings.setAllowedMediaCodecTypes(null))
+EXPECTED (video.canPlayType("video/mp4; codecs=avc1") == 'probably') OK
+EXPECTED (video.canPlayType("video/mp4; codecs=mp4v") == 'probably') OK
+RUN(video.src = "content/test.mp4")
+EVENT(canplay) OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("avc1"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("aac "))
+RUN(internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40"))
+EXPECTED (video.canPlayType("video/mp4; codecs=avc1") == 'probably') OK
+EXPECTED (video.canPlayType("video/mp4; codecs=mp4v") == '') OK
+RUN(video.src = "content/test.mp4")
+EVENT(canplay) OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("vp09"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("opus"))
+RUN(internals.settings.setAllowedMediaCodecTypes("vp09,opus"))
+EXPECTED (video.canPlayType("video/mp4; codecs=avc1") == '') OK
+EXPECTED (video.canPlayType("video/mp4; codecs=mp4v") == '') OK
+RUN(video.src = "content/test.mp4")
+EVENT(error) OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("avc1"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("opus"))
+RUN(internals.settings.setAllowedMediaCodecTypes("avc1,opus"))
+RUN(video.src = "content/test.mp4")
+EVENT(error) OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("vp09"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("aac "))
+RUN(internals.settings.setAllowedMediaCodecTypes("vp09,mp4a.40"))
+RUN(video.src = "content/test.mp4")
+EVENT(error) OK
+END OF TEST
+

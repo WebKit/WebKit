@@ -37,6 +37,18 @@ struct FourCC {
     static std::optional<FourCC> fromString(StringView);
 
     uint32_t value { 0 };
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << value;
+    }
+
+    template <class Decoder>
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, FourCC& configuration)
+    {
+        return decoder.decode(configuration.value);
+    }
 };
 
 constexpr bool operator==(FourCC, FourCC);

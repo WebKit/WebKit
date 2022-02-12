@@ -1,3 +1,28 @@
+2022-02-12  Jer Noble  <jer.noble@apple.com>
+
+        Add settings to restrict media containers and codecs when in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=236245
+
+        Reviewed by Eric Carlson.
+
+        RemoteMediaPlayerManager caches the results of supportsTypeAndCodecs() calls, which
+        is problematic when those results can change due to a change in settings. So enforce
+        the allowed codec and containers settings at the RemoteMediaPlayerManager level. Also,
+        pass those settings across the GPU process boundary via RemoteMediaPlayerProxyConfiguration.
+
+        Drive-by fix: refactor RemoteMediaPlayerProxyConfiguration::decode() so as not to require
+        re-declaring the types of every ivar, and greatly simplify the implementation.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::supportsTypeAndCodecs):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2022-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Use system window and screen picker when available

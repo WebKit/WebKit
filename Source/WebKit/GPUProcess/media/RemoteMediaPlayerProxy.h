@@ -76,6 +76,8 @@ class AudioTrackPrivate;
 class MediaPlaybackTargetContext;
 #endif
 class VideoTrackPrivate;
+
+struct FourCC;
 }
 
 #if USE(AVFOUNDATION)
@@ -292,6 +294,12 @@ private:
     bool mediaPlayerShouldDisableSleep() const final;
     const Vector<WebCore::ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
     bool mediaPlayerShouldCheckHardwareSupport() const final;
+
+    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final { return m_configuration.allowedMediaContainerTypes; };
+    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final { return m_configuration.allowedMediaCodecTypes; };
+    const std::optional<Vector<WebCore::FourCC>>& allowedMediaVideoCodecIDs() const final { return m_configuration.allowedMediaVideoCodecIDs; };
+    const std::optional<Vector<WebCore::FourCC>>& allowedMediaAudioCodecIDs() const final { return m_configuration.allowedMediaAudioCodecIDs; };
+    const std::optional<Vector<WebCore::FourCC>>& allowedMediaCaptionFormatTypes() const final { return m_configuration.allowedMediaCaptionFormatTypes; };
 
     void startUpdateCachedStateMessageTimer();
     void updateCachedState(bool = false);

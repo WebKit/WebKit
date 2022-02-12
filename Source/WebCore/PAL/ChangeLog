@@ -1,3 +1,13 @@
+2022-02-12  Jer Noble  <jer.noble@apple.com>
+
+        Add settings to restrict media containers and codecs when in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=236245
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2022-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Use system window and screen picker when available

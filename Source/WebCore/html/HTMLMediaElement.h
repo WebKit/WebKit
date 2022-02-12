@@ -770,6 +770,12 @@ private:
     bool mediaPlayerShouldDisableSleep() const final { return shouldDisableSleep() == SleepType::Display; }
     bool mediaPlayerShouldCheckHardwareSupport() const final;
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
+    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final;
+    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final;
+    const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const final;
+    const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const final;
+    const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final;
+
     void mediaPlayerBufferedTimeRangesChanged() final;
 
 #if USE(GSTREAMER)

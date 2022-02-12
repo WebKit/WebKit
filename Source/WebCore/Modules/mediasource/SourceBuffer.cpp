@@ -38,6 +38,7 @@
 #include "AudioTrackList.h"
 #include "AudioTrackPrivate.h"
 #include "BufferSource.h"
+#include "ContentTypeUtilities.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -355,6 +356,11 @@ ExceptionOr<void> SourceBuffer::changeType(const String& type)
     // the types specified (currently or previously) of SourceBuffer objects in the sourceBuffers attribute of
     // the parent media source, then throw a NotSupportedError exception and abort these steps.
     ContentType contentType(type);
+
+    auto& settings = document().settings();
+    if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
+        return Exception { NotSupportedError };
+
     if (!m_private->canSwitchToType(contentType))
         return Exception { NotSupportedError };
 
@@ -786,6 +792,25 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         // 5.1 If the initialization segment contains tracks with codecs the user agent does not support,
         // then run the append error algorithm with the decode error parameter set to true and abort these steps.
         // NOTE: This check is the responsibility of the SourceBufferPrivate.
+        if (auto& allowedMediaAudioCodecIDs = document().settings().allowedMediaAudioCodecIDs()) {
+            for (auto& audioTrackInfo : segment.audioTracks) {
+                if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
+                    continue;
+                appendError(true);
+                completionHandler();
+                return;
+            }
+        }
+
+        if (auto& allowedMediaVideoCodecIDs = document().settings().allowedMediaVideoCodecIDs()) {
+            for (auto& videoTrackInfo : segment.videoTracks) {
+                if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
+                    continue;
+                appendError(true);
+                completionHandler();
+                return;
+            }
+        }
 
         // 5.2 For each audio track in the initialization segment, run following steps:
         for (auto& audioTrackInfo : segment.audioTracks) {

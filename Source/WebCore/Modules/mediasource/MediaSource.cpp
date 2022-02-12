@@ -36,6 +36,7 @@
 
 #include "AudioTrackList.h"
 #include "ContentType.h"
+#include "ContentTypeUtilities.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -908,6 +909,17 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.type = contentType;
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
+
+    if (context.isDocument()) {
+        auto& settings = downcast<Document>(context).settings();
+        if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
+            return false;
+
+        parameters.allowedMediaContainerTypes = settings.allowedMediaContainerTypes();
+        parameters.allowedMediaVideoCodecIDs = settings.allowedMediaVideoCodecIDs();
+        parameters.allowedMediaAudioCodecIDs = settings.allowedMediaAudioCodecIDs();
+        parameters.allowedMediaCaptionFormatTypes = settings.allowedMediaCaptionFormatTypes();
+    }
 
     MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 

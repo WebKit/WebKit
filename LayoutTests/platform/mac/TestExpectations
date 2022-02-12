@@ -2441,3 +2441,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 #rdar://80333071
 [ BigSur+ ] compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
+
+# rdar://84556831 
+[ Catalina ] media/media-allowed-containers.html [ Skip ]
