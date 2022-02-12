@@ -565,6 +565,7 @@ platform/mediastream/mac/RealtimeMediaSourceCenterMac.mm
 platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp
 platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
+platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm
 platform/mediastream/mac/WebAudioSourceProviderCocoa.mm
 platform/mock/MediaPlaybackTargetMock.cpp
 platform/mock/MediaPlaybackTargetPickerMock.cpp

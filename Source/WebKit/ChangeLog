@@ -1,3 +1,18 @@
+2022-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Use system window and screen picker when available
+        https://bugs.webkit.org/show_bug.cgi?id=236531
+        rdar://87111816
+
+        Reviewed by Jer Noble.
+
+        * Platform/spi/Cocoa/SafeBrowsingSPI.h:
+        * UIProcess/mac/DisplayCaptureSessionManager.mm:
+        (WebKit::DisplayCaptureSessionManager::alertForGetDisplayMedia): Update prompt strings.
+        (WebKit::DisplayCaptureSessionManager::showWindowPicker): Use capture session 
+        manager when available.
+        (WebKit::DisplayCaptureSessionManager::showScreenPicker): Ditto.
+
 2022-02-12  Kevin Turner  <kevin_turner@apple.com>
 
         Invoke mouse hover delegate callback on iOS

@@ -57,6 +57,7 @@ public:
 
     virtual void capturerIsRunningChanged(bool) { }
     virtual void capturerFailed() { };
+    virtual void capturerConfigurationChanged() { };
 };
 
 class DisplayCaptureSourceCocoa final
@@ -99,6 +100,11 @@ public:
             if (m_observer)
                 m_observer->capturerFailed();
         }
+        void configurationChanged()
+        {
+            if (m_observer)
+                m_observer->capturerConfigurationChanged();
+        }
 
     private:
         WeakPtr<CapturerObserver> m_observer;
@@ -132,6 +138,7 @@ private:
     // CapturerObserver
     void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }
     void capturerFailed() final { captureFailed(); }
+    void capturerConfigurationChanged() final;
 
     void emitFrame();
 

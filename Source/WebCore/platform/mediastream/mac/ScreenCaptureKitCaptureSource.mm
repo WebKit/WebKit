@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScreenCaptureKitCaptureSource.h"
+#import "config.h"
+#import "ScreenCaptureKitCaptureSource.h"
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
@@ -34,7 +34,9 @@
 #import "PlatformScreen.h"
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeVideoUtilities.h"
+#import "ScreenCaptureKitSharingSessionManager.h"
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
+#import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
@@ -91,7 +93,11 @@ typedef NS_ENUM(NSInteger, WKSCStreamOutputType) {
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
 using namespace WebCore;
-@interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate, WKSCStreamOutput> {
+@interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate,
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    SCContentSharingSessionProtocol,
+#endif
+    WKSCStreamOutput> {
     WeakPtr<ScreenCaptureKitCaptureSource> _callback;
 }
 
@@ -99,6 +105,9 @@ using namespace WebCore;
 - (void)disconnect;
 - (void)stream:(SCStream *)stream didStopWithError:(NSError *)error;
 - (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(WKSCStreamOutputType)type;
+- (void)sessionDidEnd:(SCContentSharingSession *)session;
+- (void)sessionDidChangeContent:(SCContentSharingSession *)session;
+- (void)pickerCanceledForSession:(SCContentSharingSession *)session;
 @end
 
 @implementation WebCoreScreenCaptureKitHelper
@@ -119,11 +128,11 @@ using namespace WebCore;
 
 - (void)stream:(SCStream *)stream didStopWithError:(NSError *)error
 {
-    callOnMainRunLoop([strongSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
-        if (!strongSelf->_callback)
+    callOnMainRunLoop([self, strongSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
+        if (!_callback)
             return;
 
-        strongSelf->_callback->streamFailedWithError(WTFMove(error), "-[SCStreamDelegate stream:didStopWithError:] called"_s);
+        _callback->streamFailedWithError(WTFMove(error), "-[SCStreamDelegate stream:didStopWithError:] called"_s);
     });
 }
 
@@ -137,6 +146,25 @@ using namespace WebCore;
     });
 }
 
+- (void)sessionDidEnd:(SCContentSharingSession *)session
+{
+    RunLoop::main().dispatch([self, strongSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+        if (_callback)
+            _callback->sessionDidEnd(session);
+    });
+}
+
+- (void)sessionDidChangeContent:(SCContentSharingSession *)session
+{
+    RunLoop::main().dispatch([self, strongSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+        if (_callback)
+            _callback->sessionDidChangeContent(session);
+    });
+}
+
+- (void)pickerCanceledForSession:(SCContentSharingSession *)session
+{
+}
 @end
 
 #pragma clang diagnostic pop
@@ -234,6 +262,45 @@ void ScreenCaptureKitCaptureSource::streamFailedWithError(RetainPtr<NSError>&& e
     ERROR_LOG_IF(loggerPtr() && !error, LOGIDENTIFIER, message);
 
     captureFailed();
+}
+
+void ScreenCaptureKitCaptureSource::sessionDidChangeContent(RetainPtr<SCContentSharingSession> session)
+{
+    ASSERT(isMainThread());
+
+    if ([session content].type == SCContentFilterTypeNothing)
+        return;
+
+    std::optional<CaptureDevice> device;
+    SCContentFilter* content = [session content];
+    switch (content.type) {
+    case SCContentFilterTypeDesktopIndependentWindow:
+        device = windowCaptureDeviceWithPersistentID(String::number(content.desktopIndependentWindowInfo.window.windowID));
+        m_content = content.desktopIndependentWindowInfo.window;
+        break;
+    case SCContentFilterTypeDisplay:
+        device = screenCaptureDeviceWithPersistentID(String::number(content.displayInfo.display.displayID));
+        m_content = content.displayInfo.display;
+        break;
+    case SCContentFilterTypeNothing:
+    case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
+    case SCContentFilterTypeClientShouldImplementDefault:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (!device) {
+        streamFailedWithError(nil, "Failed find CaptureDevice after content change"_s);
+        return;
+    }
+
+    m_captureDevice = device.value();
+    m_intrinsicSize = { };
+    configurationChanged();
+}
+
+void ScreenCaptureKitCaptureSource::sessionDidEnd(RetainPtr<SCContentSharingSession>)
+{
+    streamFailedWithError(nil, "sessionDidEnd"_s);
 }
 
 DisplayCaptureSourceCocoa::DisplayFrameType ScreenCaptureKitCaptureSource::generateFrame()
@@ -348,8 +415,22 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     else
         m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_contentFilter.get() captureOutputProperties:streamConfiguration().get() delegate:m_captureHelper.get()]);
 
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    if (ScreenCaptureKitSharingSessionManager::isAvailable()) {
+        m_contentSharingSession = ScreenCaptureKitSharingSessionManager::singleton().takeSharingSessionForFilter(m_contentFilter.get());
+        if (!m_contentSharingSession) {
+            streamFailedWithError(nil, "Failed to get SharingSession"_s);
+            return;
+        }
+
+        m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithSharingSession:m_contentSharingSession.get() captureOutputProperties:streamConfiguration().get() delegate:m_captureHelper.get()]);
+    } else
+#endif
+        m_contentStream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:m_contentFilter.get() captureOutputProperties:streamConfiguration().get() delegate:m_captureHelper.get()]);
+
+
     if (!m_contentStream) {
-        streamFailedWithError(nil, "Failed to allocate SLContentStream"_s);
+        streamFailedWithError(nil, "Failed to allocate ContentStream"_s);
         return;
     }
 
@@ -384,6 +465,19 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
 {
     if (m_intrinsicSize)
         return m_intrinsicSize.value();
+
+    if (m_content) {
+        auto frame = switchOn(m_content.value(),
+            [] (const RetainPtr<SCDisplay> display) -> CGRect {
+                return [display frame];
+            },
+            [] (const RetainPtr<SCWindow> window) -> CGRect {
+                return [window frame];
+            }
+        );
+
+        return { static_cast<int>(frame.size.width), static_cast<int>(frame.size.height) };
+    }
 
     if (m_captureDevice.type() == CaptureDevice::DeviceType::Screen) {
         auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_deviceID));

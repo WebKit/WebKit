@@ -1,3 +1,16 @@
+2022-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Use system window and screen picker when available
+        https://bugs.webkit.org/show_bug.cgi?id=236531
+        rdar://87111816
+
+        Reviewed by Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/mac/ScreenCaptureKitSoftLink.h:
+        * pal/mac/ScreenCaptureKitSoftLink.mm:
+        * pal/spi/mac/ScreenCaptureKitSPI.h: Added.
+
 2022-02-10  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Support both versions of ScreenCaptureKit API

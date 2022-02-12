@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		07035D3127A9B33000FB03E4 /* ScreenCaptureKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07035D3027A9B32E00FB03E4 /* ScreenCaptureKitSPI.h */; };
 		071C00372707EDF000D027C7 /* ReplayKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 071C00352707EDF000D027C7 /* ReplayKitSoftLink.mm */; };
 		071C00382707EDF000D027C7 /* ReplayKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 071C00362707EDF000D027C7 /* ReplayKitSoftLink.h */; };
 		07611DB6243FA5BF00D80704 /* UsageTrackingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */; };
@@ -430,6 +431,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07035D3027A9B32E00FB03E4 /* ScreenCaptureKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureKitSPI.h; sourceTree = "<group>"; };
 		071C00352707EDF000D027C7 /* ReplayKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReplayKitSoftLink.mm; sourceTree = "<group>"; };
 		071C00362707EDF000D027C7 /* ReplayKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayKitSoftLink.h; sourceTree = "<group>"; };
 		07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageTrackingSoftLink.h; sourceTree = "<group>"; };
@@ -1055,7 +1057,7 @@
 				0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */,
 				0C7785851F45130F00F4EBB6 /* PIPSPI.h */,
 				0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */,
-				A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */,
+				07035D3027A9B32E00FB03E4 /* ScreenCaptureKitSPI.h */,
 				71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */,
 				0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */,
 			);
@@ -1677,6 +1679,7 @@
 				442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */,
 				BC4DDD9F273EF56E00660EBB /* SceneKitSPI.h in Headers */,
 				07789182273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h in Headers */,
+				07035D3127A9B33000FB03E4 /* ScreenCaptureKitSPI.h in Headers */,
 				570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */,
 				0C2DA1581F3BEB4900DBC317 /* ServersSPI.h in Headers */,
 				A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */,

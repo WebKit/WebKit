@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+#if 0 && USE(APPLE_INTERNAL_SDK)
 
 #import <SafariSafeBrowsing/SafariSafeBrowsing.h>
 

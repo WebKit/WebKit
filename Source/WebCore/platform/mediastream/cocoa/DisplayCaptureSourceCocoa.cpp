@@ -324,6 +324,16 @@ void DisplayCaptureSourceCocoa::emitFrame()
     videoSampleAvailable(*sample.get(), metadata);
 }
 
+void DisplayCaptureSourceCocoa::capturerConfigurationChanged()
+{
+    m_currentSettings = { };
+    auto capturerIntrinsicSize = m_capturer->intrinsicSize();
+    if (this->intrinsicSize() != capturerIntrinsicSize) {
+        m_capabilities = { };
+        setIntrinsicSize(capturerIntrinsicSize);
+    }
+}
+
 void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, const void* identifier)
 {
     RealtimeMediaSource::setLogger(logger, identifier);

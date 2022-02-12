@@ -146,10 +146,10 @@
 "Align Right (Undo action name)" = "Align Right";
 
 /* Allow screen button title in window and screen sharing prompt */
-"Allow Observing a Screen" = "Allow Observing a Screen";
+"Allow to Share Screen" = "Allow to Share Screen";
 
 /* Allow window button title in window and screen sharing prompt */
-"Allow Observing a Window" = "Allow Observing a Window";
+"Allow to Share Window" = "Allow to Share Window";
 
 /* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";

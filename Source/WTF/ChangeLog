@@ -1,3 +1,13 @@
+2022-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Use system window and screen picker when available
+        https://bugs.webkit.org/show_bug.cgi?id=236531
+        rdar://87111816
+
+        Reviewed by Jer Noble.
+
+        * wtf/PlatformHave.h: Define HAVE_SC_CONTENT_SHARING_SESSION.
+
 2022-02-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Turn overscroll-behavior on by default
