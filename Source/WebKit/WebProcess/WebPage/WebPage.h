@@ -797,6 +797,9 @@ public:
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
 
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
+#if ENABLE(REVEAL)
+    void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&&);
+#endif
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply);

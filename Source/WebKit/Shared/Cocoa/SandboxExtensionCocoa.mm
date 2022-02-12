@@ -28,9 +28,11 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
+#import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
 #import "Decoder.h"
 #import "Encoder.h"
+#import "WebCoreArgumentCoders.h"
 #import <string.h>
 #import <wtf/FileSystem.h>
 #import <wtf/spi/darwin/SandboxSPI.h>

@@ -41,6 +41,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteScrollingCoordinator.h"
+#import "RevealItem.h"
 #import "SandboxUtilities.h"
 #import "ShareableBitmapUtilities.h"
 #import "SharedBufferCopy.h"
@@ -147,6 +148,7 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
+#import <pal/cocoa/RevealSoftLink.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
@@ -2341,6 +2343,35 @@ void WebPage::requestDictationContext(CompletionHandler<void(const String&, cons
 
     completionHandler(selectedText, contextBefore, contextAfter);
 }
+
+#if ENABLE(REVEAL)
+void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& completionHandler)
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    auto selection = frame->selection().selection();
+    RetainPtr<RVItem> item;
+    if (!selection.isNone()) {
+        std::optional<SimpleRange> fullCharacterRange;
+        if (selection.isRange()) {
+            auto selectionStart = selection.visibleStart();
+            auto selectionEnd = selection.visibleEnd();
+
+            // As context, we are going to use the surrounding paragraphs of text.
+            fullCharacterRange = makeSimpleRange(startOfParagraph(selectionStart), endOfParagraph(selectionEnd));
+            if (!fullCharacterRange)
+                fullCharacterRange = makeSimpleRange(selectionStart, selectionEnd);
+            
+            if (fullCharacterRange) {
+                auto selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)), characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
+                String itemString = plainText(*fullCharacterRange);
+                item = adoptNS([PAL::allocRVItemInstance() initWithText:itemString selectedRange:selectionRange]);
+            }
+        }
+    }
+    
+    completionHandler(RevealItem(WTFMove(item)));
+}
+#endif
 
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)
 {

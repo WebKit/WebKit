@@ -81,6 +81,9 @@ messages -> WebPage LegacyReceiver {
     UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor) -> (bool endIsMoving) Async
     UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement) -> (bool endIsMoving) Async
     RequestDictationContext() -> (String selectedText, String textBefore, String textAfter) Async
+#if ENABLE(REVEAL)
+    RequestRVItemInCurrentSelectedRange() -> (WebKit::RevealItem item) Async
+#endif
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection) -> (struct WebKit::WebAutocorrectionData data) Async

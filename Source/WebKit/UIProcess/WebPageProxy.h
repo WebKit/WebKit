@@ -356,6 +356,7 @@ class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteMediaSessionCoordinatorProxy;
 class RemoteScrollingCoordinatorProxy;
+class RevealItem;
 class SecKeyProxyStore;
 class SpeechRecognitionPermissionManager;
 class UserData;
@@ -876,6 +877,9 @@ public:
     void requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
+#if ENABLE(REVEAL)
+    void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const RevealItem&)>&&);
+#endif
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);

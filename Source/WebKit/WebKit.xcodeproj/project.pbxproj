@@ -865,6 +865,7 @@
 		41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */; };
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
+		442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 442E7BEA27B4581300C69AC1 /* RevealItem.h */; };
 		4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4459984122833E6000E61373 /* SyntheticEditingCommandType.h */; };
 		4476EF0925BFC8B7004A0587 /* _WKAppHighlightDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4476EF0825BFC8B7004A0587 /* _WKAppHighlightDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4482734724528F6000A95493 /* CocoaImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4482734624528F6000A95493 /* CocoaImage.h */; };
@@ -4228,6 +4229,8 @@
 		41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDownloadTask.cpp; sourceTree = "<group>"; };
 		41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDownloadTask.h; sourceTree = "<group>"; };
 		41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerDownloadTask.messages.in; sourceTree = "<group>"; };
+		442E7BE827B4572B00C69AC1 /* RevealItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RevealItem.mm; sourceTree = "<group>"; };
+		442E7BEA27B4581300C69AC1 /* RevealItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RevealItem.h; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		4476EF0825BFC8B7004A0587 /* _WKAppHighlightDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAppHighlightDelegate.h; sourceTree = "<group>"; };
@@ -9121,6 +9124,8 @@
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */,
+				442E7BEA27B4581300C69AC1 /* RevealItem.h */,
+				442E7BE827B4572B00C69AC1 /* RevealItem.mm */,
 				7AB4EA3F22777C460085BBAA /* SandboxExtensionCocoa.mm */,
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
@@ -13447,6 +13452,7 @@
 				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,
 				1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */,
+				442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,
 				46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */,
 				0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */,

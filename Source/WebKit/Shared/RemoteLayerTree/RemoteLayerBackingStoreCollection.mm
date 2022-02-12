@@ -27,8 +27,10 @@
 #import "RemoteLayerBackingStoreCollection.h"
 
 #import "PlatformCALayerRemote.h"
+#import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
+#import <WebCore/ConcreteImageBuffer.h>
 
 const Seconds volatileBackingStoreAgeThreshold = 1_s;
 const Seconds volatileSecondaryBackingStoreAgeThreshold = 200_ms;

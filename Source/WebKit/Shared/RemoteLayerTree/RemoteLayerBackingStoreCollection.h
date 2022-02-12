@@ -28,6 +28,7 @@
 #import <WebCore/Timer.h>
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
+#import <wtf/OptionSet.h>
 
 namespace WebCore {
 class ImageBuffer;

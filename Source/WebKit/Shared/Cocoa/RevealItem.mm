@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "RevealItem.h"
 
-#include "ArrayReference.h"
-#include <wtf/Span.h>
+#import "ArgumentCodersCocoa.h"
+#import "WebCoreArgumentCoders.h"
+#import <pal/cocoa/RevealSoftLink.h>
 
-namespace IPC {
+namespace WebKit {
 
-using DataReference = Span<const uint8_t>;
+#if ENABLE(REVEAL)
 
-} // namespace IPC
+RevealItem::RevealItem(RetainPtr<RVItem>&& item)
+    : m_item { WTFMove(item) }
+{
+}
+
+void RevealItem::encode(IPC::Encoder& encoder) const
+{
+    encoder << m_item;
+}
+
+std::optional<RevealItem> RevealItem::decode(IPC::Decoder& decoder)
+{
+    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        auto allowed = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
+        if (auto rvItemClass = PAL::getRVItemClass())
+            [allowed addObject:rvItemClass];
+        allowedClasses.get() = adoptNS([allowed copy]);
+    });
+    
+    auto item = IPC::decode<RVItem>(decoder, allowedClasses.get().get());
+    if (!item)
+        return std::nullopt;
+
+    return RevealItem { WTFMove(*item) };
+}
+#endif
+
+}

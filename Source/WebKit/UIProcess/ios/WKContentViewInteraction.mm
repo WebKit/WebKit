@@ -40,6 +40,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "RevealItem.h"
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
 #import "TextInputSPI.h"
@@ -7545,6 +7546,15 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
     return YES;
 }
+
+#if ENABLE(REVEAL)
+- (void)requestRVItemInSelectedRangeWithCompletionHandler:(void(^)(RVItem *item))completionHandler
+{
+    _page->requestRVItemInCurrentSelectedRange([revealItemSelectionHandler = makeBlockPtr(completionHandler)](const WebKit::RevealItem& item) {
+        revealItemSelectionHandler(item.item());
+    });
+}
+#endif
 
 - (BOOL)hasHiddenContentEditable
 {

@@ -48,6 +48,7 @@
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "RevealItem.h"
 #import "ShareableResource.h"
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
@@ -524,6 +525,16 @@ void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&,
 
     sendWithAsyncReply(Messages::WebPage::RequestDictationContext(), WTFMove(callbackFunction));
 }
+
+#if ENABLE(REVEAL)
+void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& callbackFunction)
+{
+    if (!hasRunningProcess())
+        return callbackFunction(RevealItem());
+
+    sendWithAsyncReply(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), WTFMove(callbackFunction));
+}
+#endif
 
 void WebPageProxy::requestAutocorrectionContext()
 {

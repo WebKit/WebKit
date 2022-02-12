@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,30 @@
 
 #pragma once
 
-#include "ArrayReference.h"
-#include <wtf/Span.h>
+#if ENABLE(REVEAL)
 
-namespace IPC {
+#import "ArgumentCoders.h"
 
-using DataReference = Span<const uint8_t>;
+#import <wtf/RetainPtr.h>
 
-} // namespace IPC
+OBJC_CLASS RVItem;
+
+namespace WebKit {
+
+class RevealItem {
+    
+public:
+    RevealItem() = default;
+    RevealItem(RetainPtr<RVItem>&&);
+    
+    void encode(IPC::Encoder&) const;
+    static std::optional<RevealItem> decode(IPC::Decoder&);
+    
+    RVItem *item() const { return m_item.get(); }
+private:
+    RetainPtr<RVItem> m_item;
+};
+
+}
+
+#endif // ENABLE(REVEAL)

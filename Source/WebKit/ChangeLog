@@ -1,3 +1,29 @@
+2022-02-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Implement Reveal methods
+        https://bugs.webkit.org/show_bug.cgi?id=236478
+
+        Reviewed by Wenson Hsieh.
+
+        Respond to protocol methods that request RVItems for selection.
+
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/DataReference.h:
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        * SourcesCocoa.txt:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestRVItemInSelectedRangeWithCompletionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestRVItemInCurrentSelectedRange):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestRVItemInCurrentSelectedRange):
+
 2022-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a "Copy Cropped Image" context menu item when long pressing images
