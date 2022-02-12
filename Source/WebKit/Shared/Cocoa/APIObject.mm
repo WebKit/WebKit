@@ -260,7 +260,7 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKHTTPCookieStore alloc];
         break;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     case Type::HitTestResult:
         wrapper = [_WKHitTestResult alloc];
         break;

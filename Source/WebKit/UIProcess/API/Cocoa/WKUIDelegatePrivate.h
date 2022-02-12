@@ -222,6 +222,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(13.0));
 - (UIViewController *)_webView:(WKWebView *)webView contextMenuContentPreviewForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(15.0));
 - (void)_webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo WK_API_AVAILABLE(ios(13.0));
+- (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(UIKeyModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 - (BOOL)_webView:(WKWebView *)webView showCustomSheetForElement:(_WKActivatedElementInfo *)element WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:contextMenuConfigurationForElement:completionHandler:", ios(10.0, 13.0));

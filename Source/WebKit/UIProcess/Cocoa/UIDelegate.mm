@@ -69,6 +69,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "TapHandlingResult.h"
 #import "WKWebViewIOS.h"
+#import "WebIOSEventFactory.h"
 #endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -117,6 +118,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo = [delegate respondsToSelector:@selector(_webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo = [delegate respondsToSelector:@selector(_webView:mouseDidMoveOverElement:withFlags:userInfo:)];
+#endif
 
 #if PLATFORM(MAC)
     m_delegateMethods.showWebView = [delegate respondsToSelector:@selector(_showWebView:)];
@@ -135,7 +139,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDrawFooterInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawFooterInRect:forPageWithTitle:URL:)];
     m_delegateMethods.webViewHeaderHeight = [delegate respondsToSelector:@selector(_webViewHeaderHeight:)];
     m_delegateMethods.webViewFooterHeight = [delegate respondsToSelector:@selector(_webViewFooterHeight:)];
-    m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo = [delegate respondsToSelector:@selector(_webView:mouseDidMoveOverElement:withFlags:userInfo:)];
     m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
@@ -257,6 +260,29 @@ UIDelegate::UIClient::UIClient(UIDelegate& uiDelegate)
 UIDelegate::UIClient::~UIClient()
 {
 }
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEvent::Modifier> modifiers, API::Object* userInfo)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo)
+        return;
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    auto apiHitTestResult = API::HitTestResult::create(data);
+#if PLATFORM(MAC)
+    auto modifierFlags = WebEventFactory::toNSEventModifierFlags(modifiers);
+#else
+    auto modifierFlags = WebIOSEventFactory::toUIKeyModifierFlags(modifiers);
+#endif
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:modifierFlags userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
+}
+#endif
 
 void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
 {
@@ -924,22 +950,6 @@ void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(WebC
         checker->didCallCompletionHandler();
         completionHandler(frame);
     }).get()];
-}
-
-void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEvent::Modifier> modifiers, API::Object* userInfo)
-{
-    if (!m_uiDelegate)
-        return;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo)
-        return;
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return;
-
-    auto apiHitTestResult = API::HitTestResult::create(data);
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:WebEventFactory::toNSEventModifierFlags(modifiers) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }
 
 void UIDelegate::UIClient::toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&& completionHandler)

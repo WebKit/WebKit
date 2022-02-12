@@ -36,8 +36,29 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+
+@interface MouseSupportUIDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation MouseSupportUIDelegate {
+    BlockPtr<void(_WKHitTestResult *)> _mouseDidMoveOverElementHandler;
+}
+
+- (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(UIKeyModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo
+{
+    if (_mouseDidMoveOverElementHandler)
+        _mouseDidMoveOverElementHandler(hitTestResult);
+}
+
+- (void)setMouseDidMoveOverElementHandler:(void(^)(_WKHitTestResult *))handler
+{
+    _mouseDidMoveOverElementHandler = handler;
+}
+
+@end
 
 @interface WKMouseGestureRecognizer : UIGestureRecognizer
 - (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
@@ -302,6 +323,37 @@ TEST(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
 
     bool wasClicked = [[webView objectByEvaluatingJavaScript:@"window.wasClicked"] boolValue];
     EXPECT_FALSE(wasClicked);
+}
+
+TEST(iOSMouseSupport, MouseDidMoveOverElement)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([MouseSupportUIDelegate new]);
+
+    __block bool mouseDidMoveOverElement = false;
+    __block RetainPtr<_WKHitTestResult> hitTestResult;
+    [delegate setMouseDidMoveOverElementHandler:^(_WKHitTestResult *result) {
+        hitTestResult = result;
+        mouseDidMoveOverElement = true;
+    }];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView setUIDelegate:delegate.get()];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+    auto touch = adoptNS([[WKTestingTouch alloc] init]);
+    auto touchSet = RetainPtr { [NSSet setWithObject:touch.get()] };
+    auto event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+
+    TestWebKitAPI::Util::run(&mouseDidMoveOverElement);
+
+    EXPECT_TRUE(mouseDidMoveOverElement);
+    EXPECT_NOT_NULL(hitTestResult);
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
