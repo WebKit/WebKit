@@ -1,3 +1,16 @@
+2022-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Allow structureHeapAddressSize to be set during build
+        https://bugs.webkit.org/show_bug.cgi?id=236527
+
+        Reviewed by Yusuke Suzuki.
+
+        Add `STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB` as a way to set the size of
+        structureHeapAddressSize at build time. Set a default for the PlayStation port.
+
+        * PlatformPlayStation.cmake:
+        * runtime/JSCConfig.h:
+
 2022-02-10  Keith Miller  <keith_miller@apple.com>
 
         tryReserveUncommittedAligned should explicitly take the alignment requested
