@@ -1153,8 +1153,11 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     Vector<FlexItem> lineItems;
     size_t nextIndex = 0;
     size_t numLines = 0;
+    InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
     while (flexAlgorithm.computeNextFlexLine(nextIndex, lineItems, sumFlexBaseSize, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink, sumHypotheticalMainSize)) {
         ++numLines;
+        InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(*this, nextIndex);
+
         LayoutUnit containerMainInnerSize = mainAxisContentExtent(sumHypotheticalMainSize);
         // availableFreeSpace is the initial amount of free space in this flexbox.
         // remainingFreeSpace starts out at the same value but as we place and lay

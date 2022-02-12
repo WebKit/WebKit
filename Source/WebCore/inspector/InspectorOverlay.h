@@ -39,6 +39,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -146,6 +147,11 @@ public:
 
             Color color;
             FloatQuad containerBounds;
+            Vector<FloatQuad> itemBounds;
+            Vector<FloatQuad> mainAxisGaps;
+            Vector<FloatQuad> mainAxisSpaceBetweenItemsAndGaps;
+            Vector<FloatQuad> spaceBetweenItemsAndCrossAxisSpace;
+            Vector<FloatQuad> crossAxisGaps;
 
 #if PLATFORM(IOS_FAMILY)
             template<class Encoder> void encode(Encoder&) const;
@@ -303,6 +309,11 @@ template<class Encoder> void InspectorOverlay::Highlight::FlexHighlightOverlay::
 {
     encoder << color;
     encoder << containerBounds;
+    encoder << itemBounds;
+    encoder << mainAxisGaps;
+    encoder << mainAxisSpaceBetweenItemsAndGaps;
+    encoder << spaceBetweenItemsAndCrossAxisSpace;
+    encoder << crossAxisGaps;
 }
 
 template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::Highlight::FlexHighlightOverlay::decode(Decoder& decoder)
@@ -311,6 +322,16 @@ template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlight
     if (!decoder.decode(flexHighlightOverlay.color))
         return { };
     if (!decoder.decode(flexHighlightOverlay.containerBounds))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.itemBounds))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.mainAxisGaps))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.crossAxisGaps))
         return { };
     return { flexHighlightOverlay };
 }

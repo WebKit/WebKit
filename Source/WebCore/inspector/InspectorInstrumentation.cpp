@@ -578,6 +578,18 @@ void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instr
         pageAgent->applyEmulatedMedia(media);
 }
 
+void InspectorInstrumentation::flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer)
+{
+    if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->flexibleBoxRendererBeganLayout(renderer);
+}
+
+void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer, size_t lineStartItemIndex)
+{
+    if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
+}
+
 void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
@@ -1272,7 +1284,7 @@ void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents
     }
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(RenderObject& renderer)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const RenderObject& renderer)
 {
     return instrumentingAgents(renderer.frame());
 }

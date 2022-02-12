@@ -51,12 +51,15 @@
 #include "GridArea.h"
 #include "GridPositionsResolver.h"
 #include "InspectorClient.h"
+#include "InspectorController.h"
+#include "InspectorDOMAgent.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
+#include "OrderIterator.h"
 #include "Page.h"
 #include "PseudoElement.h"
 #include "RenderBox.h"
@@ -68,6 +71,7 @@
 #include "Settings.h"
 #include "StyleGridData.h"
 #include "StyleResolver.h"
+#include "TextDirection.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -94,6 +98,8 @@ static constexpr UChar ellipsis = 0x2026;
 static constexpr UChar multiplicationSign = 0x00D7;
 static constexpr UChar thinSpace = 0x2009;
 static constexpr UChar emSpace = 0x2003;
+
+enum class Flip : bool { No, Yes };
 
 static void truncateWithEllipsis(String& string, size_t length)
 {
@@ -1220,38 +1226,61 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     return path;
 }
 
-static void drawLayoutHatching(GraphicsContext& context, FloatQuad quad)
+static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, int hatchSpacing, Flip flip)
 {
     GraphicsContextStateSaver saver(context);
     context.clipPath(quadToPath(quad));
-    context.setStrokeThickness(0.5);
-    context.setStrokeStyle(StrokeStyle::DashedStroke);
-    context.setLineDash({ 2, 2 }, 2);
-        
-    constexpr auto hatchSpacing = 12;
+
     Path hatchPath;
-    
-    FloatLine topSide = { quad.p1(), quad.p2() };
-    FloatLine leftSide = { quad.p1(), quad.p4() };
-    
+
+    auto boundingBox = quad.enclosingBoundingBox();
+
+    auto correctedLineForPoints = [&](const FloatPoint& start, const FloatPoint& end) {
+        return (flip == Flip::Yes) ? FloatLine(end, start) : FloatLine(start, end);
+    };
+
+    auto topSide = correctedLineForPoints(boundingBox.minXMinYCorner(), boundingBox.maxXMinYCorner());
+    auto leftSide = correctedLineForPoints(boundingBox.minXMinYCorner(), boundingBox.minXMaxYCorner());
+
     // The opposite axis' length is used to determine how far to draw a hatch line in both dimensions, which keeps the lines at a 45deg angle.
     if (topSide.length() > leftSide.length()) {
-        FloatLine bottomSide = { quad.p4(), quad.p3() };
-        // Move across the relative top of the quad, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        auto bottomSide = correctedLineForPoints(boundingBox.minXMaxYCorner(), boundingBox.maxXMaxYCorner());
+        // Move across the relative top of the area, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
         for (float x = -leftSide.length(); x < topSide.length(); x += hatchSpacing) {
             hatchPath.moveTo(topSide.pointAtAbsoluteDistance(x));
             hatchPath.addLineTo(bottomSide.pointAtAbsoluteDistance(x + leftSide.length()));
         }
     } else {
-        FloatLine rightSide = { quad.p2(), quad.p3() };
-        // Move down the relative left side of the quad, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        auto rightSide = correctedLineForPoints(boundingBox.maxXMinYCorner(), boundingBox.maxXMaxYCorner());
+        // Move down the relative left side of the area, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
         for (float y = -topSide.length(); y < leftSide.length(); y += hatchSpacing) {
             hatchPath.moveTo(leftSide.pointAtAbsoluteDistance(y));
             hatchPath.addLineTo(rightSide.pointAtAbsoluteDistance(y + topSide.length()));
         }
     }
-    
+
     context.strokePath(hatchPath);
+}
+
+static void drawLayoutStippling(GraphicsContext& context, const FloatQuad& quad, float density)
+{
+    GraphicsContextStateSaver saver(context);
+    context.setStrokeThickness(1);
+    context.setStrokeStyle(StrokeStyle::DashedStroke);
+    context.setLineDash({ 1, density }, 1);
+
+    drawLayoutPattern(context, quad, density, Flip::No);
+}
+
+static void drawLayoutHatching(GraphicsContext& context, const FloatQuad& quad, Flip flip = Flip::No)
+{
+    GraphicsContextStateSaver saver(context);
+    context.setStrokeThickness(0.5);
+    context.setStrokeStyle(StrokeStyle::DashedStroke);
+    context.setLineDash({ 2, 2 }, 2);
+
+    constexpr auto defaultLayoutHatchSpacing = 12;
+    drawLayoutPattern(context, quad, defaultLayoutHatchSpacing, flip);
 }
 
 static FontCascade fontForLayoutLabel()
@@ -1993,6 +2022,33 @@ void InspectorOverlay::drawFlexOverlay(GraphicsContext& context, const Inspector
     context.setStrokeThickness(1);
     context.setStrokeColor(flexHighlightOverlay.color);
     context.strokePath(quadToPath(flexHighlightOverlay.containerBounds));
+
+    for (const auto& bounds : flexHighlightOverlay.itemBounds)
+        context.strokePath(quadToPath(bounds));
+
+    for (const auto& mainAxisGap : flexHighlightOverlay.mainAxisGaps) {
+        context.strokePath(quadToPath(mainAxisGap));
+        drawLayoutHatching(context, mainAxisGap);
+    }
+
+    {
+        GraphicsContextStateSaver mainAxisSpaceContextSaver(context);
+        context.setAlpha(0.5);
+
+        constexpr auto mainAxisSpaceDensity = 3;
+        for (auto mainAxisSpaceBetweenItemAndGap : flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps)
+            drawLayoutStippling(context, mainAxisSpaceBetweenItemAndGap, mainAxisSpaceDensity);
+    }
+
+    for (const auto& crossAxisGap : flexHighlightOverlay.crossAxisGaps) {
+        context.strokePath(quadToPath(crossAxisGap));
+        drawLayoutHatching(context, crossAxisGap, Flip::Yes);
+    }
+
+    context.setAlpha(0.7);
+    constexpr auto spaceBetweenItemsAndCrossAxisSpaceStipplingDensity = 6;
+    for (const auto& crossAxisSpaceBetweenItemAndGap : flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace)
+        drawLayoutStippling(context, crossAxisSpaceBetweenItemAndGap, spaceBetweenItemsAndCrossAxisSpaceStipplingDensity);
 }
 
 std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::buildFlexOverlay(const InspectorOverlay::Flex& flexOverlay)
@@ -2016,23 +2072,180 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     auto& renderFlex = *downcast<RenderFlexibleBox>(renderer);
 
+    auto itemsAtStartOfLine = m_page.inspectorController().ensureDOMAgent().flexibleBoxRendererCachedItemsAtStartOfLine(renderFlex);
+
     Frame* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
     FrameView* containingView = containingFrame->view();
 
-    auto localQuadToRootQuad = [&](const FloatQuad& quad) -> FloatQuad {
-        return {
+    auto computedStyle = node->computedStyle();
+    if (!computedStyle)
+        return { };
+
+    auto wasRowDirection = !computedStyle->isColumnFlexDirection();
+    auto isFlippedBlocksWritingMode = computedStyle->isFlippedBlocksWritingMode();
+    auto isRightToLeftDirection = computedStyle->direction() == TextDirection::RTL;
+
+    auto isRowDirection = wasRowDirection ^ !computedStyle->isHorizontalWritingMode();
+    auto isMainAxisDirectionReversed = computedStyle->isReverseFlexDirection() ^ (wasRowDirection ? isRightToLeftDirection : isFlippedBlocksWritingMode);
+    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isFlippedBlocksWritingMode : isRightToLeftDirection);
+
+    auto localQuadToRootQuad = [&](const FloatQuad& quad) {
+        return FloatQuad(
             localPointToRootPoint(containingView, quad.p1()),
             localPointToRootPoint(containingView, quad.p2()),
             localPointToRootPoint(containingView, quad.p3()),
             localPointToRootPoint(containingView, quad.p4())
-        };
+        );
+    };
+
+    auto childQuadToRootQuad = [&](const FloatQuad& quad) {
+        return FloatQuad(
+            localPointToRootPoint(containingView, renderFlex.localToContainerPoint(quad.p1(), nullptr)),
+            localPointToRootPoint(containingView, renderFlex.localToContainerPoint(quad.p2(), nullptr)),
+            localPointToRootPoint(containingView, renderFlex.localToContainerPoint(quad.p3(), nullptr)),
+            localPointToRootPoint(containingView, renderFlex.localToContainerPoint(quad.p4(), nullptr))
+        );
+    };
+
+    auto correctedMainAxisLeadingEdge = [&](const LayoutRect& rect) {
+        if (isRowDirection)
+            return isMainAxisDirectionReversed ? rect.maxX() : rect.x();
+        return isMainAxisDirectionReversed ? rect.maxY() : rect.y();
+    };
+
+    auto correctedMainAxisTrailingEdge = [&](const LayoutRect& rect) {
+        if (isRowDirection)
+            return isMainAxisDirectionReversed ? rect.x() : rect.maxX();
+        return isMainAxisDirectionReversed ? rect.y() : rect.maxY();
+    };
+
+    auto correctedCrossAxisLeadingEdge = [&](const LayoutRect& rect) {
+        if (isRowDirection)
+            return isCrossAxisDirectionReversed ? rect.maxY() : rect.y();
+        return isCrossAxisDirectionReversed ? rect.maxX() : rect.x();
+    };
+
+    auto correctedCrossAxisTrailingEdge = [&](const LayoutRect& rect) {
+        if (isRowDirection)
+            return isCrossAxisDirectionReversed ? rect.y() : rect.maxY();
+        return isCrossAxisDirectionReversed ? rect.x() : rect.maxX();
+    };
+
+    auto correctedCrossAxisMin = [&](float a, float b) {
+        return isCrossAxisDirectionReversed ? std::fmax(a, b) : std::fmin(a, b);
+    };
+
+    auto correctedCrossAxisMax = [&](float a, float b) {
+        return isCrossAxisDirectionReversed ? std::fmin(a, b) : std::fmax(a, b);
+    };
+
+    auto correctedPoint = [&](float mainAxisLocation, float crossAxisLocation) {
+        return isRowDirection ? FloatPoint(mainAxisLocation, crossAxisLocation) : FloatPoint(crossAxisLocation, mainAxisLocation);
+    };
+
+    auto populateHighlightForGapOrSpace = [&](float fromMainAxisEdge, float toMainAxisEdge, float fromCrossAxisEdge, float toCrossAxisEdge, Vector<FloatQuad>& gapsSet) {
+        gapsSet.append(childQuadToRootQuad({
+            correctedPoint(fromMainAxisEdge, fromCrossAxisEdge),
+            correctedPoint(toMainAxisEdge, fromCrossAxisEdge),
+            correctedPoint(toMainAxisEdge, toCrossAxisEdge),
+            correctedPoint(fromMainAxisEdge, toCrossAxisEdge),
+        }));
     };
 
     InspectorOverlay::Highlight::FlexHighlightOverlay flexHighlightOverlay;
     flexHighlightOverlay.color = flexOverlay.config.flexColor;
-    flexHighlightOverlay.containerBounds = localQuadToRootQuad({ renderFlex.absoluteContentQuad() });
+    flexHighlightOverlay.containerBounds = localQuadToRootQuad(renderFlex.absoluteContentQuad());
+
+    float computedMainAxisGap = renderFlex.computeGap(RenderFlexibleBox::GapType::BetweenItems).toFloat();
+    float computedCrossAxisGap = renderFlex.computeGap(RenderFlexibleBox::GapType::BetweenLines).toFloat();
+
+    // For reasoning about the edges of the flex container, use the untransformed content rect moved to the origin of the
+    // inner top-left corner of padding, which is the same relative coordinate space that each item's `frameRect()` will be in.
+    auto containerRect = renderFlex.absoluteContentBox();
+    containerRect.setLocation({ renderFlex.paddingLeft() + renderFlex.borderLeft(), renderFlex.paddingTop() + renderFlex.borderTop() });
+
+    float containerMainAxisLeadingEdge = correctedMainAxisLeadingEdge(containerRect);
+    float containerMainAxisTrailingEdge = correctedMainAxisTrailingEdge(containerRect);
+
+    Vector<LayoutRect> currentLineChildrenRects;
+    float currentLineCrossAxisLeadingEdge = isCrossAxisDirectionReversed ? 0.0f : std::numeric_limits<float>::max();
+    float currentLineCrossAxisTrailingEdge = isCrossAxisDirectionReversed ? std::numeric_limits<float>::max() : 0.0f;
+    float previousLineCrossAxisTrailingEdge = correctedCrossAxisLeadingEdge(containerRect);
+
+    size_t currentChildIndex = 0;
+    auto childOrderIterator = renderFlex.orderIterator();
+    for (RenderBox* renderChild = childOrderIterator.first(); renderChild; renderChild = childOrderIterator.next()) {
+        if (childOrderIterator.shouldSkipChild(*renderChild))
+            continue;
+
+        // Build bounds for each child and collect children on the same logical line.
+        {
+            auto childRect = renderChild->frameRect();
+            renderFlex.flipForWritingMode(childRect);
+            childRect.expand(renderChild->marginBox());
+            flexHighlightOverlay.itemBounds.append(childQuadToRootQuad({ childRect }));
+
+            currentLineCrossAxisLeadingEdge = correctedCrossAxisMin(currentLineCrossAxisLeadingEdge, correctedCrossAxisLeadingEdge(childRect));
+            currentLineCrossAxisTrailingEdge = correctedCrossAxisMax(currentLineCrossAxisTrailingEdge, correctedCrossAxisTrailingEdge(childRect));
+
+            currentLineChildrenRects.append(WTFMove(childRect));
+            ++currentChildIndex;
+        }
+
+        // The remaining work can only be done once we have collected all of the children on the current line.
+        if (!itemsAtStartOfLine.contains(currentChildIndex))
+            continue;
+
+        float previousChildMainAxisTrailingEdge = correctedMainAxisLeadingEdge(containerRect);
+        for (const auto& childRect : currentLineChildrenRects) {
+            auto childMainAxisLeadingEdge = correctedMainAxisLeadingEdge(childRect);
+            auto childMainAxisTrailingEdge = correctedMainAxisTrailingEdge(childRect);
+            auto childCrossAxisLeadingEdge = correctedCrossAxisLeadingEdge(childRect);
+            auto childCrossAxisTrailingEdge = correctedCrossAxisTrailingEdge(childRect);
+
+            // Build bounds for space between the current item and the cross-axis space.
+            if (std::fabs(childCrossAxisLeadingEdge - currentLineCrossAxisLeadingEdge) > 1)
+                populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisLeadingEdge, childCrossAxisLeadingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
+            if (std::fabs(childCrossAxisTrailingEdge - currentLineCrossAxisTrailingEdge) > 1)
+                populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisTrailingEdge, childCrossAxisTrailingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
+
+            // Build bounds for gaps and space between the current item and previous item (or container edge).
+            if (computedMainAxisGap && previousChildMainAxisTrailingEdge != correctedMainAxisLeadingEdge(containerRect)) {
+                // Regardless of flipped axises, we need to do the below calculations from left to right or top to bottom.
+                float startEdge = std::fmin(previousChildMainAxisTrailingEdge, childMainAxisLeadingEdge);
+                float endEdge = std::fmax(previousChildMainAxisTrailingEdge, childMainAxisLeadingEdge);
+
+                float spaceBetweenEdgeAndGap = (endEdge - startEdge - computedMainAxisGap) / 2;
+
+                populateHighlightForGapOrSpace(startEdge, startEdge + spaceBetweenEdgeAndGap, currentLineCrossAxisLeadingEdge, currentLineCrossAxisTrailingEdge, flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps);
+                populateHighlightForGapOrSpace(startEdge + spaceBetweenEdgeAndGap, endEdge - spaceBetweenEdgeAndGap, currentLineCrossAxisLeadingEdge, currentLineCrossAxisTrailingEdge, flexHighlightOverlay.mainAxisGaps);
+                populateHighlightForGapOrSpace(endEdge - spaceBetweenEdgeAndGap, endEdge, currentLineCrossAxisLeadingEdge, currentLineCrossAxisTrailingEdge, flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps);
+            } else
+                populateHighlightForGapOrSpace(previousChildMainAxisTrailingEdge, childMainAxisLeadingEdge, currentLineCrossAxisLeadingEdge, currentLineCrossAxisTrailingEdge, flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps);
+
+            previousChildMainAxisTrailingEdge = childMainAxisTrailingEdge;
+        }
+        populateHighlightForGapOrSpace(previousChildMainAxisTrailingEdge, containerMainAxisTrailingEdge, currentLineCrossAxisLeadingEdge, currentLineCrossAxisTrailingEdge, flexHighlightOverlay.mainAxisSpaceBetweenItemsAndGaps);
+
+        // Build gaps between the current line and the previous line.
+        if (computedCrossAxisGap && previousLineCrossAxisTrailingEdge != correctedCrossAxisLeadingEdge(containerRect)) {
+            // Regardless of flipped axises, we need to do the below calculations from left to right or top to bottom.
+            float startEdge = std::fmin(previousLineCrossAxisTrailingEdge, currentLineCrossAxisLeadingEdge);
+            float endEdge = std::fmax(previousLineCrossAxisTrailingEdge, currentLineCrossAxisLeadingEdge);
+
+            float spaceBetweenEdgeAndGap = (endEdge - startEdge - computedCrossAxisGap) / 2;
+
+            populateHighlightForGapOrSpace(containerMainAxisLeadingEdge, containerMainAxisTrailingEdge, startEdge + spaceBetweenEdgeAndGap, endEdge - spaceBetweenEdgeAndGap, flexHighlightOverlay.crossAxisGaps);
+        }
+
+        previousLineCrossAxisTrailingEdge = currentLineCrossAxisTrailingEdge;
+
+        currentLineChildrenRects.clear();
+        currentLineCrossAxisLeadingEdge = isCrossAxisDirectionReversed ? 0.0f : std::numeric_limits<float>::max();
+        currentLineCrossAxisTrailingEdge = isCrossAxisDirectionReversed ? std::numeric_limits<float>::max() : 0.0f;
+    }
 
     return { flexHighlightOverlay };
 }

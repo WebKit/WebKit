@@ -87,6 +87,9 @@ public:
     // be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
+    enum class GapType { BetweenLines, BetweenItems };
+    LayoutUnit computeGap(GapType) const;
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
@@ -205,9 +208,6 @@ private:
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
 
-    enum class GapType { BetweenLines, BetweenItems };
-    LayoutUnit computeGap(GapType) const;
-
     // This is used to cache the preferred size for orthogonal flow children so we
     // don't have to relayout to get it
     HashMap<const RenderBox*, LayoutUnit> m_intrinsicSizeAlongMainAxis;
@@ -222,7 +222,7 @@ private:
     // the first layout likely did not use the correct value for percentage
     // sizing of children.
     HashSet<const RenderBox*> m_relaidOutChildren;
-    
+
     mutable OrderIterator m_orderIterator { *this };
     int m_numberOfInFlowChildrenOnFirstLine { -1 };
     

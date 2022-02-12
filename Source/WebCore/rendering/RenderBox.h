@@ -262,6 +262,7 @@ public:
     virtual void setScrollTop(int, const ScrollPositionChangeOptions&);
     void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
 
+    const LayoutBoxExtent& marginBox() const { return m_marginBox; }
     LayoutUnit marginTop() const override { return m_marginBox.top(); }
     LayoutUnit marginBottom() const override { return m_marginBox.bottom(); }
     LayoutUnit marginLeft() const override { return m_marginBox.left(); }
