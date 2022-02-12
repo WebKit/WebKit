@@ -1,3 +1,13 @@
+2022-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebGL2 AllowShared TypedArray should be accepted
+        https://bugs.webkit.org/show_bug.cgi?id=232662
+
+        Reviewed by Dean Jackson.
+
+        * webgl/webgl-allow-shared-typed-array-expected.txt: Added.
+        * webgl/webgl-allow-shared-typed-array.html: Added.
+
 2022-02-12  Tim Nguyen  <ntim@apple.com>
 
         Unreviewed test gardening: imported/w3c/web-platform-tests/url/toascii.window.html
