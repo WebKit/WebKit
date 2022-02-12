@@ -86,23 +86,9 @@ class Tracker(GenericTracker):
                 return self.issue(int(match.group('id')))
         return None
 
-    def credentials(self, required=True, validate=False):
-        def validater(username, access_token):
-            if '@' in username:
-                sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
-                return False
-            response = requests.get(
-                '{}/user'.format(self.api_url),
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                auth=HTTPBasicAuth(username, access_token),
-            )
-            if response.status_code == 200 and response.json().get('login') == username:
-                return True
-            sys.stderr.write('Login to {} for {} failed\n'.format(self.api_url, username))
-            return False
-
+    def credentials(self, required=True):
         hostname = self.url.split('/')[2]
-        return webkitcorepy.credentials(
+        args = dict(
             url=self.api_url,
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
@@ -110,8 +96,16 @@ class Tracker(GenericTracker):
 Please go to https://{host}/settings/tokens/new and generate a new 'Personal access token' via 'Developer settings'
 with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
             key_name='token',
-            validater=validater if validate else None,
         )
+
+        username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
+            webkitcorepy.delete_credentials(url=args['url'], name=args['name'])
+            username, token = webkitcorepy.credentials(**args)
+        if username and '@' in username:
+            raise ValueError("GitHub usernames cannot have '@' in them")
+        return username, token
 
     def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
         headers = {key: value for key, value in headers.items()} if headers else dict()

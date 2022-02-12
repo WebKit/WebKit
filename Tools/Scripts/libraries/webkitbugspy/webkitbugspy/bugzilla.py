@@ -110,19 +110,11 @@ class Tracker(GenericTracker):
                 return self.issue(int(match.group('id')))
         return None
 
-    def credentials(self, required=True, validate=False):
-        def validater(username, password):
-            response = requests.get('{}/rest/user/{}?login={}&password={}'.format(self.url, username, username, password))
-            if response.status_code == 200:
-                return True
-            sys.stderr.write('Login to {} for {} failed\n'.format(self.url, username))
-            return False
-
+    def credentials(self, required=True):
         return webkitcorepy.credentials(
             url=self.url,
             required=required,
             prompt=self.url.split('//')[-1],
-            validater=validater if validate else None,
         )
 
     def _login_arguments(self, required=False, query=None):

@@ -251,7 +251,7 @@ class Setup(Command):
         if code:
             return result
 
-        username, _ = rmt.credentials(required=True, validate=True)
+        username, _ = rmt.credentials(required=True)
         log.info("Adding forked remote as '{}' and 'fork'...".format(username))
         url = repository.url()
 
