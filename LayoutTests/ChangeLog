@@ -1,3 +1,14 @@
+2022-02-11  Alan Bujtas  <zalan@apple.com>
+
+        `contain:content` breaks fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=236470
+        <rdar://88689388>
+
+        Reviewed by Simon Fraser.
+
+        * fullscreen/fullscreen-prevented-by-containment-expected.txt: Added.
+        * fullscreen/fullscreen-prevented-by-containment.html: Added.
+
 2022-02-11  Truitt Savell  <tsavell@apple.com>
 
         Marking expectations for compositing/iframes/border-radius-composited-frame.html as it is failing on EWS
