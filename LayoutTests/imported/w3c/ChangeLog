@@ -1,3 +1,9 @@
+2022-02-12  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed test gardening: imported/w3c/web-platform-tests/url/toascii.window.html
+
+        * web-platform-tests/url/toascii.window-expected.txt:
+
 2022-02-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289498.

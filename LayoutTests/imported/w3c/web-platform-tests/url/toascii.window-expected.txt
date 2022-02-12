@@ -126,15 +126,15 @@ PASS xn--a.ß (using <a>.hostname)
 PASS xn--a.ß (using <area>)
 PASS xn--a.ß (using <area>.host)
 PASS xn--a.ß (using <area>.hostname)
-FAIL xn--tešla (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--tešla (using URL.host) assert_equals: expected "x" but got "xn--teala"
-FAIL xn--tešla (using URL.hostname) assert_equals: expected "x" but got "xn--teala"
-FAIL xn--tešla (using <a>) assert_equals: expected "" but got "xn--teala"
-FAIL xn--tešla (using <a>.host) assert_equals: expected "x" but got "xn--teala"
-FAIL xn--tešla (using <a>.hostname) assert_equals: expected "x" but got "xn--teala"
-FAIL xn--tešla (using <area>) assert_equals: expected "" but got "xn--teala"
-FAIL xn--tešla (using <area>.host) assert_equals: expected "x" but got "xn--teala"
-FAIL xn--tešla (using <area>.hostname) assert_equals: expected "x" but got "xn--teala"
+PASS xn--tešla (using URL)
+PASS xn--tešla (using URL.host)
+PASS xn--tešla (using URL.hostname)
+PASS xn--tešla (using <a>)
+PASS xn--tešla (using <a>.host)
+PASS xn--tešla (using <a>.hostname)
+PASS xn--tešla (using <area>)
+PASS xn--tešla (using <area>.host)
+PASS xn--tešla (using <area>.hostname)
 PASS xn--zca.xn--zca (using URL)
 PASS xn--zca.xn--zca (using URL.host)
 PASS xn--zca.xn--zca (using URL.hostname)

@@ -1,3 +1,10 @@
+2022-02-12  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed test gardening: imported/w3c/web-platform-tests/url/toascii.window.html
+
+        * platform/gtk/imported/w3c/web-platform-tests/url/toascii.window-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
 2022-02-12  Jer Noble  <jer.noble@apple.com>
 
         Add settings to restrict media containers and codecs when in Captive Portal mode
