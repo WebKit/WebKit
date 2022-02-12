@@ -27,6 +27,7 @@ import sys
 from .command import Command
 from .branch import Branch
 
+from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, Terminal
 from webkitscmpy import local, log, remote
 
@@ -207,6 +208,12 @@ class PullRequest(Command):
             existing_pr = None
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
 
+        issue = None
+        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
+            issue = Tracker.from_string(line)
+            if issue:
+                break
+
         if existing_pr:
             log.info("Updating pull-request for '{}'...".format(repository.branch))
             pr = rmt.pull_requests.update(
@@ -233,6 +240,17 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
             print("Created '{}'!".format(pr))
+
+        if issue:
+            log.info('Checking issue assignee...')
+            if issue.assignee != issue.tracker.me():
+                issue.assign(issue.tracker.me())
+                print('Assigning associated issue to {}'.format(issue.tracker.me()))
+            log.info('Checking for pull request link in associated issue...')
+            if pr.url and not any([pr.url in comment.content for comment in issue.comments]):
+                issue.add_comment('Pull request: {}'.format(pr.url))
+                print('Posted pull request link to {}'.format(issue.link))
+
         if pr.url:
             print(pr.url)
 
