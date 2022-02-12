@@ -1,3 +1,13 @@
+2022-02-12  Rob Buis  <rbuis@igalia.com>
+
+        Suppress style invalidation when matching :checked
+        https://bugs.webkit.org/show_bug.cgi?id=235910
+
+        Reviewed by Antti Koivisto.
+
+        * fast/selectors/has-select-option-crash-expected.txt: Added.
+        * fast/selectors/has-select-option-crash.html: Added.
+
 2022-02-11  Alan Bujtas  <zalan@apple.com>
 
         `contain:content` breaks fullscreen

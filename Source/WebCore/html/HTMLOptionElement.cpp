@@ -210,10 +210,10 @@ void HTMLOptionElement::setValue(const String& value)
     setAttributeWithoutSynchronization(valueAttr, value);
 }
 
-bool HTMLOptionElement::selected() const
+bool HTMLOptionElement::selected(AllowStyleInvalidation allowStyleInvalidation) const
 {
     if (RefPtr select = ownerSelectElement())
-        select->updateListItemSelectedStates();
+        select->updateListItemSelectedStates(allowStyleInvalidation);
     return m_isSelected;
 }
 
@@ -228,12 +228,14 @@ void HTMLOptionElement::setSelected(bool selected)
         select->optionSelectionStateChanged(*this, selected);
 }
 
-void HTMLOptionElement::setSelectedState(bool selected)
+void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation allowStyleInvalidation)
 {
     if (m_isSelected == selected)
         return;
 
-    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, selected);
+    std::optional<Style::PseudoClassChangeInvalidation> checkedInvalidation;
+    if (allowStyleInvalidation == AllowStyleInvalidation::Yes)
+        emplace(checkedInvalidation, *this, { { CSSSelector::PseudoClassChecked, selected } });
 
     m_isSelected = selected;
 

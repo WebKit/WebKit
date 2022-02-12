@@ -41,7 +41,6 @@
 #include "HTMLHRElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
-#include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
@@ -365,10 +364,10 @@ Ref<HTMLOptionsCollection> HTMLSelectElement::options()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(*this, SelectOptions);
 }
 
-void HTMLSelectElement::updateListItemSelectedStates()
+void HTMLSelectElement::updateListItemSelectedStates(AllowStyleInvalidation allowStyleInvalidation)
 {
     if (m_shouldRecalcListItems)
-        recalcListItems();
+        recalcListItems(true, allowStyleInvalidation);
 }
 
 CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeScope(const ContainerNode::ChildChange& change, HTMLOptGroupElement* parentOptGroup)
@@ -801,7 +800,7 @@ void HTMLSelectElement::setRecalcListItems()
         cache->childrenChanged(this);
 }
 
-void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
+void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInvalidation allowStyleInvalidation) const
 {
     m_listItems.clear();
 
@@ -816,11 +815,11 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
                 firstOption = &option;
             if (option.selected()) {
                 if (foundSelected)
-                    foundSelected->setSelectedState(false);
+                    foundSelected->setSelectedState(false, allowStyleInvalidation);
                 foundSelected = &option;
             } else if (m_size <= 1 && !foundSelected && !option.isDisabledFormControl()) {
                 foundSelected = &option;
-                foundSelected->setSelectedState(true);
+                foundSelected->setSelectedState(true, allowStyleInvalidation);
             }
         }
     };
@@ -837,7 +836,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
     }
 
     if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())
-        firstOption->setSelectedState(true);
+        firstOption->setSelectedState(true, allowStyleInvalidation);
 }
 
 int HTMLSelectElement::selectedIndex() const

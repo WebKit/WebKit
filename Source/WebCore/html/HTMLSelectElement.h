@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HTMLFormControlElementWithState.h"
+#include "HTMLOptionElement.h"
 #include "TypeAhead.h"
 #include <wtf/CompletionHandler.h>
 
@@ -70,7 +71,7 @@ public:
 
     void setRecalcListItems();
     void invalidateSelectedItems();
-    void updateListItemSelectedStates();
+    void updateListItemSelectedStates(AllowStyleInvalidation = AllowStyleInvalidation::Yes);
 
     WEBCORE_EXPORT const Vector<HTMLElement*>& listItems() const;
 
@@ -147,7 +148,7 @@ private:
 
     void didRecalcStyle(Style::Change) final;
 
-    void recalcListItems(bool updateSelectedStates = true) const;
+    void recalcListItems(bool updateSelectedStates = true, AllowStyleInvalidation = AllowStyleInvalidation::Yes) const;
 
     void deselectItems(HTMLOptionElement* excludeElement = nullptr);
     void typeAheadFind(KeyboardEvent&);
