@@ -1,3 +1,20 @@
+2022-02-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/image-map1.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=236565
+        <rdar://problem/88874467>
+
+        Reviewed by Darin Adler.
+
+        Don't use focus manipulation just to retrieve an accessible element,
+        instead use accessibilityElementById. Updated the outdated code in this
+        test.
+
+        * accessibility/image-map1-expected.txt:
+        * accessibility/image-map1.html:
+        * platform/glib/accessibility/image-map1-expected.txt:
+        * platform/win/accessibility/image-map1-expected.txt:
+
 2022-02-13  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Take writing direction into account when setting up the root geometry
