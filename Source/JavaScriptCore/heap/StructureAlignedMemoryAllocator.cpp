@@ -82,7 +82,7 @@ public:
             m_mappedHeapSize /= 2;
         }
 
-        ASSERT((g_jscConfig.startOfStructureHeap & ~structureIDMask) == g_jscConfig.startOfStructureHeap);
+        RELEASE_ASSERT(g_jscConfig.startOfStructureHeap && ((g_jscConfig.startOfStructureHeap & ~structureIDMask) == g_jscConfig.startOfStructureHeap));
     }
 
     void* tryMallocStructureBlock()

@@ -1,3 +1,15 @@
+2022-02-13  Keith Miller  <keith_miller@apple.com>
+
+        Make StructureMemoryManager alignment assert a RELEASE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=236567
+
+        Reviewed by Saam Barati.
+
+        Also, check the structure base pointer is non-zero.
+
+        * heap/StructureAlignedMemoryAllocator.cpp:
+        (JSC::StructureMemoryManager::StructureMemoryManager):
+
 2022-02-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] REGRESSION(r289611): Debug builds fail linking binaries with ld.lld
