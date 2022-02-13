@@ -536,30 +536,30 @@ Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, std::un
     return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
 }
 
-StyleRuleContainer::StyleRuleContainer(ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+StyleRuleContainer::StyleRuleContainer(FilteredContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
-    , m_query(WTFMove(query))
+    , m_filteredQuery(WTFMove(query))
 {
 }
 
-StyleRuleContainer::StyleRuleContainer(ContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+StyleRuleContainer::StyleRuleContainer(FilteredContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
     : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
-    , m_query(WTFMove(query))
+    , m_filteredQuery(WTFMove(query))
 {
 }
 
 StyleRuleContainer::StyleRuleContainer(const StyleRuleContainer& other)
     : StyleRuleGroup(other)
-    , m_query(other.m_query)
+    , m_filteredQuery(other.m_filteredQuery)
 {
 }
 
-Ref<StyleRuleContainer> StyleRuleContainer::create(ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
+Ref<StyleRuleContainer> StyleRuleContainer::create(FilteredContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
 }
 
-Ref<StyleRuleContainer> StyleRuleContainer::create(ContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+Ref<StyleRuleContainer> StyleRuleContainer::create(FilteredContainerQuery&& query, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
 {
     return adoptRef(*new StyleRuleContainer(WTFMove(query), WTFMove(rules)));
 }

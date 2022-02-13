@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-struct ContainerQuery;
+struct FilteredContainerQuery;
 class Element;
 
 namespace Style {
@@ -37,7 +37,7 @@ class ContainerQueryEvaluator {
 public:
     ContainerQueryEvaluator(const Vector<Ref<const Element>>& containers);
 
-    bool evaluate(const ContainerQuery&) const;
+    bool evaluate(const FilteredContainerQuery&) const;
 
 private:
     const Vector<Ref<const Element>>& m_containers;

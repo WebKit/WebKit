@@ -108,7 +108,7 @@ public:
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
 
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
-    const ContainerQuery* containerQueryFor(const RuleData&) const;
+    const FilteredContainerQuery* containerQueryFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -144,7 +144,7 @@ private:
     CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
 
     struct ContainerQueryAndParent {
-        ContainerQuery query;
+        FilteredContainerQuery query;
         ContainerQueryIdentifier parent;
     };
 
@@ -221,7 +221,7 @@ inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& rul
     return cascadeLayerPriorityForIdentifier(identifier);
 }
 
-inline const ContainerQuery* RuleSet::containerQueryFor(const RuleData& ruleData) const
+inline const FilteredContainerQuery* RuleSet::containerQueryFor(const RuleData& ruleData) const
 {
     if (m_containerQueryIdentifierForRulePosition.size() <= ruleData.position())
         return nullptr;

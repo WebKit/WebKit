@@ -505,7 +505,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
     }
 }
 
-bool ElementRuleCollector::containerQueryMatches(const ContainerQuery& query)
+bool ElementRuleCollector::containerQueryMatches(const FilteredContainerQuery& query)
 {
     if (!m_selectorMatchingState)
         return true;

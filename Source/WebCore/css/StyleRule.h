@@ -23,6 +23,7 @@
 
 #include "CSSSelectorList.h"
 #include "CompiledSelector.h"
+#include "ContainerQuery.h"
 #include "FontPaletteValues.h"
 #include "StyleProperties.h"
 #include "StyleRuleType.h"
@@ -314,25 +315,20 @@ private:
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
 };
 
-struct ContainerQuery {
-    AtomString containerName;
-    Ref<MediaQuerySet> query;
-};
-
 class StyleRuleContainer final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleContainer> create(ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
-    static Ref<StyleRuleContainer> create(ContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    static Ref<StyleRuleContainer> create(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleContainer> create(FilteredContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
 
-    const ContainerQuery& query() const { return m_query; }
+    const FilteredContainerQuery& filteredQuery() const { return m_filteredQuery; }
 
 private:
-    StyleRuleContainer(ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleContainer(ContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    StyleRuleContainer(FilteredContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleContainer(FilteredContainerQuery&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleContainer(const StyleRuleContainer&);
 
-    ContainerQuery m_query;
+    FilteredContainerQuery m_filteredQuery;
 };
 
 // This is only used by the CSS parser.

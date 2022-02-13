@@ -59,25 +59,26 @@ static std::optional<LayoutUnit> computeSize(CSSValue* value, const CSSToLengthC
 
 enum class Comparator { Lesser, Greater, LesserOrEqual, GreaterOrEqual, Equal, True };
 
-bool ContainerQueryEvaluator::evaluate(const ContainerQuery& containerQuery) const
+bool ContainerQueryEvaluator::evaluate(const FilteredContainerQuery& filteredContainerQuery) const
 {
     if (m_containers.isEmpty())
         return false;
 
-    auto rendererForContainerSelector = [&]() -> RenderBox* {
+    auto containerRendererForFilter = [&]() -> RenderBox* {
         for (auto& container : makeReversedRange(m_containers)) {
             auto* renderer = dynamicDowncast<RenderBox>(container->renderer());
             if (!renderer)
                 return nullptr;
-            if (containerQuery.containerName.isEmpty())
+            if (filteredContainerQuery.nameFilter.isEmpty())
                 return renderer;
-            if (renderer->style().containerNames().contains(containerQuery.containerName))
+            // FIXME: Support type filter.
+            if (renderer->style().containerNames().contains(filteredContainerQuery.nameFilter))
                 return renderer;
         }
         return nullptr;
     };
 
-    auto* renderer = rendererForContainerSelector();
+    auto* renderer = containerRendererForFilter();
     if (!renderer)
         return false;
 
@@ -129,7 +130,7 @@ bool ContainerQueryEvaluator::evaluate(const ContainerQuery& containerQuery) con
     bool result = false;
 
     // FIXME: This is very rudimentary.
-    auto& queries = containerQuery.query->queryVector();
+    auto& queries = filteredContainerQuery.query->queryVector();
     for (auto& query : queries) {
         for (auto& expression : query.expressions()) {
             if (expression.mediaFeature() == MediaFeatureNames::minWidth) {
