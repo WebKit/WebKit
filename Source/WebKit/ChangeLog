@@ -1,3 +1,35 @@
+2022-02-12  Gavin Phillips  <gavin.p@apple.com>
+        
+        Update preference location used for CaptivePortalMode.
+        https://bugs.webkit.org/show_bug.cgi?id=236135
+        <rdar://problem/88486544>
+
+        Reviewed by Geoffrey Garen.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/_WKSystemPreferences.h: Added.
+        * UIProcess/API/Cocoa/_WKSystemPreferences.mm: Added.
+        (+[_WKSystemPreferences isCaptivePortalModeEnabled]):
+        (+[_WKSystemPreferences setCaptivePortalModeEnabled:]):
+        (+[_WKSystemPreferences isCaptivePortalModeIgnored:]):
+        (+[_WKSystemPreferences setCaptivePortalModeIgnored:ignore:]):
+        * UIProcess/API/Cocoa/_WKSystemPreferencesInternal.h: Added.
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults findPreferenceChangesAndNotifyForKeys:toValuesForKeys:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::captivePortalModeConfigUpdateCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        (WebKit::isCaptivePortalModeEnabledBySystemIgnoringCaching):
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/mac/DisplayCaptureSessionManager.h:
+        * UIProcess/mac/DisplayCaptureSessionManager.mm:
+        (WebKit::DisplayCaptureSessionManager::promptForGetDisplayMedia):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-02-12  Jer Noble  <jer.noble@apple.com>
 
         Add settings to restrict media containers and codecs when in Captive Portal mode

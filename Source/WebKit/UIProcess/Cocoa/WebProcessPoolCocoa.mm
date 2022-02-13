@@ -52,6 +52,7 @@
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"
+#import "_WKSystemPreferencesInternal.h"
 #import <WebCore/AGXCompilerService.h>
 #import <WebCore/Color.h>
 #import <WebCore/LocalizedDeviceModel.h>
@@ -70,6 +71,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -128,7 +130,7 @@ NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKe
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorPreferencesChangedNotification");
 #endif
-static const char* const WebKitCaptivePortalModeChangedNotification = "WebKitCaptivePortalModeEnabled";
+static const char* const WebKitCaptivePortalModeChangedNotification_Legacy = "WebKitCaptivePortalModeEnabled";
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
@@ -622,6 +624,14 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+void WebProcessPool::captivePortalModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    if (auto pool = extractWebProcessPool(observer))
+        pool->captivePortalModeStateChanged();
+}
+#endif
+
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::startObservingPreferenceChanges()
 {
@@ -735,6 +745,10 @@ void WebProcessPool::registerNotificationObservers()
         sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
     });
 
+#if PLATFORM(IOS_FAMILY)
+    addCFNotificationObserver(captivePortalModeConfigUpdateCallback, (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
+#endif
+
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification);
@@ -778,6 +792,10 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 
     m_powerSourceNotifier = nullptr;
+    
+#if PLATFORM(IOS_FAMILY)
+    removeCFNotificationObserver((__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
+#endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     removeCFNotificationObserver(kAXSReduceMotionChangedNotification);
@@ -930,7 +948,23 @@ static bool isCaptivePortalModeEnabledBySystemIgnoringCaching()
     if (auto& enabledForTesting = isCaptivePortalModeEnabledGloballyForTesting())
         return *enabledForTesting;
 
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithUTF8String:WebKitCaptivePortalModeChangedNotification]];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithUTF8String:WebKitCaptivePortalModeChangedNotification_Legacy]])
+        return true;
+
+    if (![_WKSystemPreferences isCaptivePortalModeEnabled])
+        return false;
+
+#if PLATFORM(IOS_FAMILY)
+    if (processHasContainer() && [_WKSystemPreferences isCaptivePortalModeIgnored:pathForProcessContainer()])
+        return false;
+#endif
+    
+#if PLATFORM(MAC)
+    if (!WebCore::MacApplication::isSafari() && !WebCore::MacApplication::isMiniBrowser())
+        return false;
+#endif
+    
+    return true;
 }
 
 void WebProcessPool::captivePortalModeStateChanged()
@@ -1063,7 +1097,7 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
         webAuthnProcess->send(Messages::WebAuthnProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 #endif
 
-    if (key == WebKitCaptivePortalModeChangedNotification)
+    if (key == WKCaptivePortalModeEnabledKey || key == WebKitCaptivePortalModeChangedNotification_Legacy)
         captivePortalModeStateChanged();
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)

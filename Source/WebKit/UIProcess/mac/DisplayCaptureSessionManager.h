@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "UserMediaPermissionRequestProxy.h"
+#include "WebPageProxy.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>

@@ -460,6 +460,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h
     UIProcess/API/Cocoa/_WKSessionState.h
+    UIProcess/API/Cocoa/_WKSystemPreferences.h
     UIProcess/API/Cocoa/_WKTapHandlingResult.h
     UIProcess/API/Cocoa/_WKTextInputContext.h
     UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h
