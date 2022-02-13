@@ -1,3 +1,13 @@
+2022-02-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Take writing direction into account when setting up the root geometry
+        https://bugs.webkit.org/show_bug.cgi?id=236548
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/fast/text/international/bidi-layout-across-linebreak-expected.txt: Progressions.
+        * platform/mac/fast/text/international/bidi-override-expected.txt:
+
 2022-02-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose the correct role, subrole and role description properties for the <dialog> element.

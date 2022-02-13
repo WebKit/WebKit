@@ -345,9 +345,12 @@ void LineLayout::updateFormattingRootGeometryAndInvalidate()
     auto& flow = this->flow();
 
     auto updateGeometry = [&](auto& root) {
-        root.setContentBoxWidth(flow.contentLogicalWidth());
-        root.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
-        root.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
+        auto isLeftToRightDirection = flow.style().isLeftToRightDirection();
+        auto isHorizontalWritingMode = flow.style().isHorizontalWritingMode();
+
+        root.setContentBoxWidth(isHorizontalWritingMode ? flow.contentWidth() : flow.contentHeight());
+        root.setPadding(logicalPadding(flow, isLeftToRightDirection, isHorizontalWritingMode));
+        root.setBorder(logicalBorder(flow, isLeftToRightDirection, isHorizontalWritingMode));
         root.setHorizontalMargin({ });
         root.setVerticalMargin({ });
     };
