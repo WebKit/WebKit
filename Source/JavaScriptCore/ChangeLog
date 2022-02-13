@@ -1,5 +1,17 @@
 2022-02-13  Keith Miller  <keith_miller@apple.com>
 
+        Add comment on how StructureMemoryManager grows the free list when there are no free blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=236568
+
+        Reviewed by Saam Barati.
+
+        Also, use uint8_t* rather than rely on the fact that `sizeof(MarkedBlock) == 1`.
+
+        * heap/StructureAlignedMemoryAllocator.cpp:
+        (JSC::StructureMemoryManager::tryMallocStructureBlock):
+
+2022-02-13  Keith Miller  <keith_miller@apple.com>
+
         Make StructureMemoryManager alignment assert a RELEASE_ASSERT
         https://bugs.webkit.org/show_bug.cgi?id=236567
 

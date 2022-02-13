@@ -96,10 +96,11 @@ public:
             RELEASE_ASSERT(m_mappedHeapSize <= structureHeapAddressSize);
             if (freeIndex * MarkedBlock::blockSize >= m_mappedHeapSize)
                 return nullptr;
+            // If we can't find a free block then `freeIndex == m_usedBlocks.bitCount()` and this set will grow the bit vector.
             m_usedBlocks.set(freeIndex);
         }
 
-        MarkedBlock* block = reinterpret_cast<MarkedBlock*>(g_jscConfig.startOfStructureHeap) + freeIndex * MarkedBlock::blockSize;
+        auto* block = reinterpret_cast<uint8_t*>(g_jscConfig.startOfStructureHeap) + freeIndex * MarkedBlock::blockSize;
         commitBlock(block);
         return block;
     }
