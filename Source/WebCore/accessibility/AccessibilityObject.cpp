@@ -3612,16 +3612,20 @@ String AccessibilityObject::validationMessage() const
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
     bool useParentData = !m_isIgnoredFromParentData.isNull();
-    
+
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     if ((renderer() && renderer()->style().effectiveInert()) || ignoredFromModalPresence())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
+
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
+
+    // Include <dialog> elements and elements with role="dialog".
+    if (roleValue() == AccessibilityRole::ApplicationDialog)
+        return AccessibilityObjectInclusion::IncludeObject;
+
     return accessibilityPlatformIncludesObject();
 }
     

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<dialog id="dialog">
+    <h3>Just a dialog.</h3>
+    <button id="ok" onclick="document.getElementById('dialog').close();" class="close-button">OK</button>
+    <button onclick="document.getElementById('dialog').close();" class="close-button">Cancel</button>
+</dialog>
+
+<script>
+    description("This test verifies several AX properties of the dialog element.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async () => {
+            // Show the dialog as modal.
+            debug("Modal dialog:");
+            document.getElementById("dialog").showModal();
+            let dialog = null;
+            await waitFor(() => {
+                dialog = accessibilityController.accessibleElementById("dialog");
+                return dialog;
+            });
+            let properties = `${dialog.role} ${dialog.subrole} ${dialog.roleDescription}`;
+            debug(properties);
+
+            // Dismiss the modal and show the dialog as modeless.
+            document.getElementById("dialog").close();
+            debug("Modeless dialog:");
+            document.getElementById("dialog").show();
+            dialog = null;
+            await waitFor(() => {
+                dialog = accessibilityController.accessibleElementById("dialog");
+                return dialog;
+            });
+            properties = `${dialog.role} ${dialog.subrole} ${dialog.roleDescription}`;
+            debug(properties);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

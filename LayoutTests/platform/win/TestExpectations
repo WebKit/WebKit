@@ -4920,6 +4920,7 @@ webkit.org/b/229300 http/tests/security/no-javascript-refresh-spaces.py [ Pass C
 
 accessibility/selected-state-changed-notifications.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
+accessibility/dialog-properties.html [ Skip ]
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 

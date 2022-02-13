@@ -358,6 +358,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Blockquote;
     if (node()->hasTagName(captionTag))
         return AccessibilityRole::Caption;
+    if (node()->hasTagName(dialogTag))
+        return AccessibilityRole::ApplicationDialog;
     if (node()->hasTagName(markTag))
         return AccessibilityRole::Mark;
     if (node()->hasTagName(preTag))
@@ -414,7 +416,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Group;
     if (is<Element>(*node()) && downcast<Element>(*node()).isFocusable())
         return AccessibilityRole::Group;
-    
+
     return AccessibilityRole::Unknown;
 }
 

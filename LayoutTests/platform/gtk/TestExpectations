@@ -1849,6 +1849,8 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+accessibility/dialog-properties.html [ Skip ]
+
 # These tests require platform support.
 media/media-allowed-codecs.html
 media/media-allowed-containers.html

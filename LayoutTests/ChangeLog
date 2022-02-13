@@ -1,3 +1,16 @@
+2022-02-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose the correct role, subrole and role description properties for the <dialog> element.
+        https://bugs.webkit.org/show_bug.cgi?id=236359
+
+        Reviewed by Chris Fleizach.
+
+        Tests that these AX properties have the expected values both when the
+        dialog is shown modal or modeless.
+
+        * accessibility/dialog-properties-expected.txt: Added.
+        * accessibility/dialog-properties.html: Added.
+
 2022-02-12  Tim Nguyen  <ntim@apple.com>
 
         Skip imported/w3c/web-platform-tests/url/toascii.window.html on Catalina/Big Sur
