@@ -245,7 +245,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setBorder(logicalBorder(replacedOrInlineBlock, isLeftToRightDirection, isHorizontalWritingMode));
     replacedBoxGeometry.setPadding(logicalPadding(replacedOrInlineBlock, isLeftToRightDirection, isHorizontalWritingMode));
 
-    auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
+    auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, isHorizontalWritingMode ? HorizontalLine : VerticalLine, PositionOnContainingLine);
     replacedBox.setBaseline(roundToInt(baseline));
 }
 
