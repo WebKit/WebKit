@@ -1,3 +1,11 @@
+2022-02-12  Tim Nguyen  <ntim@apple.com>
+
+        Skip imported/w3c/web-platform-tests/url/toascii.window.html on Catalina/Big Sur
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2022-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WebGL2 AllowShared TypedArray should be accepted

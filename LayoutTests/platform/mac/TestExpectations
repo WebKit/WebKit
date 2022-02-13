@@ -2445,4 +2445,4 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 # rdar://84556831 
 [ Catalina ] media/media-allowed-containers.html [ Skip ]
 
-[ Catalina BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Failure ]
+[ Catalina BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
