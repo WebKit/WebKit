@@ -1,3 +1,20 @@
+2022-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Do not try and read from /dev/null
+        https://bugs.webkit.org/show_bug.cgi?id=236528
+        <rdar://problem/88836868>
+
+        Reviewed by Alexey Proskuryakov.
+
+        While writing to /dev/null is well defined, reading from it is not. Do not
+        read from /dev/null.
+
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket.__init__): Delete _wsin.
+        (PyWebSocket._prepare_config): Ditto.
+        (PyWebSocket._spawn_process): Use executive.PIPE instead of os.devnull.
+        (PyWebSocket._stop_running_server): Delete _wsin.
+
 2022-02-12  Kevin Turner  <kevin_turner@apple.com>
 
         Invoke mouse hover delegate callback on iOS
