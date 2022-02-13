@@ -426,7 +426,12 @@ LayoutUnit LineLayout::firstLineBaseline() const
     }
 
     auto& firstLine = m_inlineContent->lines.first();
-    return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
+    if (rootLayoutBox().style().isHorizontalWritingMode())
+        return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
+
+    // See LineLayout::lastLineBaseline below for more info.
+    auto lineLogicalTop = flow().logicalHeight() - firstLine.lineBoxRight();
+    return LayoutUnit { lineLogicalTop + firstLine.baseline() };
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -437,7 +442,15 @@ LayoutUnit LineLayout::lastLineBaseline() const
     }
 
     auto& lastLine = m_inlineContent->lines.last();
-    return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
+    if (rootLayoutBox().style().isHorizontalWritingMode())
+        return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
+
+    // FIXME: We should set the computed height on the root's box geometry (in RenderBlockFlow) so that
+    // we could call m_layoutState.geometryForRootBox().borderBoxHeight() instead.
+
+    // Line is always visual coordinates while logicalHeight is not (i.e. this translate to "box visual width" - "line visual right")
+    auto lineLogicalTop = flow().logicalHeight() - lastLine.lineBoxRight();
+    return LayoutUnit { lineLogicalTop + lastLine.baseline() };
 }
 
 void LineLayout::adjustForPagination()
