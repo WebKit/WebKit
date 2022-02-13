@@ -80,7 +80,7 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(ATSPI)
+#if USE(ATSPI) || USE(ATK)
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
