@@ -582,7 +582,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto wordSpacingMargin = lineRun.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
 
-                visualRect.moveHorizontally(wordSpacingMargin);
+                isHorizontalWritingMode ? visualRect.moveHorizontally(wordSpacingMargin) : visualRect.moveVertically(wordSpacingMargin);
                 appendTextDisplayBox(lineRun, visualRect, boxes);
                 contentRightInInlineDirectionVisualOrder += logicalRect.width() + wordSpacingMargin;
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
@@ -609,7 +609,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
 
                 auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-                visualRect.moveHorizontally(boxMarginLeft);
+                isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
                 contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
