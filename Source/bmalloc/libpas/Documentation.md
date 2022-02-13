@@ -35,7 +35,7 @@ where WebKit was as of r289146. Libpas is a fast and memory-efficient memory all
 supporting many heaps at once, engineered with the hopes that someday it'll be used for comprehensive isoheaping
 of all malloc/new callsites in C/C++ programs.
 
-Since WebKit r213753, we've been steadinly enabling libpas as a replacement for WebKit's bmalloc and
+Since WebKit r213753, we've been steadily enabling libpas as a replacement for WebKit's bmalloc and
 MetaAllocator. This has so far added up to a ~2% Speedometer2 speed-up and a ~8% memory improvement (on multiple
 memory benchmarks). Half of the speed-up comes from replacing the MetaAllocator, which was JavaScriptCore's old
 way of managing executable memory. Now, JSC uses libpas's jit_heap to manage executable memory. The other half
@@ -71,7 +71,7 @@ Libpas tries to be:
   should funnel into the same free function. One kind of exception to this requirement is stuff like
   ExecutableAllocator, which needs a malloc, but is fine with not calling a common free function.
 - Cages. WebKit uses virtual memory reservations called *cages*, in which case WebKit allocates the virtual
-  memory and the malloc has to associate that memory with some heap. Libpas supports multiple kines of cages.
+  memory and the malloc has to associate that memory with some heap. Libpas supports multiple kinds of cages.
 
 # Libpas Style
 
@@ -150,7 +150,7 @@ Libpas is organized into roughly eleven areas:
 6.  The scavenger. Libpas performs a bunch of periodic bookkeeping tasks in a scavenger thread. This includes,
     but is not limited to, returning memory to the OS.
 7.  Megapages and page header tables. Libpas has multiple clever tricks for rapidly identifying which kind of
-    heap an object belogs to. This includes an arithmetic hack called megapages and some lock-free hashtables.
+    heap an object belongs to. This includes an arithmetic hack called megapages and some lock-free hashtables.
 8.  The enumerator. Libpas supports malloc heap enumeration APIs.
 9.  The basic configuration template, used to create the `bmalloc_heap` API that is used as a replacement for
     all of bmalloc's functionality.
@@ -170,7 +170,7 @@ heap config literal expression. So, a call like `pas_get_allocation_size(ptr, BM
 you an optimized fast path for getting the allocation size of objects in bmalloc. This works because such fast
 paths are `always_inline`.
 
-Heap confings are passed by-pointer to functions that are not meant to be specialized. To support this, all
+Heap configs are passed by-pointer to functions that are not meant to be specialized. To support this, all
 heap configs also have a global variable like `bmalloc_heap_config`, so we can do things like
 `pas_large_heap_try_deallocate(base, &bmalloc_heap_config)`.
 
@@ -504,7 +504,7 @@ Both of them rely on the same basic state, though they use it a bit differently:
   heap). This vector may be appended to, but existing entries are immutable. So, resizing just avoids deleting
   the smaller-sized vectors so that they may still be accessed in case of a race.
 - A lock-free-access segmented vector of bitvectors. There are two bitvectors, and we interleave their 32-bit
-  words of bits. The *eligibile* bitvector tells us which views may be allocated out of. This means different
+  words of bits. The *eligible* bitvector tells us which views may be allocated out of. This means different
   things for size directories than shared page directories. For size directories, these are the views that have
   some free memory and nobody is currently doing anything with them. For shared page directories, these are the
   shared pages that haven't yet been fully claimed by partial views. The *empty* bitvector tells us which pages
@@ -927,7 +927,7 @@ Each segregated directory is a page sharing participant. They register themselve
 could become empty. Segregated directories use the empty bits and the last-empty-plus-one index to satisfy the
 page sharing pool participant API:
 
-- A directory particpant says it's eligible when last-empty-plus-one is nonzero.
+- A directory participant says it's eligible when last-empty-plus-one is nonzero.
 - A directory participant reports the use epoch of the last empty page before where last-empty-plus-one points.
   Note that in extreme cases this means having to search the bitvector for a set empty bit, since the
   last-empty-plus-one could lag in being set to a lower value in case of races.
@@ -953,7 +953,7 @@ Once an empty page is found the basic idea is:
 Sadly, it's a bit more complicated than that:
 
 - Directories don't track pages; they track views. Shared page directories have views of pages whose actual
-  eligibility is covered by the eligibile bits in the segregated size directories that hold the shared page's
+  eligibility is covered by the eligible bits in the segregated size directories that hold the shared page's
   partial views. So, insofar as taking eligibility is part of the algorithm, shared page directories have to
   take eligibility for each partial view associated with the shared view.
 - Shared and exclusive views could both be in a state where they don't even have a page. So, before looking at
@@ -1240,7 +1240,7 @@ page header tables even for the small bitfit page config.
 
 All of the discussion in the previous sections is about the innards of libpas. But ultimately, clients want to
 just call malloc-like and free-like functions to manage memory. Libpas provides fast path templates that actual
-heap implementations reuse to providec malloc/free functions. The fast paths are:
+heap implementations reuse to provide malloc/free functions. The fast paths are:
 
 - `pas_try_allocate.h`, which is the single object allocation fast path for isoheaps. This function just takes a
   heap and no size; it allocates one object of the size and alignment that the heap's type wants.
@@ -1258,7 +1258,7 @@ heap implementations reuse to providec malloc/free functions. The fast paths are
 One thing to remember when dealing with the fast paths is that they are engineered so that malloc/free functions
 do not have a stack frame, no callee saves, and don't need to save the LR/FP to the stack. To facilitate this,
 we have the fast path call an inline-only fast path, and if that fails, we call a "casual case". The inline-only
-fast path makes no out-of-line function calls, since if it did, we'd need a stack ferame. The only slow call (to
+fast path makes no out-of-line function calls, since if it did, we'd need a stack frame. The only slow call (to
 the casual case) is a tail call. For example:
 
     static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_inline(size_t size)

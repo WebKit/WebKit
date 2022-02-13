@@ -1,3 +1,14 @@
+2022-02-12  Brandon Stewart  <brandonstewart@apple.com>
+
+        Fix typos in libpas docs
+        https://bugs.webkit.org/show_bug.cgi?id=236550
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix several typos in libpas documentation.
+
+        * libpas/Documentation.md:
+
 2022-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] jit_heap should support the segregated heap
