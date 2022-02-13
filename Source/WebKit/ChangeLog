@@ -1,3 +1,17 @@
+2022-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal macOS build
+
+        Add some missing `WebCore` namespaces (which are presumably now necessary due to changes in unified source
+        groupings).
+
+        * UIProcess/mac/DisplayCaptureSessionManager.mm:
+        (WebKit::alertForWindowSelection):
+        (WebKit::DisplayCaptureSessionManager::deviceSelectedForTesting):
+        (WebKit::DisplayCaptureSessionManager::showWindowPicker):
+        (WebKit::DisplayCaptureSessionManager::showScreenPicker):
+        (WebKit::DisplayCaptureSessionManager::isAvailable):
+
 2022-02-12  Gavin Phillips  <gavin.p@apple.com>
         
         Update preference location used for CaptivePortalMode.
