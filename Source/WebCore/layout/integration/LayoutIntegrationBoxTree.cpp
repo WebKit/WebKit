@@ -75,10 +75,8 @@ static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlockFlow&
 
 BoxTree::BoxTree(RenderBlockFlow& flow)
     : m_flow(flow)
-    , m_root(Layout::Box::ElementAttributes { }, rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
+    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
 {
-    m_root.setIsIntegrationBlockContainer();
-
     if (flow.isAnonymous())
         m_root.setIsAnonymous();
 
@@ -119,7 +117,7 @@ void BoxTree::buildTree()
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderBlock>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderInline>(childRenderer)) {
             // This looks like continuation renderer.

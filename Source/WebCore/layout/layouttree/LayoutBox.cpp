@@ -48,7 +48,6 @@ Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::
     , m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_hasRareData(false)
     , m_isAnonymous(false)
-    , m_isIntegrationBlockContainer(false)
 {
     if (firstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
