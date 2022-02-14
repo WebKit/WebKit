@@ -38,6 +38,7 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
+struct SecurityOriginData;
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 class RegistrableDomain;
@@ -93,6 +94,7 @@ public:
     WEBCORE_EXPORT bool shouldIgnoreAriaForFastPathContentObservationCheck() const;
     WEBCORE_EXPORT bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const;
     WEBCORE_EXPORT bool shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const;
+    WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
     

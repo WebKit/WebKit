@@ -1420,6 +1420,11 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #endif
 }
 
+bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
+{
+    return protocol == "msteams" && requesterOrigin.host == "teams.live.com";
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 bool Quirks::needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const
