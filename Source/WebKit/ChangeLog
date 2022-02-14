@@ -1,5 +1,21 @@
 2022-02-14  J Pascoe  <j_pascoe@apple.com>
 
+        [WebAuthn] Access group not set in add query for importLocalAuthenticatorCredential
+        https://bugs.webkit.org/show_bug.cgi?id=236469
+        rdar://problem/88783447
+
+        Reviewed by Brent Fulgham.
+
+        In Bug 236311 we added support setting accessGroup, but did not properly set it
+        on the addQuery. This patch fixes that.
+
+        Updated API test to use non-standard accessGroup.        
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:credential:error:]):
+
+2022-02-14  J Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] Modify _WKWebAuthenticationAssertionResponse according to internal needs
         https://bugs.webkit.org/show_bug.cgi?id=236369
         rdar://88585811

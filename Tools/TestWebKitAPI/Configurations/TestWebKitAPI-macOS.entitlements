@@ -4,6 +4,7 @@
 <dict>
 	<key>keychain-access-groups</key>
 	<array>
+		<string>com.apple.TestWebKitAPIAlternate</string>
 		<string>com.apple.TestWebKitAPI</string>
 	</array>
 	<key>com.apple.private.webkit.webpush</key>

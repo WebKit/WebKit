@@ -1,3 +1,19 @@
+2022-02-14  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Access group not set in add query for importLocalAuthenticatorCredential
+        https://bugs.webkit.org/show_bug.cgi?id=236469
+        rdar://problem/88783447
+
+        Reviewed by Brent Fulgham.
+
+        Updated API test to use non-standard access group.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-iOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2022-02-14  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Rebase PRs on tip of branch (Follow-up fix)

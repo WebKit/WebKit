@@ -510,7 +510,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     updateQueryIfNecessary(addQuery.get());
 
     if (accessGroup != nil)
-        [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
+        [addQuery setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
 
     status = SecItemAdd(bridge_cast(addQuery.get()), NULL);
     if (status) {
