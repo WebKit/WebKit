@@ -1,3 +1,14 @@
+2022-02-07  Jon Lee  <jonlee@apple.com>
+
+        Enable accelerated drawing in the iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=231828
+        rdar://problem/84315491
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-02-14  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Access group not set in add query for importLocalAuthenticatorCredential

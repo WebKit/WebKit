@@ -1,3 +1,13 @@
+2022-02-07  Jon Lee  <jonlee@apple.com>
+
+        Enable accelerated drawing in the iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=231828
+        rdar://problem/84315491
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios/compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt:
+
 2022-02-14  Truitt Savell  <tsavell@apple.com>
 
         Mark imported/w3c/web-platform-tests/xhr/send-timeout-events.htm as failing on iOS aftet the changes in r289540
