@@ -1448,9 +1448,6 @@ webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
-# Interferes with the rAF tests that are enabled
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
-
 # Failing after r121121 on both GTK and EFL
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 

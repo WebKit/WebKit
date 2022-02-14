@@ -1,3 +1,21 @@
+2022-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Delete fast/animation/request-animation-frame-disabled.html after RequestAnimationFrameEnabled setting is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=236569
+
+        Reviewed by Ryosuke Niwa.
+
+        r288797 (Bug 235866) deleted RequestAnimationFrameEnabled setting.
+        We no longer need fast/animation/request-animation-frame-disabled.html
+        which tests disabling the setting.
+
+        * fast/animation/request-animation-frame-disabled-expected.txt: Removed.
+        * fast/animation/request-animation-frame-disabled.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-02-13  Matt Woodrow  <mattwoodrow@apple.com>
 
         Add support for parsing 'subgrid' in grid-template-columns/row

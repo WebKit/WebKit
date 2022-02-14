@@ -2696,9 +2696,6 @@ webkit.org/b/44199 perf/ [ Skip ]
 # Fails because MutationObservers are not notified at end-of-task
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Skip ]
 
-# Interferes with the other requestAnimationFrame tests
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
-
 # Causes crashes in the next test
 webkit.org/b/87416 fast/dom/Window/Location/set-location-after-close.html [ Skip ]
 
