@@ -867,7 +867,7 @@ pas_segregated_heap_ensure_allocator_index(
     PAS_ASSERT(!pas_heap_config_is_utility(config));
     
     if (verbose)
-        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", pthread_self(), size);
+        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", (void*)pthread_self(), size);
     index = pas_segregated_heap_index_for_size(size, *config);
     if (verbose)
         pas_log("index = %zu\n", index);

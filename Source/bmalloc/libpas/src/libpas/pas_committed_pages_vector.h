@@ -54,10 +54,14 @@ static inline bool pas_committed_pages_vector_is_committed(pas_committed_pages_v
                                                            size_t page_index)
 {
     PAS_ASSERT(page_index < vector->size);
+#if PAS_OS(LINUX)
+    return vector->raw_data[page_index];
+#else
     return vector->raw_data[page_index] & (MINCORE_REFERENCED |
                                            MINCORE_REFERENCED_OTHER |
                                            MINCORE_MODIFIED_OTHER |
                                            MINCORE_MODIFIED);
+#endif
 }
 
 PAS_API size_t pas_committed_pages_vector_count_committed(pas_committed_pages_vector* vector);

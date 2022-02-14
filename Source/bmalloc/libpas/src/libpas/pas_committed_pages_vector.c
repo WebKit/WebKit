@@ -55,7 +55,11 @@ void pas_committed_pages_vector_construct(pas_committed_pages_vector* vector,
         num_pages, "pas_committed_pages_vector/raw_data", pas_object_allocation, allocation_config->arg);
     vector->size = num_pages;
 
+#if PAS_OS(LINUX)
+    PAS_SYSCALL(mincore(object, size, (unsigned char*)vector->raw_data));
+#else
     PAS_SYSCALL(mincore(object, size, vector->raw_data));
+#endif
 }
 
 void pas_committed_pages_vector_destruct(pas_committed_pages_vector* vector,

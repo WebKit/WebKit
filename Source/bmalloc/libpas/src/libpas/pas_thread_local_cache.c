@@ -984,6 +984,8 @@ static void stop_allocator(pas_thread_local_cache* cache,
     if (!pas_local_allocator_scavenger_data_stop(
             scavenger_data, pas_lock_lock_mode_try_lock, pas_lock_is_held))
         *result = true;
+#else
+    UNUSED_PARAM(did_suspend);
 #endif
 }
 

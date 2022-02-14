@@ -82,7 +82,7 @@ pas_try_allocate_primitive_impl_casual_case(pas_primitive_heap_ref* heap_ref,
        the more interesting part, since */
 
     if (verbose)
-        pas_log("%p: getting allocator index.\n", pthread_self());
+        pas_log("%p: getting allocator index.\n", (void*)pthread_self());
     
     if (index == heap_ref->cached_index) {
         if (verbose)
@@ -116,7 +116,7 @@ pas_try_allocate_primitive_impl_casual_case(pas_primitive_heap_ref* heap_ref,
         allocator_index, config.config_ptr);
 
     if (verbose && !allocator.did_succeed)
-        pas_log("%p: Failed to quickly get the allocator, allocator_index = %u.\n", pthread_self(), allocator_index);
+        pas_log("%p: Failed to quickly get the allocator, allocator_index = %u.\n", (void*)pthread_self(), allocator_index);
     
     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
        alignment being the constant 1. */

@@ -118,6 +118,7 @@ static inline bool pas_local_view_cache_prepare_to_pop(pas_local_view_cache* cac
     case pas_local_view_cache_not_full_state:
         return false;
     }
+    return false;
 }
 
 static inline bool pas_local_view_cache_prepare_to_push(pas_local_view_cache* cache)

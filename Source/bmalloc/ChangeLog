@@ -1,3 +1,21 @@
+2022-02-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix Linux build of libpas
+        https://bugs.webkit.org/show_bug.cgi?id=235347
+
+        * libpas/src/libpas/pas_committed_pages_vector.c:
+        (pas_committed_pages_vector_construct):
+        * libpas/src/libpas/pas_committed_pages_vector.h:
+        (pas_committed_pages_vector_is_committed):
+        * libpas/src/libpas/pas_local_view_cache.h:
+        (pas_local_view_cache_prepare_to_pop):
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (pas_segregated_heap_ensure_allocator_index):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (stop_allocator):
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        (pas_try_allocate_primitive_impl_casual_case):
+
 2022-02-12  Brandon Stewart  <brandonstewart@apple.com>
 
         Fix typos in libpas docs
