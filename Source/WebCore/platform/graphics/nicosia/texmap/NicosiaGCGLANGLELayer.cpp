@@ -53,6 +53,9 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     auto size = m_context.getInternalFramebufferSize();
 
     if (m_context.m_compositorTextureBacking) {
+        if (m_context.m_compositorTextureBacking->isReleased())
+            return;
+
         auto format = m_context.m_compositorTextureBacking->format();
         auto stride = m_context.m_compositorTextureBacking->stride();
         auto fd = m_context.m_compositorTextureBacking->fd();

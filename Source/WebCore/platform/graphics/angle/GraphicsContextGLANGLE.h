@@ -469,6 +469,8 @@ protected:
 
         uint32_t format() const;
         uint32_t stride() const;
+
+        bool isReleased();
     private:
         void releaseResources();
 

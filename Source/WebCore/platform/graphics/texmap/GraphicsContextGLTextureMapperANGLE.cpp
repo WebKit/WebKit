@@ -164,6 +164,11 @@ void GraphicsContextGLANGLE::EGLImageBacking::releaseResources()
     }
 }
 
+bool GraphicsContextGLANGLE::EGLImageBacking::isReleased()
+{
+    return !m_BO;
+}
+
 bool GraphicsContextGLANGLE::EGLImageBacking::reset(int width, int height, bool hasAlpha)
 {
     releaseResources();
