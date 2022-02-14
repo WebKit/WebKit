@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.css-grid-section .node-display-name {
-    margin-inline: 5px 4px;
-}
+WI.CSSFlexNodeOverlayListSection = class CSSFlexNodeOverlayListSection extends WI.NodeOverlayListSection
+{
+    // Protected
 
-.css-grid-section .node-overlay-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.css-grid-section .node-overlay-list-item-container {
-    display: flex;
-    align-items: center;
-}
-
-.css-grid-section .node-overlay-list-item-container label {
-    flex-shrink: 1;
-    min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.css-grid-section .node-overlay-list-item-container :is(.go-to-arrow, .inline-swatch) {
-    flex-shrink: 0;
-}
-
-.css-grid-section .node-overlay-list-item-container:not(:hover) .go-to-arrow {
-    opacity: 0;
-}
-
-.css-grid-section :is(.heading, .title) {
-    font-size: 11px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: var(--text-color)
-}
-
-.css-grid-section .toggle-all {
-    padding-inline-start: 4px;
-}
-
-.css-grid-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"] {
-    margin-inline-end: 0;
-}
-
-.css-grid-section .setting-editor > input[type="checkbox"] {
-    font-size: revert;
-}
+    get sectionLabel()
+    {
+        return WI.UIString("Flexbox Overlays", "Page Overlays for Flex containers @ Layout Sidebar Section Header", "Heading for list of flex container nodes");
+    }
+};

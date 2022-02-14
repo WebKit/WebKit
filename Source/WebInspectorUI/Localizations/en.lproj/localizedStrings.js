@@ -674,6 +674,8 @@ localizedStrings["Filter Full URL"] = "Filter Full URL";
 localizedStrings["Filter:"] = "Filter:";
 localizedStrings["Find Next (%s)"] = "Find Next (%s)";
 localizedStrings["Find Previous (%s)"] = "Find Previous (%s)";
+/* Flexbox layout section name */
+localizedStrings["Flexbox @ Elements details sidebar"] = "Flexbox";
 localizedStrings["Flows"] = "Flows";
 localizedStrings["Focus on Subtree"] = "Focus on Subtree";
 localizedStrings["Focused"] = "Focused";
@@ -968,8 +970,10 @@ localizedStrings["No Associated Data"] = "No Associated Data";
 localizedStrings["No Attributes"] = "No Attributes";
 localizedStrings["No Box Model Information"] = "No Box Model Information";
 localizedStrings["No CSS Changes"] = "No CSS Changes";
-/* Message shown when there are no CSS Grid contexts on the inspected page. */
-localizedStrings["No CSS Grid Contexts @ Layout Details Sidebar Panel"] = "No CSS Grid Contexts";
+/* Message shown when there are no CSS Flex containers on the inspected page. */
+localizedStrings["No CSS Flex Containers @ Layout Details Sidebar Panel"] = "No CSS Flex Containers";
+/* Message shown when there are no CSS Grid containers on the inspected page. */
+localizedStrings["No CSS Grid Containers @ Layout Details Sidebar Panel"] = "No CSS Grid Containers";
 localizedStrings["No Canvas Contexts"] = "No Canvas Contexts";
 localizedStrings["No Canvas Selected"] = "No Canvas Selected";
 localizedStrings["No Chart Available"] = "No Chart Available";
@@ -1075,6 +1079,8 @@ localizedStrings["Page Issue"] = "Page Issue";
 localizedStrings["Page Overlay Options @ Layout Panel Section Header"] = "Page Overlay Options";
 /* Heading for list of grid nodes */
 localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
+/* Heading for list of flex container nodes */
+localizedStrings["Page Overlays for Flex containers @ Layout Sidebar Section Header"] = "Flexbox Overlays";
 localizedStrings["Page navigated at %s"] = "Page navigated at %s";
 localizedStrings["Page reloaded at %s"] = "Page reloaded at %s";
 /* Paint (render) phase timeline records */

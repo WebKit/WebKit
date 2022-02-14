@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: <https://webkit.org/b/152269> convert `WI.CSSGridSection` to be a subclass of `WI.DetailsSectionRow`
-
-WI.CSSGridSection = class CSSGridSection extends WI.View
+WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 {
     constructor()
     {
         super();
 
-        this.element.classList.add("css-grid-section");
+        this.element.classList.add("node-overlay-list-section");
 
-        this._gridNodeSet = new Set;
+        this._nodeSet = new Set;
         this._checkboxElementByNodeMap = new WeakMap;
         this._toggleAllCheckboxElement = null;
         this._suppressUpdateToggleAllCheckbox = false;
@@ -41,26 +39,31 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
     // Public
 
-    set gridNodeSet(value)
+    set nodeSet(value)
     {
-        this._gridNodeSet = value;
+        this._nodeSet = value;
         this.needsLayout();
     }
 
     // Protected
 
+    get sectionLabel()
+    {
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
     attached()
     {
         super.attached();
 
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayStateChanged, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayStateChanged, this);
+        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleOverlayStateChanged, this);
+        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleOverlayStateChanged, this);
     }
 
     detached()
     {
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayStateChanged, this);
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayStateChanged, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleOverlayStateChanged, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleOverlayStateChanged, this);
 
         super.detached();
     }
@@ -68,15 +71,6 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
     initialLayout()
     {
         super.initialLayout();
-
-        let settingsGroup = new WI.SettingsGroup(WI.UIString("Page Overlay Options", "Page Overlay Options @ Layout Panel Section Header", "Heading for list of grid overlay options"));
-        this.element.append(settingsGroup.element);
-
-        settingsGroup.addSetting(WI.settings.gridOverlayShowTrackSizes, WI.UIString("Track Sizes", "Track sizes @ Layout Panel Overlay Options", "Label for option to toggle the track sizes setting for CSS grid overlays"));
-        settingsGroup.addSetting(WI.settings.gridOverlayShowLineNumbers, WI.UIString("Line Numbers", "Line numbers @ Layout Panel Overlay Options", "Label for option to toggle the line numbers setting for CSS grid overlays"));
-        settingsGroup.addSetting(WI.settings.gridOverlayShowLineNames, WI.UIString("Line Names", "Line names @ Layout Panel Overlay Options", "Label for option to toggle the line names setting for CSS grid overlays"));
-        settingsGroup.addSetting(WI.settings.gridOverlayShowAreaNames, WI.UIString("Area Names", "Area names @ Layout Panel Overlay Options", "Label for option to toggle the area names setting for CSS grid overlays"));
-        settingsGroup.addSetting(WI.settings.gridOverlayShowExtendedGridLines, WI.UIString("Extended Grid Lines", "Show extended lines @ Layout Panel Overlay Options", "Label for option to toggle the extended lines setting for CSS grid overlays"));
 
         let listHeading = this.element.appendChild(document.createElement("h2"));
         listHeading.classList.add("heading");
@@ -87,24 +81,12 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         this._toggleAllCheckboxElement.addEventListener("change", this._handleToggleAllCheckboxChanged.bind(this));
 
         let labelInner = label.createChild("span", "toggle-all");
-        labelInner.textContent = WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes");
+        labelInner.textContent = this.sectionLabel;
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-overlay-list");
     }
 
-    _handleToggleAllCheckboxChanged(event)
-    {
-        let isChecked = event.target.checked;
-        this._suppressUpdateToggleAllCheckbox = true;
-        for (let domNode of this._gridNodeSet) {
-            if (isChecked)
-                WI.overlayManager.showOverlay(domNode, {initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel});
-            else
-                WI.overlayManager.hideOverlay(domNode);
-        }
-        this._suppressUpdateToggleAllCheckbox = false;
-    }
 
     layout()
     {
@@ -112,47 +94,50 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         this._listElement.removeChildren();
 
-        for (let domNode of this._gridNodeSet) {
+        for (let domNode of this._nodeSet) {
             let itemElement = this._listElement.appendChild(document.createElement("li"));
             let itemContainerElement = itemElement.appendChild(document.createElement("span"));
             itemContainerElement.classList.add("node-overlay-list-item-container");
 
             let labelElement = itemContainerElement.appendChild(document.createElement("label"));
-            let checkboxElement = labelElement.appendChild(document.createElement("input"));
-            checkboxElement.type = "checkbox";
-            checkboxElement.checked = WI.overlayManager.hasVisibleOverlay(domNode);
-
-            const nodeDisplayName = labelElement.appendChild(document.createElement("span"));
+            let nodeDisplayName = labelElement.appendChild(document.createElement("span"));
             nodeDisplayName.classList.add("node-display-name");
             nodeDisplayName.textContent = domNode.displayName;
 
+            let checkboxElement = labelElement.appendChild(document.createElement("input"));
+            labelElement.insertBefore(checkboxElement, nodeDisplayName);
+            checkboxElement.type = "checkbox";
+            checkboxElement.checked = WI.overlayManager.hasVisibleOverlay(domNode);
+
             this._checkboxElementByNodeMap.set(domNode, checkboxElement);
+
+            let initiator;
+            if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+                initiator = WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel;
 
             checkboxElement.addEventListener("change", (event) => {
                 if (checkboxElement.checked)
-                    WI.overlayManager.showOverlay(domNode, {color: swatch.value, initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel});
+                    WI.overlayManager.showOverlay(domNode, {color: swatch?.value, initiator});
                 else
                     WI.overlayManager.hideOverlay(domNode);
             });
 
-            let gridColor = WI.overlayManager.getColorForNode(domNode);
-            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, gridColor);
+            let color = WI.overlayManager.getColorForNode(domNode);
+            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color);
             swatch.shiftClickColorEnabled = false;
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
-                if (checkboxElement.checked)
-                    // While changing the overlay color, WI.OverlayManager.Event.GridOverlayShown is dispatched with high frequency.
-                    // An initiator is not provided so as not to skew usage count of overlay options when logging diagnostics in WI.GridOverlayDiagnosticEventRecorder.
+                if (checkboxElement?.checked)
                     WI.overlayManager.showOverlay(domNode, {color: event.data.value});
             }, swatch);
 
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, (event) => {
-                if (event.target.value === gridColor)
+                if (event.target.value === color)
                     return;
 
-                gridColor = event.target.value;
-                WI.overlayManager.setColorForNode(domNode, gridColor);
+                color = event.target.value;
+                WI.overlayManager.setColorForNode(domNode, color);
             }, swatch);
 
             let buttonElement = itemContainerElement.appendChild(WI.createGoToArrowButton());
@@ -165,17 +150,29 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
     // Private
 
-    _handleGridOverlayStateChanged(event)
+    _handleOverlayStateChanged(event)
     {
-        if (event.data.domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
-            return;
-
         let checkboxElement = this._checkboxElementByNodeMap.get(event.data.domNode);
         if (!checkboxElement)
             return;
 
         checkboxElement.checked = event.type === WI.OverlayManager.Event.OverlayShown;
         this._updateToggleAllCheckbox();
+    }
+
+    _handleToggleAllCheckboxChanged(event)
+    {
+        let isChecked = event.target.checked;
+        this._suppressUpdateToggleAllCheckbox = true;
+
+        for (let domNode of this._nodeSet) {
+            if (isChecked)
+                WI.overlayManager.showOverlay(domNode);
+            else
+                WI.overlayManager.hideOverlay(domNode);
+        }
+
+        this._suppressUpdateToggleAllCheckbox = false;
     }
 
     _updateToggleAllCheckbox()
@@ -185,7 +182,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         let hasVisible = false;
         let hasHidden = false;
-        for (let domNode of this._gridNodeSet) {
+        for (let domNode of this._nodeSet) {
             let isVisible = WI.overlayManager.hasVisibleOverlay(domNode);
             if (isVisible)
                 hasVisible = true;

@@ -1,3 +1,85 @@
+2022-02-14  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: [Flexbox] List flex containers in Layout sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=235647
+        <rdar://87886241>
+
+        Reviewed by Patrick Angle.
+
+        The representation in the Layout details sidebar of the list of flex containers on the page is very similar to the one for grid containers:
+        a list of nodes identified by selector, with adjacent checkboxes that synchronize state with the visibility of a page overlay, interactive
+        color swatches to decorate the corresponding overlay, and a button to jump to the node in the DOM Tree view.
+
+        Therefore, it makes sense to generalize the code for CSS Grid and reuse it for Flexbox.
+
+        This patch extracts a generic `WI.NodeOverlayListSection` from `WI.CSSGridNodeOverlayListSection`.
+        This is subclassed by `WI.CSSGridNodeOverlayListSection` and `WI.CSSFlexboxSection`.
+        The two rely on the abstract implementations to show/hide overlays, get/set overlay colors, interrogate overlay visibility, and listen to generic overlay show events.
+
+        Which particular type of overlay is the target of each panel is determined in `WI.OverlayManager`
+        by the value of `WI.DomNode.layoutContextType`, either "flex" or "grid". A node cannot have more than one layout context type.
+
+        Where the subclasses differ:
+        - each section has its own label (obviously).
+        - the layout for `WI.CSSGridNodeOverlayListSection` includes a section with settings for the CSS Grid overlay.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        We've received feedback that the latter is more common in web developers' vocabulary when
+        refering to CSS grids. Adopted the same for the flexbox section empty message.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/CSSFlexNodeOverlayListSection.js: Added.
+        (WI.CSSFlexNodeOverlayListSection.prototype.get sectionLabel):
+        (WI.CSSFlexNodeOverlayListSection):
+
+        * UserInterface/Views/CSSGridNodeOverlayListSection.js: Renamed from Source/WebInspectorUI/UserInterface/Views/CSSGridSection.js.
+        (WI.CSSGridNodeOverlayListSection.prototype.get sectionLabel):
+        (WI.CSSGridNodeOverlayListSection.prototype.initialLayout):
+        (WI.CSSGridNodeOverlayListSection):
+        The layout of `WI.CSSFlexNodeOverlayListSection` includes a set of options to configure the CSS Grid overlay.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css:
+        (.details-section:is(.layout-css-flexbox, .layout-css-grid):not(.collapsed) > .content,):
+        (.details-section.layout-css-grid > .content > .group > .row > .css-grid-section): Deleted.
+        (.details-section.layout-css-grid:not(.collapsed) > .content,): Deleted.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.attached):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._handleLayoutContextTypeChanged):
+        (WI.LayoutDetailsSidebarPanel.prototype._refreshNodeSets):
+        (WI.LayoutDetailsSidebarPanel.prototype._refreshGridNodeSet): Deleted.
+        Added Flexbox section to Layout details sidebar.
+
+        * UserInterface/Views/NodeOverlayListSection.css: Renamed from Source/WebInspectorUI/UserInterface/Views/CSSGridSection.css.
+        (.node-overlay-list-section):
+        (.node-overlay-list-section > .node-overlay-list):
+        (.node-overlay-list-section > .node-overlay-list > li > .node-overlay-list-item-container):
+        (.node-overlay-list-section > .node-overlay-list > li > .node-overlay-list-item-container > label):
+        (.node-overlay-list-section > .node-overlay-list > li > .node-overlay-list-item-container > label > .node-display-name):
+        (.node-overlay-list-section > .node-overlay-list > li > .node-overlay-list-item-container > :is(.go-to-arrow, .inline-swatch)):
+        (.node-overlay-list-section > .node-overlay-list > li > .node-overlay-list-item-container:not(:hover) > .go-to-arrow):
+        (.node-overlay-list-section > .heading,):
+        (.node-overlay-list-section > .heading > label > .toggle-all):
+        (.node-overlay-list-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"]):
+        A full-on replacement of `.css-grid-section` with `.node-overlay-list-section` since the two sections share the same styles.
+
+        * UserInterface/Views/NodeOverlayListSection.js: Copied from Source/WebInspectorUI/UserInterface/Views/CSSGridSection.js.
+        (WI.NodeOverlayListSection):
+        (WI.NodeOverlayListSection.prototype.set nodeSet):
+        (WI.NodeOverlayListSection.prototype.get sectionLabel):
+        (WI.NodeOverlayListSection.prototype.attached):
+        (WI.NodeOverlayListSection.prototype.detached):
+        (WI.NodeOverlayListSection.prototype.initialLayout):
+        (WI.NodeOverlayListSection.prototype.layout):
+        (WI.NodeOverlayListSection.prototype._handleOverlayStateChanged):
+        (WI.NodeOverlayListSection.prototype._handleToggleAllCheckboxChanged):
+        (WI.NodeOverlayListSection.prototype._updateToggleAllCheckbox):
+        Removed all the specific implementations for CSS Grid after generalizing them into `WI.NodeOverlayListSection`.
+
 2022-02-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: double clicking a breakpoint icon should show the edit popover
