@@ -1,0 +1,4 @@
+This is the fullscreen element (click to activate)
+EVENT(webkitfullscreenchange) TEST(fullscreener.offsetWidth == window.innerWidth && fullscreener.offsetHeight == window.innerHeight) OK
+END OF TEST
+
