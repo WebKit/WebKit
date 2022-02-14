@@ -128,9 +128,9 @@ private:
     GRefPtr<GDBusProxy> m_registry;
     Vector<PendingRootRegistration> m_pendingRootRegistrations;
     HashMap<CString, Vector<GUniquePtr<char*>>> m_eventListeners;
-    HashMap<AccessibilityRootAtspi*, Vector<unsigned, 2>> m_rootObjects;
-    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiObjects;
-    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiHyperlinks;
+    HashMap<AccessibilityRootAtspi*, Vector<unsigned, 3>> m_rootObjects;
+    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 7>> m_atspiObjects;
+    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 1>> m_atspiHyperlinks;
     HashMap<CString, unsigned> m_clients;
     unsigned m_cacheID { 0 };
     HashMap<String, AccessibilityObjectAtspi*> m_cache;
