@@ -3448,6 +3448,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ Failure ]
 fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
 fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/231337 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
+
 # Test failures due to framework bugs that occur only with --accelerated-drawing flag turned on
 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 imported/mozilla/svg/blend-color-burn.svg [ ImageOnlyFailure ]

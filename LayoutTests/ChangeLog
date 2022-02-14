@@ -1,3 +1,12 @@
+2022-02-14  Truitt Savell  <tsavell@apple.com>
+
+        Mark imported/w3c/web-platform-tests/xhr/send-timeout-events.htm as failing on iOS aftet the changes in r289540
+        https://bugs.webkit.org/show_bug.cgi?id=231337
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-02-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.
