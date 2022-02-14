@@ -187,7 +187,6 @@ private:
 #endif
 
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { ASSERT_NOT_REACHED(); }
-    void drawLineForText(const FloatRect&, bool, bool, StrokeStyle) final { ASSERT_NOT_REACHED(); }
 
     WEBCORE_EXPORT const GraphicsContextState& state() const final;
 
