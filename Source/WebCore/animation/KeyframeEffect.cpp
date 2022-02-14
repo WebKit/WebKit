@@ -938,34 +938,11 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
     if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
         return;
 
-    // Empty transforms match anything, so find the first non-empty entry as the reference.
-    size_t numKeyframes = m_blendingKeyframes.size();
-    size_t firstNonEmptyTransformKeyframeIndex = numKeyframes;
+    Vector<TransformOperation::OperationType> sharedPrimitives;
+    sharedPrimitives.reserveInitialCapacity(m_blendingKeyframes[0].style()->transform().operations().size());
 
-    for (size_t i = 0; i < numKeyframes; ++i) {
-        const KeyframeValue& currentKeyframe = m_blendingKeyframes[i];
-        if (currentKeyframe.style()->transform().operations().size()) {
-            firstNonEmptyTransformKeyframeIndex = i;
-            break;
-        }
-    }
-
-    // All of the frames have an empty list of transform operations, so they match.
-    if (firstNonEmptyTransformKeyframeIndex == numKeyframes) {
-        m_transformFunctionListsMatch = true;
-        return;
-    }
-
-    const TransformOperations* firstVal = &m_blendingKeyframes[firstNonEmptyTransformKeyframeIndex].style()->transform();
-    for (size_t i = firstNonEmptyTransformKeyframeIndex + 1; i < numKeyframes; ++i) {
-        const KeyframeValue& currentKeyframe = m_blendingKeyframes[i];
-        const TransformOperations* val = &currentKeyframe.style()->transform();
-
-        // An empty transform list matches anything.
-        if (val->operations().isEmpty())
-            continue;
-
-        if (!firstVal->operationsMatch(*val))
+    for (const auto& keyframe : m_blendingKeyframes) {
+        if (!keyframe.style()->transform().updateSharedPrimitives(sharedPrimitives))
             return;
     }
 

@@ -71,6 +71,11 @@ public:
     }
 
     bool operationsMatch(const TransformOperations&) const;
+
+    // Find a list of transform primitives for the given TransformOperations which are compatible with the primitives
+    // stored in sharedPrimitives. The results are written back into sharedPrimitives. This returns false if any element
+    // of TransformOperation does not have a shared primitive, otherwise it returns true.
+    bool updateSharedPrimitives(Vector<TransformOperation::OperationType>& sharedPrimitives) const;
     
     void clear()
     {

@@ -1,3 +1,15 @@
+2022-02-14  Martin Robinson  <mrobinson@webkit.org>
+
+        Animation from "scale()" to "scale() translate()" does not yield the expected result
+        https://bugs.webkit.org/show_bug.cgi?id=222595
+        <rdar://problem/74926700>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-transforms/animation/list-interpolation-expected.txt: Mark tests as passing.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-003-expected.txt:
+
 2022-02-13  Matt Woodrow  <mattwoodrow@apple.com>
 
         Add support for parsing 'subgrid' in grid-template-columns/row

@@ -1,3 +1,14 @@
+2022-02-14  Martin Robinson  <mrobinson@webkit.org>
+
+        Animation from "scale()" to "scale() translate()" does not yield the expected result
+        https://bugs.webkit.org/show_bug.cgi?id=222595
+        <rdar://problem/74926700>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/layer-creation/multiple-keyframes-animation-overlap-expected.txt:
+        * compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+
 2022-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Delete fast/animation/request-animation-frame-disabled.html after RequestAnimationFrameEnabled setting is deleted

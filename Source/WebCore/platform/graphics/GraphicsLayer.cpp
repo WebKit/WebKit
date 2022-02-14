@@ -733,43 +733,8 @@ bool GraphicsLayer::getSharedPrimitivesForTransformKeyframes(const KeyframeValue
     sharedPrimitives.clear();
     sharedPrimitives.reserveInitialCapacity(operationsAt(valueList, 0).size());
 
-    // Find a list of transform primitives for the given TransformOperations which are compatible with the primitives
-    // stored in sharedPrimitives. The results are written back into sharedPrimitives. This returns false if any element
-    // of TransformOperation does not have a shared primitive, otherwise it returns true.
-    auto updateSharedPrimitives = [&](const TransformOperations& operations) {
-        // Empty transform lists are implicitly a list of identity transforms.
-        if (!operations.size())
-            return true;
-
-        // If we have seen a non-empty list already and this list's size doesn't match, then we can't use shared
-        // primitives. FIXME: This should handle prefix matches and then fall back to matrix interpolation for the rest
-        // of the list.
-        // See: https://bugs.webkit.org/show_bug.cgi?id=235757
-        if (sharedPrimitives.size() && sharedPrimitives.size() != operations.size())
-            return false;
-
-        for (size_t i = 0; i < operations.size(); ++i) {
-            const auto* operation = operations.at(i);
-
-            // If we haven't seen an operation at this index before, we can simply use our primitive type.
-            if (i >= sharedPrimitives.size()) {
-                ASSERT(i == sharedPrimitives.size());
-                sharedPrimitives.append(operation->primitiveType());
-                continue;
-            }
-
-            if (auto sharedPrimitive = operation->sharedPrimitiveType(sharedPrimitives[i]))
-                sharedPrimitives[i] = *sharedPrimitive;
-            else
-                return false;
-        }
-
-        return true;
-    };
-
     for (size_t i = 0; i < valueList.size(); ++i) {
-        const TransformOperations& operations = operationsAt(valueList, i);
-        if (!updateSharedPrimitives(operations))
+        if (!operationsAt(valueList, i).updateSharedPrimitives(sharedPrimitives))
             return false;
     }
 

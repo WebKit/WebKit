@@ -52,16 +52,38 @@ bool TransformOperations::operator==(const TransformOperations& o) const
 
 bool TransformOperations::operationsMatch(const TransformOperations& other) const
 {
-    size_t numOperations = operations().size();
-    // If the sizes of the function lists don't match, the lists don't match
-    if (numOperations != other.operations().size())
-        return false;
-    
-    // If the types of each function are not the same, the lists don't match
-    for (size_t i = 0; i < numOperations; ++i) {
+    // If functions at the same index don't share a blending primitive, the lists don't match.
+    // When the lists are different sizes, the missing functions in the shorter list are treated
+    // as identity functions.
+    size_t minimumLength = std::min(operations().size(), other.operations().size());
+    for (size_t i = 0; i < minimumLength; ++i) {
         if (!operations()[i]->sharedPrimitiveType(other.operations()[i].get()))
             return false;
     }
+    return true;
+}
+
+bool TransformOperations::updateSharedPrimitives(Vector<TransformOperation::OperationType>& sharedPrimitives) const
+{
+    for (size_t i = 0; i < operations().size(); ++i) {
+        const auto* operation = at(i);
+
+        // If we haven't seen an operation at this index before, we can simply use our primitive type.
+        if (i >= sharedPrimitives.size()) {
+            ASSERT(i == sharedPrimitives.size());
+            sharedPrimitives.append(operation->primitiveType());
+            continue;
+        }
+
+        if (auto sharedPrimitive = operation->sharedPrimitiveType(sharedPrimitives[i]))
+            sharedPrimitives[i] = *sharedPrimitive;
+        else {
+            // FIXME: This should handle prefix matches and then fall back to matrix interpolation for the rest
+            // of the list. See: https://bugs.webkit.org/show_bug.cgi?id=235757
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -90,16 +112,19 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
         RefPtr<TransformOperation> toOperation = (i < toOperationCount) ? operations()[i].get() : nullptr;
         if (fromOperation && toOperation && !fromOperation->sharedPrimitiveType(toOperation.get()))
             return blendByUsingMatrixInterpolation(from, context, boxSize);
-        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), context) : (fromOperation ? RefPtr<TransformOperation>(fromOperation->blend(nullptr, context, true)) : nullptr);
-        if (blendedOperation)
-            result.operations().append(blendedOperation);
-        else {
-            auto identityOperation = IdentityTransformOperation::create();
-            if (context.progress > 0.5)
-                result.operations().append(toOperation ? toOperation : WTFMove(identityOperation));
-            else
-                result.operations().append(fromOperation ? fromOperation : WTFMove(identityOperation));
-        }
+
+        RefPtr<TransformOperation> blendedOperation;
+        if (fromOperation && toOperation)
+            blendedOperation = toOperation->blend(fromOperation.get(), context);
+        else if (!fromOperation)
+            blendedOperation = toOperation->blend(nullptr, 1 - context.progress, true);
+        else if (!toOperation)
+            blendedOperation = fromOperation->blend(nullptr, context, true);
+
+        // We should have exited early above if the fromOperation and toOperation didn't share a transform
+        // function primitive, so blending the two operations should always yield a result.
+        ASSERT(blendedOperation);
+        result.operations().append(blendedOperation);
     }
 
     return result;

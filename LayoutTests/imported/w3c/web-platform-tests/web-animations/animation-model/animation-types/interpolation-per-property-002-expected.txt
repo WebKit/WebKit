@@ -216,8 +216,8 @@ PASS transform: scale
 PASS transform: skew
 PASS transform: rotate and translate
 PASS transform: translate and rotate
-FAIL transform: extend shorter list (from) assert_approx_equals: expected matrix(-1, 0, 0, -1, -50, 0) but got matrix(1, 0, 0, 1, 50, 0): The value should be matrix(-1, 0, 0, -1, -50, 0) at 500ms but got matrix(1, 0, 0, 1, 50, 0) expected -1 +/- 0.0001 but got 1
-FAIL transform: extend shorter list (to) assert_approx_equals: expected matrix(-1, 0, 0, -1, -50, 0) but got matrix(1, 0, 0, 1, 50, 0): The value should be matrix(-1, 0, 0, -1, -50, 0) at 500ms but got matrix(1, 0, 0, 1, 50, 0) expected -1 +/- 0.0001 but got 1
+PASS transform: extend shorter list (from)
+PASS transform: extend shorter list (to)
 PASS transform: mismatch order of translate and rotate
 PASS transform: matrix
 PASS transform: rotate3d
