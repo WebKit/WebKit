@@ -1642,3 +1642,8 @@ ray
 // farthest-corner
 sides
 // contain
+
+// for @media/@supports/@container
+and
+or
+not

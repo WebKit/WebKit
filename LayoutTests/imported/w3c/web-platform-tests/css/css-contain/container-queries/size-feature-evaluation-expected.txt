@@ -1,12 +1,12 @@
 Test
 
-PASS size(width < 100px) (.horizontal)
+FAIL size(width < 100px) (.horizontal) assert_equals: expected "" but got "true"
 FAIL size(width >= 100px) (.horizontal) assert_equals: expected "true" but got ""
 PASS size(min-width: 100px) (.horizontal)
 PASS size(min-width: 101px) (.horizontal)
 PASS size(max-width: 100px) (.horizontal)
 PASS size(max-width: 99px) (.horizontal)
-PASS size(height < 200px) (.horizontal)
+FAIL size(height < 200px) (.horizontal) assert_equals: expected "" but got "true"
 FAIL size(height >= 200px) (.horizontal) assert_equals: expected "true" but got ""
 PASS size(min-height: 200px) (.horizontal)
 PASS size(min-height: 201px) (.horizontal)
@@ -28,13 +28,13 @@ PASS size(orientation: landscape) (.horizontal)
 FAIL size(orientation: portrait) (.horizontal) assert_equals: expected "true" but got ""
 FAIL size(aspect-ratio: 1/2) (.horizontal) assert_equals: expected "true" but got ""
 PASS size(aspect-ratio: 2/1) (.horizontal)
-PASS size(width < 100px) (.vertical)
+FAIL size(width < 100px) (.vertical) assert_equals: expected "" but got "true"
 FAIL size(width >= 100px) (.vertical) assert_equals: expected "true" but got ""
 PASS size(min-width: 100px) (.vertical)
 PASS size(min-width: 101px) (.vertical)
 PASS size(max-width: 100px) (.vertical)
 PASS size(max-width: 99px) (.vertical)
-PASS size(height < 200px) (.vertical)
+FAIL size(height < 200px) (.vertical) assert_equals: expected "" but got "true"
 FAIL size(height >= 200px) (.vertical) assert_equals: expected "true" but got ""
 PASS size(min-height: 200px) (.vertical)
 PASS size(min-height: 201px) (.vertical)

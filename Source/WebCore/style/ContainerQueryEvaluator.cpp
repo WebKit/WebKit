@@ -35,29 +35,28 @@
 
 namespace WebCore::Style {
 
+struct ContainerQueryEvaluator::EvaluationContext {
+    RenderBox& renderer;
+    CSSToLengthConversionData conversionData;
+};
+
 ContainerQueryEvaluator::ContainerQueryEvaluator(const Vector<Ref<const Element>>& containers)
     : m_containers(containers)
 {
 }
 
-static std::optional<LayoutUnit> computeSize(CSSValue* value, const CSSToLengthConversionData& conversionData)
+static std::optional<LayoutUnit> computeSize(const CSSPrimitiveValue& value, const CSSToLengthConversionData& conversionData)
 {
-    if (!is<CSSPrimitiveValue>(value))
-        return { };
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (primitiveValue.isNumberOrInteger()) {
-        if (primitiveValue.doubleValue())
+    if (value.isNumberOrInteger()) {
+        if (value.doubleValue())
             return { };
         return 0_lu;
     }
 
-    if (!primitiveValue.isLength())
+    if (!value.isLength())
         return { };
-    return primitiveValue.computeLength<LayoutUnit>(conversionData);
+    return value.computeLength<LayoutUnit>(conversionData);
 }
-
-enum class Comparator { Lesser, Greater, LesserOrEqual, GreaterOrEqual, Equal, True };
 
 bool ContainerQueryEvaluator::evaluate(const FilteredContainerQuery& filteredContainerQuery) const
 {
@@ -83,90 +82,114 @@ bool ContainerQueryEvaluator::evaluate(const FilteredContainerQuery& filteredCon
         return false;
 
     auto& view = renderer->view();
-    CSSToLengthConversionData conversionData { &renderer->style(), &view.style(), nullptr, &view, 1 };
+    CSSToLengthConversionData { &renderer->style(), &view.style(), nullptr, &view, 1 };
 
-    auto evaluateSize = [&](const MediaQueryExpression& expression, Comparator comparator, auto&& sizeGetter)
-    {
+    EvaluationContext evaluationContext {
+        *renderer,
+        CSSToLengthConversionData { &renderer->style(), &view.style(), nullptr, &view, 1 }
+    };
+
+    return evaluateQuery(filteredContainerQuery.query, evaluationContext) == EvaluationResult::True;
+}
+
+auto ContainerQueryEvaluator::evaluateQuery(const CQ::ContainerQuery& containerQuery, const EvaluationContext& context) const -> EvaluationResult
+{
+    return WTF::switchOn(containerQuery, [&](const CQ::ContainerCondition& containerCondition) {
+        return evaluateCondition(containerCondition, context);
+    }, [&](const CQ::SizeQuery& sizeQuery) {
+        return evaluateQuery(sizeQuery, context);
+    }, [&](const CQ::UnknownQuery&) {
+        return EvaluationResult::Unknown;
+    });
+}
+
+auto ContainerQueryEvaluator::evaluateQuery(const CQ::SizeQuery& sizeQuery, const EvaluationContext& context) const -> EvaluationResult
+{
+    return WTF::switchOn(sizeQuery, [&](const CQ::SizeCondition& sizeCondition) {
+        return evaluateCondition(sizeCondition, context);
+    }, [&](const CQ::SizeFeature& sizeFeature) {
+        return evaluateSizeFeature(sizeFeature, context);
+    });
+}
+
+template<typename ConditionType>
+auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, const EvaluationContext& context) const -> EvaluationResult
+{
+    if (condition.queries.isEmpty())
+        return EvaluationResult::Unknown;
+
+    switch (condition.logicalOperator) {
+    case CQ::LogicalOperator::Not: {
+        switch (evaluateQuery(condition.queries.first(), context)) {
+        case EvaluationResult::True:
+            return EvaluationResult::False;
+        case EvaluationResult::False:
+            return EvaluationResult::True;
+        case EvaluationResult::Unknown:
+            return EvaluationResult::Unknown;
+        }
+    }
+    case CQ::LogicalOperator::And: {
+        auto result = EvaluationResult::True;
+        for (auto query : condition.queries) {
+            auto queryResult = evaluateQuery(query, context);
+            if (queryResult == EvaluationResult::False)
+                return EvaluationResult::False;
+            if (queryResult == EvaluationResult::Unknown)
+                result = EvaluationResult::Unknown;
+        }
+        return result;
+    }
+    case CQ::LogicalOperator::Or: {
+        auto result = EvaluationResult::False;
+        for (auto query : condition.queries) {
+            auto queryResult = evaluateQuery(query, context);
+            if (queryResult == EvaluationResult::True)
+                return EvaluationResult::True;
+            if (queryResult == EvaluationResult::Unknown)
+                result = EvaluationResult::Unknown;
+        }
+        return result;
+    }
+    }
+}
+
+auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFeature, const EvaluationContext& context) const -> EvaluationResult
+{
+    auto evaluateSize = [&](LayoutUnit size) {
         std::optional<LayoutUnit> expressionSize;
 
-        if (comparator != Comparator::True) {
-            expressionSize = computeSize(expression.value(), conversionData);
+        if (sizeFeature.comparisonOperator != CQ::ComparisonOperator::True) {
+            if (!sizeFeature.value)
+                return false;
+            expressionSize = computeSize(*sizeFeature.value, context.conversionData);
             if (!expressionSize)
                 return false;
         }
 
-        auto size = sizeGetter(*renderer);
-
-        switch (comparator) {
-        case Comparator::Lesser:
+        switch (sizeFeature.comparisonOperator) {
+        case CQ::ComparisonOperator::LessThan:
             return size < *expressionSize;
-        case Comparator::Greater:
+        case CQ::ComparisonOperator::GreaterThan:
             return size > *expressionSize;
-        case Comparator::LesserOrEqual:
+        case CQ::ComparisonOperator::LessThanOrEqual:
             return size <= *expressionSize;
-        case Comparator::GreaterOrEqual:
+        case CQ::ComparisonOperator::GreaterThanOrEqual:
             return size >= *expressionSize;
-        case Comparator::Equal:
+        case CQ::ComparisonOperator::Equal:
             return size == *expressionSize;
-        case Comparator::True:
+        case CQ::ComparisonOperator::True:
             return !!size;
         }
     };
 
-    auto evaluateWidth = [&](const MediaQueryExpression& expression, Comparator comparator)
-    {
-        return evaluateSize(expression, comparator, [&](const RenderBox& renderer) {
-            return renderer.width();
-        });
-    };
+    // FIXME: Support all features.
+    if (sizeFeature.name == MediaFeatureNames::width)
+        return evaluateSize(context.renderer.width()) ? EvaluationResult::True : EvaluationResult::False;
+    if (sizeFeature.name == MediaFeatureNames::height)
+        return evaluateSize(context.renderer.height()) ? EvaluationResult::True : EvaluationResult::False;
 
-    auto evaluateHeight = [&](const MediaQueryExpression& expression, Comparator comparator)
-    {
-        return evaluateSize(expression, comparator, [&](const RenderBox& renderer) {
-            return renderer.height();
-        });
-    };
-
-    bool result = false;
-
-    // FIXME: This is very rudimentary.
-    auto& queries = filteredContainerQuery.query->queryVector();
-    for (auto& query : queries) {
-        for (auto& expression : query.expressions()) {
-            if (expression.mediaFeature() == MediaFeatureNames::minWidth) {
-                if (evaluateWidth(expression, Comparator::GreaterOrEqual))
-                    result = true;
-                continue;
-            }
-            if (expression.mediaFeature() == MediaFeatureNames::maxWidth) {
-                if (evaluateWidth(expression, Comparator::LesserOrEqual))
-                    result = true;
-                continue;
-            }
-            if (expression.mediaFeature() == MediaFeatureNames::width) {
-                if (evaluateWidth(expression, expression.value() ? Comparator::Equal : Comparator::True))
-                    result = true;
-                continue;
-            }
-            if (expression.mediaFeature() == MediaFeatureNames::minHeight) {
-                if (evaluateHeight(expression, Comparator::GreaterOrEqual))
-                    result = true;
-                continue;
-            }
-            if (expression.mediaFeature() == MediaFeatureNames::maxHeight) {
-                if (evaluateHeight(expression, Comparator::LesserOrEqual))
-                    result = true;
-                continue;
-            }
-            if (expression.mediaFeature() == MediaFeatureNames::height) {
-                if (evaluateHeight(expression, expression.value() ? Comparator::Equal : Comparator::True))
-                    result = true;
-                continue;
-            }
-        }
-    }
-
-    return result;
+    return EvaluationResult::Unknown;
 }
 
 }

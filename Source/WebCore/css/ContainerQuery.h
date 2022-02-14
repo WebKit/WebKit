@@ -28,13 +28,45 @@
 
 namespace WebCore {
 
-class MediaQuerySet;
+class CSSPrimitiveValue;
 
-using ContainerQuery = MediaQuerySet;
+namespace CQ {
+
+struct ContainerCondition;
+struct SizeCondition;
+struct SizeFeature;
+
+struct UnknownQuery { };
+
+using SizeQuery = std::variant<SizeCondition, SizeFeature>;
+using ContainerQuery = std::variant<ContainerCondition, SizeQuery, UnknownQuery>;
+
+enum class LogicalOperator : uint8_t { And, Or, Not };
+enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual, True };
+
+struct ContainerCondition {
+    LogicalOperator logicalOperator { LogicalOperator::And };
+    Vector<ContainerQuery> queries;
+};
+
+struct SizeCondition {
+    LogicalOperator logicalOperator { LogicalOperator::And };
+    Vector<SizeQuery> queries;
+};
+
+struct SizeFeature {
+    ComparisonOperator comparisonOperator { ComparisonOperator::Equal };
+    AtomString name;
+    RefPtr<CSSPrimitiveValue> value;
+};
+
+}
+
+using ContainerQuery = CQ::ContainerQuery;
 
 struct FilteredContainerQuery {
     AtomString nameFilter;
-    Ref<ContainerQuery> query;
+    ContainerQuery query;
 };
 
 }

@@ -1,3 +1,12 @@
+2022-02-14  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Implement full query parser and evaluator
+        https://bugs.webkit.org/show_bug.cgi?id=236580
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+
 2022-02-14  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply

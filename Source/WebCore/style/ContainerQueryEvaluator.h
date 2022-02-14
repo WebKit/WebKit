@@ -24,11 +24,11 @@
 
 #pragma once
 
+#include "ContainerQuery.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-struct FilteredContainerQuery;
 class Element;
 
 namespace Style {
@@ -40,6 +40,14 @@ public:
     bool evaluate(const FilteredContainerQuery&) const;
 
 private:
+    struct EvaluationContext;
+    enum class EvaluationResult : uint8_t { False, True, Unknown };
+
+    EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const EvaluationContext&) const;
+    EvaluationResult evaluateQuery(const CQ::SizeQuery&, const EvaluationContext&) const;
+    template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const EvaluationContext&) const;
+    EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const EvaluationContext&) const;
+
     const Vector<Ref<const Element>>& m_containers;
 };
 

@@ -1,3 +1,16 @@
+2022-02-14  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Implement full query parser and evaluator
+        https://bugs.webkit.org/show_bug.cgi?id=236580
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.tentative-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-feature-evaluation-expected.txt:
+
 2022-02-14  Martin Robinson  <mrobinson@webkit.org>
 
         Animation from "scale()" to "scale() translate()" does not yield the expected result

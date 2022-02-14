@@ -1,36 +1,36 @@
 
-FAIL size(width) assert_equals: expected "true" but got ""
-FAIL size(min-width: 0px) assert_equals: expected "true" but got ""
-FAIL size(max-width: 0px) assert_equals: expected "true" but got ""
-FAIL size(height) assert_equals: expected "true" but got ""
-FAIL size(min-height: 0px) assert_equals: expected "true" but got ""
-FAIL size(max-height: 0px) assert_equals: expected "true" but got ""
+PASS size(width)
+PASS size(min-width: 0px)
+PASS size(max-width: 0px)
+PASS size(height)
+PASS size(min-height: 0px)
+PASS size(max-height: 0px)
 FAIL size(aspect-ratio) assert_equals: expected "true" but got ""
-FAIL size(min-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
-FAIL size(max-aspect-ratio: 1/2) assert_equals: expected "true" but got ""
-FAIL size(orientation: portrait) assert_equals: expected "true" but got ""
+FAIL size(min-aspect-ratio: 1/2) assert_equals: expected 2 but got 0
+FAIL size(max-aspect-ratio: 1/2) assert_equals: expected 2 but got 0
+FAIL size(orientation: portrait) assert_equals: expected 2 but got 0
 FAIL size(inline-size) assert_equals: expected "true" but got ""
 FAIL size(min-inline-size: 0px) assert_equals: expected "true" but got ""
 FAIL size(max-inline-size: 0px) assert_equals: expected "true" but got ""
 FAIL size(block-size) assert_equals: expected "true" but got ""
 FAIL size(min-block-size: 0px) assert_equals: expected "true" but got ""
 FAIL size(max-block-size: 0px) assert_equals: expected "true" but got ""
-FAIL size(width: 100px) assert_equals: expected "true" but got ""
-FAIL size((width: 100px)) assert_equals: expected "true" but got ""
-FAIL size(not (width: 100px)) assert_equals: expected "true" but got ""
-FAIL size((width: 100px) and (height: 100px)) assert_equals: expected "true" but got ""
-FAIL size((width: 50px) or (height: 100px)) assert_equals: expected "true" but got ""
-FAIL size(width < 100px) assert_equals: expected "true" but got ""
-FAIL size(100px < width) assert_equals: expected "true" but got ""
-FAIL size(100px < width < 200px) assert_equals: expected "true" but got ""
+PASS size(width: 100px)
+PASS size((width: 100px))
+PASS size(not (width: 100px))
+PASS size((width: 100px) and (height: 100px))
+PASS size((width: 50px) or (height: 100px))
+PASS size(width < 100px)
+FAIL size(100px < width) assert_equals: expected 2 but got 0
+FAIL size(100px < width < 200px) assert_equals: expected 2 but got 0
 PASS foo(width)
 PASS size(asdf)
-PASS size(resolution > 100dpi)
-PASS size(resolution: 150dpi)
+FAIL size(resolution > 100dpi) assert_equals: expected 2 but got 0
+FAIL size(resolution: 150dpi) assert_equals: expected 2 but got 0
 PASS size(color)
-PASS size(min-color: 1)
-PASS size(color-index >= 1)
-PASS (color-index >= 1)
+FAIL size(min-color: 1) assert_equals: expected 2 but got 0
+FAIL size(color-index >= 1) assert_equals: expected 2 but got 0
+FAIL (color-index >= 1) assert_equals: expected 2 but got 0
 PASS size(grid)
 PASS (grid)
 PASS screen
@@ -41,28 +41,28 @@ PASS screen and (width: 100px)
 PASS screen or (width: 100px)
 PASS not screen and (width: 100px)
 PASS not screen or (width: 100px)
-FAIL (width: 100px), (height: 100px) assert_equals: expected 0 but got 1
+PASS (width: 100px), (height: 100px)
 PASS Container selector:  foo
 PASS Container selector:  foo
-PASS Container selector: name(foo)
-PASS Container selector: name( foo )
-PASS Container selector: type(size)
-PASS Container selector: type( size )
-PASS Container selector: type(inline-size)
-PASS Container selector: type(block-size)
-PASS Container selector: name(bar) type(block-size)
-PASS Container selector: type(block-size) name(bar)
+FAIL Container selector: name(foo) assert_equals: expected 1 but got 0
+FAIL Container selector: name( foo ) assert_equals: expected 1 but got 0
+FAIL Container selector: type(size) assert_equals: expected 1 but got 0
+FAIL Container selector: type( size ) assert_equals: expected 1 but got 0
+FAIL Container selector: type(inline-size) assert_equals: expected 1 but got 0
+FAIL Container selector: type(block-size) assert_equals: expected 1 but got 0
+FAIL Container selector: name(bar) type(block-size) assert_equals: expected 1 but got 0
+FAIL Container selector: type(block-size) name(bar) assert_equals: expected 1 but got 0
 PASS Container selector: foo foo
 PASS Container selector: 1px
 PASS Container selector: 50gil
-FAIL Container selector: name(1px) assert_equals: expected 0 but got 1
-FAIL Container selector: type(1px) assert_equals: expected 0 but got 1
-FAIL Container selector: type(red) assert_equals: expected 0 but got 1
-FAIL Container selector: type(size) type(size) assert_equals: expected 0 but got 1
-FAIL Container selector: type(inline-size) type(block-size) assert_equals: expected 0 but got 1
-FAIL Container selector: name(foo) name(bar) assert_equals: expected 0 but got 1
-FAIL Container selector: type(inline-size) name(foo) type(block-size) assert_equals: expected 0 but got 1
-FAIL Container selector: name(foo) type(size) name(bar) assert_equals: expected 0 but got 1
-FAIL Container selector: name(type(size)) assert_equals: expected 0 but got 1
-FAIL Container selector: type(name(bar)) assert_equals: expected 0 but got 1
+PASS Container selector: name(1px)
+PASS Container selector: type(1px)
+PASS Container selector: type(red)
+PASS Container selector: type(size) type(size)
+PASS Container selector: type(inline-size) type(block-size)
+PASS Container selector: name(foo) name(bar)
+PASS Container selector: type(inline-size) name(foo) type(block-size)
+PASS Container selector: name(foo) type(size) name(bar)
+PASS Container selector: name(type(size))
+PASS Container selector: type(name(bar))
 

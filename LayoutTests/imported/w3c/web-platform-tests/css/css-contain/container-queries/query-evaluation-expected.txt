@@ -3,18 +3,18 @@ PASS size(width)
 PASS size(height)
 PASS size(unknown)
 PASS unknown(width)
-FAIL (size(width)) assert_equals: expected "true" but got "false"
+PASS (size(width))
 PASS (size(height))
 PASS (size(unknown))
-FAIL (((size(width)))) assert_equals: expected "true" but got "false"
+PASS (((size(width))))
 PASS (((size(height))))
 PASS (((size(unknown))))
 PASS (not size(width))
-FAIL (not size(height)) assert_equals: expected "true" but got "false"
+PASS (not size(height))
 PASS (not size(unknown))
 PASS (not unknown(width))
-FAIL (size(width) and size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) and size(width) and size(width)) assert_equals: expected "true" but got "false"
+PASS (size(width) and size(width))
+PASS (size(width) and size(width) and size(width))
 PASS (size(height) and size(height))
 PASS (size(height) and size(width) and size(width))
 PASS (size(width) and size(height) and size(width))
@@ -22,30 +22,30 @@ PASS (size(width) and size(width) and size(height))
 PASS (size(unknown) and size(width) and size(width))
 PASS (size(width) and size(unknown) and size(width))
 PASS (size(width) and size(width) and size(unknown))
-FAIL (size(width) or size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) or size(width) or size(width)) assert_equals: expected "true" but got "false"
+PASS (size(width) or size(width))
+PASS (size(width) or size(width) or size(width))
 PASS (size(height) or size(height))
-FAIL (size(height) or size(width) or size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) or size(height) or size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) or size(width) or size(height)) assert_equals: expected "true" but got "false"
-FAIL (size(unknown) or size(width) or size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) or size(unknown) or size(width)) assert_equals: expected "true" but got "false"
-FAIL (size(width) or size(width) or size(unknown)) assert_equals: expected "true" but got "false"
-FAIL (size(unknown) or size(height) or size(width)) assert_equals: expected "true" but got "false"
+PASS (size(height) or size(width) or size(width))
+PASS (size(width) or size(height) or size(width))
+PASS (size(width) or size(width) or size(height))
+PASS (size(unknown) or size(width) or size(width))
+PASS (size(width) or size(unknown) or size(width))
+PASS (size(width) or size(width) or size(unknown))
+PASS (size(unknown) or size(height) or size(width))
 PASS (not (size(width) and size(width)))
-FAIL (not (size(width) and size(height))) assert_equals: expected "true" but got "false"
+PASS (not (size(width) and size(height)))
 PASS (size(width) and (not (size(height) or size(width))))
-FAIL (size(height) or (not (size(height) and size(width)))) assert_equals: expected "true" but got "false"
+PASS (size(height) or (not (size(height) and size(width))))
 PASS (size(height) or (size(height) and size(width)))
-FAIL size((width)) assert_equals: expected "true" but got "false"
+PASS size((width))
 PASS size((height))
 PASS size((unknown))
 PASS unknown((width))
 PASS size(not (width))
-FAIL size(not (height)) assert_equals: expected "true" but got "false"
+PASS size(not (height))
 PASS size(not (unknown))
-FAIL size((width) and (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) and (width) and (width)) assert_equals: expected "true" but got "false"
+PASS size((width) and (width))
+PASS size((width) and (width) and (width))
 PASS size((height) and (height))
 PASS size((height) and (width) and (width))
 PASS size((width) and (height) and (width))
@@ -53,19 +53,19 @@ PASS size((width) and (width) and (height))
 PASS size((unknown) and (width) and (width))
 PASS size((width) and (unknown) and (width))
 PASS size((width) and (width) and (unknown))
-FAIL size((width) or (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) or (width) or (width)) assert_equals: expected "true" but got "false"
+PASS size((width) or (width))
+PASS size((width) or (width) or (width))
 PASS size((height) or (height))
-FAIL size((height) or (width) or (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) or (height) or (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) or (width) or (height)) assert_equals: expected "true" but got "false"
-FAIL size((unknown) or (width) or (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) or (unknown) or (width)) assert_equals: expected "true" but got "false"
-FAIL size((width) or (width) or (unknown)) assert_equals: expected "true" but got "false"
-FAIL size((unknown) or (height) or (width)) assert_equals: expected "true" but got "false"
+PASS size((height) or (width) or (width))
+PASS size((width) or (height) or (width))
+PASS size((width) or (width) or (height))
+PASS size((unknown) or (width) or (width))
+PASS size((width) or (unknown) or (width))
+PASS size((width) or (width) or (unknown))
+PASS size((unknown) or (height) or (width))
 PASS size(not ((width) and (width)))
-FAIL size(not ((width) and (height))) assert_equals: expected "true" but got "false"
+PASS size(not ((width) and (height)))
 PASS size((width) and (not ((height) or (width))))
-FAIL size((height) or (not ((height) and (width)))) assert_equals: expected "true" but got "false"
+PASS size((height) or (not ((height) and (width))))
 PASS size((height) or ((height) and (width)))
 

@@ -47,6 +47,7 @@
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
 #include "CSSVariableParser.h"
+#include "ContainerQueryParser.h"
 #include "Document.h"
 #include "Element.h"
 #include "FontPaletteValues.h"
@@ -865,12 +866,16 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
 
     auto name = consumeName();
 
-    auto query = MediaQueryParser::parseContainerQuery(prelude, MediaQueryParserContext(m_context));
+    auto query = ContainerQueryParser::consumeContainerQuery(prelude, m_context);
     if (!query)
         return nullptr;
 
+    prelude.consumeWhitespace();
+    if (!prelude.atEnd())
+        return nullptr;
+
     if (m_deferredParser)
-        return StyleRuleContainer::create({ name, query.releaseNonNull() }, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleContainer::create({ name, *query }, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     Vector<RefPtr<StyleRuleBase>> rules;
 
@@ -888,7 +893,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    return StyleRuleContainer::create({ name, query.releaseNonNull() }, WTFMove(rules));
+    return StyleRuleContainer::create({ name, *query }, WTFMove(rules));
 }
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
