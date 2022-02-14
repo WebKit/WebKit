@@ -1,3 +1,23 @@
+2022-02-14  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] RemoteImageBufferProxy should not sink itself to an Image or a NativeImage though its backend
+        https://bugs.webkit.org/show_bug.cgi?id=236484
+
+        Reviewed by Simon Fraser.
+
+        The purpose of sinkIntoImage() and sinkIntoNativeImage() is to reuse the
+        pixels of an ImageBuffer to be a NativeImage or an Image which encapsulates
+        a NativeImage.
+
+        But for RemoteImageBufferProxy these functions are meaningless because
+        the pixels (or the backend) can't be accessed in WebProcess.
+
+        So to keep the code in WebCore untouched, these two functions will be 
+        overridden by RemoteImageBufferProxy to call the 'copy' methods. The
+        'copy' methods use the IPC messages to get a NativeImage from GPUProcess.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2022-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Plumb platform image analysis objects to the web process
