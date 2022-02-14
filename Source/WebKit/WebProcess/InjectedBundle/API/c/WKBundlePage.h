@@ -129,6 +129,7 @@ WK_EXPORT void WKBundlePagePostMessage(WKBundlePageRef page, WKStringRef message
 
 // Switches a connection into a fully synchronous mode, so all messages become synchronous until we get a response.
 WK_EXPORT void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnRetainedData);
+WK_EXPORT void WKBundlePagePostSynchronousMessageForTestingWithoutLayout(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnRetainedData);
 // Same as WKBundlePagePostMessage() but the message cannot become synchronous, even if the connection is in fully synchronous mode.
 WK_EXPORT void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
 

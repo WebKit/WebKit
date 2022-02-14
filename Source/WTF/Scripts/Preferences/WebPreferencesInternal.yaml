@@ -644,8 +644,10 @@ NotificationEventEnabled:
   condition: ENABLE(NOTIFICATION_EVENT)
   defaultValue:
     WebCore:
+      "ENABLE(NOTIFICATION_EVENT)": true
       default: false
     WebKit:
+      "ENABLE(NOTIFICATION_EVENT)": true
       default: false
 
 OffscreenCanvasEnabled:

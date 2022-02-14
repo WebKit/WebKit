@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Identified.h>
 #include <wtf/URL.h>
 #include "WritingMode.h"
@@ -131,6 +132,7 @@ private:
         ServiceWorker,
     };
     NotificationSource m_notificationSource;
+    ScriptExecutionContextIdentifier m_contextIdentifier;
 };
 
 } // namespace WebCore

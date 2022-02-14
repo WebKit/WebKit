@@ -47,7 +47,7 @@ public:
     }
 
 private:
-    void show(WebPageProxy& page, WebNotification& notification) override
+    void show(WebPageProxy* page, WebNotification& notification) override
     {
         m_provider.show(page, notification);
     }
@@ -115,10 +115,16 @@ void WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag(cons
 #endif
 }
 
-void WebKitNotificationProvider::show(WebPageProxy& page, const WebNotification& webNotification)
+void WebKitNotificationProvider::show(WebPageProxy* page, const WebNotification& webNotification)
 {
+    if (!page) {
+        // FIXME: glib needs to find their own solution to handling pageless notifications.
+        // I won't make something up for them.
+        return;
+    }
+    
     GRefPtr<WebKitNotification> notification = m_notifications.get(webNotification.notificationID());
-    auto* webView = webkitWebContextGetWebViewForPage(m_webContext, &page);
+    auto* webView = webkitWebContextGetWebViewForPage(m_webContext, page);
     ASSERT(webView);
 
     if (!notification) {

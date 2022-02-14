@@ -62,6 +62,6 @@ FAIL Notification interface: notification must inherit property "data" with the 
 FAIL Notification interface: notification must inherit property "actions" with the proper type assert_inherits: property "actions" not found in prototype chain
 PASS Notification interface: notification must inherit property "close()" with the proper type
 PASS NotificationEvent interface: existence and properties of interface object
-FAIL ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "showNotification" missing
-FAIL ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "getNotifications" missing
+PASS ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions)
+PASS ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions)
 

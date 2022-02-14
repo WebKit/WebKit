@@ -294,6 +294,7 @@ public:
     static void denyWebNotificationPermission(JSStringRef origin);
     static void removeAllWebNotificationPermissions();
     static void simulateWebNotificationClick(JSValueRef notification);
+    static void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);

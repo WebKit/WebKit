@@ -127,6 +127,7 @@ public:
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
     void simulateWebNotificationClick(WKDataRef notificationID);
+    void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);
@@ -372,6 +373,9 @@ public:
     WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
     WKPreferencesRef platformPreferences();
+
+    bool grantNotificationPermission(WKStringRef origin);
+    bool denyNotificationPermission(WKStringRef origin);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);

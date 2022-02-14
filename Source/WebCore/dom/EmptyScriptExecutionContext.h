@@ -94,6 +94,10 @@ private:
 
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
+#if ENABLE(NOTIFICATIONS)
+    NotificationClient* notificationClient() final { return nullptr; }
+#endif
+
     class EmptyEventLoop final : public EventLoop {
     public:
         static Ref<EmptyEventLoop> create(JSC::VM& vm)

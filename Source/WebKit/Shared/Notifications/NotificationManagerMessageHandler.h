@@ -41,7 +41,7 @@ public:
     virtual ~NotificationManagerMessageHandler() = default;
 
     virtual void requestSystemNotificationPermission(const String& securityOrigin, CompletionHandler<void(bool)>&&) = 0;
-    virtual void showNotification(const WebCore::NotificationData&) = 0;
+    virtual void showNotification(IPC::Connection&, const WebCore::NotificationData&) = 0;
     virtual void cancelNotification(const UUID& notificationID) = 0;
     virtual void clearNotifications(const Vector<UUID>& notificationIDs) = 0;
     virtual void didDestroyNotification(const UUID& notificationID) = 0;

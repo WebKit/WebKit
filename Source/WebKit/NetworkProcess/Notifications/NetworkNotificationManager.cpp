@@ -93,13 +93,14 @@ void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(Co
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
 {
     CompletionHandler<void(Vector<WebPushMessage>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<WebPushMessage>&& messages) mutable {
+        LOG(Push, "Done getting push messages");
         completionHandler(WTFMove(messages));
     };
 
     sendMessageWithReply<WebPushD::MessageType::GetPendingPushMessages>(WTFMove(replyHandler));
 }
 
-void NetworkNotificationManager::showNotification(const WebCore::NotificationData&)
+void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCore::NotificationData&)
 {
     if (!m_connection)
         return;

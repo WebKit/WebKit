@@ -80,6 +80,10 @@ enum class LoadedFromOpaqueSource : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 
+#if ENABLE(NOTIFICATIONS)
+class NotificationClient;
+#endif
+
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;
 class ServiceWorkerContainer;

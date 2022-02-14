@@ -52,7 +52,7 @@ private:
     void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
-    WebPage* m_page;
+    WebPage* m_page { nullptr };
 };
 
 } // namespace WebKit

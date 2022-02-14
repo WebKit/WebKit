@@ -94,6 +94,10 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+#if ENABLE(NOTIFICATIONS)
+    NotificationClient* notificationClient() override { return nullptr; }
+#endif
+
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
     WorkerOrWorkletThread* m_thread;

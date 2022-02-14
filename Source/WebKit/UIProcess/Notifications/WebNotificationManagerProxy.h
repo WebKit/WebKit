@@ -57,10 +57,12 @@ public:
 
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
+    static WebNotificationManagerProxy& sharedServiceWorkerManager();
+
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();
 
-    void show(WebPageProxy*, const WebCore::NotificationData&);
+    void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&);
     void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
@@ -78,9 +80,6 @@ public:
 
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
-
-    typedef bool (*NotificationFilterFunction)(WebPageProxyIdentifier pageID, const UUID& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<UUID>& desiredPageNotificationIDs);
-    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs, NotificationFilterFunction);
 
     // WebContextSupplement
     void processPoolDestroyed() override;

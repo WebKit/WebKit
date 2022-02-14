@@ -35,6 +35,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "JSDOMPromiseDeferred.h"
+#include "NotificationEvent.h"
 #include "SWContextManager.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
@@ -69,7 +70,12 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(ServiceWorkerContextData&& co
 {
 }
 
-ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
+ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope()
+{
+    // NotificationClient might have some interactions pending with the main thread,
+    // so it should also be destroyed there.
+    callOnMainThread([notificationClient = WTFMove(m_notificationClient)] { });
+}
 
 void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
 {
@@ -207,6 +213,28 @@ void ServiceWorkerGlobalScope::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
         it->value.script = WTFMove(pair.value);
     }
 }
+
+#if ENABLE(NOTIFICATION_EVENT)
+void ServiceWorkerGlobalScope::postTaskToFireNotificationEvent(NotificationEventType eventType, Notification& notification, const String& action)
+{
+    thread().runLoop().postTaskForMode([eventType, protectedNotification = Ref { notification }, action = action.isolatedCopy()](auto& scope) {
+        scope.eventLoop().queueTask(TaskSource::DOMManipulation, [&scope, protectedScope = Ref { scope }, eventType, protectedNotification, action] {
+            AtomString eventName;
+            switch (eventType) {
+            case NotificationEventType::Click:
+                eventName = eventNames().notificationclickEvent;
+                break;
+            case NotificationEventType::Close:
+                eventName = eventNames().notificationcloseEvent;
+                break;
+            }
+
+            auto event = NotificationEvent::create(eventName, protectedNotification.ptr(), action, ExtendableEvent::IsTrusted::Yes);
+            downcast<ServiceWorkerGlobalScope>(scope).dispatchEvent(event);
+        });
+    }, WorkerRunLoop::defaultMode());
+}
+#endif
 
 } // namespace WebCore
 

@@ -49,6 +49,13 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
     return adoptRef(*new WebNotificationManagerProxy(processPool));
 }
 
+WebNotificationManagerProxy& WebNotificationManagerProxy::sharedServiceWorkerManager()
+{
+    ASSERT(isMainRunLoop());
+    static WebNotificationManagerProxy* sharedManager = new WebNotificationManagerProxy(nullptr);
+    return *sharedManager;
+}
+
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
     , m_provider(makeUnique<API::NotificationProvider>())
@@ -88,21 +95,28 @@ HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
     return m_provider->notificationPermissions();
 }
 
-void WebNotificationManagerProxy::show(WebPageProxy* webPage, const WebCore::NotificationData& notificationData)
+static WebPageProxyIdentifier identifierForPagePointer(WebPageProxy* webPage)
 {
-    auto notification = WebNotification::create(notificationData, webPage->identifier());
-    m_globalNotificationMap.set(notification->notificationID(), notification->coreNotificationID());
-    m_notifications.set(notification->coreNotificationID(), notification);
-    m_provider->show(*webPage, notification.get());
+    return webPage ? webPage->identifier() : WebPageProxyIdentifier();
 }
 
-void WebNotificationManagerProxy::cancel(WebPageProxy* webPage, const UUID& pageNotificationID)
+void WebNotificationManagerProxy::show(WebPageProxy* webPage, IPC::Connection& connection, const WebCore::NotificationData& notificationData)
+{
+    LOG(Notifications, "WebPageProxy (%p) asking to show notification (%s)", webPage, notificationData.notificationID.toString().utf8().data());
+
+    auto notification = WebNotification::create(notificationData, identifierForPagePointer(webPage), connection);
+    m_globalNotificationMap.set(notification->notificationID(), notification->coreNotificationID());
+    m_notifications.set(notification->coreNotificationID(), notification);
+    m_provider->show(webPage, notification.get());
+}
+
+void WebNotificationManagerProxy::cancel(WebPageProxy*, const UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.get(pageNotificationID))
         m_provider->cancel(*webNotification);
 }
     
-void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, const UUID& pageNotificationID)
+void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.take(pageNotificationID)) {
         m_globalNotificationMap.remove(webNotification->notificationID());
@@ -110,37 +124,26 @@ void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, 
     }
 }
 
-static bool pageIDsMatch(WebPageProxyIdentifier pageID, const UUID&, WebPageProxyIdentifier desiredPageID, const Vector<UUID>&)
-{
-    return pageID == desiredPageID;
-}
-
-static bool pageAndNotificationIDsMatch(WebPageProxyIdentifier pageID, const UUID& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<UUID>& desiredPageNotificationIDs)
-{
-    return pageID == desiredPageID && desiredPageNotificationIDs.contains(pageNotificationID);
-}
-
 void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage)
 {
-    clearNotifications(webPage, Vector<UUID>(), pageIDsMatch);
+    ASSERT(webPage);
+    clearNotifications(webPage, { });
 }
 
 void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<UUID>& pageNotificationIDs)
 {
-    clearNotifications(webPage, pageNotificationIDs, pageAndNotificationIDsMatch);
-}
-
-void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<UUID>& pageNotificationIDs, NotificationFilterFunction filterFunction)
-{
-    auto targetPageProxyID = webPage->identifier();
-
     Vector<uint64_t> globalNotificationIDs;
-    globalNotificationIDs.reserveCapacity(m_globalNotificationMap.size());
+    globalNotificationIDs.reserveInitialCapacity(m_globalNotificationMap.size());
+
+    // We always check page identity.
+    // If the set of notification IDs is non-empty, we also check that.
+    auto targetPageIdentifier = identifierForPagePointer(webPage);
+    bool checkNotificationIDs = !pageNotificationIDs.isEmpty();
 
     for (auto notification : m_notifications.values()) {
-        auto pageProxyID = notification->pageIdentifier();
-        auto coreNotificationID = notification->coreNotificationID();
-        if (!filterFunction(pageProxyID, coreNotificationID, targetPageProxyID, pageNotificationIDs))
+        if (checkNotificationIDs && !pageNotificationIDs.contains(notification->coreNotificationID()))
+            continue;
+        if (targetPageIdentifier != notification->pageIdentifier())
             continue;
 
         uint64_t globalNotificationID = notification->notificationID();
@@ -167,11 +170,27 @@ void WebNotificationManagerProxy::providerDidShowNotification(uint64_t globalNot
         return;
     }
 
-    auto* webPage = WebProcessProxy::webPage(notification->pageIdentifier());
-    if (!webPage)
+    LOG(Notifications, "Provider did show notification (%s)", notification->coreNotificationID().toString().utf8().data());
+
+    auto* connection = notification->sourceConnection();
+    if (!connection)
         return;
 
-    webPage->process().send(Messages::WebNotificationManager::DidShowNotification(it->value), 0);
+    connection->send(Messages::WebNotificationManager::DidShowNotification(it->value), 0);
+}
+
+static void dispatchDidClickNotification(WebNotification* notification)
+{
+    LOG(Notifications, "Provider did click notification (%s)", notification->coreNotificationID().toString().utf8().data());
+
+    if (!notification)
+        return;
+
+    auto* connection = notification->sourceConnection();
+    if (!connection)
+        return;
+
+    connection->send(Messages::WebNotificationManager::DidClickNotification(notification->coreNotificationID()), 0);
 }
 
 void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNotificationID)
@@ -180,35 +199,17 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
     if (it == m_globalNotificationMap.end())
         return;
 
-    auto notification = m_notifications.get(it->value);
-    if (!notification) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto* webPage = WebProcessProxy::webPage(notification->pageIdentifier());
-    if (!webPage)
-        return;
-
-    webPage->process().send(Messages::WebNotificationManager::DidClickNotification(it->value), 0);
+    dispatchDidClickNotification(m_notifications.get(it->value));
 }
 
 void WebNotificationManagerProxy::providerDidClickNotification(const UUID& coreNotificationID)
 {
-    auto notification = m_notifications.get(coreNotificationID);
-    if (!notification)
-        return;
-
-    auto* webPage = WebProcessProxy::webPage(notification->pageIdentifier());
-    if (!webPage)
-        return;
-
-    webPage->process().send(Messages::WebNotificationManager::DidClickNotification(coreNotificationID), 0);
+    dispatchDidClickNotification(m_notifications.get(coreNotificationID));
 }
 
 void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* globalNotificationIDs)
 {
-    HashMap<WebPageProxy*, Vector<UUID>> pageNotificationIDs;
+    Vector<RefPtr<WebNotification>> closedNotifications;
 
     size_t size = globalNotificationIDs->size();
     for (size_t i = 0; i < size; ++i) {
@@ -241,26 +242,25 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         if (!notification)
             continue;
 
-        if (WebPageProxy* webPage = WebProcessProxy::webPage(notification->pageIdentifier())) {
-            auto pageIt = pageNotificationIDs.find(webPage);
-            if (pageIt == pageNotificationIDs.end()) {
-                Vector<UUID> newVector;
-                newVector.reserveInitialCapacity(size);
-                pageIt = pageNotificationIDs.add(webPage, WTFMove(newVector)).iterator;
-            }
-
-            pageIt->value.append(notification->coreNotificationID());
-        }
-
         m_globalNotificationMap.remove(notification->notificationID());
+        closedNotifications.append(WTFMove(notification));
     }
 
-    for (auto it = pageNotificationIDs.begin(), end = pageNotificationIDs.end(); it != end; ++it)
-        it->key->process().send(Messages::WebNotificationManager::DidCloseNotifications(it->value), 0);
+    for (auto& notification : closedNotifications) {
+        if (auto* connection = notification->sourceConnection()) {
+            LOG(Notifications, "Provider did close notification (%s)", notification->coreNotificationID().toString().utf8().data());
+            Vector<UUID> notificationIDs = { notification->coreNotificationID() };
+            connection->send(Messages::WebNotificationManager::DidCloseNotifications(notificationIDs), 0);
+        }
+    }
 }
 
 void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool allowed)
 {
+    LOG(Notifications, "Provider did update notification policy for origin %s to %i", origin->securityOrigin().toString().utf8().data(), allowed);
+
+    WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), allowed));
+
     if (!processPool())
         return;
 
@@ -281,7 +281,11 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
     
     for (size_t i = 0; i < size; ++i)
         originStrings.append(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
-    
+
+    WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
+
+    if (!processPool())
+        return;
     processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
 }
 

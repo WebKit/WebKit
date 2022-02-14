@@ -34,6 +34,7 @@
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "ProvisionalPageProxy.h"
+#include "ServiceWorkerNotificationHandler.h"
 #include "SpeechRecognitionPermissionRequest.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h"
@@ -2003,6 +2004,7 @@ void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTyp
 
     bool didChange = false;
     if (workerType.contains(RemoteWorkerType::ServiceWorker) && m_serviceWorkerInformation) {
+        removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_serviceWorkerInformation->remoteWorkerPageID);
         m_serviceWorkerInformation = { };
         didChange = true;
     }
@@ -2064,6 +2066,10 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
         nullptr,
         { }
     };
+
+    if (workerType == RemoteWorkerType::ServiceWorker)
+        addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_serviceWorkerInformation->remoteWorkerPageID, ServiceWorkerNotificationHandler::singleton());
+
     updateBackgroundResponsivenessTimer();
 
     updateRemoteWorkerProcessAssertion(workerType);

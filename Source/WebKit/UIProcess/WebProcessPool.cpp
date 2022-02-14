@@ -588,7 +588,8 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
 
     remoteWorkerProcesses().add(*serviceWorkerProcessProxy);
 
-    serviceWorkerProcessProxy->establishServiceWorkerContext(processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store(), registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
+    auto preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
+    serviceWorkerProcessProxy->establishServiceWorkerContext(preferencesStore, registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         serviceWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
 }

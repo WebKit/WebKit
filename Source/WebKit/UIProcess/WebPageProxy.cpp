@@ -8874,9 +8874,9 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
     m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::showNotification(const WebCore::NotificationData& notificationData)
+void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData)
 {
-    m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, notificationData);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, connection, notificationData);
 }
 
 void WebPageProxy::cancelNotification(const UUID& notificationID)

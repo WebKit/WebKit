@@ -996,6 +996,7 @@
 		515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1AD1D555C5100DD7C68 /* UIGamepad.h */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
 		5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACC9351628064800342550 /* NetworkProcessMessages.h */; };
+		5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */; };
 		516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* APIError.h */; };
 		5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7E016138E2900D03ED3 /* NetworkProcess.h */; };
 		5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */; };
@@ -4483,6 +4484,8 @@
 		5160E958274C0D8800567388 /* PushAppBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushAppBundle.mm; sourceTree = "<group>"; };
 		5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAppBundleRegistry.h; sourceTree = "<group>"; };
 		5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockAppBundleRegistry.mm; sourceTree = "<group>"; };
+		5164657E27A9C76500E1F2BA /* ServiceWorkerNotificationHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNotificationHandler.cpp; sourceTree = "<group>"; };
+		5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNotificationHandler.h; sourceTree = "<group>"; };
 		5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuxiliaryProcess.messages.in; sourceTree = "<group>"; };
 		516A4A5B120A2CCD00C05B7F /* APIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIError.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
@@ -8680,6 +8683,8 @@
 			isa = PBXGroup;
 			children = (
 				31A2EC531489982500810D71 /* NotificationPermissionRequest.h */,
+				5164657E27A9C76500E1F2BA /* ServiceWorkerNotificationHandler.cpp */,
+				5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */,
 				31A2EC41148997BE00810D71 /* WebNotification.cpp */,
 				31A2EC42148997BE00810D71 /* WebNotification.h */,
 				51452706271FBEC1000467B6 /* WebNotificationManagerMessageHandler.cpp */,
@@ -13929,6 +13934,7 @@
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
 				E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */,
 				5CD286541E7235B10094FDC8 /* WKContentRuleList.h in Headers */,
+				5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */,
 				5CD286551E7235B80094FDC8 /* WKContentRuleListInternal.h in Headers */,
 				5C5139DB25927D80009C3E30 /* WKContentRuleListPrivate.h in Headers */,
 				5CD286511E7235990094FDC8 /* WKContentRuleListStore.h in Headers */,

@@ -35,18 +35,18 @@ FAIL Notification interface: attribute requireInteraction assert_own_property: s
 FAIL Notification interface: attribute data assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute actions assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: operation close() assert_own_property: self does not have own property "Notification" expected property "Notification" missing
-FAIL NotificationEvent interface: existence and properties of interface object assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface object length assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface object name assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface: attribute notification assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL NotificationEvent interface: attribute action assert_own_property: self does not have own property "NotificationEvent" expected property "NotificationEvent" missing
-FAIL ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "showNotification" missing
-FAIL ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "getNotifications" missing
-FAIL ServiceWorkerGlobalScope interface: attribute onnotificationclick assert_own_property: The global object must have a property "onnotificationclick" expected property "onnotificationclick" missing
-FAIL ServiceWorkerGlobalScope interface: attribute onnotificationclose assert_own_property: The global object must have a property "onnotificationclose" expected property "onnotificationclose" missing
-FAIL ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclick" with the proper type assert_own_property: expected property "onnotificationclick" missing
-FAIL ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclose" with the proper type assert_own_property: expected property "onnotificationclose" missing
+PASS NotificationEvent interface: existence and properties of interface object
+PASS NotificationEvent interface object length
+PASS NotificationEvent interface object name
+PASS NotificationEvent interface: existence and properties of interface prototype object
+PASS NotificationEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS NotificationEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS NotificationEvent interface: attribute notification
+PASS NotificationEvent interface: attribute action
+PASS ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions)
+PASS ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions)
+PASS ServiceWorkerGlobalScope interface: attribute onnotificationclick
+PASS ServiceWorkerGlobalScope interface: attribute onnotificationclose
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclick" with the proper type
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclose" with the proper type
 

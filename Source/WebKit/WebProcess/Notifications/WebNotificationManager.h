@@ -81,6 +81,8 @@ private:
     void didCloseNotifications(const Vector<UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
+    template<typename U> bool sendNotificationMessage(U&& message, WebCore::Notification&, WebPage*);
+
     WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)

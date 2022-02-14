@@ -40,9 +40,9 @@ void WebNotificationManagerMessageHandler::requestSystemNotificationPermission(c
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebNotificationManagerMessageHandler::showNotification(const WebCore::NotificationData& data)
+void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data)
 {
-    m_webPageProxy.showNotification(data);
+    m_webPageProxy.showNotification(connection, data);
 }
 
 void WebNotificationManagerMessageHandler::cancelNotification(const UUID& notificationID)

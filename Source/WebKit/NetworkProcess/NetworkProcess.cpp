@@ -2254,17 +2254,22 @@ void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, Completion
 {
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     if (auto* session = networkSession(sessionID)) {
+        LOG(Notifications, "NetworkProcess getting pending push messages for session ID %" PRIu64, sessionID.toUInt64());
         session->notificationManager().getPendingPushMessages(WTFMove(callback));
         return;
-    }
+    } else
+        LOG(Notifications, "NetworkProcess could not find session for ID %llu to get pending push messages", sessionID.toUInt64());
 #endif
     callback({ });
 }
 
 void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& callback)
 {
-    if (auto* session = networkSession(sessionID))
+    if (auto* session = networkSession(sessionID)) {
+        LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
         session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), WTFMove(callback));
+    } else
+        LOG(Push, "Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
 }
 #endif // ENABLE(SERVICE_WORKER)
 

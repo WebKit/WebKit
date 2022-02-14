@@ -1,0 +1,60 @@
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<script>
+
+function failTheTest(msg)
+{
+    testFailed(msg);
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.denyWebNotificationPermission(testURL);
+    setTimeout("failTheTest('timed out')", 15000);
+}
+
+description("This tests that a notification shown by a service worker can be clicked and closed, with those actions being observable by the service worker");
+
+shouldBeEqualToString("Notification.permission", "denied");
+
+async function registerServiceWorker() {
+    var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
+    
+    if (!registration)
+        return testFailed("No registration");
+    
+    if (registration.active) {
+        registration.active.postMessage("Start");
+        return;
+    }
+
+    var installingWorker = registration.installing;
+    if (!installingWorker)
+        failTheTest("No active *or* installing worker");
+
+    installingWorker.addEventListener("statechange", () => {
+        if (installingWorker.state === "activated") {
+            installingWorker.postMessage("tryshow");
+        }
+    });
+}
+
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data == "showFailed") {
+        testPassed("Notification failed to show");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else if (event.data == "shown") {
+        testFailed("Notification shown, but shouldn't have been");
+    } else {
+        testFailed("Message received: " + event.data);
+    }
+});
+
+</script>
+</head>
+<body onload="registerServiceWorker()">
+</body>

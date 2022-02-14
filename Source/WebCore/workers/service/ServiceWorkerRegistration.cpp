@@ -30,10 +30,13 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "NavigationPreloadManager.h"
+#include "NotificationClient.h"
+#include "NotificationPermission.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerTypes.h"
@@ -264,20 +267,38 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerRegistration::showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
 {
-    UNUSED_PARAM(title);
-    UNUSED_PARAM(options);
+    if (!m_activeWorker) {
+        promise.reject(Exception { TypeError, "Registration does not have an active worker"_s });
+        return;
+    }
 
-    promise.reject();
+    auto* client = context.notificationClient();
+    if (!client) {
+        promise.reject(Exception { TypeError, "Registration not active"_s });
+        return;
+    }
+
+    if (client->checkPermission(&context) != NotificationPermission::Granted) {
+        promise.reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
+        return;
+    }
+
+    // The Notification is kept alive by virtue of being show()'n soon.
+    // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.
+    auto notification = Notification::create(context, title, options);
+
+    context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise)]() mutable {
+        promise.resolve();
+    });
 }
 
 void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>> promise)
 {
     UNUSED_PARAM(filter);
 
-    promise.reject();
-
+    promise.reject(Exception { NotSupportedError, "ServiceWorkerRegistration.getNotifications not yet implemented"_s });
 }
 #endif // ENABLE(NOTIFICATION_EVENT)
 

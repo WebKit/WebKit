@@ -776,11 +776,15 @@ void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef pageRef
 
 void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnRetainedDataRef)
 {
-    WebKit::WebPage* page = WebKit::toImpl(pageRef);
-    page->layoutIfNeeded();
+    WebKit::toImpl(pageRef)->layoutIfNeeded();
 
+    WKBundlePagePostSynchronousMessageForTestingWithoutLayout(pageRef, messageNameRef, messageBodyRef, returnRetainedDataRef);
+}
+
+void WKBundlePagePostSynchronousMessageForTestingWithoutLayout(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnRetainedDataRef)
+{
     RefPtr<API::Object> returnData;
-    page->postSynchronousMessageForTesting(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef), returnData);
+    WebKit::toImpl(pageRef)->postSynchronousMessageForTesting(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef), returnData);
     if (returnRetainedDataRef)
         *returnRetainedDataRef = WebKit::toAPI(returnData.leakRef());
 }

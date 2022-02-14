@@ -39,10 +39,13 @@ namespace WebCore {
 class DeferredPromise;
 class ExtendableEvent;
 class Page;
-struct ServiceWorkerClientData;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
+
+enum class NotificationEventType : bool;
+
+struct ServiceWorkerClientData;
 
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
@@ -80,7 +83,11 @@ public:
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
 
     WEBCORE_EXPORT Page* serviceWorkerPage();
-    
+
+#if ENABLE(NOTIFICATION_EVENT)
+    void postTaskToFireNotificationEvent(NotificationEventType, Notification&, const String& action);
+#endif
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
     void notifyServiceWorkerPageOfCreationIfNecessary();

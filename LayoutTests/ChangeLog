@@ -1,3 +1,21 @@
+2022-02-13  Brady Eidson  <beidson@apple.com>
+
+        Implement ServiceWorkerRegistration.showNotification()
+        https://bugs.webkit.org/show_bug.cgi?id=22722
+
+        Reviewed by Chris Dumez.
+
+        Test a ServiceWorker showing a notification both when it's allowed and when it's denied.
+
+        * http/tests/workers/service/resources/shownotification-worker.js: Added.
+        (async const):
+        (let.messageClients):
+        (async event):
+        * http/tests/workers/service/shownotification-allowed-expected.txt: Added.
+        * http/tests/workers/service/shownotification-allowed.html: Added.
+        * http/tests/workers/service/shownotification-denied-expected.txt: Added.
+        * http/tests/workers/service/shownotification-denied.html: Added.
+
 2022-02-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/image-map1.html in isolated tree mode.

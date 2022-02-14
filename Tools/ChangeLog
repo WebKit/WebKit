@@ -1,3 +1,49 @@
+2022-02-13  Brady Eidson  <beidson@apple.com>
+
+        Implement ServiceWorkerRegistration.showNotification()
+        https://bugs.webkit.org/show_bug.cgi?id=22722
+
+        Reviewed by Chris Dumez.
+
+        To reliably support testing ServiceWorker notifications, TestRunner needed to actually grant/deny permissions in the UI process
+        like a proper NotificationProvider would.
+        
+        It also has to understand showing a notification without an associated WKPage.
+        
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::postSimulateWebNotificationClickForServiceWorkerNotifications):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::grantWebNotificationPermission):
+        (WTR::TestRunner::denyWebNotificationPermission):
+        (WTR::TestRunner::simulateWebNotificationClickForServiceWorkerNotifications):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::grantNotificationPermission):
+        (WTR::TestController::denyNotificationPermission):
+        (WTR::TestController::simulateWebNotificationClickForServiceWorkerNotifications):
+        * WebKitTestRunner/TestController.h:
+        
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::WebNotificationProvider):
+        (WTR::notificationManagerForPage):
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::WebNotificationProvider::addNotificationManager):
+        (WTR::WebNotificationProvider::notificationPermissions):
+        (WTR::WebNotificationProvider::setPermission):
+        (WTR::WebNotificationProvider::simulateWebNotificationClickForServiceWorkerNotifications):
+        (WTR::WebNotificationProvider::reset):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2022-02-12  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Do not try and read from /dev/null

@@ -48,6 +48,7 @@ class CacheStorageProvider;
 class FetchLoader;
 class FetchLoaderClient;
 class PageConfiguration;
+class NotificationClient;
 class ServiceWorkerInspectorProxy;
 struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;

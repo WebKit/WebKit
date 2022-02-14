@@ -38,6 +38,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import "WebNotificationManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebPushMessage.h"
 #import "WebResourceLoadStatisticsStore.h"
@@ -659,6 +660,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return wrapper(_websiteDataStore->configuration().copy());
 }
 
++ (WKNotificationManagerRef)_sharedServiceWorkerNotificationManager
+{
+    LOG(Push, "Accessing _sharedServiceWorkerNotificationManager");
+    return WebKit::toAPI(&WebKit::WebNotificationManagerProxy::sharedServiceWorkerManager());
+}
+
 - (void)_allowTLSCertificateChain:(NSArray *)certificateChain forHost:(NSString *)host
 {
     _websiteDataStore->allowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain), host);
@@ -771,12 +778,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 -(void)_getPendingPushMessages:(void(^)(NSArray<NSDictionary *> *))completionHandler
 {
+    LOG(Push, "Getting pending push messages");
+
 #if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:messages.size()]);
         for (auto& message : messages)
             [result addObject:message.toDictionary()];
 
+        LOG(Push, "Giving application %u pending push messages", messages.size());
         completionHandler(result.get());
     });
 #endif
@@ -787,11 +797,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #if ENABLE(SERVICE_WORKER)
     auto pushMessage = WebKit::WebPushMessage::fromDictionary(pushMessageDictionary);
     if (!pushMessage) {
+        LOG(Push, "Asked to handle an invalid push message");
         completionHandler(false);
         return;
     }
 
+    LOG(Push, "Sending push message to network process to handle");
     _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        LOG(Push, "Push message processing complete. Callback result: %i", wasProcessed);
         completionHandler(wasProcessed);
     });
 #endif

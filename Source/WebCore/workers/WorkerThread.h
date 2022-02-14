@@ -28,6 +28,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "FetchRequestCredentials.h"
+#include "NotificationPermission.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkerType.h"

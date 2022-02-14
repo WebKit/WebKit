@@ -396,6 +396,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClickForServiceWorkerNotifications")) {
+        TestController::singleton().simulateWebNotificationClickForServiceWorkerNotifications();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetAddsVisitedLinks")) {
         WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), booleanValue(messageBody));
         return;
@@ -1024,6 +1029,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         unsigned count = TestController::singleton().userMediaPermissionRequestCountForOrigin(originWK, parentOriginWK);
         return adoptWK(WKUInt64Create(count));
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GrantNotificationPermission"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().grantNotificationPermission(stringValue(messageBody))));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermission"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermission(stringValue(messageBody))));
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));

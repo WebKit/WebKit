@@ -95,6 +95,7 @@ public:
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
     void postSimulateWebNotificationClick(WKDataRef notificationID);
+    void postSimulateWebNotificationClickForServiceWorkerNotifications();
     void postSetAddsVisitedLinks(bool);
 
     // Geolocation.

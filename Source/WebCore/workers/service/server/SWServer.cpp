@@ -163,6 +163,7 @@ void SWServer::whenImportIsCompletedIfNeeded(CompletionHandler<void()>&& callbac
 
 void SWServer::registrationStoreDatabaseFailedToOpen()
 {
+    LOG(ServiceWorker, "Failed to open SW registration database");
     ASSERT(!m_importCompleted);
     if (!m_importCompleted)
         registrationStoreImportComplete();
@@ -172,6 +173,8 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 {
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
+
+    LOG(ServiceWorker, "Adding registration from store for %s", data.registration.key.loggingString().utf8().data());
 
     auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
     validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, [this, weakThis = WeakPtr { *this }, data = WTFMove(data)] (bool isValid) mutable {
@@ -198,6 +201,8 @@ void SWServer::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerI
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
 {
+    LOG(ServiceWorker, "Adding registration live for %s", registration->key().loggingString().utf8().data());
+
     if (!m_scopeToRegistrationMap.contains(registration->key()) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host))
         m_uniqueRegistrationCount++;
 
@@ -1224,20 +1229,24 @@ void SWServer::softUpdate(SWServerRegistration& registration)
 void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& registrationURL, CompletionHandler<void(bool)>&& callback)
 {
     whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
+        LOG(Push, "ServiceWorker import is complete, can handle push message now");
         if (!weakThis) {
             callback(false);
             return;
         }
+
         auto origin = SecurityOriginData::fromURL(registrationURL);
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), WTFMove(registrationURL) };
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
+            LOG(Push, "Cannot process push messasge: Failed to find SW registration for registration key %s", registrationKey.loggingString().utf8().data());
             callback(true);
             return;
         }
 
         auto* worker = registration->activeWorker();
         if (!worker) {
+            LOG(Push, "Cannot process push messasge: No active worker for registration key %s", registrationKey.loggingString().utf8().data());
             callback(true);
             return;
         }

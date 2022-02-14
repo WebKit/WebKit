@@ -78,6 +78,7 @@ class SecurityOrigin;
 class LocalWebLockRegistry;
 
 struct MockWebAuthenticationConfiguration;
+struct NotificationData;
 }
 
 namespace WebKit {
@@ -369,6 +370,11 @@ public:
     void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
 
     void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
+
+    void showServiceWorkerNotification(IPC::Connection&, const WebCore::NotificationData&);
+    void cancelServiceWorkerNotification(const UUID& notificationID);
+    void clearServiceWorkerNotification(const UUID& notificationID);
+    void didDestroyServiceWorkerNotification(const UUID& notificationID);
 
 private:
     enum class ForceReinitialization : bool { No, Yes };

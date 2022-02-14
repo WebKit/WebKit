@@ -403,7 +403,7 @@ private:
 #endif
 
 #if ENABLE(NOTIFICATION_EVENT)
-    bool m_notificationEventEnabled { false };
+    bool m_notificationEventEnabled { true };
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

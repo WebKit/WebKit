@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionOr.h"
+#include "PageIdentifier.h"
 #include "PushSubscriptionData.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerClientQueryOptions.h"
@@ -70,6 +71,7 @@ public:
         virtual void didFailHeartBeatCheck(ServiceWorkerIdentifier) = 0;
 
         virtual bool isThrottleable() const = 0;
+        virtual PageIdentifier pageIdentifier() const = 0;
 
         bool isClosed() const { return m_isClosed; }
 

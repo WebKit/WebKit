@@ -147,10 +147,22 @@ static bool postSynchronousMessageReturningBoolean(const char* name)
     return postSynchronousMessageReturningBoolean(name, WKRetainPtr<WKTypeRef> { });
 }
 
-template<typename T> static WKRetainPtr<WKTypeRef> postSynchronousPageMessageWithReturnValue(const char* name, const WKRetainPtr<T>& value)
+enum class WithLayout : bool {
+    No,
+    Yes
+};
+
+template<typename T> static WKRetainPtr<WKTypeRef> postSynchronousPageMessageWithReturnValue(const char* name, const WKRetainPtr<T>& value, WithLayout withLayout = WithLayout::Yes)
 {
     WKTypeRef rawReturnValue = nullptr;
-    WKBundlePagePostSynchronousMessageForTesting(page(), toWK(name).get(), value.get(), &rawReturnValue);
+    switch (withLayout) {
+    case WithLayout::No:
+        WKBundlePagePostSynchronousMessageForTestingWithoutLayout(page(), toWK(name).get(), value.get(), &rawReturnValue);
+        break;
+    case WithLayout::Yes:
+        WKBundlePagePostSynchronousMessageForTesting(page(), toWK(name).get(), value.get(), &rawReturnValue);
+        break;
+    }
     return adoptWK(rawReturnValue);
 }
 
@@ -867,11 +879,13 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
+    postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin), WithLayout::No);
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
+    postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin), WithLayout::No);
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
@@ -885,6 +899,11 @@ void TestRunner::simulateWebNotificationClick(JSValueRef notification)
 
     auto notificationID = adoptWK(WKBundleCopyWebNotificationID(injectedBundle.bundle(), mainFrameJSContext(), notification));
     injectedBundle.postSimulateWebNotificationClick(notificationID.get());
+}
+
+void TestRunner::simulateWebNotificationClickForServiceWorkerNotifications()
+{
+    InjectedBundle::singleton().postSimulateWebNotificationClickForServiceWorkerNotifications();
 }
 
 void TestRunner::setGeolocationPermission(bool enabled)

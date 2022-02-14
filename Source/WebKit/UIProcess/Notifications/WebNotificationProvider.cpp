@@ -42,12 +42,12 @@ WebNotificationProvider::WebNotificationProvider(const WKNotificationProviderBas
     initialize(provider);
 }
 
-void WebNotificationProvider::show(WebPageProxy& page, WebNotification& notification)
+void WebNotificationProvider::show(WebPageProxy* page, WebNotification& notification)
 {
     if (!m_client.show)
         return;
 
-    m_client.show(toAPI(&page), toAPI(&notification), m_client.base.clientInfo);
+    m_client.show(toAPI(page), toAPI(&notification), m_client.base.clientInfo);
 }
 
 void WebNotificationProvider::cancel(WebNotification& notification)

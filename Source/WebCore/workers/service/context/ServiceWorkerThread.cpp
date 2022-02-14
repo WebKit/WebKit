@@ -279,6 +279,10 @@ void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
     startHeartBeatTimer();
 
     WorkerThread::start([callback = WTFMove(callback), weakThis = WeakPtr { *this }](auto& errorMessage) mutable {
+#ifndef NDEBUG
+        if (!errorMessage.isEmpty())
+            LOG(ServiceWorker, "Service worker thread failed to start: %s", errorMessage.utf8().data());
+#endif
         bool doesHandleFetch = true;
         if (weakThis) {
             weakThis->finishedStarting();

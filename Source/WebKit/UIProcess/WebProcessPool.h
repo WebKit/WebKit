@@ -203,6 +203,8 @@ public:
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
 
+    template<typename T> static void sendToAllRemoteWorkerProcesses(const T& message);
+
     void processDidFinishLaunching(WebProcessProxy&);
 
     WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
@@ -833,6 +835,15 @@ void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::Session
     for (auto& process : m_processes) {
         if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
+    }
+}
+
+template<typename T>
+void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message)
+{
+    for (auto& process : remoteWorkerProcesses()) {
+        if (process.canSendMessage())
+            process.send(T(message), 0);
     }
 }
 

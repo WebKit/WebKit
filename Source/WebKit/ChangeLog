@@ -1,3 +1,130 @@
+2022-02-13  Brady Eidson  <beidson@apple.com>
+
+        Implement ServiceWorkerRegistration.showNotification()
+        https://bugs.webkit.org/show_bug.cgi?id=22722
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getPendingPushMessages):
+        (WebKit::NetworkProcess::processPushMessage):
+
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::getPendingPushMessages):
+        (WebKit::NetworkNotificationManager::showNotification):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+
+        * Platform/Logging.h:
+
+        * Shared/Notifications/NotificationManagerMessageHandler.h:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+
+        * Sources.txt:
+
+        * UIProcess/API/APINotificationProvider.h:
+        (API::NotificationProvider::show):
+
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerGetSharedServiceWorkerNotificationManager):
+        * UIProcess/API/C/WKNotificationManager.h:
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _sharedServiceWorkerNotificationManager]):
+        (-[WKWebsiteDataStore _getPendingPushMessages:]):
+        (-[WKWebsiteDataStore _processPushMessage:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * UIProcess/API/glib/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::show):
+        * UIProcess/API/glib/WebKitNotificationProvider.h:
+
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp: Added.
+        (WebKit::ServiceWorkerNotificationHandler::singleton):
+        (WebKit::ServiceWorkerNotificationHandler::ServiceWorkerNotificationHandler):
+        (WebKit::ServiceWorkerNotificationHandler::requestSystemNotificationPermission):
+        (WebKit::ServiceWorkerNotificationHandler::dataStoreForNotificationID):
+        (WebKit::ServiceWorkerNotificationHandler::showNotification):
+        (WebKit::ServiceWorkerNotificationHandler::cancelNotification):
+        (WebKit::ServiceWorkerNotificationHandler::clearNotifications):
+        (WebKit::ServiceWorkerNotificationHandler::didDestroyNotification):
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.h: Copied from Source/WebKit/UIProcess/Notifications/WebNotificationManagerMessageHandler.h.
+
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::sourceConnection const):
+
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        (WebKit::WebNotificationManagerMessageHandler::showNotification):
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.h:
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::sharedServiceWorkerManager):
+        (WebKit::identifierForPagePointer):
+        (WebKit::WebNotificationManagerProxy::show):
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::WebNotificationManagerProxy::clearNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification):
+        (WebKit::dispatchDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidUpdateNotificationPolicy):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        (WebKit::pageIDsMatch): Deleted.
+        (WebKit::pageAndNotificationIDsMatch): Deleted.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::show):
+        * UIProcess/Notifications/WebNotificationProvider.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToAllRemoteWorkerProcesses):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disableRemoteWorkers):
+        (WebKit::WebProcessProxy::enableRemoteWorkers):
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::showServiceWorkerNotification):
+        (WebKit::WebsiteDataStore::cancelServiceWorkerNotification):
+        (WebKit::WebsiteDataStore::clearServiceWorkerNotification):
+        (WebKit::WebsiteDataStore::didDestroyServiceWorkerNotification):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::sendNotificationMessage):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        (WebKit::WebNotificationManager::didShowNotification):
+        (WebKit::WebNotificationManager::didClickNotification):
+        (WebKit::WebNotificationManager::didCloseNotifications):
+        (WebKit::sendNotificationMessage): Deleted.
+        * WebProcess/Notifications/WebNotificationManager.h:
+
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::WebNotificationClient):
+        (WebKit::WebNotificationClient::~WebNotificationClient):
+        (WebKit::WebNotificationClient::show):
+        (WebKit::WebNotificationClient::cancel):
+        (WebKit::WebNotificationClient::notificationObjectDestroyed):
+        (WebKit::WebNotificationClient::notificationControllerDestroyed):
+        (WebKit::WebNotificationClient::requestPermission):
+        (WebKit::WebNotificationClient::checkPermission):
+
 2022-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal macOS build

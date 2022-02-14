@@ -64,6 +64,7 @@ static WKDictionaryRef notificationPermissions(const void* clientInfo)
 
 WebNotificationProvider::WebNotificationProvider()
 {
+    m_permissions = adoptWK(WKMutableDictionaryCreate());
 }
 
 WebNotificationProvider::~WebNotificationProvider()
@@ -87,10 +88,17 @@ WKNotificationProviderV0 WebNotificationProvider::provider()
     return notificationProvider;
 }
 
+static WKNotificationManagerRef notificationManagerForPage(WKPageRef page)
+{
+    if (page)
+        return WKContextGetNotificationManager(WKPageGetContext(page));
+
+    return WKNotificationManagerGetSharedServiceWorkerNotificationManager();
+}
+
 void WebNotificationProvider::showWebNotification(WKPageRef page, WKNotificationRef notification)
 {
-    auto context = WKPageGetContext(page);
-    auto notificationManager = WKContextGetNotificationManager(context);
+    auto notificationManager = notificationManagerForPage(page);
     ASSERT(m_knownManagers.contains(notificationManager));
 
     uint64_t identifier = WKNotificationGetID(notification);
@@ -118,7 +126,7 @@ void WebNotificationProvider::closeWebNotification(WKNotificationRef notificatio
 
 void WebNotificationProvider::addNotificationManager(WKNotificationManagerRef manager)
 {
-    ASSERT(!m_knownManagers.contains(manager));
+    ASSERT(!m_knownManagers.contains(manager) || manager == WKNotificationManagerGetSharedServiceWorkerNotificationManager());
     m_knownManagers.add(manager);
 }
 
@@ -145,8 +153,14 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
 
 WKDictionaryRef WebNotificationProvider::notificationPermissions()
 {
-    // Initial permissions are always empty.
-    return WKMutableDictionaryCreate();
+    WKRetain(m_permissions.get());
+    return m_permissions.get();
+}
+
+void WebNotificationProvider::setPermission(const String& origin, bool allowed)
+{
+    auto wkAllowed = adoptWK(WKBooleanCreate(allowed));
+    WKDictionarySetItem(m_permissions.get(), toWK(origin).get(), wkAllowed.get());
 }
 
 void WebNotificationProvider::simulateWebNotificationClick(WKPageRef, WKDataRef notificationID)
@@ -155,6 +169,16 @@ void WebNotificationProvider::simulateWebNotificationClick(WKPageRef, WKDataRef 
     ASSERT(m_owningManager.contains(identifier));
 
     WKNotificationManagerProviderDidClickNotification_b(m_owningManager.get(identifier), notificationID);
+}
+
+void WebNotificationProvider::simulateWebNotificationClickForServiceWorkerNotifications()
+{
+    auto sharedManager = WKNotificationManagerGetSharedServiceWorkerNotificationManager();
+    for (auto& iterator : m_owningManager) {
+        if (iterator.value != sharedManager)
+            continue;
+        WKNotificationManagerProviderDidClickNotification_b(sharedManager, uuidToData(iterator.key).get());
+    }
 }
 
 void WebNotificationProvider::reset()
@@ -166,6 +190,7 @@ void WebNotificationProvider::reset()
     }
 
     m_owningManager.clear();
+    m_permissions = adoptWK(WKMutableDictionaryCreate());
 }
 
 } // namespace WTR

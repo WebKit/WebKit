@@ -66,6 +66,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
+    WebCore::PageIdentifier pageIdentifier() const final { return m_pageID; }
+
 private:
     void updatePreferencesStore(const WebPreferencesStore&);
 

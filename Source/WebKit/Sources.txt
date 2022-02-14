@@ -585,6 +585,7 @@ UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp
 UIProcess/Media/MediaUsageManager.cpp
 UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp
 
+UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp
 UIProcess/Notifications/WebNotification.cpp
 UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp

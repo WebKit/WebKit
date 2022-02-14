@@ -1,3 +1,12 @@
+2022-02-13  Brady Eidson  <beidson@apple.com>
+
+        Implement ServiceWorkerRegistration.showNotification()
+        https://bugs.webkit.org/show_bug.cgi?id=22722
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-12  Jer Noble  <jer.noble@apple.com>
 
         Add settings to restrict media containers and codecs when in Captive Portal mode

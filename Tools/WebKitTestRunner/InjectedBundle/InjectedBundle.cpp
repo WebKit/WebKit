@@ -668,6 +668,11 @@ void InjectedBundle::postSimulateWebNotificationClick(WKDataRef notificationID)
     postPageMessage("SimulateWebNotificationClick", notificationID);
 }
 
+void InjectedBundle::postSimulateWebNotificationClickForServiceWorkerNotifications()
+{
+    postPageMessage("SimulateWebNotificationClickForServiceWorkerNotifications");
+}
+
 void InjectedBundle::postSetAddsVisitedLinks(bool addsVisitedLinks)
 {
     postPageMessage("SetAddsVisitedLinks", adoptWK(WKBooleanCreate(addsVisitedLinks)));

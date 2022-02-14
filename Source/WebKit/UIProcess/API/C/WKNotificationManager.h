@@ -43,6 +43,8 @@ WK_EXPORT void WKNotificationManagerProviderDidCloseNotifications(WKNotification
 WK_EXPORT void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerRef managerRef, WKSecurityOriginRef origin, bool allowed);
 WK_EXPORT void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins);
 
+WK_EXPORT WKNotificationManagerRef WKNotificationManagerGetSharedServiceWorkerNotificationManager();
+
 #ifdef __cplusplus
 }
 #endif

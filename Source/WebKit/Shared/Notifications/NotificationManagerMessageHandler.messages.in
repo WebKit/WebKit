@@ -22,7 +22,7 @@
 
 messages -> NotificationManagerMessageHandler NotRefCounted {
     RequestSystemNotificationPermission(String originIdentifier) -> (bool allowed) Async
-    ShowNotification(struct WebCore::NotificationData notificationData)
+    ShowNotification(struct WebCore::NotificationData notificationData) WantsConnection
     CancelNotification(UUID notificationID)
     ClearNotifications(Vector<UUID> notificationIDs)
     DidDestroyNotification(UUID notificationID)

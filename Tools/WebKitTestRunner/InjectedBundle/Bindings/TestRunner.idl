@@ -208,6 +208,7 @@ interface TestRunner {
     undefined denyWebNotificationPermission(DOMString origin);
     undefined removeAllWebNotificationPermissions();
     undefined simulateWebNotificationClick(object notification);
+    undefined simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation
     undefined setGeolocationPermission(boolean value);
