@@ -422,8 +422,6 @@ private:
     double m_pendingLoadingProgress WTF_GUARDED_BY_LOCK(m_changeLogLock) { 0 };
     double m_loadingProgress { 0 };
     Lock m_changeLogLock;
-
-    bool m_creatingSubtree { false };
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

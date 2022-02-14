@@ -1010,14 +1010,15 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         return;
     }
 
-    // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
     if (!object.node() && !object.renderer())
         return;
 
-    postNotification(&object, object.document(), AXChildrenChanged);
-
     // Should make the subtree dirty so that everything below will be updated correctly.
     object.setNeedsToUpdateSubtree();
+
+    // If isIgnored has changed for object, notify that ChildrenChanged for its parent.
+    if (object.parentObjectIfExists() && object.hasIgnoredValueChanged())
+        childrenChanged(object.parentObject());
 
     // Go up the existing ancestors chain and fire the appropriate notifications.
     bool shouldUpdateParent = true;
@@ -1040,6 +1041,12 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             shouldUpdateParent = false;
         }
     }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(object, AXChildrenChanged);
+#endif
+
+    postPlatformNotification(&object, AXChildrenChanged);
 }
 
 void AXObjectCache::handleMenuOpened(Node* node)
@@ -1129,24 +1136,17 @@ void AXObjectCache::notificationPostTimerFired()
         }
 #endif
 
-        // Ensure that this menu really is a menu. We do this check here so that we don't have to create
-        // the axChildren when the menu is marked as opening.
         if (note.second == AXMenuOpened) {
+            // Only notify if the object is in fact a menu.
             note.first->updateChildrenIfNecessary();
             if (note.first->roleValue() != AccessibilityRole::Menu)
                 continue;
         }
 
-        if (note.second == AXChildrenChanged && note.first->parentObjectIfExists()
-            && downcast<AccessibilityObject>(*note.first).lastKnownIsIgnoredValue() != note.first->accessibilityIsIgnored())
-            childrenChanged(downcast<AccessibilityObject>(note.first->parentObject()));
-
         notificationsToPost.append(note);
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    // FIXME: this updateIsolatedTree here may be premature in some cases.
-    // E.g., if the childrenChanged above is hit, we should updateIsolatedTree after performDeferredCacheUpdate.
     updateIsolatedTree(notificationsToPost);
 #endif
 
@@ -1271,8 +1271,14 @@ void AXObjectCache::deferMenuListValueChange(Element* element)
 
 void AXObjectCache::deferModalChange(Element* element)
 {
-    if (element)
+    if (element) {
         m_deferredModalChangedList.add(*element);
+
+        // Notify that parent's children have changed.
+        if (auto* axParent = get(element->parentNode()))
+            m_deferredChildrenChangedList.add(axParent);
+    }
+
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
@@ -1829,7 +1835,6 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         recomputeIsIgnored(element->parentNode());
     }
 
-
     if (!attrName.localName().string().startsWith("aria-"))
         return;
 
@@ -1848,7 +1853,9 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
     else if (attrName == aria_hiddenAttr) {
-        childrenChanged(element->parentNode(), element);
+        if (auto* parent = get(element->parentNode()))
+            handleChildrenChanged(*parent);
+
         if (m_currentModalElement && m_currentModalElement->isDescendantOf(element)) {
             m_modalNodesInitialized = false;
             deferModalChange(m_currentModalElement.get());
@@ -3228,8 +3235,6 @@ void AXObjectCache::performCacheUpdateTimerFired()
         return;
 
     performDeferredCacheUpdate();
-    // FIXME: need to update the isolated tree after the above cache update.
-    // This is most likely the cause of problems with the isolated tree updates..
 }
 
 void AXObjectCache::processDeferredChildrenChangedList()

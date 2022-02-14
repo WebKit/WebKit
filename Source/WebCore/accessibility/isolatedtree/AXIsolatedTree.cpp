@@ -280,10 +280,6 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject, AXID p
     AXTRACE("AXIsolatedTree::collectNodeChangesForSubtree");
     ASSERT(isMainThread());
 
-    if (!m_creatingSubtree)
-        axObjectCache()->processDeferredChildrenChangedList();
-    SetForScope<bool> creatingSubtree(m_creatingSubtree, true);
-
     auto nodeChange = nodeChangeForObject(axObject, parentID, attachWrapper);
     if (idsBeingChanged)
         idsBeingChanged->add(nodeChange.isolatedObject->objectID());
