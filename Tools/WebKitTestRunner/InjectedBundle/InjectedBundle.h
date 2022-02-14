@@ -30,6 +30,7 @@
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include <WebKit/WKBase.h>
+#include <WebKit/WKBundlePage.h>
 #include <WebKit/WKRetainPtr.h>
 #include <sstream>
 #include <wtf/Forward.h>
@@ -257,8 +258,12 @@ template<typename T> void postPageMessage(const char* name, const WKRetainPtr<T>
 
 template<typename T> void postSynchronousPageMessage(const char* name, const WKRetainPtr<T>& value)
 {
-    if (auto page = InjectedBundle::singleton().pageRef())
+    if (auto page = InjectedBundle::singleton().pageRef()) {
+        // EventSender needs a layout
+        if (!strcmp(name, "EventSender"))
+            WKBundlePageLayoutIfNeeded(page);
         WKBundlePagePostSynchronousMessageForTesting(page, toWK(name).get(), value.get(), nullptr);
+    }
 }
 
 } // namespace WTR

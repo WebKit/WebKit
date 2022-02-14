@@ -1,3 +1,21 @@
+2022-02-14  Tim Nguyen  <ntim@apple.com>
+
+        Don't perform layout in WKBundlePagePostSynchronousMessageForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=236579
+
+        Reviewed by Brady Eidson.
+
+        This turned out to be a problem for bug 22722, which introduced the WithLayout::No workaround.
+
+        r188793 introduced this layoutIfNeeded call specifically for UI event messages, so only perform the
+        layout in that specific case. Also remove the workaround introduced in bug 22722.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostSynchronousMessageForTesting):
+        (WKBundlePageLayoutIfNeeded):
+        (WKBundlePagePostSynchronousMessageForTestingWithoutLayout): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2022-02-13  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes

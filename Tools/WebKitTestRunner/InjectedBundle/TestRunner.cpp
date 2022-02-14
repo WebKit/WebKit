@@ -147,22 +147,10 @@ static bool postSynchronousMessageReturningBoolean(const char* name)
     return postSynchronousMessageReturningBoolean(name, WKRetainPtr<WKTypeRef> { });
 }
 
-enum class WithLayout : bool {
-    No,
-    Yes
-};
-
-template<typename T> static WKRetainPtr<WKTypeRef> postSynchronousPageMessageWithReturnValue(const char* name, const WKRetainPtr<T>& value, WithLayout withLayout = WithLayout::Yes)
+template<typename T> static WKRetainPtr<WKTypeRef> postSynchronousPageMessageWithReturnValue(const char* name, const WKRetainPtr<T>& value)
 {
     WKTypeRef rawReturnValue = nullptr;
-    switch (withLayout) {
-    case WithLayout::No:
-        WKBundlePagePostSynchronousMessageForTestingWithoutLayout(page(), toWK(name).get(), value.get(), &rawReturnValue);
-        break;
-    case WithLayout::Yes:
-        WKBundlePagePostSynchronousMessageForTesting(page(), toWK(name).get(), value.get(), &rawReturnValue);
-        break;
-    }
+    WKBundlePagePostSynchronousMessageForTesting(page(), toWK(name).get(), value.get(), &rawReturnValue);
     return adoptWK(rawReturnValue);
 }
 
@@ -879,13 +867,13 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
-    postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin), WithLayout::No);
+    postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin));
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
-    postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin), WithLayout::No);
+    postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
 }
 
 void TestRunner::removeAllWebNotificationPermissions()

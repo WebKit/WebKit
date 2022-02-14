@@ -34,6 +34,7 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKBundleFrame.h>
+#include <WebKit/WKBundlePage.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
