@@ -51,6 +51,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         individualTransformPropertiesEnabled = true;
         focusVisibleEnabled = true;
         inputSecurityEnabled = true;
+        containmentEnabled = true;
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
         transformStyleOptimized3DEnabled = true;
 #endif
