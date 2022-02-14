@@ -1,3 +1,15 @@
+2022-02-14  Gustavo Noronha Silva  <gustavo@noronha.dev.br>
+
+        [Linux/aarch64] Move page size ceiling to 16k
+        https://bugs.webkit.org/show_bug.cgi?id=236564
+
+        Reviewed by Yusuke Suzuki.
+
+        On Apple Silicon, Linux needs to use 16k pages to be as fast as possible. This change has no
+        visible impact on binary size for release builds, so apply it to all of aarch64 Linux.
+
+        * wtf/PageBlock.h:
+
 2022-02-13  Matt Woodrow  <mattwoodrow@apple.com>
 
         Add support for parsing 'subgrid' in grid-template-columns/row
