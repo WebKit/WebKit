@@ -58,6 +58,16 @@
     return wrapper(_response->userHandle());
 }
 
+- (BOOL)synchronizable
+{
+    return _response->synchronizable();
+}
+
+- (NSString *)group
+{
+    return _response->group();
+}
+
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)setLAContext:(LAContext *)context

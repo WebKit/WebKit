@@ -1,3 +1,23 @@
+2022-02-14  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Modify _WKWebAuthenticationAssertionResponse according to internal needs
+        https://bugs.webkit.org/show_bug.cgi?id=236369
+        rdar://88585811
+
+        Reviewed by Brent Fulgham.
+
+        This patch modifies the _WKWebAuthenticationAssertionResponse API object with additional
+        fields and populates them according to internal needs.
+
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm:
+        (-[_WKWebAuthenticationAssertionResponse synchronizable]):
+        (-[_WKWebAuthenticationAssertionResponse group]):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (groupForAttributes):
+        (WebKit::LocalAuthenticatorInternal::getExistingCredentials):
+
 2022-02-14  Tim Nguyen  <ntim@apple.com>
 
         Don't perform layout in WKBundlePagePostSynchronousMessageForTesting

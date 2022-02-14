@@ -42,6 +42,8 @@ public:
     const WTF::String& name() const { return m_response->name(); }
     const WTF::String& displayName() const { return m_response->displayName(); }
     RefPtr<Data> userHandle() const;
+    bool synchronizable() const { return m_response->synchronizable(); }
+    const WTF::String& group() const { return m_response->group(); }
 
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 

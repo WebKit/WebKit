@@ -44,6 +44,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
@@ -54,6 +55,10 @@
 #else
 static void updateQueryIfNecessary(NSMutableDictionary *)
 {
+}
+static inline String groupForAttributes(NSDictionary *attributes)
+{
+    return nullString();
 }
 #endif
 
@@ -163,7 +168,15 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         }
         auto& username = it->second.getString();
 
-        result.uncheckedAppend(AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform));
+        auto response = AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
+
+        auto group = groupForAttributes(attributes);
+        if (!group.isNull())
+            response->setGroup(group);
+        if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
+            response->setSynchronizable(attributes[(id)kSecAttrSynchronizable]);
+
+        result.uncheckedAppend(WTFMove(response));
     }
     return result;
 }

@@ -36,6 +36,8 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *displayName;
 @property (nonatomic, readonly, copy) NSData *userHandle;
+@property (nonatomic, readonly) BOOL synchronizable;
+@property (nonatomic, readonly, copy) NSString *group;
 
 - (void)setLAContext:(LAContext *)context WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
