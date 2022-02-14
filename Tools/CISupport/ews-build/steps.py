@@ -2055,16 +2055,11 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
         pr_number = self.getProperty('github.number')
 
         if compile_without_patch_result == FAILURE:
-            if pr_number:
-                message = 'Unable to build WebKit without PR, please rebase the PR against {}'.format(self.getProperty('basename', 'ToT'))
-            else:
-                message = 'Unable to build WebKit without patch, retrying build'
-
+            message = 'Unable to build WebKit without {}, retrying build'.format('PR' if pr_number else 'patch')
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()
             self.finished(FAILURE)
-            # Do not retry PRs, we end up in an infinite retry loop because we don't automatically rebase against ToT
-            self.build.buildFinished([message], FAILURE if pr_number else RETRY)
+            self.build.buildFinished([message], RETRY)
             return defer.succeed(None)
 
         self.build.results = FAILURE

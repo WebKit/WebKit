@@ -1260,6 +1260,16 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')
         return self.runStep()
 
+    def test_pr_with_main_failure(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.setProperty('github.number', '1234')
+        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without PR, retrying build (failure)')
+        return self.runStep()
+
     def test_filter_logs_containing_error(self):
         logs = 'In file included from WebCore/unified-sources/UnifiedSource263.cpp:4:\nImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
         expected_output = 'ImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
