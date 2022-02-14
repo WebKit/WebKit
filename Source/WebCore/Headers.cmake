@@ -953,6 +953,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorInstrumentationPublic.h
     inspector/InspectorInstrumentationWebKit.h
     inspector/InspectorOverlay.h
+    inspector/InspectorOverlayLabel.h
     inspector/InspectorWebAgentBase.h
     inspector/PageDebugger.h
 

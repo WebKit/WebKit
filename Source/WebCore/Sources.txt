@@ -1488,6 +1488,7 @@ inspector/InspectorInstrumentationPublic.cpp
 inspector/InspectorInstrumentationWebKit.cpp
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
+inspector/InspectorOverlayLabel.cpp
 inspector/InspectorShaderProgram.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/InstrumentingAgents.cpp
