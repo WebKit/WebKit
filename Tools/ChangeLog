@@ -1,3 +1,15 @@
+2022-02-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-jsc-stress-tests reports "in `<module:URI>': uninitialized class variable @@schemes in URI (NameError)" with Ruby 3.1
+        https://bugs.webkit.org/show_bug.cgi?id=236281
+
+        Reviewed by Yusuke Suzuki.
+
+        Ruby 3.1.0 removed @@schemes and added URI.register_scheme.
+
+        * Scripts/run-jsc-stress-tests: Added `register_scheme` class
+        method if not exists. Use the register_scheme method for ssh.
+
 2022-02-14  Tim Nguyen  <ntim@apple.com>
 
         Don't perform layout in WKBundlePagePostSynchronousMessageForTesting

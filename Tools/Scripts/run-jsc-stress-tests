@@ -40,7 +40,12 @@ module URI
     class SSH < Generic
         DEFAULT_PORT = 22
     end
-    @@schemes['SSH'] = SSH
+    unless defined?(self.register_scheme)
+      def self.register_scheme(scheme, klass)
+        @@schemes[scheme] = klass
+      end
+    end
+    register_scheme 'SSH', SSH
 end
 
 class String
