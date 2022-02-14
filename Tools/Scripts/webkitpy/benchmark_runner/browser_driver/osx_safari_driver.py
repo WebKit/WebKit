@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import logging
 import os
 import sys
@@ -8,7 +6,6 @@ import subprocess
 import time
 
 from webkitpy.benchmark_runner.browser_driver.osx_browser_driver import OSXBrowserDriver
-from webkitpy.benchmark_runner.utils import force_remove
 
 
 _log = logging.getLogger(__name__)

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from abc import ABCMeta, abstractmethod
 from webkitpy.benchmark_runner.utils import get_driver_binary_path
 
