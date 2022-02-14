@@ -1,3 +1,26 @@
+2022-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Plumb platform image analysis objects to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=236535
+        rdar://88845367
+
+        Reviewed by Devin Rousso.
+
+        Plumb the platform text recognition results object (VKCImageAnalysis) through TextRecognitionResults to the
+        web process when computing text recognition results for Live Text, and add a few new WebKitAdditions extension
+        points. In a subsequent patch, we'll use this VKCImageAnalysis on TextRecognitionResults to refactor how we
+        write Live Text to the system pasteboard when copying.
+
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::makeTextRecognitionResult):
+
+        Set `platformData`.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode):
+        (IPC::ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2022-02-14  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Access group not set in add query for importLocalAuthenticatorCredential

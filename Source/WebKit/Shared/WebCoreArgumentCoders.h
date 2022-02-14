@@ -103,6 +103,8 @@ class MachSendRight;
 }
 #endif
 
+OBJC_CLASS VKCImageAnalysis;
+
 #if USE(AVFOUNDATION)
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
@@ -822,6 +824,15 @@ template<> struct ArgumentCoder<WebCore::TextRecognitionDataDetector> {
 };
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+template<> struct ArgumentCoder<RetainPtr<VKCImageAnalysis>> {
+    static void encode(Encoder&, const RetainPtr<VKCImageAnalysis>&);
+    static WARN_UNUSED_RETURN std::optional<RetainPtr<VKCImageAnalysis>> decode(Decoder&);
+};
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if USE(AVFOUNDATION)
 

@@ -1,3 +1,23 @@
+2022-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Plumb platform image analysis objects to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=236535
+        rdar://88845367
+
+        Reviewed by Devin Rousso.
+
+        Add soft-linking support for VKCImageAnalysis. See WebCore and WebKit ChangeLogs for more detail.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+
+        Avoid a build error after shifting around Cocoa unified sources, by removing an unused definition of
+        AVOutputContextOutputDevicesDidChangeNotification. This definition causes the unified build to break downstream,
+        when other media-related source files end up importing AVKit headers that try to reference this symbol
+        (AVOutputContextOutputDevicesDidChangeNotification) but end up expanding the WebKit soft-linking macro instead.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
 2022-02-12  Jer Noble  <jer.noble@apple.com>
 
         Add settings to restrict media containers and codecs when in Captive Portal mode

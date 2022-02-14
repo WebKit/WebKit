@@ -73,6 +73,8 @@
 #import <WebCore/CoreVideoSoftLink.h>
 #endif
 
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+
 namespace IPC {
 
 void ArgumentCoder<WebCore::AttributedString>::encode(Encoder& encoder, const WebCore::AttributedString& attributedString)
@@ -729,6 +731,20 @@ bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Dec
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode(Encoder& encoder, const RetainPtr<VKCImageAnalysis>& data)
+{
+    encoder << data.get();
+}
+
+std::optional<RetainPtr<VKCImageAnalysis>> ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode(Decoder& decoder)
+{
+    return IPC::decode<VKCImageAnalysis>(decoder, @[ PAL::getVKCImageAnalysisClass() ]);
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if USE(AVFOUNDATION)
 

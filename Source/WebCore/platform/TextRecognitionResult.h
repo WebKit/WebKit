@@ -27,6 +27,8 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+OBJC_CLASS VKCImageAnalysis;
+
 #if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
 #endif
@@ -36,6 +38,8 @@ OBJC_CLASS DDScannerResult;
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+struct CharacterRange;
 
 struct TextRecognitionWordData {
     TextRecognitionWordData(const String& theText, FloatQuad&& quad, bool leadingWhitespace)
@@ -183,6 +187,10 @@ struct TextRecognitionResult {
 
     Vector<TextRecognitionBlockData> blocks;
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    RetainPtr<VKCImageAnalysis> platformData;
+#endif
+
     bool isEmpty() const
     {
         if (!lines.isEmpty())
@@ -210,6 +218,9 @@ template<class Encoder> void TextRecognitionResult::encode(Encoder& encoder) con
     encoder << dataDetectors;
 #endif
     encoder << blocks;
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    encoder << platformData;
+#endif
 }
 
 template<class Decoder> std::optional<TextRecognitionResult> TextRecognitionResult::decode(Decoder& decoder)
@@ -231,15 +242,29 @@ template<class Decoder> std::optional<TextRecognitionResult> TextRecognitionResu
     if (!blocks)
         return std::nullopt;
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    std::optional<RetainPtr<VKCImageAnalysis>> platformData;
+    decoder >> platformData;
+    if (!platformData)
+        return std::nullopt;
+#endif
+
     return {{
         WTFMove(*lines),
 #if ENABLE(DATA_DETECTION)
         WTFMove(*dataDetectors),
 #endif
         WTFMove(*blocks),
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        WTFMove(*platformData),
+#endif
     }};
 }
 
 } // namespace WebCore
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/TextRecognitionResultAdditions.h>
+#endif
 
 #endif // ENABLE(IMAGE_ANALYSIS)

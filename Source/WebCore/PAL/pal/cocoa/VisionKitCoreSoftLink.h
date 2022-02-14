@@ -35,6 +35,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzerRequest)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalyzer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalyzerRequest)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalysis)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VisionKitCoreSoftLinkAdditions.h>

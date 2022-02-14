@@ -120,12 +120,16 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 
 #if ENABLE(DATA_DETECTION)
     if ([analysis respondsToSelector:@selector(textDataDetectors)]) {
-        auto dataDetectors = retainPtr(analysis.textDataDetectors);
+        auto dataDetectors = RetainPtr { analysis.textDataDetectors };
         result.dataDetectors.reserveInitialCapacity([dataDetectors count]);
         for (VKWKDataDetectorInfo *info in dataDetectors.get())
             result.dataDetectors.uncheckedAppend({ info.result, floatQuads(info.boundingQuads) });
     }
 #endif // ENABLE(DATA_DETECTION)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    result.platformData = { RetainPtr { analysis } };
+#endif
 
     return result;
 }
