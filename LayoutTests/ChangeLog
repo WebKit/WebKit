@@ -1,3 +1,13 @@
+2022-02-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash with deeply nested async overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=236599
+
+        Reviewed by Alan Bujtas.
+
+        * compositing/layer-creation/clipping-scope/deeply-nested-overflow-expected.txt: Added.
+        * compositing/layer-creation/clipping-scope/deeply-nested-overflow.html: Added.
+
 2022-02-07  Jon Lee  <jonlee@apple.com>
 
         Enable accelerated drawing in the iOS simulator

@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    .container {
+        width: 600px;
+        border: 1px solid gray;
+        overflow-x: auto;
+        margin: 10px;
+    }
+    
+    .inner {
+        padding: 10px;
+        background-color: blue;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.addEventListener('load', () => {
+        const depth = 256;
+        
+        let currParent = document.body;
+        for (let i = 0; i < depth; ++i) {
+            
+            let div = document.createElement('div');
+            div.className = 'container';
+            currParent.appendChild(div);
+            currParent = div;
+        }
+        
+        let div = document.createElement('div');
+        div.className = 'inner';
+        div.textContent = 'This test should not crash.';
+        currParent.appendChild(div);
+    }, false);
+</script>
+</head>
+<body>
+</body>
+</html>
