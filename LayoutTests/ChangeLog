@@ -1,3 +1,15 @@
+2022-02-14  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=229283
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/inserting/insert-paragraph-separator-with-inline-table-bold-crash-expected.txt: Added.
+        * editing/inserting/insert-paragraph-separator-with-inline-table-bold-crash.html: Added.
+
 2022-02-14  Antoine Quint  <graouts@webkit.org>
 
         [model] refactor model document tests to use a shared testing function
