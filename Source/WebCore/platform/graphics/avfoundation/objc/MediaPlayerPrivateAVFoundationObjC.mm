@@ -670,13 +670,13 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
 {
     // Date changes as the track's playback position changes. Must subtract currentTime (offset in seconds) from date offset to get date beginning
-    double date = [[m_avPlayerItem currentDate] timeIntervalSince1970] * 1000;
+    double date = [[m_avPlayerItem currentDate] timeIntervalSince1970];
 
     // No live streams were made during the epoch (1970). AVFoundation returns 0 if the media file doesn't have a start date
     if (!date)
         return MediaTime::invalidTime();
 
-    double currentTime = PAL::CMTimeGetSeconds([m_avPlayerItem currentTime]) * 1000;
+    double currentTime = PAL::CMTimeGetSeconds([m_avPlayerItem currentTime]);
 
     // Rounding due to second offset error when subtracting.
     return MediaTime::createWithDouble(round(date - currentTime));
