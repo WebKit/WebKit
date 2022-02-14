@@ -39,8 +39,8 @@ bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, 
     if (!allowedMediaCodecTypes)
         return true;
 
-    return allOf(type.codecs(), [&] (auto& codec) {
-        return anyOf(*allowedMediaCodecTypes, [&] (auto& allowedCodec) {
+    return WTF::allOf(type.codecs(), [&] (auto& codec) {
+        return WTF::anyOf(*allowedMediaCodecTypes, [&] (auto& allowedCodec) {
             return codec.startsWith(allowedCodec);
         });
     });

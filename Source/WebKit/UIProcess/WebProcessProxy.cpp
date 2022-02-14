@@ -33,6 +33,7 @@
 #include "DownloadProxyMap.h"
 #include "LoadParameters.h"
 #include "Logging.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "ProvisionalPageProxy.h"
 #include "ServiceWorkerNotificationHandler.h"
 #include "SpeechRecognitionPermissionRequest.h"

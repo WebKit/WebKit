@@ -1,3 +1,10 @@
+2022-02-13  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=236577
+
+        * heap/StructureAlignedMemoryAllocator.cpp: Add missing include.
+
 2022-02-13  Keith Miller  <keith_miller@apple.com>
 
         Add comment on how StructureMemoryManager grows the free list when there are no free blocks.

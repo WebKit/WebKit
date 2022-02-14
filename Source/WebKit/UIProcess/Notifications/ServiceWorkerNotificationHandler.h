@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+class WebsiteDataStore;
+
 class ServiceWorkerNotificationHandler final : public NotificationManagerMessageHandler {
 public:
     static ServiceWorkerNotificationHandler& singleton();

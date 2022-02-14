@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "EventLoop.h"
+#include "EventNames.h"
 #include "ExtendableEvent.h"
 #include "Frame.h"
 #include "FrameLoader.h"

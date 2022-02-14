@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NotificationEvent.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 #if ENABLE(NOTIFICATION_EVENT)
 
 namespace WebCore {

@@ -28,6 +28,7 @@
 
 #include "JSCConfig.h"
 #include "MarkedBlock.h"
+#include "StructureID.h"
 
 #include <wtf/OSAllocator.h>
 

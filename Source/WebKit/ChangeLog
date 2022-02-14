@@ -1,3 +1,12 @@
+2022-02-13  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=236577
+
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.h: Forward
+        declare.
+        * UIProcess/WebProcessProxy.cpp: Missing include.
+
 2022-02-13  Brady Eidson  <beidson@apple.com>
 
         Implement ServiceWorkerRegistration.showNotification()
