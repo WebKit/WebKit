@@ -379,18 +379,21 @@ void LineLayout::prepareFloatingState()
         return;
 
     for (auto& floatingObject : *flow().floatingObjectSet()) {
-        auto& rect = floatingObject->frameRect();
+        auto& visualRect = floatingObject->frameRect();
         auto position = floatingObject->type() == FloatingObject::FloatRight
             ? Layout::FloatingState::FloatItem::Position::Right
             : Layout::FloatingState::FloatItem::Position::Left;
         auto boxGeometry = Layout::BoxGeometry { };
         // FIXME: We are flooring here for legacy compatibility.
         //        See FloatingObjects::intervalForFloatingObject and RenderBlockFlow::clearFloats.
-        auto y = rect.y().floor();
-        auto maxY = rect.maxY().floor();
-        boxGeometry.setLogicalTopLeft({ rect.x(), y });
-        boxGeometry.setContentBoxWidth(rect.width());
-        boxGeometry.setContentBoxHeight(maxY - y);
+        auto logicalTop = visualRect.y().floor();
+        auto logicalHeight = visualRect.maxY().floor() - logicalTop;
+        auto logicalRect = flow().style().isHorizontalWritingMode() ? LayoutRect(visualRect.x(), logicalTop, visualRect.width(), logicalHeight)
+            : LayoutRect(logicalTop, visualRect.x(), logicalHeight, visualRect.width());
+
+        boxGeometry.setLogicalTopLeft(logicalRect.location());
+        boxGeometry.setContentBoxWidth(logicalRect.width());
+        boxGeometry.setContentBoxHeight(logicalRect.height());
         boxGeometry.setBorder({ });
         boxGeometry.setPadding({ });
         boxGeometry.setHorizontalMargin({ });
