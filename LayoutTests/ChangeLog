@@ -1,3 +1,19 @@
+2022-02-14  Antoine Quint  <graouts@webkit.org>
+
+        [model] refactor model document tests to use a shared testing function
+        https://bugs.webkit.org/show_bug.cgi?id=236578
+
+        Reviewed by Dean Jackson.
+
+        Add a new model_document_test function that both model document tests can use
+        to get the document loaded inside the iframe.
+
+        * http/tests/model/model-document-interactive-expected.txt:
+        * http/tests/model/model-document-interactive.html:
+        * http/tests/model/model-document.html:
+        * http/tests/model/resources/model-document.js: Added.
+        (const.model_document_test):
+
 2022-02-14  Martin Robinson  <mrobinson@webkit.org>
 
         Animation from "scale()" to "scale() translate()" does not yield the expected result
