@@ -402,12 +402,16 @@ GLContextEGL::~GLContextEGL()
 EGLImage GLContextEGL::createImage(EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attribList) const
 {
     if (m_eglCreateImage)
-        return m_eglCreateImage(m_display.eglDisplay(), !attribList.isEmpty() ? EGL_NO_CONTEXT : m_context, target, clientBuffer, attribList.data());
+        return m_eglCreateImage(m_display.eglDisplay(), attribList.isEmpty() ? m_context : EGL_NO_CONTEXT, target, clientBuffer, attribList.data());
+
     if (m_eglCreateImageKHR) {
+        if (attribList.isEmpty())
+            return m_eglCreateImageKHR(m_display.eglDisplay(), m_context, target, clientBuffer, nullptr);
+
         auto intAttribList = attribList.map<Vector<EGLint>>([] (EGLAttrib value) {
             return value;
         });
-        return m_eglCreateImageKHR(m_display.eglDisplay(), !attribList.isEmpty() ? EGL_NO_CONTEXT : m_context, target, clientBuffer, intAttribList.data());
+        return m_eglCreateImageKHR(m_display.eglDisplay(), EGL_NO_CONTEXT, target, clientBuffer, intAttribList.data());
     }
     return EGL_NO_IMAGE;
 }
