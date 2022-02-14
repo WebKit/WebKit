@@ -875,10 +875,17 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.h
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 
+webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
+webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-004.html [ Failure ]
+
 webkit.org/b/229732 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
 webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
+webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
+
 webkit.org/b/229740 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure Crash ]
+
+webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 
 webkit.org/b/236298 css1/pseudo/firstletter-surrogate.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
@@ -1052,6 +1059,8 @@ webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
+
+webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html [ Failure ]
 
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure ]
@@ -1477,6 +1486,14 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 

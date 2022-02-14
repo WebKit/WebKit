@@ -1,3 +1,19 @@
+2022-02-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=236597
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-contain/container-queries/counters-flex-circular-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/filter-effects/feimage-circular-reference-foreign-object-crash-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/filter-effects/feimage-reference-foreign-object-crash-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/international/bidi-layout-across-linebreak-expected.txt: Copied from LayoutTests/platform/glib/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+        * platform/gtk/fast/text/international/bidi-override-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Copied from LayoutTests/platform/glib/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt.
+        * platform/wpe/fast/text/international/bidi-layout-across-linebreak-expected.txt: Renamed from LayoutTests/platform/glib/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt.
+
 2022-02-14  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Implement full query parser and evaluator
