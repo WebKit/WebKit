@@ -1,3 +1,18 @@
+2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Expand RefPtr / Ref use in FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=235551
+        rdar://87986840
+
+        Reviewed by Mark Lam.
+
+        Apply Ref / RefPtr instead of taking SerializedScriptValue*.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        * loader/FrameLoader.h:
+
 2022-02-10  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Scrollbars painted incorrectly if theme enables steppers (steppers misplaced on vertical scrollbars, horizontal scrollbars very broken) 
