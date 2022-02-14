@@ -1420,6 +1420,7 @@ span
 
 // grid-template-{columns|rows}
 minmax
+subgrid
 
 // grid-auto-flow
 auto-flow

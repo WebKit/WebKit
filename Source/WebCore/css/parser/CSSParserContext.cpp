@@ -112,6 +112,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
+    , subgridEnabled { document.settings().subgridEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -165,6 +166,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
+        && a.subgridEnabled == b.subgridEnabled
     ;
 }
 
@@ -209,7 +211,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #endif
         | context.accentColorEnabled                        << 29
         | context.inputSecurityEnabled                      << 30
-        | context.mode                                      << 31; // This is multiple bits, so keep it last.
+        | context.subgridEnabled                            << 31
+        | (unsigned long long)context.mode                  << 32; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 

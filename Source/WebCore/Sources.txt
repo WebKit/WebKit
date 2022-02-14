@@ -768,6 +768,7 @@ css/CSSShadowValue.cpp
 css/CSSStyleDeclaration.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
+css/CSSSubgridValue.cpp
 css/CSSSupportsRule.cpp
 css/CSSTimingFunctionValue.cpp
 css/CSSToLengthConversionData.cpp

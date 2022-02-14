@@ -1349,6 +1349,18 @@ StorageAPIEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+SubgridEnabled:
+  type: bool
+  humanReadableName: "CSS subgrid support"
+  humanReadableDescription: "Enable CSS subgrid support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SyntheticEditingCommandsEnabled:
   type: bool
   humanReadableName: "Synthetic Editing Commands"

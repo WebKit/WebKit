@@ -69,6 +69,7 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSSubgridValue.h"
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
@@ -184,6 +185,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSGridIntegerRepeatValue>(*this, other);
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
+        case SubgridClass:
+            return compareCSSValues<CSSSubgridValue>(*this, other);
         case GridTemplateAreasClass:
             return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
         case PrimitiveClass:
@@ -287,6 +290,8 @@ String CSSValue::cssText() const
         return downcast<CSSGridIntegerRepeatValue>(*this).customCSSText();
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
+    case SubgridClass:
+        return downcast<CSSSubgridValue>(*this).customCSSText();
     case GridTemplateAreasClass:
         return downcast<CSSGridTemplateAreasValue>(*this).customCSSText();
     case PrimitiveClass:
@@ -409,6 +414,9 @@ void CSSValue::destroy()
         return;
     case GridLineNamesClass:
         delete downcast<CSSGridLineNamesValue>(this);
+        return;
+    case SubgridClass:
+        delete downcast<CSSSubgridValue>(this);
         return;
     case GridTemplateAreasClass:
         delete downcast<CSSGridTemplateAreasValue>(this);

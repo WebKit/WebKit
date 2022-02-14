@@ -857,6 +857,8 @@ public:
     bool isEmpty() const { return m_orderedNamedGridLines.isEmpty() && m_orderedNamedAutoRepeatGridLines.isEmpty(); }
     virtual void collectLineNamesForIndex(CSSGridLineNamesValue&, unsigned index) const;
 
+    virtual int namedGridLineCount() const { return m_orderedNamedGridLines.size(); }
+
 protected:
 
     enum NamedLinesType { NamedLines, AutoRepeatNamedLines };
@@ -874,6 +876,8 @@ public:
     }
 
     void collectLineNamesForIndex(CSSGridLineNamesValue&, unsigned index) const override;
+
+    int namedGridLineCount() const override { return m_orderedNamedAutoRepeatGridLines.size(); }
 };
 
 class OrderedNamedLinesCollectorInGridLayout : public OrderedNamedLinesCollector {
@@ -951,14 +955,14 @@ void OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex(CSSGridLin
     appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, AutoRepeatNamedLines);
 }
 
-static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collector, unsigned i, CSSValueList& list)
+static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collector, unsigned i, CSSValueList& list, bool renderEmpty = false)
 {
     if (collector.isEmpty())
         return;
 
     auto lineNames = CSSGridLineNamesValue::create();
     collector.collectLineNamesForIndex(lineNames.get(), i);
-    if (lineNames->length())
+    if (lineNames->length() || renderEmpty)
         list.append(WTFMove(lineNames));
 }
 
@@ -993,10 +997,22 @@ void populateGridTrackList(CSSValueList& list, OrderedNamedLinesCollector& colle
     populateGridTrackList<T>(list, collector, tracks, getTrackSize, 0, tracks.size(), offset);
 }
 
+static void populateSubgridLineNameList(CSSValueList& list, OrderedNamedLinesCollector& collector, int start, int end)
+{
+    for (int i = start; i < end; i++)
+        addValuesForNamedGridLinesAtIndex(collector, i, list, true);
+}
+
+static void populateSubgridLineNameList(CSSValueList& list, OrderedNamedLinesCollector& collector)
+{
+    populateSubgridLineNameList(list, collector, 0, collector.namedGridLineCount());
+}
+
 static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle& style)
 {
     bool isRowAxis = direction == ForColumns;
     bool isRenderGrid = is<RenderGrid>(renderer);
+    bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
     auto& trackSizes = isRowAxis ? style.gridColumns() : style.gridRows();
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
 
@@ -1010,14 +1026,17 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
         trackListIsEmpty = positions.size() == 1;
     }
 
-    if (trackListIsEmpty)
+    if (trackListIsEmpty && !isSubgrid)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
+    if (isSubgrid)
+        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSubgrid));
 
     // If the element is a grid container, the resolved value is the used value,
     // specifying track sizes in pixels and expanding the repeat() notation.
     if (isRenderGrid) {
+        // FIXME: We need to handle computed subgrid here.
         auto* grid = downcast<RenderGrid>(renderer);
         OrderedNamedLinesCollectorInGridLayout collector(style, isRowAxis, grid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
         // Named grid line indices are relative to the explicit grid, but we are including all tracks.
@@ -1035,6 +1054,29 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
         return specifiedValueForGridTrackSize(v, style);
     };
 
+    OrderedNamedLinesCollectorInsideRepeat repeatCollector(style, isRowAxis);
+    if (isSubgrid) {
+        if (!repeatCollector.namedGridLineCount()) {
+            populateSubgridLineNameList(list.get(), collector);
+            return list;
+        }
+
+        // Add the line names that precede the auto repeat().
+        int autoRepeatInsertionPoint = isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint();
+        autoRepeatInsertionPoint = std::clamp<int>(autoRepeatInsertionPoint, 0, collector.namedGridLineCount());
+        populateSubgridLineNameList(list.get(), collector, 0, autoRepeatInsertionPoint);
+
+        // Add a CSSGridAutoRepeatValue with the contents of the auto repeat().
+        ASSERT((isRowAxis ? style.gridAutoRepeatColumnsType() : style.gridAutoRepeatRowsType()) == AutoRepeatType::Fill);
+        auto repeatedValues = CSSGridAutoRepeatValue::create(CSSValueAutoFill);
+        populateSubgridLineNameList(repeatedValues.get(), repeatCollector);
+        list->append(repeatedValues.get());
+
+        // Add the line names that follow the auto repeat().
+        populateSubgridLineNameList(list.get(), collector, autoRepeatInsertionPoint, collector.namedGridLineCount());
+        return list;
+    }
+
     if (autoRepeatTrackSizes.isEmpty()) {
         // If there's no auto repeat(), just add all the line names and track sizes.
         populateGridTrackList(list.get(), collector, trackSizes, getTrackSize);
@@ -1042,13 +1084,14 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     // Add the line names and track sizes that precede the auto repeat().
-    int autoRepeatInsertionPoint = std::clamp<int>(isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint(), 0, trackSizes.size());
+    int autoRepeatInsertionPoint = isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint();
+    autoRepeatInsertionPoint = std::clamp<int>(autoRepeatInsertionPoint, 0, trackSizes.size());
     populateGridTrackList(list.get(), collector, trackSizes, getTrackSize, 0, autoRepeatInsertionPoint);
 
     // Add a CSSGridAutoRepeatValue with the contents of the auto repeat().
     AutoRepeatType autoRepeatType = isRowAxis ? style.gridAutoRepeatColumnsType() : style.gridAutoRepeatRowsType();
     auto repeatedValues = CSSGridAutoRepeatValue::create(autoRepeatType == AutoRepeatType::Fill ? CSSValueAutoFill : CSSValueAutoFit);
-    OrderedNamedLinesCollectorInsideRepeat repeatCollector(style, isRowAxis);
+
     populateGridTrackList(repeatedValues.get(), repeatCollector, autoRepeatTrackSizes, getTrackSize);
     list->append(repeatedValues.get());
 

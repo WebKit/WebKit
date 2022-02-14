@@ -44,6 +44,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
+#include "CSSSubgridValue.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionOperation.h"
 #include "FontPalette.h"
@@ -981,12 +982,13 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
 static void createGridLineNamesList(const CSSValue& value, unsigned currentNamedGridLine, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines)
 {
     ASSERT(value.isGridLineNamesValue());
+    auto orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
 
     for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(value)) {
         String namedGridLine = downcast<CSSPrimitiveValue>(namedGridLineValue.get()).stringValue();
         auto result = namedGridLines.add(namedGridLine, Vector<unsigned>());
         result.iterator->value.append(currentNamedGridLine);
-        auto orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
+
         orderedResult.iterator->value.append(namedGridLine);
     }
 }
@@ -1004,6 +1006,7 @@ public:
     OrderedNamedGridLinesMap m_autoRepeatOrderedNamedGridLines;
     unsigned m_autoRepeatInsertionPoint { RenderStyle::initialGridAutoRepeatInsertionPoint() };
     AutoRepeatType m_autoRepeatType { RenderStyle::initialGridAutoRepeatType() };
+    bool isSubgrid { false };
 };
 
 inline bool BuilderConverter::createGridTrackList(const CSSValue& value, TracksData& tracksData, BuilderState& builderState)
@@ -1017,30 +1020,42 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, TracksD
 
     unsigned currentNamedGridLine = 0;
     auto handleLineNameOrTrackSize = [&](const CSSValue& currentValue) {
-        if (is<CSSGridLineNamesValue>(currentValue))
+        if (is<CSSGridLineNamesValue>(currentValue)) {
             createGridLineNamesList(currentValue, currentNamedGridLine, tracksData.m_namedGridLines, tracksData.m_orderedNamedGridLines);
-        else {
+            // Subgrids only have line names defined, not track sizes, so we want our count
+            // to be the number of lines named rather than number of sized tracks.
+            if (tracksData.isSubgrid)
+                currentNamedGridLine++;
+        } else {
             ++currentNamedGridLine;
             tracksData.m_trackSizes.append(createGridTrackSize(currentValue, builderState));
         }
     };
 
+    if (is<CSSSubgridValue>(value))
+        tracksData.isSubgrid = true;
+
+    unsigned autoRepeatIndex = 0;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
-            ASSERT(tracksData.m_autoRepeatTrackSizes.isEmpty());
-            unsigned autoRepeatIndex = 0;
+            ASSERT(!autoRepeatIndex);
+            autoRepeatIndex = 0;
             CSSValueID autoRepeatID = downcast<CSSGridAutoRepeatValue>(currentValue.get()).autoRepeatID();
             ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
             tracksData.m_autoRepeatType = autoRepeatID == CSSValueAutoFill ? AutoRepeatType::Fill : AutoRepeatType::Fit;
             for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
                 if (is<CSSGridLineNamesValue>(autoRepeatValue)) {
                     createGridLineNamesList(autoRepeatValue.get(), autoRepeatIndex, tracksData.m_autoRepeatNamedGridLines, tracksData.m_autoRepeatOrderedNamedGridLines);
+                    if (tracksData.isSubgrid)
+                        ++autoRepeatIndex;
                     continue;
                 }
                 ++autoRepeatIndex;
                 tracksData.m_autoRepeatTrackSizes.append(createGridTrackSize(autoRepeatValue.get(), builderState));
             }
-            tracksData.m_autoRepeatInsertionPoint = currentNamedGridLine++;
+            tracksData.m_autoRepeatInsertionPoint = currentNamedGridLine;
+            if (!tracksData.isSubgrid)
+                currentNamedGridLine++;
             continue;
         }
 
@@ -1058,7 +1073,7 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, TracksD
 
     // The parser should have rejected any <track-list> without any <track-size> as
     // this is not conformant to the syntax.
-    ASSERT(!tracksData.m_trackSizes.isEmpty() || !tracksData.m_autoRepeatTrackSizes.isEmpty());
+    ASSERT(!tracksData.m_trackSizes.isEmpty() || !tracksData.m_autoRepeatTrackSizes.isEmpty() || tracksData.isSubgrid);
     return true;
 }
 

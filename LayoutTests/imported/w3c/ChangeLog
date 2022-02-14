@@ -1,3 +1,19 @@
+2022-02-13  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Add support for parsing 'subgrid' in grid-template-columns/row
+        https://bugs.webkit.org/show_bug.cgi?id=236054
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Imported lastest subgrid tests.
+
+        * web-platform-tests/css/css-grid/subgrid/grid-template-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/subgrid/grid-template-computed-nogrid.html:
+        * web-platform-tests/css/css-grid/subgrid/grid-template-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/subgrid/grid-template-invalid.html:
+        * web-platform-tests/css/css-grid/subgrid/grid-template-valid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/subgrid/grid-template-valid.html:
+
 2022-02-13  Brady Eidson  <beidson@apple.com>
 
         Implement ServiceWorkerRegistration.showNotification()

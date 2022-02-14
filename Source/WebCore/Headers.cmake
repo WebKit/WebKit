@@ -546,6 +546,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSStyleDeclaration.h
     css/CSSStyleRule.h
     css/CSSStyleSheet.h
+    css/CSSSubgridValue.h
     css/CSSToLengthConversionData.h
     css/CSSUnits.h
     css/CSSUnknownRule.h
