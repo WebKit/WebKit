@@ -342,17 +342,24 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
     CCallHelpers::JumpList slowPath;
 
     if (useDataIC == UseDataIC::Yes) {
-        // FIXME: This scratch register is not generally safe to use on ARMv7, as the macro
-        //        assembler always assumes it is available. At the moment, it does happen to work
-        //        with the code below.
-        GPRReg scratchGPR = jit.scratchRegister();
-        jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR);
         CCallHelpers::Jump goPolymorphic;
-        {
+
+        // For RISCV64, scratch register usage here collides with MacroAssembler's internal usage
+        // that's necessary for the test-and-branch operation but is avoidable by loading from the callee
+        // address for each branch operation. Other MacroAssembler implementations handle this better by
+        // using a wider range of scratch registers or more potent branching instructions.
+        if constexpr (isRISCV64()) {
+            CCallHelpers::Address calleeAddress(callLinkInfoGPR, offsetOfCallee());
+            goPolymorphic = jit.branchTestPtr(CCallHelpers::NonZero, calleeAddress, CCallHelpers::TrustedImm32(polymorphicCalleeMask));
+            slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, calleeAddress, calleeGPR));
+        } else {
+            GPRReg scratchGPR = jit.scratchRegister();
             DisallowMacroScratchRegisterUsage disallowScratch(jit);
+            jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR);
             goPolymorphic = jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask));
             slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, calleeGPR));
         }
+
         if (isTailCall) {
             prepareForTailCall();
             goPolymorphic.link(&jit); // Polymorphic stub handles tail call stack prep.

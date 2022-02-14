@@ -1,3 +1,26 @@
+2022-02-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        CallLinkInfo::emitFastPathImpl() should avoid external scratch register use on RISCV64
+        https://bugs.webkit.org/show_bug.cgi?id=236064
+
+        Reviewed by Yusuke Suzuki.
+
+        Avoid external scratch register usage in CallLinkInfo::emitFastPathImpl()
+        for RISCV64 since the scratch register ends up having to be used in the
+        branchTestPtr implementation of RISCV64's MacroAssembler.
+
+        The RISCV64-specific alternative is to suffer resolving and loading from
+        the callee address for both branching operations. Other platforms
+        continue to operate with the external scratch register as they either
+        use a wider set of scratch registers or don't even have to use scratch
+        registers for the load and branching operations used here.
+
+        * assembler/CPU.h: Add isRISCV64(). Also impose a more sensible order.
+        (JSC::isMIPS):
+        (JSC::isRISCV64):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::emitFastPathImpl):
+
 2022-02-13  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes
