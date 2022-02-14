@@ -1,3 +1,54 @@
+2022-02-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289592. rdar://problem/88323950
+
+    tryReserveUncommittedAligned should explicitly take the alignment requested
+    https://bugs.webkit.org/show_bug.cgi?id=236460
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Source/JavaScriptCore:
+    
+    When reducing the size of VA space reserved for Structures, we
+    didn't take care to ensure the alignment matched the required
+    alignment for our bit mask. To fix this we need to pass the
+    original alignment to the allocator as a new parameter.
+    
+    * heap/StructureAlignedMemoryAllocator.cpp:
+    (JSC::StructureMemoryManager::StructureMemoryManager):
+    
+    Source/WTF:
+    
+    This patch adds a new ifdef for Unix flavors that support the
+    MAP_ALIGNED macro/parameter to mmap.
+    
+    Also, fix a bug where on windows we wouldn't request enough
+    space to guarantee that allocation is aligned.
+    
+    * wtf/OSAllocator.h:
+    * wtf/posix/OSAllocatorPOSIX.cpp:
+    (WTF::OSAllocator::tryReserveUncommittedAligned):
+    * wtf/win/OSAllocatorWin.cpp:
+    (WTF::OSAllocator::tryReserveUncommittedAligned):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289592 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-10  Keith Miller  <keith_miller@apple.com>
+
+            tryReserveUncommittedAligned should explicitly take the alignment requested
+            https://bugs.webkit.org/show_bug.cgi?id=236460
+
+            Reviewed by Yusuke Suzuki.
+
+            When reducing the size of VA space reserved for Structures, we
+            didn't take care to ensure the alignment matched the required
+            alignment for our bit mask. To fix this we need to pass the
+            original alignment to the allocator as a new parameter.
+
+            * heap/StructureAlignedMemoryAllocator.cpp:
+            (JSC::StructureMemoryManager::StructureMemoryManager):
+
 2022-02-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288870. rdar://problem/88318960

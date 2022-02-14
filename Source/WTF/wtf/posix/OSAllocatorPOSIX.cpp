@@ -148,9 +148,9 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
     return result;
 }
 
-void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
-    ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
+    ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
     UNUSED_PARAM(usage); // Not supported for mach API.
@@ -167,7 +167,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool 
     const int flags = VM_FLAGS_ANYWHERE;
 
     void* aligned = nullptr;
-    kern_return_t result = mach_vm_map(mach_task_self(), reinterpret_cast<mach_vm_address_t*>(&aligned), bytes, bytes - 1, flags, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
+    kern_return_t result = mach_vm_map(mach_task_self(), reinterpret_cast<mach_vm_address_t*>(&aligned), bytes, alignment - 1, flags, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
     ASSERT_UNUSED(result, result == KERN_SUCCESS || !aligned);
 #if HAVE(MADV_FREE_REUSE)
     if (aligned) {
@@ -178,8 +178,18 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool 
 
     return aligned;
 #else
-    // Double the size so we can ensure enough mapped memory to get an aligned start.
-    size_t mappedSize = bytes * 2;
+#ifdef MAP_ALIGNED
+
+    void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
+    if (result == MAP_FAILED)
+        return nullptr;
+    if (result)
+        madvise(result, bytes, MADV_DONTNEED);
+    return result;
+#else
+
+    // Add the alignment so we can ensure enough mapped memory to get an aligned start.
+    size_t mappedSize = bytes + alignment;
     char* mapped = reinterpret_cast<char*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
     char* mappedEnd = mapped + mappedSize;
 
@@ -195,7 +205,8 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool 
         releaseDecommitted(alignedEnd, rightExtra);
 
     return aligned;
-#endif
+#endif // MAP_ALIGNED
+#endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 }
 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)

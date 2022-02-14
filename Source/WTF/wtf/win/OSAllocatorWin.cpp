@@ -56,21 +56,23 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
     return result;
 }
 
-void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, Usage usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, bool writable, bool executable, bool, bool)
 {
-    ASSERT(hasOneBitSet(bytes) && bytes >= pageSize());
+    ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
+
     if (VirtualAlloc2Ptr()) {
         MEM_ADDRESS_REQUIREMENTS addressReqs = { };
         MEM_EXTENDED_PARAMETER param = { };
-        addressReqs.Alignment = bytes;
+        addressReqs.Alignment = alignment;
         param.Type = MemExtendedParameterAddressRequirements;
         param.Pointer = &addressReqs;
         void* result = VirtualAlloc2Ptr()(nullptr, nullptr, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
         return result;
     }
 
-    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
-    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(result)));
+    void* result = tryReserveUncommitted(bytes + alignment);
+    // There's no way to release the reserved memory on Windows, from what I can tell as the whole segment has to be released at once.
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(result)));
     return aligned;
 }
 
