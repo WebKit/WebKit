@@ -1,3 +1,15 @@
+2022-02-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Rebase PRs on tip of branch (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=236389
+        <rdar://problem/88705147>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (CleanGitRepo.run): Squash `git rebase --abort` errors.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         run-jsc-stress-tests reports "in `<module:URI>': uninitialized class variable @@schemes in URI (NameError)" with Ruby 3.1

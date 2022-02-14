@@ -3903,7 +3903,7 @@ class CleanGitRepo(steps.ShellSequence):
         branch = self.getProperty('basename', self.default_branch)
         self.commands = []
         for command in [
-            ['git', 'rebase', '--abort'],
+            ['/bin/sh', '-c', 'git rebase --abort & true'],
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
             ['git', 'fetch', self.git_remote],  # Avoid updating the working copy to a stale revision.
             ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote
