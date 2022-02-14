@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "ScreenCaptureKitCaptureSource.h"
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 
@@ -113,9 +114,20 @@ using namespace WebCore;
 
 namespace WebCore {
 
+static bool screenCaptureKitPickerFeatureEnabled()
+{
+    static bool enabled;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(ScreenCaptureKit, expanseAdoption);
+    });
+    return enabled;
+}
+
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
-    return WTF::processHasEntitlement("com.apple.private.screencapturekit.sharingsession")
+    return screenCaptureKitPickerFeatureEnabled()
+            && WTF::processHasEntitlement("com.apple.private.screencapturekit.sharingsession")
             && PAL::getSCContentSharingSessionClass()
             && ScreenCaptureKitCaptureSource::isAvailable();
 }
