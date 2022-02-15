@@ -1,3 +1,9 @@
+2022-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Big Sur build
+
+        * pal/spi/mac/HIToolboxSPI.h:
+
 2022-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Plumb platform image analysis objects to the web process
