@@ -4531,6 +4531,27 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
     }
 }
 
+RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange& range)
+{
+    auto leftValue = consumeNumber(range, ValueRange::NonNegative);
+    if (!leftValue)
+        return nullptr;
+
+    bool slashSeen = consumeSlashIncludingWhitespace(range);
+    auto rightValue = slashSeen
+        ? consumeNumber(range, ValueRange::NonNegative)
+        : CSSValuePool::singleton().createValue(1, CSSUnitType::CSS_NUMBER);
+
+    if (!rightValue)
+        return nullptr;
+
+    auto ratioList = CSSValueList::createSlashSeparated();
+    ratioList->append(leftValue.releaseNonNull());
+    ratioList->append(rightValue.releaseNonNull());
+
+    return ratioList;
+}
+
 } // namespace CSSPropertyParserHelpers
 
 } // namespace WebCore

@@ -210,11 +210,19 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParse
 
     range.consumeWhitespace();
 
-    auto length = CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All);
-    if (!length)
-        return { };
+    auto featureName = name.toAtomString();
 
-    return CQ::SizeFeature { *op, name.toAtomString(), length };
+    auto consumeValue = [&]() -> RefPtr<CSSValue> {
+        if (featureName == CQ::FeatureNames::orientation())
+            return CSSPropertyParserHelpers::consumeIdent(range);
+        if (featureName == CQ::FeatureNames::aspectRatio())
+            return CSSPropertyParserHelpers::consumeAspectRatioValue(range);
+        return CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All);
+    };
+
+    auto value = consumeValue();
+
+    return CQ::SizeFeature { *op, WTFMove(featureName), WTFMove(value) };
 }
 
 }

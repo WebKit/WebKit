@@ -13,20 +13,20 @@ PASS size(min-height: 201px) (.horizontal)
 PASS size(max-height: 200px) (.horizontal)
 PASS size(max-height: 199px) (.horizontal)
 PASS size(inline-size < 100px) (.horizontal)
-FAIL size(inline-size >= 100px) (.horizontal) assert_equals: expected "true" but got ""
-FAIL size(min-inline-size: 100px) (.horizontal) assert_equals: expected "true" but got ""
+PASS size(inline-size >= 100px) (.horizontal)
+PASS size(min-inline-size: 100px) (.horizontal)
 PASS size(min-inline-size: 101px) (.horizontal)
-FAIL size(max-inline-size: 100px) (.horizontal) assert_equals: expected "true" but got ""
+PASS size(max-inline-size: 100px) (.horizontal)
 PASS size(max-inline-size: 99px) (.horizontal)
 PASS size(block-size < 200px) (.horizontal)
-FAIL size(block-size >= 200px) (.horizontal) assert_equals: expected "true" but got ""
-FAIL size(min-block-size: 200px) (.horizontal) assert_equals: expected "true" but got ""
+PASS size(block-size >= 200px) (.horizontal)
+PASS size(min-block-size: 200px) (.horizontal)
 PASS size(min-block-size: 201px) (.horizontal)
-FAIL size(max-block-size: 200px) (.horizontal) assert_equals: expected "true" but got ""
+PASS size(max-block-size: 200px) (.horizontal)
 PASS size(max-block-size: 199px) (.horizontal)
 PASS size(orientation: landscape) (.horizontal)
-FAIL size(orientation: portrait) (.horizontal) assert_equals: expected "true" but got ""
-FAIL size(aspect-ratio: 1/2) (.horizontal) assert_equals: expected "true" but got ""
+PASS size(orientation: portrait) (.horizontal)
+PASS size(aspect-ratio: 1/2) (.horizontal)
 PASS size(aspect-ratio: 2/1) (.horizontal)
 PASS size(width < 100px) (.vertical)
 PASS size(width >= 100px) (.vertical)
@@ -41,19 +41,19 @@ PASS size(min-height: 201px) (.vertical)
 PASS size(max-height: 200px) (.vertical)
 PASS size(max-height: 199px) (.vertical)
 PASS size(block-size < 100px) (.vertical)
-FAIL size(block-size >= 100px) (.vertical) assert_equals: expected "true" but got ""
-FAIL size(min-block-size: 100px) (.vertical) assert_equals: expected "true" but got ""
+PASS size(block-size >= 100px) (.vertical)
+PASS size(min-block-size: 100px) (.vertical)
 PASS size(min-block-size: 101px) (.vertical)
-FAIL size(max-block-size: 100px) (.vertical) assert_equals: expected "true" but got ""
+PASS size(max-block-size: 100px) (.vertical)
 PASS size(max-block-size: 99px) (.vertical)
 PASS size(inline-size < 200px) (.vertical)
-FAIL size(inline-size >= 200px) (.vertical) assert_equals: expected "true" but got ""
-FAIL size(min-inline-size: 200px) (.vertical) assert_equals: expected "true" but got ""
+PASS size(inline-size >= 200px) (.vertical)
+PASS size(min-inline-size: 200px) (.vertical)
 PASS size(min-inline-size: 201px) (.vertical)
-FAIL size(max-inline-size: 200px) (.vertical) assert_equals: expected "true" but got ""
+PASS size(max-inline-size: 200px) (.vertical)
 PASS size(max-inline-size: 199px) (.vertical)
 PASS size(orientation: landscape) (.vertical)
-FAIL size(orientation: portrait) (.vertical) assert_equals: expected "true" but got ""
-FAIL size(aspect-ratio: 1/2) (.vertical) assert_equals: expected "true" but got ""
+PASS size(orientation: portrait) (.vertical)
+PASS size(aspect-ratio: 1/2) (.vertical)
 PASS size(aspect-ratio: 2/1) (.vertical)
 

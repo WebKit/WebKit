@@ -5,16 +5,16 @@ PASS size(max-width: 0px)
 PASS size(height)
 PASS size(min-height: 0px)
 PASS size(max-height: 0px)
-FAIL size(aspect-ratio) assert_equals: expected "true" but got ""
-FAIL size(min-aspect-ratio: 1/2) assert_equals: expected 2 but got 0
-FAIL size(max-aspect-ratio: 1/2) assert_equals: expected 2 but got 0
-FAIL size(orientation: portrait) assert_equals: expected 2 but got 0
-FAIL size(inline-size) assert_equals: expected "true" but got ""
-FAIL size(min-inline-size: 0px) assert_equals: expected "true" but got ""
-FAIL size(max-inline-size: 0px) assert_equals: expected "true" but got ""
-FAIL size(block-size) assert_equals: expected "true" but got ""
-FAIL size(min-block-size: 0px) assert_equals: expected "true" but got ""
-FAIL size(max-block-size: 0px) assert_equals: expected "true" but got ""
+PASS size(aspect-ratio)
+PASS size(min-aspect-ratio: 1/2)
+PASS size(max-aspect-ratio: 1/2)
+PASS size(orientation: portrait)
+PASS size(inline-size)
+PASS size(min-inline-size: 0px)
+PASS size(max-inline-size: 0px)
+PASS size(block-size)
+PASS size(min-block-size: 0px)
+PASS size(max-block-size: 0px)
 PASS size(width: 100px)
 PASS size((width: 100px))
 PASS size(not (width: 100px))

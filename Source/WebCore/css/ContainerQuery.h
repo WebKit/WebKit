@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
+class CSSValue;
 
 namespace CQ {
 
@@ -57,7 +57,16 @@ struct SizeCondition {
 struct SizeFeature {
     ComparisonOperator comparisonOperator { ComparisonOperator::Equal };
     AtomString name;
-    RefPtr<CSSPrimitiveValue> value;
+    RefPtr<CSSValue> value;
+};
+
+namespace FeatureNames {
+const AtomString& width();
+const AtomString& height();
+const AtomString& inlineSize();
+const AtomString& blockSize();
+const AtomString& aspectRatio();
+const AtomString& orientation();
 };
 
 }

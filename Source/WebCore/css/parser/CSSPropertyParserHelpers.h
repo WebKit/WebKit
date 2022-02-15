@@ -213,6 +213,8 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 bool isFontStyleAngleInRange(double angleInDegrees);
 
+RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange&);
+
 // Template and inline implementations are at the bottom of the file for readability.
 
 template<typename... emptyBaseCase> inline bool identMatches(CSSValueID) { return false; }
@@ -244,6 +246,7 @@ inline bool isFontStyleAngleInRange(double angleInDegrees)
 {
     return angleInDegrees > -90 && angleInDegrees < 90;
 }
+
 
 } // namespace CSSPropertyParserHelpers
 

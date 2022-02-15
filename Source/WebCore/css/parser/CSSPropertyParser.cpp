@@ -4008,32 +4008,23 @@ static RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
         autoValue = consumeIdent<CSSValueAuto>(range);
 
     if (range.atEnd())
-        return RefPtr<CSSValue>(WTFMove(autoValue));
+        return autoValue;
 
-    auto leftValue = consumeNumber(range, ValueRange::NonNegative);
-    if (!leftValue)
+    auto ratioList = consumeAspectRatioValue(range);
+    if (!ratioList)
         return nullptr;
 
-    bool slashSeen = consumeSlashIncludingWhitespace(range);
-
-    auto rightValue = consumeNumber(range, ValueRange::NonNegative);
-    if ((rightValue && !slashSeen) || (!rightValue && slashSeen))
-        return nullptr;
-    if (!slashSeen && !rightValue) // A missing right-hand is treated as 1.
-        rightValue = CSSValuePool::singleton().createValue(1, CSSUnitType::CSS_NUMBER);
     if (!autoValue)
         autoValue = consumeIdent<CSSValueAuto>(range);
 
-    auto ratioList = CSSValueList::createSlashSeparated();
-    ratioList->append(leftValue.releaseNonNull());
-    if (rightValue)
-        ratioList->append(rightValue.releaseNonNull());
     if (!autoValue)
-        return RefPtr<CSSValue>(WTFMove(ratioList));
+        return ratioList;
+
     auto list = CSSValueList::createSpaceSeparated();
     list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto));
-    list->append(ratioList);
-    return RefPtr<CSSValue>(WTFMove(list));
+    list->append(ratioList.releaseNonNull());
+
+    return list;
 }
 
 static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)

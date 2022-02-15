@@ -4752,7 +4752,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-003.html [
 imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-004.html [ ImageOnlyFailure ]
 
 # Container queries
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/display-in-container.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.tentative.html [ ImageOnlyFailure ]
 
 # Flaky css-contain test

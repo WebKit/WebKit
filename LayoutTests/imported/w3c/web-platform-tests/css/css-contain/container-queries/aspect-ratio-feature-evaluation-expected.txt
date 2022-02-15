@@ -1,4 +1,4 @@
 
-FAIL @container queries with aspect-ratio and size containment assert_equals: Should match for block-size containment expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL @container queries with aspect-ratio and size containment assert_equals: Should not match for inline-size containment expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
 FAIL @container query with aspect-ratio change after resize assert_equals: Should match 2/1 min-ratio expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
 

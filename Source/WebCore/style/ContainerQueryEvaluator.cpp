@@ -25,7 +25,9 @@
 #include "config.h"
 #include "ContainerQueryEvaluator.h"
 
+#include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
@@ -43,19 +45,6 @@ struct ContainerQueryEvaluator::EvaluationContext {
 ContainerQueryEvaluator::ContainerQueryEvaluator(const Vector<Ref<const Element>>& containers)
     : m_containers(containers)
 {
-}
-
-static std::optional<LayoutUnit> computeSize(const CSSPrimitiveValue& value, const CSSToLengthConversionData& conversionData)
-{
-    if (value.isNumberOrInteger()) {
-        if (value.doubleValue())
-            return { };
-        return 0_lu;
-    }
-
-    if (!value.isLength())
-        return { };
-    return value.computeLength<LayoutUnit>(conversionData);
 }
 
 bool ContainerQueryEvaluator::evaluate(const FilteredContainerQuery& filteredContainerQuery) const
@@ -154,40 +143,107 @@ auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, 
     }
 }
 
+static std::optional<LayoutUnit> computeSize(const CSSValue* value, const CSSToLengthConversionData& conversionData)
+{
+    if (!is<CSSPrimitiveValue>(value))
+        return { };
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+
+    if (primitiveValue.isNumberOrInteger()) {
+        if (primitiveValue.doubleValue())
+            return { };
+        return 0_lu;
+    }
+
+    if (!primitiveValue.isLength())
+        return { };
+    return primitiveValue.computeLength<LayoutUnit>(conversionData);
+}
+
 auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFeature, const EvaluationContext& context) const -> EvaluationResult
 {
-    auto evaluateSize = [&](LayoutUnit size) {
-        std::optional<LayoutUnit> expressionSize;
+    auto toEvaluationResult = [](bool boolean) {
+        return boolean ? EvaluationResult::True : EvaluationResult::False;
+    };
 
-        if (sizeFeature.comparisonOperator != CQ::ComparisonOperator::True) {
-            if (!sizeFeature.value)
-                return false;
-            expressionSize = computeSize(*sizeFeature.value, context.conversionData);
-            if (!expressionSize)
-                return false;
-        }
-
+    auto compare = [&](auto left, auto right) {
         switch (sizeFeature.comparisonOperator) {
         case CQ::ComparisonOperator::LessThan:
-            return size < *expressionSize;
+            return left < right;
         case CQ::ComparisonOperator::GreaterThan:
-            return size > *expressionSize;
+            return left > right;
         case CQ::ComparisonOperator::LessThanOrEqual:
-            return size <= *expressionSize;
+            return left <= right;
         case CQ::ComparisonOperator::GreaterThanOrEqual:
-            return size >= *expressionSize;
+            return left >= right;
         case CQ::ComparisonOperator::Equal:
-            return size == *expressionSize;
+            return left == right;
         case CQ::ComparisonOperator::True:
-            return !!size;
+            ASSERT_NOT_REACHED();
+            return false;
         }
     };
 
-    // FIXME: Support all features.
-    if (sizeFeature.name == MediaFeatureNames::width)
-        return evaluateSize(context.renderer.width()) ? EvaluationResult::True : EvaluationResult::False;
-    if (sizeFeature.name == MediaFeatureNames::height)
-        return evaluateSize(context.renderer.height()) ? EvaluationResult::True : EvaluationResult::False;
+    auto evaluateSize = [&](LayoutUnit size) {
+        if (sizeFeature.comparisonOperator == CQ::ComparisonOperator::True)
+            return toEvaluationResult(!!size);
+
+        auto expressionSize = computeSize(sizeFeature.value.get(), context.conversionData);
+        if (!expressionSize)
+            return EvaluationResult::Unknown;
+
+        return toEvaluationResult(compare(size, *expressionSize));
+    };
+
+    if (sizeFeature.name == CQ::FeatureNames::width())
+        return evaluateSize(context.renderer.contentWidth());
+
+    if (sizeFeature.name == CQ::FeatureNames::height())
+        return evaluateSize(context.renderer.contentHeight());
+
+    if (sizeFeature.name == CQ::FeatureNames::inlineSize())
+        return evaluateSize(context.renderer.contentLogicalWidth());
+
+    if (sizeFeature.name == CQ::FeatureNames::blockSize())
+        return evaluateSize(context.renderer.contentLogicalHeight());
+
+    if (sizeFeature.name == CQ::FeatureNames::aspectRatio()) {
+        auto boxRatio = context.renderer.contentWidth().toDouble() / context.renderer.contentHeight().toDouble();
+        if (sizeFeature.comparisonOperator == CQ::ComparisonOperator::True)
+            return toEvaluationResult(!!boxRatio);
+
+        if (!is<CSSValueList>(sizeFeature.value))
+            return EvaluationResult::Unknown;
+
+        auto& ratioList = downcast<CSSValueList>(*sizeFeature.value);
+        if (ratioList.length() != 2)
+            return EvaluationResult::Unknown;
+
+        auto first = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(0));
+        auto second = dynamicDowncast<CSSPrimitiveValue>(ratioList.item(1));
+
+        if (!first || !second || !first->isNumberOrInteger() || !second->isNumberOrInteger())
+            return EvaluationResult::Unknown;
+
+        auto expressionRatio = first->doubleValue() / second->doubleValue();
+
+        return toEvaluationResult(compare(boxRatio, expressionRatio));
+    }
+
+    if (sizeFeature.name == CQ::FeatureNames::orientation()) {
+        if (!is<CSSPrimitiveValue>(sizeFeature.value) || sizeFeature.comparisonOperator != CQ::ComparisonOperator::Equal)
+            return EvaluationResult::Unknown;
+
+        auto& value = downcast<CSSPrimitiveValue>(*sizeFeature.value);
+
+        bool isPortrait = context.renderer.contentHeight() >= context.renderer.contentWidth();
+        if (value.valueID() == CSSValuePortrait)
+            return toEvaluationResult(isPortrait);
+        if (value.valueID() == CSSValueLandscape)
+            return toEvaluationResult(!isPortrait);
+
+        return EvaluationResult::Unknown;
+    }
 
     return EvaluationResult::Unknown;
 }
