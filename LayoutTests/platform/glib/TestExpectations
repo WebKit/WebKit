@@ -723,6 +723,9 @@ webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passi
 webkit.org/b/218931 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-events-become-non-cancelable.html [ Timeout ]
 
+# We draw the focus ring of focused links on keydown event.
+imported/blink/fast/events/click-focus-keydown-no-ring.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,15 @@
+2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r195447): [GTK] document.activeElement not set on mouse click
+        https://bugs.webkit.org/show_bug.cgi?id=236217
+
+        Reviewed by Michael Catanzaro.
+
+        * fast/events/click-focus-anchor-expected.txt:
+        * fast/events/click-focus-anchor.html:
+        * platform/glib/TestExpectations: Mark imported/blink/fast/events/click-focus-keydown-no-ring.html as failure.
+        * platform/glib/fast/events/click-focus-anchor-expected.txt: Copied from LayoutTests/fast/events/click-focus-anchor-expected.txt.
+
 2022-02-14  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support range operators in size queries
