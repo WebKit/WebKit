@@ -1,3 +1,12 @@
+2022-02-15  Yosef Or Boczko  <yoseforb@gmail.com>
+
+        l10n: Updated Hebrew translation of WebKitGTK
+        https://bugs.webkit.org/show_bug.cgi?id=236603
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * he.po:
+
 2021-11-24  David Kilzer  <ddkilzer@apple.com>
 
         Compiler should be able to check localized format strings for consistency
