@@ -45,8 +45,10 @@
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
+#import "ImageOverlay.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
+#import "Page.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -75,6 +77,8 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 
 String Editor::selectionInHTMLFormat()
 {
+    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
+        return { };
     return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::Yes);
 }
 
@@ -100,9 +104,52 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 
 #endif
 
+static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(const VisibleSelection& selection)
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    auto* page = selection.document()->page();
+    if (!page)
+        return nil;
+
+    RefPtr hostElement = dynamicDowncast<HTMLElement>(selection.start().containerNode()->shadowHost());
+    if (!hostElement) {
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    auto cachedResult = page->cachedTextRecognitionResult(*hostElement);
+    if (!cachedResult)
+        return nil;
+
+    auto characterRange = valueOrDefault(ImageOverlay::characterRange(selection));
+    if (!characterRange.length)
+        return nil;
+
+    auto string = stringForRange(*cachedResult, characterRange);
+    __block bool hasAnyAttributes = false;
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange, BOOL *stop) {
+        if (attributes.count) {
+            hasAnyAttributes = true;
+            *stop = YES;
+        }
+    }];
+
+    if (!hasAnyAttributes)
+        return nil;
+
+    return string;
+#else
+    UNUSED_PARAM(selection);
+    return nil;
+#endif
+}
+
 static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document)
 {
-    auto range = document.selection().selection().firstRange();
+    auto selection = document.selection().selection();
+    if (ImageOverlay::isInsideOverlay(selection))
+        return selectionInImageOverlayAsAttributedString(selection);
+    auto range = selection.firstRange();
     return range ? attributedString(*range).string : adoptNS([[NSAttributedString alloc] init]);
 }
 
@@ -146,6 +193,8 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
+    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
+        return nullptr;
     auto archive = LegacyWebArchive::createFromSelection(m_document.frame());
     if (!archive)
         return nullptr;

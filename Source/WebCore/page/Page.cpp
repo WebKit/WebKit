@@ -3836,6 +3836,15 @@ bool Page::hasCachedTextRecognitionResult(const HTMLElement& element) const
     return m_textRecognitionResults.contains(element);
 }
 
+std::optional<TextRecognitionResult> Page::cachedTextRecognitionResult(const HTMLElement& element) const
+{
+    auto iterator = m_textRecognitionResults.find(element);
+    if (iterator == m_textRecognitionResults.end())
+        return std::nullopt;
+
+    return { iterator->value.first };
+}
+
 void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntRect& containerRect, const TextRecognitionResult& result)
 {
     m_textRecognitionResults.set(element, CachedTextRecognitionResult { result, containerRect });

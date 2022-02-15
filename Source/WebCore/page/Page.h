@@ -918,6 +918,7 @@ public:
     void setLoadSchedulingMode(LoadSchedulingMode);
 
 #if ENABLE(IMAGE_ANALYSIS)
+    std::optional<TextRecognitionResult> cachedTextRecognitionResult(const HTMLElement&) const;
     WEBCORE_EXPORT bool hasCachedTextRecognitionResult(const HTMLElement&) const;
     void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
     void resetTextRecognitionResult(const HTMLElement&);

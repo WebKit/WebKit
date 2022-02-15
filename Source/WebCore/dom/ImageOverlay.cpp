@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageOverlay.h"
 
+#include "CharacterRange.h"
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
@@ -46,8 +47,10 @@
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
 #include "Text.h"
+#include "TextIterator.h"
 #include "TextRecognitionResult.h"
 #include "UserAgentStyleSheets.h"
+#include "VisibleSelection.h"
 #include <wtf/Range.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -115,6 +118,35 @@ static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
 bool isDataDetectorResult(const HTMLElement& element)
 {
     return imageOverlayHost(element) && element.hasClass() && element.classNames().contains(imageOverlayDataDetectorClass());
+}
+
+std::optional<CharacterRange> characterRange(const VisibleSelection& selection)
+{
+    auto selectionRange = selection.range();
+    if (!selectionRange)
+        return std::nullopt;
+
+    if (!isInsideOverlay(selection))
+        return std::nullopt;
+
+    std::optional<SimpleRange> imageOverlayRange;
+    for (auto& ancestor : ancestorsOfType<HTMLDivElement>(*selection.start().containerNode())) {
+        if (ancestor.getIdAttribute() == imageOverlayElementIdentifier()) {
+            imageOverlayRange = makeRangeSelectingNodeContents(ancestor);
+            break;
+        }
+    }
+
+    if (!imageOverlayRange)
+        return std::nullopt;
+
+    return characterRange(resolveCharacterLocation(*imageOverlayRange, 0), *selectionRange);
+}
+
+bool isInsideOverlay(const VisibleSelection& selection)
+{
+    auto range = selection.range();
+    return range && isInsideOverlay(*range);
 }
 
 bool isInsideOverlay(const SimpleRange& range)

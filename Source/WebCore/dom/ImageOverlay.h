@@ -31,7 +31,9 @@ namespace WebCore {
 
 class HTMLElement;
 class Node;
+class VisibleSelection;
 
+struct CharacterRange;
 struct SimpleRange;
 struct TextRecognitionResult;
 
@@ -45,6 +47,8 @@ WEBCORE_EXPORT bool isOverlayText(const Node&);
 WEBCORE_EXPORT bool isOverlayText(const Node*);
 void removeOverlaySoonIfNeeded(HTMLElement&);
 IntRect containerRect(HTMLElement&);
+std::optional<CharacterRange> characterRange(const VisibleSelection&);
+bool isInsideOverlay(const VisibleSelection&);
 
 #if ENABLE(IMAGE_ANALYSIS)
 enum class CacheTextRecognitionResults : bool { No, Yes };
