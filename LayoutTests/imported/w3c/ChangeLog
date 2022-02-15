@@ -1,3 +1,13 @@
+2022-02-15  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Make sure the element's dirty checkedness flag is set to true when setting checked
+        https://bugs.webkit.org/show_bug.cgi?id=236497
+
+        Reviewed by Chris Dumez.
+
+        Update the test expectations as the tests are now passing.
+        * web-platform-tests/html/semantics/forms/the-input-element/cloning-steps-expected.txt:
+
 2022-02-14  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support range operators in size queries
