@@ -36,8 +36,8 @@
 #include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/GraphicsContextGL.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/RemoteGraphicsContextGLProxyBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,7 +50,7 @@ namespace WebKit {
 class RemoteGraphicsContextGLProxy
     : private IPC::MessageReceiver
     , private GPUProcessConnection::Client
-    , public WebCore::RemoteGraphicsContextGLProxyBase {
+    , public WebCore::GraphicsContextGL {
 public:
     static RefPtr<RemoteGraphicsContextGLProxy> create(const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
     ~RemoteGraphicsContextGLProxy();
@@ -58,11 +58,14 @@ public:
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    // RemoteGraphicsContextGLProxyBase overrides.
+    // WebCore::GraphicsContextGL overrides.
     void reshape(int width, int height) final;
-    using WebCore::RemoteGraphicsContextGLProxyBase::isEnabled;
-    void ensureExtensionEnabled(const String& extension) final;
-    void notifyMarkContextChanged() final;
+    void setContextVisibility(bool) final;
+    bool isGLES2Compliant() const final;
+    void markContextChanged() final;
+    bool supportsExtension(const String&) final;
+    void ensureExtensionEnabled(const String&) final;
+    bool isExtensionEnabled(const String&) final;
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
 #if ENABLE(MEDIA_STREAM)
@@ -324,9 +327,6 @@ public:
 protected:
     RemoteGraphicsContextGLProxy(GPUProcessConnection&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
 
-    // RemoteGraphicsContextGLProxyBase overrides.
-    void waitUntilInitialized() final;
-
     bool isContextLost() const { return !m_gpuProcessConnection; }
     void markContextLost();
 
@@ -353,11 +353,18 @@ private:
     // GPUProcessConnection::Client overrides.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
+    void initialize(const String& availableExtensions, const String& requestableExtensions);
+    void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
 
     GPUProcessConnection* m_gpuProcessConnection;
     bool m_didInitialize { false };
+    // Guarded by waitUntilInitialized().
+    HashSet<String> m_availableExtensions;
+    HashSet<String> m_requestableExtensions;
+
+    HashSet<String> m_enabledExtensions;
     GCGLenum m_errorWhenContextIsLost = NO_ERROR;
     IPC::StreamClientConnection m_streamConnection;
 };

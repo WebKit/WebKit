@@ -109,7 +109,7 @@ bool ExtensionsGLOpenGLCommon::supports(const String& name)
     if (name == "GL_ANGLE_translated_shader_source")
         return false;
 
-    return supportsExtension(name);
+    return platformSupportsExtension(name);
 }
 
 void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
@@ -128,7 +128,7 @@ void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
         ShBuiltInResources ANGLEResources = compiler.getResources();
         if (!ANGLEResources.EXT_draw_buffers) {
             ANGLEResources.EXT_draw_buffers = 1;
-            ANGLEResources.MaxDrawBuffers = m_context->getInteger(ExtensionsGL::MAX_DRAW_BUFFERS_EXT);
+            ANGLEResources.MaxDrawBuffers = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS_EXT);
             compiler.setResources(ANGLEResources);
         }
     } else if (name == "GL_EXT_shader_texture_lod") {

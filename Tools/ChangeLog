@@ -1,3 +1,14 @@
+2022-02-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ExtensionsGL is not useful class, it should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=236490
+
+        Reviewed by Dean Jackson.
+
+        Update manually implemented functions.
+        * Scripts/generate-gpup-webgl:
+        * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm:
+
 2022-02-01  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Support PRs when sending build failure emails

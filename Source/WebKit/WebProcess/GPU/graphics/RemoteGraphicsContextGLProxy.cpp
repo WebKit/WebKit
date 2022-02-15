@@ -47,7 +47,7 @@ using namespace WebCore;
 static constexpr size_t defaultStreamSize = 1 << 21;
 
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection& gpuProcessConnection, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)
-    : RemoteGraphicsContextGLProxyBase(attributes)
+    : GraphicsContextGL(attributes)
     , m_gpuProcessConnection(&gpuProcessConnection)
     , m_streamConnection(gpuProcessConnection.connection(), defaultStreamSize)
 {
@@ -64,6 +64,66 @@ RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
     disconnectGpuProcessIfNeeded();
 }
 
+void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
+{
+    notImplemented();
+}
+
+bool RemoteGraphicsContextGLProxy::isGLES2Compliant() const
+{
+#if ENABLE(WEBGL2)
+    return contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+#else
+    return false;
+#endif
+}
+
+void RemoteGraphicsContextGLProxy::markContextChanged()
+{
+    // FIXME: The caller should track this state.
+    if (m_layerComposited) {
+        GraphicsContextGL::markContextChanged();
+        if (isContextLost())
+            return;
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MarkContextChanged());
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+bool RemoteGraphicsContextGLProxy::supportsExtension(const String& name)
+{
+    waitUntilInitialized();
+    return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
+}
+
+void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& name)
+{
+    waitUntilInitialized();
+    if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
+        m_enabledExtensions.add(name);
+        if (isContextLost())
+            return;
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::EnsureExtensionEnabled(name));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const String& name)
+{
+    waitUntilInitialized();
+    return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
+}
+
+void RemoteGraphicsContextGLProxy::initialize(const String& availableExtensions, const String& requestableExtensions)
+{
+    for (auto& extension : availableExtensions.split(' '))
+        m_availableExtensions.add(extension);
+    for (auto& extension : requestableExtensions.split(' '))
+        m_requestableExtensions.add(extension);
+}
+
 void RemoteGraphicsContextGLProxy::reshape(int width, int height)
 {
     if (isContextLost())
@@ -71,24 +131,6 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
     m_currentWidth = width;
     m_currentHeight = height;
     auto sendResult = send(Messages::RemoteGraphicsContextGL::Reshape(width, height));
-    if (!sendResult)
-        markContextLost();
-}
-
-void RemoteGraphicsContextGLProxy::ensureExtensionEnabled(const String& extension)
-{
-    if (isContextLost())
-        return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::EnsureExtensionEnabled(extension));
-    if (!sendResult)
-        markContextLost();
-}
-
-void RemoteGraphicsContextGLProxy::notifyMarkContextChanged()
-{
-    if (isContextLost())
-        return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::NotifyMarkContextChanged());
     if (!sendResult)
         markContextLost();
 }

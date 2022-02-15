@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "WebGLColorBufferFloat.h"
 
-#include "ExtensionsGL.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -38,12 +37,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
 WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
     // Optimistically enable RGB floating-point render targets also, if possible.
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_float_blend"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
 }
 
 WebGLColorBufferFloat::~WebGLColorBufferFloat() = default;
@@ -53,10 +52,10 @@ WebGLExtension::ExtensionName WebGLColorBufferFloat::getName() const
     return WebGLColorBufferFloatName;
 }
 
-bool WebGLColorBufferFloat::supported(const WebGLRenderingContextBase& context)
+bool WebGLColorBufferFloat::supported(GraphicsContextGL& context)
 {
-    return context.graphicsContextGL()->getExtensions().supports("GL_OES_texture_float"_s)
-        && context.graphicsContextGL()->getExtensions().supports("GL_CHROMIUM_color_buffer_float_rgba"_s);
+    return context.supportsExtension("GL_OES_texture_float"_s)
+        && context.supportsExtension("GL_CHROMIUM_color_buffer_float_rgba"_s);
 }
 
 } // namespace WebCore

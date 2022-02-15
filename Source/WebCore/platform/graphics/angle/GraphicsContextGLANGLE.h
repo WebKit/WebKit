@@ -53,7 +53,6 @@ struct gbm_bo;
 namespace WebCore {
 
 class ExtensionsGL;
-class ExtensionsGLANGLE;
 class GLContext;
 class HostWindow;
 class ImageBuffer;
@@ -332,6 +331,13 @@ public:
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) override;
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
+    bool supportsExtension(const String&) override;
+    void ensureExtensionEnabled(const String&) override;
+    bool isExtensionEnabled(const String&) override;
+    GCGLint getGraphicsResetStatusARB() override;
+    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
+    String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
+
     PlatformGLObject createBuffer() final;
     PlatformGLObject createFramebuffer() final;
     PlatformGLObject createProgram() final;
@@ -346,12 +352,10 @@ public:
     void deleteTexture(PlatformGLObject) final;
     void synthesizeGLError(GCGLenum error) final;
     bool moveErrorsToSyntheticErrorList() final;
-    ExtensionsGL& getExtensions() final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
-    void prepareForDisplay() override;
 
     void forceContextLost();
     void recycleContext();
@@ -366,14 +370,20 @@ public:
 #endif
 
 protected:
-#if PLATFORM(COCOA) && HAVE(TASK_IDENTITY_TOKEN)
-    GraphicsContextGLANGLE(GraphicsContextGLAttributes, const ProcessIdentity&);
-#else
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
-#endif
+
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
+
+    // Initializes the instance. Returns false if the instance should not be used.
+    bool initialize();
+    // Called first by initialize(). Subclasses should override to instantiate the platform specific bits of EGLContext.
+    // FIXME: Currently platforms do not share the context creation. They should.
+    virtual bool platformInitializeContext();
+    // Called last by initialize(). Subclasses should override to instantiate platform specific state that depend on
+    // the shared state.
+    virtual bool platformInitialize();
 
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
@@ -395,13 +405,11 @@ protected:
     void prepareTextureImpl();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
-
-    bool reshapeDisplayBufferBacking();
 #if PLATFORM(COCOA)
-    bool allocateAndBindDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
     static bool makeCurrent(PlatformGraphicsContextGLDisplay, PlatformGraphicsContextGL);
 #endif
+    virtual bool reshapeDisplayBufferBacking() = 0;
+
     // Returns false if context should be lost due to timeout.
     bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
 
@@ -410,6 +418,14 @@ protected:
 
     virtual void invalidateKnownTextureContent(GCGLuint);
 
+    // Only for non-WebGL 2.0 contexts.
+    GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+
+    HashSet<String> m_availableExtensions;
+    HashSet<String> m_requestableExtensions;
+    HashSet<String> m_enabledExtensions;
+    bool m_webglColorBufferFloatRGB { false };
+    bool m_webglColorBufferFloatRGBA { false };
     GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };
     GCGLuint m_depthStencilBuffer { 0 };
@@ -434,7 +450,6 @@ protected:
     size_t m_oldestFrameCompletionFence { 0 };
     ScopedGLFence m_frameCompletionFences[maxPendingFrames];
     GraphicsContextGLState m_state;
-    std::unique_ptr<ExtensionsGLANGLE> m_extensions;
 
 #if PLATFORM(COCOA)
     // FIXME: Move these to GraphicsContextGLCocoa.
@@ -447,7 +462,6 @@ protected:
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
     std::unique_ptr<IOSurface> m_displayBufferBacking;
     void* m_displayBufferPbuffer { nullptr };
-    ProcessIdentity m_resourceOwner;
 #endif
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_compositorTexture { 0 };
@@ -488,7 +502,6 @@ protected:
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 #endif
 
-    friend class ExtensionsGLANGLE;
 #if USE(NICOSIA)
     friend class Nicosia::GCGLANGLELayer;
     friend class Nicosia::GCGLLayer;

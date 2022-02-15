@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "ExtensionsGL.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
@@ -39,41 +38,41 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureASTC);
 
 WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
-    , m_isHDRSupported(context.graphicsContextGL()->getExtensions().supports("GL_KHR_texture_compression_astc_hdr"_s))
-    , m_isLDRSupported(context.graphicsContextGL()->getExtensions().supports("GL_KHR_texture_compression_astc_ldr"_s))
+    , m_isHDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_hdr"_s))
+    , m_isLDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_ldr"_s))
 {
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_KHR_texture_compression_astc_hdr"_s);
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_KHR_texture_compression_astc_ldr"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_KHR_texture_compression_astc_hdr"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_KHR_texture_compression_astc_ldr"_s);
 
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_4x4_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_5x4_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_5x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_6x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_6x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_8x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_8x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_8x8_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_10x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_10x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_10x8_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_10x10_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_12x10_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_ASTC_12x12_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_4x4_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_5x4_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_5x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_6x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_6x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_8x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_8x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_8x8_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_10x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_10x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_10x8_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_10x10_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_12x10_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_ASTC_12x12_KHR);
     
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR);
 }
 
 WebGLCompressedTextureASTC::~WebGLCompressedTextureASTC() = default;
@@ -95,10 +94,10 @@ Vector<String> WebGLCompressedTextureASTC::getSupportedProfiles()
     return result;
 }
 
-bool WebGLCompressedTextureASTC::supported(const WebGLRenderingContextBase& context)
+bool WebGLCompressedTextureASTC::supported(GraphicsContextGL& context)
 {
-    return context.graphicsContextGL()->getExtensions().supports("GL_KHR_texture_compression_astc_hdr"_s)
-        || context.graphicsContextGL()->getExtensions().supports("GL_KHR_texture_compression_astc_ldr"_s);
+    return context.supportsExtension("GL_KHR_texture_compression_astc_hdr"_s)
+        || context.supportsExtension("GL_KHR_texture_compression_astc_ldr"_s);
 }
 
 } // namespace WebCore

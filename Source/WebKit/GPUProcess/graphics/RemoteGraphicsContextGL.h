@@ -35,7 +35,6 @@
 #include "ScopedWebGLRenderingResourcesRequest.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
-#include <WebCore/ExtensionsGL.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakPtr.h>
@@ -102,9 +101,9 @@ protected:
     void dispatchContextChangedNotification() final;
 
     // Messages to be received.
-    void reshape(int32_t width, int32_t height);
     void ensureExtensionEnabled(String&&);
-    void notifyMarkContextChanged();
+    void markContextChanged();
+    void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
 #elif USE(GRAPHICS_LAYER_WC)

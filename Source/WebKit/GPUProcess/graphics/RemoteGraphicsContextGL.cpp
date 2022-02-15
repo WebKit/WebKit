@@ -127,7 +127,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
     if (m_context) {
         m_context->addClient(*this);
         String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
-        String requestableExtensions = m_context->getString(ExtensionsGL::REQUESTABLE_EXTENSIONS_ANGLE);
+        String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, remoteGraphicsContextGLStreamWorkQueue().wakeUpSemaphore(), extensions, requestableExtensions));
     } else
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, IPC::Semaphore { }, "", ""));
@@ -195,10 +195,10 @@ void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& compl
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 {
     assertIsCurrent(m_streamThread);
-    m_context->getExtensions().ensureEnabled(extension);
+    m_context->ensureExtensionEnabled(extension);
 }
 
-void RemoteGraphicsContextGL::notifyMarkContextChanged()
+void RemoteGraphicsContextGL::markContextChanged()
 {
     assertIsCurrent(m_streamThread);
     m_context->markContextChanged();

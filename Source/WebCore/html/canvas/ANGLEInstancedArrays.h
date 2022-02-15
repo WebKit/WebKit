@@ -39,7 +39,7 @@ public:
 
     ExtensionName getName() const final;
 
-    static bool supported(WebGLRenderingContextBase&);
+    static bool supported(GraphicsContextGL&);
 
     void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
     void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount);

@@ -39,7 +39,7 @@ public:
 
     ExtensionName getName() const override;
 
-    static bool supported(const WebGLRenderingContextBase&);
+    static bool supported(GraphicsContextGL&);
 };
 
 } // namespace WebCore

@@ -345,10 +345,10 @@ void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
         type = GL_HALF_FLOAT_ARB;
     }
 
-    ASSERT(format != ExtensionsGL::SRGB8_ALPHA8_EXT);
-    if (format == ExtensionsGL::SRGB_ALPHA_EXT)
+    ASSERT(format != GraphicsContextGL::SRGB8_ALPHA8_EXT);
+    if (format == GraphicsContextGL::SRGB_ALPHA_EXT)
         openGLFormat = GL_RGBA;
-    else if (format == ExtensionsGL::SRGB_EXT)
+    else if (format == GraphicsContextGL::SRGB_EXT)
         openGLFormat = GL_RGB;
 #endif
 
@@ -398,7 +398,7 @@ void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 }
 
 #if !PLATFORM(GTK)
-ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
         m_extensions = makeUnique<ExtensionsGLOpenGL>(this, isGLES2Compliant());

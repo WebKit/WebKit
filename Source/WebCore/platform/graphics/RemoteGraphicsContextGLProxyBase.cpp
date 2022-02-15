@@ -46,78 +46,7 @@ RemoteGraphicsContextGLProxyBase::RemoteGraphicsContextGLProxyBase(const Graphic
 
 RemoteGraphicsContextGLProxyBase::~RemoteGraphicsContextGLProxyBase() = default;
 
-ExtensionsGL& RemoteGraphicsContextGLProxyBase::getExtensions()
-{
-    return *this;
-}
 
-void RemoteGraphicsContextGLProxyBase::setContextVisibility(bool)
-{
-    notImplemented();
-}
 
-bool RemoteGraphicsContextGLProxyBase::isGLES2Compliant() const
-{
-#if ENABLE(WEBGL2)
-    return contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-#else
-    return false;
-#endif
-}
-
-void RemoteGraphicsContextGLProxyBase::markContextChanged()
-{
-    // FIXME: The caller should track this state.
-    if (m_layerComposited) {
-        notifyMarkContextChanged();
-        GraphicsContextGL::markContextChanged();
-    }
-}
-
-bool RemoteGraphicsContextGLProxyBase::supports(const String& name)
-{
-    waitUntilInitialized();
-    return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
-}
-
-void RemoteGraphicsContextGLProxyBase::ensureEnabled(const String& name)
-{
-    waitUntilInitialized();
-    if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
-        ensureExtensionEnabled(name);
-        m_enabledExtensions.add(name);
-    }
-}
-
-bool RemoteGraphicsContextGLProxyBase::isEnabled(const String& name)
-{
-    waitUntilInitialized();
-    return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
-}
-
-void RemoteGraphicsContextGLProxyBase::initialize(const String& availableExtensions, const String& requestableExtensions)
-{
-    for (auto& extension : availableExtensions.split(' '))
-        m_availableExtensions.add(extension);
-    for (auto& extension : requestableExtensions.split(' '))
-        m_requestableExtensions.add(extension);
-}
-
-#if !USE(ANGLE)
-void RemoteGraphicsContextGLProxyBase::readnPixelsEXT(GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLvoid*)
-{
-}
-
-void RemoteGraphicsContextGLProxyBase::getnUniformfvEXT(GCGLuint, GCGLint, GCGLsizei, GCGLfloat*)
-{
-}
-
-void RemoteGraphicsContextGLProxyBase::getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*)
-{
-}
-#endif
-
-#if ENABLE(MEDIA_STREAM) && !PLATFORM(COCOA)
-#endif
 }
 #endif

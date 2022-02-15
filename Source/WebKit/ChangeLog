@@ -1,3 +1,36 @@
+2022-02-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ExtensionsGL is not useful class, it should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=236490
+
+        Move the RemoteGraphicsContextGLProxyBase functions to
+        RemoteGraphicsContextGL. The ..Base can now be removed
+        as ExtensionGL is removed.
+
+        Reviewed by Dean Jackson.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::ensureExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGL::markContextChanged):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (getGraphicsResetStatusARB):
+        (getTranslatedShaderSourceANGLE):
+        (drawBuffersEXT):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::setContextVisibility):
+        (WebKit::RemoteGraphicsContextGLProxy::isGLES2Compliant const):
+        (WebKit::RemoteGraphicsContextGLProxy::markContextChanged):
+        (WebKit::RemoteGraphicsContextGLProxy::supportsExtension):
+        (WebKit::RemoteGraphicsContextGLProxy::ensureExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGLProxy::isExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGLProxy::initialize):
+        (WebKit::RemoteGraphicsContextGLProxy::reshape):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+
 2022-02-14  Tim Horton  <timothy_horton@apple.com>
 
         Direct touches don't trigger other gesture recognizers if WKMouseGestureRecognizer sees them first

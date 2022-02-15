@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-#include "ExtensionsGL.h"
 #include "GraphicsContextGL.h"
 
 #include <wtf/HashSet.h>
@@ -39,42 +38,12 @@ namespace WebCore {
 // This implements the parts that are using WebCore internal functionality:
 // - Drawing buffer tracking management.
 // - Compositing support.
-class WEBCORE_EXPORT RemoteGraphicsContextGLProxyBase : public GraphicsContextGL, public ExtensionsGL {
+class WEBCORE_EXPORT RemoteGraphicsContextGLProxyBase : public GraphicsContextGL {
 public:
     RemoteGraphicsContextGLProxyBase(const GraphicsContextGLAttributes&);
     ~RemoteGraphicsContextGLProxyBase() override;
 
-    // Other WebCore::GraphicsContextGL overrides.
-    using GraphicsContextGL::isEnabled;
-    ExtensionsGL& getExtensions() final;
-    void setContextVisibility(bool) final;
-    bool isGLES2Compliant() const final;
-    void markContextChanged() final;
 
-    // Other ExtensionGL overrides.
-    using ExtensionsGL::isEnabled;
-    bool supports(const String&) final;
-    void ensureEnabled(const String&) final;
-    bool isEnabled(const String&) final;
-
-#if !USE(ANGLE)
-    void readnPixelsEXT(GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLvoid*) final;
-    void getnUniformfvEXT(GCGLuint, GCGLint, GCGLsizei, GCGLfloat*) final;
-    void getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*) final;
-#endif
-
-protected:
-    void initialize(const String& availableExtensions, const String& requestableExtensions);
-    virtual void waitUntilInitialized() = 0;
-    virtual void ensureExtensionEnabled(const String&) = 0;
-    virtual void notifyMarkContextChanged() = 0;
-
-private:
-    // Guarded by waitUntilInitialized().
-    HashSet<String> m_availableExtensions;
-    HashSet<String> m_requestableExtensions;
-
-    HashSet<String> m_enabledExtensions;
 };
 
 }

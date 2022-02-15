@@ -41,7 +41,6 @@
 #import "ContentTypeUtilities.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
-#import "ExtensionsGL.h"
 #import "FloatConversion.h"
 #import "FourCC.h"
 #import "GraphicsContext.h"

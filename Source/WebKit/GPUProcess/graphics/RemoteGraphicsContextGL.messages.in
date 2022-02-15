@@ -36,7 +36,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
-    void NotifyMarkContextChanged()
+    void MarkContextChanged()
     void SynthesizeGLError(uint32_t error)
     void GetError() -> (uint32_t returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous

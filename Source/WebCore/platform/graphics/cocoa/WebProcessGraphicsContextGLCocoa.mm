@@ -151,7 +151,7 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
         return nullptr;
     auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes { attributes }));
-    if (!context->isValid())
+    if (!context->initialize())
         return nullptr;
     GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
     return context;

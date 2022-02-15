@@ -43,10 +43,9 @@ class GCGLLayer;
 #endif
 
 namespace WebCore {
-class ExtensionsGL;
 #if USE(OPENGL_ES)
 class ExtensionsGLOpenGLES;
-#elif USE(OPENGL)
+#else
 class ExtensionsGLOpenGL;
 #endif
 class HostWindow;
@@ -370,6 +369,13 @@ public:
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) override;
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
 
+    bool supportsExtension(const String&) final;
+    void ensureExtensionEnabled(const String&) final;
+    bool isExtensionEnabled(const String&) final;
+    GLint getGraphicsResetStatusARB() final;
+    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
+    String getTranslatedShaderSourceANGLE(PlatformGLObject) final;
+
     // Helper methods.
     void forceContextLost();
     void recycleContext();
@@ -405,11 +411,13 @@ public:
 
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
-    // current hardware. Must call ExtensionsGL::supports() to
+    // current hardware. Must call ExtensionsGLOpenGL{ES}::supports() to
     // determine this.
-    // Use covariant return type for OPENGL/OPENGL_ES
-    ExtensionsGLOpenGLCommon& getExtensions() final;
-
+#if USE(OPENGL_ES)
+    ExtensionsGLOpenGLES& getExtensions();
+#else
+    ExtensionsGLOpenGL& getExtensions();
+#endif
     void simulateEventForTesting(SimulatedEventForTesting) override;
 
     void prepareForDisplay() override;
@@ -420,7 +428,7 @@ protected:
     GCGLuint m_texture { 0 };
 
     // Called once by all the public entry points that eventually call OpenGL.
-    // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
+    // Called once by all the public entry points of ExtensionsGLOpenGL/ExtensionGLOpenGLES that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
 
     // Take into account the user's requested context creation attributes,
@@ -512,13 +520,12 @@ protected:
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
+    friend class ExtensionsGLOpenGLCommon;
 #if USE(OPENGL_ES)
     friend class ExtensionsGLOpenGLES;
-    friend class ExtensionsGLOpenGLCommon;
     std::unique_ptr<ExtensionsGLOpenGLES> m_extensions;
-#elif USE(OPENGL)
+#else
     friend class ExtensionsGLOpenGL;
-    friend class ExtensionsGLOpenGLCommon;
     std::unique_ptr<ExtensionsGLOpenGL> m_extensions;
 #endif
 

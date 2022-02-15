@@ -33,6 +33,9 @@
 #include "ExtensionsGLOpenGLCommon.h"
 #if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
+#include "GraphicsContextGLOpenGL.h"
+#else
+#include "ExtensionsGLOpenGL.h"
 #endif
 #include "GraphicsContextGL.h"
 #endif
@@ -177,7 +180,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     m_opaqueTexture = data.opaqueTexture;
 
 #if USE(OPENGL_ES) && !USE(ANGLE)
-    auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
+    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
     if (m_attributes.antialias && extensions.isImagination()) {
         extensions.framebufferTexture2DMultisampleIMG(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0, m_sampleCount);
         return;
@@ -272,12 +275,12 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #elif USE(OPENGL_ES)
-    auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
+    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
     bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
-    auto& extensions = reinterpret_cast<ExtensionsGLOpenGLCommon&>(gl.getExtensions());
+    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
     bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil");
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_COMPONENT;
@@ -290,7 +293,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 #if USE(ANGLE)
         gl.getIntegerv(GL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
 #else
-        gl.getIntegerv(ExtensionsGL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
+        gl.getIntegerv(GraphicsContextGL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
 #endif
         // Cap the maxiumum multisample count at 4. Any more than this is likely overkill and will impact performance.
         m_sampleCount = std::min(4, maxSampleCount);

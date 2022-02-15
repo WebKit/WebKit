@@ -41,7 +41,6 @@ import collections
 from typing import List, Dict, Iterable, Callable, Tuple, Set, Optional, Generator, Iterator, Counter
 
 root_dir = (pathlib.Path(__file__).parent / ".." / "..").resolve()
-extensions_input_fn = root_dir / "Source" / "WebCore" / "platform" / "graphics" / "ExtensionsGL.h"
 
 functions_input_fns = [
     root_dir / "Source" / "WebKit" / "WebProcess" / "GPU" / "graphics" / "RemoteGraphicsContextGLProxy.h"
@@ -101,7 +100,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
-    void NotifyMarkContextChanged()
+    void MarkContextChanged()
     void SynthesizeGLError(uint32_t error)
     void GetError() -> (uint32_t returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
@@ -426,14 +425,12 @@ class cpp_func(object):
     name: str
     args: cpp_arg_list
     return_type: cpp_type
-    is_extension: bool
     overload_suffix: str
 
-    def __init__(self, name: str, return_type: cpp_type, args: cpp_arg_list, is_extension: bool):
+    def __init__(self, name: str, return_type: cpp_type, args: cpp_arg_list):
         self.name = name
         self.return_type = return_type
         self.args = args
-        self.is_extension = is_extension
         self.overload_suffix = ""
 
     def __str__(self):
@@ -723,7 +720,6 @@ class context_proxy_cpp_webkit_ipc_generator(object):
 class webkit_ipc_cpp_impl(object):
     name: str
     args: cpp_arg_list
-    is_extension: bool
     pre_call_stmts: List[str]
     call_stmts: List[str]
     post_call_stmts: List[str]
@@ -735,7 +731,6 @@ class webkit_ipc_cpp_impl(object):
         self.name = cpp_func.name
         self.overload_suffix = cpp_func.overload_suffix
         self.args = cpp_arg_list([])
-        self.is_extension = cpp_func.is_extension
         self.pre_call_stmts = []
         self.call_stmts = []
         self.post_call_stmts = []
@@ -750,12 +745,11 @@ class webkit_ipc_cpp_impl(object):
 
     def process_call(self):
         self.call_stmts += [ "assertIsCurrent(m_streamThread);" ]
-        ext = "getExtensions()." if self.is_extension else ""
 
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
         is_async = len(self.out_exprs) == 0
 
-        call_expr = f"m_context->{ext}{self.name}({in_exprs})"
+        call_expr = f"m_context->{self.name}({in_exprs})"
         if not self.return_value_expr:
             self.call_stmts += [f"{call_expr};"]
         else:
@@ -891,8 +885,8 @@ def create_cpp_arg_list(args_specs: Iterable[str]):
     return cpp_arg_list([create_cpp_arg(arg_spec=e, arg_index=i) for i, e in enumerate(args_specs)])
 
 
-def create_cpp_func(name: str, return_spec: str, args_specs: List[str], is_extension: bool):
-    return cpp_func(name=name, return_type=get_cpp_type(return_spec), args=create_cpp_arg_list(args_specs), is_extension=is_extension)
+def create_cpp_func(name: str, return_spec: str, args_specs: List[str]):
+    return cpp_func(name=name, return_type=get_cpp_type(return_spec), args=create_cpp_arg_list(args_specs))
 
 
 def read_lines_until(lines : Iterable[str], match : str) -> Generator[str, None, None]:
@@ -908,20 +902,6 @@ def main():
 
     # Construct the list of functions to remote from web process to GPU process.
 
-    # FIXME: Until extensions header is removed, we need to complicate the implementation
-    # with the distinction of whether a function is or is not an extension function.
-    extension_signatures : Set[str] = set()
-    with open(extensions_input_fn) as f:
-        for line in f.readlines():
-            m = re.match(r".*virtual (\S+)\s+(\w+)\((.*)\) = 0;", line)
-            if m:
-                func = create_cpp_func(
-                    name=m[2],
-                    return_spec=m[1],
-                    args_specs=cpp_split_args_specs(m[3]),
-                    is_extension=True,
-                )
-                extension_signatures.update([str(func)])
     funcs = []
     unimplemented = []
     for fn in functions_input_fns:
@@ -938,9 +918,7 @@ def main():
                         name=func_name,
                         return_spec=m[1],
                         args_specs=cpp_split_args_specs(m[3]),
-                        is_extension=False,
                     )
-                    func.is_extension = str(func) in extension_signatures
                     if func.is_implemented():
                         funcs.append(func)
                     else:

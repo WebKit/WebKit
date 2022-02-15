@@ -47,15 +47,8 @@
 #include "OpenGLShims.h"
 #endif
 
-#if USE(ANGLE)
-#include "ExtensionsGLANGLE.h"
-#else
+#if !USE(ANGLE)
 #include <ANGLE/ShaderLang.h>
-#if USE(OPENGL_ES)
-#include "ExtensionsGLOpenGLES.h"
-#else
-#include "ExtensionsGLOpenGL.h"
-#endif
 #endif
 
 #if USE(NICOSIA)
@@ -108,7 +101,12 @@ private:
 
 RefPtr<GraphicsContextGLTextureMapper> GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes&& attributes)
 {
-    return adoptRef(*new GraphicsContextGLTextureMapper(WTFMove(attributes)));
+    auto context = adoptRef(*new GraphicsContextGLTextureMapper(WTFMove(attributes)));
+#if USE(ANGLE)
+    if (!context->initialize())
+        return nullptr;
+#endif
+    return context;
 }
 
 GraphicsContextGLTextureMapper::~GraphicsContextGLTextureMapper() = default;
@@ -148,7 +146,8 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
 
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
     auto context = GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes { attributes });
-
+    if (!context)
+        return nullptr;
 #if USE(LIBEPOXY) && USE(OPENGL_ES) && ENABLE(WEBGL2)
     // Bail if GLES3 was requested but cannot be provided.
     if (attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2 && !epoxy_is_desktop_gl() && epoxy_gl_version() < 30)

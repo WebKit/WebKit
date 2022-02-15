@@ -45,7 +45,7 @@ class WEBCORE_EXPORT GraphicsContextGLTextureMapper : public GraphicsContextGLTe
 public:
     static RefPtr<GraphicsContextGLTextureMapper> create(WebCore::GraphicsContextGLAttributes&&);
     ~GraphicsContextGLTextureMapper();
-
+    
     // GraphicsContextGLTextureMapperBase overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
 #if ENABLE(VIDEO)
@@ -56,6 +56,8 @@ public:
 #endif
 #if USE(ANGLE)
     void setContextVisibility(bool) final;
+    bool reshapeDisplayBufferBacking() final;
+    void prepareForDisplay() final;
 #endif
 
 protected:
