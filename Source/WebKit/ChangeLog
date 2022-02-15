@@ -1,3 +1,18 @@
+2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] D-Bus crash atk-bridge
+        https://bugs.webkit.org/show_bug.cgi?id=236208
+
+        Reviewed by Adrian Perez de Castro.
+
+        It seems that for some reason we might end up with an empty string as plug ID which ATK doesn't handle right. We
+        should not send the BindAccessibilityTree message if the plug ID is not valid. In the case of ATSPI we can just
+        check it's not empty, since we know we always build a valid ID when we have a connection. In the case of ATK we
+        should check it's a valid unique name and object path.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformInitialize):
+
 2022-02-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Memory for messages wrapped for testing is freed before use

@@ -303,6 +303,15 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
 
 void AccessibilityAtspi::unregisterRoot(AccessibilityRootAtspi& rootObject)
 {
+    for (unsigned i = 0; i < m_pendingRootRegistrations.size(); ++i) {
+        auto& pendingRootRegistration = m_pendingRootRegistrations[i];
+        if (pendingRootRegistration.root.ptr() == &rootObject) {
+            pendingRootRegistration.completionHandler({ });
+            m_pendingRootRegistrations.remove(i);
+            return;
+        }
+    }
+
     if (!m_connection)
         return;
 
