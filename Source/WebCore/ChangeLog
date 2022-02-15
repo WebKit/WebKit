@@ -1,3 +1,23 @@
+2022-02-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] WebKit browser scrollbars not always correctly displayed if overlay scrollbars are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=234874
+
+        Reviewed by Carlos Garcia Campos.
+
+        If overlay scrollbars are disabled, and there is not enough content for the page to be
+        scrollable, and scrollbars are forced using overflow:scroll, then we currently fail to
+        paint the scrollbars properly. At minimum, we need to paint the scrollbar background, which
+        is what the macOS port does. Do so.
+
+        In the future, we might want to additionally paint the rest of the scrollbars, similar to
+        the GTK_POLICY_ALWAYS scrollbar policy type, but this would require more work.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::paint):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::paint):
+
 2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] D-Bus crash atk-bridge

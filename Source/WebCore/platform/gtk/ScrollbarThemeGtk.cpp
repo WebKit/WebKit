@@ -331,7 +331,7 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     if (graphicsContext.paintingDisabled())
         return false;
 
-    if (!scrollbar.enabled())
+    if (!scrollbar.enabled() && usesOverlayScrollbars())
         return true;
 
     double opacity = scrollbar.hoveredPart() == NoPart ? scrollbar.opacity() : 1;
@@ -376,18 +376,20 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     preferredSize += scrollbarGadget.preferredSize() - scrollbarGadget.minimumSize();
 
     FloatRect contentsRect(rect);
-    // When using overlay scrollbars we always claim the size of the scrollbar when hovered, so when
-    // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
-    if (scrollbar.orientation() == VerticalScrollbar) {
-        if (rect.width() != preferredSize.width()) {
-            if (!scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                contentsRect.move(std::abs(rect.width() - preferredSize.width()), 0);
-            contentsRect.setWidth(preferredSize.width());
-        }
-    } else {
-        if (rect.height() != preferredSize.height()) {
-            contentsRect.move(0, std::abs(rect.height() - preferredSize.height()));
-            contentsRect.setHeight(preferredSize.height());
+    if (usesOverlayScrollbars()) {
+        // When using overlay scrollbars we always claim the size of the scrollbar when hovered, so when
+        // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
+        if (scrollbar.orientation() == ScrollbarOrientation::VerticalScrollbar) {
+            if (rect.width() != preferredSize.width()) {
+                if (!scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
+                    contentsRect.move(std::abs(rect.width() - preferredSize.width()), 0);
+                contentsRect.setWidth(preferredSize.width());
+            }
+        } else {
+            if (rect.height() != preferredSize.height()) {
+                contentsRect.move(0, std::abs(rect.height() - preferredSize.height()));
+                contentsRect.setHeight(preferredSize.height());
+            }
         }
     }
 
