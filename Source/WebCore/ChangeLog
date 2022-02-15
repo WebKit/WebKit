@@ -1,3 +1,16 @@
+2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Inclusion of OpenGLShims.h should not depend on USE(GLX)
+        https://bugs.webkit.org/show_bug.cgi?id=236593
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * platform/graphics/GLContext.cpp: Remove inclusion of OpenGLShims.h guarded by USE(GLX).
+        * platform/graphics/GLContext.h: Include OpenGLShims.h as fallback option when neither
+        USE(LIBEPOXY) nor USE(OPENGL_ES) are into effect.
+
 2022-01-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Expand RefPtr / Ref use in FrameLoader
