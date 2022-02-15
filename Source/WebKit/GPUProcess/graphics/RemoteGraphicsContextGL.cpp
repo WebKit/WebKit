@@ -253,6 +253,11 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
     Lock lock;
     Condition conditionVariable;
     bool isFinished = false;
+
+    // FIXME: This should not be needed. Maybe ArrayBufferView should be ThreadSafeRefCounted as it is used in accross multiple threads.
+    // The call below is synchronous and we transfer the ownership of the `pixelBuffer`.
+    if (pixelBuffer)
+        pixelBuffer->data().disableThreadingChecks();
     m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
         if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
