@@ -1,5 +1,36 @@
 2022-02-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        Memory for messages wrapped for testing is freed before use
+        https://bugs.webkit.org/show_bug.cgi?id=236590
+
+        Reviewed by Antti Koivisto.
+
+        Wrapped messages are such that the data is wrapped inside a synchronous message.
+        These are sent by certain test objects.
+        In case the wrapped message was sent to another thread, the wrappee would be
+        destroyed before the wrapped message was read.
+
+        This is a regression from "Support in-process testing of IPC messages"
+        where the Decoder constructor with deallocator parameter was changed to
+        unconditionally mean that the Decoder owns the passed in data.
+        This call-site was missed, and it uses the constructor to pass nullptr
+        deallocator. Previously this used to mean that the constructor should
+        copy the data.
+
+        Fix by using the copying Decoder constructor.
+        Add assertion to the ownership-transfer decoder that the deallocation
+        function is non-null to notice the potential misuse. Currently passing
+        globally owned data, e.g. non-deallocated data is not useful.
+        Remove pessimizing WTFMove of a local variabl from a return position.
+
+        No new tests, caught by fast/events/gesture/wheel-from-gesture.html with ASAN.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::create):
+        (IPC::Decoder::unwrapForTesting):
+
+2022-02-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         GPUP WebGL: WTF::RefCountedBase::applyRefDerefThreadingCheck() fails due to RemoteGraphicsContextGL::paintPixelBufferToImageBuffer
         https://bugs.webkit.org/show_bug.cgi?id=236501
 
