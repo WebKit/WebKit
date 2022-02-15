@@ -1,3 +1,10 @@
+2022-02-14  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        Expand pixel range.
+        * css3/color-filters/color-filter-color-text-decorations.html:
+
 2022-02-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash with deeply nested async overflow scroll
