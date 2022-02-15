@@ -158,6 +158,8 @@ function filter(callback /*, thisArg */)
 
 function groupBy(callback /*, thisArg */)
 {
+    "use strict";
+
     var array = @toObject(this, "Array.prototype.groupBy requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
@@ -182,6 +184,8 @@ function groupBy(callback /*, thisArg */)
 
 function groupByToMap(callback /*, thisArg */)
 {
+    "use strict";
+
     var array = @toObject(this, "Array.prototype.groupByToMap requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 

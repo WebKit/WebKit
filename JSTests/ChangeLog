@@ -1,3 +1,13 @@
+2022-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        `Array#{ groupBy, groupByToMap }` should throw a `TypeError` when `this` is `null` or `undefined`
+        https://bugs.webkit.org/show_bug.cgi?id=236541
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/array-group-by-null-or-undefined.js: Added.
+        (shouldThrow):
+
 2022-02-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip failing shadow realms tests on MIPS

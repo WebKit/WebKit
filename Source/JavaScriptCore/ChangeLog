@@ -1,3 +1,18 @@
+2022-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        `Array#{ groupBy, groupByToMap }` should throw a `TypeError` when `this` is `null` or `undefined`
+        https://bugs.webkit.org/show_bug.cgi?id=236541
+
+        Reviewed by Alexey Shvayka.
+
+        While we are correctly using @toObject, these functions missed "use strict", which enforces a function
+        to change a non object |this| to an object (in this case, global object). This patch adds "use strict",
+        to make these function strict code.
+
+        * builtins/ArrayPrototype.js:
+        (groupBy):
+        (groupByToMap):
+
 2022-02-14  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove uses of add_definitions in JavaScriptCore build
