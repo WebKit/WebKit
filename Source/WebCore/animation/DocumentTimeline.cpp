@@ -235,8 +235,11 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
-    ASSERT(target->renderer());
-    auto& style = target->renderer()->style();
+    auto& style = [&]() -> const RenderStyle& {
+        if (auto* renderer = target->renderer())
+            return renderer->style();
+        return RenderStyle::defaultStyle();
+    }();
 
     HashSet<CSSPropertyID> propertiesToMatch;
     for (auto cssProperty : keyframeEffect->animatedProperties())
