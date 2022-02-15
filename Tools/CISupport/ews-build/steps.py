@@ -206,6 +206,23 @@ class GitHubMixin(object):
         return True
 
 
+class ShellMixin(object):
+    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+
+    def has_windows_shell(self):
+        return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
+
+    def shell_command(self, command):
+        if self.has_windows_shell():
+            return ['cmd', '/c', command]
+        return ['/bin/sh', '-c', command]
+
+    def shell_exit_0(self):
+        if self.has_windows_shell():
+            return 'exit 0'
+        return 'true'
+
+
 class Contributors(object):
     url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
     contributors = {}
@@ -567,7 +584,7 @@ class UpdateWorkingDirectory(shell.ShellCommand):
         return rc
 
 
-class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
+class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
     name = 'apply-patch'
     description = ['applying-patch']
     descriptionDone = ['Applied patch']
@@ -591,7 +608,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         if not patch:
             # Forced build, don't have patch_id raw data on the request, need to fech it.
             patch_id = self.getProperty('patch_id', '')
-            self.command = ['/bin/sh', '-c', 'curl -L "https://bugs.webkit.org/attachment.cgi?id={}" -o .buildbot-diff && {}'.format(patch_id, ' '.join(self.command))]
+            self.command = self.shell_command('curl -L "https://bugs.webkit.org/attachment.cgi?id={}" -o .buildbot-diff && {}'.format(patch_id, ' '.join(self.command)))
             shell.ShellCommand.start(self)
             return None
 
@@ -626,7 +643,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         return rc
 
 
-class CheckOutPullRequest(steps.ShellSequence):
+class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
     name = 'checkout-pull-request'
     description = ['checking-out-pull-request']
     descriptionDone = ['Checked out pull request']
@@ -651,7 +668,7 @@ class CheckOutPullRequest(steps.ShellSequence):
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
 
         commands = [
-            ['/bin/sh', '-c', 'git remote add {} {}{}.git & true'.format(remote, GITHUB_URL, project)],
+            self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
             ['git', 'fetch', remote],
             ['git', 'branch', '-f', pr_branch, 'remotes/{}/{}'.format(remote, pr_branch)],
@@ -3935,7 +3952,7 @@ class PrintConfiguration(steps.ShellSequence):
 
 
 # FIXME: We should be able to remove this step once abandoning patch workflows
-class CleanGitRepo(steps.ShellSequence):
+class CleanGitRepo(steps.ShellSequence, ShellMixin):
     name = 'clean-up-git-repo'
     haltOnFailure = False
     flunkOnFailure = False
@@ -3950,7 +3967,7 @@ class CleanGitRepo(steps.ShellSequence):
         branch = self.getProperty('basename', self.default_branch)
         self.commands = []
         for command in [
-            ['/bin/sh', '-c', 'git rebase --abort & true'],
+            self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
             ['git', 'fetch', self.git_remote],  # Avoid updating the working copy to a stale revision.
             ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote

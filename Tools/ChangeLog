@@ -1,3 +1,21 @@
+2022-02-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Need /bin/sh equivalent on wincairo
+        https://bugs.webkit.org/show_bug.cgi?id=236608
+        <rdar://problem/88926062>
+
+        Reviewed by Don Olmstead.
+
+        * CISupport/ews-build/steps.py:
+        (ShellMixin.shell_command): Invoke provided command with
+        the system shell (either /bin/sh or cmd)
+        (ShellMixin.shell_exit_0): Trailing shell command ensuring
+        a 0 exit code regardless of the outcome of previous commands.
+        (ApplyPatch.start): Invoke command with cmd or /bin/sh/.
+        (CheckOutPullRequest.run): Ditto.
+        (CleanGitRepo.run): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-15  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Speed up getStatusMap and increase robustness
