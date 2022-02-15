@@ -1,5 +1,21 @@
 2022-02-15  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Include sparkle-cdm library
+        https://bugs.webkit.org/show_bug.cgi?id=236562
+
+        Reviewed by Martin Robinson.
+
+        This new recipe ships the Sparkle-CDM library, providing an alternative to Thunder. A
+        ClearKey plugin is provided as well, it will be used later on by the Thunder decryptor,
+        instead of the dedicated decryptor maintained in WebCore. The goals are to reduce GStreamer
+        decryptors maintenance here and to dog-food the Thunder code paths using the clearkey layout
+        tests.
+
+        * elements/sdk-platform.bst:
+        * elements/sdk/sparkle-cdm.bst: Added.
+
+2022-02-15  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Include a GStreamer DTLS transport bug fix
         https://bugs.webkit.org/show_bug.cgi?id=236591
 
