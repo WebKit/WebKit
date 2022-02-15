@@ -1,3 +1,13 @@
+2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Checks uses of execute_process() for correct command splitting
+        https://bugs.webkit.org/show_bug.cgi?id=236366
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/FindGObjectIntrospection.cmake: Remove macro _GIR_GET_PKGCONFIG_VAR, which used
+        execute_process(), in favor of pkg_get_variable(), which has been supported since CMake 3.4
+
 2022-02-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Check for MAP_ALIGNED support

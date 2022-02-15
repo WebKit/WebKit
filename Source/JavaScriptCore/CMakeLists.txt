@@ -249,12 +249,7 @@ add_custom_command(
     VERBATIM)
 add_custom_target(Bytecodes DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h")
 
-
-if (WTF_OS_MAC_OS_X)
-    execute_process(COMMAND bash -c "date +'%s'" OUTPUT_VARIABLE BUILD_TIME OUTPUT_STRIP_TRAILING_WHITESPACE)
-else ()
-    string(TIMESTAMP BUILD_TIME "%s")
-endif ()
+string(TIMESTAMP BUILD_TIME "%s")
 
 list(APPEND JavaScriptCore_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
