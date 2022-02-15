@@ -1,3 +1,19 @@
+2022-02-15  J Pascoe  <j_pascoe@apple.com>
+
+        Modify getAllLocalAuthenticatorCredentials according to internal requirements
+        https://bugs.webkit.org/show_bug.cgi?id=236364
+        rdar://88585418
+
+        Reviewed by Brent Fulgham.
+
+        This patch modifies the getAllLocalAuthenticatorCredentials SPI to return additional
+        fields according to internal needs.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (updateCredentialIfNessesary):
+        (getAllLocalAuthenticatorCredentialsImpl):
+
 2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Move WebPage::platformInitialize and WebPage::platformDetach() to WebPageGLib.cpp

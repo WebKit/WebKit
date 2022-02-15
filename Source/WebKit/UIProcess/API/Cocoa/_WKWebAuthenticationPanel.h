@@ -92,6 +92,8 @@ WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialGroupKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey;
 
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
@@ -114,10 +116,13 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID WK_API_AVAILABLE(macos(12.0), ios(15.0));
++ (void)deleteLocalAuthenticatorCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)clearAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)setUsernameForLocalCredentialWithID:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(12.0), ios(15.0));
++ (void)setUsernameForLocalCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID username: (NSString *)username WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 + (NSData *)exportLocalAuthenticatorCredentialWithID:(NSData *)credentialID error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSData *)exportLocalAuthenticatorCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (NSData *)importLocalAuthenticatorCredential:(NSData *)credentialBlob error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (NSData *)importLocalAuthenticatorWithAccessGroup:(NSString *)accessGroup credential:(NSData *)credentialBlob error:(NSError **)error WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
