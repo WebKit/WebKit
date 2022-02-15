@@ -76,7 +76,7 @@ public:
 
         m_mappedHeapSize = structureHeapAddressSize;
         for (unsigned i = 0; i < 8; ++i) {
-            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(m_mappedHeapSize, OSAllocator::FastMallocPages));
+            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(m_mappedHeapSize, structureHeapAddressSize, OSAllocator::FastMallocPages));
             if (g_jscConfig.startOfStructureHeap)
                 break;
             m_mappedHeapSize /= 2;
