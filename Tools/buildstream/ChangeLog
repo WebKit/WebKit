@@ -1,3 +1,15 @@
+2022-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to libnice development snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=236537
+
+        Reviewed by Martin Robinson.
+
+        Until there is 0.1.19 release, rely on development branch.
+
+        * elements/freedesktop-sdk.bst:
+        * patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch: Added.
+
 2022-02-11  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Enable GStreamer webrtcdsp support
