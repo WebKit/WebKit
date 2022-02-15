@@ -1,3 +1,18 @@
+2022-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK2] animations/background-position.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=236630
+
+        Reviewed by Don Olmstead.
+
+        WKPageForceRepaint didn't call back if the page had active
+        animations.
+
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::didUpdate): Call
+        m_forceRepaintCompletionHandler even if
+        m_hasDeferredRenderingUpdate is true.
+
 2022-02-15  Megan Gardner  <megan_gardner@apple.com>
 
         Implement additional Reveeal methods.

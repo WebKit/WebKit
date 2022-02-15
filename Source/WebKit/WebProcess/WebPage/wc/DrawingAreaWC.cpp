@@ -361,11 +361,12 @@ RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 void DrawingAreaWC::didUpdate()
 {
     m_waitDidUpdate = false;
+    if (m_forceRepaintCompletionHandler)
+        m_forceRepaintCompletionHandler();
     if (m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
         triggerRenderingUpdate();
-    } else if (m_forceRepaintCompletionHandler)
-        m_forceRepaintCompletionHandler();
+    }
 }
 
 } // namespace WebKit
