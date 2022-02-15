@@ -1,3 +1,13 @@
+2022-02-15  Matteo Flores  <matteo_flores@apple.com>
+
+        Rebaslining fonts/monospace.html for Monterey.
+        https://bugs.webkit.org/show_bug.cgi?id=236619
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fonts/monospace-expected.txt: Copied from LayoutTests/platform/mac/fonts/monospace-expected.txt.
+        * platform/mac/fonts/monospace-expected.txt:
+
 2022-02-15  Ziran Sun  <zsun@igalia.com>
 
         [Forms] the select() method returns should be in line with specs
