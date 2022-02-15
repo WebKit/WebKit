@@ -1,3 +1,18 @@
+2022-02-15  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Remove "Make libWTF.a Symbolic Link" script phase
+        https://bugs.webkit.org/show_bug.cgi?id=236613
+
+        Reviewed by Alexey Proskuryakov.
+
+        We pass the absolute path to libWTF.a to ld's -force_load argument. The path was being
+        computed at build time by a script, but can be expressed in build settings. Change
+        OTHER_LDFLAGS such that engineering builds libWTF.a from build products, and production
+        builds use libWTF.a from their SDK.
+
+        * Configurations/JavaScriptCore.xcconfig: Set OTHER_LDFLAGS.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove build phase.
+
 2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Checks uses of execute_process() for correct command splitting

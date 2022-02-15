@@ -93,7 +93,6 @@
 			buildPhases = (
 				DDE99311278D088800F60D26 /* Product Dependencies */,
 				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
-				374F95C9205F9975002BF68F /* Make libWTF.a Symbolic Link */,
 			);
 			dependencies = (
 			);
@@ -11729,20 +11728,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec ${SRCROOT}/postprocess-headers.sh\n";
-		};
-		374F95C9205F9975002BF68F /* Make libWTF.a Symbolic Link */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Make libWTF.a Symbolic Link";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/libWTF.a\" ]]; then\n    ln -s -f -h \"${BUILT_PRODUCTS_DIR}/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nelse\n    ln -s -f -h \"${SDK_DIR}${WK_ALTERNATE_WEBKIT_SDK_PATH}/usr/local/lib/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nfi\n";
 		};
 		532424B0254905D900A6975B /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
