@@ -952,6 +952,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         auto privateRelayed = PrivateRelayed::No;
 #endif
+        WTFLogAlways("RESPONSE WAS PRIVATE RELAYED %d", privateRelayed);
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
