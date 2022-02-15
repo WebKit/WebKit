@@ -38,7 +38,6 @@
 #include "Logging.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
-#include "PrivateRelayed.h"
 #include "WebErrors.h"
 #include <WebCore/AsyncFileStream.h>
 #include <WebCore/BlobRegistryImpl.h>
@@ -291,7 +290,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
         break;
     }
 
-    didReceiveResponse(WTFMove(response), NegotiatedLegacyTLS::No, PrivateRelayed::No, [this, protectedThis = WTFMove(protectedThis), errorCode](PolicyAction policyAction) {
+    didReceiveResponse(WTFMove(response), NegotiatedLegacyTLS::No, [this, protectedThis = WTFMove(protectedThis), errorCode](PolicyAction policyAction) {
         LOG(NetworkSession, "%p - NetworkDataTaskBlob::didReceiveResponse completionHandler (%u)", this, static_cast<unsigned>(policyAction));
 
         if (m_state == State::Canceling || m_state == State::Completed) {

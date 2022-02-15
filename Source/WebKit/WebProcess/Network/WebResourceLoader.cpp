@@ -30,7 +30,6 @@
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoaderMessages.h"
-#include "PrivateRelayed.h"
 #include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -94,22 +93,6 @@ void WebResourceLoader::detachFromCoreLoader()
     m_coreLoader = nullptr;
 }
 
-MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
-{
-    auto* frame = m_coreLoader->frame();
-    if (!frame || !frame->isMainFrame())
-        return MainFrameMainResource::No;
-
-    auto* frameLoader = m_coreLoader->frameLoader();
-    if (!frameLoader)
-        return MainFrameMainResource::No;
-
-    if (!frameLoader->notifier().isInitialRequestIdentifier(m_coreLoader->identifier()))
-        return MainFrameMainResource::No;
-
-    return MainFrameMainResource::Yes;
-}
-
 void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse)
 {
     Ref<WebResourceLoader> protectedThis(*this);
@@ -127,7 +110,11 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
     
     if (auto* frame = m_coreLoader->frame()) {
         if (auto* page = frame->page()) {
-            if (!page->allowsLoadFromURL(proposedRequest.url(), mainFrameMainResource()))
+            auto mainFrameMainResource = frame->isMainFrame()
+                && m_coreLoader->frameLoader()
+                && m_coreLoader->frameLoader()->notifier().isInitialRequestIdentifier(m_coreLoader->identifier())
+                ? MainFrameMainResource::Yes : MainFrameMainResource::No;
+            if (!page->allowsLoadFromURL(proposedRequest.url(), mainFrameMainResource))
                 proposedRequest = { };
         }
     }
@@ -148,15 +135,12 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
     m_coreLoader->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
+void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'. Status %d.", m_coreLoader->url().string().latin1().data(), response.httpStatusCode());
     WEBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d)", response.httpStatusCode());
 
     Ref<WebResourceLoader> protectedThis(*this);
-
-    if (privateRelayed == PrivateRelayed::Yes && mainFrameMainResource() == MainFrameMainResource::Yes)
-        m_coreLoader->documentLoader()->setMainResourceWasPrivateRelayed(privateRelayed == PrivateRelayed::Yes);
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(m_coreLoader.get(), response)) {
         WEBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: not continuing load because the content is already cached");
