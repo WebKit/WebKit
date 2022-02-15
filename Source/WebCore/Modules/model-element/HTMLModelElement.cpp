@@ -274,7 +274,9 @@ bool HTMLModelElement::usesPlatformLayer() const
 
 PlatformLayer* HTMLModelElement::platformLayer() const
 {
-    return m_modelPlayer->layer();
+    if (m_modelPlayer)
+        return m_modelPlayer->layer();
+    return nullptr;
 }
 
 void HTMLModelElement::sizeMayHaveChanged()
@@ -322,7 +324,8 @@ GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
 
 void HTMLModelElement::enterFullscreen()
 {
-    m_modelPlayer->enterFullscreen();
+    if (m_modelPlayer)
+        m_modelPlayer->enterFullscreen();
 }
 
 // MARK: - Interaction support.

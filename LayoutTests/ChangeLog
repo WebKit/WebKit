@@ -1,3 +1,13 @@
+2022-02-15  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        null ptr deref in WebCore::HTMLModelElement::enterFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=236409
+
+        Reviewed by Darin Adler.
+
+        * model-element/model-element-enter-fullscreen-crash-expected.txt: Added.
+        * model-element/model-element-enter-fullscreen-crash.html: Added.
+
 2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r195447): [GTK] document.activeElement not set on mouse click
