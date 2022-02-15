@@ -607,7 +607,12 @@ void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiR
     for (BidiRun* run = firstRun; run; run = run->next()) {
         if (!run->box() || run == trailingSpaceRun)
             continue;
-        
+
+        // Positioned objects are only participating to figure out their correct static x position.
+        // They have no affect on the width. Similarly, line break boxes have no affect on the width.
+        if (run->renderer().isOutOfFlowPositioned() || run->box()->isLineBreak())
+            continue;
+
         if (is<RenderText>(run->renderer())) {
             unsigned opportunitiesInRun = expansionOpportunities[i++];
             
