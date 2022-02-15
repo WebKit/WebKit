@@ -46,7 +46,11 @@ TEST(WebKit, GrantAccessPreferencesService)
         return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.cfprefsd.daemon')"].boolValue;
     };
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    ASSERT_FALSE(sandboxAccess());
+#else
     ASSERT_TRUE(sandboxAccess());
+#endif
 }
 
 #endif
