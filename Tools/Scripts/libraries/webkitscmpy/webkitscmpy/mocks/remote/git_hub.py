@@ -370,6 +370,8 @@ class GitHub(bmocks.GitHub):
                 )
             if json.get('state'):
                 pr['state'] = json.get('state')
+            if json.get('draft'):
+                pr['draft'] = json.get('draft')
 
         # Create specifically
         if method == 'POST' and auth and stripped_url == pr_base:
@@ -377,6 +379,7 @@ class GitHub(bmocks.GitHub):
             pr['state'] = 'open'
             pr['user'] = dict(login=auth.username)
             pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
+            pr['draft'] = pr.get('draft', False)
             self.pull_requests.append(pr)
             if pr['number'] not in self.issues:
                 self.issues[pr['number']] = dict(

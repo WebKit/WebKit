@@ -329,6 +329,39 @@ Rebased 'eng/pr-branch' on 'main!'
                 args=('pull-request', '-i', 'pr-branch', '-v', '--no-history'),
                 path=self.path,
             ))
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/pr-branch'\n"
+            "Created 'PR 1 | [Testing] Creating commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/pr-branch'...",
+                '    Found 1 commit...',
+                'Creating commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
+    def test_github_draft(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch', '-v', '--no-history', '--draft'),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, True)
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -526,6 +559,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -545,6 +579,38 @@ Rebased 'eng/pr-branch' on 'main!'
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
+    def test_bitbucket_draft(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch', '-v', '--draft'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/pr-branch'\n",
+        )
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'https://bitbucket.example.com/projects/WEBKIT/repos/webkit' does not support draft pull requests, aborting\n",
+        )
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/pr-branch'...",
+                '    Found 1 commit...',
+                'Creating commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'origin'...",
             ],
         )
 
@@ -759,7 +825,7 @@ Reviewed by NOBODY (OOPS!).
                 dict(user=dict(login='sreviewer'), state='CHANGES_REQUESTED'),
             ], _links=dict(
                 issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
-            ),
+            ), draft=False,
         )]
         return result
 
@@ -780,6 +846,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
             self.assertEqual(pr.base, 'main')
+            self.assertEqual(pr.draft, False)
 
     def test_reviewers(self):
         with self.webserver():
@@ -906,6 +973,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
             self.assertEqual(pr.base, 'main')
+            self.assertEqual(pr.draft, False)
 
     def test_reviewers(self):
         with self.webserver():

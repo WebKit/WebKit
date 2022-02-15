@@ -42,6 +42,8 @@ class GitHub(Scm):
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
 
     class PRGenerator(Scm.PRGenerator):
+        SUPPORTS_DRAFTS = True
+
         def PullRequest(self, data):
             if not data:
                 return None
@@ -61,6 +63,7 @@ class GitHub(Scm):
                 metadata=dict(
                     issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
                 ), url='{}/pull/{}'.format(self.repository.url, data['number']),
+                draft=data['draft'],
             )
 
         def get(self, number):
@@ -86,7 +89,8 @@ class GitHub(Scm):
                     continue
                 yield self.PullRequest(datum)
 
-        def create(self, head, title, body=None, commits=None, base=None):
+        def create(self, head, title, body=None, commits=None, base=None, draft=None):
+            draft = False if draft is None else draft
             for key, value in dict(head=head, title=title).items():
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
@@ -104,6 +108,7 @@ class GitHub(Scm):
                     body=PullRequest.create_body(body, commits),
                     base=base or self.repository.default_branch,
                     head='{}:{}'.format(user, head),
+                    draft=draft,
                 ),
             )
             if response.status_code // 100 != 2:
@@ -115,11 +120,13 @@ class GitHub(Scm):
                 sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
             return result
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
             if not any((head, title, body, commits, base)) and opened is None:
                 raise ValueError('No arguments to update pull-request provided')
+            if draft is not None:
+                sys.stderr.write('GitHub does not allow editing draft state via API\n')
 
             user, _ = self.repository.credentials(required=True)
             updates = dict(

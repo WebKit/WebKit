@@ -244,7 +244,7 @@ class TestLandGitHub(testing.PathTestCase):
                 dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')
             ] if approved is not None else [], _links=dict(
                 issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
-            ),
+            ), draft=False,
         )]
         return result
 

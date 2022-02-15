@@ -27,6 +27,8 @@ from webkitscmpy.scm_base import ScmBase
 
 class Scm(ScmBase):
     class PRGenerator(object):
+        SUPPORTS_DRAFTS = False
+
         def __init__(self, repository):
             self.repository = repository
 
@@ -36,10 +38,10 @@ class Scm(ScmBase):
         def find(self, opened=True, head=None, base=None):
             raise NotImplementedError()
 
-        def create(self, head, title, body=None, commits=None, base=None):
+        def create(self, head, title, body=None, commits=None, base=None, draft=None):
             raise NotImplementedError()
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
             raise NotImplementedError()
 
         def reviewers(self, pull_request):

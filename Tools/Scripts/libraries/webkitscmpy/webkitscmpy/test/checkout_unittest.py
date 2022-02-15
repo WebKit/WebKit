@@ -117,6 +117,7 @@ Reviewed by NOBODY (OOPS!).
                 base=dict(ref='main'),
                 requested_reviews=[dict(login='rreviewer')],
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
+                draft=False,
             )]
             repo.commits['eng/example'] = [Commit(
                 hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',

@@ -1,5 +1,42 @@
 2022-02-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Support draft pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=235721
+        <rdar://problem/88139678>
+
+        Rubber-stamped by Aakash Jain.
+
+        GitHub has the concept of a "draft" pull request. Our tooling should allow users
+        to request that the pull request they are updating or creating be converted to a draft.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.request): Handle "draft" in upload.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.parser): Add --draft option.
+        (PullRequest.main): When creating or uploading a pull-request, set draft state.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest.__init__): Pass draft state.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.PullRequest): Pass draft state to PullRequest object.
+        (BitBucket.PRGenerator.create): Accept draft flag.
+        (BitBucket.PRGenerator.update): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator): Draft pull requests are a GitHub idea.
+        (GitHub.PRGenerator.PullRequest): Pass draft state to PullRequest object.
+        (GitHub.PRGenerator.create): Accept draft flag.
+        (GitHub.PRGenerator.update): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.PRGenerator): Draft pull requests are a GitHub idea.
+        (Scm.PRGenerator.create): Accept draft flag.
+        (Scm.PRGenerator.update): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
+2022-02-15  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Support PRs when sending build failure emails (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=235926
         <rdar://problem/88302122>

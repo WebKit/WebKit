@@ -72,6 +72,10 @@ class PullRequest(Command):
             help='Create numbered branches to track the history of a change',
             action=arguments.NoAction,
         )
+        parser.add_argument(
+            '--draft', dest='draft', action='store_true', default=None,
+            help='Mark a pull request as a draft when creating it',
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -195,6 +199,10 @@ class PullRequest(Command):
         if not rmt.pull_requests:
             sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
             return 1
+        if args.draft and not rmt.pull_requests.SUPPORTS_DRAFTS:
+            sys.stderr.write("'{}' does not support draft pull requests, aborting\n".format(rmt.url))
+            return 1
+
         existing_pr = None
         for pr in rmt.pull_requests.find(opened=None, head=repository.branch):
             existing_pr = pr
@@ -222,7 +230,8 @@ class PullRequest(Command):
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
-                opened=None if existing_pr.opened else True
+                opened=None if existing_pr.opened else True,
+                draft=args.draft,
             )
             if not pr:
                 sys.stderr.write("Failed to update pull-request '{}'\n".format(existing_pr))
@@ -235,6 +244,7 @@ class PullRequest(Command):
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
+                draft=args.draft,
             )
             if not pr:
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
