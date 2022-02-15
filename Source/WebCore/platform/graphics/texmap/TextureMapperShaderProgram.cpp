@@ -502,6 +502,8 @@ static const char* fragmentTemplateCommon =
             applyTexturePackedYUVIfNeeded(color, texCoord);
             applyPremultiplyIfNeeded(color);
             applySolidColorIfNeeded(color);
+            applyAlphaBlurIfNeeded(color, texCoord);
+            applyContentTextureIfNeeded(color, texCoord);
             applyAntialiasingIfNeeded(color);
             applyOpacityIfNeeded(color);
             applyGrayscaleFilterIfNeeded(color);
@@ -513,8 +515,6 @@ static const char* fragmentTemplateCommon =
             applyContrastFilterIfNeeded(color);
             applyOpacityFilterIfNeeded(color);
             applyBlurFilterIfNeeded(color, texCoord);
-            applyAlphaBlurIfNeeded(color, texCoord);
-            applyContentTextureIfNeeded(color, texCoord);
             applyTextureExternalOESIfNeeded(color, texCoord);
             applyRoundedRectClipIfNeeded(color);
             gl_FragColor = color;

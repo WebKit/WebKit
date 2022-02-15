@@ -472,7 +472,7 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
-    TextureMapperShaderProgram::Options options = TextureMapperShaderProgram::TextureRGB;
+    TextureMapperShaderProgram::Options options = 0;
     if (useRect)
         options |= TextureMapperShaderProgram::Rect;
     if (opacity < 1)
@@ -493,7 +493,8 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
         options |= optionsForFilterType(filter->type(), data().filterInfo->pass);
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
-    }
+    } else
+        options |= TextureMapperShaderProgram::TextureRGB;
 
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
