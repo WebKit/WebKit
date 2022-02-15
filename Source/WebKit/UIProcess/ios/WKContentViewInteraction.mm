@@ -1845,7 +1845,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
+    if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch && touch.type == UITouchTypeIndirectPointer)
         return NO;
     
     if (gestureRecognizer != _alternateMouseGestureRecognizer && [_alternateMouseGestureRecognizer mouseTouch] == touch)

@@ -1,3 +1,18 @@
+2022-02-14  Tim Horton  <timothy_horton@apple.com>
+
+        Direct touches don't trigger other gesture recognizers if WKMouseGestureRecognizer sees them first
+        https://bugs.webkit.org/show_bug.cgi?id=236617
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        WKMouseGestureRecognizer should only completely steal touches of type
+        UITouchTypeIndirectPointer. Other touch types (e.g. synthetic direct touches)
+        still need to trigger other WKContentViewInteraction gesture recognizers
+        (like long-press and double-tap) despite WKMouseGestureRecognizer
+        seeing their touches. So, check the touch type before early-returning.
+
 2022-02-14  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] RemoteImageBufferProxy should not sink itself to an Image or a NativeImage though its backend
