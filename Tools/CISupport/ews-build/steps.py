@@ -130,8 +130,7 @@ class GitHub(object):
     @classmethod
     def email_for_owners(cls, owners):
         if not owners:
-            print('No owners defined, so email cannot be extracted')
-            return None
+            return None, 'No owners defined, so email cannot be extracted'
         contributors, errors = Contributors.load(use_network=False)
         return contributors.get(owners[0], {}).get('email'), errors
 
@@ -2172,7 +2171,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             if pr_number and not self.should_send_email_for_pr(pr_number):
                 return
             if not patch_id and not (pr_number and sha):
-                print('Unrecognized change type')
+                self._addToLog('Unrecognized change type')
                 return
 
             change_string = None
@@ -2185,9 +2184,10 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
                     print(error)
+                    self._addToLog('stdio', error)
 
             if not change_author:
-                print('Failed to determine change author for hash {} belonging to PR #{}'.format(sha, patch_id))
+                self._addToLog('Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
                 return
 
             builder_name = self.getProperty('buildername', '')
