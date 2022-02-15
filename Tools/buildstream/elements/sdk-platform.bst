@@ -46,6 +46,7 @@ depends:
 - sdk/libsoup3.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
+- sdk/mold.bst
 - sdk/monado.bst
 - sdk/openxr.bst
 - sdk/os-release.bst

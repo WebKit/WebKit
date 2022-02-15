@@ -1,3 +1,29 @@
+2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Add mold linker
+        https://bugs.webkit.org/show_bug.cgi?id=236362
+
+        Reviewed by Philippe Normand.
+
+        The Mold linker claims to be faster than Gold and LLD, and while it does not support LTO
+        at the moment, it has reachd a reasonable level of maturity and can be used for projects
+        as complex as WebKit already.
+
+        Mold can be used in combination with the Clang compiler driver or GCC 12+ by passing
+        -fuse-ld=mold as a linker flag, for example as follows:
+
+          % LDFLAGS=-fuse-ld=mold Tools/Scripts/build-webkit [...]
+          % LDFLAGS=-fuse-ld=mold CC=clang CXX=clang++ Tools/Scripts/build-webkit [...]
+
+        As GCC 11 and older, the -fuse-ld=mold option is not supported. It is still possible to
+        use -B to instruct the compiler driver to try a different path first for helper programs,
+        and a wrapper for Mold called "ld" is available as well:
+
+          % LDFLAGS=-B/usr/libexec/mold Tools/Scripts/build-webkit [...]
+
+        * elements/sdk-platform.bst: List sdk/mold.bst as part of the SDK.
+        * elements/sdk/mold.bst: Added.
+
 2022-02-15  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Include sparkle-cdm library
