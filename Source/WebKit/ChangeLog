@@ -1,3 +1,17 @@
+2022-02-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add access to mach service in the Networking process for all users
+        https://bugs.webkit.org/show_bug.cgi?id=236653
+        <rdar://88787266>
+
+        Reviewed by Brent Fulgham.
+
+        We currently allow access to "com.apple.trustd" for the root user. Access to this service is needed for all users.
+        This issue was introduced in https://trac.webkit.org/changeset/283012/webkit, and this patch also reverts this
+        change for older versions of macOS.
+        
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2022-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add a context menu item to "Copy Cropped Image"
