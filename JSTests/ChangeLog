@@ -1,3 +1,12 @@
+2022-02-15  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Reduce iterations for getter-richards.js on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=236594
+
+        Reviewed by Adrian Perez de Castro.
+
+        * typeProfiler/getter-richards.js: do 50 iterations on MIPS.
+
 2022-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         `Array#{ groupBy, groupByToMap }` should throw a `TypeError` when `this` is `null` or `undefined`
