@@ -1,3 +1,15 @@
+2022-02-15  Robin Morisset  <rmorisset@apple.com>
+
+        [WGSL] Implement enough of the lexer for the simplest shaders
+        https://bugs.webkit.org/show_bug.cgi?id=233276
+        <rdar://problem/85732675>
+
+        Reviewed by Myles Maxfield.
+
+        Add WTF::Unicode::formFeed and WTF::Unicode::verticalTabulation.
+
+        * wtf/unicode/CharacterNames.h:
+
 2022-02-14  Gustavo Noronha Silva  <gustavo@noronha.dev.br>
 
         [Linux/aarch64] Move page size ceiling to 16k

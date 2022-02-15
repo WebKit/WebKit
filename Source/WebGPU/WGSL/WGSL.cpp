@@ -27,11 +27,15 @@
 #include "WGSL.h"
 
 #include "AST.h"
+#include "Lexer.h"
 
 namespace WGSL {
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String&, const std::optional<SourceMap>&)
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& str, const std::optional<SourceMap>&)
 {
+    // Making sure that the lexer builds correctly, will be removed in later patches
+    Lexer<LChar> lexer(str);
+    lexer.lex();
     return FailedCheck { { }, { } };
 }
 

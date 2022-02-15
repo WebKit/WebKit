@@ -1,3 +1,77 @@
+2022-02-15  Robin Morisset  <rmorisset@apple.com>
+
+        [WGSL] Implement enough of the lexer for the simplest shaders
+        https://bugs.webkit.org/show_bug.cgi?id=233276
+        <rdar://problem/85732675>
+
+        Reviewed by Myles Maxfield.
+
+        There is just enough of the lexer in this patch to pass the unit tests (also added by the patch).
+        The lexer is templated by the character size, following the code from JSC's lexer.
+        I did not use a lexer generator like lex for a few reasons:
+        - It would have made the build system(s) even more of a nightmare
+        - It would have made it harder to give accurate and customized error messages
+        - If we ever decide to do anything exotic to the grammar of the language, it could have made it much harder
+
+        The lexing of floating point literals is a bit hacky, and probably has some precision issues in corner cases, but it passed all simple unit tests,
+        so for now I just left it as is with a FIXME, to be fixed once we can run the full CTS.
+
+        The TokenType includes an `Invalid` value. I could instead have used std::optional<Token> everywhere.
+        I made this choice for two reasons:
+        - space efficiency: we don't use an extra word of memory for the variant's tag
+        -  (although this part could be solved by using https://github.com/akrzemi1/markable)
+        - ease of use and time efficiency: everywhere that we check for a given TokenType, we would have to first check that the Token is not nullopt, and then check the TokenType.
+
+        * Configurations/WGSLUnitTests.xcconfig:
+        * WGSL/Lexer.cpp: Added.
+        (WGSL::Lexer<T>::lex):
+        (WGSL::Lexer<T>::shift):
+        (WGSL::Lexer<T>::peek):
+        (WGSL::Lexer<T>::skipWhitespace):
+        (WGSL::Lexer<T>::isAtEndOfFile const):
+        (WGSL::Lexer<T>::parseDecimalInteger):
+        (WGSL::Lexer<T>::parseDecimalFloatExponent):
+        (WGSL::Lexer<T>::parseIntegerLiteralSuffix):
+        (WGSL::Lexer<LChar>::isWhiteSpace):
+        (WGSL::Lexer<LChar>::isIdentifierStart):
+        (WGSL::Lexer<LChar>::isValidIdentifierCharacter):
+        (WGSL::Lexer<LChar>::isDecimal):
+        (WGSL::Lexer<LChar>::isHexadecimal):
+        (WGSL::Lexer<LChar>::readDecimal):
+        (WGSL::Lexer<LChar>::readHexadecimal):
+        (WGSL::Lexer<UChar>::isWhiteSpace):
+        (WGSL::Lexer<UChar>::isIdentifierStart):
+        (WGSL::Lexer<UChar>::isValidIdentifierCharacter):
+        (WGSL::Lexer<UChar>::isDecimal):
+        (WGSL::Lexer<UChar>::isHexadecimal):
+        (WGSL::Lexer<UChar>::readDecimal):
+        (WGSL::Lexer<UChar>::readHexadecimal):
+        * WGSL/Lexer.h: Added.
+        (WGSL::Lexer::Lexer):
+        (WGSL::Lexer::currentPosition const):
+        (WGSL::Lexer::currentOffset const):
+        (WGSL::Lexer::currentTokenLength const):
+        (WGSL::Lexer::makeToken):
+        (WGSL::Lexer::makeLiteralToken):
+        (WGSL::Lexer::makeIdentifierToken):
+        * WGSL/SourceSpan.h: Added.
+        (WGSL::SourceSpan::SourceSpan):
+        * WGSL/Token.cpp: Added.
+        (WGSL::toString):
+        * WGSL/Token.h: Added.
+        (WGSL::Token::Token):
+        (WGSL::Token::operator=):
+        (WGSL::Token::~Token):
+        * WGSL/WGSL.cpp:
+        (WGSL::staticCheck):
+        * WGSLUnitTests/WGSLLexerTests.mm: Added.
+        (-[WGSLLexerTests testLexerOnSingleTokens]):
+        (-[WGSLLexerTests testLexerOnComputeShader]):
+        (-[WGSLLexerTests testLexerOnGraphicsShader]):
+        * WGSLUnitTests/WGSLUnitTests.mm: Removed.
+        (-[WGSLUnitTests testExample]): Deleted.
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-01-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Make sure WGSLUnitTests can call into WGSL
