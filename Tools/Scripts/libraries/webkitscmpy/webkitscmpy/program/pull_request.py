@@ -47,7 +47,7 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
-            '--rebase', '--no-rebase',
+            '--rebase', '--no-rebase', '--update', '--no-update',
             dest='rebase', default=None,
             help='Rebase (or do not rebase) the pull-request on the source branch before pushing',
             action=arguments.NoAction,
