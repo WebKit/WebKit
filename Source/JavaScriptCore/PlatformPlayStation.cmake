@@ -40,4 +40,6 @@ list(APPEND JavaScriptCore_DEFINITIONS
 )
 
 # This overrides the default x64 value of 1GB for the memory pool size
-add_definitions(-DFIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB=64)
+list(APPEND JavaScriptCore_PRIVATE_DEFINITIONS
+    FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB=64
+)

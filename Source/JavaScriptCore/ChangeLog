@@ -1,3 +1,18 @@
+2022-02-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Remove uses of add_definitions in JavaScriptCore build
+        https://bugs.webkit.org/show_bug.cgi?id=236605
+
+        Reviewed by Michael Catanzaro.
+
+        Use target specific definitions when building JavaScriptCore. In the current cases the
+        definitions don't need to propagate to targets using JavaScriptCore so
+        JavaScriptCore_PRIVATE_DEFINITIONS is used.
+
+        * PlatformGTK.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWPE.cmake:
+
 2022-02-14  Zan Dobersek  <zdobersek@igalia.com>
 
         CallLinkInfo::emitFastPathImpl() should avoid external scratch register use on RISCV64
