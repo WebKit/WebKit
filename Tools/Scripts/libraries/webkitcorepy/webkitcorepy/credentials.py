@@ -24,12 +24,12 @@ import getpass
 import sys
 
 from subprocess import CalledProcessError
-from webkitcorepy import Environment, OutputCapture, Terminal
+from webkitcorepy import Environment, OutputCapture, Terminal, string_utils
 
 _cache = dict()
 
 
-def credentials(url, required=True, name=None, prompt=None, key_name='password'):
+def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, retry=3):
     global _cache
 
     name = name or url.split('/')[2].replace('.', '_')
@@ -51,36 +51,53 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
 
     username_prompted = False
     key_prompted = False
-    if not username:
-        try:
-            if keyring:
-                username = keyring.get_password(url, 'username')
-        except (RuntimeError, AttributeError):
-            pass
 
-        if not username and required:
-            if not sys.stderr.isatty() or not sys.stdin.isatty():
-                raise OSError('No tty to prompt user for username')
-            sys.stderr.write("Authentication required to use {}\n".format(prompt or name))
-            sys.stderr.write('Username: ')
-            username = Terminal.input()
-            username_prompted = True
+    for attempt in range(retry):
+        if attempt:
+            sys.stderr.write('Ignoring keychain values and re-prompting user\n')
+        if not username:
+            try:
+                if keyring and not attempt:
+                    username = keyring.get_password(url, 'username')
+            except (RuntimeError, AttributeError):
+                pass
 
-    if not key:
-        try:
-            if keyring:
-                key = keyring.get_password(url, username)
-        except (RuntimeError, AttributeError):
-            pass
+            if not username and required:
+                if not sys.stderr.isatty() or not sys.stdin.isatty():
+                    raise OSError('No tty to prompt user for username')
+                sys.stderr.write("Authentication required to use {}\n".format(prompt or name))
+                sys.stderr.write('Username: ')
+                username = Terminal.input()
+                username_prompted = True
 
-        if not key and required:
-            if not sys.stderr.isatty() or not sys.stdin.isatty():
-                raise OSError('No tty to prompt user for username')
-            key = getpass.getpass('{}: '.format(key_name.capitalize()))
-            key_prompted = True
+        if not key:
+            try:
+                if keyring and not attempt:
+                    key = keyring.get_password(url, username)
+            except (RuntimeError, AttributeError):
+                pass
 
-    if username and key:
-        _cache[name] = (username, key)
+            if not key and required:
+                if not sys.stderr.isatty() or not sys.stdin.isatty():
+                    raise OSError('No tty to prompt user for username')
+                key = getpass.getpass('{}: '.format(key_name.capitalize()))
+                key_prompted = True
+
+        if username and key and (not validater or validater(username, key)):
+            _cache[name] = (username, key)
+            break
+
+        username = None
+        key = None
+
+        if not required:  # Failed validation, but credentials aren't required
+            break
+
+        sys.stderr.write("Failed to validate credentials for '{}' ({} attempt)\n".format(url, string_utils.ordinal(attempt + 1)))
+
+    if required and (not username or not key):
+        sys.stderr.write("Exhausted attempts to prompt user for '{}' credentials\n".format(url))
+        sys.exit(1)
 
     if keyring and (username_prompted or key_prompted):
         if Terminal.choose(
