@@ -72,8 +72,8 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
 
     // Notify clients only of the newly appended content since the last run.
     auto previousDataSize = encodedSize();
-    while (m_data->size() > previousDataSize) {
-        auto incrementalData = m_data->getSomeData(previousDataSize);
+    while (data.size() > previousDataSize) {
+        auto incrementalData = data.getSomeData(previousDataSize);
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
