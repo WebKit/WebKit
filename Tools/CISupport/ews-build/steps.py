@@ -31,7 +31,7 @@ from requests.auth import HTTPBasicAuth
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
-from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin
+from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
 
 import json
 import os
@@ -648,6 +648,10 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
     description = ['checking-out-pull-request']
     descriptionDone = ['Checked out pull request']
     haltOnFailure = True
+    env = dict(
+        GIT_COMMITTER_NAME='EWS',
+        GIT_COMMITTER_EMAIL=FROM_EMAIL,
+    )
 
     def __init__(self, **kwargs):
         super(CheckOutPullRequest, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)

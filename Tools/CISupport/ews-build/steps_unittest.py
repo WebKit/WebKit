@@ -3085,6 +3085,11 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(
+        GIT_COMMITTER_NAME='EWS',
+        GIT_COMMITTER_EMAIL='ews@webkit.org',
+    )
+
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -3106,36 +3111,43 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['/bin/sh', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git || true'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'fetch', 'Contributor'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'branch', '-f', 'eng/pull-request-branch', 'remotes/Contributor/eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'checkout', 'eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'rebase', '--onto', '59dab0396721db221c264aad3c0cea37ef0d297b', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1', 'eng/pull-request-branch'],
             ) + 0,
         )
@@ -3157,36 +3169,43 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['cmd', '/c', 'git remote add Contributor https://github.com/Contributor/WebKit.git || exit 0'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'fetch', 'Contributor'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'branch', '-f', 'eng/pull-request-branch', 'remotes/Contributor/eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'checkout', 'eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'config', 'merge.changelog.driver', 'perl Tools/Scripts/resolve-ChangeLogs --merge-driver -c %O %A %B'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'rebase', '--onto', '59dab0396721db221c264aad3c0cea37ef0d297b', 'aaebef7312238f3ad1d25e8894916a1aaea45ba1', 'eng/pull-request-branch'],
             ) + 0,
         )
@@ -3207,16 +3226,19 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['/bin/sh', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git || true'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
                 logEnviron=False,
+                env=self.ENV,
                 command=['git', 'fetch', 'Contributor'],
             ) + 1,
         )
