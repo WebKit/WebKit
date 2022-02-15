@@ -142,6 +142,10 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #if ENABLE(IMAGE_ANALYSIS)
     bool supportsLookUpInImages() final { return false; }
 #endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    bool supportsCopyCroppedImage() final { return false; }
+#endif
 };
 
 #endif // ENABLE(CONTEXT_MENUS)

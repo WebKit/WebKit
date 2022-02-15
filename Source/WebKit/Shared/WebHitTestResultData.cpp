@@ -39,7 +39,7 @@ WebHitTestResultData::WebHitTestResultData()
 {
 }
 
-WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult, const String& toolTipText)
+WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, const String& toolTipText)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -61,7 +61,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
 }
 
-WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult, bool includeImage)
+WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, bool includeImage)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -92,8 +92,15 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
         }
     }
 
-    if (auto target = RefPtr { hitTestResult.innerNonSharedNode() }; target && is<RenderImage>(target->renderer()))
-        imageBitmap = createShareableBitmap(*downcast<RenderImage>(target->renderer()));
+    if (auto target = RefPtr { hitTestResult.innerNonSharedNode() }) {
+        if (auto renderer = dynamicDowncast<RenderImage>(target->renderer())) {
+            imageBitmap = createShareableBitmap(*downcast<RenderImage>(target->renderer()));
+            if (auto* cachedImage = renderer->cachedImage()) {
+                if (auto* image = cachedImage->image())
+                    sourceImageMIMEType = image->mimeType();
+            }
+        }
+    }
 }
 
 WebHitTestResultData::~WebHitTestResultData()
@@ -130,6 +137,7 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     if (imageBitmap)
         imageBitmap->createHandle(imageBitmapHandle, SharedMemory::Protection::ReadOnly);
     encoder << imageBitmapHandle;
+    encoder << sourceImageMIMEType;
 
     bool hasLinkTextIndicator = linkTextIndicator;
     encoder << hasLinkTextIndicator;
@@ -182,6 +190,9 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
 
     if (!imageBitmapHandle.isNull())
         hitTestResultData.imageBitmap = ShareableBitmap::create(imageBitmapHandle, SharedMemory::Protection::ReadOnly);
+
+    if (!decoder.decode(hitTestResultData.sourceImageMIMEType))
+        return false;
 
     bool hasLinkTextIndicator;
     if (!decoder.decode(hasLinkTextIndicator))

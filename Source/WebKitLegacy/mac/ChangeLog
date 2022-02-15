@@ -1,3 +1,17 @@
+2022-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a context menu item to "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=236602
+        rdar://88924479
+
+        Reviewed by Megan Gardner.
+
+        See WebCore and WebKit ChangeLogs for more details.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebView/WebHTMLView.mm:
+        (toTag):
+
 2022-02-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build with the latest iOS SDK.

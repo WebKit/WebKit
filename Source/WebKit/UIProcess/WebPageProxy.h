@@ -2009,10 +2009,14 @@ public:
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
-#if ENABLE(IMAGE_ANALYSIS) && ENABLE(CONTEXT_MENUS)
-    void handleContextMenuLookUpImage();
+#if ENABLE(CONTEXT_MENUS)
+#if ENABLE(IMAGE_ANALYSIS)
     void handleContextMenuQuickLookImage(QuickLookPreviewActivity);
 #endif
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void handleContextMenuCopyCroppedImage(ShareableBitmap&, const String& preferredMIMEType);
+#endif
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if USE(APPKIT)
     void beginPreviewPanelControl(QLPreviewPanel *);

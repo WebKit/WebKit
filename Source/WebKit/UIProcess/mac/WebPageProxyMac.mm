@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
+#import "CocoaImage.h"
 #import "Connection.h"
 #import "DataReference.h"
 #import "EditorState.h"
@@ -43,6 +44,7 @@
 #import "RemoteLayerTreeHost.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
+#import "TextRecognitionUtilities.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
@@ -772,6 +774,31 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void WebPageProxy::handleContextMenuCopyCroppedImage(ShareableBitmap& imageBitmap, const String& preferredMIMEType)
+{
+    auto originalImage = imageBitmap.makeCGImage();
+    if (!originalImage)
+        return;
+
+    auto changeCount = NSPasteboard.generalPasteboard.changeCount;
+    requestImageAnalysisMarkup(originalImage.get(), [changeCount, originalImage, preferredMIMEType](CGImageRef resultImage) {
+        auto pasteboard = NSPasteboard.generalPasteboard;
+        if (changeCount != pasteboard.changeCount)
+            return;
+
+        auto [data, type] = WebKit::transcodeWithPreferredMIMEType(resultImage ?: originalImage.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        if (!data)
+            return;
+
+        [pasteboard declareTypes:@[(__bridge NSString *)type.get()] owner:nil];
+        [pasteboard setData:data.get() forType:(__bridge NSString *)type.get()];
+    });
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace WebKit
 

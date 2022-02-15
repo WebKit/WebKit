@@ -180,7 +180,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionTypeCopyCroppedImage:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        title = WEB_UI_STRING("Copy Cropped Image", "Title for Copy Cropped Image");
+        title = WebCore::contextMenuItemTagCopyCroppedImage();
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };

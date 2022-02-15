@@ -526,8 +526,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
+    case ContextMenuItemTagCopyCroppedImage:
     case ContextMenuItemTagQuickLookImage:
-        // This should be handled at the client layer.
+        // These should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
     case ContextMenuItemTagTranslate:
@@ -842,6 +843,10 @@ void ContextMenuController::populate()
     ContextMenuItem ShareMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    ContextMenuItem copyCroppedImageItem { ActionType, ContextMenuItemTagCopyCroppedImage, contextMenuItemTagCopyCroppedImage() };
+#endif
+
     Node* node = m_context.hitTestResult().innerNonSharedNode();
     if (!node)
         return;
@@ -912,10 +917,15 @@ void ContextMenuController::populate()
             if (imageURL.isLocalFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
-#if ENABLE(IMAGE_ANALYSIS)
-                if (m_client.supportsLookUpInImages() && image && !image->isAnimated())
-                    shouldAppendQuickLookImageItem = true;
+                if (image && !image->isAnimated()) {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+                    if (m_client.supportsCopyCroppedImage())
+                        appendItem(copyCroppedImageItem, m_contextMenu.get());
 #endif
+#if ENABLE(IMAGE_ANALYSIS)
+                    shouldAppendQuickLookImageItem = m_client.supportsLookUpInImages();
+#endif
+                }
             }
 #if PLATFORM(GTK)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
@@ -1417,6 +1427,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCopyLinkToClipboard:
         case ContextMenuItemTagOpenImageInNewWindow:
         case ContextMenuItemTagCopyImageToClipboard:
+        case ContextMenuItemTagCopyCroppedImage:
 #if PLATFORM(GTK)
         case ContextMenuItemTagCopyImageUrlToClipboard:
 #endif

@@ -7113,6 +7113,13 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 #endif
         return;
 
+    case ContextMenuItemTagCopyCroppedImage:
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        if (hitTestData.imageBitmap)
+            handleContextMenuCopyCroppedImage(*hitTestData.imageBitmap, hitTestData.sourceImageMIMEType);
+#endif
+        return;
+
     default:
         break;
     }

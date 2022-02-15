@@ -319,4 +319,13 @@ String contextMenuItemTagQuickLookImageForVisualSearch()
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+String contextMenuItemTagCopyCroppedImage()
+{
+    return WEB_UI_STRING("Copy Cropped Image", "Title for Copy Cropped Image");
+}
+
+#endif
+
 } // namespace WebCore

@@ -547,6 +547,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagRevealImage;
     case WebCore::ContextMenuItemTagTranslate:
         return kWKContextMenuItemTagTranslate;
+    case WebCore::ContextMenuItemTagCopyCroppedImage:
+        return kWKContextMenuItemTagCopyCroppedImage;
     default:
         if (action < WebCore::ContextMenuItemBaseApplicationTag && !(action >= WebCore::ContextMenuItemBaseCustomTag && action <= WebCore::ContextMenuItemLastCustomTag))
             LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::ContextMenuItemBaseApplicationTag);
@@ -749,6 +751,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagQuickLookImage;
     case kWKContextMenuItemTagTranslate:
         return WebCore::ContextMenuItemTagTranslate;
+    case kWKContextMenuItemTagCopyCroppedImage:
+        return WebCore::ContextMenuItemTagCopyCroppedImage;
     case kWKContextMenuItemTagOpenLinkInThisWindow:
     default:
         if (tag < kWKContextMenuItemBaseApplicationTag && !(tag >= WebCore::ContextMenuItemBaseCustomTag && tag <= WebCore::ContextMenuItemLastCustomTag))

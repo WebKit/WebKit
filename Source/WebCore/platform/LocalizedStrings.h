@@ -377,6 +377,10 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagQuickLookImageForVisualSearch();
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    WEBCORE_EXPORT String contextMenuItemTagCopyCroppedImage();
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);
 #endif

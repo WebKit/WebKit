@@ -600,6 +600,7 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
     case ContextMenuItemTagQuickLookImage:
+    case ContextMenuItemTagCopyCroppedImage:
         return std::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
