@@ -1,5 +1,24 @@
 2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Move WebPage::platformInitialize and WebPage::platformDetach() to WebPageGLib.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=236646
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's duplicated code related to accessibility.
+
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformDetach):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformInitialize): Deleted.
+        (WebKit::WebPage::platformDetach): Deleted.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformInitialize): Deleted.
+        (WebKit::WebPage::platformDetach): Deleted.
+
+2022-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] D-Bus crash atk-bridge
         https://bugs.webkit.org/show_bug.cgi?id=236208
 

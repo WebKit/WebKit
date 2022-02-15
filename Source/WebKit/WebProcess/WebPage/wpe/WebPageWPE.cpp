@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "WebKitWebPageAccessibilityObject.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/NotImplemented.h>
@@ -36,38 +35,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize(const WebPageCreationParameters&)
-{
-#if ENABLE(ACCESSIBILITY)
-    // Create the accessible object (the plug) that will serve as the
-    // entry point to the web process, and send a message to the UI
-    // process to connect the two worlds through the accessibility
-    // object there specifically placed for that purpose (the socket).
-#if USE(ATK)
-    m_accessibilityObject = adoptGRef(webkitWebPageAccessibilityObjectNew(this));
-    GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
-    send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
-#elif USE(ATSPI)
-    if (auto* page = corePage()) {
-        m_accessibilityRootObject = AccessibilityRootAtspi::create(*page);
-        m_accessibilityRootObject->registerObject([&](const String& plugID) {
-            send(Messages::WebPageProxy::BindAccessibilityTree(plugID));
-        });
-    }
-#endif
-#endif
-}
-
 void WebPage::platformReinitialize()
 {
-}
-
-void WebPage::platformDetach()
-{
-#if USE(ATSPI)
-    if (m_accessibilityRootObject)
-        m_accessibilityRootObject->unregisterObject();
-#endif
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
