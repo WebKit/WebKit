@@ -991,18 +991,6 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent& whee
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
 }
 
-VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
-{
-    if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
-        return { };
-
-    auto range = DictionaryLookup::rangeAtHitTestResult(result);
-    if (!range)
-        return { };
-
-    return std::get<SimpleRange>(*range);
-}
-
 static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)
 {
     // If the window is at the edge of the screen, and the mouse position is also at that edge of the screen,

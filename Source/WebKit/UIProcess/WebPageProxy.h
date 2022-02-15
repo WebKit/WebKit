@@ -879,6 +879,7 @@ public:
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
 #if ENABLE(REVEAL)
     void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const RevealItem&)>&&);
+    void prepareSelectionForContextMenuWithLocationInView(const WebCore::IntPoint, CompletionHandler<void(bool, const RevealItem&)>&&);
 #endif
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);

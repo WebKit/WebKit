@@ -2343,9 +2343,8 @@ void WebPage::requestDictationContext(CompletionHandler<void(const String&, cons
 
     completionHandler(selectedText, contextBefore, contextAfter);
 }
-
 #if ENABLE(REVEAL)
-void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& completionHandler)
+RetainPtr<RVItem> WebPage::revealItemForCurrentSelection()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto selection = frame->selection().selection();
@@ -2368,8 +2367,23 @@ void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const W
             }
         }
     }
+    return item;
+}
+
+void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& completionHandler)
+{
+    completionHandler(RevealItem(revealItemForCurrentSelection()));
+}
+
+void WebPage::prepareSelectionForContextMenuWithLocationInView(const WebCore::IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& completionHandler)
+{
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    auto& eventHander = m_page->mainFrame().eventHandler();
+    HitTestResult result = eventHander.hitTestResultAtPoint(point, hitType);
     
-    completionHandler(RevealItem(WTFMove(item)));
+    eventHander.selectClosestContextualWordOrLinkFromHitTestResult(result, WebCore::DontAppendTrailingWhitespace);
+    
+    completionHandler(true, RevealItem(revealItemForCurrentSelection()));
 }
 #endif
 

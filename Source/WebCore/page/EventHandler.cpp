@@ -534,25 +534,17 @@ static AppendTrailingWhitespace shouldAppendTrailingWhitespace(const MouseEventW
     return (result.event().clickCount() == 2 && frame.editor().isSelectTrailingWhitespaceEnabled()) ? ShouldAppendTrailingWhitespace : DontAppendTrailingWhitespace;
 }
 
-void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
-{
-    if (mouseDownMayStartSelect())
-        selectClosestWordFromHitTestResult(result.hitTestResult(), shouldAppendTrailingWhitespace(result, m_frame));
-}
-
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult&)
 {
     return VisibleSelection();
 }
 #endif
     
-void EventHandler::selectClosestContextualWordFromMouseEvent(const MouseEventWithHitTestResults& mouseEvent)
+void EventHandler::selectClosestContextualWordFromHitTestResult(const HitTestResult& result, AppendTrailingWhitespace appendTrailingWhitespace)
 {
-    RefPtr targetNode = mouseEvent.targetNode();
-    const HitTestResult& result = mouseEvent.hitTestResult();
+    RefPtr targetNode = result.targetNode();
     VisibleSelection newSelection;
-    bool appendTrailingWhitespace = shouldAppendTrailingWhitespace(mouseEvent, m_frame);
     
     if (targetNode && targetNode->renderer()) {
         newSelection = selectClosestWordFromHitTestResultBasedOnLookup(result);
@@ -571,16 +563,19 @@ void EventHandler::selectClosestContextualWordFromMouseEvent(const MouseEventWit
     }
 }
     
-void EventHandler::selectClosestContextualWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults& result)
+void EventHandler::selectClosestContextualWordOrLinkFromHitTestResult(const HitTestResult& result, AppendTrailingWhitespace appendTrailingWhitespace)
 {
-    RefPtr urlElement = result.hitTestResult().URLElement();
+    RefPtr urlElement = result.URLElement();
     if (!urlElement || !isDraggableLink(*urlElement)) {
         if (RefPtr targetNode = result.targetNode()) {
-            if (isEditableNode(*targetNode))
-                return selectClosestWordFromMouseEvent(result);
+            if (isEditableNode(*targetNode)) {
+                if (mouseDownMayStartSelect())
+                    return selectClosestWordFromHitTestResult(result, appendTrailingWhitespace);
+                return;
+            }
         }
 
-        return selectClosestContextualWordFromMouseEvent(result);
+        return selectClosestContextualWordFromHitTestResult(result, appendTrailingWhitespace);
     }
 
     RefPtr targetNode = result.targetNode();
@@ -602,12 +597,12 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
     if (m_frame.selection().isRange())
         // A double-click when range is already selected
         // should not change the selection.  So, do not call
-        // selectClosestWordFromMouseEvent, but do set
+        // selectClosestWordFromHitTestResult, but do set
         // m_beganSelectingText to prevent handleMouseReleaseEvent
         // from setting caret selection.
         m_selectionInitiationState = ExtendedSelection;
     else
-        selectClosestWordFromMouseEvent(event);
+        selectClosestWordFromHitTestResult(event.hitTestResult(), shouldAppendTrailingWhitespace(event, m_frame));
 
     return true;
 }
@@ -3280,7 +3275,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         // available for text selections.  But only if we're above text.
         && (m_frame.selection().selection().isContentEditable() || (mouseEvent.targetNode() && mouseEvent.targetNode()->isTextNode()))) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
-        selectClosestContextualWordOrLinkFromMouseEvent(mouseEvent);
+        selectClosestContextualWordOrLinkFromHitTestResult(mouseEvent.hitTestResult(), shouldAppendTrailingWhitespace(mouseEvent, m_frame));
     }
 
     swallowEvent = !dispatchMouseEvent(eventNames().contextmenuEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);

@@ -83,6 +83,7 @@ messages -> WebPage LegacyReceiver {
     RequestDictationContext() -> (String selectedText, String textBefore, String textAfter) Async
 #if ENABLE(REVEAL)
     RequestRVItemInCurrentSelectedRange() -> (WebKit::RevealItem item) Async
+    PrepareSelectionForContextMenuWithLocationInView(WebCore::IntPoint point) -> (bool shouldShowMenu, WebKit::RevealItem item) Async
 #endif
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)

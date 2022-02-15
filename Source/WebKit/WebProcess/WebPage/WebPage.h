@@ -168,6 +168,7 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
+OBJC_CLASS RVItem;
 #endif
 
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
@@ -798,7 +799,9 @@ public:
 
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
 #if ENABLE(REVEAL)
+    RetainPtr<RVItem> revealItemForCurrentSelection();
     void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&&);
+    void prepareSelectionForContextMenuWithLocationInView(const WebCore::IntPoint, CompletionHandler<void(bool, const RevealItem&)>&&);
 #endif
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);

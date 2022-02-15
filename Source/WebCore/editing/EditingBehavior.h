@@ -87,7 +87,7 @@ public:
     // space when deleting password cause space been showed insecurely.
     bool shouldRebalanceWhiteSpacesInSecureField() const { return m_type != EditingBehaviorType::iOS; }
 
-    bool shouldSelectBasedOnDictionaryLookup() const { return m_type == EditingBehaviorType::Mac; }
+    bool shouldSelectBasedOnDictionaryLookup() const { return m_type == EditingBehaviorType::Mac || m_type == EditingBehaviorType::iOS; }
 
     // Linux and Windows always extend selections from the extent endpoint.
     bool shouldAlwaysExtendSelectionFromExtentEndpoint() const { return m_type != EditingBehaviorType::Mac && m_type != EditingBehaviorType::iOS; }

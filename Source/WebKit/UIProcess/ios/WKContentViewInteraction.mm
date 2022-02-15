@@ -7554,6 +7554,13 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         revealItemSelectionHandler(item.item());
     });
 }
+
+- (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler
+{
+    _page->prepareSelectionForContextMenuWithLocationInView(WebCore::roundedIntPoint(locationInView), [protectedCompletionHandler = makeBlockPtr(completionHandler)](bool shouldPresentMenu, const WebKit::RevealItem& item) {
+        protectedCompletionHandler(shouldPresentMenu, item.item());
+    });
+}
 #endif
 
 - (BOOL)hasHiddenContentEditable

@@ -359,6 +359,8 @@ public:
 #endif
 
     static bool scrollableAreaCanHandleEvent(const PlatformWheelEvent&, ScrollableArea&);
+    
+    WEBCORE_EXPORT void selectClosestContextualWordOrLinkFromHitTestResult(const HitTestResult&, AppendTrailingWhitespace);
 
 private:
 #if ENABLE(DRAG_SUPPORT)
@@ -370,9 +372,8 @@ private:
     bool updateSelectionForMouseDownDispatchingSelectStart(Node*, const VisibleSelection&, TextGranularity);
     void selectClosestWordFromHitTestResult(const HitTestResult&, AppendTrailingWhitespace);
     VisibleSelection selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult&);
-    void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults&);
-    void selectClosestContextualWordFromMouseEvent(const MouseEventWithHitTestResults&);
-    void selectClosestContextualWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults&);
+    void selectClosestContextualWordFromHitTestResult(const HitTestResult&, AppendTrailingWhitespace);
+    
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
 
