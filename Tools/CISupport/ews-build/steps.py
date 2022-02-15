@@ -127,6 +127,14 @@ class GitHub(object):
             print('Error reading GitHub credentials')
             return None, None
 
+    @classmethod
+    def email_for_owners(cls, owners):
+        if not owners:
+            print('No owners defined, so email cannot be extracted')
+            return None
+        contributors, errors = Contributors.load(use_network=False)
+        return contributors.get(owners[0], {}).get('email'), errors
+
 
 class GitHubMixin(object):
     addURLs = False
@@ -183,6 +191,19 @@ class GitHubMixin(object):
             self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
             return -1
         return 0 if pr_sha == self.getProperty('github.head.sha', '?') else 1
+
+    def should_send_email_for_pr(self, pr_number):
+        pr_json = self.get_pr_json(pr_number)
+        if not pr_json:
+            self._addToLog('stdio', 'Unable to fetch PR #{}\n'.format(pr_number))
+            return True
+
+        if 1 == self._is_hash_outdated(pr_json):
+            self._addToLog('stdio', 'Skipping email since hash {} on PR #{} is outdated\n'.format(
+                self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number,
+            ))
+            return False
+        return True
 
 
 class Contributors(object):
@@ -317,16 +338,15 @@ class ConfigureBuild(buildstep.BuildStep):
         if title:
             self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
         if owners:
-            contributors, errors = Contributors.load(use_network=False)
+            email, errors = GitHub.email_for_owners(owners)
             for error in errors:
                 print(error)
                 self._addToLog('stdio', error)
-            github_username = owners[0]
-            contributor = contributors.get(github_username, {})
-            display_name = contributor.get('email', github_username)
-            if display_name != github_username:
-                display_name = '{} ({})'.format(display_name, github_username)
-            self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, github_username))
+            if email:
+                display_name = '{} ({})'.format(email, owners[0])
+            else:
+                display_name = owners[0]
+            self.addURL('PR by: {}'.format(display_name), '{}{}'.format(GITHUB_URL, owners[0]))
         if revision:
             self.addURL('Hash: {}'.format(revision[:HASH_LENGTH_TO_DISPLAY]), GitHub.commit_url(revision, repository_url))
 
@@ -1018,7 +1038,7 @@ class BugzillaMixin(object):
             return 1
         return 0
 
-    def should_send_email(self, patch_id):
+    def should_send_email_for_patch(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
             self._addToLog('stdio', 'Unable to fetch patch {}'.format(patch_id))
@@ -2031,7 +2051,7 @@ class CompileWebKitWithoutChange(CompileWebKit):
             print('Error in sending email for unexpected build failure: {}'.format(e))
 
 
-class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
+class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     name = 'analyze-compile-webkit-results'
     description = ['analyze-compile-webkit-results']
     descriptionDone = ['analyze-compile-webkit-results']
@@ -2123,14 +2143,36 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
     def send_email_for_new_build_failure(self):
         try:
             patch_id = self.getProperty('patch_id', '')
-            # FIXME: Support pull requests
-            if not patch_id or not self.should_send_email(patch_id):
+            pr_number = self.getProperty('github.number', '')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+
+            if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
+            if pr_number and not self.should_send_email_for_pr(pr_number):
+                return
+            if not patch_id and not (pr_number and sha):
+                print('Unrecognized change type')
+                return
+
+            change_string = None
+            change_author = None
+            if patch_id:
+                change_author = self.getProperty('patch_author', '')
+                change_string = 'Patch {}'.format(patch_id)
+            elif pr_number and sha:
+                change_string = 'Hash {}'.format(sha)
+                change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+                for error in errors:
+                    print(error)
+
+            if not change_author:
+                print('Failed to determine change author for hash {} belonging to PR #{}'.format(sha, patch_id))
+                return
+
             builder_name = self.getProperty('buildername', '')
-            bug_id = self.getProperty('bug_id', '')
-            bug_title = self.getProperty('bug_title', '')
+            issue_id = self.getProperty('bug_id', '') or pr_number
+            title = self.getProperty('bug_title', '') or self.getProperty('github.title', '')
             worker_name = self.getProperty('workername', '')
-            patch_author = self.getProperty('patch_author', '')
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
@@ -2139,17 +2181,22 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             else:
                 logs = self.filter_logs_containing_error(logs)
 
-            email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
+            email_subject = 'Build failure for {}: {}'.format(change_string, title)
             email_text = 'EWS has detected build failure on {}'.format(builder_name)
-            email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
-            email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
-            email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
+            if patch_id:
+                email_text += ' while testing <a href="{}">{}</a>'.format(Bugzilla.patch_url(patch_id), change_string)
+                email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
+            if sha:
+                repository = self.getProperty('repository')
+                email_text += ' while testing <a href="{}">{}</a>'.format(GitHub.commit_url(sha, repository), change_string)
+                email_text += ' for <a href="{}">PR #{}</a>.'.format(GitHub.pr_url(pr_number, repository), pr_number)
+            email_text += '\n\nFull details are available at: {}\n\nChange author: {}'.format(build_url, change_author)
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += '\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
-            send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
+            self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
+            send_email_to_patch_author(change_author, email_subject, email_text, patch_id or self.getProperty('github.head.sha', ''))
         except Exception as e:
             print('Error in sending email for new build failure: {}'.format(e))
 
@@ -2962,7 +3009,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
     def send_email_for_new_test_failures(self, test_names, exceed_failure_limit=False):
         try:
             patch_id = self.getProperty('patch_id', '')
-            if not self.should_send_email(patch_id):
+            if not self.should_send_email_for_patch(patch_id):
                 return
             builder_name = self.getProperty('buildername', '')
             bug_id = self.getProperty('bug_id', '')

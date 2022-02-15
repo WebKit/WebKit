@@ -1,3 +1,20 @@
+2022-02-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support PRs when sending build failure emails
+        https://bugs.webkit.org/show_bug.cgi?id=235926
+        <rdar://problem/88302122>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHub.email_for_owners): Convert list of owners to an email address.
+        (GitHubMixin.should_send_email_for_pr): Check if the tested sha is outdated.
+        (BugzillaMixin.should_send_email_for_patch): Renamed from should_send_email.
+        (BugzillaMixin.should_send_email): Renamed to should_send_email_for_patch.
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Draft different
+        email for failed patch than failed pull request build.
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+
 2022-02-07  Jon Lee  <jonlee@apple.com>
 
         Enable accelerated drawing in the iOS simulator
