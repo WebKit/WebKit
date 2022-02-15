@@ -48,12 +48,9 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
-enum class MainFrameMainResource : bool;
 }
 
 namespace WebKit {
-
-enum class PrivateRelayed : bool;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
@@ -83,7 +80,7 @@ private:
 
     void willSendRequest(WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&&);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
-    void didReceiveResponse(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferCopy& data, int64_t encodedDataLength);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
@@ -93,8 +90,6 @@ private:
 
     void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(const WebCore::ResourceResponse&);
 
-    WebCore::MainFrameMainResource mainFrameMainResource() const;
-    
 #if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&);
 #endif

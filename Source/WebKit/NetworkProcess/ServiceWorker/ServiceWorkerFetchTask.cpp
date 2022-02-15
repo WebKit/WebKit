@@ -35,7 +35,6 @@
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
-#include "PrivateRelayed.h"
 #include "ServiceWorkerNavigationPreloader.h"
 #include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
@@ -221,7 +220,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
 
     if (shouldSetSource == ShouldSetSource::Yes)
         response.setSource(ResourceResponse::Source::ServiceWorker);
-    m_loader.sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, PrivateRelayed::No, needsContinueDidReceiveResponseMessage);
+    m_loader.sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, needsContinueDidReceiveResponseMessage);
     if (needsContinueDidReceiveResponseMessage)
         m_loader.setResponse(WTFMove(response));
 }

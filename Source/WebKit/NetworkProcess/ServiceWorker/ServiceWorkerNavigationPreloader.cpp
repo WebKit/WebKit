@@ -33,7 +33,6 @@
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
-#include "PrivateRelayed.h"
 #include <WebCore/NavigationPreloadState.h>
 
 namespace WebKit {
@@ -112,7 +111,7 @@ void ServiceWorkerNavigationPreloader::cancel()
 
 void ServiceWorkerNavigationPreloader::loadWithCacheEntry(NetworkCache::Entry& entry)
 {
-    didReceiveResponse(ResourceResponse { entry.response() }, PrivateRelayed::No, [body = RefPtr { entry.buffer() }, weakThis = WeakPtr { *this }](auto) mutable {
+    didReceiveResponse(ResourceResponse { entry.response() }, [body = RefPtr { entry.buffer() }, weakThis = WeakPtr { *this }](auto) mutable {
         if (!weakThis || weakThis->m_isCancelled)
             return;
 
@@ -154,11 +153,11 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
 
 void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response)
 {
-    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [](auto) { });
+    didReceiveResponse(WTFMove(response), [](auto) { });
     didComplete();
 }
 
-void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
+void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didReceiveResponse %p", this);
 

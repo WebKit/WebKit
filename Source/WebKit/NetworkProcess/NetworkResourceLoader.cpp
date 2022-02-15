@@ -38,7 +38,6 @@
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
-#include "PrivateRelayed.h"
 #include "ResourceLoadInfo.h"
 #include "ServiceWorkerFetchTask.h"
 #include "WebCoreArgumentCoders.h"
@@ -548,7 +547,7 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse);
 #endif
     bool willWaitForContinueDidReceiveResponse = true;
-    send(Messages::WebResourceLoader::DidReceiveResponse { m_response, PrivateRelayed::No, willWaitForContinueDidReceiveResponse });
+    send(Messages::WebResourceLoader::DidReceiveResponse { m_response, willWaitForContinueDidReceiveResponse });
 }
 
 bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xFrameOptions, const URL& url)
@@ -688,7 +687,7 @@ static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(c
     return BrowsingContextGroupSwitchDecision::NewSharedGroup;
 }
 
-void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
+void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, ResponseCompletionHandler&& completionHandler)
 {
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%" PRId64 ", hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
@@ -806,7 +805,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     // a main resource because the embedding client must decide whether to allow the load.
     bool willWaitForContinueDidReceiveResponse = isMainResource();
     LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
-    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, privateRelayed, willWaitForContinueDidReceiveResponse);
+    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, willWaitForContinueDidReceiveResponse);
 
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo, response), 0);
@@ -825,11 +824,11 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     completionHandler(PolicyAction::Use);
 }
 
-void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
+void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     auto browsingContextGroupSwitchDecision = toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
-        send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage });
+        send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
         return;
     }
 
@@ -1090,7 +1089,7 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
     LOADER_RELEASE_LOG("didFinishWithRedirectResponse:");
     redirectResponse.setType(ResourceResponse::Type::Opaqueredirect);
     if (!isCrossOriginPrefetch())
-        didReceiveResponse(WTFMove(redirectResponse), PrivateRelayed::No, [] (auto) { });
+        didReceiveResponse(WTFMove(redirectResponse), [] (auto) { });
     else if (auto* session = m_connection->networkProcess().networkSession(sessionID()))
         session->prefetchCache().storeRedirect(request.url(), WTFMove(redirectResponse), WTFMove(redirectRequest));
 
@@ -1340,7 +1339,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     bool needsContinueDidReceiveResponseMessage = isMainResource();
     LOADER_RELEASE_LOG("didRetrieveCacheEntry: Sending WebResourceLoader::DidReceiveResponse IPC (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
-    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, PrivateRelayed::No, needsContinueDidReceiveResponseMessage);
+    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, needsContinueDidReceiveResponseMessage);
 
     if (needsContinueDidReceiveResponseMessage) {
         m_response = WTFMove(response);
