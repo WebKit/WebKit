@@ -195,9 +195,10 @@ void OverlapMapContainer::mergeClippingScopesRecursive(const ClippingScope& sour
 
     for (auto& sourceChildScope : sourceScope.children) {
         ClippingScope* destChild = destScope.childWithLayer(sourceChildScope.layer);
-        if (destChild)
+        if (destChild) {
+            destChild->rectList.append(sourceChildScope.rectList);
             mergeClippingScopesRecursive(sourceChildScope, *destChild);
-        else {
+        } else {
             // New child, just copy the whole subtree.
             destScope.addChild(sourceChildScope);
         }

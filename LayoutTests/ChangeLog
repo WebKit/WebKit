@@ -1,5 +1,9 @@
 2022-02-15  Russell Epstein  <repstein@apple.com>
 
+        Revert r289828. rdar://problem/88656665
+
+2022-02-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289776. rdar://problem/88656665
 
     Fix crash with deeply nested async overflow scroll
