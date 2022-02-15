@@ -77,9 +77,9 @@
     readonly attribute NodeList labels;
 
     undefined select();
-    [ImplementedAs=selectionStartForBindings] attribute long selectionStart;
-    [ImplementedAs=selectionEndForBindings] attribute long selectionEnd;
-    [ImplementedAs=selectionDirectionForBindings] attribute DOMString selectionDirection;
+    [ImplementedAs=selectionStartForBindings] attribute long? selectionStart;
+    [ImplementedAs=selectionEndForBindings] attribute long? selectionEnd;
+    [ImplementedAs=selectionDirectionForBindings] attribute DOMString? selectionDirection;
 
     undefined setRangeText(DOMString replacement);
     undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
