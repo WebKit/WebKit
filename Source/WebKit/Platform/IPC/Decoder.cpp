@@ -59,13 +59,16 @@ std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSiz
 
 std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
 {
+    ASSERT(bufferDeallocator);
     ASSERT(buffer);
     if (UNLIKELY(!buffer)) {
         RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
         return nullptr;
     }
     auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, bufferSize, WTFMove(bufferDeallocator), WTFMove(attachments)));
-    return decoder->isValid() ? WTFMove(decoder) : nullptr;
+    if (!decoder->isValid())
+        return nullptr;
+    return decoder;
 }
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
@@ -145,7 +148,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
+    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
 }
 
 static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, size_t alignment)
