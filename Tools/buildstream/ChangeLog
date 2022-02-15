@@ -1,5 +1,17 @@
 2022-02-15  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Include a GStreamer DTLS transport bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=236591
+
+        Reviewed by Martin Robinson.
+
+        This patch is needed for the GstWebRTC backend.
+
+        * elements/sdk/gst-plugins-bad.bst:
+        * patches/gstreamer-0001-dtlstransport-Notify-ICE-transport-property-changes.patch: Added.
+
+2022-02-15  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Update to libnice development snapshot
         https://bugs.webkit.org/show_bug.cgi?id=236537
 

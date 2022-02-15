@@ -3,6 +3,9 @@ sources:
 - kind: tar
   url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.0.tar.xz
   ref: 015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
+# To be shipped in 1.20.1.
+- kind: patch
+  path: patches/gstreamer-0001-dtlstransport-Notify-ICE-transport-property-changes.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
