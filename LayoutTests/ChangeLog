@@ -1,3 +1,17 @@
+2022-02-15  Joseph Griego  <jgriego@igalia.com>
+
+        Redirect shadow realm console output to page's ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=236518
+
+        Reviewed by Devin Rousso.
+
+        Add tests to verify that (nested) shadow realm contexts still output to
+        the parent page's inspector; fix one changed test.
+
+        * inspector/shadow-realm-console-expected.txt: Added.
+        * inspector/shadow-realm-console.html: Added.
+        * js/ShadowRealm-importValue-expected.txt: Added console line that had previously been blackholed
+
 2022-02-15  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support all size features
