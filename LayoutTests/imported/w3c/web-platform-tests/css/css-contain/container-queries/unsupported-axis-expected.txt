@@ -1,9 +1,9 @@
 Test
 
-FAIL size(width > 0px) assert_equals: expected "true" but got ""
-PASS size(height > 0px)
-FAIL size((height > 0px) or (width > 0px)) assert_equals: expected "true" but got ""
-FAIL size((width > 0px) or (height > 0px)) assert_equals: expected "true" but got ""
+PASS size(width > 0px)
+FAIL size(height > 0px) assert_equals: expected "" but got "true"
+PASS size((height > 0px) or (width > 0px))
+PASS size((width > 0px) or (height > 0px))
 FAIL size((orientation: landscape) or (width > 0px)) assert_equals: expected "true" but got ""
 FAIL size((width > 0px) or (orientation: landscape)) assert_equals: expected "true" but got ""
 PASS size((height > 0px) or (orientation: landscape))

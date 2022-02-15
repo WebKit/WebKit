@@ -1,3 +1,12 @@
+2022-02-14  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Support range operators in size queries
+        https://bugs.webkit.org/show_bug.cgi?id=236600
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+
 2022-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r288804): fast/forms/visual-hebrew-text-field.html is failing

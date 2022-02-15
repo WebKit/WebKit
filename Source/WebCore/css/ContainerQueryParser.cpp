@@ -143,35 +143,78 @@ std::optional<CQ::SizeQuery> ContainerQueryParser::consumeSizeQuery(CSSParserTok
         return { *sizeCondition };
     }
 
+    auto sizeFeature = consumeSizeFeature(range);
+    if (!sizeFeature)
+        return { };
+
+    range.consumeWhitespace();
+    if (!range.atEnd())
+        return { };
+
+    return { *sizeFeature };
+}
+
+std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParserTokenRange& range)
+{
+    // FIXME: Support value-first (100px < width) and full range (100px < width < 200px) notations.
+
     auto nameToken = range.consumeIncludingWhitespace();
+    ASSERT(nameToken.type() == IdentToken);
+
     auto name = nameToken.value();
 
     if (range.atEnd())
         return CQ::SizeFeature { CQ::ComparisonOperator::True, name.toAtomString(), { } };
 
-    auto opToken = range.consumeIncludingWhitespace();
-    if (range.atEnd())
+    auto consumeOperator = [&]() -> std::optional<CQ::ComparisonOperator> {
+        auto opToken = range.consume();
+        if (range.atEnd())
+            return { };
+        if (opToken.type() == ColonToken) {
+            if (name.startsWith("min-")) {
+                name = name.substring(4);
+                return CQ::ComparisonOperator::GreaterThanOrEqual;
+            }
+            if (name.startsWith("max-")) {
+                name = name.substring(4);
+                return CQ::ComparisonOperator::LessThanOrEqual;
+            }
+            return CQ::ComparisonOperator::Equal;
+        }
+        if (opToken.type() == DelimiterToken) {
+            switch (opToken.delimiter()) {
+            case '=':
+                return CQ::ComparisonOperator::Equal;
+            case '<':
+                if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+                    range.consume();
+                    return CQ::ComparisonOperator::LessThanOrEqual;
+                }
+                return CQ::ComparisonOperator::LessThan;
+            case '>':
+                if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+                    range.consume();
+                    return CQ::ComparisonOperator::GreaterThanOrEqual;
+                }
+                return CQ::ComparisonOperator::GreaterThan;
+            default:
+                return { };
+            }
+        }
+        return { };
+    };
+
+    auto op = consumeOperator();
+    if (!op)
         return { };
 
-    // FIXME: Support '<' style operators and ranges.
-    auto op = CQ::ComparisonOperator::Equal;
-    if (opToken.type() == ColonToken) {
-        if (name.startsWith("min-"))
-            op = CQ::ComparisonOperator::GreaterThanOrEqual;
-        else if (name.startsWith("max-"))
-            op = CQ::ComparisonOperator::LessThanOrEqual;
-
-        if (op != CQ::ComparisonOperator::Equal)
-            name = name.substring(4);
-        if (name.isEmpty())
-            return { };
-    }
+    range.consumeWhitespace();
 
     auto length = CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All);
     if (!length)
         return { };
 
-    return CQ::SizeFeature { op, name.toAtomString(), length };
+    return CQ::SizeFeature { *op, name.toAtomString(), length };
 }
 
 }
