@@ -74,6 +74,7 @@
 #include "RenderTreeBuilderTable.h"
 #include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
+#include <wtf/SetForScope.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "FrameView.h"
@@ -456,12 +457,12 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     // Take the ownership.
     auto* newChild = parent.attachRendererInternal(WTFMove(child), beforeChild);
 
-    newChild->initializeFragmentedFlowStateOnInsertion();
+    if (m_internalMovesType == RenderObject::IsInternalMove::No)
+        newChild->initializeFragmentedFlowStateOnInsertion();
     if (!parent.renderTreeBeingDestroyed()) {
         newChild->insertedIntoTree(isInternalMove);
 
-        auto needsStateReset = isInternalMove == RenderObject::IsInternalMove::No;
-        if (needsStateReset) {
+        if (m_internalMovesType == RenderObject::IsInternalMove::No) {
             if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
                 multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
 
@@ -496,8 +497,9 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto childToMove = detachFromRenderElement(from, child);
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
-        auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No, RenderObject::IsInternalMove::Yes);
-        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, RenderObject::IsInternalMove::Yes);
+        auto internalMoveScope = SetForScope { m_internalMovesType, RenderObject::IsInternalMove::Yes };
+        auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No);
+        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
     }
 
     auto findBFCRootAndDestroyInlineTree = [&] {
@@ -943,7 +945,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed, RenderObject::IsInternalMove isInternalMove)
+RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
 
@@ -981,10 +983,11 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     if (!parent.renderTreeBeingDestroyed() && willBeDestroyed == WillBeDestroyed::Yes && child.isSelectionBorder())
         parent.frame().selection().setNeedsSelectionUpdate();
 
-    child.resetFragmentedFlowStateOnRemoval();
+    if (!parent.renderTreeBeingDestroyed() && m_internalMovesType == RenderObject::IsInternalMove::No)
+        child.resetFragmentedFlowStateOnRemoval();
 
     if (!parent.renderTreeBeingDestroyed())
-        child.willBeRemovedFromTree(isInternalMove);
+        child.willBeRemovedFromTree(m_internalMovesType);
 
     // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure

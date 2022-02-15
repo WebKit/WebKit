@@ -34,6 +34,7 @@
 #include "RenderTable.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderTable.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -266,6 +267,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
 
 void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
+    auto internalMoveScope = SetForScope { m_builder.m_internalMovesType, RenderObject::IsInternalMove::Yes };
     // Create a clone of this inline.
     RenderPtr<RenderInline> cloneInline = cloneAsContinuation(parent);
 #if ENABLE(FULLSCREEN_API)

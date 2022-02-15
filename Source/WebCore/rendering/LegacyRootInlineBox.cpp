@@ -75,7 +75,7 @@ LegacyRootInlineBox::~LegacyRootInlineBox()
 {
     detachEllipsisBox();
 
-    if (blockFlow().enclosingFragmentedFlow())
+    if (!renderer().document().renderTreeBeingDestroyed() && blockFlow().enclosingFragmentedFlow())
         containingFragmentMap(blockFlow()).remove(this);
 }
 
