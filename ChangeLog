@@ -1,3 +1,16 @@
+2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/FindOpenGL.cmake: Rewrite to use imported targets, try the "opengl" and "glx"
+        pkg-config modules first, otherwise keep the existing logic that tried the "gl" pkg-config
+        module with fallbacks to find_path/find_library.
+        * Source/cmake/OptionsGTK.cmake: Check for the presence of the OpenGL::GLX target instead of
+        te GLX_FOUND variable.
+
 2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Checks uses of execute_process() for correct command splitting

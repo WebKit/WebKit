@@ -1,3 +1,15 @@
+2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Don Olmstead.
+
+        * PlatformGTK.cmake: Use the OpenGL::OpenGL imported target instead of the
+        OPENGL_LIBRARIES variable.
+        * PlatformWPE.cmake: Ditto, plus replace a spurious use of OPENGLES_LIBRARIES
+        with the OpenGL::GLES target.
+
 2022-02-11  Kyle Piddington  <kpiddington@apple.com>
 
         Cocoa2d-HTLM5 game apepars to use wrong vertex buffer data
