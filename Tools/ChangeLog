@@ -1,3 +1,29 @@
+2022-02-16  Don Olmstead  <don.olmstead@sony.com>
+
+        Share WebKitTestRunner code among USE(LIBWPE) ports
+        https://bugs.webkit.org/show_bug.cgi?id=236651
+
+        Reviewed by Žan Doberšek.
+
+        Modify PLATFORM(WPE) to USE(LIBWPE) in EventSenderProxy and PlatformWebView. The former
+        just uses the libwpe API to send events so it can be shared. The later uses the
+        WPEToolingBackend so it can also be shared.
+
+        The WPE port was missing guards around ENABLE(TOUCH_EVENTS) so add those and organize the
+        corresponding .cpp so the methods track with the ordering in the header.
+
+        Also modernize the PlatformWebView code to prefer using over typedef.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/libwpe/EventSenderProxyLibWPE.cpp: Renamed from Tools/WebKitTestRunner/wpe/EventSenderProxyWPE.cpp.
+        (WTR::EventSenderProxy::getUpdatedTouchEvents):
+        (WTR::EventSenderProxy::removeUpdatedTouchEvents):
+        (WTR::EventSenderProxy::prepareAndDispatchTouchEvent):
+        * WebKitTestRunner/libwpe/PlatformWebViewLibWPE.cpp: Renamed from Tools/WebKitTestRunner/wpe/PlatformWebViewWPE.cpp.
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2022-02-15  Sihui Liu  <sihui_liu@apple.com>
 
         Migrate IndexedDB and LocalStorage data to GeneralStorageDirectory

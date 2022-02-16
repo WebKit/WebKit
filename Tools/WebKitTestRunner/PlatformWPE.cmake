@@ -6,8 +6,9 @@ list(APPEND WebKitTestRunner_DEPENDENCIES WebKitTestRunner-forwarding-headers)
 list(APPEND WebKitTestRunner_SOURCES
     cairo/TestInvocationCairo.cpp
 
-    wpe/EventSenderProxyWPE.cpp
-    wpe/PlatformWebViewWPE.cpp
+    libwpe/EventSenderProxyLibWPE.cpp
+    libwpe/PlatformWebViewLibWPE.cpp
+
     wpe/TestControllerWPE.cpp
     wpe/UIScriptControllerWPE.cpp
     wpe/main.cpp

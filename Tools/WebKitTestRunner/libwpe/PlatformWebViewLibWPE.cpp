@@ -27,10 +27,7 @@
 #include "PlatformWebView.h"
 
 #include <WPEToolingBackends/HeadlessViewBackend.h>
-#include <WebKit/WKImageCairo.h>
-#include <cairo.h>
 #include <cstdio>
-#include <glib.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
@@ -115,7 +112,7 @@ void PlatformWebView::makeWebViewFirstResponder()
 {
 }
 
-cairo_surface_t* PlatformWebView::windowSnapshotImage()
+PlatformImage PlatformWebView::windowSnapshotImage()
 {
     {
         struct TimeoutTimer {

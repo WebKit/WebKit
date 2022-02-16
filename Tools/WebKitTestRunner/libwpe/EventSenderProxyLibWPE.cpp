@@ -176,11 +176,11 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         return;
 
     if (horizontal) {
-        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal, 0};
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal, 0 };
         wpe_view_backend_dispatch_axis_event(viewBackend(*m_testController), &event);
     }
     if (vertical) {
-        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical, 0};
+        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical, 0 };
         wpe_view_backend_dispatch_axis_event(viewBackend(*m_testController), &event);
     }
 }
@@ -320,7 +320,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     struct wpe_input_xkb_keymap_entry* entries;
     uint32_t entriesCount;
     wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keySym, &entries, &entriesCount);
-    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers};
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers };
     wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
     event.pressed = false;
     wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
@@ -334,6 +334,8 @@ void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, u
 void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
 }
+
+#if ENABLE(TOUCH_EVENTS)
 
 void EventSenderProxy::addTouchPoint(int x, int y)
 {
@@ -362,33 +364,6 @@ void EventSenderProxy::setTouchModifier(WKEventModifiers, bool)
 void EventSenderProxy::setTouchPointRadius(int, int)
 {
     notImplemented();
-}
-
-Vector<struct wpe_input_touch_event_raw> EventSenderProxy::getUpdatedTouchEvents()
-{
-    Vector<wpe_input_touch_event_raw> events;
-    for (auto id : m_updatedTouchEvents)
-        events.append(m_touchEvents[id]);
-    return events;
-}
-
-void EventSenderProxy::removeUpdatedTouchEvents()
-{
-    for (auto id : m_updatedTouchEvents)
-        m_touchEvents[id].type = wpe_input_touch_event_type_null;
-    m_touchEvents.removeAllMatching([] (auto current) {
-        return current.type == wpe_input_touch_event_type_null;
-        });
-}
-
-void EventSenderProxy::prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type eventType)
-{
-    auto updatedEvents = getUpdatedTouchEvents();
-    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, secToMsTimestamp(m_time), 0 };
-    wpe_view_backend_dispatch_touch_event(viewBackend(*m_testController), &event);
-    if (eventType == wpe_input_touch_event_type_up)
-        removeUpdatedTouchEvents();
-    m_updatedTouchEvents.clear();
 }
 
 void EventSenderProxy::touchStart()
@@ -431,5 +406,34 @@ void EventSenderProxy::cancelTouchPoint(int)
 {
     notImplemented();
 }
+
+Vector<struct wpe_input_touch_event_raw> EventSenderProxy::getUpdatedTouchEvents()
+{
+    Vector<wpe_input_touch_event_raw> events;
+    for (auto id : m_updatedTouchEvents)
+        events.append(m_touchEvents[id]);
+    return events;
+}
+
+void EventSenderProxy::removeUpdatedTouchEvents()
+{
+    for (auto id : m_updatedTouchEvents)
+        m_touchEvents[id].type = wpe_input_touch_event_type_null;
+    m_touchEvents.removeAllMatching([] (auto current) {
+        return current.type == wpe_input_touch_event_type_null;
+        });
+}
+
+void EventSenderProxy::prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type eventType)
+{
+    auto updatedEvents = getUpdatedTouchEvents();
+    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, secToMsTimestamp(m_time), 0 };
+    wpe_view_backend_dispatch_touch_event(viewBackend(*m_testController), &event);
+    if (eventType == wpe_input_touch_event_type_up)
+        removeUpdatedTouchEvents();
+    m_updatedTouchEvents.clear();
+}
+
+#endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WTR
