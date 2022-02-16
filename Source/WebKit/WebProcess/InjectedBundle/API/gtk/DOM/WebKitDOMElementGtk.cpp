@@ -893,8 +893,10 @@ void webkit_dom_element_webkit_request_fullscreen(WebKitDOMElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
+#if ENABLE(FULLSCREEN_API)
     WebCore::Element* item = WebKit::core(self);
     item->webkitRequestFullscreen();
+#endif
 }
 
 WebKitDOMElement* webkit_dom_element_insert_adjacent_element(WebKitDOMElement* self, const gchar* where, WebKitDOMElement* element, GError** error)

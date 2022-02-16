@@ -189,11 +189,15 @@ static std::optional<InputMethodState> inputMethodSateForElement(Element* elemen
     if (is<HTMLInputElement>(*element)) {
         auto& inputElement = downcast<HTMLInputElement>(*element);
         state.setPurposeForInputElement(inputElement);
+#if ENABLE(AUTOCAPITALIZE)
         state.addHintsForAutocapitalizeType(inputElement.autocapitalizeType());
+#endif
     } else if (is<HTMLTextAreaElement>(*element) || (element->hasEditableStyle() && is<HTMLElement>(*element))) {
         auto& htmlElement = downcast<HTMLElement>(*element);
         state.setPurposeOrHintForInputMode(htmlElement.canonicalInputMode());
+#if ENABLE(AUTOCAPITALIZE)
         state.addHintsForAutocapitalizeType(htmlElement.autocapitalizeType());
+#endif
     }
 
     if (element->isSpellCheckingEnabled())

@@ -1,3 +1,47 @@
+2022-02-15  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Don Olmstead.
+
+        Missing headers that didn't get included by other headers if certain
+        options were disabled; missing ifdef guards around usage of features.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp: Missing
+          ENABLE(PUBLIC_SUFFIX_LIST), duplicate line in order to avoid semicolon
+          by itself on a line which check-style doesn't like
+        (WebKit::NetworkDataTaskSoup::shouldAllowHSTSPolicySetting const):
+        * Shared/API/glib/WebKitContextMenuActions.cpp: Missing include
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Missing
+          ENABLE(FULLSCREEN_API)
+        (webkitWebViewBaseDispose):
+        * UIProcess/gtk/PointerLockManagerWayland.cpp: Missing include
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp: Missing
+          ENABLE(USER_MESSAGE_HANDLERS)
+        (webkit_dom_dom_window_webkit_message_handlers_post_message):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+          Several instances of missing ENABLE(FULLSCREEN_API). The public API
+          methods just do nothing if not compiled with fullscreen support.
+        (webkit_dom_document_webkit_cancel_fullscreen):
+        (webkit_dom_document_webkit_exit_fullscreen):
+        (webkit_dom_document_get_webkit_is_fullscreen):
+        (webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed):
+        (webkit_dom_document_get_webkit_current_fullscreen_element):
+        (webkit_dom_document_get_webkit_fullscreen_enabled):
+        (webkit_dom_document_get_webkit_fullscreen_element):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementGtk.cpp: Missing
+          ENABLE(FULLSCREEN_API)
+        (webkit_dom_element_webkit_request_fullscreen):
+        * WebProcess/WebPage/EventDispatcher.cpp: Two instances of missing
+          ENABLE(ASYNC_SCROLLING)
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::notifyScrollingTreesDisplayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h: Missing ENABLE(ASYNC_SCROLLING)
+        * WebProcess/WebPage/glib/WebPageGLib.cpp: Missing
+          ENABLE(AUTOCAPITALIZE)
+        (WebKit::inputMethodSateForElement):
+
 2022-02-15  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add access to mach service in the Networking process for all users

@@ -147,8 +147,9 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
     ASSERT(!url.isNull());
 
     String domain = url.host().toString();
-    String baseDomain = topPrivatelyControlledDomain(domain);
     UserAgentQuirks quirks;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String baseDomain = topPrivatelyControlledDomain(domain);
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
@@ -157,6 +158,10 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresMacintoshPlatform(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+#else
+    if (urlRequiresFirefoxBrowser(domain))
+        quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
+#endif
 
     if (urlRequiresUnbrandedUserAgent(domain))
         quirks.add(UserAgentQuirks::NeedsUnbrandedUserAgent);

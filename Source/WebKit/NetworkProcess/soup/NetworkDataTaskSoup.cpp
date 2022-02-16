@@ -1568,9 +1568,14 @@ bool NetworkDataTaskSoup::shouldAllowHSTSPolicySetting() const
 {
     // Follow Apple's HSTS abuse mitigation 1:
     //  "Limit HSTS State to the Hostname, or the Top Level Domain + 1"
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     return isTopLevelNavigation()
         || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host()
         || isPublicSuffix(m_currentRequest.url().host().toStringWithoutCopying());
+#else
+    return isTopLevelNavigation()
+        || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host();
+#endif
 }
 
 bool NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade() const

@@ -705,7 +705,9 @@ static void webkitWebViewBaseDispose(GObject* gobject)
     webView->priv->inputMethodFilter.setContext(nullptr);
     webView->priv->pageProxy->close();
     webView->priv->acceleratedBackingStore = nullptr;
+#if ENABLE(FULLSCREEN_API)
     webView->priv->sleepDisabler = nullptr;
+#endif
     webView->priv->keyBindingTranslator.invalidate();
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }

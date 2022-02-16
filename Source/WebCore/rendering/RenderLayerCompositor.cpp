@@ -608,7 +608,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         SetForScope<bool> flushingLayersScope(m_flushingLayers, true);
 
         if (auto* rootLayer = rootGraphicsLayer()) {
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
             LayerTreeHitTestLocker layerLocker(scrollingCoordinator());
 #endif
             FloatRect visibleRect = visibleRectForLayerFlushing();

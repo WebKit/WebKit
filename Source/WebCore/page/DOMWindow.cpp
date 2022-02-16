@@ -111,7 +111,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SuddenTermination.h"
-#include <wtf/URL.h>
+#include "UserContentProvider.h"
 #include "UserGestureIndicator.h"
 #include "VisualViewport.h"
 #include "WebKitPoint.h"
@@ -130,6 +130,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
