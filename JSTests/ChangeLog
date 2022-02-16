@@ -1,3 +1,13 @@
+2022-02-16  Geza Lore  <glore@igalia.com>
+
+        [JSC][32-bit] Fix and re-enable flaky test
+        https://bugs.webkit.org/show_bug.cgi?id=181227
+
+        Reviewed by Adrian Perez de Castro.
+
+        * stress/new-largeish-contiguous-array-with-size.js:
+        Re-enable on ARMv7, re-enable and increase leniency on MIPS.
+
 2022-02-15  Mark Lam  <mark.lam@apple.com>
 
         Defer TerminationsExceptions while in operationMaterializeObjectInOSR.

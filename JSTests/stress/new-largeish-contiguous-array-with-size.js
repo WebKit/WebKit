@@ -1,7 +1,19 @@
 // We only need one run of this with any GC or JIT strategy. This test is not particularly fast.
 // Unfortunately, it needs to run for a while to test the thing it's testing.
-//@ if $architecture =~ /(^arm$)|mips/ then skip else runWithRAMSize(10000000) end
+//@ runWithRAMSize(10000000)
+//@ requireOptions("-e", "let leakFactor=3") if $architecture == "mips"
 //@ slow!
+
+// Note: Due to the conservative stack scanning, it is possible that arbitrary
+// values on a thread stack allocated between thread startup and entering the
+// user defined thread entry point alias heap cells (objects), which can
+// therefore never be collected. Currently this manifests on some of the MIPS
+// test targets, with the main thread, where cruft on the main thread stack
+// allocated by the OS and crt0 during process startup aliases some of the
+// Arrays allocated in the loop. This would then cause the final check on the
+// post GC heap size to fail, as some of the arrays cannot be collected, so ...
+// increasing leniency on platforms where this manifests.
+var leakFactor = typeof(leakFactor) === 'undefined' ? 1 : leakFactor;
 
 function foo(x) {
     return new Array(x);
@@ -43,5 +55,5 @@ if (result > 10000000)
 // Do a final check after GC, just for sanity.
 gc();
 result = gcHeapSize();
-if (result > 1000000)
+if (result > 1000000*leakFactor)
     throw "Error: heap too big after forced GC: " + result;
