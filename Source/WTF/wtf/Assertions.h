@@ -494,7 +494,10 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, ...) WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__)
+#define LOG(channel, ...) do { \
+        if (LOG_CHANNEL(channel).state != logChannelStateOff) \
+            WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__); \
+    } while (0)
 #endif
 
 /* LOG_VERBOSE */
@@ -502,7 +505,10 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG_VERBOSE(channel, ...) ((void)0)
 #else
-#define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LOG_CHANNEL(channel), __VA_ARGS__)
+#define LOG_VERBOSE(channel, ...) do { \
+        if (LOG_CHANNEL(channel).state != logChannelStateOff) \
+            WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LOG_CHANNEL(channel), __VA_ARGS__); \
+    } while (0)
 #endif
 
 /* LOG_WITH_LEVEL */
@@ -510,7 +516,10 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG_WITH_LEVEL(channel, level, ...) ((void)0)
 #else
-#define LOG_WITH_LEVEL(channel, level, ...) WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__)
+#define LOG_WITH_LEVEL(channel, level, ...) do { \
+        if  (LOG_CHANNEL(channel).state != logChannelStateOff && channel->level >= (level)) \
+            WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__); \
+    } while (0)
 #endif
 
 /* LOG_WITH_STREAM */
@@ -519,7 +528,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define LOG_WITH_STREAM(channel, commands) ((void)0)
 #else
 #define LOG_WITH_STREAM(channel, commands) do { \
-        if (LOG_CHANNEL(channel).state == WTFLogChannelState::On) { \
+        if (LOG_CHANNEL(channel).state != logChannelStateOff) { \
             WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
             commands; \
             WTFLog(&LOG_CHANNEL(channel), "%s", stream.release().utf8().data()); \

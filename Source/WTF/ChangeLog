@@ -1,3 +1,21 @@
+2022-02-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Constructing untaken LOG(Channel, ...) arguments slow debug binaries down
+        https://bugs.webkit.org/show_bug.cgi?id=235562
+
+        Reviewed by Simon Fraser.
+
+        Speed up debug build binary LOG(Channel, ...) by checking the
+        channel (and level) before constructing the log arguments.
+        This is consistent with how RELEASE_LOG() works.
+
+        If the arguments are slow to create, call sites end up implementing
+        this at the call site and risk subtle bugs which make existing logging unreliable.
+
+        Fixes a bug with LOG_WITH_STREAM where ChannelState::OnWithAccumulation channels would not log.
+
+        * wtf/Assertions.h:
+
 2022-02-15  Chris Dumez  <cdumez@apple.com>
 
         Do preliminary work to pass domain names to CoreLocation
