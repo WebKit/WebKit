@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     Exposed=AudioWorklet,
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,

@@ -27,6 +27,7 @@
 // FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL,
+    EnabledBySetting=WebGLEnabled,
     Exposed=Window
 ] interface WebGLShaderPrecisionFormat {
     readonly attribute long rangeMin;
