@@ -2915,7 +2915,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
                 self.setCommand(self.command + ['--skipped=always'] + list_failed_tests_with_patch)
 
 
-class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
+class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     name = 'analyze-layout-tests-results'
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
@@ -3030,11 +3030,36 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
     def send_email_for_new_test_failures(self, test_names, exceed_failure_limit=False):
         try:
             patch_id = self.getProperty('patch_id', '')
-            if not self.should_send_email_for_patch(patch_id):
+            pr_number = self.getProperty('github.number', '')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+
+            if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
+            if pr_number and not self.should_send_email_for_pr(pr_number):
+                return
+            if not patch_id and not (pr_number and sha):
+                self._addToLog('Unrecognized change type')
+                return
+
+            change_string = None
+            change_author = None
+            if patch_id:
+                change_author = self.getProperty('patch_author', '')
+                change_string = 'Patch {}'.format(patch_id)
+            elif pr_number and sha:
+                change_string = 'Hash {}'.format(sha)
+                change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+                for error in errors:
+                    print(error)
+                    self._addToLog('stdio', error)
+
+            if not change_author:
+                self._addToLog('Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                return
+
             builder_name = self.getProperty('buildername', '')
-            bug_id = self.getProperty('bug_id', '')
-            bug_title = self.getProperty('bug_title', '')
+            issue_id = self.getProperty('bug_id', '') or pr_number
+            title = self.getProperty('bug_title', '') or self.getProperty('github.title', '')
             worker_name = self.getProperty('workername', '')
             patch_author = self.getProperty('patch_author', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
@@ -3044,17 +3069,23 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
-            email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
+            email_subject = 'Layout test failure for {}: {}'.format(change_string, title)
             email_text = 'EWS has detected layout test failure{} on {}'.format(pluralSuffix, builder_name)
-            email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
-            email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
-            email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
+            if patch_id:
+                email_text += ' while testing <a href="{}">{}</a>'.format(Bugzilla.patch_url(patch_id), change_string)
+                email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
+            else:
+                repository = self.getProperty('repository')
+                email_text += ' while testing <a href="{}">{}</a>'.format(GitHub.commit_url(sha, repository), change_string)
+                email_text += ' for <a href="{}">PR #{}</a>.'.format(GitHub.pr_url(pr_number, repository), pr_number)
+            email_text += '\n\nFull details are available at: {}\n\nChange author: {}'.format(build_url, change_author)
+
             if exceed_failure_limit:
                 email_text += '\n\nAditionally the failure limit has been exceeded, so the test suite has been terminated early. It is likely that there would be more failures than the ones listed below.'
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
-            send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
+            self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
+            send_email_to_patch_author(change_author, email_subject, email_text, patch_id or self.getProperty('github.head.sha', ''))
         except Exception as e:
             print('Error in sending email for new layout test failures: {}'.format(e))
 
