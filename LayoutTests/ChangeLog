@@ -1,3 +1,14 @@
+2022-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Add a dedicated ENABLE flag for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=236652
+
+        Reviewed by Eric Carlson.
+
+        * platform/glib/TestExpectations: Skip MediaRecorder test, GLib ports don't enable this
+        feature yet. This test used to pass because MediaRecorder used to be under MediaStream and
+        there is a mock Recorder implementation.
+
 2022-02-16  Alexey Shvayka  <ashvayka@apple.com>
 
         REGRESSION(r287293): EventListener::wasCreatedFromMarkup() is incorrect after replaceJSFunctionForAttributeListener()

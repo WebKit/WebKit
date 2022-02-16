@@ -30,7 +30,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 namespace WTF {
 class MediaTime;
@@ -137,4 +137,4 @@ inline MediaRecorderPrivate::~MediaRecorderPrivate()
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

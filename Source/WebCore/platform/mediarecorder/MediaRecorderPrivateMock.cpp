@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivateMock.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "MediaStreamTrackPrivate.h"
 #include "SharedBuffer.h"
@@ -115,4 +115,4 @@ const String& MediaRecorderPrivateMock::mimeType() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

@@ -801,7 +801,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
-    [Conditional=MEDIA_STREAM] undefined setCustomPrivateRecorderCreator();
+    [Conditional=MEDIA_RECORDER] undefined setCustomPrivateRecorderCreator();
 
     [Conditional=WEB_AUDIO] undefined useMockAudioDestinationCocoa();
 

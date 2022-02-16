@@ -25,7 +25,7 @@
 #include "config.h"
 #include "AudioSampleBufferCompressor.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #include "Logging.h"
 #include <AudioToolbox/AudioCodec.h>
@@ -540,4 +540,4 @@ unsigned AudioSampleBufferCompressor::bitRate() const
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

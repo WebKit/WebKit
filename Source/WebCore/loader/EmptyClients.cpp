@@ -1172,7 +1172,7 @@ class EmptyMediaRecorderProvider final : public MediaRecorderProvider {
 public:
     EmptyMediaRecorderProvider() = default;
 private:
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(MEDIA_RECORDER)
     std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&) final { return nullptr; }
 #endif
 };

@@ -27,7 +27,7 @@ dictionary MediaRecorderErrorEventInit : EventInit {
 };
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=MEDIA_RECORDER,
     Exposed=Window,
     EnabledBySetting=MediaRecorderEnabled
 ] interface MediaRecorderErrorEvent : Event {

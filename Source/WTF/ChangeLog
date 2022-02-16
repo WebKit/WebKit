@@ -1,3 +1,16 @@
+2022-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Add a dedicated ENABLE flag for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=236652
+
+        Reviewed by Eric Carlson.
+
+        ENABLE(MEDIA_RECORDER) depends on ENABLE(MEDIA_STREAM) and is enabled only for COCOA
+        platforms. Suggested by Eric Carlson.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteVideoFrameProxy is missing reference field encode, decode

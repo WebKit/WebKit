@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #import <CoreMedia/CoreMedia.h>
 #import <wtf/WorkQueue.h>
@@ -95,4 +95,4 @@ private:
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

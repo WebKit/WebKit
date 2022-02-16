@@ -1648,6 +1648,7 @@ http/tests/media/now-playing-info.html [ Skip ]
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit.html [ Pass ]
 

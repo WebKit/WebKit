@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorder.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "Blob.h"
 #include "BlobEvent.h"
@@ -410,4 +410,4 @@ void MediaRecorder::computeBitRates(const MediaStreamPrivate* stream)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

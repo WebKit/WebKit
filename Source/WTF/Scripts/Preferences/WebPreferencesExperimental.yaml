@@ -856,7 +856,7 @@ MediaRecorderEnabled:
   type: bool
   humanReadableName: "MediaRecorder"
   humanReadableDescription: "MediaRecorder"
-  condition: ENABLE(MEDIA_STREAM)
+  condition: ENABLE(MEDIA_RECORDER)
   defaultValue:
     WebKitLegacy:
       default: false

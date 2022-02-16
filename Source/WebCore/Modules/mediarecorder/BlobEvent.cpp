@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BlobEvent.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "Blob.h"
 #include <wtf/IsoMallocInlines.h>
@@ -54,4 +54,4 @@ EventInterface BlobEvent::eventInterface() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)
