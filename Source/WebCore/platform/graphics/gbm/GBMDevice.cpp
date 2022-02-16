@@ -55,9 +55,31 @@ const GBMDevice& GBMDevice::get()
 
 GBMDevice::GBMDevice()
 {
-    int fd = getDeviceFd();
-    if (fd >= 0)
-        m_device = gbm_create_device(fd);
+    static int s_globalFd { -1 };
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [] {
+        drmDevicePtr devices[64];
+        memset(devices, 0, sizeof(devices));
+
+        int numDevices = drmGetDevices2(0, devices, WTF_ARRAY_LENGTH(devices));
+        if (numDevices <= 0)
+            return;
+
+        for (int i = 0; i < numDevices; ++i) {
+            drmDevice* device = devices[i];
+            if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
+                continue;
+
+            s_globalFd = open(device->nodes[DRM_NODE_RENDER], O_RDWR | O_CLOEXEC);
+            if (s_globalFd >= 0)
+                break;
+        }
+
+        drmFreeDevices(devices, numDevices);
+    });
+
+    if (s_globalFd >= 0)
+        m_device = gbm_create_device(s_globalFd);
 }
 
 GBMDevice::~GBMDevice()
@@ -66,29 +88,6 @@ GBMDevice::~GBMDevice()
         gbm_device_destroy(m_device);
         m_device = nullptr;
     }
-}
-
-int GBMDevice::getDeviceFd()
-{
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, WTF_ARRAY_LENGTH(devices));
-    if (numDevices <=0)
-        return -1;
-
-    int fd = -1;
-    for (int i = 0; i < numDevices; ++i) {
-        drmDevice* device = devices[i];
-        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY)))
-            continue;
-
-        fd = open(device->nodes[DRM_NODE_PRIMARY], O_RDWR);
-        if (fd < 0)
-            continue;
-    }
-
-    return fd;
 }
 
 } // namespace WebCore
