@@ -26,74 +26,37 @@
 #ifndef WEBGPUEXT_H_
 #define WEBGPUEXT_H_
 
-typedef enum WGPUSTypeExtended {
-    WGPUSType_DeviceDescriptorLabel = 0x242A99E0, // Random
-} WGPUSTypeExtended;
-
-typedef enum WGPUTextureFormatExtended {
-    WGPUTextureFormat_ETC2RGB8Unorm = 0x28C25C67, // Random
-    WGPUTextureFormat_ETC2RGB8unormSrgb = 0x566AAFEE, // Random
-    WGPUTextureFormat_ETC2RGB8a1Unorm = 0x2F794348, // Random
-    WGPUTextureFormat_ETC2RGB8a1unormSrgb = 0x5EF38ABA, // Random
-    WGPUTextureFormat_ETC2RGBA8Unorm = 0x5A4E6480, // Random
-    WGPUTextureFormat_ETC2RGBA8UnormSrgb = 0x780968EB, // Random
-    WGPUTextureFormat_EACR11Unorm = 0x69863090, // Random
-    WGPUTextureFormat_EACR11Snorm = 0x25E5428A, // Random
-    WGPUTextureFormat_EACRG11Unorm = 0x1B0969B3, // Random
-    WGPUTextureFormat_EACRG11Snorm = 0x16F4BB6D, // Random
-
-    WGPUTextureFormat_ASTC4x4Unorm = 0x39F60F6E, // Random
-    WGPUTextureFormat_ASTC4x4UnormSrgb = 0x24472700, // Random
-    WGPUTextureFormat_ASTC5x4Unorm = 0x67D32B0E, // Random
-    WGPUTextureFormat_ASTC5x4UnormSrgb = 0x313DA1BE, // Random
-    WGPUTextureFormat_ASTC5x5Unorm = 0x15AB8DFD, // Random
-    WGPUTextureFormat_ASTC5x5UnormSrgb = 0x7B00EB57, // Random
-    WGPUTextureFormat_ASTC6x5Unorm = 0x653E80C3, // Random
-    WGPUTextureFormat_ASTC6x5UnormSrgb = 0x50AE869A, // Random
-    WGPUTextureFormat_ASTC6x6Unorm = 0x579AF598, // Random
-    WGPUTextureFormat_ASTC6x6UnormSrgb = 0x73B69732, // Random
-    WGPUTextureFormat_ASTC8x5Unorm = 0x06F70308, // Random
-    WGPUTextureFormat_ASTC8x5UnormSrgb = 0x420EA946, // Random
-    WGPUTextureFormat_ASTC8x6Unorm = 0x61086AC8, // Random
-    WGPUTextureFormat_ASTC8x6UnormSrgb = 0x0E17D39A, // Random
-    WGPUTextureFormat_ASTC8x8Unorm = 0x569BF2E8, // Random
-    WGPUTextureFormat_ASTC8x8UnormSrgb = 0x572A4849, // Random
-    WGPUTextureFormat_ASTC10x5Unorm = 0x63ABE432, // Random
-    WGPUTextureFormat_ASTC10x5UnormSrgb = 0x3BC3AA4C, // Random
-    WGPUTextureFormat_ASTC10x6Unorm = 0x6FE19499, // Random
-    WGPUTextureFormat_ASTC10x6UnormSrgb = 0x7FF0B5C0, // Random
-    WGPUTextureFormat_ASTC10x8Unorm = 0x2015F4C3, // Random
-    WGPUTextureFormat_ASTC10x8UnormSrgb = 0x7D51DC6F, // Random
-    WGPUTextureFormat_ASTC10x10Unorm = 0x67F10173, // Random
-    WGPUTextureFormat_ASTC10x10UnormSrgb = 0x35D74D21, // Random
-    WGPUTextureFormat_ASTC12x10Unorm = 0x09DAD0A7, // Random
-    WGPUTextureFormat_ASTC12x10UnormSrgb = 0x3560C93A, // Random
-    WGPUTextureFormat_ASTC12x12Unorm = 0x26CC3050, // Random
-    WGPUTextureFormat_ASTC12x12UnormSrgb = 0x3EF578A0, // Random
-
-    WGPUTextureFormat_Depth32FloatStencil8 = 0x53DC2307, // Random
-} WGPUTextureFormatExtended;
-
-typedef enum WGPUFeatureNameExtended {
-    WGPUFeatureName_DepthClipControl = 0x55ABC13D, // Random
-    WGPUFeatureName_IndirectFirstInstance = 0x2A7084F5, // Random
-    WGPUFeatureName_TextureCompressionETC2 = 0x7BF66F69, // Random
-    WGPUFeatureName_TextureCompressionASTC = 0x26173399, // Random
-} WGPUFeatureNameExtended;
-
-typedef enum WGPUPowerPreferenceExtended {
-    WGPUPowerPreference_NoPreference = 0x4748336F,
-} WGPUPowerPreferenceExtended;
-
-typedef struct WGPUDeviceDescriptorLabel {
-    WGPUChainedStruct header;
-    WGPUChainedStruct const * nextInChain;
-    char const * label;
-} WGPUDeviceDescriptorLabel;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef enum WGPUSTypeExtended {
+    WGPUSTypeExtended_ShaderModuleDescriptorHints = 0x348970F3, // Random
+    WGPUSTypeExtended_TextureDescriptorViewFormats = 0x1D5BC57, // Random
+    WGPUSTypeExtended_Force32 = 0x7FFFFFFF
+} WGPUSTypeExtended;
+
+typedef struct WGPUShaderModuleCompilationHint {
+    WGPUPipelineLayout layout;
+} WGPUShaderModuleCompilationHint;
+
+typedef struct WGPUShaderModuleCompilationHintEntry {
+    WGPUChainedStruct const * nextInChain;
+    char const * key;
+    WGPUShaderModuleCompilationHint hint;
+} WGPUShaderModuleCompilationHintEntry;
+
+typedef struct WGPUShaderModuleDescriptorHints {
+    WGPUChainedStruct chain;
+    uint32_t hintsCount;
+    WGPUShaderModuleCompilationHintEntry const * hints;
+} WGPUShaderModuleDescriptorHints;
+
+typedef struct WGPUTextureDescriptorViewFormats {
+    WGPUChainedStruct chain;
+    uint32_t viewFormatsCount;
+    WGPUTextureFormat const * viewFormats;
+} WGPUTextureDescriptorViewFormats;
 
 #if !defined(WGPU_SKIP_PROCS)
 
@@ -137,10 +100,6 @@ typedef void (*WGPUProcRenderPassEncoderSetLabel)(WGPURenderPassEncoder renderBu
 typedef void (*WGPUProcSamplerSetLabel)(WGPUSampler sampler, char const * label);
 typedef void (*WGPUProcTextureSetLabel)(WGPUTexture sampler, char const * label);
 typedef void (*WGPUProcTextureViewSetLabel)(WGPUTextureView sampler, char const * label);
-
-typedef WGPUFeatureName (*WGPUProcAdapterGetFeatureAtIndex)(WGPUAdapter adapter, size_t index);
-
-typedef void (*WGPUProcCommandEncoderFillBuffer)(WGPUCommandEncoder commandEncoder, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size);
 
 #endif  // !defined(WGPU_SKIP_PROCS)
 
@@ -186,10 +145,6 @@ WGPU_EXPORT void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderBundl
 WGPU_EXPORT void wgpuSamplerSetLabel(WGPUSampler sampler, char const * label);
 WGPU_EXPORT void wgpuTextureSetLabel(WGPUTexture sampler, char const * label);
 WGPU_EXPORT void wgpuTextureViewSetLabel(WGPUTextureView sampler, char const * label);
-
-WGPU_EXPORT WGPUFeatureName wgpuAdapterGetFeatureAtIndex(WGPUAdapter adapter, size_t index);
-
-WGPU_EXPORT void wgpuCommandEncoderFillBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size);
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

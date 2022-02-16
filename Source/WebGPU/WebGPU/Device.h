@@ -75,8 +75,10 @@ public:
     Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor*);
     Ref<Texture> createTexture(const WGPUTextureDescriptor*);
     void destroy();
+    size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits*);
     Ref<Queue> getQueue();
+    bool hasFeature(WGPUFeatureName);
     bool popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
     void setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&&);

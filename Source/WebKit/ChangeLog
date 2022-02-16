@@ -1,3 +1,124 @@
+2022-02-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update IDLs and stubs to latest version of the spec
+        https://bugs.webkit.org/show_bug.cgi?id=236639
+
+        Reviewed by Dean Jackson.
+
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.cpp:
+        (WebKit::RemoteBuffer::mapAsync):
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.messages.in:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp:
+        (WebKit::RemoteCommandEncoder::clearBuffer):
+        (WebKit::RemoteCommandEncoder::fillBuffer): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.messages.in:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp:
+        (WebKit::RemoteComputePassEncoder::dispatch):
+        (WebKit::RemoteComputePassEncoder::end):
+        (WebKit::RemoteComputePassEncoder::beginPipelineStatisticsQuery): Deleted.
+        (WebKit::RemoteComputePassEncoder::endPipelineStatisticsQuery): Deleted.
+        (WebKit::RemoteComputePassEncoder::endPass): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.messages.in:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp:
+        (WebKit::RemoteRenderPassEncoder::end):
+        (WebKit::RemoteRenderPassEncoder::beginPipelineStatisticsQuery): Deleted.
+        (WebKit::RemoteRenderPassEncoder::endPipelineStatisticsQuery): Deleted.
+        (WebKit::RemoteRenderPassEncoder::endPass): Deleted.
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.messages.in:
+        * Shared/WebGPU/WebGPUCanvasConfiguration.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUCanvasConfiguration.h:
+        (WebKit::WebGPU::CanvasConfiguration::encode const):
+        (WebKit::WebGPU::CanvasConfiguration::decode):
+        * Shared/WebGPU/WebGPUConvertFromBackingContext.h:
+        * Shared/WebGPU/WebGPUConvertToBackingContext.h:
+        * Shared/WebGPU/WebGPUFragmentState.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUFragmentState.h:
+        (WebKit::WebGPU::FragmentState::decode):
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUImageCopyExternalImage.h:
+        (WebKit::WebGPU::ImageCopyExternalImage::encode const):
+        (WebKit::WebGPU::ImageCopyExternalImage::decode):
+        * Shared/WebGPU/WebGPUImageCopyTexture.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUQuerySetDescriptor.h:
+        (WebKit::WebGPU::QuerySetDescriptor::encode const):
+        (WebKit::WebGPU::QuerySetDescriptor::decode):
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassColorAttachment.h:
+        (WebKit::WebGPU::RenderPassColorAttachment::encode const):
+        (WebKit::WebGPU::RenderPassColorAttachment::decode):
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        (WebKit::WebGPU::RenderPassDepthStencilAttachment::encode const):
+        (WebKit::WebGPU::RenderPassDepthStencilAttachment::decode):
+        * Shared/WebGPU/WebGPURenderPassDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPURenderPassDescriptor.h:
+        (WebKit::WebGPU::RenderPassDescriptor::decode):
+        * Shared/WebGPU/WebGPURenderPassLayout.h:
+        (WebKit::WebGPU::RenderPassLayout::decode):
+        * Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp: Copied from Source/WebKit/Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp.
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUShaderModuleCompilationHint.h: Copied from Source/WebKit/Shared/WebGPU/WebGPUImageCopyExternalImage.h.
+        (WebKit::WebGPU::ShaderModuleCompilationHint::encode const):
+        (WebKit::WebGPU::ShaderModuleCompilationHint::decode):
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUShaderModuleDescriptor.h:
+        (WebKit::WebGPU::ShaderModuleDescriptor::encode const):
+        (WebKit::WebGPU::ShaderModuleDescriptor::decode):
+        * Shared/WebGPU/WebGPUTextureDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUTextureDescriptor.h:
+        (WebKit::WebGPU::TextureDescriptor::encode const):
+        (WebKit::WebGPU::TextureDescriptor::decode):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp:
+        (WebKit::WebGPU::RemoteBufferProxy::mapAsync):
+        (WebKit::WebGPU::RemoteBufferProxy::getMappedRange):
+        * WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::clearBuffer):
+        (WebKit::WebGPU::RemoteCommandEncoderProxy::fillBuffer): Deleted.
+        * WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::dispatch):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::end):
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::beginPipelineStatisticsQuery): Deleted.
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPipelineStatisticsQuery): Deleted.
+        (WebKit::WebGPU::RemoteComputePassEncoderProxy::endPass): Deleted.
+        * WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp:
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::end):
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::beginPipelineStatisticsQuery): Deleted.
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPipelineStatisticsQuery): Deleted.
+        (WebKit::WebGPU::RemoteRenderPassEncoderProxy::endPass): Deleted.
+        * WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.h:
+
 2022-02-16  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Route the call to ImageBuffer::drawPattern() through GraphicsContext

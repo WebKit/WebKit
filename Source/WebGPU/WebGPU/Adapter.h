@@ -45,10 +45,10 @@ public:
 
     ~Adapter();
 
+    size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits*);
     void getProperties(WGPUAdapterProperties*);
     bool hasFeature(WGPUFeatureName);
-    WGPUFeatureName getFeatureAtIndex(size_t);
     void requestDevice(const WGPUDeviceDescriptor*, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback);
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,12 +48,12 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64>, WTF::Function<void()>&&) = 0;
+    virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, WTF::Function<void()>&&) = 0;
     struct MappedRange {
         void* source { nullptr };
         size_t byteLength { 0 };
     };
-    virtual MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) = 0;
+    virtual MappedRange getMappedRange(Size64 offset, std::optional<Size64>) = 0;
     virtual void unmap() = 0;
 
     virtual void destroy() = 0;

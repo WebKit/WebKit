@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -86,6 +86,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUCommandBufferDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUCommandEncoder.idl \
     $(WebCore)/Modules/WebGPU/GPUCommandEncoderDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUCommandsMixin.idl \
     $(WebCore)/Modules/WebGPU/GPUCompareFunction.idl \
     $(WebCore)/Modules/WebGPU/GPUCompilationInfo.idl \
     $(WebCore)/Modules/WebGPU/GPUCompilationMessage.idl \
@@ -97,6 +98,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUCullMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUDebugCommandsMixin.idl \
     $(WebCore)/Modules/WebGPU/GPUDepthStencilState.idl \
     $(WebCore)/Modules/WebGPU/GPUDevice.idl \
     $(WebCore)/Modules/WebGPU/GPUDeviceDescriptor.idl \
@@ -132,7 +134,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl \
-    $(WebCore)/Modules/WebGPU/GPUPipelineStatisticName.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
     $(WebCore)/Modules/WebGPU/GPUPredefinedColorSpace.idl \
     $(WebCore)/Modules/WebGPU/GPUPrimitiveState.idl \
@@ -163,6 +164,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUSamplerBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUSamplerDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUShaderModule.idl \
+    $(WebCore)/Modules/WebGPU/GPUShaderModuleCompilationHint.idl \
     $(WebCore)/Modules/WebGPU/GPUShaderModuleDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUShaderStage.idl \
     $(WebCore)/Modules/WebGPU/GPUStencilFaceState.idl \

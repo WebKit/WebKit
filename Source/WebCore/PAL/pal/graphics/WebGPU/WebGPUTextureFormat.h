@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,12 +78,18 @@ enum class TextureFormat : uint8_t {
     Rgba32sint,
     Rgba32float,
 
-    // Depth and stencil formats
+    // Depth/stencil formats
     Stencil8,
     Depth16unorm,
     Depth24plus,
     Depth24plusStencil8,
     Depth32float,
+
+    // depth24unorm-stencil8 feature
+    Depth24unormStencil8,
+
+    // depth32float-stencil8 feature
+    Depth32floatStencil8,
 
     // BC compressed formats usable if texture-compression-bc is both
     // supported by the device/user agent and enabled in requestDevice.
@@ -145,12 +151,6 @@ enum class TextureFormat : uint8_t {
     Astc12x10UnormSRGB,
     Astc12x12Unorm,
     Astc12x12UnormSRGB,
-
-    // depth24unorm-stencil8 feature
-    Depth24unormStencil8,
-
-    // depth32float-stencil8 feature
-    Depth32floatStencil8,
 };
 
 } // namespace PAL::WebGPU
@@ -201,6 +201,8 @@ template<> struct EnumTraits<PAL::WebGPU::TextureFormat> {
         PAL::WebGPU::TextureFormat::Depth24plus,
         PAL::WebGPU::TextureFormat::Depth24plusStencil8,
         PAL::WebGPU::TextureFormat::Depth32float,
+        PAL::WebGPU::TextureFormat::Depth24unormStencil8,
+        PAL::WebGPU::TextureFormat::Depth32floatStencil8,
         PAL::WebGPU::TextureFormat::Bc1RgbaUnorm,
         PAL::WebGPU::TextureFormat::Bc1RgbaUnormSRGB,
         PAL::WebGPU::TextureFormat::Bc2RgbaUnorm,
@@ -252,9 +254,7 @@ template<> struct EnumTraits<PAL::WebGPU::TextureFormat> {
         PAL::WebGPU::TextureFormat::Astc12x10Unorm,
         PAL::WebGPU::TextureFormat::Astc12x10UnormSRGB,
         PAL::WebGPU::TextureFormat::Astc12x12Unorm,
-        PAL::WebGPU::TextureFormat::Astc12x12UnormSRGB,
-        PAL::WebGPU::TextureFormat::Depth24unormStencil8,
-        PAL::WebGPU::TextureFormat::Depth32floatStencil8
+        PAL::WebGPU::TextureFormat::Astc12x12UnormSRGB
     >;
 };
 

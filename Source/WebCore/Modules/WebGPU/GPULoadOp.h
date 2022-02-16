@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ namespace WebCore {
 
 enum class GPULoadOp : uint8_t {
     Load,
+    Clear,
 };
 
 inline PAL::WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)
@@ -39,6 +40,8 @@ inline PAL::WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)
     switch (loadOp) {
     case GPULoadOp::Load:
         return PAL::WebGPU::LoadOp::Load;
+    case GPULoadOp::Clear:
+        return PAL::WebGPU::LoadOp::Clear;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

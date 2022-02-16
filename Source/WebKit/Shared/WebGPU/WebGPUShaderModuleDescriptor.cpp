@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,16 @@ std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), shaderModuleDescriptor.code } };
+    Vector<KeyValuePair<String, ShaderModuleCompilationHint>> hints;
+    hints.reserveInitialCapacity(shaderModuleDescriptor.hints.size());
+    for (const auto& hint : shaderModuleDescriptor.hints) {
+        auto value = convertToBacking(hint.value);
+        if (!value)
+            return std::nullopt;
+        hints.uncheckedAppend(makeKeyValuePair(hint.key, WTFMove(*value)));
+    }
+
+    return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
 }
 
 std::optional<PAL::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext::convertFromBacking(const ShaderModuleDescriptor& shaderModuleDescriptor)
@@ -49,7 +58,16 @@ std::optional<PAL::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext::co
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), shaderModuleDescriptor.code } };
+    Vector<KeyValuePair<String, PAL::WebGPU::ShaderModuleCompilationHint>> hints;
+    hints.reserveInitialCapacity(shaderModuleDescriptor.hints.size());
+    for (const auto& hint : shaderModuleDescriptor.hints) {
+        auto value = convertFromBacking(hint.value);
+        if (!value)
+            return std::nullopt;
+        hints.uncheckedAppend(makeKeyValuePair(hint.key, WTFMove(*value)));
+    }
+
+    return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
 }
 
 } // namespace WebKit

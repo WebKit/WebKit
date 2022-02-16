@@ -71,7 +71,6 @@ public:
     void setStencilReference(uint32_t);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
-    void writeTimestamp(const QuerySet&, uint32_t queryIndex);
     void setLabel(const char*);
 
 private:

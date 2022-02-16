@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,8 +82,8 @@ private:
         PAL::WebGPU::Size64 bufferOffset,
         const void* source,
         size_t byteLength,
-        PAL::WebGPU::Size64 dataOffset,
-        std::optional<PAL::WebGPU::Size64>) final;
+        PAL::WebGPU::Size64 dataOffset = 0,
+        std::optional<PAL::WebGPU::Size64> = std::nullopt) final;
 
     void writeTexture(
         const PAL::WebGPU::ImageCopyTexture& destination,

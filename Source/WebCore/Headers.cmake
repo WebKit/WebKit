@@ -71,7 +71,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUPipelineDescriptorBase.h
     Modules/WebGPU/GPUPipelineLayout.h
     Modules/WebGPU/GPUPipelineLayoutDescriptor.h
-    Modules/WebGPU/GPUPipelineStatisticName.h
     Modules/WebGPU/GPUPowerPreference.h
     Modules/WebGPU/GPUPredefinedColorSpace.h
     Modules/WebGPU/GPUPrimitiveState.h
@@ -100,6 +99,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUSamplerBindingType.h
     Modules/WebGPU/GPUSamplerDescriptor.h
     Modules/WebGPU/GPUShaderModule.h
+    Modules/WebGPU/GPUShaderModuleCompilationHint.h
     Modules/WebGPU/GPUShaderModuleDescriptor.h
     Modules/WebGPU/GPUShaderStage.h
     Modules/WebGPU/GPUStencilFaceState.h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@ class CommandBuffer;
 class CommandEncoder;
 enum class CompareFunction : uint8_t;
 enum class CompilationMessageType : uint8_t;
+enum class ComputePassTimestampLocation : uint8_t;
 class ComputePassEncoder;
 class ComputePipeline;
 enum class CullMode : uint8_t;
@@ -66,7 +67,6 @@ class GPU;
 enum class IndexFormat : uint8_t;
 enum class LoadOp : uint8_t;
 class PipelineLayout;
-enum class PipelineStatisticName : uint8_t;
 enum class PowerPreference : uint8_t;
 enum class PrimitiveTopology : uint8_t;
 class QuerySet;
@@ -75,6 +75,7 @@ class Queue;
 class RenderBundleEncoder;
 class RenderBundle;
 class RenderPassEncoder;
+enum class RenderPassTimestampLocation : uint8_t;
 class RenderPipeline;
 class Sampler;
 enum class SamplerBindingType : uint8_t;
@@ -103,6 +104,7 @@ public:
     WGPUBufferBindingType convertToBacking(BufferBindingType);
     WGPUCompareFunction convertToBacking(CompareFunction);
     WGPUCompilationMessageType convertToBacking(CompilationMessageType);
+    WGPUComputePassTimestampLocation convertToBacking(ComputePassTimestampLocation);
     WGPUCullMode convertToBacking(CullMode);
     WGPUErrorFilter convertToBacking(ErrorFilter);
     WGPUFeatureName convertToBacking(FeatureName);
@@ -110,10 +112,10 @@ public:
     WGPUFrontFace convertToBacking(FrontFace);
     WGPUIndexFormat convertToBacking(IndexFormat);
     WGPULoadOp convertToBacking(LoadOp);
-    WGPUPipelineStatisticName convertToBacking(PipelineStatisticName);
     WGPUPowerPreference convertToBacking(PowerPreference);
     WGPUPrimitiveTopology convertToBacking(PrimitiveTopology);
     WGPUQueryType convertToBacking(QueryType);
+    WGPURenderPassTimestampLocation convertToBacking(RenderPassTimestampLocation);
     WGPUSamplerBindingType convertToBacking(SamplerBindingType);
     WGPUStencilOperation convertToBacking(StencilOperation);
     WGPUStorageTextureAccess convertToBacking(StorageTextureAccess);

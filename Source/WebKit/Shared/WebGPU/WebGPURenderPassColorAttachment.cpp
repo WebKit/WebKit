@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,20 +47,14 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
             return std::nullopt;
     }
 
-    auto loadValue = WTF::switchOn(renderPassColorAttachment.loadValue, [] (PAL::WebGPU::LoadOp loadOp) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
-        return { { loadOp } };
-    }, [] (const Vector<double>& vector) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
-        return { { vector } };
-    }, [this] (const PAL::WebGPU::ColorDict& colorDict) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> {
-        auto backingColorDict = convertToBacking(colorDict);
-        if (!backingColorDict)
+    std::optional<Color> clearValue;
+    if (renderPassColorAttachment.clearValue) {
+        clearValue = convertToBacking(*renderPassColorAttachment.clearValue);
+        if (!clearValue)
             return std::nullopt;
-        return { { WTFMove(*backingColorDict) } };
-    });
-    if (!loadValue)
-        return std::nullopt;
+    }
 
-    return { { view, resolveTarget, WTFMove(*loadValue), renderPassColorAttachment.storeOp } };
+    return { { view, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
 std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
@@ -76,20 +70,14 @@ std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext:
             return std::nullopt;
     }
 
-    auto loadValue = WTF::switchOn(renderPassColorAttachment.loadValue, [] (PAL::WebGPU::LoadOp loadOp) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
-        return { { loadOp } };
-    }, [] (const Vector<double>& vector) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
-        return { { vector } };
-    }, [this] (const ColorDict& colorDict) -> std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict>> {
-        auto backingColorDict = convertFromBacking(colorDict);
-        if (!backingColorDict)
+    std::optional<PAL::WebGPU::Color> clearValue;
+    if (renderPassColorAttachment.clearValue) {
+        clearValue = convertFromBacking(*renderPassColorAttachment.clearValue);
+        if (!clearValue)
             return std::nullopt;
-        return { { WTFMove(*backingColorDict) } };
-    });
-    if (!loadValue)
-        return std::nullopt;
+    }
 
-    return { { *view, resolveTarget, WTFMove(*loadValue), renderPassColorAttachment.storeOp } };
+    return { { *view, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
 } // namespace WebKit

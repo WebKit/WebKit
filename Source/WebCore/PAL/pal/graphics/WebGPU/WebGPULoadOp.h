@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ namespace PAL::WebGPU {
 
 enum class LoadOp : uint8_t {
     Load,
+    Clear,
 };
 
 } // namespace PAL::WebGPU
@@ -41,7 +42,8 @@ namespace WTF {
 template<> struct EnumTraits<PAL::WebGPU::LoadOp> {
     using values = EnumValues<
         PAL::WebGPU::LoadOp,
-        PAL::WebGPU::LoadOp::Load
+        PAL::WebGPU::LoadOp::Load,
+        PAL::WebGPU::LoadOp::Clear
     >;
 };
 

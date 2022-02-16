@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,10 +104,10 @@ private:
         const WebGPU::ImageCopyTexture& destination,
         const WebGPU::Extent3D& copySize);
 
-    void fillBuffer(
-        WebGPUIdentifier destination,
-        PAL::WebGPU::Size64 destinationOffset,
-        PAL::WebGPU::Size64);
+    void clearBuffer(
+        WebGPUIdentifier buffer,
+        PAL::WebGPU::Size64 offset = 0,
+        std::optional<PAL::WebGPU::Size64> = std::nullopt);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();

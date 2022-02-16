@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    void mapAsync(PAL::WebGPU::MapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void mapAsync(PAL::WebGPU::MapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unmap(Vector<uint8_t>&&);
 
     void destroy();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUShaderModuleCompilationHint.h"
 
-#include <cstdint>
-#include <wtf/EnumTraits.h>
+#if ENABLE(GPU_PROCESS)
 
-namespace PAL::WebGPU {
+#include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
+#include <pal/graphics/WebGPU/WebGPUShaderModuleCompilationHint.h>
 
-enum class PipelineStatisticName : uint8_t {
-    VertexShaderInvocations,
-    ClipperInvocations,
-    ClipperPrimitivesOut,
-    FragmentShaderInvocations,
-    ComputeShaderInvocations,
-};
+namespace WebKit::WebGPU {
 
-} // namespace PAL::WebGPU
+std::optional<ShaderModuleCompilationHint> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ShaderModuleCompilationHint& shaderModuleCompilationHint)
+{
+    WebGPUIdentifier pipelineLayout = convertToBacking(shaderModuleCompilationHint.pipelineLayout);
+    if (!pipelineLayout)
+        return std::nullopt;
 
-namespace WTF {
+    return { { pipelineLayout } };
+}
 
-template<> struct EnumTraits<PAL::WebGPU::PipelineStatisticName> {
-    using values = EnumValues<
-        PAL::WebGPU::PipelineStatisticName,
-        PAL::WebGPU::PipelineStatisticName::VertexShaderInvocations,
-        PAL::WebGPU::PipelineStatisticName::ClipperInvocations,
-        PAL::WebGPU::PipelineStatisticName::ClipperPrimitivesOut,
-        PAL::WebGPU::PipelineStatisticName::FragmentShaderInvocations,
-        PAL::WebGPU::PipelineStatisticName::ComputeShaderInvocations
-    >;
-};
+std::optional<PAL::WebGPU::ShaderModuleCompilationHint> ConvertFromBackingContext::convertFromBacking(const ShaderModuleCompilationHint& shaderModuleCompilationHint)
+{
+    auto* pipelineLayout = convertPipelineLayoutFromBacking(shaderModuleCompilationHint.pipelineLayout);
+    if (!pipelineLayout)
+        return std::nullopt;
 
-} // namespace WTF
+    return { { *pipelineLayout } };
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS)

@@ -34,6 +34,11 @@ ShaderModule::ShaderModule() = default;
 
 ShaderModule::~ShaderModule() = default;
 
+void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback)
+{
+    UNUSED_PARAM(callback);
+}
+
 void ShaderModule::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -44,6 +49,13 @@ void ShaderModule::setLabel(const char* label)
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
     delete shaderModule;
+}
+
+void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
+{
+    shaderModule->shaderModule->getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* compilationInfo) {
+        callback(status, compilationInfo, userdata);
+    });
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)

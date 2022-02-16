@@ -1528,6 +1528,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUCommandBufferDescriptor.idl
     Modules/WebGPU/GPUCommandEncoder.idl
     Modules/WebGPU/GPUCommandEncoderDescriptor.idl
+    Modules/WebGPU/GPUCommandsMixin.idl
     Modules/WebGPU/GPUCompareFunction.idl
     Modules/WebGPU/GPUCompilationInfo.idl
     Modules/WebGPU/GPUCompilationMessage.idl
@@ -1539,6 +1540,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
     Modules/WebGPU/GPUCullMode.idl
+    Modules/WebGPU/GPUDebugCommandsMixin.idl
     Modules/WebGPU/GPUDepthStencilState.idl
     Modules/WebGPU/GPUDevice.idl
     Modules/WebGPU/GPUDeviceDescriptor.idl
@@ -1574,7 +1576,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUPipelineDescriptorBase.idl
     Modules/WebGPU/GPUPipelineLayout.idl
     Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
-    Modules/WebGPU/GPUPipelineStatisticName.idl
     Modules/WebGPU/GPUPowerPreference.idl
     Modules/WebGPU/GPUPredefinedColorSpace.idl
     Modules/WebGPU/GPUPrimitiveState.idl
@@ -1605,6 +1606,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUSamplerBindingType.idl
     Modules/WebGPU/GPUSamplerDescriptor.idl
     Modules/WebGPU/GPUShaderModule.idl
+    Modules/WebGPU/GPUShaderModuleCompilationHint.idl
     Modules/WebGPU/GPUShaderModuleDescriptor.idl
     Modules/WebGPU/GPUShaderStage.idl
     Modules/WebGPU/GPUStencilFaceState.idl

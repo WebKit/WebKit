@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,21 +179,6 @@ void RemoteRenderPassEncoder::endOcclusionQuery()
     m_backing->endOcclusionQuery();
 }
 
-void RemoteRenderPassEncoder::beginPipelineStatisticsQuery(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
-{
-    auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
-    ASSERT(convertedQuerySet);
-    if (!convertedQuerySet)
-        return;
-
-    m_backing->beginPipelineStatisticsQuery(*convertedQuerySet, queryIndex);
-}
-
-void RemoteRenderPassEncoder::endPipelineStatisticsQuery()
-{
-    m_backing->endPipelineStatisticsQuery();
-}
-
 void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBundles)
 {
     Vector<std::reference_wrapper<PAL::WebGPU::RenderBundle>> convertedBundles;
@@ -208,9 +193,9 @@ void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBu
     m_backing->executeBundles(WTFMove(convertedBundles));
 }
 
-void RemoteRenderPassEncoder::endPass()
+void RemoteRenderPassEncoder::end()
 {
-    m_backing->endPass();
+    m_backing->end();
 }
 
 void RemoteRenderPassEncoder::setLabel(String&& label)

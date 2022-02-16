@@ -54,7 +54,7 @@ public:
     void copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
     void copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize);
     void copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
-    void fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size);
+    void clearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor*);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();

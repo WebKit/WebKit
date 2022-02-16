@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,12 +85,13 @@ void GPUCommandEncoder::copyTextureToTexture(
     m_backing->copyTextureToTexture(source.convertToBacking(), destination.convertToBacking(), convertToBacking(copySize));
 }
 
-void GPUCommandEncoder::fillBuffer(
-    const GPUBuffer& destination,
-    GPUSize64 destinationOffset,
-    GPUSize64 size)
+
+void GPUCommandEncoder::clearBuffer(
+    const GPUBuffer& buffer,
+    GPUSize64 offset,
+    std::optional<GPUSize64> size)
 {
-    m_backing->fillBuffer(destination.backing(), destinationOffset, size);
+    m_backing->clearBuffer(buffer.backing(), offset, size);
 }
 
 void GPUCommandEncoder::pushDebugGroup(String&& groupLabel)

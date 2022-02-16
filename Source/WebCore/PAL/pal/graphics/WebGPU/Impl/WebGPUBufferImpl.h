@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,8 @@ private:
     WGPUBuffer backing() const { return m_backing; }
 
     void mapCallback(WGPUBufferMapAsyncStatus);
-    void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64> sizeForMap, WTF::Function<void()>&&) final;
-    MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) final;
+    void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, WTF::Function<void()>&&) final;
+    MappedRange getMappedRange(Size64 offset, std::optional<Size64>) final;
     void unmap() final;
 
     void destroy() final;

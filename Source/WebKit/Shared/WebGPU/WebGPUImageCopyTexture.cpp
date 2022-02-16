@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const 
 
     std::optional<Origin3D> origin;
     if (imageCopyTexture.origin) {
-        auto origin = convertToBacking(*imageCopyTexture.origin);
+        origin = convertToBacking(*imageCopyTexture.origin);
         if (!origin)
             return std::nullopt;
     }
@@ -58,7 +58,7 @@ std::optional<PAL::WebGPU::ImageCopyTexture> ConvertFromBackingContext::convertF
 
     std::optional<PAL::WebGPU::Origin3D> origin;
     if (imageCopyTexture.origin) {
-        auto origin = convertFromBacking(*imageCopyTexture.origin);
+        origin = convertFromBacking(*imageCopyTexture.origin);
         if (!origin)
             return std::nullopt;
     }

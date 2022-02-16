@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "WebGPUBufferBindingType.h"
 #include "WebGPUCompareFunction.h"
 #include "WebGPUCompilationMessageType.h"
+#include "WebGPUComputePassTimestampLocation.h"
 #include "WebGPUCullMode.h"
 #include "WebGPUErrorFilter.h"
 #include "WebGPUFeatureName.h"
@@ -41,10 +42,10 @@
 #include "WebGPUFrontFace.h"
 #include "WebGPUIndexFormat.h"
 #include "WebGPULoadOp.h"
-#include "WebGPUPipelineStatisticName.h"
 #include "WebGPUPowerPreference.h"
 #include "WebGPUPrimitiveTopology.h"
 #include "WebGPUQueryType.h"
+#include "WebGPURenderPassTimestampLocation.h"
 #include "WebGPUSamplerBindingType.h"
 #include "WebGPUStencilOperation.h"
 #include "WebGPUStorageTextureAccess.h"
@@ -166,6 +167,16 @@ WGPUCompilationMessageType ConvertToBackingContext::convertToBacking(Compilation
     }
 }
 
+WGPUComputePassTimestampLocation ConvertToBackingContext::convertToBacking(ComputePassTimestampLocation computePassTimestampLocation)
+{
+    switch (computePassTimestampLocation) {
+    case ComputePassTimestampLocation::Beginning:
+        return WGPUComputePassTimestampLocation_Beginning;
+    case ComputePassTimestampLocation::End:
+        return WGPUComputePassTimestampLocation_End;
+    }
+}
+
 WGPUCullMode ConvertToBackingContext::convertToBacking(CullMode cullMode)
 {
     switch (cullMode) {
@@ -197,8 +208,6 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_Depth24UnormStencil8;
     case FeatureName::Depth32floatStencil8:
         return WGPUFeatureName_Depth32FloatStencil8;
-    case FeatureName::PipelineStatisticsQuery:
-        return WGPUFeatureName_PipelineStatisticsQuery;
     case FeatureName::TextureCompressionBc:
         return WGPUFeatureName_TextureCompressionBC;
     case FeatureName::TextureCompressionEtc2:
@@ -247,22 +256,8 @@ WGPULoadOp ConvertToBackingContext::convertToBacking(LoadOp loadOp)
     switch (loadOp) {
     case LoadOp::Load:
         return WGPULoadOp_Load;
-    }
-}
-
-WGPUPipelineStatisticName ConvertToBackingContext::convertToBacking(PipelineStatisticName pipelineStatisticName)
-{
-    switch (pipelineStatisticName) {
-    case PipelineStatisticName::VertexShaderInvocations:
-        return WGPUPipelineStatisticName_VertexShaderInvocations;
-    case PipelineStatisticName::ClipperInvocations:
-        return WGPUPipelineStatisticName_ClipperInvocations;
-    case PipelineStatisticName::ClipperPrimitivesOut:
-        return WGPUPipelineStatisticName_ClipperPrimitivesOut;
-    case PipelineStatisticName::FragmentShaderInvocations:
-        return WGPUPipelineStatisticName_FragmentShaderInvocations;
-    case PipelineStatisticName::ComputeShaderInvocations:
-        return WGPUPipelineStatisticName_ComputeShaderInvocations;
+    case LoadOp::Clear:
+        return WGPULoadOp_Clear;
     }
 }
 
@@ -297,10 +292,18 @@ WGPUQueryType ConvertToBackingContext::convertToBacking(QueryType queryType)
     switch (queryType) {
     case QueryType::Occlusion:
         return WGPUQueryType_Occlusion;
-    case QueryType::PipelineStatistics:
-        return WGPUQueryType_PipelineStatistics;
     case QueryType::Timestamp:
         return WGPUQueryType_Timestamp;
+    }
+}
+
+WGPURenderPassTimestampLocation ConvertToBackingContext::convertToBacking(RenderPassTimestampLocation renderPassTimestampLocation)
+{
+    switch (renderPassTimestampLocation) {
+    case RenderPassTimestampLocation::Beginning:
+        return WGPURenderPassTimestampLocation_Beginning;
+    case RenderPassTimestampLocation::End:
+        return WGPURenderPassTimestampLocation_End;
     }
 }
 
@@ -496,11 +499,11 @@ WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textur
     case TextureFormat::Etc2Rgb8unorm:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8Unorm);
     case TextureFormat::Etc2Rgb8unormSRGB:
-        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8unormSrgb);
+        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8UnormSrgb);
     case TextureFormat::Etc2Rgb8a1unorm:
-        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8a1Unorm);
+        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8A1Unorm);
     case TextureFormat::Etc2Rgb8a1unormSRGB:
-        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8a1unormSrgb);
+        return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGB8A1UnormSrgb);
     case TextureFormat::Etc2Rgba8unorm:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ETC2RGBA8Unorm);
     case TextureFormat::Etc2Rgba8unormSRGB:

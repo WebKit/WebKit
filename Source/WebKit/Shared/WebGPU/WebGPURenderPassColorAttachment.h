@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,14 +42,16 @@ struct RenderPassColorAttachment {
     WebGPUIdentifier view;
     WebGPUIdentifier resolveTarget;
 
-    std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict> loadValue;
+    std::optional<Color> clearValue;
+    PAL::WebGPU::LoadOp loadOp { PAL::WebGPU::LoadOp::Load };
     PAL::WebGPU::StoreOp storeOp { PAL::WebGPU::StoreOp::Store };
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << view;
         encoder << resolveTarget;
-        encoder << loadValue;
+        encoder << clearValue;
+        encoder << loadOp;
         encoder << storeOp;
     }
 
@@ -65,9 +67,14 @@ struct RenderPassColorAttachment {
         if (!resolveTarget)
             return std::nullopt;
 
-        std::optional<std::variant<PAL::WebGPU::LoadOp, Vector<double>, ColorDict>> loadValue;
-        decoder >> loadValue;
-        if (!loadValue)
+        std::optional<std::optional<Color>> clearValue;
+        decoder >> clearValue;
+        if (!clearValue)
+            return std::nullopt;
+
+        std::optional<PAL::WebGPU::LoadOp> loadOp;
+        decoder >> loadOp;
+        if (!loadOp)
             return std::nullopt;
 
         std::optional<PAL::WebGPU::StoreOp> storeOp;
@@ -75,7 +82,7 @@ struct RenderPassColorAttachment {
         if (!storeOp)
             return std::nullopt;
 
-        return { { WTFMove(*view), WTFMove(*resolveTarget), WTFMove(*loadValue), WTFMove(*storeOp) } };
+        return { { WTFMove(*view), WTFMove(*resolveTarget), WTFMove(*clearValue), WTFMove(*loadOp), WTFMove(*storeOp) } };
     }
 };
 

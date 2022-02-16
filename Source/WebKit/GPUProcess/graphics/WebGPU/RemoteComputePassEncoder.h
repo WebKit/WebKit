@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,13 +74,10 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
     void setPipeline(WebGPUIdentifier);
-    void dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32>);
+    void dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY = 1, PAL::WebGPU::Size32 workgroupCountZ = 1);
     void dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset);
 
-    void beginPipelineStatisticsQuery(WebGPUIdentifier, PAL::WebGPU::Size32 queryIndex);
-    void endPipelineStatisticsQuery();
-
-    void endPass();
+    void end();
 
     void setBindGroup(PAL::WebGPU::Index32, WebGPUIdentifier,
         std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&&);

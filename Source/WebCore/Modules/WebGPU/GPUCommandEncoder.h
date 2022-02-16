@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,10 +81,10 @@ public:
         const GPUImageCopyTexture& destination,
         const GPUExtent3D& copySize);
 
-    void fillBuffer(
-        const GPUBuffer& destination,
-        GPUSize64 destinationOffset,
-        GPUSize64);
+    void clearBuffer(
+        const GPUBuffer&,
+        GPUSize64 offset,
+        std::optional<GPUSize64>);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();

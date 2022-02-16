@@ -941,6 +941,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandEncoderDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandEncoderDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandsMixin.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCommandsMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompilationInfo.cpp
@@ -963,6 +965,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipelineDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUComputePipelineDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCullMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCullMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDebugCommandsMixin.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDebugCommandsMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDevice.cpp
@@ -1033,8 +1037,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayoutDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayoutDescriptor.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineStatisticName.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineStatisticName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPowerPreference.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPowerPreference.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPredefinedColorSpace.cpp
@@ -1095,6 +1097,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModuleCompilationHint.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModuleCompilationHint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModuleDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderModuleDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStage.cpp

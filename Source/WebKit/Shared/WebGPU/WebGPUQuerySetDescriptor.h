@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUPipelineStatisticName.h>
 #include <pal/graphics/WebGPU/WebGPUQueryType.h>
 #include <wtf/Vector.h>
 
@@ -39,14 +38,12 @@ namespace WebKit::WebGPU {
 struct QuerySetDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::QueryType type { PAL::WebGPU::QueryType::Occlusion };
     PAL::WebGPU::Size32 count { 0 };
-    Vector<PAL::WebGPU::PipelineStatisticName> pipelineStatistics;
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << static_cast<const ObjectDescriptorBase&>(*this);
         encoder << type;
         encoder << count;
-        encoder << pipelineStatistics;
     }
 
     template<class Decoder> static std::optional<QuerySetDescriptor> decode(Decoder& decoder)
@@ -66,12 +63,7 @@ struct QuerySetDescriptor : public ObjectDescriptorBase {
         if (!count)
             return std::nullopt;
 
-        std::optional<Vector<PAL::WebGPU::PipelineStatisticName>> pipelineStatistics;
-        decoder >> pipelineStatistics;
-        if (!pipelineStatistics)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*type), WTFMove(*count), WTFMove(*pipelineStatistics) } };
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*type), WTFMove(*count) } };
     }
 };
 

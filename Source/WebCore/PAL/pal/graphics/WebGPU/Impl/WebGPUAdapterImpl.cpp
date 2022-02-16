@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,13 +43,17 @@ static String adapterName(WGPUAdapter adapter)
 
 static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
 {
+    auto featureCount = wgpuAdapterEnumerateFeatures(adapter, nullptr);
+    Vector<WGPUFeatureName> features(featureCount);
+    wgpuAdapterEnumerateFeatures(adapter, features.data());
+
     Vector<String> result;
-    for (size_t i = 0; ; ++i) {
-        auto feature = wgpuAdapterGetFeatureAtIndex(adapter, i);
-        if (feature == WGPUFeatureName_Undefined)
-            break;
-        switch (static_cast<uint>(feature)) {
-        case WGPUFeatureName_DepthClamping:
+    for (auto feature : features) {
+        switch (feature) {
+        case WGPUFeatureName_Undefined:
+            continue;
+        case WGPUFeatureName_DepthClipControl:
+            result.append("depth-clip-control"_s);
             break;
         case WGPUFeatureName_Depth24UnormStencil8:
             result.append("depth24unorm-stencil8"_s);
@@ -66,20 +70,17 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
         case WGPUFeatureName_TextureCompressionBC:
             result.append("texture-compression-bc"_s);
             break;
-        case WGPUFeatureName_DepthClipControl:
-            result.append("depth-clip-control"_s);
-            break;
-        case WGPUFeatureName_IndirectFirstInstance:
-            result.append("indirect-first-instance"_s);
-            break;
         case WGPUFeatureName_TextureCompressionETC2:
             result.append("texture-compression-etc2"_s);
             break;
         case WGPUFeatureName_TextureCompressionASTC:
             result.append("texture-compression-astc"_s);
             break;
-        default:
+        case WGPUFeatureName_IndirectFirstInstance:
+            result.append("indirect-first-instance"_s);
             break;
+        default:
+            continue;
         }
     }
     return SupportedFeatures::create(WTFMove(result));
@@ -151,15 +152,6 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, WTF::Functio
 
     auto label = descriptor.label.utf8();
 
-    WGPUDeviceDescriptorLabel backingDescriptorLabel {
-        {
-            nullptr,
-            static_cast<WGPUSType>(WGPUSType_DeviceDescriptorLabel),
-        },
-        nullptr,
-        label.data()
-    };
-
     auto features = descriptor.requiredFeatures.map([this] (auto featureName) {
         return m_convertToBackingContext->convertToBacking(featureName);
     });
@@ -196,7 +188,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, WTF::Functio
     };
 
     WGPUDeviceDescriptor backingDescriptor {
-        &backingDescriptorLabel.header,
+        nullptr,
+        label.data(),
         static_cast<uint32_t>(features.size()),
         features.data(),
         &limits,

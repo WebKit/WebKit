@@ -171,12 +171,6 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
     UNUSED_PARAM(maxDepth);
 }
 
-void RenderPassEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryIndex)
-{
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
-}
-
 void RenderPassEncoder::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -295,11 +289,6 @@ void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncode
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)
 {
     renderPassEncoder->renderPassEncoder->setViewport(x, y, width, height, minDepth, maxDepth);
-}
-
-void wgpuRenderPassEncoderWriteTimestamp(WGPURenderPassEncoder renderPassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
-{
-    renderPassEncoder->renderPassEncoder->writeTimestamp(querySet->querySet, queryIndex);
 }
 
 void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, const char* label)

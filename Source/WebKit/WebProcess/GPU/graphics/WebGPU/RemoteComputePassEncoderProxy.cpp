@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,9 +55,9 @@ void RemoteComputePassEncoderProxy::setPipeline(const PAL::WebGPU::ComputePipeli
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32> z)
+void RemoteComputePassEncoderProxy::dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY, PAL::WebGPU::Size32 workgroupCountZ)
 {
-    auto sendResult = send(Messages::RemoteComputePassEncoder::Dispatch(x, y, z));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::Dispatch(workgroupCountX, workgroupCountY, workgroupCountZ));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -72,26 +72,9 @@ void RemoteComputePassEncoderProxy::dispatchIndirect(const PAL::WebGPU::Buffer& 
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::beginPipelineStatisticsQuery(const PAL::WebGPU::QuerySet& querySet, PAL::WebGPU::Size32 queryIndex)
+void RemoteComputePassEncoderProxy::end()
 {
-    auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
-    ASSERT(convertedQuerySet);
-    if (!convertedQuerySet)
-        return;
-
-    auto sendResult = send(Messages::RemoteComputePassEncoder::BeginPipelineStatisticsQuery(convertedQuerySet, queryIndex));
-    UNUSED_VARIABLE(sendResult);
-}
-
-void RemoteComputePassEncoderProxy::endPipelineStatisticsQuery()
-{
-    auto sendResult = send(Messages::RemoteComputePassEncoder::EndPipelineStatisticsQuery());
-    UNUSED_VARIABLE(sendResult);
-}
-
-void RemoteComputePassEncoderProxy::endPass()
-{
-    auto sendResult = send(Messages::RemoteComputePassEncoder::EndPass());
+    auto sendResult = send(Messages::RemoteComputePassEncoder::End());
     UNUSED_VARIABLE(sendResult);
 }
 

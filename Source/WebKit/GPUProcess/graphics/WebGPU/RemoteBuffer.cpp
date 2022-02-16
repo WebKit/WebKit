@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ void RemoteBuffer::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, WTF::CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
     if (m_isMapped) {
         callback(std::nullopt);

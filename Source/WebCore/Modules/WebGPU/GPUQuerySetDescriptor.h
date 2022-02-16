@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
-#include "GPUPipelineStatisticName.h"
 #include "GPUQueryType.h"
 #include <pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h>
 #include <wtf/RefPtr.h>
@@ -42,15 +41,11 @@ struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
             { label },
             WebCore::convertToBacking(type),
             count,
-            pipelineStatistics.map([] (const auto& pipelineStatistic) {
-                return WebCore::convertToBacking(pipelineStatistic);
-            }),
         };
     }
 
     GPUQueryType type { GPUQueryType::Occlusion };
     GPUSize32 count { 0 };
-    Vector<GPUPipelineStatisticName> pipelineStatistics;
 };
 
 }

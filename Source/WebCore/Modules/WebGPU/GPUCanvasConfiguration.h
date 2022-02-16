@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -46,6 +47,9 @@ struct GPUCanvasConfiguration {
             device->backing(),
             WebCore::convertToBacking(format),
             convertTextureUsageFlagsToBacking(usage),
+            viewFormats.map([] (auto& viewFormat) {
+                return WebCore::convertToBacking(viewFormat);
+            }),
             WebCore::convertToBacking(colorSpace),
             WebCore::convertToBacking(compositingAlphaMode),
             size ? std::optional { WebCore::convertToBacking(*size) } : std::nullopt,
@@ -55,6 +59,7 @@ struct GPUCanvasConfiguration {
     GPUDevice* device { nullptr };
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
     GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
+    Vector<GPUTextureFormat> viewFormats;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
     GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
     std::optional<GPUExtent3D> size;

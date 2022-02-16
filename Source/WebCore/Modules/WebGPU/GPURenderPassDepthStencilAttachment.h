@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,31 +41,27 @@ struct GPURenderPassDepthStencilAttachment {
         ASSERT(view);
         return {
             view->backing(),
-            WTF::switchOn(depthLoadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, float> {
-                return WebCore::convertToBacking(loadOp);
-            }, [&] (float f) -> std::variant<PAL::WebGPU::LoadOp, float> {
-                return f;
-            }),
-            WebCore::convertToBacking(depthStoreOp),
+            depthClearValue,
+            depthLoadOp ? std::optional { WebCore::convertToBacking(*depthLoadOp) } : std::nullopt,
+            depthStoreOp ? std::optional { WebCore::convertToBacking(*depthStoreOp) } : std::nullopt,
             depthReadOnly,
-            WTF::switchOn(stencilLoadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> {
-                return WebCore::convertToBacking(loadOp);
-            }, [&] (GPUStencilValue stencilValue) -> std::variant<PAL::WebGPU::LoadOp, PAL::WebGPU::StencilValue> {
-                return stencilValue;
-            }),
-            WebCore::convertToBacking(stencilStoreOp),
+            stencilClearValue,
+            stencilLoadOp ? std::optional { WebCore::convertToBacking(*stencilLoadOp) } : std::nullopt,
+            stencilStoreOp ? std::optional { WebCore::convertToBacking(*stencilStoreOp) } : std::nullopt,
             stencilReadOnly,
         };
     }
 
     GPUTextureView* view { nullptr };
 
-    std::variant<GPULoadOp, float> depthLoadValue;
-    GPUStoreOp depthStoreOp { GPUStoreOp::Store };
+    float depthClearValue { 0 };
+    std::optional<GPULoadOp> depthLoadOp;
+    std::optional<GPUStoreOp> depthStoreOp;
     bool depthReadOnly { false };
 
-    std::variant<GPULoadOp, GPUStencilValue> stencilLoadValue;
-    GPUStoreOp stencilStoreOp { GPUStoreOp::Store };
+    GPUStencilValue stencilClearValue { 0 };
+    std::optional<GPULoadOp> stencilLoadOp;
+    std::optional<GPUStoreOp> stencilStoreOp;
     bool stencilReadOnly { false };
 };
 

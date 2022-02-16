@@ -105,7 +105,6 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUPipelineDescriptorBase.h
     graphics/WebGPU/WebGPUPipelineLayout.h
     graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h
-    graphics/WebGPU/WebGPUPipelineStatisticName.h
     graphics/WebGPU/WebGPUPowerPreference.h
     graphics/WebGPU/WebGPUPredefinedColorSpace.h
     graphics/WebGPU/WebGPUPrimitiveState.h
@@ -134,6 +133,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUSamplerBindingType.h
     graphics/WebGPU/WebGPUSamplerDescriptor.h
     graphics/WebGPU/WebGPUShaderModule.h
+    graphics/WebGPU/WebGPUShaderModuleCompilationHint.h
     graphics/WebGPU/WebGPUShaderModuleDescriptor.h
     graphics/WebGPU/WebGPUShaderStage.h
     graphics/WebGPU/WebGPUStencilFaceState.h

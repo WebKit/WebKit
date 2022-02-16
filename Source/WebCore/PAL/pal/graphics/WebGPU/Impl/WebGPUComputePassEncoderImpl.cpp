@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,9 +53,9 @@ void ComputePassEncoderImpl::setPipeline(const ComputePipeline& computePipeline)
     wgpuComputePassEncoderSetPipeline(m_backing, m_convertToBackingContext->convertToBacking(computePipeline));
 }
 
-void ComputePassEncoderImpl::dispatch(Size32 x, std::optional<Size32> y, std::optional<Size32> z)
+void ComputePassEncoderImpl::dispatch(Size32 workgroupCountX, Size32 workgroupCountY, Size32 workgroupCountZ)
 {
-    wgpuComputePassEncoderDispatch(m_backing, x, y.value_or(1), z.value_or(1));
+    wgpuComputePassEncoderDispatch(m_backing, workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void ComputePassEncoderImpl::dispatchIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
@@ -63,17 +63,7 @@ void ComputePassEncoderImpl::dispatchIndirect(const Buffer& indirectBuffer, Size
     wgpuComputePassEncoderDispatchIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
-void ComputePassEncoderImpl::beginPipelineStatisticsQuery(const QuerySet& querySet, Size32 queryIndex)
-{
-    wgpuComputePassEncoderBeginPipelineStatisticsQuery(m_backing, m_convertToBackingContext->convertToBacking(querySet), queryIndex);
-}
-
-void ComputePassEncoderImpl::endPipelineStatisticsQuery()
-{
-    wgpuComputePassEncoderEndPipelineStatisticsQuery(m_backing);
-}
-
-void ComputePassEncoderImpl::endPass()
+void ComputePassEncoderImpl::end()
 {
     wgpuComputePassEncoderEndPass(m_backing);
 }

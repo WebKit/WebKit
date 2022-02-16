@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,8 +99,21 @@ Ref<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
 
     auto label = descriptor.label.utf8();
 
+    auto backingTextureFormats = descriptor.viewFormats.map([&] (TextureFormat textureFormat) {
+        return m_convertToBackingContext->convertToBacking(textureFormat);
+    });
+
+    WGPUTextureDescriptorViewFormats backingViewFormats {
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats),
+        },
+        static_cast<uint32_t>(backingTextureFormats.size()),
+        backingTextureFormats.data(),
+    };
+
     WGPUTextureDescriptor backingDescriptor {
-        nullptr,
+        &backingViewFormats.chain,
         label.data(),
         m_convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
         m_convertToBackingContext->convertToBacking(descriptor.dimension),
@@ -231,9 +244,34 @@ Ref<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor& d
 
     auto source = descriptor.code.utf8();
 
-    WGPUShaderModuleWGSLDescriptor backingWGSLDescriptor {
+    auto entryPoints = descriptor.hints.map([] (const auto& hint) {
+        return hint.key.utf8();
+    });
+
+    Vector<WGPUShaderModuleCompilationHintEntry> hintsEntries;
+    hintsEntries.reserveInitialCapacity(descriptor.hints.size());
+    for (size_t i = 0; i < descriptor.hints.size(); ++i) {
+        const auto& hint = descriptor.hints[i].value;
+        hintsEntries.append(WGPUShaderModuleCompilationHintEntry {
+            nullptr,
+            entryPoints[i].data(), {
+                m_convertToBackingContext->convertToBacking(hint.pipelineLayout),
+            },
+        });
+    }
+
+    WGPUShaderModuleDescriptorHints backingShaderModuleHints {
         {
             nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_ShaderModuleDescriptorHints),
+        },
+        static_cast<uint32_t>(hintsEntries.size()),
+        hintsEntries.data(),
+    };
+
+    WGPUShaderModuleWGSLDescriptor backingWGSLDescriptor {
+        {
+            &backingShaderModuleHints.chain,
             WGPUSType_ShaderModuleWGSLDescriptor,
         },
         source.data(),
@@ -248,7 +286,7 @@ Ref<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor& d
 }
 
 template <typename T>
-auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
+static auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -292,7 +330,7 @@ Ref<ComputePipeline> DeviceImpl::createComputePipeline(const ComputePipelineDesc
 }
 
 template <typename T>
-auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
+static auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -385,16 +423,16 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
     Vector<std::optional<WGPUBlendState>> blendStates;
     if (descriptor.fragment) {
         blendStates = descriptor.fragment->targets.map([&convertToBackingContext] (const auto& target) -> std::optional<WGPUBlendState> {
-            if (target.blend) {
+            if (target && target->blend) {
                 return WGPUBlendState {
                     {
-                        convertToBackingContext.convertToBacking(target.blend->color.operation),
-                        convertToBackingContext.convertToBacking(target.blend->color.srcFactor),
-                        convertToBackingContext.convertToBacking(target.blend->color.dstFactor),
+                        convertToBackingContext.convertToBacking(target->blend->color.operation),
+                        convertToBackingContext.convertToBacking(target->blend->color.srcFactor),
+                        convertToBackingContext.convertToBacking(target->blend->color.dstFactor),
                     }, {
-                        convertToBackingContext.convertToBacking(target.blend->alpha.operation),
-                        convertToBackingContext.convertToBacking(target.blend->alpha.srcFactor),
-                        convertToBackingContext.convertToBacking(target.blend->alpha.dstFactor),
+                        convertToBackingContext.convertToBacking(target->blend->alpha.operation),
+                        convertToBackingContext.convertToBacking(target->blend->alpha.srcFactor),
+                        convertToBackingContext.convertToBacking(target->blend->alpha.dstFactor),
                     }
                 };
             } else
@@ -406,13 +444,21 @@ auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBacki
     if (descriptor.fragment) {
         colorTargets.reserveInitialCapacity(descriptor.fragment->targets.size());
         for (size_t i = 0; i < descriptor.fragment->targets.size(); ++i) {
-            const auto& target = descriptor.fragment->targets[i];
-            colorTargets.uncheckedAppend(WGPUColorTargetState {
-                nullptr,
-                convertToBackingContext.convertToBacking(target.format),
-                blendStates[i] ? &*blendStates[i] : nullptr,
-                convertToBackingContext.convertColorWriteFlagsToBacking(target.writeMask),
-            });
+            if (const auto& target = descriptor.fragment->targets[i]) {
+                colorTargets.uncheckedAppend(WGPUColorTargetState {
+                    nullptr,
+                    convertToBackingContext.convertToBacking(target->format),
+                    blendStates[i] ? &*blendStates[i] : nullptr,
+                    convertToBackingContext.convertColorWriteFlagsToBacking(target->writeMask),
+                });
+            } else {
+                colorTargets.uncheckedAppend(WGPUColorTargetState {
+                    nullptr,
+                    WGPUTextureFormat_Undefined,
+                    nullptr,
+                    WGPUMapMode_None,
+                });
+            }
         }
     }
 
@@ -528,7 +574,7 @@ Ref<RenderBundleEncoder> DeviceImpl::createRenderBundleEncoder(const RenderBundl
     auto label = descriptor.label.utf8();
 
     auto backingColorFormats = descriptor.colorFormats.map([this] (auto colorFormat) {
-        return m_convertToBackingContext->convertToBacking(colorFormat);
+        return colorFormat ? m_convertToBackingContext->convertToBacking(*colorFormat) : WGPUTextureFormat_Undefined;
     });
 
     WGPURenderBundleEncoderDescriptor backingDescriptor {
@@ -538,6 +584,8 @@ Ref<RenderBundleEncoder> DeviceImpl::createRenderBundleEncoder(const RenderBundl
         backingColorFormats.data(),
         descriptor.depthStencilFormat ? m_convertToBackingContext->convertToBacking(*descriptor.depthStencilFormat) : WGPUTextureFormat_Undefined,
         descriptor.sampleCount,
+        descriptor.depthReadOnly,
+        descriptor.stencilReadOnly,
     };
 
     return RenderBundleEncoderImpl::create(wgpuDeviceCreateRenderBundleEncoder(m_backing, &backingDescriptor), m_convertToBackingContext);
@@ -547,17 +595,13 @@ Ref<QuerySet> DeviceImpl::createQuerySet(const QuerySetDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();
 
-    auto backingPipelineStatistics = descriptor.pipelineStatistics.map([this] (auto pipelineStatistic) {
-        return m_convertToBackingContext->convertToBacking(pipelineStatistic);
-    });
-
     WGPUQuerySetDescriptor backingDescriptor {
         nullptr,
         label.data(),
         m_convertToBackingContext->convertToBacking(descriptor.type),
         descriptor.count,
-        backingPipelineStatistics.data(),
-        static_cast<uint32_t>(backingPipelineStatistics.size()),
+        nullptr,
+        0,
     };
 
     return QuerySetImpl::create(wgpuDeviceCreateQuerySet(m_backing, &backingDescriptor), m_convertToBackingContext);

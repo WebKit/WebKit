@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,11 +97,8 @@ public:
     virtual void beginOcclusionQuery(Size32 queryIndex) = 0;
     virtual void endOcclusionQuery() = 0;
 
-    virtual void beginPipelineStatisticsQuery(const QuerySet&, Size32 queryIndex) = 0;
-    virtual void endPipelineStatisticsQuery() = 0;
-
     virtual void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&&) = 0;
-    virtual void endPass() = 0;
+    virtual void end() = 0;
 
 protected:
     RenderPassEncoder() = default;

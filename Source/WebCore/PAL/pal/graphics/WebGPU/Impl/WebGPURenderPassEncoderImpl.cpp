@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,16 +156,6 @@ void RenderPassEncoderImpl::endOcclusionQuery()
     wgpuRenderPassEncoderEndOcclusionQuery(m_backing);
 }
 
-void RenderPassEncoderImpl::beginPipelineStatisticsQuery(const QuerySet& querySet, Size32 queryIndex)
-{
-    wgpuRenderPassEncoderBeginPipelineStatisticsQuery(m_backing, m_convertToBackingContext->convertToBacking(querySet), queryIndex);
-}
-
-void RenderPassEncoderImpl::endPipelineStatisticsQuery()
-{
-    wgpuRenderPassEncoderEndPipelineStatisticsQuery(m_backing);
-}
-
 void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& renderBundles)
 {
     auto backingBundles = renderBundles.map([this] (auto renderBundle) {
@@ -175,7 +165,7 @@ void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderB
     wgpuRenderPassEncoderExecuteBundles(m_backing, backingBundles.size(), backingBundles.data());
 }
 
-void RenderPassEncoderImpl::endPass()
+void RenderPassEncoderImpl::end()
 {
     wgpuRenderPassEncoderEndPass(m_backing);
 }

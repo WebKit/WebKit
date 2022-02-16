@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(con
             return std::nullopt;
     }
 
-    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
+    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
 }
 
 std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
@@ -63,7 +63,7 @@ std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::conve
             return std::nullopt;
     }
 
-    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
+    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
 }
 
 } // namespace WebKit

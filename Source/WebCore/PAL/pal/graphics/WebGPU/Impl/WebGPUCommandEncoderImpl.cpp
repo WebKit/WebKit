@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,57 +53,51 @@ CommandEncoderImpl::~CommandEncoderImpl()
 
 Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescriptor& descriptor)
 {
+    auto label = descriptor.label.utf8();
+
     Vector<WGPURenderPassColorAttachment> colorAttachments;
     for (const auto& colorAttachment : descriptor.colorAttachments) {
-        colorAttachments.append(WGPURenderPassColorAttachment {
-            m_convertToBackingContext->convertToBacking(colorAttachment.view),
-            colorAttachment.resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment.resolveTarget) : nullptr,
-            std::holds_alternative<LoadOp>(colorAttachment.loadValue) ? m_convertToBackingContext->convertToBacking(std::get<LoadOp>(colorAttachment.loadValue)) : WGPULoadOp_Clear,
-            m_convertToBackingContext->convertToBacking(colorAttachment.storeOp),
-            WTF::switchOn(colorAttachment.loadValue, [] (LoadOp) -> WGPUColor {
-                return { 0, 0, 0, 0 };
-            }, [] (const Vector<double>& vector) -> WGPUColor {
-                return WGPUColor {
-                    vector.size() > 0 ? vector[0] : 0,
-                    vector.size() > 1 ? vector[1] : 0,
-                    vector.size() > 2 ? vector[2] : 0,
-                    vector.size() > 3 ? vector[3] : 0,
-                };
-            }, [] (const ColorDict& color) -> WGPUColor {
-                return WGPUColor {
-                    color.r,
-                    color.g,
-                    color.b,
-                    color.a,
-                };
-            }),
-        });
+        if (colorAttachment) {
+            colorAttachments.append(WGPURenderPassColorAttachment {
+                m_convertToBackingContext->convertToBacking(colorAttachment->view),
+                colorAttachment->resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment->resolveTarget) : nullptr,
+                m_convertToBackingContext->convertToBacking(colorAttachment->loadOp),
+                m_convertToBackingContext->convertToBacking(colorAttachment->storeOp),
+                colorAttachment->clearValue ? m_convertToBackingContext->convertToBacking(*colorAttachment->clearValue) : WGPUColor { 0, 0, 0, 0 },
+            });
+        } else
+            colorAttachments.append({
+                nullptr,
+                nullptr,
+                WGPULoadOp_Clear,
+                WGPUStoreOp_Discard,
+                { 0, 0, 0, 0 },
+            });
     }
 
     std::optional<WGPURenderPassDepthStencilAttachment> depthStencilAttachment;
     if (descriptor.depthStencilAttachment) {
         depthStencilAttachment = WGPURenderPassDepthStencilAttachment {
             m_convertToBackingContext->convertToBacking(descriptor.depthStencilAttachment->view),
-            std::holds_alternative<LoadOp>(descriptor.depthStencilAttachment->depthLoadValue) ? m_convertToBackingContext->convertToBacking(std::get<LoadOp>(descriptor.depthStencilAttachment->depthLoadValue)) : WGPULoadOp_Clear,
-            m_convertToBackingContext->convertToBacking(descriptor.depthStencilAttachment->depthStoreOp),
-            WTF::switchOn(descriptor.depthStencilAttachment->depthLoadValue, [] (LoadOp) -> float {
-                return 0;
-            }, [] (float clearDepth) -> float {
-                return clearDepth;
-            }),
+            descriptor.depthStencilAttachment->depthLoadOp ? m_convertToBackingContext->convertToBacking(*descriptor.depthStencilAttachment->depthLoadOp) : WGPULoadOp_Clear,
+            descriptor.depthStencilAttachment->depthStoreOp ? m_convertToBackingContext->convertToBacking(*descriptor.depthStencilAttachment->depthStoreOp) : WGPUStoreOp_Discard,
+            descriptor.depthStencilAttachment->depthClearValue,
             descriptor.depthStencilAttachment->depthReadOnly,
-            std::holds_alternative<LoadOp>(descriptor.depthStencilAttachment->stencilLoadValue) ? m_convertToBackingContext->convertToBacking(std::get<LoadOp>(descriptor.depthStencilAttachment->stencilLoadValue)) : WGPULoadOp_Clear,
-            m_convertToBackingContext->convertToBacking(descriptor.depthStencilAttachment->stencilStoreOp),
-            WTF::switchOn(descriptor.depthStencilAttachment->stencilLoadValue, [] (LoadOp) -> uint32_t {
-                return 0;
-            }, [] (StencilValue clearStencil) -> uint32_t {
-                return clearStencil;
-            }),
+            descriptor.depthStencilAttachment->stencilLoadOp ? m_convertToBackingContext->convertToBacking(*descriptor.depthStencilAttachment->stencilLoadOp) : WGPULoadOp_Clear,
+            descriptor.depthStencilAttachment->stencilStoreOp ? m_convertToBackingContext->convertToBacking(*descriptor.depthStencilAttachment->stencilStoreOp) : WGPUStoreOp_Discard,
+            descriptor.depthStencilAttachment->stencilClearValue,
             descriptor.depthStencilAttachment->stencilReadOnly,
         };
     }
 
-    auto label = descriptor.label.utf8();
+    Vector<WGPURenderPassTimestampWrite> timestampWrites;
+    for (const auto& timestampWrite : descriptor.timestampWrites) {
+        timestampWrites.append(WGPURenderPassTimestampWrite {
+            m_convertToBackingContext->convertToBacking(timestampWrite.querySet),
+            timestampWrite.queryIndex,
+            m_convertToBackingContext->convertToBacking(timestampWrite.location),
+        });
+    }
 
     WGPURenderPassDescriptor backingDescriptor {
         nullptr,
@@ -112,6 +106,8 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
         colorAttachments.data(),
         depthStencilAttachment ? &depthStencilAttachment.value() : nullptr,
         descriptor.occlusionQuerySet ? m_convertToBackingContext->convertToBacking(*descriptor.occlusionQuerySet) : nullptr,
+        static_cast<uint32_t>(timestampWrites.size()),
+        timestampWrites.data(),
     };
 
     return RenderPassEncoderImpl::create(wgpuCommandEncoderBeginRenderPass(m_backing, &backingDescriptor), m_convertToBackingContext);
@@ -121,9 +117,22 @@ Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
+    Vector<WGPUComputePassTimestampWrite> timestampWrites;
+    if (descriptor) {
+        for (const auto& timestampWrite : descriptor->timestampWrites) {
+            timestampWrites.append(WGPUComputePassTimestampWrite {
+                m_convertToBackingContext->convertToBacking(timestampWrite.querySet),
+                timestampWrite.queryIndex,
+                m_convertToBackingContext->convertToBacking(timestampWrite.location),
+            });
+        }
+    }
+
     WGPUComputePassDescriptor backingDescriptor {
         nullptr,
         label.data(),
+        static_cast<uint32_t>(timestampWrites.size()),
+        timestampWrites.data(),
     };
 
     return ComputePassEncoderImpl::create(wgpuCommandEncoderBeginComputePass(m_backing, &backingDescriptor), m_convertToBackingContext);
@@ -221,12 +230,12 @@ void CommandEncoderImpl::copyTextureToTexture(
     wgpuCommandEncoderCopyTextureToTexture(m_backing, &backingSource, &backingDestination, &backingCopySize);
 }
 
-void CommandEncoderImpl::fillBuffer(
-    const Buffer& destination,
-    Size64 destinationOffset,
-    Size64 size)
+void CommandEncoderImpl::clearBuffer(
+    const Buffer& buffer,
+    Size64 offset,
+    std::optional<Size64> size)
 {
-    wgpuCommandEncoderFillBuffer(m_backing, m_convertToBackingContext->convertToBacking(destination), destinationOffset, size);
+    wgpuCommandEncoderClearBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), offset, size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void CommandEncoderImpl::pushDebugGroup(String&& groupLabel)

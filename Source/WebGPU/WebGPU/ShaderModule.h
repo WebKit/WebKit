@@ -42,6 +42,7 @@ public:
 
     ~ShaderModule();
 
+    void getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback);
     void setLabel(const char*);
 
 private:

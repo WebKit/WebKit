@@ -92,12 +92,6 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
     UNUSED_PARAM(pipeline);
 }
 
-void ComputePassEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryIndex)
-{
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
-}
-
 void ComputePassEncoder::setLabel(const char* label)
 {
     UNUSED_PARAM(label);
@@ -158,11 +152,6 @@ void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncode
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
 {
     computePassEncoder->computePassEncoder->setPipeline(pipeline->computePipeline);
-}
-
-void wgpuComputePassEncoderWriteTimestamp(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
-{
-    computePassEncoder->computePassEncoder->writeTimestamp(querySet->querySet, queryIndex);
 }
 
 void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, const char* label)

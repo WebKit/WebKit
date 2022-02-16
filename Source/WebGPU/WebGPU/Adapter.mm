@@ -36,6 +36,12 @@ Adapter::Adapter() = default;
 
 Adapter::~Adapter() = default;
 
+size_t Adapter::enumerateFeatures(WGPUFeatureName* features)
+{
+    UNUSED_PARAM(features);
+    return 0;
+}
+
 bool Adapter::getLimits(WGPUSupportedLimits* limits)
 {
     UNUSED_PARAM(limits);
@@ -53,12 +59,6 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
     return false;
 }
 
-WGPUFeatureName Adapter::getFeatureAtIndex(size_t index)
-{
-    UNUSED_PARAM(index);
-    return WGPUFeatureName_Undefined;
-}
-
 void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback)
 {
     UNUSED_PARAM(descriptor);
@@ -70,6 +70,11 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, WTF::Functio
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     delete adapter;
+}
+
+size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
+{
+    return adapter->adapter->enumerateFeatures(features);
 }
 
 bool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
@@ -85,11 +90,6 @@ void wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties* proper
 bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
     return adapter->adapter->hasFeature(feature);
-}
-
-WGPUFeatureName wgpuAdapterGetFeatureAtIndex(WGPUAdapter adapter, size_t index)
-{
-    return adapter->adapter->getFeatureAtIndex(index);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)

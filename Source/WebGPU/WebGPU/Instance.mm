@@ -72,26 +72,17 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
 {
     UNUSED_PARAM(device);
     // FIXME: Use gperf to make this faster.
-    if (!strcmp(procName, "wgpuAdapterGetFeatureAtIndex"))
-        return reinterpret_cast<WGPUProc>(&wgpuAdapterGetFeatureAtIndex);
+    // FIXME: Generate this at build time
+    if (!strcmp(procName, "wgpuAdapterEnumerateFeatures"))
+        return reinterpret_cast<WGPUProc>(&wgpuAdapterEnumerateFeatures);
     if (!strcmp(procName, "wgpuAdapterGetLimits"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterGetLimits);
     if (!strcmp(procName, "wgpuAdapterGetProperties"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterGetProperties);
     if (!strcmp(procName, "wgpuAdapterHasFeature"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterHasFeature);
-    if (!strcmp(procName, "wgpuAdapterRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuAdapterRelease);
     if (!strcmp(procName, "wgpuAdapterRequestDevice"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterRequestDevice);
-    if (!strcmp(procName, "wgpuBindGroupLayoutRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuBindGroupLayoutRelease);
-    if (!strcmp(procName, "wgpuBindGroupLayoutSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuBindGroupLayoutSetLabel);
-    if (!strcmp(procName, "wgpuBindGroupRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuBindGroupRelease);
-    if (!strcmp(procName, "wgpuBindGroupSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuBindGroupSetLabel);
     if (!strcmp(procName, "wgpuBufferDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferDestroy);
     if (!strcmp(procName, "wgpuBufferGetConstMappedRange"))
@@ -100,20 +91,14 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuBufferGetMappedRange);
     if (!strcmp(procName, "wgpuBufferMapAsync"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferMapAsync);
-    if (!strcmp(procName, "wgpuBufferRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuBufferRelease);
-    if (!strcmp(procName, "wgpuBufferSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuBufferSetLabel);
     if (!strcmp(procName, "wgpuBufferUnmap"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferUnmap);
-    if (!strcmp(procName, "wgpuCommandBufferRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuCommandBufferRelease);
-    if (!strcmp(procName, "wgpuCommandBufferSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuCommandBufferSetLabel);
     if (!strcmp(procName, "wgpuCommandEncoderBeginComputePass"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderBeginComputePass);
     if (!strcmp(procName, "wgpuCommandEncoderBeginRenderPass"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderBeginRenderPass);
+    if (!strcmp(procName, "wgpuCommandEncoderClearBuffer"))
+        return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderClearBuffer);
     if (!strcmp(procName, "wgpuCommandEncoderCopyBufferToBuffer"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderCopyBufferToBuffer);
     if (!strcmp(procName, "wgpuCommandEncoderCopyBufferToTexture"))
@@ -122,8 +107,6 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderCopyTextureToBuffer);
     if (!strcmp(procName, "wgpuCommandEncoderCopyTextureToTexture"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderCopyTextureToTexture);
-    if (!strcmp(procName, "wgpuCommandEncoderFillBuffer"))
-        return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderFillBuffer);
     if (!strcmp(procName, "wgpuCommandEncoderFinish"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderFinish);
     if (!strcmp(procName, "wgpuCommandEncoderInsertDebugMarker"))
@@ -132,12 +115,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderPopDebugGroup);
     if (!strcmp(procName, "wgpuCommandEncoderPushDebugGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderPushDebugGroup);
-    if (!strcmp(procName, "wgpuCommandEncoderRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderRelease);
     if (!strcmp(procName, "wgpuCommandEncoderResolveQuerySet"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderResolveQuerySet);
-    if (!strcmp(procName, "wgpuCommandEncoderSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderSetLabel);
     if (!strcmp(procName, "wgpuCommandEncoderWriteTimestamp"))
         return reinterpret_cast<WGPUProc>(&wgpuCommandEncoderWriteTimestamp);
     if (!strcmp(procName, "wgpuComputePassEncoderBeginPipelineStatisticsQuery"))
@@ -156,20 +135,12 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderPopDebugGroup);
     if (!strcmp(procName, "wgpuComputePassEncoderPushDebugGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderPushDebugGroup);
-    if (!strcmp(procName, "wgpuComputePassEncoderRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderRelease);
     if (!strcmp(procName, "wgpuComputePassEncoderSetBindGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderSetBindGroup);
-    if (!strcmp(procName, "wgpuComputePassEncoderSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderSetLabel);
     if (!strcmp(procName, "wgpuComputePassEncoderSetPipeline"))
         return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderSetPipeline);
-    if (!strcmp(procName, "wgpuComputePassEncoderWriteTimestamp"))
-        return reinterpret_cast<WGPUProc>(&wgpuComputePassEncoderWriteTimestamp);
     if (!strcmp(procName, "wgpuComputePipelineGetBindGroupLayout"))
         return reinterpret_cast<WGPUProc>(&wgpuComputePipelineGetBindGroupLayout);
-    if (!strcmp(procName, "wgpuComputePipelineRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuComputePipelineRelease);
     if (!strcmp(procName, "wgpuComputePipelineSetLabel"))
         return reinterpret_cast<WGPUProc>(&wgpuComputePipelineSetLabel);
     if (!strcmp(procName, "wgpuCreateInstance"))
@@ -206,20 +177,20 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateTexture);
     if (!strcmp(procName, "wgpuDeviceDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceDestroy);
+    if (!strcmp(procName, "wgpuDeviceEnumerateFeatures"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceEnumerateFeatures);
     if (!strcmp(procName, "wgpuDeviceGetLimits"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceGetLimits);
     if (!strcmp(procName, "wgpuDeviceGetQueue"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceGetQueue);
+    if (!strcmp(procName, "wgpuDeviceHasFeature"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceHasFeature);
     if (!strcmp(procName, "wgpuDevicePopErrorScope"))
         return reinterpret_cast<WGPUProc>(&wgpuDevicePopErrorScope);
     if (!strcmp(procName, "wgpuDevicePushErrorScope"))
         return reinterpret_cast<WGPUProc>(&wgpuDevicePushErrorScope);
-    if (!strcmp(procName, "wgpuDeviceRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuDeviceRelease);
     if (!strcmp(procName, "wgpuDeviceSetDeviceLostCallback"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceSetDeviceLostCallback);
-    if (!strcmp(procName, "wgpuDeviceSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuDeviceSetLabel);
     if (!strcmp(procName, "wgpuDeviceSetUncapturedErrorCallback"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceSetUncapturedErrorCallback);
     if (!strcmp(procName, "wgpuGetProcAddress"))
@@ -228,26 +199,12 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuInstanceCreateSurface);
     if (!strcmp(procName, "wgpuInstanceProcessEvents"))
         return reinterpret_cast<WGPUProc>(&wgpuInstanceProcessEvents);
-    if (!strcmp(procName, "wgpuInstanceRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuInstanceRelease);
     if (!strcmp(procName, "wgpuInstanceRequestAdapter"))
         return reinterpret_cast<WGPUProc>(&wgpuInstanceRequestAdapter);
-    if (!strcmp(procName, "wgpuPipelineLayoutRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuPipelineLayoutRelease);
-    if (!strcmp(procName, "wgpuPipelineLayoutSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuPipelineLayoutSetLabel);
     if (!strcmp(procName, "wgpuQuerySetDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuQuerySetDestroy);
-    if (!strcmp(procName, "wgpuQuerySetRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuQuerySetRelease);
-    if (!strcmp(procName, "wgpuQuerySetSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuQuerySetSetLabel);
     if (!strcmp(procName, "wgpuQueueOnSubmittedWorkDone"))
         return reinterpret_cast<WGPUProc>(&wgpuQueueOnSubmittedWorkDone);
-    if (!strcmp(procName, "wgpuQueueRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuQueueRelease);
-    if (!strcmp(procName, "wgpuQueueSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuQueueSetLabel);
     if (!strcmp(procName, "wgpuQueueSubmit"))
         return reinterpret_cast<WGPUProc>(&wgpuQueueSubmit);
     if (!strcmp(procName, "wgpuQueueWriteBuffer"))
@@ -270,22 +227,14 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderPopDebugGroup);
     if (!strcmp(procName, "wgpuRenderBundleEncoderPushDebugGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderPushDebugGroup);
-    if (!strcmp(procName, "wgpuRenderBundleEncoderRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderRelease);
     if (!strcmp(procName, "wgpuRenderBundleEncoderSetBindGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderSetBindGroup);
     if (!strcmp(procName, "wgpuRenderBundleEncoderSetIndexBuffer"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderSetIndexBuffer);
-    if (!strcmp(procName, "wgpuRenderBundleEncoderSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderSetLabel);
     if (!strcmp(procName, "wgpuRenderBundleEncoderSetPipeline"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderSetPipeline);
     if (!strcmp(procName, "wgpuRenderBundleEncoderSetVertexBuffer"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderBundleEncoderSetVertexBuffer);
-    if (!strcmp(procName, "wgpuRenderBundleRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderBundleRelease);
-    if (!strcmp(procName, "wgpuRenderBundleSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderBundleSetLabel);
     if (!strcmp(procName, "wgpuRenderPassEncoderBeginOcclusionQuery"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderBeginOcclusionQuery);
     if (!strcmp(procName, "wgpuRenderPassEncoderBeginPipelineStatisticsQuery"))
@@ -312,16 +261,12 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderPopDebugGroup);
     if (!strcmp(procName, "wgpuRenderPassEncoderPushDebugGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderPushDebugGroup);
-    if (!strcmp(procName, "wgpuRenderPassEncoderRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderRelease);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetBindGroup"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetBindGroup);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetBlendConstant"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetBlendConstant);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetIndexBuffer"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetIndexBuffer);
-    if (!strcmp(procName, "wgpuRenderPassEncoderSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetLabel);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetPipeline"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetPipeline);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetScissorRect"))
@@ -332,44 +277,24 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetVertexBuffer);
     if (!strcmp(procName, "wgpuRenderPassEncoderSetViewport"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderSetViewport);
-    if (!strcmp(procName, "wgpuRenderPassEncoderWriteTimestamp"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderPassEncoderWriteTimestamp);
     if (!strcmp(procName, "wgpuRenderPipelineGetBindGroupLayout"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPipelineGetBindGroupLayout);
-    if (!strcmp(procName, "wgpuRenderPipelineRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuRenderPipelineRelease);
     if (!strcmp(procName, "wgpuRenderPipelineSetLabel"))
         return reinterpret_cast<WGPUProc>(&wgpuRenderPipelineSetLabel);
-    if (!strcmp(procName, "wgpuSamplerRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuSamplerRelease);
-    if (!strcmp(procName, "wgpuSamplerSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuSamplerSetLabel);
-    if (!strcmp(procName, "wgpuShaderModuleRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuShaderModuleRelease);
+    if (!strcmp(procName, "wgpuShaderModuleGetCompilationInfo"))
+        return reinterpret_cast<WGPUProc>(&wgpuShaderModuleGetCompilationInfo);
     if (!strcmp(procName, "wgpuShaderModuleSetLabel"))
         return reinterpret_cast<WGPUProc>(&wgpuShaderModuleSetLabel);
     if (!strcmp(procName, "wgpuSurfaceGetPreferredFormat"))
         return reinterpret_cast<WGPUProc>(&wgpuSurfaceGetPreferredFormat);
-    if (!strcmp(procName, "wgpuSurfaceRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuSurfaceRelease);
     if (!strcmp(procName, "wgpuSwapChainGetCurrentTextureView"))
         return reinterpret_cast<WGPUProc>(&wgpuSwapChainGetCurrentTextureView);
     if (!strcmp(procName, "wgpuSwapChainPresent"))
         return reinterpret_cast<WGPUProc>(&wgpuSwapChainPresent);
-    if (!strcmp(procName, "wgpuSwapChainRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuSwapChainRelease);
     if (!strcmp(procName, "wgpuTextureCreateView"))
         return reinterpret_cast<WGPUProc>(&wgpuTextureCreateView);
     if (!strcmp(procName, "wgpuTextureDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuTextureDestroy);
-    if (!strcmp(procName, "wgpuTextureRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuTextureRelease);
-    if (!strcmp(procName, "wgpuTextureSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuTextureSetLabel);
-    if (!strcmp(procName, "wgpuTextureViewRelease"))
-        return reinterpret_cast<WGPUProc>(&wgpuTextureViewRelease);
-    if (!strcmp(procName, "wgpuTextureViewSetLabel"))
-        return reinterpret_cast<WGPUProc>(&wgpuTextureViewSetLabel);
     return nullptr;
 }
 

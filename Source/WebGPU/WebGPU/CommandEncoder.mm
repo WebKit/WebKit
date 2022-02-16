@@ -81,10 +81,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture* source, co
     UNUSED_PARAM(copySize);
 }
 
-void CommandEncoder::fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size)
+void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
 {
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(destinationOffset);
+    UNUSED_PARAM(buffer);
+    UNUSED_PARAM(offset);
     UNUSED_PARAM(size);
 }
 
@@ -165,9 +165,9 @@ void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, c
     commandEncoder->commandEncoder->copyTextureToTexture(source, destination, copySize);
 }
 
-void wgpuCommandEncoderFillBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
+void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    commandEncoder->commandEncoder->fillBuffer(destination->buffer, destinationOffset, size);
+    commandEncoder->commandEncoder->clearBuffer(buffer->buffer, offset, size);
 }
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,13 +73,10 @@ private:
     }
 
     void setPipeline(const PAL::WebGPU::ComputePipeline&) final;
-    void dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32>) final;
+    void dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY = 1, PAL::WebGPU::Size32 workgroupCountZ = 1) final;
     void dispatchIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset) final;
 
-    void beginPipelineStatisticsQuery(const PAL::WebGPU::QuerySet&, PAL::WebGPU::Size32 queryIndex) final;
-    void endPipelineStatisticsQuery() final;
-
-    void endPass() final;
+    void end() final;
 
     void setBindGroup(PAL::WebGPU::Index32, const PAL::WebGPU::BindGroup&,
         std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&&) final;

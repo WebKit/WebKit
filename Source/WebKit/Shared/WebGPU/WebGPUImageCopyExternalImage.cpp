@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,24 +38,24 @@ std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(
 {
     std::optional<Origin2D> origin;
     if (imageCopyExternalImage.origin) {
-        auto convertedOrigin = convertToBacking(*imageCopyExternalImage.origin);
-        if (!convertedOrigin)
+        origin = convertToBacking(*imageCopyExternalImage.origin);
+        if (!origin)
             return std::nullopt;
     }
 
-    return { { WTFMove(origin) } };
+    return { { WTFMove(origin), imageCopyExternalImage.flipY } };
 }
 
 std::optional<PAL::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
 {
     std::optional<PAL::WebGPU::Origin2D> origin;
     if (imageCopyExternalImage.origin) {
-        auto origin = convertFromBacking(*imageCopyExternalImage.origin);
+        origin = convertFromBacking(*imageCopyExternalImage.origin);
         if (!origin)
             return std::nullopt;
     }
 
-    return { { WTFMove(origin) } };
+    return { { WTFMove(origin), imageCopyExternalImage.flipY } };
 }
 
 } // namespace WebKit

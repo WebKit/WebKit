@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 namespace WebKit::WebGPU {
 
 struct FragmentState : public ProgrammableStage {
-    Vector<ColorTargetState> targets;
+    Vector<std::optional<ColorTargetState>> targets;
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
@@ -50,7 +50,7 @@ struct FragmentState : public ProgrammableStage {
         if (!programmableStage)
             return std::nullopt;
 
-        std::optional<Vector<ColorTargetState>> targets;
+        std::optional<Vector<std::optional<ColorTargetState>>> targets;
         decoder >> targets;
         if (!targets)
             return std::nullopt;

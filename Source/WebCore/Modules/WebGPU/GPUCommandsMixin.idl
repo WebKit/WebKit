@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://gpuweb.github.io/gpuweb/#gpucommandsmixin
 
-#include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUPipelineStatisticName.h>
-
-namespace WebCore {
-
-enum class GPUPipelineStatisticName : uint8_t {
-    VertexShaderInvocations,
-    ClipperInvocations,
-    ClipperPrimitivesOut,
-    FragmentShaderInvocations,
-    ComputeShaderInvocations,
+[
+    EnabledBySetting=WebGPU
+]
+interface mixin GPUCommandsMixin {
 };
-
-inline PAL::WebGPU::PipelineStatisticName convertToBacking(GPUPipelineStatisticName pipelineStatisticName)
-{
-    switch (pipelineStatisticName) {
-    case GPUPipelineStatisticName::VertexShaderInvocations:
-        return PAL::WebGPU::PipelineStatisticName::VertexShaderInvocations;
-    case GPUPipelineStatisticName::ClipperInvocations:
-        return PAL::WebGPU::PipelineStatisticName::ClipperInvocations;
-    case GPUPipelineStatisticName::ClipperPrimitivesOut:
-        return PAL::WebGPU::PipelineStatisticName::ClipperPrimitivesOut;
-    case GPUPipelineStatisticName::FragmentShaderInvocations:
-        return PAL::WebGPU::PipelineStatisticName::FragmentShaderInvocations;
-    case GPUPipelineStatisticName::ComputeShaderInvocations:
-        return PAL::WebGPU::PipelineStatisticName::ComputeShaderInvocations;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-}

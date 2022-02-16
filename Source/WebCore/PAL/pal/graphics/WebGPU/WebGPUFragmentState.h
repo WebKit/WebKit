@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,13 @@
 
 #include "WebGPUColorTargetState.h"
 #include "WebGPUProgrammableStage.h"
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
 
 struct FragmentState : public ProgrammableStage {
-    Vector<ColorTargetState> targets;
+    Vector<std::optional<ColorTargetState>> targets;
 };
 
 } // namespace PAL::WebGPU

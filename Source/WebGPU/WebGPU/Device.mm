@@ -145,6 +145,12 @@ void Device::destroy()
 {
 }
 
+size_t Device::enumerateFeatures(WGPUFeatureName* features)
+{
+    UNUSED_PARAM(features);
+    return 0;
+}
+
 bool Device::getLimits(WGPUSupportedLimits* limits)
 {
     UNUSED_PARAM(limits);
@@ -154,6 +160,12 @@ bool Device::getLimits(WGPUSupportedLimits* limits)
 Ref<Queue> Device::getQueue()
 {
     return Queue::create();
+}
+
+bool Device::hasFeature(WGPUFeatureName feature)
+{
+    UNUSED_PARAM(feature);
+    return false;
 }
 
 bool Device::popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
@@ -273,6 +285,11 @@ void wgpuDeviceDestroy(WGPUDevice device)
     device->device->destroy();
 }
 
+size_t wgpuDeviceEnumerateFeatures(WGPUDevice device, WGPUFeatureName* features)
+{
+    return device->device->enumerateFeatures(features);
+}
+
 bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 {
     return device->device->getLimits(limits);
@@ -281,6 +298,11 @@ bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
 {
     return new WGPUQueueImpl { device->device->getQueue() };
+}
+
+bool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
+{
+    return device->device->hasFeature(feature);
 }
 
 bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void* userdata)

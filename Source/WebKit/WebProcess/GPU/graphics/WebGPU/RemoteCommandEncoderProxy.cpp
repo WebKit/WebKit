@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,17 +152,17 @@ void RemoteCommandEncoderProxy::copyTextureToTexture(
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandEncoderProxy::fillBuffer(
-    const PAL::WebGPU::Buffer& destination,
-    PAL::WebGPU::Size64 destinationOffset,
-    PAL::WebGPU::Size64 size)
+void RemoteCommandEncoderProxy::clearBuffer(
+    const PAL::WebGPU::Buffer& buffer,
+    PAL::WebGPU::Size64 offset,
+    std::optional<PAL::WebGPU::Size64> size)
 {
-    auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
-    ASSERT(convertedDestination);
-    if (!convertedDestination)
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    ASSERT(convertedBuffer);
+    if (!convertedBuffer)
         return;
 
-    auto sendResult = send(Messages::RemoteCommandEncoder::FillBuffer(convertedDestination, destinationOffset, size));
+    auto sendResult = send(Messages::RemoteCommandEncoder::ClearBuffer(convertedBuffer, offset, size));
     UNUSED_VARIABLE(sendResult);
 }
 

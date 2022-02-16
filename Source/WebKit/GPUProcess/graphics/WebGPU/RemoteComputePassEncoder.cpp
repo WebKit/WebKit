@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,9 +61,9 @@ void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
     m_backing->setPipeline(*convertedComputePipeline);
 }
 
-void RemoteComputePassEncoder::dispatch(PAL::WebGPU::Size32 x, std::optional<PAL::WebGPU::Size32> y, std::optional<PAL::WebGPU::Size32> z)
+void RemoteComputePassEncoder::dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY, PAL::WebGPU::Size32 workgroupCountZ)
 {
-    m_backing->dispatch(x, y, z);
+    m_backing->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
@@ -76,24 +76,9 @@ void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer,
     m_backing->dispatchIndirect(*convertedIndirectBuffer, indirectOffset);
 }
 
-void RemoteComputePassEncoder::beginPipelineStatisticsQuery(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
+void RemoteComputePassEncoder::end()
 {
-    auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
-    ASSERT(convertedQuerySet);
-    if (!convertedQuerySet)
-        return;
-
-    m_backing->beginPipelineStatisticsQuery(*convertedQuerySet, queryIndex);
-}
-
-void RemoteComputePassEncoder::endPipelineStatisticsQuery()
-{
-    m_backing->endPipelineStatisticsQuery();
-}
-
-void RemoteComputePassEncoder::endPass()
-{
-    m_backing->endPass();
+    m_backing->end();
 }
 
 void RemoteComputePassEncoder::setBindGroup(PAL::WebGPU::Index32 index, WebGPUIdentifier bindGroup,

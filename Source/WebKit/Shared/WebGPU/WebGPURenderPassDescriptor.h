@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@
 namespace WebKit::WebGPU {
 
 struct RenderPassDescriptor : public ObjectDescriptorBase {
-    Vector<RenderPassColorAttachment> colorAttachments;
+    Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
     WebGPUIdentifier occlusionQuerySet;
     RenderPassTimestampWrites timestampWrites;
@@ -59,7 +59,7 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
         if (!objectDescriptorBase)
             return std::nullopt;
 
-        std::optional<Vector<RenderPassColorAttachment>> colorAttachments;
+        std::optional<Vector<std::optional<RenderPassColorAttachment>>> colorAttachments;
         decoder >> colorAttachments;
         if (!colorAttachments)
             return std::nullopt;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,16 +145,6 @@ void GPURenderPassEncoder::endOcclusionQuery()
     m_backing->endOcclusionQuery();
 }
 
-void GPURenderPassEncoder::beginPipelineStatisticsQuery(const GPUQuerySet& querySet, GPUSize32 queryIndex)
-{
-    m_backing->beginPipelineStatisticsQuery(querySet.backing(), queryIndex);
-}
-
-void GPURenderPassEncoder::endPipelineStatisticsQuery()
-{
-    m_backing->endPipelineStatisticsQuery();
-}
-
 void GPURenderPassEncoder::executeBundles(Vector<RefPtr<GPURenderBundle>>&& bundles)
 {
     Vector<std::reference_wrapper<PAL::WebGPU::RenderBundle>> result;
@@ -167,9 +157,9 @@ void GPURenderPassEncoder::executeBundles(Vector<RefPtr<GPURenderBundle>>&& bund
     m_backing->executeBundles(WTFMove(result));
 }
 
-void GPURenderPassEncoder::endPass()
+void GPURenderPassEncoder::end()
 {
-    m_backing->endPass();
+    m_backing->end();
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,9 @@ void GPUComputePassEncoder::setPipeline(const GPUComputePipeline& computePipelin
     m_backing->setPipeline(computePipeline.backing());
 }
 
-void GPUComputePassEncoder::dispatch(GPUSize32 x, std::optional<GPUSize32> y, std::optional<GPUSize32> z)
+void GPUComputePassEncoder::dispatch(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ)
 {
-    m_backing->dispatch(x, y, z);
+    m_backing->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void GPUComputePassEncoder::dispatchIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
@@ -58,19 +58,9 @@ void GPUComputePassEncoder::dispatchIndirect(const GPUBuffer& indirectBuffer, GP
     m_backing->dispatchIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPUComputePassEncoder::beginPipelineStatisticsQuery(const GPUQuerySet& querySet, GPUSize32 queryIndex)
+void GPUComputePassEncoder::end()
 {
-    m_backing->beginPipelineStatisticsQuery(querySet.backing(), queryIndex);
-}
-
-void GPUComputePassEncoder::endPipelineStatisticsQuery()
-{
-    m_backing->endPipelineStatisticsQuery();
-}
-
-void GPUComputePassEncoder::endPass()
-{
-    m_backing->endPass();
+    m_backing->end();
 }
 
 void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,

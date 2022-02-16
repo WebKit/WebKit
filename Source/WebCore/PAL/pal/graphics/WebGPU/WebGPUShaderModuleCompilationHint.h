@@ -23,24 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpassdepthstencilattachment
+#pragma once
 
-// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
-typedef [EnforceRange] unsigned long GPUStencilValue;
+namespace PAL::WebGPU {
 
-[
-    EnabledBySetting=WebGPU
-]
-dictionary GPURenderPassDepthStencilAttachment {
-    required GPUTextureView view;
+class WebGPUPipelineLayout;
 
-    float depthClearValue = 0;
-    GPULoadOp depthLoadOp;
-    GPUStoreOp depthStoreOp;
-    boolean depthReadOnly = false;
-
-    GPUStencilValue stencilClearValue = 0;
-    GPULoadOp stencilLoadOp;
-    GPUStoreOp stencilStoreOp;
-    boolean stencilReadOnly = false;
+struct ShaderModuleCompilationHint {
+    PipelineLayout& pipelineLayout;
 };
+
+} // namespace PAL::WebGPU

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ RemoteBufferProxy::~RemoteBufferProxy()
 {
 }
 
-void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size, WTF::Function<void()>&& callback)
+void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, WTF::Function<void()>&& callback)
 {
     std::optional<Vector<uint8_t>> data;
     auto sendResult = sendSync(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), { data });
@@ -59,14 +59,13 @@ void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::op
     callback();
 }
 
-auto RemoteBufferProxy::getMappedRange(std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size) -> MappedRange
+auto RemoteBufferProxy::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size) -> MappedRange
 {
     // FIXME: Implement error handling.
     if (!m_data)
         return { };
 
-    auto usedOffset = offset.value_or(0);
-    return { m_data->data() + usedOffset, static_cast<size_t>(size.value_or(m_data->size() - usedOffset)) };
+    return { m_data->data() + offset, static_cast<size_t>(size.value_or(m_data->size() - offset)) };
 }
 
 void RemoteBufferProxy::unmap()

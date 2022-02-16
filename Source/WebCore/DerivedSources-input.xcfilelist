@@ -63,6 +63,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUCommandBuffer.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandEncoder.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandEncoderDescriptor.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCommandsMixin.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompilationInfo.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompilationMessage.idl
@@ -74,6 +75,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassTimestampWrite.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipeline.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCullMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUDebugCommandsMixin.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDepthStencilState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDevice.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDeviceDescriptor.idl
@@ -109,7 +111,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineDescriptorBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUPipelineStatisticName.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPowerPreference.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPredefinedColorSpace.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPrimitiveState.idl
@@ -140,6 +141,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerBindingLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderModule.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUShaderModuleCompilationHint.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderModuleDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderStage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSize64.idl

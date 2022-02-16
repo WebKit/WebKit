@@ -23,24 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpassdepthstencilattachment
+#pragma once
 
-// https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
-typedef [EnforceRange] unsigned long GPUStencilValue;
+#if ENABLE(GPU_PROCESS)
 
-[
-    EnabledBySetting=WebGPU
-]
-dictionary GPURenderPassDepthStencilAttachment {
-    required GPUTextureView view;
+#include "WebGPUIdentifier.h"
+#include <optional>
 
-    float depthClearValue = 0;
-    GPULoadOp depthLoadOp;
-    GPUStoreOp depthStoreOp;
-    boolean depthReadOnly = false;
+namespace WebKit::WebGPU {
 
-    GPUStencilValue stencilClearValue = 0;
-    GPULoadOp stencilLoadOp;
-    GPUStoreOp stencilStoreOp;
-    boolean stencilReadOnly = false;
+struct ShaderModuleCompilationHint {
+    WebGPUIdentifier pipelineLayout;
+
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << pipelineLayout;
+    }
+
+    template<class Decoder> static std::optional<ShaderModuleCompilationHint> decode(Decoder& decoder)
+    {
+        std::optional<WebGPUIdentifier> pipelineLayout;
+        decoder >> pipelineLayout;
+        if (!pipelineLayout)
+            return std::nullopt;
+
+        return { { WTFMove(*pipelineLayout) } };
+    }
 };
+
+} // namespace WebKit::WebGPU
+
+#endif // ENABLE(GPU_PROCESS)

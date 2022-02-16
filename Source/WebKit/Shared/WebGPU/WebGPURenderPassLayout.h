@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 namespace WebKit::WebGPU {
 
 struct RenderPassLayout : public ObjectDescriptorBase {
-    Vector<PAL::WebGPU::TextureFormat> colorFormats;
+    Vector<std::optional<PAL::WebGPU::TextureFormat>> colorFormats;
     std::optional<PAL::WebGPU::TextureFormat> depthStencilFormat;
     PAL::WebGPU::Size32 sampleCount { 1 };
 
@@ -55,7 +55,7 @@ struct RenderPassLayout : public ObjectDescriptorBase {
         if (!objectDescriptorBase)
             return std::nullopt;
 
-        std::optional<Vector<PAL::WebGPU::TextureFormat>> colorFormats;
+        std::optional<Vector<std::optional<PAL::WebGPU::TextureFormat>>> colorFormats;
         decoder >> colorFormats;
         if (!colorFormats)
             return std::nullopt;

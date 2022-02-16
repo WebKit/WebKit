@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,6 +111,7 @@ class Sampler;
 struct SamplerBindingLayout;
 struct SamplerDescriptor;
 class ShaderModule;
+struct ShaderModuleCompilationHint;
 struct ShaderModuleDescriptor;
 struct StencilFaceState;
 struct StorageTextureBindingLayout;
@@ -175,6 +176,7 @@ struct RenderPipelineDescriptor;
 struct RequestAdapterOptions;
 struct SamplerBindingLayout;
 struct SamplerDescriptor;
+struct ShaderModuleCompilationHint;
 struct ShaderModuleDescriptor;
 struct StencilFaceState;
 struct StorageTextureBindingLayout;
@@ -250,6 +252,7 @@ public:
     std::optional<RequestAdapterOptions> convertToBacking(const PAL::WebGPU::RequestAdapterOptions&);
     std::optional<SamplerBindingLayout> convertToBacking(const PAL::WebGPU::SamplerBindingLayout&);
     std::optional<SamplerDescriptor> convertToBacking(const PAL::WebGPU::SamplerDescriptor&);
+    std::optional<ShaderModuleCompilationHint> convertToBacking(const PAL::WebGPU::ShaderModuleCompilationHint&);
     std::optional<ShaderModuleDescriptor> convertToBacking(const PAL::WebGPU::ShaderModuleDescriptor&);
     std::optional<StencilFaceState> convertToBacking(const PAL::WebGPU::StencilFaceState&);
     std::optional<StorageTextureBindingLayout> convertToBacking(const PAL::WebGPU::StorageTextureBindingLayout&);

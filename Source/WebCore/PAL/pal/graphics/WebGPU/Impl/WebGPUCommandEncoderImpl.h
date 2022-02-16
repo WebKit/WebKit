@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,10 +81,10 @@ private:
         const ImageCopyTexture& destination,
         const Extent3D& copySize) final;
 
-    void fillBuffer(
-        const Buffer& destination,
-        Size64 destinationOffset,
-        Size64) final;
+    void clearBuffer(
+        const Buffer&,
+        Size64 offset,
+        std::optional<Size64>) final;
 
     void pushDebugGroup(String&& groupLabel) final;
     void popDebugGroup() final;

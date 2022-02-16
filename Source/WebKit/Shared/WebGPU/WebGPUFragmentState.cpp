@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,13 +40,16 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const PAL
     if (!base)
         return std::nullopt;
 
-    Vector<ColorTargetState> targets;
+    Vector<std::optional<ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
     for (const auto& target : fragmentState.targets) {
-        auto convertedTarget = convertToBacking(target);
-        if (!convertedTarget)
-            return std::nullopt;
-        targets.uncheckedAppend(WTFMove(*convertedTarget));
+        if (target) {
+            auto convertedTarget = convertToBacking(*target);
+            if (!convertedTarget)
+                return std::nullopt;
+            targets.uncheckedAppend(WTFMove(*convertedTarget));
+        } else
+            targets.uncheckedAppend(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(targets) } };
@@ -58,13 +61,16 @@ std::optional<PAL::WebGPU::FragmentState> ConvertFromBackingContext::convertFrom
     if (!base)
         return std::nullopt;
 
-    Vector<PAL::WebGPU::ColorTargetState> targets;
+    Vector<std::optional<PAL::WebGPU::ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
     for (const auto& backingTarget : fragmentState.targets) {
-        auto target = convertFromBacking(backingTarget);
-        if (!target)
-            return std::nullopt;
-        targets.uncheckedAppend(WTFMove(*target));
+        if (backingTarget) {
+            auto target = convertFromBacking(*backingTarget);
+            if (!target)
+                return std::nullopt;
+            targets.uncheckedAppend(WTFMove(*target));
+        } else
+            targets.uncheckedAppend(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(targets) } };

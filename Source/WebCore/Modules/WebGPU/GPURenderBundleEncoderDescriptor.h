@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,10 @@ struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
         return {
             {
                 { label },
-                colorFormats.map([] (const auto& colorFormat) {
-                    return WebCore::convertToBacking(colorFormat);
+                colorFormats.map([] (auto& colorFormat) -> std::optional<PAL::WebGPU::TextureFormat> {
+                    if (colorFormat)
+                        return WebCore::convertToBacking(*colorFormat);
+                    return std::nullopt;
                 }),
                 depthStencilFormat ? std::optional { WebCore::convertToBacking(*depthStencilFormat) } : std::nullopt,
                 sampleCount,

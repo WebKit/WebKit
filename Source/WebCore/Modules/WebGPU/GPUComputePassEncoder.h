@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,13 +52,10 @@ public:
     void setLabel(String&&);
 
     void setPipeline(const GPUComputePipeline&);
-    void dispatch(GPUSize32 x, std::optional<GPUSize32> y, std::optional<GPUSize32>);
+    void dispatch(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ);
     void dispatchIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
 
-    void beginPipelineStatisticsQuery(const GPUQuerySet&, GPUSize32 queryIndex);
-    void endPipelineStatisticsQuery();
-
-    void endPass();
+    void end();
 
     void setBindGroup(GPUIndex32, const GPUBindGroup&,
         std::optional<Vector<GPUBufferDynamicOffset>>&&);

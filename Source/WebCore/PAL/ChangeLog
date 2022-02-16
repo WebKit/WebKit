@@ -1,3 +1,70 @@
+2022-02-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update IDLs and stubs to latest version of the spec
+        https://bugs.webkit.org/show_bug.cgi?id=236639
+
+        Reviewed by Dean Jackson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::supportedFeatures):
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.cpp:
+        (PAL::WebGPU::BufferImpl::mapAsync):
+        (PAL::WebGPU::BufferImpl::getMappedRange):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp:
+        (PAL::WebGPU::CommandEncoderImpl::beginRenderPass):
+        (PAL::WebGPU::CommandEncoderImpl::beginComputePass):
+        (PAL::WebGPU::CommandEncoderImpl::clearBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::fillBuffer): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp:
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatch):
+        (PAL::WebGPU::ComputePassEncoderImpl::end):
+        (PAL::WebGPU::ComputePassEncoderImpl::beginPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::ComputePassEncoderImpl::endPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::ComputePassEncoderImpl::endPass): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertToBacking):
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::createTexture):
+        (PAL::WebGPU::DeviceImpl::createShaderModule):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        (PAL::WebGPU::GPUImpl::requestAdapter):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        (PAL::WebGPU::RenderPassEncoderImpl::end):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::RenderPassEncoderImpl::endPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::RenderPassEncoderImpl::endPass): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFragmentState.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h: Removed.
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPUShaderModuleCompilationHint.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h.
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+
 2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE includes interfere with system header includes

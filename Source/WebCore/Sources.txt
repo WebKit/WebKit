@@ -3185,6 +3185,7 @@ JSGPUCommandBuffer.cpp
 JSGPUCommandBufferDescriptor.cpp
 JSGPUCommandEncoder.cpp
 JSGPUCommandEncoderDescriptor.cpp
+JSGPUCommandsMixin.cpp
 JSGPUCompareFunction.cpp
 JSGPUCompilationInfo.cpp
 JSGPUCompilationMessage.cpp
@@ -3196,6 +3197,7 @@ JSGPUComputePassTimestampWrite.cpp
 JSGPUComputePipeline.cpp
 JSGPUComputePipelineDescriptor.cpp
 JSGPUCullMode.cpp
+JSGPUDebugCommandsMixin.cpp
 JSGPUDepthStencilState.cpp
 JSGPUDevice.cpp
 JSGPUDeviceDescriptor.cpp
@@ -3231,7 +3233,6 @@ JSGPUPipelineBase.cpp
 JSGPUPipelineDescriptorBase.cpp
 JSGPUPipelineLayout.cpp
 JSGPUPipelineLayoutDescriptor.cpp
-JSGPUPipelineStatisticName.cpp
 JSGPUPowerPreference.cpp
 JSGPUPredefinedColorSpace.cpp
 JSGPUPrimitiveState.cpp
@@ -3262,6 +3263,7 @@ JSGPUSamplerBindingLayout.cpp
 JSGPUSamplerBindingType.cpp
 JSGPUSamplerDescriptor.cpp
 JSGPUShaderModule.cpp
+JSGPUShaderModuleCompilationHint.cpp
 JSGPUShaderModuleDescriptor.cpp
 JSGPUShaderStage.cpp
 JSGPUStencilFaceState.cpp

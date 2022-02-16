@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,14 +38,14 @@ void GPUBuffer::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
+void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
 {
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTFMove(promise)] () mutable {
         promise.resolve(nullptr);
     });
 }
 
-Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+Ref<JSC::ArrayBuffer> GPUBuffer::getMappedRange(GPUSize64 offset, std::optional<GPUSize64> size)
 {
     auto mappedRange = m_backing->getMappedRange(offset, size);
     return ArrayBuffer::create(mappedRange.source, mappedRange.byteLength);
