@@ -28,7 +28,6 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "GPUProcessConnectionParameters.h"
-#import "LaunchServicesDatabaseManager.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -325,12 +324,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // no window in WK2, NSApplication needs to use the focused page's focused element.
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
-#endif
-
-#if HAVE(LSDATABASECONTEXT)
-    // On Mac, this needs to be called before NSApplication is being initialized.
-    // The NSApplication initialization is being done in [NSApplication _accessibilityInitialize]
-    LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate();
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
