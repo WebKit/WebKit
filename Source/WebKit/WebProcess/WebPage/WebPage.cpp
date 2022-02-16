@@ -651,10 +651,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    if (parameters.attachmentElementExtensionHandles)
-        SandboxExtension::consumePermanently(*parameters.attachmentElementExtensionHandles);
-#endif
 #if PLATFORM(COCOA)
     // FIXME(207716): The following should be removed when the GPU process is complete.
     static bool hasConsumedMediaExtensionHandles = false;

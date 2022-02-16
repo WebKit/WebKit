@@ -157,9 +157,6 @@ struct WebPageCreationParameters {
     WebCore::FloatSize viewportConfigurationViewSize;
     std::optional<WebCore::ViewportArguments> overrideViewportArguments;
 #endif
-#if ENABLE(ATTACHMENT_ELEMENT)
-    std::optional<Vector<SandboxExtension::Handle>> attachmentElementExtensionHandles;
-#endif
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;

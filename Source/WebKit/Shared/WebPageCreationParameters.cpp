@@ -97,10 +97,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << overrideViewportArguments;
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    encoder << attachmentElementExtensionHandles;
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     encoder << screenSize;
     encoder << availableScreenSize;
@@ -361,14 +357,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!overrideViewportArguments)
         return std::nullopt;
     parameters.overrideViewportArguments = WTFMove(*overrideViewportArguments);
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    std::optional<std::optional<Vector<SandboxExtension::Handle>>> attachmentElementExtensionHandles;
-    decoder >> attachmentElementExtensionHandles;
-    if (!attachmentElementExtensionHandles)
-        return std::nullopt;
-    parameters.attachmentElementExtensionHandles = WTFMove(*attachmentElementExtensionHandles);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

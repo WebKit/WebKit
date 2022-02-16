@@ -383,11 +383,6 @@ public:
     UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    bool hasIssuedAttachmentElementRelatedSandboxExtensions() const { return m_hasIssuedAttachmentElementRelatedSandboxExtensions; }
-    void setHasIssuedAttachmentElementRelatedSandboxExtensions() { m_hasIssuedAttachmentElementRelatedSandboxExtensions = true; }
-#endif
-
 #if ENABLE(GPU_PROCESS)
     void gpuProcessExited(GPUProcessTerminationReason);
 #endif
@@ -634,9 +629,6 @@ private:
     bool m_isPrewarmed;
     CaptivePortalMode m_captivePortalMode { CaptivePortalMode::Disabled };
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
-#if ENABLE(ATTACHMENT_ELEMENT)
-    bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
-#endif
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
 #endif

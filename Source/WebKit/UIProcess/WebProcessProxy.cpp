@@ -546,10 +546,6 @@ void WebProcessProxy::shutDown()
     m_routingArbitrator->processDidTerminate();
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    m_hasIssuedAttachmentElementRelatedSandboxExtensions = false;
-#endif
-
     m_processPool->disconnectProcess(*this);
 }
 
@@ -908,10 +904,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_userMediaCaptureManagerProxy->clear();
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    m_hasIssuedAttachmentElementRelatedSandboxExtensions = false;
 #endif
 
     if (auto* webConnection = this->webConnection())

@@ -8143,21 +8143,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_process->processTerminated();
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
-
-static Span<const ASCIILiteral> attachmentElementServices()
-{
-    static constexpr std::array services {
-        "com.apple.iconservices"_s,
-#if PLATFORM(MAC)
-        "com.apple.iconservices.store"_s,
-#endif
-    };
-    return services;
-}
-
-#endif
-
 #if PLATFORM(COCOA)
 
 static Span<const ASCIILiteral> gpuIOKitClasses()
@@ -8461,13 +8446,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.lastNavigationWasAppInitiated = m_lastNavigationWasAppInitiated;
     parameters.shouldRelaxThirdPartyCookieBlocking = m_configuration->shouldRelaxThirdPartyCookieBlocking();
     parameters.canUseCredentialStorage = m_canUseCredentialStorage;
-
-#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
-    if (m_preferences->attachmentElementEnabled() && !process.hasIssuedAttachmentElementRelatedSandboxExtensions()) {
-        parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), std::nullopt);
-        process.setHasIssuedAttachmentElementRelatedSandboxExtensions();
-    }
-#endif
 
     parameters.httpsUpgradeEnabled = preferences().upgradeKnownHostsToHTTPSEnabled() ? m_configuration->httpsUpgradeEnabled() : false;
 

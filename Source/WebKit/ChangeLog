@@ -1,3 +1,29 @@
+2022-02-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][macOS] Block access to Icon Services
+        https://bugs.webkit.org/show_bug.cgi?id=235616
+
+        Reviewed by Darin Adler.
+
+        Stop creating a sandbox extension for the Icon service when the attachment element is enabled,
+        since local testing indicates that this is not needed.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::attachmentElementServices): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::hasIssuedAttachmentElementRelatedSandboxExtensions const): Deleted.
+        (WebKit::WebProcessProxy::setHasIssuedAttachmentElementRelatedSandboxExtensions): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+
 2022-02-16  Tim Horton  <timothy_horton@apple.com>
 
         Add an additions point for `shouldRecognizeSimultaneouslyWithGestureRecognizer`
