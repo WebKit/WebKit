@@ -116,18 +116,29 @@ endif ()
 
 list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 
+set(WebKitRequirements_COMPONENTS
+    JPEG
+    LibPSL
+    LibXml2
+    ProcessLauncher
+    SQLite3
+    ZLIB
+)
+
+find_package(WPEBackendPlayStation)
+if (WPEBackendPlayStation_FOUND)
+    # WPE::libwpe is compiled into the PlayStation backend
+    set(WPE_NAMES SceWPE)
+    find_package(WPE REQUIRED)
+
+    SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
+else ()
+    list(APPEND WebKitRequirements_COMPONENTS libwpe)
+endif ()
+
 find_library(C_STD_LIBRARY c)
 find_library(KERNEL_LIBRARY kernel)
-find_package(WebKitRequirements REQUIRED
-    COMPONENTS
-        JPEG
-        LibPSL
-        LibXml2
-        ProcessLauncher
-        SQLite3
-        ZLIB
-        libwpe
-)
+find_package(WebKitRequirements REQUIRED COMPONENTS ${WebKitRequirements_COMPONENTS})
 
 # The OpenGL ES implementation is in the same library as the EGL implementation
 set(OpenGLES2_NAMES ${EGL_NAMES})

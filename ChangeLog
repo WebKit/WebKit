@@ -1,3 +1,17 @@
+2022-02-16  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][PlayStation] Add find module for WPE Backend for PlayStation
+        https://bugs.webkit.org/show_bug.cgi?id=236721
+
+        Reviewed by Michael Catanzaro.
+
+        Add the find module to detect the presence of the WPE Backend for PlayStation platforms.
+        Currently its not required to have the WPE Backend so its presence is conditional. When
+        there USE(WPE_BACKEND_PLAYSTATION) will be true.
+
+        * Source/cmake/FindWPEBackendPlayStation.cmake: Added.
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
