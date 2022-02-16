@@ -1,5 +1,11 @@
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
+        Reset GPU Process TestExpectations after accelerated drawing is enabled.
+
+        * gpu-process/TestExpectations:
+
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening.
 
         * css3/calc/block-mask-overlay-image-outset.html: Expand pixel range for GPU Process.
