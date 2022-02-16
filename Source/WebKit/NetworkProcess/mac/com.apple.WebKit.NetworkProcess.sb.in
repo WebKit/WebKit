@@ -128,6 +128,13 @@
         "com.apple.xpc.activity.unmanaged"))
 #endif
 
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+(allow mach-lookup
+    (global-name "com.apple.cfprefsd.agent")
+    (global-name "com.apple.cfprefsd.daemon")
+)
+#endif
+
 (allow mach-lookup
     (global-name "com.apple.system.opendirectoryd.libinfo")
     (global-name "com.apple.trustd")
