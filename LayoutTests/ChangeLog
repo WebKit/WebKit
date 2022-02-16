@@ -1,3 +1,19 @@
+2022-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        fast/filter-image/filter-image-svg.html is failing to load the image due to a wrong path
+        https://bugs.webkit.org/show_bug.cgi?id=236632
+
+        Reviewed by Simon Fraser.
+
+        This test case had the following CSS.
+        > background-image: filter(url(image.svg), url(#filter));
+
+        However, 'image.svg' doesn't exist. DRT and WTR unexpectedly
+        loaded the missing image icon and applied the filter. It should be
+        'resources/image.svg'.
+
+        * fast/filter-image/filter-image-svg.html:
+
 2022-02-15  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r289495): [ Monterey arm64 ] model-element/model-element-ready.html is a flaky assertion failure.
