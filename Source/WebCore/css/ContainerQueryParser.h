@@ -24,10 +24,13 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "CSSParserToken.h"
 #include "ContainerQuery.h"
 
 namespace WebCore {
+
+class CSSParserTokenRange;
 
 class ContainerQueryParser {
 public:
