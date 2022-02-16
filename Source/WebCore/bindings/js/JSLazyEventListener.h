@@ -53,7 +53,6 @@ private:
 #endif
 
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;
-    bool wasCreatedFromMarkup() const final { return true; }
 
     String m_functionName;
     const String& m_eventParameterName;
