@@ -326,6 +326,11 @@ String contextMenuItemTagCopyCroppedImage()
     return WEB_UI_STRING("Copy Cropped Image", "Title for Copy Cropped Image");
 }
 
-#endif
+String contextMenuItemTitleMarkupImage()
+{
+    return WEB_UI_STRING("Markup Image", "Image analysis markup menu item");
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace WebCore

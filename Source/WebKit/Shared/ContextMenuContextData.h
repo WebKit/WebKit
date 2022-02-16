@@ -31,6 +31,7 @@
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
 #include <WebCore/ContextMenuContext.h>
+#include <WebCore/ElementContext.h>
 #include <wtf/EnumTraits.h>
 
 namespace IPC {
@@ -64,7 +65,7 @@ public:
     {
     }
     
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID);
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
 
     ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
@@ -74,7 +75,9 @@ public:
     bool controlledDataIsEditable() const;
     WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
     String controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
-#endif
+    std::optional<WebCore::ElementContext> controlledImageElementContext() const { return m_controlledImageElementContext; }
+    String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
+#endif // ENABLE(SERVICE_CONTROLS)
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
@@ -97,6 +100,8 @@ private:
     bool m_selectionIsEditable;
     WebCore::IntRect m_controlledImageBounds;
     String m_controlledImageAttachmentID;
+    std::optional<WebCore::ElementContext> m_controlledImageElementContext;
+    String m_controlledImageMIMEType;
 #endif
 };
 

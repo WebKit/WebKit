@@ -30,10 +30,12 @@
 
 #import "APIAttachment.h"
 #import "APIContextMenuClient.h"
+#import "CocoaImage.h"
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"
 #import "ServicesController.h"
 #import "ShareableBitmap.h"
+#import "TextRecognitionUtilities.h"
 #import "WKMenuItemIdentifiersPrivate.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuItem.h"
@@ -48,6 +50,10 @@
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+
+#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#endif
 
 @interface WKUserDataWrapper : NSObject {
     RefPtr<API::Object> _webUserData;
@@ -256,6 +262,21 @@ void WebContextMenuProxyMac::setupServicesMenu()
 
     if (!hasControlledImage)
         [m_menu setShowsStateColumn:YES];
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    else if (isImageAnalysisMarkupSystemFeatureEnabled()) {
+        auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
+        [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
+        [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
+        [markupImageItem setAction:@selector(markupImage)];
+        auto numberOfItems = [m_menu numberOfItems];
+        if (numberOfItems)
+            [markupImageItem setIndentationLevel:[m_menu itemAtIndex:numberOfItems - 1].indentationLevel];
+        if (numberOfItems >= 1)
+            [m_menu insertItem:markupImageItem.get() atIndex:numberOfItems - 1];
+        else
+            [m_menu addItem:markupImageItem.get()];
+    }
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
     // Explicitly add a menu item for each telephone number that is in the selection.
     Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
@@ -299,6 +320,38 @@ void WebContextMenuProxyMac::clearServicesMenu()
 {
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nullptr];
     m_menu = nullptr;
+}
+
+void WebContextMenuProxyMac::applyMarkupToControlledImage()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (!page())
+        return;
+
+    auto elementContext = m_context.controlledImageElementContext();
+    if (!elementContext)
+        return;
+
+    auto* imageBitmap = m_context.controlledImage();
+    if (!imageBitmap)
+        return;
+
+    auto image = imageBitmap->makeCGImage();
+    if (!image)
+        return;
+
+    requestImageAnalysisMarkup(image.get(), [weakPage = WeakPtr { page() }, preferredMIMEType = m_context.controlledImageMIMEType(), elementContext = WTFMove(*elementContext)](CGImageRef result) {
+        RefPtr protectedPage = weakPage.get();
+        if (!protectedPage || !result)
+            return;
+
+        auto [data, type] = transcodeWithPreferredMIMEType(result, preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        if (!data)
+            return;
+
+        protectedPage->replaceWithPasteboardData(elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
+    });
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
 static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(NSMenuItem *))

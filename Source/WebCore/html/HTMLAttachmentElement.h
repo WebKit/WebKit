@@ -42,7 +42,7 @@ class HTMLAttachmentElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLAttachmentElement);
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-    static const String& getAttachmentIdentifier(HTMLImageElement&);
+    WEBCORE_EXPORT static const String& getAttachmentIdentifier(HTMLImageElement&);
     static URL archiveResourceURL(const String&);
 
     WEBCORE_EXPORT URL blobURL() const;

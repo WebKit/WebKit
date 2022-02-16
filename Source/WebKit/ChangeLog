@@ -1,3 +1,81 @@
+2022-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add an "Markup Image" item to the sharing services picker context menu
+        https://bugs.webkit.org/show_bug.cgi?id=236628
+        rdar://86446810
+
+        Reviewed by Darin Adler.
+
+        Add support for a new context menu item in the sharing services picker; to achieve this, we plumb along some
+        more information about the controlled image element for the services picker menu (i.e. MIME type and an element
+        context). In WebContextMenuProxyMac, we then append the "Markup Image" item if the system feature is enabled,
+        and use this information about the controlled image element to replace the image using image data returned from
+        VisionKit, transcoded to a format that matches that of the original source image. See below for more details.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::controlledImageElementContext const):
+        (WebKit::ContextMenuContextData::controlledImageMIMEType const):
+
+        Add `m_controlledImageElementContext`, which can be used to identify the controlled image element, and
+        `m_controlledImageMIMEType`, the MIME type of the controlled image. See `applyMarkupToControlledImage` for more
+        information about usage.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::replaceWithPasteboardData):
+
+        Add a helper method that's nearly identical to the extant `replaceSelectionWithPasteboardData` method, except
+        that it takes an ElementContext and applies the editing replacement to a selection containing the element
+        corresponding to the given context, rather than applying the edit command to the current selection.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView updateImageAnalysisMarkupMenuItems:]):
+
+        Use the new WebCore localized string helper function.
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.h:
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate markupImage]):
+
+        Handle the new context menu invocation.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
+        If the controlled image is set and `isImageAnalysisMarkupSystemFeatureEnabled()` is true, append a new item to
+        the services menu to invoke "Markup Image"; when activated, this menu item invokes the
+        `-[WKSharingServicePickerDelegate markupImage]` method above, which in turn calls into
+        `applyMarkupToControlledImage` below.
+
+        (WebKit::WebContextMenuProxyMac::applyMarkupToControlledImage):
+
+        This method contains the main logic for coordinating "Markup Image" from the services menu on macOS. Using
+        information about the controlled image, this first creates a CGImageRef from the image bitmap, passes it to
+        VisionKit for analysis, and obtains a resulting CGImageRef; it then transcodes this resulting CGImageRef to
+        image data in a format that matches the MIME type of the source image, and replaces the controlled image using
+        this image data via the override pasteboard.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleImageServiceClick):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::replaceWithPasteboardData):
+
+        Move the current selection to surround the element identified by the given ElementContext, and then call into
+        `replaceSelectionWithPasteboardData` to perform the replacement.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleImageServiceClick):
+
+        Additionally compute and send the controlled image MIME type and its element context.
+
 2022-02-15  Sihui Liu  <sihui_liu@apple.com>
 
         Migrate IndexedDB and LocalStorage data to GeneralStorageDirectory

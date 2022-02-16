@@ -138,16 +138,17 @@ bool handleEvent(HTMLElement& element, Event& event)
     auto& node = downcast<Node>(*mouseEvent.target());
 
     if (ImageControlsMac::isImageControlsButtonElement(node)) {
-        auto shadowHost = node.shadowHost();
-        if (!is<HTMLImageElement>(*shadowHost))
+        RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(node.shadowHost());
+        if (!shadowHost)
             return false;
-        if (auto* image = imageFromImageElementNode(*shadowHost)) {
-            HTMLImageElement& imageElement = downcast<HTMLImageElement>(*shadowHost);
-            auto attachmentID = HTMLAttachmentElement::getAttachmentIdentifier(imageElement);
-            page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, imageElement.isContentEditable(), imageElement.renderBox()->absoluteContentQuad().enclosingBoundingBox(), attachmentID);
-            event.setDefaultHandled();
-            return true;
-        }
+
+        auto* image = imageFromImageElementNode(*shadowHost);
+        if (!image)
+            return false;
+
+        page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, *shadowHost);
+        event.setDefaultHandled();
+        return true;
     }
     return false;
 }

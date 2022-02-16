@@ -70,7 +70,9 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
@@ -759,9 +761,17 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
-void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, bool isEditable, const IntRect& imageRect, const String& attachmentID)
+void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, HTMLImageElement& element)
 {
-    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, image, isEditable, imageRect, attachmentID), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData {
+        point,
+        image,
+        element.isContentEditable(),
+        element.renderBox()->absoluteContentQuad().enclosingBoundingBox(),
+        HTMLAttachmentElement::getAttachmentIdentifier(element),
+        contextForElement(element),
+        image.mimeType()
+    }, { }));
 }
 
 #endif

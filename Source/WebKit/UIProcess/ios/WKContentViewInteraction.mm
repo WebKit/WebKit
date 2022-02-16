@@ -4667,7 +4667,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         if (currentItem)
             [updatedItems removeObject:currentItem];
     } else if (!currentItem)
-        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WEB_UI_STRING("Markup Image", "Image analysis markup menu item") action:@selector(performImageAnalysisMarkup:)]).get()];
+        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTitleMarkupImage() action:@selector(performImageAnalysisMarkup:)]).get()];
 }
 
 - (BOOL)canPerformImageAnalysisMarkup

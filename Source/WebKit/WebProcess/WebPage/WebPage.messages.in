@@ -460,6 +460,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
     GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::IPCHandle ipcHandle) Synchronous
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
+    ReplaceWithPasteboardData(struct WebCore::ElementContext context, Vector<String> types, IPC::DataReference data)
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous

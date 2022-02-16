@@ -183,6 +183,11 @@
     return _menuProxy->window();
 }
 
+- (void)markupImage
+{
+    _menuProxy->applyMarkupToControlledImage();
+}
+
 @end
 
 #endif // ENABLE(SERVICE_CONTROLS)

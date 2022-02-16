@@ -868,6 +868,11 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
     send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }
 
+void WebPageProxy::replaceWithPasteboardData(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+{
+    send(Messages::WebPage::ReplaceWithPasteboardData(elementContext, types, data));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

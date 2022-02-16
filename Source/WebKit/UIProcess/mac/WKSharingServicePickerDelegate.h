@@ -50,6 +50,7 @@ class WebContextMenuProxyMac;
 - (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
 - (void)setSourceFrame:(NSRect)sourceFrame;
 - (void)setAttachmentID:(String)attachmentID;
+- (void)markupImage;
 
 @end
 
