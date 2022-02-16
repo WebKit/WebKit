@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Notification.h"
 #include "NotificationOptions.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
@@ -37,6 +38,9 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Supplementable.h"
 #include "Timer.h"
+#include <wtf/ListHashSet.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -96,7 +100,11 @@ public:
     };
 
     void showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions&, DOMPromiseDeferred<void>&&);
-    void getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>>);
+    void getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>);
+
+    void addNotificationToList(Notification&);
+    void removeNotificationFromList(Notification&);
+    Vector<Ref<Notification>> filteredNotificationList(const String& filteredTag);
 #endif
 
 private:
@@ -120,6 +128,11 @@ private:
     RefPtr<ServiceWorker> m_activeWorker;
 
     std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
+
+#if ENABLE(NOTIFICATION_EVENT)
+    ListHashSet<Notification*> m_notificationList;
+    WeakHashSet<Notification> m_notificationSet;
+#endif
 };
 
 } // namespace WebCore

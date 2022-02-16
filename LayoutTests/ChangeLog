@@ -1,3 +1,17 @@
+2022-02-15  Brady Eidson  <beidson@apple.com>
+
+        Implement ServiceWorkerRegistration.getNotifications().
+        https://bugs.webkit.org/show_bug.cgi?id=236545
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/getnotifications-expected.txt: Added.
+        * http/tests/workers/service/getnotifications.html: Added.
+        * http/tests/workers/service/resources/shownotification-worker.js:
+        (async tryShow):
+        (async getNotes):
+        (async event):
+
 2022-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         fast/filter-image/filter-image-svg.html is failing to load the image due to a wrong path

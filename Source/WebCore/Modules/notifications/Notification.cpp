@@ -72,9 +72,10 @@ Notification::Notification(ScriptExecutionContext& context, const String& title,
 {
     if (context.isDocument())
         m_notificationSource = NotificationSource::Document;
-    else if (context.isServiceWorkerGlobalScope())
+    else if (context.isServiceWorkerGlobalScope()) {
         m_notificationSource = NotificationSource::ServiceWorker;
-    else
+        downcast<ServiceWorkerGlobalScope>(context).registration().addNotificationToList(*this);
+    } else
         RELEASE_ASSERT_NOT_REACHED();
 
     if (!options.icon.isEmpty()) {
@@ -84,7 +85,43 @@ Notification::Notification(ScriptExecutionContext& context, const String& title,
     }
 }
 
-Notification::~Notification() = default;
+Notification::Notification(const Notification& other)
+    : ActiveDOMObject(other.scriptExecutionContext())
+    , m_title(other.m_title.isolatedCopy())
+    , m_direction(other.m_direction)
+    , m_lang(other.m_lang.isolatedCopy())
+    , m_body(other.m_body.isolatedCopy())
+    , m_tag(other.m_tag.isolatedCopy())
+    , m_icon(other.m_icon.isolatedCopy())
+    , m_state(other.m_state)
+    , m_notificationSource(other.m_notificationSource)
+    , m_contextIdentifier(other.m_contextIdentifier)
+{
+    suspendIfNeeded();
+}
+
+Notification::~Notification()
+{
+    if (auto* context = scriptExecutionContext()) {
+        if (context->isServiceWorkerGlobalScope())
+            downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
+    }
+}
+
+Ref<Notification> Notification::copyForGetNotifications() const
+{
+    return adoptRef(*new Notification(*this));
+}
+
+void Notification::contextDestroyed()
+{
+    auto* context = scriptExecutionContext();
+    RELEASE_ASSERT(context);
+    if (context->isServiceWorkerGlobalScope())
+        downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
+
+    ActiveDOMObject::contextDestroyed();
+}
 
 
 void Notification::showSoon()
@@ -130,6 +167,10 @@ void Notification::close()
     case Showing: {
         if (auto* client = clientFromContext())
             client->cancel(*this);
+        if (auto* context = scriptExecutionContext()) {
+            if (context->isServiceWorkerGlobalScope())
+                downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
+        }
         break;
     }
     case Closed:

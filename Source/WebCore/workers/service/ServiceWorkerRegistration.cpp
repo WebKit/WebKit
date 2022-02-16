@@ -33,6 +33,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSNotification.h"
 #include "Logging.h"
 #include "NavigationPreloadManager.h"
 #include "NotificationClient.h"
@@ -294,12 +295,49 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
     });
 }
 
-void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>> promise)
+void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext& context, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>> promise)
 {
-    UNUSED_PARAM(filter);
-
-    promise.reject(Exception { NotSupportedError, "ServiceWorkerRegistration.getNotifications not yet implemented"_s });
+    auto notifications = filteredNotificationList(filter.tag);
+    context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise), notifications = WTFMove(notifications)]() mutable {
+        promise.resolve(WTFMove(notifications));
+    });
 }
+
+void ServiceWorkerRegistration::addNotificationToList(Notification& notification)
+{
+    // A Notification at this exact address might previously have been in the list but not successfully removed.
+    // The WeakHashSet captures that possibility here to help us maintain consistency.
+    auto iter = m_notificationList.find(&notification);
+    if (iter != m_notificationList.end()) {
+        RELEASE_ASSERT(!m_notificationSet.contains(notification));
+        m_notificationList.remove(iter);
+    }
+
+    m_notificationList.add(&notification);
+    auto result = m_notificationSet.add(notification);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ServiceWorkerRegistration::removeNotificationFromList(Notification& notification)
+{
+    // The same notification might try to remove itself from this list more than once, and that's fine.
+    m_notificationList.remove(&notification);
+    m_notificationSet.remove(notification);
+}
+
+Vector<Ref<Notification>> ServiceWorkerRegistration::filteredNotificationList(const String& filteredTag)
+{
+    Vector<Ref<Notification>> results;
+    for (auto* notification : m_notificationList) {
+        if (!m_notificationSet.contains(*notification))
+            continue;
+        if (filteredTag.isEmpty() || notification->tag() == filteredTag)
+            results.append(notification->copyForGetNotifications());
+    }
+
+    return results;
+}
+
 #endif // ENABLE(NOTIFICATION_EVENT)
 
 } // namespace WebCore
