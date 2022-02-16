@@ -613,7 +613,6 @@ webkit.org/b/137729 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 # Subpixel failures END
 
 # These tests were always flaky, but became a lot more so at in r163472-r163476.
-webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/50959 animations/play-state-suspend.html [ Pass Failure ]
 
 # Skipped for ios-simulator as well:
@@ -1180,7 +1179,6 @@ webkit.org/b/170177 fast/images/reset-image-animation.html [ Pass Failure ]
 
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
-webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]

@@ -1,5 +1,12 @@
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
+        Unreviewed gardening for GPU Process.
+
+        * gpu-process/TestExpectations:
+        * platform/mac/TestExpectations: fly-by update.
+
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
         iOS test gardening after turning on accelerated drawing
         https://bugs.webkit.org/show_bug.cgi?id=236680
         rdar://problem/88996489
