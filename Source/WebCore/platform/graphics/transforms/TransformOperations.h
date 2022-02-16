@@ -60,6 +60,13 @@ public:
         }
         return false;
     }
+    
+    bool hasMatrixOperation() const
+    {
+        return std::any_of(m_operations.begin(), m_operations.end(), [](auto operation) {
+            return operation->type() == WebCore::TransformOperation::MATRIX;
+        });
+    }
 
     bool isRepresentableIn2D() const
     {
@@ -95,6 +102,8 @@ public:
         apply(size, transform);
         return transform.isInvertible();
     }
+    
+    bool shouldFallBackToDiscreteAnimation(const TransformOperations&, const LayoutSize&) const;
     
     TransformOperations blendByMatchingOperations(const TransformOperations& from, const BlendingContext&, const LayoutSize&) const;
     TransformOperations blendByUsingMatrixInterpolation(const TransformOperations& from, const BlendingContext&, const LayoutSize&) const;

@@ -1753,8 +1753,6 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
 
 void TransformationMatrix::blend(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
-    if (compositeOperation == CompositeOperation::Accumulate && (!from.isInvertible() || !isInvertible()))
-        compositeOperation = CompositeOperation::Replace;
     
     if (!progress && compositeOperation == CompositeOperation::Replace) {
         *this = from;

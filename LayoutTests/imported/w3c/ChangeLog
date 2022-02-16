@@ -1,3 +1,13 @@
+2022-02-15  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        [css-transforms] properly handle interpolation of non-invertible matrices
+        https://bugs.webkit.org/show_bug.cgi?id=236480
+
+        Reviewed by Martin Robinson.
+
+        * web-platform-tests/css/css-transforms/animation/transform-matrix-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2022-02-15  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support all size features

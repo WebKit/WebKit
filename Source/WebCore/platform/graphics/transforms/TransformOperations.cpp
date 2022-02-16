@@ -96,6 +96,11 @@ bool TransformOperations::affectedByTransformOrigin() const
     return false;
 }
 
+bool TransformOperations::shouldFallBackToDiscreteAnimation(const TransformOperations& from, const LayoutSize& boxSize) const
+{
+    return (from.hasMatrixOperation() || hasMatrixOperation()) && (!from.isInvertible(boxSize) || !isInvertible(boxSize));
+}
+
 TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const BlendingContext& context, const LayoutSize& boxSize) const
 {
     TransformOperations result;
@@ -104,7 +109,7 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     unsigned toOperationCount = operations().size();
     unsigned maxOperationCount = std::max(fromOperationCount, toOperationCount);
     
-    if (context.compositeOperation == CompositeOperation::Accumulate && (!from.isInvertible(boxSize) || !isInvertible(boxSize)))
+    if (shouldFallBackToDiscreteAnimation(from, boxSize))
         return blendByUsingMatrixInterpolation(from, context, boxSize);
     
     for (unsigned i = 0; i < maxOperationCount; i++) {
@@ -139,7 +144,14 @@ TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const T
     TransformationMatrix toTransform;
     from.apply(boxSize, fromTransform);
     apply(boxSize, toTransform);
-    toTransform.blend(fromTransform, context.progress, context.compositeOperation);
+    
+    auto progress = context.progress;
+    auto compositeOperation = context.compositeOperation;
+    if (shouldFallBackToDiscreteAnimation(from, boxSize)) {
+        progress = progress < 0.5 ? 0 : 1;
+        compositeOperation = CompositeOperation::Replace;
+    }
+    toTransform.blend(fromTransform, progress, compositeOperation);
     // Append the result
     result.operations().append(Matrix3DTransformOperation::create(toTransform));
 

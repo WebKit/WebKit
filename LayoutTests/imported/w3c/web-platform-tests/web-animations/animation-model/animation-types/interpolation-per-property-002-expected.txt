@@ -224,9 +224,9 @@ PASS transform: rotate3d
 PASS transform: matrix3d
 PASS transform: mismatched 3D transforms
 PASS transform: rotateY
-FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1, 0, 0, -1, 200, 0) but got matrix(-0.070657, 0.719998, -0.395146, -0.260079, 87.65015, 62.44985): The value should be matrix(-1, 0, 0, -1, 200, 0) at 499ms but got matrix(-0.070657, 0.719998, -0.395146, -0.260079, 87.65015, 62.44985) expected -1 +/- 0.0001 but got -0.070657
-FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985): The value should be matrix(0, -1, 1, 0, 250, 0) at 499ms but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985) expected 0 +/- 0.0001 but got -0.229966
-FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9): The value should be matrix(-2, 0, 0, -2, 250, 0) at 499ms but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9) expected -2 +/- 0.0001 but got 0.457235
+PASS transform: non-invertible matrices
+PASS transform: non-invertible matrices in matched transform lists
+PASS transform: non-invertible matrices in mismatched transform lists
 FAIL transform: perspective assert_approx_equals: expected matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.55, 0, 0, 0, 1) but got matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.05, 0, 0, 0, 1): The value should be matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.55, 0, 0, 0, 1) at 500ms but got matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.05, 0, 0, 0, 1) expected -0.55 +/- 0.0001 but got -0.05
 PASS transform-box (type: discrete) has testInterpolation function
 PASS transform-box uses discrete animation when animating between "fill-box" and "border-box" with linear easing
