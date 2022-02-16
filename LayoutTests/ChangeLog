@@ -1,3 +1,11 @@
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * css3/calc/block-mask-overlay-image-outset.html: Expand pixel range for GPU Process.
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes.html: Add fuzzy data for GPU Process.
+        * svg/clip-path/clip-path-line-use-before-defined.svg: Add fuzzy data for all bots.
+
 2022-02-15  Matteo Flores  <matteo_flores@apple.com>
 
         http/tests/history/back-with-fragment-change.php fails.
