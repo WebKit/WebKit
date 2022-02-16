@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "JSEventListener.h"
 #include "RenderAncestorIterator.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
@@ -462,7 +463,7 @@ bool SVGElement::removeEventListener(const AtomString& eventType, EventListener&
             continue;
 
         // This case can only be hit for event listeners created from markup
-        ASSERT(listener.wasCreatedFromMarkup());
+        ASSERT(JSEventListener::wasCreatedFromMarkup(listener));
 
         // If the event listener 'listener' has been created from markup and has been fired before
         // then JSLazyEventListener::parseCode() has been called and m_jsFunction of that listener

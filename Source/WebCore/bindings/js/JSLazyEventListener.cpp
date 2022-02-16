@@ -68,7 +68,7 @@ static TextPosition convertZeroToOne(const TextPosition& position)
 }
 
 JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const URL& sourceURL, const TextPosition& sourcePosition)
-    : JSEventListener(nullptr, arguments.wrapper, true, mainThreadNormalWorld())
+    : JSEventListener(nullptr, arguments.wrapper, true, CreatedFromMarkup::Yes, mainThreadNormalWorld())
     , m_functionName(arguments.attributeName.localName().string())
     , m_eventParameterName(eventParameterName(arguments.shouldUseSVGEventName))
     , m_code(arguments.attributeValue)

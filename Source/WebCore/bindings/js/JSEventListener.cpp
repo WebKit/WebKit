@@ -46,10 +46,12 @@
 namespace WebCore {
 using namespace JSC;
 
-JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld& isolatedWorld)
+JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, CreatedFromMarkup createdFromMarkup, DOMWrapperWorld& isolatedWorld)
     : EventListener(JSEventListenerType)
-    , m_wrapper(wrapper)
     , m_isAttribute(isAttribute)
+    , m_wasCreatedFromMarkup(createdFromMarkup == CreatedFromMarkup::Yes)
+    , m_isInitialized(false)
+    , m_wrapper(wrapper)
     , m_isolatedWorld(isolatedWorld)
 {
     if (function) {
@@ -63,7 +65,7 @@ JSEventListener::~JSEventListener() = default;
 
 Ref<JSEventListener> JSEventListener::create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
 {
-    return adoptRef(*new JSEventListener(&listener, &wrapper, isAttribute, world));
+    return adoptRef(*new JSEventListener(&listener, &wrapper, isAttribute, CreatedFromMarkup::No, world));
 }
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
@@ -77,6 +79,7 @@ void JSEventListener::replaceJSFunctionForAttributeListener(JSObject* function, 
     ASSERT(function);
     ASSERT(wrapper);
 
+    m_wasCreatedFromMarkup = false;
     m_jsFunction = Weak { function };
     if (m_isInitialized)
         ASSERT(m_wrapper.get() == wrapper);
