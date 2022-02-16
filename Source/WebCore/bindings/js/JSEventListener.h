@@ -46,8 +46,6 @@ public:
     // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
     bool isAttribute() const final { return m_isAttribute; }
 
-    bool wasCreatedFromMarkup() const { return m_wasCreatedFromMarkup; }
-
     JSC::JSObject* ensureJSFunction(ScriptExecutionContext&) const;
     DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
 
@@ -61,10 +59,6 @@ public:
     String functionName() const;
 
     void replaceJSFunctionForAttributeListener(JSC::JSObject* function, JSC::JSObject* wrapper);
-    static bool wasCreatedFromMarkup(const EventListener& listener)
-    {
-        return is<JSEventListener>(listener) && downcast<JSEventListener>(listener).wasCreatedFromMarkup();
-    }
 
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
@@ -75,20 +69,16 @@ private:
     virtual String code() const { return String(); }
 
 protected:
-    enum class CreatedFromMarkup : bool { No, Yes };
-
-    JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, CreatedFromMarkup, DOMWrapperWorld&);
+    JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
     void handleEvent(ScriptExecutionContext&, Event&) override;
     void setWrapperWhenInitializingJSFunction(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
 private:
-    bool m_isAttribute : 1;
-    bool m_wasCreatedFromMarkup : 1;
-
-    mutable bool m_isInitialized : 1;
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;
     mutable JSC::Weak<JSC::JSObject> m_wrapper;
+    mutable bool m_isInitialized { false };
 
+    bool m_isAttribute;
     Ref<DOMWrapperWorld> m_isolatedWorld;
 };
 
