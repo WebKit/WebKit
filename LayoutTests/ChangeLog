@@ -1,3 +1,13 @@
+2022-02-16  Ali Juma  <ajuma@chromium.org>
+
+        Floating point exception in RenderListBox::numVisibleItems
+        https://bugs.webkit.org/show_bug.cgi?id=229307
+
+        Reviewed by Mark Lam.
+
+        * fast/forms/listbox-zero-item-height-expected.txt: Added.
+        * fast/forms/listbox-zero-item-height.html: Added.
+
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
         Reset GPU Process TestExpectations after accelerated drawing is enabled.

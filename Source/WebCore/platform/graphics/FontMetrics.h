@@ -42,7 +42,7 @@ public:
     void setAscent(float ascent)
     {
         m_floatAscent = ascent;
-        m_intAscent = lroundf(ascent);
+        m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
     }
 
     float floatDescent(FontBaseline baselineType = AlphabeticBaseline) const
