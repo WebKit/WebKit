@@ -1,3 +1,9 @@
+2022-02-15  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * css3/masking/clip-path-inset-corners.html: Add fuzzy data.
+
 2022-02-15  Brady Eidson  <beidson@apple.com>
 
         Implement ServiceWorkerRegistration.getNotifications().
