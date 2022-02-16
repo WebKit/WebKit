@@ -76,6 +76,12 @@
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
 
+@interface AVSampleBufferDisplayLayer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
+@end
+
+@interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
+@end
+
 #pragma mark -
 #pragma mark AVStreamSession
 
@@ -275,6 +281,24 @@ static uint64_t nextMapID()
     return ++mapID;
 }
 
+static bool sampleBufferRenderersSupportKeySession()
+{
+    static bool supports = false;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, [&] {
+        supports = [PAL::getAVSampleBufferAudioRendererClass() conformsToProtocol:@protocol(AVContentKeyRecipient)]
+            && [PAL::getAVSampleBufferDisplayLayerClass() conformsToProtocol:@protocol(AVContentKeyRecipient)];
+    });
+    return supports;
+}
+
+static Vector<Ref<FragmentedSharedBuffer>> copyKeyIDs(const Vector<Ref<FragmentedSharedBuffer>> keyIDs)
+{
+    return keyIDs.map([] (auto& keyID) {
+        return keyID.copyRef();
+    });
+}
+
 static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
 {
     if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
@@ -307,6 +331,9 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:*this]))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
     , m_mediaSource(parent)
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { keyStatusesChanged(); }))
+#endif
     , m_mapID(nextMapID())
 #if !RELEASE_LOG_DISABLED
     , m_logger(parent->logger())
@@ -363,6 +390,9 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     }
 
     clearTracks();
+
+    m_protectedTrackInitDataMap.swap(m_pendingProtectedTrackInitDataMap);
+    m_pendingProtectedTrackInitDataMap.clear();
 
     for (auto videoTrackInfo : segment.videoTracks) {
         videoTrackInfo.track->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {
@@ -458,9 +488,15 @@ void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
     m_parsingSucceeded = false;
 }
 
-void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSample>&& mediaSample, uint64_t trackId, const String& mediaType)
+void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    auto findResult = m_protectedTrackInitDataMap.find(trackId);
+    if (findResult != m_protectedTrackInitDataMap.end())
+        mediaSample->setKeyIDs(copyKeyIDs(findResult->value.keyIDs));
+#endif
 
     if (m_processingInitializationSegment) {
         DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
@@ -508,7 +544,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 #endif
 }
 
-void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<Uint8Array>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
+void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
 {
     auto player = this->player();
     if (!player)
@@ -519,11 +555,15 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
     m_protectedTrackID = trackID;
     m_initData = WTFMove(initData);
-    m_mediaSource->sourceBufferKeyNeeded(this, m_initData.get());
+    m_mediaSource->sourceBufferKeyNeeded(this, *m_initData);
+
     if (auto session = player->cdmSession()) {
-        if (auto parser = this->streamDataParser())
+        if (sampleBufferRenderersSupportKeySession()) {
+            // no-op.
+        } else if (auto parser = this->streamDataParser())
             session->addParser(parser);
-        hasSessionSemaphore->signal();
+        if (hasSessionSemaphore)
+            hasSessionSemaphore->signal();
         return;
     }
 #endif
@@ -533,14 +573,17 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     m_hasSessionSemaphore = hasSessionSemaphore;
     
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto initDataBuffer = SharedBuffer::create(m_initData->data(), m_initData->byteLength());
-    auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initDataBuffer);
+    auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(*m_initData);
     if (!keyIDs)
         return;
 
+    m_pendingProtectedTrackInitDataMap.set(trackID, TrackInitData { m_initData.copyRef(), *keyIDs });
+
     if (m_cdmInstance) {
         if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(keyIDs.value())) {
-            if (auto parser = this->streamDataParser())
+            if (sampleBufferRenderersSupportKeySession()) {
+                // no-op.
+            } else if (auto parser = this->streamDataParser())
                 [instanceSession->contentKeySession() addContentKeyRecipient:parser];
             if (m_hasSessionSemaphore) {
                 m_hasSessionSemaphore->signal();
@@ -552,7 +595,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    player->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
+    player->initializationDataEncountered("sinf", m_initData->tryCreateArrayBuffer());
 
     m_waitingForKey = true;
     player->waitingForKeyChanged();
@@ -587,7 +630,7 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
         weakThis->didEncounterErrorDuringParsing(errorCode);
     });
 
-    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<MediaSample>&& sample, uint64_t trackId, const String& mediaType) {
+    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
         ASSERT(isMainThread());
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
             return;
@@ -616,7 +659,7 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
         }
     });
 
-    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled](Ref<Uint8Array>&& initData, uint64_t trackID) mutable {
+    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled](Ref<SharedBuffer>&& initData, uint64_t trackID) mutable {
         // Called on the data parser queue.
         Box<BinarySemaphore> hasSessionSemaphore = Box<BinarySemaphore>::create();
         callOnMainThread([weakThis = WTFMove(weakThis), abortCalled, initData = WTFMove(initData), trackID, hasSessionSemaphore] () mutable {
@@ -634,6 +677,13 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
                 return;
             }
         }
+    });
+
+    m_parser->setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<SharedBuffer>&& initData, uint64_t trackID) {
+        ASSERT(isMainThread());
+        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+            return;
+        weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, nullptr);
     });
 
     m_parsingSucceeded = true;
@@ -736,6 +786,11 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         [renderer flush];
         [renderer stopRequestingMediaData];
         [m_errorListener stopObservingRenderer:renderer.get()];
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
+#endif
     }
 
     [m_errorListener invalidate];
@@ -843,6 +898,11 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
                 return;
             }
 
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
+#endif
+
             WeakPtr weakThis { *this };
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (weakThis)
@@ -909,7 +969,24 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
+        if (m_displayLayer)
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
+
+        for (auto& audioRenderer : m_audioRenderers.values())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:audioRenderer.get()];
+    }
+
     m_cdmInstance = fpsInstance;
+
+    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
+        if (m_displayLayer)
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
+
+        for (auto& audioRenderer : m_audioRenderers.values())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:audioRenderer.get()];
+    }
+
     attemptToDecrypt();
 #else
     UNUSED_PARAM(instance);
@@ -926,8 +1003,10 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
     if (!instanceSession)
         return;
 
-    if (auto parser = this->streamDataParser())
-        [instanceSession->contentKeySession() addContentKeyRecipient:parser];
+    if (!sampleBufferRenderersSupportKeySession()) {
+        if (auto parser = this->streamDataParser())
+            [instanceSession->contentKeySession() addContentKeyRecipient:parser];
+    }
     if (m_hasSessionSemaphore) {
         m_hasSessionSemaphore->signal();
         m_hasSessionSemaphore = nullptr;
@@ -1105,18 +1184,88 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         player->setHasAvailableAudioSample(renderer, false);
 }
 
+bool SourceBufferPrivateAVFObjC::trackIsBlocked(uint64_t trackID) const
+{
+    for (auto& samplePair : m_blockedSamples) {
+        if (samplePair.first == trackID)
+            return true;
+    }
+    return false;
+}
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+void SourceBufferPrivateAVFObjC::keyStatusesChanged()
+{
+    while (!m_blockedSamples.isEmpty()) {
+        auto& firstPair = m_blockedSamples.first();
+
+        // If we still can't enqueue the sample, bail.
+        if (!canEnqueueSample(firstPair.first, firstPair.second))
+            return;
+
+        auto firstPairTaken = m_blockedSamples.takeFirst();
+        enqueueSample(WTFMove(firstPairTaken.second), firstPairTaken.first);
+    }
+}
+#endif
+
+bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC& sample)
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    // If sample buffers don't support AVContentKeySession: enqueue sample
+    if (!sampleBufferRenderersSupportKeySession())
+        return true;
+
+    // if sample is unencrytped: enqueue sample
+    if (sample.keyIDs().isEmpty())
+        return true;
+
+    // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
+    if (!m_cdmInstance)
+        return false;
+
+    // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.
+    auto findResult = m_currentTrackIDs.find(trackID);
+    if (findResult != m_currentTrackIDs.end() && findResult->value == sample.keyIDs())
+        return true;
+
+    // if sample's set of keyIDs does not match the current set of keyIDs, consult with the CDM
+    // to determine if the keyIDs are usable; if so, update the current set of keyIDs and enqueue sample.
+    if (m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
+        m_currentTrackIDs.set(trackID, sample.keyIDs());
+        return true;
+    }
+    return false;
+#else
+    return true;
+#endif
+}
+
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
         return;
 
-    PlatformSample platformSample = sample->platformSample();
-    if (platformSample.type != PlatformSample::CMSampleBufferType)
+    ASSERT(is<MediaSampleAVFObjC>(sample));
+    if (!is<MediaSampleAVFObjC>(sample))
         return;
 
+    Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
+    if (!sampleAVFObjC->keyIDs().isEmpty() && !canEnqueueSample(trackID, sampleAVFObjC)) {
+        m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
+        return;
+    }
+
+    enqueueSample(WTFMove(sampleAVFObjC), trackID);
+}
+
+void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID)
+{
     auto logSiteIdentifier = LOGIDENTIFIER;
     DEBUG_LOG(logSiteIdentifier, "track ID = ", trackID, ", sample = ", sample.get());
+
+    PlatformSample platformSample = sample->platformSample();
 
     CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
     ASSERT(formatDescription);
@@ -1284,6 +1433,9 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
     else
         return;
 
+    if (trackIsBlocked(trackID))
+        return;
+
     provideMediaData(AtomString::number(trackID));
 }
 
@@ -1375,11 +1527,21 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
         [m_errorListener stopObservingLayer:m_displayLayer.get()];
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
+#endif
     }
 
     m_displayLayer = layer;
 
     if (m_displayLayer) {
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
+#endif
+
         WeakPtr weakThis { *this };
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (weakThis)

@@ -617,6 +617,37 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     return nullptr;
 }
 
+bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
+{
+    for (auto& sessionInterface : m_sessions) {
+        if (!sessionInterface)
+            continue;
+
+        for (auto& keyStatusPair : sessionInterface->keyStatuses()) {
+            if (keyStatusPair.second != CDMInstanceSession::KeyStatus::Usable)
+                continue;
+
+            if (keys.findIf([&] (auto& key) {
+                return key.get() == keyStatusPair.first.get();
+            }) != notFound)
+                return true;
+        }
+    }
+    return false;
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::addKeyStatusesChangedObserver(const KeyStatusesChangedObserver& observer)
+{
+    m_keyStatusChangedObservers.add(observer);
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&)
+{
+    m_keyStatusChangedObservers.forEach([] (auto& observer) {
+        observer();
+    });
+}
+
 CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&& instance)
     : m_instance(WTFMove(instance))
     , m_delegate(adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:this]))
@@ -1306,13 +1337,15 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed(AVContentKeyRequest *request)
 {
+    updateKeyStatuses();
+
     if (m_updateResponseCollector) {
         m_updateResponseCollector->addSuccessfulResponse(request, nullptr);
         return;
     }
 
     if (m_updateLicenseCallback) {
-        m_updateLicenseCallback(false, std::make_optional(keyStatuses()), std::nullopt, std::nullopt, Succeeded);
+        m_updateLicenseCallback(false, std::make_optional(copyKeyStatuses()), std::nullopt, std::nullopt, Succeeded);
         ASSERT(!m_updateLicenseCallback);
     }
 
@@ -1405,7 +1438,7 @@ static auto requestStatusToCDMStatus(AVContentKeyRequestStatus status)
     }
 }
 
-CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses(std::optional<PlatformDisplayID> displayID) const
+void CDMInstanceSessionFairPlayStreamingAVFObjC::updateKeyStatuses(std::optional<PlatformDisplayID> displayID)
 {
     KeyStatusVector keyStatuses;
 
@@ -1427,7 +1460,19 @@ CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::
         }
     }
 
-    return keyStatuses;
+    m_keyStatuses.swap(keyStatuses);
+
+    m_instance->sessionKeyStatusesChanged(*this);
+}
+
+auto CDMInstanceSessionFairPlayStreamingAVFObjC::copyKeyStatuses() const -> KeyStatusVector
+{
+    KeyStatusVector copiedKeyStatuses;
+    copiedKeyStatuses.reserveInitialCapacity(m_keyStatuses.size());
+    for (auto& status : m_keyStatuses)
+        copiedKeyStatuses.uncheckedAppend({ status.first.copyRef(), status.second });
+    return copiedKeyStatuses;
+
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
@@ -1438,8 +1483,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficient
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, obscured);
     m_outputObscured = obscured;
 
+    updateKeyStatuses();
+
     if (m_client)
-        m_client->updateKeyStatuses(keyStatuses());
+        m_client->updateKeyStatuses(copyKeyStatuses());
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*)
@@ -1492,9 +1539,13 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDisplayID(PlatformDisplayID displayID)
 {
-    if (m_requests.isEmpty() || !m_client)
+    if (m_requests.isEmpty())
         return;
-    m_client->updateKeyStatuses(keyStatuses(displayID));
+
+    updateKeyStatuses(displayID);
+
+    if (m_client)
+        m_client->updateKeyStatuses(copyKeyStatuses());
 }
 
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()

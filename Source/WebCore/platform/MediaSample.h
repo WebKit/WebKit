@@ -44,7 +44,7 @@ namespace WebCore {
 class MockSampleBox;
 
 struct PlatformSample {
-    enum {
+    enum Type {
         None,
         MockSampleBoxType,
         CMSampleBufferType,
@@ -92,6 +92,7 @@ public:
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() const = 0;
+    virtual PlatformSample::Type platformSampleType() const = 0;
 
     struct ByteRange {
         size_t byteOffset { 0 };

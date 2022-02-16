@@ -71,6 +71,7 @@ public:
     }
     SampleFlags flags() const final { return m_flags; }
     PlatformSample platformSample() const final { return { PlatformSample::None, { nullptr } }; }
+    PlatformSample::Type platformSampleType() const final { return PlatformSample::None; }
     std::optional<ByteRange> byteRange() const final { return std::nullopt; }
 
     void dump(PrintStream&) const final { }

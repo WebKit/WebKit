@@ -30,7 +30,9 @@
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include <wtf/Function.h>
+#include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakHashSet.h>
 
 OBJC_CLASS AVContentKeyReportGroup;
 OBJC_CLASS AVContentKeyRequest;
@@ -117,6 +119,13 @@ public:
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(AVContentKeyReportGroup*) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForRequest(AVContentKeyRequest*) const;
 
+    bool isAnyKeyUsable(const Keys&) const;
+
+    using KeyStatusesChangedObserver = Observer<void()>;
+    void addKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
+
+    void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
+
 private:
     void handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
 
@@ -134,6 +143,7 @@ private:
     RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
     HashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
+    WeakHashSet<KeyStatusesChangedObserver> m_keyStatusChangedObservers;
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;
     const void* m_logIdentifier { nullptr };
@@ -186,11 +196,14 @@ public:
 
     bool hasRequest(AVContentKeyRequest*) const;
 
+    const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
+    KeyStatusVector copyKeyStatuses() const;
+
 private:
     bool ensureSessionOrGroup();
     bool isLicenseTypeSupported(LicenseType) const;
 
-    KeyStatusVector keyStatuses(std::optional<PlatformDisplayID> = std::nullopt) const;
+    void updateKeyStatuses(std::optional<PlatformDisplayID> = std::nullopt);
     void nextRequest();
     AVContentKeyRequest* lastKeyRequest() const;
 
@@ -216,6 +229,7 @@ private:
 
     class UpdateResponseCollector;
     std::unique_ptr<UpdateResponseCollector> m_updateResponseCollector;
+    KeyStatusVector m_keyStatuses;
 
     Vector<Request> m_pendingRequests;
     Vector<Request> m_requests;

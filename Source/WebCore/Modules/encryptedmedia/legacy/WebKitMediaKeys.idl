@@ -30,7 +30,7 @@
 ] interface WebKitMediaKeys {
     constructor(DOMString keySystem);
 
-    [CallWith=CurrentScriptExecutionContext] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
+    [CallWith=CurrentDocument] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;
 };

@@ -61,6 +61,7 @@ private:
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
     PlatformSample platformSample() const override;
+    PlatformSample::Type platformSampleType() const override { return PlatformSample::MockSampleBoxType; }
     std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     FloatSize presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;

@@ -70,7 +70,7 @@ protected:
     RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
     RetainPtr<AVContentKeyRequest> m_keyRequest;
     RefPtr<Uint8Array> m_identifier;
-    RefPtr<Uint8Array> m_initData;
+    RefPtr<SharedBuffer> m_initData;
     RetainPtr<NSData> m_expiredSession;
     Vector<int> m_protocolVersions;
     int m_cdmVersion;

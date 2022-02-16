@@ -29,11 +29,13 @@
 #include <JavaScriptCore/Forward.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
 
 using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
+class FragmentedSharedBuffer;
 class PixelBuffer;
 
 class MediaSampleAVFObjC : public MediaSample {
@@ -60,6 +62,7 @@ public:
 
     SampleFlags flags() const override;
     PlatformSample platformSample() const override;
+    PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
     std::optional<ByteRange> byteRange() const override;
     WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
@@ -80,6 +83,13 @@ public:
 
     void setByteRangeOffset(size_t);
 
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
+    void setKeyIDs(KeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
+    const KeyIDs& keyIDs() const { return m_keyIDs; }
+    KeyIDs& keyIDs() { return m_keyIDs; }
+#endif
+
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
@@ -94,10 +104,27 @@ protected:
     AtomString m_id;
     VideoRotation m_rotation { VideoRotation::None };
     bool m_mirrored { false };
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
+#endif
 };
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<typename Type> struct LogArgument;
+template <>
+struct LogArgument<WebCore::MediaSampleAVFObjC> {
+    static String toString(const WebCore::MediaSampleAVFObjC& sample)
+    {
+        return sample.toJSONString();
+    }
+};
+
+} // namespace WTF
+
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSampleAVFObjC)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSample().type == WebCore::PlatformSample::CMSampleBufferType; }
+static bool isType(const WebCore::MediaSample& sample) { return sample.platformSampleType() == WebCore::PlatformSample::CMSampleBufferType; }
 SPECIALIZE_TYPE_TRAITS_END()

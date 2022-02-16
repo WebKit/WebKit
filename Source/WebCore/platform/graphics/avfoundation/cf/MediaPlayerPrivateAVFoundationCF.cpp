@@ -1921,15 +1921,15 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
         auto initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
-        auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
+        unsigned byteLength = initDataBuffer->byteLength();
+        auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, byteLength);
         initDataView->set<uint32_t>(0, keyURISize, true);
 
         auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
         keyURIArray->setRange(reinterpret_cast<const uint16_t*>(StringView(keyURI).upconvertedCharacters().get()), keyURI.length() / sizeof(unsigned char), 0);
 
-        unsigned byteLength = initDataBuffer->byteLength();
-        auto initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
-        m_owner->player()->keyNeeded(initData.ptr());
+        auto initData = SharedBuffer::create(Vector<uint8_t> { static_cast<uint8_t*>(initDataBuffer->data()), byteLength });
+        m_owner->player()->keyNeeded(initData);
         setRequestForKey(keyURI, avRequest);
         return true;
     }

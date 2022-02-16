@@ -1032,7 +1032,7 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata&, const TrackE
                 continue;
 
             auto& keyId = keyIdElement.value();
-            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), Uint8Array::create(keyId.data(), keyId.size())));
+            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), SharedBuffer::create(keyId.data(), keyId.size())));
         }
     }
 

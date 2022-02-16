@@ -162,7 +162,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         didParseTracks({ }, errorCode);
     });
 
-    parser->setDidProvideMediaDataCallback([this, protectedThis = Ref { *this }](Ref<MediaSample>&& mediaSample, uint64_t trackID, const String& mediaType) {
+    parser->setDidProvideMediaDataCallback([this, protectedThis = Ref { *this }](Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackID, const String& mediaType) {
         didProvideMediaData(WTFMove(mediaSample), trackID, mediaType);
     });
 
@@ -224,7 +224,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     m_init = true;
 }
 
-void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint64_t trackID, const String&)
+void MediaFormatReader::didProvideMediaData(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackID, const String&)
 {
     ASSERT(!isMainRunLoop());
 

@@ -1,3 +1,12 @@
+2022-02-16  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=236109
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
 2022-02-16  Eliot Hsu  <eliot_hsu@apple.com>
 
         Move Safe Browsing knowledge into SafariSafeBrowsing framework

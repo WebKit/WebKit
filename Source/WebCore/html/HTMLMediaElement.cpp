@@ -2644,7 +2644,7 @@ RefPtr<ArrayBuffer> HTMLMediaElement::mediaPlayerCachedKeyForKeyId(const String&
     return m_webKitMediaKeys ? m_webKitMediaKeys->cachedKeyForKeyId(keyId) : nullptr;
 }
 
-void HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
+void HTMLMediaElement::mediaPlayerKeyNeeded(const SharedBuffer& initData)
 {
     if (!document().settings().legacyEncryptedMediaAPIEnabled())
         return;
@@ -2661,7 +2661,14 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
         return;
     }
 
-    auto event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initData);
+    WebKitMediaKeyNeededEvent::Init init;
+
+    if (auto initDataBuffer = initData.tryCreateArrayBuffer()) {
+        auto byteLength = initDataBuffer->byteLength();
+        init.initData = Uint8Array::tryCreate(initDataBuffer.releaseNonNull(), 0, byteLength);
+    }
+
+    auto event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, init);
     scheduleEvent(WTFMove(event));
 }
 

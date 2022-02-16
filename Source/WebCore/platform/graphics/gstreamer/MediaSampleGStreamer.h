@@ -62,6 +62,7 @@ public:
     Ref<MediaSample> createNonDisplayingCopy() const override;
     SampleFlags flags() const override { return m_flags; }
     PlatformSample platformSample() const override;
+    PlatformSample::Type platformSampleType() const override { return PlatformSample::GStreamerSampleType; }
     std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     void dump(PrintStream&) const override;
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;

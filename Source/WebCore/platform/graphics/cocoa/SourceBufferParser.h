@@ -44,7 +44,7 @@ class Logger;
 namespace WebCore {
 
 class ContentType;
-class MediaSample;
+class MediaSampleAVFObjC;
 class SharedBuffer;
 
 class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser> {
@@ -123,7 +123,7 @@ public:
     }
 
     // Will be called on the main thread.
-    using DidProvideMediaDataCallback = Function<void(Ref<MediaSample>&&, uint64_t trackID, const String& mediaType)>;
+    using DidProvideMediaDataCallback = Function<void(Ref<MediaSampleAVFObjC>&&, uint64_t trackID, const String& mediaType)>;
     void setDidProvideMediaDataCallback(DidProvideMediaDataCallback&& callback)
     {
         m_didProvideMediaDataCallback = WTFMove(callback);
@@ -137,10 +137,17 @@ public:
     }
 
     // Will be called synchronously on the parser thead.
-    using DidProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(Ref<Uint8Array>&&, uint64_t trackID)>;
+    using DidProvideContentKeyRequestInitializationDataForTrackIDCallback = Function<void(Ref<SharedBuffer>&&, uint64_t trackID)>;
     void setDidProvideContentKeyRequestInitializationDataForTrackIDCallback(DidProvideContentKeyRequestInitializationDataForTrackIDCallback&& callback)
     {
         m_didProvideContentKeyRequestInitializationDataForTrackIDCallback = WTFMove(callback);
+    }
+
+    // Will be called on the main thread.
+    using DidProvideContentKeyRequestIdentifierForTrackIDCallback = Function<void(Ref<SharedBuffer>&&, uint64_t trackID)>;
+    void setDidProvideContentKeyRequestIdentifierForTrackIDCallback(DidProvideContentKeyRequestIdentifierForTrackIDCallback&& callback)
+    {
+        m_didProvideContentKeyRequestIdentifierForTrackIDCallback = WTFMove(callback);
     }
 
 protected:
@@ -152,6 +159,7 @@ protected:
     DidProvideMediaDataCallback m_didProvideMediaDataCallback;
     WillProvideContentKeyRequestInitializationDataForTrackIDCallback m_willProvideContentKeyRequestInitializationDataForTrackIDCallback;
     DidProvideContentKeyRequestInitializationDataForTrackIDCallback m_didProvideContentKeyRequestInitializationDataForTrackIDCallback;
+    DidProvideContentKeyRequestIdentifierForTrackIDCallback m_didProvideContentKeyRequestIdentifierForTrackIDCallback;
 };
 
 }

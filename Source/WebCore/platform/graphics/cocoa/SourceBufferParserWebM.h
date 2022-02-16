@@ -269,7 +269,7 @@ private:
     webm::Status OnFrame(const webm::FrameMetadata&, webm::Reader*, uint64_t* bytesRemaining) final;
 
     std::unique_ptr<InitializationSegment> m_initializationSegment;
-    Vector<std::pair<uint64_t, Ref<Uint8Array>>> m_keyIds;
+    Vector<std::pair<uint64_t, Ref<SharedBuffer>>> m_keyIds;
     webm::Status m_status;
     std::unique_ptr<webm::WebmParser> m_parser;
     bool m_initializationSegmentEncountered { false };

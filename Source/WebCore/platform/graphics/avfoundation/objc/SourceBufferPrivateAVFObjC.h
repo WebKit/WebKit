@@ -37,6 +37,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/Observer.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -95,7 +96,9 @@ public:
     void clearMediaSource() { m_mediaSource = nullptr; }
 
     void willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID);
-    void didProvideContentKeyRequestInitializationDataForTrackID(Ref<Uint8Array>&&, uint64_t trackID, Box<BinarySemaphore>);
+    void didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&&, uint64_t trackID, Box<BinarySemaphore>);
+
+    void didProvideContentKeyRequestIdentifierForTrackID(Ref<SharedBuffer>&&, uint64_t trackID);
 
     bool hasSelectedVideo() const;
 
@@ -132,7 +135,7 @@ public:
     void bufferWasConsumed();
     
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    Uint8Array* initData() { return m_initData.get(); }
+    SharedBuffer* initData() { return m_initData.get(); }
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -150,7 +153,7 @@ private:
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
     void didEncounterErrorDuringParsing(int32_t);
-    void didProvideMediaDataForTrackId(Ref<MediaSample>&&, uint64_t trackId, const String& mediaType);
+    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
 
     // SourceBufferPrivate overrides
     void append(Ref<SharedBuffer>&&) final;
@@ -174,6 +177,7 @@ private:
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 
+    void enqueueSample(Ref<MediaSampleAVFObjC>&&, uint64_t trackID);
     void didBecomeReadyForMoreSamples(uint64_t trackID);
     void appendCompleted();
     void destroyStreamDataParser();
@@ -186,6 +190,12 @@ private:
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const;
+    bool canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC&);
+    bool trackIsBlocked(uint64_t track) const;
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    void keyStatusesChanged();
+#endif
 
     Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivate>> m_audioTracks;
@@ -197,7 +207,8 @@ private:
     bool m_processingInitializationSegment { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<Function<void()>> m_pendingTrackChangeCallbacks;
-    Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
+    Vector<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_mediaSamples;
+    Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -215,13 +226,27 @@ private:
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
     bool m_isActive { false };
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<Uint8Array> m_initData;
+    RefPtr<SharedBuffer> m_initData;
     WeakPtr<CDMSessionMediaSourceAVFObjC> m_session { nullptr };
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
+    struct TrackInitData {
+        RefPtr<SharedBuffer> initData;
+        KeyIDs keyIDs;
+    };
+    using TrackInitDataMap = HashMap<uint64_t, TrackInitData>;
+    TrackInitDataMap m_pendingProtectedTrackInitDataMap;
+    TrackInitDataMap m_protectedTrackInitDataMap;
+
+    using TrackKeyIDsMap = HashMap<uint64_t, KeyIDs>;
+    TrackKeyIDsMap m_currentTrackIDs;
+
     RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
-    Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
+    UniqueRef<Observer<void()>> m_keyStatusesChangedObserver;
+    KeyIDs m_keyIDs;
 #endif
 
     std::optional<FloatSize> m_cachedSize;

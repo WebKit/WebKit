@@ -1,3 +1,24 @@
+2022-02-16  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=236109
+
+        Reviewed by Eric Carlson.
+
+        Add the newly requried virtual method changes to MediaSample subclasses, and use
+        SharedBuffer rather than Uint8Array.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerKeyNeeded):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::parseByteSource):
+        (WebKit::MediaFormatReader::didProvideMediaData):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h:
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::mediaPlayerKeyNeeded):
+
 2022-02-16  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix after r289872

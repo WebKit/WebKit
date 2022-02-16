@@ -102,6 +102,7 @@ private:
     uint32_t videoPixelFormat() const final;
     // FIXME: When VideoFrame is not MediaSample, these will not be needed.
     WebCore::PlatformSample platformSample() const final;
+    WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::RemoteVideoFrameProxyType; }
 
 #if PLATFORM(COCOA)
     void getPixelBuffer();
@@ -143,9 +144,9 @@ TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteVideoFrameProxy)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSample().type == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
+    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
 SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrame)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSample().type == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
+    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
 SPECIALIZE_TYPE_TRAITS_END()
 #endif

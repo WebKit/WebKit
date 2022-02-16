@@ -51,6 +51,7 @@ public:
 
     AtomString trackID() const final;
     WebCore::PlatformSample platformSample() const final;
+    WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::ByteRangeSampleType; }
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
 

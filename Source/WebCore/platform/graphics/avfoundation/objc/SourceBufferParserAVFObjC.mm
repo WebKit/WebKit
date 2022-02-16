@@ -57,6 +57,12 @@
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+@interface AVContentKeySpecifier (WebCorePrivate)
+@property (readonly) NSData *initializationData;
+@end
+#endif
+
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     WebCore::SourceBufferParserAVFObjC* _parent;
     AVStreamDataParser* _parser;
@@ -133,6 +139,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
     _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
 }
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeySpecifier:(AVContentKeySpecifier *)keySpecifier forTrackID:(CMPersistentTrackID)trackID
+{
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
+    if ([keySpecifier respondsToSelector:@selector(initializationData)])
+        _parent->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
+}
+#endif
+
 @end
 
 namespace WebCore {
@@ -334,10 +350,14 @@ void SourceBufferParserAVFObjC::willProvideContentKeyRequestInitializationDataFo
 
 void SourceBufferParserAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* nsInitData, uint64_t trackID)
 {
-    auto initData = Uint8Array::create(nsInitData.length);
-    [nsInitData getBytes:initData->data() length:initData->length()];
+    m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(SharedBuffer::create(nsInitData), trackID);
+}
 
-    m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(initData), trackID);
+void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(NSData* nsInitData, uint64_t trackID)
+{
+    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, nsInitData = retainPtr(nsInitData), trackID] {
+        m_didProvideContentKeyRequestIdentifierForTrackIDCallback(SharedBuffer::create(nsInitData.get()), trackID);
+    });
 }
 
 }

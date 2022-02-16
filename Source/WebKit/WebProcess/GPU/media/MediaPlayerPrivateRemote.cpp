@@ -1191,7 +1191,7 @@ void MediaPlayerPrivateRemote::keyAdded()
 void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(IPC::DataReference&& message)
 {
     if (RefPtr player = m_player.get())
-        player->keyNeeded(Uint8Array::create(message.data(), message.size()).ptr());
+        player->keyNeeded(SharedBuffer::create(message));
 }
 #endif
 
