@@ -500,9 +500,7 @@ void WebInspectorUIProxy::open()
     if (!m_inspectorPage)
         return;
 
-#if PLATFORM(GTK)
     SetForScope<bool> isOpening(m_isOpening, true);
-#endif
 
     m_isVisible = true;
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));

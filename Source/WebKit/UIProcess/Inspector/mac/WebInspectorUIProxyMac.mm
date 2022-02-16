@@ -32,6 +32,7 @@
 #import "APIInspectorConfiguration.h"
 #import "APIUIClient.h"
 #import "GlobalFindInPageState.h"
+#import "Logging.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKObject.h"
@@ -398,6 +399,16 @@ void WebInspectorUIProxy::platformBringToFront()
     // then we need to reopen the Inspector to get it attached to the right window.
     // This can happen when dragging tabs to another window in Safari.
     if (m_isAttached && [m_inspectorViewController webView].window != inspectedPage()->platformWindow()) {
+        if (m_isOpening) {
+            // <rdar://88358696> If we are currently opening an attached inspector, the windows should have already
+            // matched, and calling back to `open` isn't going to correct this. As a fail-safe to prevent reentrancy,
+            // fall back to detaching the inspector when there is a mismatch in the web view's window and the
+            // inspector's window.
+            RELEASE_LOG(Inspector, "WebInspectorUIProxy::platformBringToFront - Inspected and inspector windows did not match while opening inspector. Falling back to detached inspector. Inspected page had window: %s", inspectedPage()->platformWindow() ? "YES" : "NO");
+            detach();
+            return;
+        }
+
         open();
         return;
     }

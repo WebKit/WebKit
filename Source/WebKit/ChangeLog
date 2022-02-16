@@ -1,3 +1,26 @@
+2022-02-15  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Reentrancy in WebKit::WebInspectorUIProxy::open
+        https://bugs.webkit.org/show_bug.cgi?id=236672
+
+        Reviewed by Devin Rousso.
+
+        Speculative fix for non-reproducible reentrancy. Because `WebInspectorUIProxy::open` calls
+        `WebInspectorUIProxy::platformBringToFront`, which under some conditions can call `WebInspectorUIProxy::open`,
+        there was an opportunity for recurssion. This appears to happen when the window of the inspector view does not
+        match the window of the inspected web view, which in general should not be possible for a newly opened
+        inspector. My suspicion is that the web view is not actually attached to a window at the time the inspector is
+        being opened. This patch adds a fail-safe that will detach the inspector view into its own window when these
+        conditions are met while we are in middle of opening the inspector, and also adds logging to indicate if the
+        inspected web view was actually in a window. This should both prevent the crash from the re-entry as well as
+        provide more context when the issue does occur.
+
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::open):
+        * UIProcess/Inspector/WebInspectorUIProxy.h:
+        * UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm:
+        (WebKit::WebInspectorUIProxy::platformBringToFront):
+
 2022-02-15  Chris Dumez  <cdumez@apple.com>
 
         Do preliminary work to pass domain names to CoreLocation
