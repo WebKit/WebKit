@@ -173,7 +173,22 @@ RefPtr<MediaSample> GraphicsContextGLTextureMapper::paintCompositedResultsToMedi
 #if ENABLE(VIDEO)
 bool GraphicsContextGLTextureMapper::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
+#if USE(ANGLE) && USE(GSTREAMER_GL)
+    UNUSED_PARAM(player);
+    UNUSED_PARAM(outputTexture);
+    UNUSED_PARAM(outputTarget);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(premultiplyAlpha);
+    UNUSED_PARAM(flipY);
+
+    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer via dmabuf.
+    return false;
+#else
     return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
+#endif
 }
 #endif
 
