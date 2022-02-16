@@ -1879,6 +1879,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
             parameters.generalStorageDirectoryHandle = WTFMove(*handle);
     }
+    parameters.shouldUseCustomStoragePaths = configuration().shouldUseCustomStoragePaths();
 
     parameters.perOriginStorageQuota = perOriginStorageQuota();
     parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();

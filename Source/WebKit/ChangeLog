@@ -1,3 +1,68 @@
+2022-02-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Migrate IndexedDB and LocalStorage data to GeneralStorageDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=236611
+
+        Reviewed by Chris Dumez.
+
+        Reviewed by Chris Dumez.
+
+        Add a new parameter shouldUseCustomStoragePaths on WebsiteDataStoreConfiguration to specify whether WebKit 
+        should use custom storage paths. If the value is true, WebKit will keep using the custom localStorageDirectory 
+        and indexedDBDatabaseDirectory paths as it is now. If the value is false, WebKit will migrate data from 
+        localStorageDirectory and indexedDBDatabaseDirectory to new paths set by WebKit under generalStorageDirectory.
+
+        API test: WebKit.MigrateLocalStorageDataToGeneralStorageDirectory
+                  WebKit.MigrateIndexedDBDataToGeneralStorageDirectory
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::addStorageManagerSession):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/storage/LocalStorageManager.cpp:
+        (WebKit::LocalStorageManager::localStorageFilePath):
+        * NetworkProcess/storage/LocalStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::create):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::originDirectoryPath):
+        (WebKit::originFilePath):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::StorageBucket):
+        (WebKit::OriginStorageManager::StorageBucket::localStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::idbStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::isEmpty):
+        (WebKit::OriginStorageManager::StorageBucket::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk):
+        (WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteIDBStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::originFileIdentifier):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::defaultBucket):
+        (WebKit::OriginStorageManager::quotaManager):
+        (WebKit::OriginStorageManager::StorageBucket::isEmpty const): Deleted.
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration shouldUseCustomStoragePaths]):
+        (-[_WKWebsiteDataStoreConfiguration setShouldUseCustomStoragePaths:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::shouldUseCustomStoragePaths const):
+        (WebKit::WebsiteDataStoreConfiguration::setShouldUseCustomStoragePaths):
+
 2022-02-15  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Reentrancy in WebKit::WebInspectorUIProxy::open

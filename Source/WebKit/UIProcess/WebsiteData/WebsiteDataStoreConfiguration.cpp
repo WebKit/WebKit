@@ -66,6 +66,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_staleWhileRevalidateEnabled = this->m_staleWhileRevalidateEnabled;
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
     copy->m_generalStorageDirectory = this->m_generalStorageDirectory;
+    copy->m_shouldUseCustomStoragePaths = this->m_shouldUseCustomStoragePaths;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;

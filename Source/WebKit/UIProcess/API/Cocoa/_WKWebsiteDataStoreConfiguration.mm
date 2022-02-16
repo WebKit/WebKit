@@ -351,6 +351,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setGeneralStorageDirectory(url.path);
 }
 
+- (BOOL)shouldUseCustomStoragePaths
+{
+    return _configuration->shouldUseCustomStoragePaths();
+}
+
+- (void)setShouldUseCustomStoragePaths:(BOOL)use
+{
+    _configuration->setShouldUseCustomStoragePaths(use);
+}
+
 - (BOOL)deviceManagementRestrictionsEnabled
 {
     return _configuration->deviceManagementRestrictionsEnabled();

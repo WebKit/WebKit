@@ -70,7 +70,7 @@ class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota);
+    static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
 
     void startReceivingMessageFromConnection(IPC::Connection&);
@@ -95,8 +95,7 @@ public:
     void resetQuotaUpdatedBasedOnUsageForTesting(const WebCore::ClientOrigin&);
 
 private:
-    NetworkStorageManager(PAL::SessionID, const String& path, const String& customLocalStoragePath);
-    NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota);
+    NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
     ~NetworkStorageManager();
     OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
@@ -181,6 +180,7 @@ private:
     String m_customCacheStoragePath;
     uint64_t m_defaultOriginQuota;
     uint64_t m_defaultThirdPartyOriginQuota;
+    bool m_shouldUseCustomPaths;
     IPC::Connection::UniqueID m_parentConnection;
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection;
 };

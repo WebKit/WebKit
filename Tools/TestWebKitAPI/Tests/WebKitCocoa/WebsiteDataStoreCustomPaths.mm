@@ -32,6 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <JavaScriptCore/JSCConfig.h>
+#import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
@@ -801,4 +802,142 @@ TEST(WebKit, MediaCache)
 
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
+}
+
+TEST(WebKit, MigrateLocalStorageDataToGeneralStorageDirectory)
+{
+    NSURL *localStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *localStorageFile = [localStorageDirectory URLByAppendingPathComponent:@"https_webkit.org_0.localstorage"];
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newLocalStorageFile = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/LocalStorage/localstorage.sqlite3"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:localStorageDirectory error:nil];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+
+    NSString *htmlString = @"<script> \
+        result = localStorage.getItem('testkey'); \
+        if (!result) \
+            result = '[null]'; \
+        window.webkit.messageHandlers.testHandler.postMessage(result); \
+        </script>";
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._webStorageDirectory = localStorageDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    auto messageHandler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+
+    @autoreleasepool {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        receivedScriptMessage = false;
+        [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+        EXPECT_WK_STREQ("[null]", getNextMessage().body);
+        [webView stringByEvaluatingJavaScript:@"localStorage.setItem('testkey', 'testvalue')"];
+
+        // Ensure item is stored by getting it in another WKWebView.
+        auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        receivedScriptMessage = false;
+        [secondWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+        EXPECT_WK_STREQ("testvalue", getNextMessage().body);
+        EXPECT_TRUE([fileManager fileExistsAtPath:localStorageFile.path]);
+    }
+
+    // Create a new WebsiteDataStore that performs migration.
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [thirdWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ("testvalue", getNextMessage().body);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStorageFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:newLocalStorageFile.path]);
+}
+
+TEST(WebKit, MigrateIndexedDBDataToGeneralStorageDirectory)
+{
+    NSURL *indexedDBDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *indexedDBOriginDirectory = [indexedDBDirectory URLByAppendingPathComponent:@"v1/https_webkit.org_0"];
+    NSString *indexedDBDatabaseName = @"TestDatabase";
+    NSString *hashedIndexedDBDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName(indexedDBDatabaseName);
+    NSURL *indexedDBDatabaseDirectory = [indexedDBOriginDirectory URLByAppendingPathComponent:hashedIndexedDBDatabaseName];
+    NSURL *indexedDBFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newIndexedDBOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/IndexedDB/"];
+    NSURL *newIndexedDBDirectory = [newIndexedDBOriginDirectory URLByAppendingPathComponent:hashedIndexedDBDatabaseName];
+    NSURL *newIndexedDBFile = [newIndexedDBDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:indexedDBDirectory error:nil];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+
+    NSString *htmlString = @"<script> \
+        var request = window.indexedDB.open('TestDatabase'); \
+        var upgradeneededReceived = false; \
+        request.onupgradeneeded = function(event) { \
+            var db = event.target.result; \
+            var os = db.createObjectStore('TestObjectStore'); \
+            os.put('value', 'key'); \
+            window.webkit.messageHandlers.testHandler.postMessage('database is created'); \
+            upgradeneededReceived = true; \
+        }; \
+        request.onsuccess = function(event) { \
+            if (upgradeneededReceived) \
+                return; \
+            db = event.target.result; \
+            db.transaction('TestObjectStore').objectStore('TestObjectStore').get('key').onsuccess = function(event) { \
+                var result = event.target.result ? event.target.result : '[null]'; \
+                window.webkit.messageHandlers.testHandler.postMessage(result); \
+            }; \
+        }; \
+        </script>";
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = indexedDBDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    auto messageHandler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+
+    @autoreleasepool {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        receivedScriptMessage = false;
+        [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+        EXPECT_WK_STREQ("database is created", getNextMessage().body);
+
+        // Ensure item is stored by getting it in another WKWebView.
+        auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        receivedScriptMessage = false;
+        [secondWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+        EXPECT_WK_STREQ("value", getNextMessage().body);
+        EXPECT_TRUE([fileManager fileExistsAtPath:indexedDBFile.path]);
+    }
+
+    // Create a new WebsiteDataStore that performs migration.
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [thirdWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ("value", getNextMessage().body);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:indexedDBFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:newIndexedDBFile.path]);
 }

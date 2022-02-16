@@ -45,7 +45,8 @@ class LocalStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Vector<WebCore::SecurityOriginData> originsOfLocalStorageData(const String& path);
-    static String localStorageFilePath(const String& path, const WebCore::ClientOrigin&);
+    static String localStorageFilePath(const String& directory, const WebCore::ClientOrigin&);
+    static String localStorageFilePath(const String& directory);
 
     LocalStorageManager(const String& path, StorageAreaRegistry&);
     bool isActive() const;

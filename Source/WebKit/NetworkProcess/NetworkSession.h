@@ -215,7 +215,7 @@ public:
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
     NetworkStorageManager* storageManager() { return m_storageManager.get(); }
-    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota);
+    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota, bool shouldUseCustomStoragePaths);
 
     CacheStorage::Engine* cacheEngine() { return m_cacheEngine.get(); }
     void ensureCacheEngine(Function<void(CacheStorage::Engine&)>&&);

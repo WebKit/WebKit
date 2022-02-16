@@ -659,7 +659,7 @@ WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
     return *m_sharedWorkerServer;
 }
 
-void NetworkSession::addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota)
+void NetworkSession::addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota, bool shouldUseCustomStoragePaths)
 {
     if (m_storageManager)
         return;
@@ -670,7 +670,7 @@ void NetworkSession::addStorageManagerSession(const String& generalStoragePath, 
     IPC::Connection::UniqueID connectionID;
     if (auto* connection = networkProcess().parentProcessConnection())
         connectionID = connection->uniqueID();
-    m_storageManager = NetworkStorageManager::create(sessionID(), connectionID, generalStoragePath, localStoragePath, idbStoragePath, cacheStoragePath, defaultOriginQuota, defaultThirdPartyQuota);
+    m_storageManager = NetworkStorageManager::create(sessionID(), connectionID, generalStoragePath, localStoragePath, idbStoragePath, cacheStoragePath, defaultOriginQuota, defaultThirdPartyQuota, shouldUseCustomStoragePaths);
 }
 
 void NetworkSession::ensureCacheEngine(Function<void(CacheStorage::Engine&)>&& callback)

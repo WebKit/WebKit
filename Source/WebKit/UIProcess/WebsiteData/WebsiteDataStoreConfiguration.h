@@ -132,6 +132,9 @@ public:
     const String& generalStorageDirectory() const { return m_generalStorageDirectory; }
     void setGeneralStorageDirectory(String&& directory) { m_generalStorageDirectory = WTFMove(directory); }
 
+    bool shouldUseCustomStoragePaths() const { return m_shouldUseCustomStoragePaths; }
+    void setShouldUseCustomStoragePaths(bool use) { m_shouldUseCustomStoragePaths = use; }
+
     const String& applicationCacheFlatFileSubdirectoryName() const { return m_applicationCacheFlatFileSubdirectoryName; }
     void setApplicationCacheFlatFileSubdirectoryName(String&& directory) { m_applicationCacheFlatFileSubdirectoryName = WTFMove(directory); }
     
@@ -204,6 +207,7 @@ public:
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
+    bool m_shouldUseCustomStoragePaths { true };
     String m_cacheStorageDirectory;
     String m_generalStorageDirectory;
     uint64_t m_perOriginStorageQuota;

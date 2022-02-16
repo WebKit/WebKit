@@ -36,6 +36,7 @@ namespace WebKit {
 // Suggested by https://www.w3.org/TR/webstorage/#disk-space
 constexpr unsigned localStorageQuotaInBytes = 5 * MB;
 constexpr auto fileSuffix = ".localstorage"_s;
+constexpr auto fileName = "localstorage.sqlite3"_s;
 
 // This is intended to be used for existing files.
 // We should not include origin in file name.
@@ -75,9 +76,17 @@ Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageDa
 String LocalStorageManager::localStorageFilePath(const String& directory, const WebCore::ClientOrigin& origin)
 {
     if (directory.isEmpty())
-        return String { };
+        return emptyString();
 
     return FileSystem::pathByAppendingComponent(directory, originToFileName(origin));
+}
+
+String LocalStorageManager::localStorageFilePath(const String& directory)
+{
+    if (directory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(directory, fileName);
 }
 
 LocalStorageManager::LocalStorageManager(const String& path, StorageAreaRegistry& registry)

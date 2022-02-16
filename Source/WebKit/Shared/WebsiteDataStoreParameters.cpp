@@ -52,6 +52,8 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 
     encoder << perOriginStorageQuota;
     encoder << perThirdPartyOriginStorageQuota;
+
+    encoder << shouldUseCustomStoragePaths;
 }
 
 std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
@@ -155,6 +157,12 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     if (!perThirdPartyOriginStorageQuota)
         return std::nullopt;
     parameters.perThirdPartyOriginStorageQuota = *perThirdPartyOriginStorageQuota;
+
+    std::optional<bool> shouldUseCustomStoragePaths;
+    decoder >> shouldUseCustomStoragePaths;
+    if (!shouldUseCustomStoragePaths)
+        return std::nullopt;
+    parameters.shouldUseCustomStoragePaths = *shouldUseCustomStoragePaths;
     
     return parameters;
 }

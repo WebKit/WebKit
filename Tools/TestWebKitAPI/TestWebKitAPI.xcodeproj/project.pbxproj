@@ -745,6 +745,7 @@
 		93625D271CD9741C006DC1F1 /* large-video-without-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93625D261CD973AF006DC1F1 /* large-video-without-audio.html */; };
 		9368A25E229EFB4700A829CA /* local-storage-process-suspends-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9368A25D229EFB3A00A829CA /* local-storage-process-suspends-1.html */; };
 		9368A25F229EFB4700A829CA /* local-storage-process-suspends-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */; };
+		936EC36627BA3B0D00AFA8AE /* general-storage-directory.salt in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */; };
 		936F72801CD7D9EC0068A0FB /* large-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */; };
 		936F72811CD7D9EC0068A0FB /* large-video-with-audio.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */; };
 		937A6C8A24357C1700C3A6B0 /* KillWebProcessWithOpenConnection-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */; };
@@ -1357,6 +1358,7 @@
 				3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */,
 				CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */,
 				CDBFCC461A9FF49E00A7B691 /* FullscreenZoomInitialFrame.html in Copy Resources */,
+				936EC36627BA3B0D00AFA8AE /* general-storage-directory.salt in Copy Resources */,
 				26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */,
 				636353A71E98665D0009F8AF /* GeolocationGetCurrentPositionResult.html in Copy Resources */,
 				26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */,
@@ -2518,6 +2520,7 @@
 		93625D261CD973AF006DC1F1 /* large-video-without-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-without-audio.html"; sourceTree = "<group>"; };
 		9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "local-storage-process-suspends-2.html"; sourceTree = "<group>"; };
 		9368A25D229EFB3A00A829CA /* local-storage-process-suspends-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "local-storage-process-suspends-1.html"; sourceTree = "<group>"; };
+		936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "general-storage-directory.salt"; sourceTree = "<group>"; };
 		936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-with-audio.html"; sourceTree = "<group>"; };
 		936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "large-video-with-audio.mp4"; sourceTree = "<group>"; };
 		937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "KillWebProcessWithOpenConnection-1.html"; sourceTree = "<group>"; };
@@ -4117,6 +4120,7 @@
 				CD78E11B1DB7EA360014A2DE /* FullscreenDelegate.html */,
 				3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */,
 				CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */,
+				936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */,
 				636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */,
 				07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */,
 				467C565121B5ECDF0057516D /* GetSessionCookie.html */,

@@ -108,12 +108,12 @@ static void deleteOriginFileIfNecessary(const String& filePath)
         FileSystem::deleteFile(filePath);
 }
 
-Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota)
+Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths)
 {
-    return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota));
+    return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, shouldUseCustomPaths));
 }
 
-NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota)
+NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths)
     : m_sessionID(sessionID)
     , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage"))
     , m_defaultOriginQuota(defaultOriginQuota)
@@ -122,10 +122,11 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), shouldUseCustomPaths]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
+        m_shouldUseCustomPaths = shouldUseCustomPaths;
         m_path = path;
         m_customLocalStoragePath = customLocalStoragePath;
         m_customIDBStoragePath = customIDBStoragePath;
@@ -211,7 +212,7 @@ static String encode(const String& string, FileSystem::Salt salt)
 static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)
 {
     if (rootPath.isEmpty())
-        return String { };
+        return emptyString();
 
     auto encodedTopOrigin = encode(origin.topOrigin.toString(), salt);
     auto encodedOpeningOrigin = encode(origin.clientOrigin.toString(), salt);
@@ -221,8 +222,9 @@ static String originDirectoryPath(const String& rootPath, const WebCore::ClientO
 static String originFilePath(const String& directory)
 {
     if (directory.isEmpty())
-        return String { };
-    return FileSystem::pathByAppendingComponent(directory, "origin"_s);
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(directory, OriginStorageManager::originFileIdentifier());
 }
 
 OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const WebCore::ClientOrigin& origin)
@@ -247,7 +249,7 @@ OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const Web
         QuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
             IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
         };
-        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath));
+        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_shouldUseCustomPaths);
     }).iterator->value;
 }
 

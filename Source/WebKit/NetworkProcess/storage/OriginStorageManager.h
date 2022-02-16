@@ -43,7 +43,9 @@ enum class WebsiteDataType : uint32_t;
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& localStoragePath, String&& idbStoragePath, String&& cacheStoragePath);
+    static String originFileIdentifier();
+
+    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& cacheStoragePath, bool shouldUseCustomPaths);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -70,11 +72,14 @@ private:
 
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;
-    bool m_persisted { false };
-    String m_localStoragePath;
-    String m_idbStoragePath;
+    String m_customLocalStoragePath;
+    String m_customIDBStoragePath;
     String m_cacheStoragePath;
-    Ref<QuotaManager> m_quotaManager;
+    uint64_t m_quota;
+    QuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
+    RefPtr<QuotaManager> m_quotaManager;
+    bool m_persisted { false };
+    bool m_shouldUseCustomPaths;
 };
 
 } // namespace WebKit

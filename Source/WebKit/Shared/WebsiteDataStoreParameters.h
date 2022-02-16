@@ -73,6 +73,8 @@ struct WebsiteDataStoreParameters {
 
     uint64_t perOriginStorageQuota;
     uint64_t perThirdPartyOriginStorageQuota;
+
+    bool shouldUseCustomStoragePaths { false };
 };
 
 } // namespace WebKit
