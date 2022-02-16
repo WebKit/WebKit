@@ -1,3 +1,25 @@
+2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteVideoFrameProxy is missing reference field encode, decode
+        https://bugs.webkit.org/show_bug.cgi?id=236690
+
+        Reviewed by Antti Koivisto.
+
+        Add the missing encode, decode. Use the better decode pattern
+        to avoid default construction and reduce the chance of having
+        a declaration but no decode.
+        Also add TextStream operator<< for RemoteVideoFrameProxy::Properties
+        for easier debugging with WebKit2Logging IPCMessages.
+
+        No new tests, tested by existing WebRTC tests
+        when WebRTCRemoteVideoFrameEnabled=true (not default currently)
+
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        (WebKit::operator<<):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        (WebKit::RemoteVideoFrameProxy::Properties::encode const):
+        (WebKit::RemoteVideoFrameProxy::Properties::decode):
+
 2022-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add an "Markup Image" item to the sharing services picker context menu

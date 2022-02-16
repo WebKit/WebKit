@@ -122,32 +122,26 @@ private:
 
 template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const
 {
-    encoder << presentationTime
-        << isMirrored
-        << rotation
-        << size
-        << pixelFormat;
+    encoder << reference << presentationTime << isMirrored << rotation << size << pixelFormat;
 }
 
 template<typename Decoder> std::optional<RemoteVideoFrameProxy::Properties> RemoteVideoFrameProxy::Properties::decode(Decoder& decoder)
 {
-    std::optional<RemoteVideoFrameReference> reference;
-    std::optional<MediaTime> presentationTime;
-    std::optional<bool> isMirrored;
-    std::optional<VideoRotation> videoRotation;
-    std::optional<WebCore::IntSize> size;
-    std::optional<uint32_t> pixelFormat;
-    decoder >> presentationTime
-        >> isMirrored
-        >> videoRotation
-        >> size
-        >> pixelFormat;
+    auto reference = decoder.template decode<RemoteVideoFrameReference>();
+    auto presentationTime = decoder.template decode<MediaTime>();
+    auto isMirrored = decoder.template decode<bool>();
+    auto videoRotation = decoder.template decode<VideoRotation>();
+    auto size = decoder.template decode<WebCore::IntSize>();
+    auto pixelFormat = decoder.template decode<uint32_t>();
     if (!decoder.isValid())
         return std::nullopt;
     return Properties { WTFMove(*reference), WTFMove(*presentationTime), *isMirrored, *videoRotation, *size, *pixelFormat };
 }
 
+TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);
+
 }
+
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteVideoFrameProxy)
     static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSample().type == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
 SPECIALIZE_TYPE_TRAITS_END()

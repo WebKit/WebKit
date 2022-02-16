@@ -1,3 +1,17 @@
+2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteVideoFrameProxy is missing reference field encode, decode
+        https://bugs.webkit.org/show_bug.cgi?id=236690
+
+        Reviewed by Antti Koivisto.
+
+        Export the MediaTime TextStream operator<< as inline function
+        for all compilation modes. It is useful also when NDEBUG is defined,
+        and it is hard to ifdef at all the call sites.
+
+        * wtf/MediaTime.cpp:
+        * wtf/MediaTime.h:
+
 2022-02-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Constructing untaken LOG(Channel, ...) arguments slow debug binaries down

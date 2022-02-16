@@ -146,5 +146,17 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 }
 #endif
 
+TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)
+{
+    ts << "{ reference=" << properties.reference
+        << ", presentationTime=" << properties.presentationTime
+        << ", isMirrored=" << properties.isMirrored
+        << ", rotation=" << static_cast<int>(properties.rotation)
+        << ", size=" << properties.size
+        << ", pixelFormat=" << properties.pixelFormat
+        << " }";
+    return ts;
+}
+
 }
 #endif

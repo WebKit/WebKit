@@ -213,9 +213,7 @@ template<> struct LogArgument<MediaTimeRange> {
     static String toString(const MediaTimeRange& range) { return range.toJSONString(); }
 };
 
-#ifndef NDEBUG
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);
-#endif
 
 }
 
