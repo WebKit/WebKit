@@ -1,3 +1,22 @@
+2022-02-15  Mark Lam  <mark.lam@apple.com>
+
+        Make HeapType an enum class.
+        https://bugs.webkit.org/show_bug.cgi?id=236667
+        <rdar://problem/88984607>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dynbench.cpp:
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        * jsc.cpp:
+        (runJSC):
+        * runtime/VM.cpp:
+        (JSC::VM::sharedInstance):
+        * runtime/VM.h:
+        * testRegExp.cpp:
+        (realMain):
+
 2022-02-15  Elliott Williams  <emw@apple.com>
 
         [Xcode] Remove "Make libWTF.a Symbolic Link" script phase

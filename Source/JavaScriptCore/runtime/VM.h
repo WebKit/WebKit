@@ -253,9 +253,9 @@ public:
     JS_EXPORT_PRIVATE static bool sharedInstanceExists();
     JS_EXPORT_PRIVATE static VM& sharedInstance();
 
-    JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
-    JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = SmallHeap, WTF::RunLoop* = nullptr);
-    static Ref<VM> createContextGroup(HeapType = SmallHeap);
+    JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);
+    JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);
+    static Ref<VM> createContextGroup(HeapType = HeapType::Small);
     JS_EXPORT_PRIVATE ~VM();
 
     Watchdog& ensureWatchdog();

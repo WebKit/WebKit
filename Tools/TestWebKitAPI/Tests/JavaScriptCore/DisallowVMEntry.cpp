@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 
 using JSC::DisallowVMEntry;
 using JSC::JSLockHolder;
-using JSC::LargeHeap;
+using JSC::HeapType;
 using JSC::VM;
 
 static void enterScope(VM& vm, unsigned entryCount, unsigned remainingEntries)
@@ -51,7 +51,7 @@ TEST(JavaScriptCore_DisallowVMEntry, NestedScopes)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);
@@ -65,7 +65,7 @@ TEST(JavaScriptCore_DisallowVMEntry, CopyConstruction)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);
@@ -89,7 +89,7 @@ TEST(JavaScriptCore_DisallowVMEntry, CopyAssignment)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);

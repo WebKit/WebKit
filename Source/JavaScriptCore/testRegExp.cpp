@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -516,7 +516,7 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int realMain(int argc, char** argv)
 {
-    VM* vm = &VM::create(LargeHeap).leakRef();
+    VM* vm = &VM::create(HeapType::Large).leakRef();
     JSLockHolder locker(vm);
 
     CommandLine options;

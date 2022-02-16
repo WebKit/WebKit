@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -114,7 +114,7 @@ double maxPauseMS(double thisPauseMS)
 
 size_t minHeapSize(HeapType heapType, size_t ramSize)
 {
-    if (heapType == LargeHeap) {
+    if (heapType == HeapType::Large) {
         double result = std::min(
             static_cast<double>(Options::largeHeapSize()),
             ramSize * Options::smallHeapRAMFraction());

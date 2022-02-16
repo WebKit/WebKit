@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 namespace TestWebKitAPI {
 
 using JSC::JSLockHolder;
-using JSC::LargeHeap;
+using JSC::HeapType;
 using JSC::PropertySlot;
 using JSC::VM;
 using JSC::jsUndefined;
@@ -42,7 +42,7 @@ TEST(JavaScriptCore_PropertySlot, DisallowVMEntryCountBasic)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);
@@ -78,7 +78,7 @@ TEST(JavaScriptCore_PropertySlot, VMInquiryReset)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);
@@ -102,7 +102,7 @@ TEST(JavaScriptCore_PropertySlot, CopyAssignment)
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(LargeHeap).leakRef();
+    VM& vm = VM::create(HeapType::Large).leakRef();
     {
         JSLockHolder locker(vm);
         EXPECT_EQ(vm.disallowVMEntryCount, 0u);

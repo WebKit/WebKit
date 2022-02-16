@@ -551,7 +551,7 @@ VM& VM::sharedInstance()
     GlobalJSLock globalLock;
     VM*& instance = sharedInstanceInternal();
     if (!instance)
-        instance = adoptRef(new VM(APIShared, SmallHeap)).leakRef();
+        instance = adoptRef(new VM(APIShared, HeapType::Small)).leakRef();
     return *instance;
 }
 
