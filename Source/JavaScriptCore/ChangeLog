@@ -1,5 +1,22 @@
 2022-02-15  Mark Lam  <mark.lam@apple.com>
 
+        Defer TerminationsExceptions while in operationMaterializeObjectInOSR.
+        https://bugs.webkit.org/show_bug.cgi?id=236686
+        rdar://81337114
+
+        Reviewed by Saam Barati.
+
+        operationMaterializeObjectInOSR expects to always succeed.  It is difficult (and
+        not worth the effort) to make it be able to handle interruptions by the
+        TerminationException.  Since operationMaterializeObjectInOSR is guaranteed to
+        finish running in some finite time, it is reasonable to just defer handling a
+        pending TerminationException until the function returns.
+
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+
+2022-02-15  Mark Lam  <mark.lam@apple.com>
+
         Make HeapType an enum class.
         https://bugs.webkit.org/show_bug.cgi?id=236667
         <rdar://problem/88984607>

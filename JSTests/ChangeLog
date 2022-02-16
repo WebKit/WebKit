@@ -1,3 +1,18 @@
+2022-02-15  Mark Lam  <mark.lam@apple.com>
+
+        Defer TerminationsExceptions while in operationMaterializeObjectInOSR.
+        https://bugs.webkit.org/show_bug.cgi?id=236686
+        rdar://81337114
+
+        Reviewed by Saam Barati.
+
+        These tests are identical except that they are customized with different watchdog
+        timeout periods for a Debug / Release build.  This is a necessary condition in
+        order for the test to manifest this issue if the code is regressed.
+
+        * stress/termination-exception-in-operationMaterializeObjectInOSR-debug.js: Added.
+        * stress/termination-exception-in-operationMaterializeObjectInOSR-release.js: Added.
+
 2022-02-15  Xan Lopez  <xan@igalia.com>
 
         [JSC] Reduce iterations for getter-richards.js on MIPS
