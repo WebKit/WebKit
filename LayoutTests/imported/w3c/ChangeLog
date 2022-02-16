@@ -1,3 +1,17 @@
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
+        iOS test gardening after turning on accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=236680
+        rdar://problem/88996489
+
+        Reviewed by Simon Fraser.
+
+        Add fuzzy data.
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht:
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht:
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht:
+
 2022-02-16  Martin Robinson  <mrobinson@webkit.org>
 
         transform: perspective(0) should not be considered an identity operation

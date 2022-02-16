@@ -566,9 +566,6 @@ webkit.org/b/131244 svg/as-image/svg-as-image-canvas.html [ Pass ImageOnlyFailur
 
 webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass ImageOnlyFailure ]
 
-# Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
-webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
-
 webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
 webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
@@ -1054,9 +1051,6 @@ fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]
 fast/css/webkit-named-image/apple-pay-logo-black [ Pass ]
 fast/css/webkit-named-image/apple-pay-logo-white [ Pass ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
-
-# <rdar://problem/23504749> imported/w3c/web-platform-tests/xhr/response-method.htm failing
-imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass Failure ]
 
 # <rdar://problem/23505582> Fails on iMac10,1 and iMac11,1
 fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
@@ -2444,3 +2438,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 [ Catalina ] media/media-allowed-containers.html [ Skip ]
 
 [ Catalina BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
+
+# Was in LayoutTests/Expectations, now only happening on Mac
+imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]

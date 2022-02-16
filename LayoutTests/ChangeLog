@@ -1,3 +1,19 @@
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
+        iOS test gardening after turning on accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=236680
+        rdar://problem/88996489
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations: Some tests now uniquely fail on GTK; moved here.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations: Many tests are passing only on iOS, some fail only on the iPad simulator.
+        * platform/mac/TestExpectations:
+
 2022-02-16  Matteo Flores  <matteo_flores@apple.com>
 
         [ macOS ] http/tests/media/video-play-waiting.html is a constant time out.

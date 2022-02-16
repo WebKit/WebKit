@@ -1868,3 +1868,11 @@ accessibility/dialog-properties.html [ Skip ]
 # These tests require platform support.
 media/media-allowed-codecs.html
 media/media-allowed-containers.html
+
+# These failures occur on GTK only (moved from LayoutTests/TestExpectations)
+webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-join-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-empty-container-with-filter-content-added.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
+[ Release ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]

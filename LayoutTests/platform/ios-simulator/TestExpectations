@@ -18,9 +18,6 @@ fast/forms/visual-hebrew-text-field.html [ Skip ]
 # The MediaSource API is unsupported on iOS simulator.
 fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ Skip ]
 
-# -webkit-flex off-by-one px
-webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
 fast/events/document-elementFromPoint.html [ Pass Failure ]
 
 transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
@@ -62,7 +59,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Failure ]
@@ -95,7 +91,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/selectors-empty-001.xml [ ImageOnlyFailure ]
 
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html [ ImageOnlyFailure ]
 
