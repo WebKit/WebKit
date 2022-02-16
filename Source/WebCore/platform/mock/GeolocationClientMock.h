@@ -59,7 +59,7 @@ public:
 
     // GeolocationClient
     void geolocationDestroyed() override;
-    void startUpdating(const String& authorizationToken) override;
+    void startUpdating(const String& authorizationToken, bool enableHighAccuracy) override;
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
     std::optional<GeolocationPositionData> lastPosition() override;

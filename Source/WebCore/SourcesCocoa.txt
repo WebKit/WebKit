@@ -252,6 +252,7 @@ platform/cf/MediaAccessibilitySoftLink.cpp
 platform/cf/RunLoopObserver.cpp
 platform/cf/SharedBufferCF.cpp
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
+platform/cocoa/CoreLocationGeolocationProvider.mm
 platform/cocoa/CoreVideoSoftLink.cpp
 platform/cocoa/DragDataCocoa.mm
 platform/cocoa/DragImageCocoa.mm
@@ -308,7 +309,7 @@ platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
 platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm
-platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
+platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
 platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm @no-unify
 platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
 platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm
@@ -319,7 +320,7 @@ platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm
 platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
-platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
+platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
 platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm

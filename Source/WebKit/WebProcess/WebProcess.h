@@ -310,10 +310,6 @@ public:
 
     void isJITEnabled(CompletionHandler<void(bool)>&&);
 
-#if PLATFORM(IOS_FAMILY)
-    void resetAllGeolocationPermissions();
-#endif
-
 #if PLATFORM(WAYLAND)
     WaylandCompositorDisplay* waylandCompositorDisplay() const { return m_waylandCompositorDisplay.get(); }
 #endif

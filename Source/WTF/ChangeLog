@@ -1,3 +1,15 @@
+2022-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Do preliminary work to pass domain names to CoreLocation
+        https://bugs.webkit.org/show_bug.cgi?id=236566
+        <rdar://88761413>
+
+        Reviewed by Darin Adler.
+
+        Add build time flag for passing website identifiers to CoreLocation.
+
+        * wtf/PlatformHave.h:
+
 2022-02-15  Robin Morisset  <rmorisset@apple.com>
 
         [WGSL] Implement enough of the lexer for the simplest shaders

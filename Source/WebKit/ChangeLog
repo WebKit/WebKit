@@ -1,3 +1,94 @@
+2022-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Do preliminary work to pass domain names to CoreLocation
+        https://bugs.webkit.org/show_bug.cgi?id=236566
+        <rdar://88761413>
+
+        Reviewed by Darin Adler.
+
+        Do preliminary work to pass domain names to CoreLocation when using the Geolocation API.
+        This pipes the domain names all the way from the Geolocation API to the CoreLocation calls
+        but doesn't yet pass the domain to CoreLocation due to <rdar://88834301>. I will follow-up
+        once <rdar://88834301> is fixed.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerSetProvider):
+        * UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp: Added.
+        (WebKit::WebGeolocationManagerProxy::positionChanged):
+        (WebKit::WebGeolocationManagerProxy::errorOccurred):
+        (WebKit::WebGeolocationManagerProxy::resetGeolocation):
+        (WebKit::WebGeolocationManagerProxy::isUpdating const):
+        (WebKit::WebGeolocationManagerProxy::isHighAccuracyEnabled const):
+        (WebKit::WebGeolocationManagerProxy::providerStartUpdating):
+        (WebKit::WebGeolocationManagerProxy::providerStopUpdating):
+        (WebKit::WebGeolocationManagerProxy::providerSetEnabledHighAccuracy):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::processPoolDestroyed):
+        (WebKit::WebGeolocationManagerProxy::processDidClose):
+        (WebKit::WebGeolocationManagerProxy::providerDidChangePosition):
+        (WebKit::WebGeolocationManagerProxy::providerDidFailToDeterminePosition):
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::stopUpdating):
+        (WebKit::WebGeolocationManagerProxy::setEnableHighAccuracy):
+        (WebKit::WebGeolocationManagerProxy::setProvider):
+        (WebKit::WebGeolocationManagerProxy::isUpdating const):
+        (WebKit::WebGeolocationManagerProxy::isHighAccuracyEnabled const):
+        (WebKit::WebGeolocationManagerProxy::providerStartUpdating):
+        (WebKit::WebGeolocationManagerProxy::providerStopUpdating):
+        (WebKit::WebGeolocationManagerProxy::providerSetEnabledHighAccuracy):
+        (WebKit::WebGeolocationManagerProxy::resetPermissions): Deleted.
+        (WebKit::WebGeolocationManagerProxy::removeRequester): Deleted.
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebKit::WebGeolocationManagerProxy::lastPosition const): Deleted.
+        (WebKit::WebGeolocationManagerProxy::isUpdating const): Deleted.
+        (WebKit::WebGeolocationManagerProxy::isHighAccuracyEnabled const): Deleted.
+        * UIProcess/WebGeolocationManagerProxy.messages.in:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS _startUpdating]):
+        (-[WKGeolocationProviderIOS _stopUpdating]):
+        (-[WKGeolocationProviderIOS _setEnableHighAccuracy:]):
+        (-[WKGeolocationProviderIOS initWithProcessPool:]):
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:completionHandler:view:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKGeolocationProviderIOS positionChanged:]):
+        (-[WKGeolocationProviderIOS errorOccurred:]):
+        (-[WKGeolocationProviderIOS resetGeolocation]):
+        (startUpdatingCallback): Deleted.
+        (stopUpdatingCallback): Deleted.
+        (setEnableHighAccuracy): Deleted.
+        (-[WKLegacyCoreLocationProvider setListener:]): Deleted.
+        (-[WKLegacyCoreLocationProvider requestGeolocationAuthorization]): Deleted.
+        (-[WKLegacyCoreLocationProvider start]): Deleted.
+        (-[WKLegacyCoreLocationProvider stop]): Deleted.
+        (-[WKLegacyCoreLocationProvider setEnableHighAccuracy:]): Deleted.
+        (-[WKLegacyCoreLocationProvider geolocationAuthorizationGranted]): Deleted.
+        (-[WKLegacyCoreLocationProvider geolocationAuthorizationDenied]): Deleted.
+        (-[WKLegacyCoreLocationProvider positionChanged:]): Deleted.
+        (-[WKLegacyCoreLocationProvider errorOccurred:]): Deleted.
+        (-[WKLegacyCoreLocationProvider resetGeolocation]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::registrableDomainForPage):
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        (WebKit::WebGeolocationManager::setEnableHighAccuracyForPage):
+        (WebKit::WebGeolocationManager::didChangePosition):
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+        (WebKit::WebGeolocationManager::resetPermissions):
+        (WebKit::WebGeolocationManager::isUpdating const): Deleted.
+        (WebKit::WebGeolocationManager::isHighAccuracyEnabled const): Deleted.
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::startUpdating):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        (WebKit::WebGeolocationClient::WebGeolocationClient): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::resetAllGeolocationPermissions): Deleted.
+        * WebProcess/WebProcess.h:
+
 2022-02-15  Philip Chimento  <pchimento@igalia.com>
 
         Fixes for build-webkit --minimal

@@ -29,7 +29,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 OBJC_CLASS CLLocation;
 #endif
 
@@ -47,7 +47,7 @@ public:
     {
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT explicit GeolocationPositionData(CLLocation*);
 #endif
 

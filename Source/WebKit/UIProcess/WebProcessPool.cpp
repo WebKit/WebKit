@@ -431,9 +431,6 @@ void WebProcessPool::screenPropertiesStateChanged()
 
 void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, NetworkProcessProxy::TerminationReason reason)
 {
-    for (auto& supplement : m_supplements.values())
-        supplement->processDidClose(&networkProcessProxy);
-
     if (reason == NetworkProcessProxy::TerminationReason::Crash)
         m_client.networkProcessDidCrash(this);
 
@@ -1057,7 +1054,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
     if (process.isRunningWorkers())
         removeFromRemoteWorkerProcesses(process);
 
-    static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(&process);
+    supplement<WebGeolocationManagerProxy>()->webProcessIsGoingAway(process);
 
     m_processes.removeFirst(process);
 

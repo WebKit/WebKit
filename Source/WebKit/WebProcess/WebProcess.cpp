@@ -1527,16 +1527,6 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
     }
 }
 
-#if PLATFORM(IOS_FAMILY)
-void WebProcess::resetAllGeolocationPermissions()
-{
-    for (auto& page : m_pageMap.values()) {
-        if (Frame* mainFrame = page->mainFrame())
-            mainFrame->resetAllGeolocationPermission();
-    }
-}
-#endif
-
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);

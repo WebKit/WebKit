@@ -69,6 +69,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "GeolocationController.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
@@ -1331,6 +1332,11 @@ void Page::didCommitLoad()
 #if ENABLE(IMAGE_ANALYSIS)
     resetTextRecognitionResults();
     resetImageAnalysisQueue();
+#endif
+
+#if ENABLE(GEOLOCATION)
+    if (auto* geolocationController = GeolocationController::from(this))
+        geolocationController->didNavigatePage();
 #endif
 }
 

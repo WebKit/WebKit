@@ -47,14 +47,6 @@ public:
     {
     }
 
-    virtual void processDidClose(WebProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(NetworkProcessProxy*)
-    {
-    }
-
     WebProcessPool* processPool() const { return m_processPool; }
     void clearProcessPool() { m_processPool = nullptr; }
 

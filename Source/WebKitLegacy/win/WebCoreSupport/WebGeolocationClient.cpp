@@ -48,9 +48,10 @@ void WebGeolocationClient::geolocationDestroyed()
     delete this;
 }
 
-void WebGeolocationClient::startUpdating(const String& authorizationToken)
+void WebGeolocationClient::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
 {
     UNUSED_PARAM(authorizationToken);
+    UNUSED_PARAM(enableHighAccuracy);
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))
         return;

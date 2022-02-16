@@ -1119,6 +1119,20 @@
 #define HAVE_NSTEXTLIST_MARKER_FORMATS 1
 #endif
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 90000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 160000)
+#define HAVE_CORE_LOCATION_WEBSITE_IDENTIFIERS 1
+#endif
+
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600)
+#define HAVE_CORE_LOCATION 1
+// kCLAuthorizationStatusAuthorizedWhenInUse is only available on macOS as part of the internal SDK.
+#if PLATFORM(IOS_FAMILY) || (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>))
+#define HAVE_CORE_LOCATION_AUTHORIZED_WHEN_IN_USE 1
+#endif
+#endif
+
 #if PLATFORM(MAC)
 #define HAVE_SCENEKIT 1
 #endif
