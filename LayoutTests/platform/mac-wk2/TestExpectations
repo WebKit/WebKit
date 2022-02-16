@@ -1015,6 +1015,8 @@ webkit.org/b/228934 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass
 
 webkit.org/b/207209 inspector/heap/getPreview.html [ Pass Failure Timeout ]
 
+webkit.org/b/236678 [ Monterey arm64 ] model-element/model-element-ready.html [ Pass Crash ]
+
 webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html [ Pass Crash ]
 
 webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failure ]

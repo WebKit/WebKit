@@ -1,3 +1,27 @@
+2022-02-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289864. rdar://problem/88993883
+
+    REGRESSION(r289495): [ Monterey arm64 ] model-element/model-element-ready.html is a flaky assertion failure.
+    https://bugs.webkit.org/show_bug.cgi?id=236678
+    
+    Unreviewed test gardening.
+    
+    Patch by Matteo Flores <matteo_flores@apple.com> on 2022-02-15
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289864 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-15  Matteo Flores  <matteo_flores@apple.com>
+
+            REGRESSION(r289495): [ Monterey arm64 ] model-element/model-element-ready.html is a flaky assertion failure.
+            https://bugs.webkit.org/show_bug.cgi?id=236678
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk2/TestExpectations:
+
 2022-02-13  Matt Woodrow  <mattwoodrow@apple.com>
 
         Add support for parsing 'subgrid' in grid-template-columns/row
