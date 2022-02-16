@@ -1432,6 +1432,9 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
             return buildstep.BuildStep.getResultSummary(self)
         return {'step': 'Failed to set cq- flag on patch'}
 
+    def doStepIf(self, step):
+        return self.getProperty('patch_id', False)
+
 
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
     name = 'remove-flags-from-patch'
