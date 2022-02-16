@@ -109,7 +109,7 @@ public:
         CSSStyleSheet* m_styleSheet;
         RuleMutationType m_mutationType;
         WhetherContentsWereClonedForMutation m_contentsWereClonedForMutation;
-        StyleRuleKeyframes* m_insertedKeyframesRule;
+        RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
         String m_modifiedKeyframesRuleName;
     };
 
