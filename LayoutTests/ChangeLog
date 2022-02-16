@@ -1,5 +1,54 @@
 2022-02-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288795. rdar://problem/88696673
+
+    [WebIDL] Add a sensible error message for a primitive non-null EventListener
+    https://bugs.webkit.org/show_bug.cgi?id=235863
+    
+    Patch by Alexey Shvayka <ashvayka@apple.com> on 2022-01-29
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    This patch moves isObject() check to JSEventListener converter, aligning it with
+    callback interface converter and removing now unused create() overload, and makes
+    code generator pass an exception thrower with a user-friendly TypeError message.
+    
+    Since JSEventListener is quite different from other callback interfaces, we can't
+    make IsCallbackInterface() recognize it just yet, thus the type name has to be
+    hard-coded if we want the error message to be consistent with other generated ones.
+    
+    Test: fast/events/event-listener-not-an-object.html
+    
+    * bindings/js/JSDOMConvertEventListener.h:
+    (WebCore::Converter<IDLEventListener<T>>::convert):
+    * bindings/js/JSEventListener.cpp:
+    * bindings/js/JSEventListener.h:
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GetArgumentExceptionFunction):
+    * bindings/scripts/test/JS/*: Updated.
+    * dom/EventTarget.idl:
+    Rename EventListener parameter to "listener" to match MDN / Chrome DevTools / matchMedia().
+    
+    LayoutTests:
+    
+    * fast/events/event-listener-not-an-object-expected.txt: Added.
+    * fast/events/event-listener-not-an-object.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288795 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-29  Alexey Shvayka  <ashvayka@apple.com>
+
+            [WebIDL] Add a sensible error message for a primitive non-null EventListener
+            https://bugs.webkit.org/show_bug.cgi?id=235863
+
+            Reviewed by Darin Adler.
+
+            * fast/events/event-listener-not-an-object-expected.txt: Added.
+            * fast/events/event-listener-not-an-object.html: Added.
+
+2022-02-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289883. rdar://problem/82142820
 
     Floating point exception in RenderListBox::numVisibleItems
