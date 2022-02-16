@@ -1,3 +1,15 @@
+2022-02-16  David Kilzer  <ddkilzer@apple.com>
+
+        [WebKitLegacy] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings
+        <https://webkit.org/b/236663>
+        <rdar://problem/88982792>
+
+        Reviewed by Dean Jackson.
+
+        * Misc/WebDownload.mm:
+        (callOnDelegateThreadAndWait):
+        - Replace WTFMove() with std::forward<>().
+
 2022-02-15  Chris Dumez  <cdumez@apple.com>
 
         Do preliminary work to pass domain names to CoreLocation

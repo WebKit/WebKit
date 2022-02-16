@@ -67,7 +67,7 @@ static void callOnDelegateThreadAndWait(Callable&& work)
     if (shouldCallOnNetworkThread() || isMainThread())
         work();
     else {
-        WorkQueue::main().dispatchSync([work = WTFMove(work)]() mutable {
+        WorkQueue::main().dispatchSync([work = std::forward<Callable>(work)]() mutable {
             work();
         });
     }
