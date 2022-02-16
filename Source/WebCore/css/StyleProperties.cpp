@@ -243,6 +243,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(columnRuleShorthand());
     case CSSPropertyColumns:
         return getShorthandValue(columnsShorthand());
+    case CSSPropertyContainer:
+        return getShorthandValue(containerShorthand(), " / ");
     case CSSPropertyFlex:
         return getShorthandValue(flexShorthand());
     case CSSPropertyFlexFlow:
