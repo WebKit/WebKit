@@ -50,7 +50,7 @@ public:
     std::optional<Length> perspective() const { return m_p; }
     
 private:
-    bool isIdentity() const override { return !m_p || !floatValueForLength(*m_p, 1); }
+    bool isIdentity() const override { return !m_p; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
     bool isRepresentableIn2D() const final { return false; }
 
