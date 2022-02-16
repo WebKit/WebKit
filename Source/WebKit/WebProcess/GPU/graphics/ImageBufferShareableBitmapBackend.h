@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ImageBufferBackendHandle.h"
+#include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/PlatformImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
@@ -39,7 +39,7 @@ namespace WebKit {
 
 class ShareableBitmap;
 
-class ImageBufferShareableBitmapBackend final : public WebCore::PlatformImageBufferBackend {
+class ImageBufferShareableBitmapBackend final : public WebCore::PlatformImageBufferBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 public:
@@ -53,11 +53,10 @@ public:
 
     ImageBufferShareableBitmapBackend(const Parameters&, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
-    ImageBufferBackendHandle createImageBufferBackendHandle() const;
-
     WebCore::GraphicsContext& context() const final { return *m_context; }
     
     WebCore::IntSize backendSize() const final;
+    ImageBufferBackendHandle createBackendHandle() const final;
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution = WebCore::PreserveResolution::No) const final;
@@ -68,6 +67,8 @@ public:
     void setOwnershipIdentity(const WebCore::ProcessIdentity&) { }
 private:
     unsigned bytesPerRow() const final;
+
+    ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     RefPtr<ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;

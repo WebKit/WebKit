@@ -97,7 +97,7 @@ CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameter
 {
 }
 
-ImageBufferBackendHandle CGDisplayListImageBufferBackend::createImageBufferBackendHandle() const
+ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle() const
 {
     auto data = adoptCF(WKCGCommandsContextCopyEncodedData(m_context->platformContext()));
     ASSERT(data);

@@ -126,7 +126,7 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
     m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
-ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createImageBufferBackendHandle() const
+ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle() const
 {
     ShareableBitmap::Handle handle;
     m_bitmap->createHandle(handle);

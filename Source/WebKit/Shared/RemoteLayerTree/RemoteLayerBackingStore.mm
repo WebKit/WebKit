@@ -116,42 +116,39 @@ void RemoteLayerBackingStore::clearBackingStore()
 
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 {
+    auto handleFromBuffer = [](WebCore::ImageBuffer& buffer) -> std::optional<ImageBufferBackendHandle> {
+        auto* backend = buffer.ensureBackendCreated();
+        if (!backend)
+            return std::nullopt;
+
+        auto* sharing = backend->toBackendSharing();
+        if (is<ImageBufferBackendHandleSharing>(sharing))
+            return downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+
+        return std::nullopt;
+    };
+
     encoder << m_type;
     encoder << m_size;
     encoder << m_scale;
     encoder << m_isOpaque;
     encoder << m_includeDisplayList;
+
     // FIXME: For simplicity this should be moved to the end of display() once the buffer handles can be created once
     // and stored in m_bufferHandle. http://webkit.org/b/234169
     std::optional<ImageBufferBackendHandle> handle;
     if (m_contentsBufferHandle) {
         ASSERT(m_type == Type::IOSurface);
         handle = m_contentsBufferHandle;
-    } else if (m_frontBuffer.imageBuffer) {
-        switch (m_type) {
-        case Type::IOSurface:
-            if (auto* backend = m_frontBuffer.imageBuffer->ensureBackendCreated()) {
-                if (m_frontBuffer.imageBuffer->canMapBackingStore())
-                    handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*backend).createImageBufferBackendHandle();
-                else
-                    handle = static_cast<AcceleratedImageBufferRemoteBackend&>(*backend).createImageBufferBackendHandle();
-            }
-            break;
-        case Type::Bitmap:
-            if (auto* backend = m_frontBuffer.imageBuffer->ensureBackendCreated())
-                handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*backend).createImageBufferBackendHandle();
-            break;
-        }
-    }
+    } else if (m_frontBuffer.imageBuffer)
+        handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
 
     encoder << handle;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> displayListHandle;
-    if (m_frontBuffer.displayListImageBuffer) {
-        if (auto* backend = m_frontBuffer.displayListImageBuffer->ensureBackendCreated())
-            displayListHandle = static_cast<CGDisplayListImageBufferBackend&>(*backend).createImageBufferBackendHandle();
-    }
+    if (m_frontBuffer.displayListImageBuffer)
+        displayListHandle = handleFromBuffer(*m_frontBuffer.displayListImageBuffer);
 
     encoder << displayListHandle;
 #endif

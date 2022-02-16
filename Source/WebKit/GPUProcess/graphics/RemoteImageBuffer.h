@@ -58,7 +58,7 @@ public:
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
     {
-        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
+        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
     }
 
     ~RemoteImageBuffer()

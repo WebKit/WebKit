@@ -27,13 +27,13 @@
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
-#include "ImageBufferBackendHandle.h"
+#include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBufferCGBackend.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebKit {
 
-class CGDisplayListImageBufferBackend final : public WebCore::ImageBufferCGBackend {
+class CGDisplayListImageBufferBackend final : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(CGDisplayListImageBufferBackend);
     WTF_MAKE_NONCOPYABLE(CGDisplayListImageBufferBackend);
 public:
@@ -42,10 +42,9 @@ public:
     static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&);
     static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&, const WebCore::HostWindow*);
 
-    ImageBufferBackendHandle createImageBufferBackendHandle() const;
-
     WebCore::GraphicsContext& context() const final;
     WebCore::IntSize backendSize() const final;
+    ImageBufferBackendHandle createBackendHandle() const final;
 
     // NOTE: These all ASSERT_NOT_REACHED().
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
@@ -56,6 +55,9 @@ protected:
     CGDisplayListImageBufferBackend(const Parameters&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
     unsigned bytesPerRow() const final;
+
+    // ImageBufferBackendSharing
+    ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     std::unique_ptr<WebCore::GraphicsContext> m_context;
 };

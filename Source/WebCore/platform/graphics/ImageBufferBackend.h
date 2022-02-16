@@ -69,6 +69,12 @@ public:
     virtual void flush() = 0;
 };
 
+class ImageBufferBackendSharing {
+public:
+    virtual ~ImageBufferBackendSharing() = default;
+    virtual bool isImageBufferBackendHandleSharing() const { return false; }
+};
+
 class ImageBufferBackend {
 public:
     struct Parameters {
@@ -133,6 +139,8 @@ public:
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
+
+    virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);

@@ -2613,6 +2613,7 @@
 		0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeScrollingNodeDelegateIOS.mm; sourceTree = "<group>"; };
 		0F9FA7DA26CEFAD100872684 /* MediaKeySystemPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
 		0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestProxy.cpp; sourceTree = "<group>"; };
+		0FA7467E27BB611800B5FF5A /* ImageBufferBackendHandleSharing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferBackendHandleSharing.h; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		0FBB5FBF2609A0910054572C /* DisplayRefreshMonitorMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorMac.h; sourceTree = "<group>"; };
 		0FBB5FC02609A0910054572C /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
@@ -9807,6 +9808,7 @@
 				1CB7461927436DE300F19874 /* WebGPU */,
 				7B64C0B6254C5C250006B4AF /* GraphicsContextGLIdentifier.h */,
 				727A7F39240788F1004D2931 /* ImageBufferBackendHandle.h */,
+				0FA7467E27BB611800B5FF5A /* ImageBufferBackendHandleSharing.h */,
 				727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */,
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,

@@ -27,14 +27,14 @@
 
 #if HAVE(IOSURFACE)
 
-#include "ImageBufferBackendHandle.h"
+#include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebKit {
 
-class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend {
+class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteIOSurfaceBackend);
 public:
@@ -50,13 +50,12 @@ public:
     {
     }
 
-    ImageBufferBackendHandle createImageBufferBackendHandle() const;
-
     static constexpr bool isOriginAtBottomLeftCorner = true;
     static constexpr bool canMapBackingStore = false;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
     WebCore::GraphicsContext& context() const final;
+    ImageBufferBackendHandle createBackendHandle() const final;
 
 private:
     WebCore::IntSize backendSize() const final;
@@ -72,6 +71,9 @@ private:
     bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }
 
     unsigned bytesPerRow() const final;
+    
+    // ImageBufferBackendSharing
+    ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
     ImageBufferBackendHandle m_handle;
 };

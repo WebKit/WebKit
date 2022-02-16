@@ -1,3 +1,44 @@
+2022-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow downcast<> to work with ImageBufferBackends that support sharing
+        https://bugs.webkit.org/show_bug.cgi?id=236671
+
+        Reviewed by Said Abou-Hallawa.
+        
+        RemoteLayerBackingStore::encode() had some awkward code that used knowlege of the relationship
+        between buffer types and mappability to static_cast<> to specific backend implementations.
+
+        Replace this with a small abstract stub in the form of WebCore::ImageBufferBackendSharing, and
+        a mixin class for shareable image buffers which inherits from a concrete subclass, ImageBufferBackendHandleSharing.
+        It's not possible to downcast<> ImageBufferBackend directly because there is no common base class for
+        the shareable types of buffer backends.
+
+        Now the code in RemoteLayerBackingStore can be simplified.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::createBackendHandle const):
+        (WebKit::CGDisplayListImageBufferBackend::createImageBufferBackendHandle const): Deleted.
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferBackendHandleSharing.h: Added.
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::createBackendHandle const):
+        (WebKit::ImageBufferShareableBitmapBackend::createImageBufferBackendHandle const): Deleted.
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::createImageBufferBackendHandle):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::createBackendHandle const):
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::createImageBufferBackendHandle const): Deleted.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle const):
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::createImageBufferBackendHandle const): Deleted.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+
 2022-02-16  Eliot Hsu  <eliot_hsu@apple.com>
 
         Move Safe Browsing knowledge into SafariSafeBrowsing framework

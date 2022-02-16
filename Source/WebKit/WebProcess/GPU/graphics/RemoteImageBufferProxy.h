@@ -73,13 +73,6 @@ public:
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
     }
 
-    ImageBufferBackendHandle createImageBufferBackendHandle()
-    {
-        if (ensureBackendCreated())
-            return m_backend->createImageBufferBackendHandle();
-        return { };
-    }
-
     WebCore::GraphicsContextFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
 
     void waitForDidFlushOnSecondaryThread(WebCore::GraphicsContextFlushIdentifier targetFlushIdentifier)
