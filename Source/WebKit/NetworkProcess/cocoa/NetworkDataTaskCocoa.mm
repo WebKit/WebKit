@@ -344,10 +344,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
-#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-    if (parameters.hadMainFrameMainResourcePrivateRelayed)
-        [mutableRequest _setPrivacyProxyFailClosed:YES];
-#endif
+    // FIXME: Remove hadMainFrameMainResourcePrivateRelayed, PrivateRelayed, and all the associated piping.
     
     nsRequest = mutableRequest;
 

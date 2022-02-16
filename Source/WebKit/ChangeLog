@@ -1,3 +1,13 @@
+2022-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Effectively revert r289018
+        https://bugs.webkit.org/show_bug.cgi?id=236000
+
+        It caused some problems, and another approach will be taken.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+
 2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE includes interfere with system header includes
