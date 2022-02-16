@@ -350,6 +350,7 @@
       "type": "AnyBranchScheduler", "name": "pullrequest",
       "builderNames": [
             "Bindings-Tests-EWS", "iOS-15-Build-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
             "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]

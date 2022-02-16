@@ -1,5 +1,15 @@
 2022-02-16  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] Enable JSC queues
+        https://bugs.webkit.org/show_bug.cgi?id=236523
+        <rdar://problem/88831360>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json:
+
+2022-02-16  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Disable Bugzilla related steps for PR workflow
         https://bugs.webkit.org/show_bug.cgi?id=236735
         <rdar://problem/89049663>
