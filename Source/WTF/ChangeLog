@@ -1,3 +1,16 @@
+2022-02-16  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/87486284
+
+    2022-02-16  Keith Miller  <keith_miller@apple.com>
+
+
+            Disable some options that don't need to be on.
+
+            * Scripts/Preferences/WebPreferences.yaml:
+            * wtf/PlatformEnableCocoa.h:
+            * wtf/PlatformHave.h
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288885. rdar://problem/88591342
