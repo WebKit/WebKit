@@ -1,3 +1,12 @@
+2022-02-16  Truitt Savell  <tsavell@apple.com>
+
+        Rebase http/tests/model/model-document.html after the changes in r289733
+        https://bugs.webkit.org/show_bug.cgi?id=236578
+
+        Unreviewed test gardening.
+
+        * http/tests/model/model-document-expected.txt:
+
 2022-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Add a dedicated ENABLE flag for MediaRecorder
