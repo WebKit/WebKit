@@ -3735,6 +3735,21 @@
                 "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
             }
         },
+        "offset": {
+            "codegen-properties": {
+                "longhands": [
+                    "offset-path",
+                    "offset-distance",
+                    "offset-position",
+                    "offset-anchor",
+                    "offset-rotate"
+                ]
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-shorthand"
+            }
+        },
         "opacity": {
             "codegen-properties": {
                 "converter": "Opacity",

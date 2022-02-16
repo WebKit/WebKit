@@ -85,7 +85,8 @@ String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssProperty
         return "cssFloat";
 
     // 3. If property refers to the CSS offset property, return the string "cssOffset".
-    // FIXME: we don't support the CSS "offset" property
+    if (cssPropertyId == CSSPropertyOffset)
+        return "cssOffset";
 
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
     return getJSPropertyName(cssPropertyId);
@@ -102,7 +103,8 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const String
         return CSSPropertyFloat;
 
     // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
-    // FIXME: We don't support the CSS "offset" property.
+    if (idlAttributeName == "cssOffset")
+        return CSSPropertyOffset;
 
     // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
     auto cssPropertyId = CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);

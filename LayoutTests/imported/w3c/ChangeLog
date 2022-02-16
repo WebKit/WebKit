@@ -1,5 +1,17 @@
 2022-02-15  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
+        Implement parsing and animation support for offset shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=233109
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/motion/animation/offset-interpolation-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-parsing-valid-expected.txt:
+        * web-platform-tests/css/motion/parsing/offset-parsing-valid.html:
+        * web-platform-tests/css/motion/parsing/offset-shorthand-expected.txt:
+
+2022-02-15  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
         [css-transforms] properly handle interpolation of non-invertible matrices
         https://bugs.webkit.org/show_bug.cgi?id=236480
 

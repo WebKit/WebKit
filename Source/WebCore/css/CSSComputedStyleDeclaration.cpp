@@ -2663,6 +2663,24 @@ static Ref<CSSValueList> valueForOffsetRotate(const OffsetRotation& rotation)
     return result;
 }
 
+static Ref<CSSValue> valueForOffsetShorthand(const RenderStyle& style)
+{
+    // offset is serialized as follow:
+    // [offset-position] [offset-path] [offset-distance] [offset-rotate] / [offset-anchor]
+    // The first four elements are serialized in a space separated CSSValueList.
+    // This is then combined with offset-anchor in a slash separated CSSValueList.
+
+    auto outerList = CSSValueList::createSlashSeparated();
+    auto innerList = CSSValueList::createSpaceSeparated();
+    innerList->append(valueForPositionOrAuto(style, style.offsetPosition()));
+    innerList->append(valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute));
+    innerList->append(CSSValuePool::singleton().createValue(style.offsetDistance(), style));
+    innerList->append(valueForOffsetRotate(style.offsetRotate()));
+    outerList->append(WTFMove(innerList));
+    outerList->append(valueForPositionOrAuto(style, style.offsetAnchor()));
+    return outerList;
+}
+
 static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 {
     if (paintOrder == PaintOrder::Normal)
@@ -3367,6 +3385,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return valueForPositionOrAuto(style, style.offsetAnchor());
         case CSSPropertyOffsetRotate:
             return valueForOffsetRotate(style.offsetRotate());
+        case CSSPropertyOffset:
+            return valueForOffsetShorthand(style);
         case CSSPropertyOpacity:
             return cssValuePool.createValue(style.opacity(), CSSUnitType::CSS_NUMBER);
         case CSSPropertyOrphans:

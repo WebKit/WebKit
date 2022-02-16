@@ -42,6 +42,9 @@ public:
     CSSPrimitiveValue* modifier() const { return m_modifier.get(); }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }
 
+    static Ref<CSSOffsetRotateValue> initialValue();
+    bool isInitialValue() const;
+
     bool equals(const CSSOffsetRotateValue&) const;
 
 private:

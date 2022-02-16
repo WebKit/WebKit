@@ -2781,11 +2781,11 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
             boxFound = true;
         }
         if (!componentValue)
-            return nullptr;
+            break;
         list->append(componentValue.releaseNonNull());
     }
     
-    if (!range.atEnd() || !list->length())
+    if (!list->length())
         return nullptr;
     
     return list;
@@ -6207,6 +6207,59 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumeOffset(bool important)
+{
+    auto& valuePool = CSSValuePool::singleton();
+
+    // The offset shorthand is defined as:
+    // [ <'offset-position'>?
+    //   [ <'offset-path'>
+    //     [ <'offset-distance'> || <'offset-rotate'> ]?
+    //   ]?
+    // ]!
+    // [ / <'offset-anchor'> ]?
+
+    // Parse out offset-position.
+    auto offsetPosition = parseSingleValue(CSSPropertyOffsetPosition, CSSPropertyOffset);
+
+    // Parse out offset-path.
+    auto offsetPath = parseSingleValue(CSSPropertyOffsetPath, CSSPropertyOffset);
+
+    // Either one of offset-position and offset-path must be present.
+    if (!offsetPosition && !offsetPath)
+        return false;
+
+    // Only parse offset-distance and offset-rotate if offset-path is specified.
+    RefPtr<CSSValue> offsetDistance;
+    RefPtr<CSSValue> offsetRotate;
+    if (offsetPath) {
+        // Try to parse offset-distance first. If successful, parse the following offset-rotate.
+        // Otherwise, parse in the reverse order.
+        if ((offsetDistance = parseSingleValue(CSSPropertyOffsetDistance, CSSPropertyOffset)))
+            offsetRotate = parseSingleValue(CSSPropertyOffsetRotate, CSSPropertyOffset);
+        else {
+            offsetRotate = parseSingleValue(CSSPropertyOffsetRotate, CSSPropertyOffset);
+            offsetDistance = parseSingleValue(CSSPropertyOffsetDistance, CSSPropertyOffset);
+        }
+    }
+
+    // Parse out offset-anchor. Only parse if the prefix slash is present.
+    RefPtr<CSSValue> offsetAnchor;
+    if (consumeSlashIncludingWhitespace(m_range)) {
+        // offset-anchor must follow the slash.
+        if (!(offsetAnchor = parseSingleValue(CSSPropertyOffsetAnchor, CSSPropertyOffset)))
+            return false;
+    }
+
+    addPropertyWithImplicitDefault(CSSPropertyOffsetPath, CSSPropertyOffset, WTFMove(offsetPath), valuePool.createIdentifierValue(CSSValueNone), important);
+    addPropertyWithImplicitDefault(CSSPropertyOffsetDistance, CSSPropertyOffset, WTFMove(offsetDistance), valuePool.createValue(0.0, CSSUnitType::CSS_PX), important);
+    addPropertyWithImplicitDefault(CSSPropertyOffsetPosition, CSSPropertyOffset, WTFMove(offsetPosition), valuePool.createIdentifierValue(CSSValueAuto), important);
+    addPropertyWithImplicitDefault(CSSPropertyOffsetAnchor, CSSPropertyOffset, WTFMove(offsetAnchor), valuePool.createIdentifierValue(CSSValueAuto), important);
+    addPropertyWithImplicitDefault(CSSPropertyOffsetRotate, CSSPropertyOffset, WTFMove(offsetRotate), CSSOffsetRotateValue::initialValue(), important);
+
+    return m_range.atEnd();
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -6269,6 +6322,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeShorthandGreedily(textEmphasisShorthand(), important);
     case CSSPropertyOutline:
         return consumeShorthandGreedily(outlineShorthand(), important);
+    case CSSPropertyOffset:
+        return consumeOffset(important);
     case CSSPropertyBorderInline: {
         RefPtr<CSSValue> width;
         RefPtr<CSSValue> style;

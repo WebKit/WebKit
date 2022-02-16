@@ -174,6 +174,7 @@ private:
     String fontValue() const;
     String fontVariantValue() const;
     String textDecorationSkipValue() const;
+    String offsetValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
     bool shorthandHasVariableReference(CSSPropertyID, String&) const;
 
