@@ -114,13 +114,24 @@
 (allow mach-lookup (global-name "com.apple.coreservices.launchservicesd"))
 #endif
 
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
 (allow mach-lookup
-       (global-name "com.apple.system.opendirectoryd.libinfo")
-       (global-name "com.apple.trustd.agent"))
+    (global-name
+        "com.apple.analyticsd.messagetracer"
+        "com.apple.appsleep"
+        "com.apple.bsd.dirhelper"
+        "com.apple.espd"
+        "com.apple.secinitd"
+        "com.apple.system.DirectoryService.libinfo_v1"
+        "com.apple.system.logger"
+        "com.apple.system.opendirectoryd.membership"
+        "com.apple.xpc.activity.unmanaged"))
+#endif
 
-(with-filter (uid 0)
-    (allow mach-lookup
-       (global-name "com.apple.trustd")))
+(allow mach-lookup
+    (global-name "com.apple.system.opendirectoryd.libinfo")
+    (global-name "com.apple.trustd")
+    (global-name "com.apple.trustd.agent"))
 
 (define (system-network)
     (allow file-read*
