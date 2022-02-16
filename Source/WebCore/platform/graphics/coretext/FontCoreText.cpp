@@ -812,6 +812,33 @@ bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> v
     return CTFontGetGlyphsForCharacters(platformData().ctFont(), codeUnits, glyphs, count);
 }
 
+static bool hasGlyphsForCharacterRange(CTFontRef font, UniChar firstCharacter, UniChar lastCharacter, bool expectValidGlyphsForAllCharacters)
+{
+    const unsigned numberOfCharacters = lastCharacter - firstCharacter + 1;
+    Vector<CGGlyph> glyphs;
+    glyphs.fill(0, numberOfCharacters);
+    CTFontGetGlyphsForCharacterRange(font, glyphs.begin(), CFRangeMake(firstCharacter, numberOfCharacters));
+    glyphs.removeAll(0);
+
+    if (glyphs.isEmpty())
+        return false;
+
+    Vector<CGRect> boundingRects;
+    boundingRects.fill(CGRectZero, glyphs.size());
+    CTFontGetBoundingRectsForGlyphs(font, kCTFontOrientationDefault, glyphs.begin(), boundingRects.begin(), glyphs.size());
+
+    unsigned validGlyphsCount = 0;
+    for (auto& rect : boundingRects) {
+        if (!CGRectIsEmpty(rect))
+            ++validGlyphsCount;
+    }
+
+    if (expectValidGlyphsForAllCharacters)
+        return validGlyphsCount == glyphs.size();
+
+    return validGlyphsCount;
+}
+
 bool Font::isProbablyOnlyUsedToRenderIcons() const
 {
     auto platformFont = platformData().ctFont();
@@ -831,25 +858,7 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
     if (CFCharacterSetHasMemberInPlane(supportedCharacters.get(), 1) || CFCharacterSetHasMemberInPlane(supportedCharacters.get(), 2))
         return false;
 
-    // This encompasses all basic Latin non-control characters.
-    constexpr UniChar firstCharacterToTest = ' ';
-    constexpr UniChar lastCharacterToTest = '~';
-    constexpr auto numberOfCharactersToTest = lastCharacterToTest - firstCharacterToTest + 1;
-
-    Vector<CGGlyph> glyphs;
-    glyphs.fill(0, numberOfCharactersToTest);
-    CTFontGetGlyphsForCharacterRange(platformFont, glyphs.begin(), CFRangeMake(firstCharacterToTest, numberOfCharactersToTest));
-    glyphs.removeAll(0);
-
-    if (glyphs.isEmpty())
-        return false;
-
-    Vector<CGRect> boundingRects;
-    boundingRects.fill(CGRectZero, glyphs.size());
-    CTFontGetBoundingRectsForGlyphs(platformFont, kCTFontOrientationDefault, glyphs.begin(), boundingRects.begin(), glyphs.size());
-    return notFound == boundingRects.findIf([](auto& rect) {
-        return !CGRectIsEmpty(rect);
-    });
+    return !hasGlyphsForCharacterRange(platformFont, ' ', '~', false) && !hasGlyphsForCharacterRange(platformFont, 0x0600, 0x06FF, true);
 }
 
 #if PLATFORM(COCOA)
