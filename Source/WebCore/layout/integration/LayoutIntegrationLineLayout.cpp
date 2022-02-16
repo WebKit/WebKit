@@ -424,7 +424,7 @@ size_t LineLayout::lineCount() const
     return m_inlineContent->lines.size();
 }
 
-LayoutUnit LineLayout::firstLineBaseline() const
+LayoutUnit LineLayout::firstLinePhysicalBaseline() const
 {
     if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -435,12 +435,10 @@ LayoutUnit LineLayout::firstLineBaseline() const
     if (rootLayoutBox().style().isHorizontalWritingMode())
         return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
 
-    // See LineLayout::lastLineBaseline below for more info.
-    auto lineLogicalTop = flow().logicalHeight() - firstLine.lineBoxRight();
-    return LayoutUnit { lineLogicalTop + firstLine.baseline() };
+    return LayoutUnit { firstLine.lineBoxLeft() + (firstLine.lineBoxWidth() - firstLine.baseline()) };
 }
 
-LayoutUnit LineLayout::lastLineBaseline() const
+LayoutUnit LineLayout::lastLineLogicalBaseline() const
 {
     if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
         ASSERT_NOT_REACHED();

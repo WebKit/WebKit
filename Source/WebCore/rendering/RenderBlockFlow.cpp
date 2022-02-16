@@ -2959,7 +2959,7 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout())
-        return LayoutUnit { floorToInt(modernLineLayout()->firstLineBaseline()) };
+        return LayoutUnit { floorToInt(modernLineLayout()->firstLinePhysicalBaseline()) };
 #endif
 
     ASSERT(firstRootBox());
@@ -3010,7 +3010,7 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
         }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         else if (modernLineLayout())
-            lastBaseline = floorToInt(modernLineLayout()->lastLineBaseline());
+            lastBaseline = floorToInt(modernLineLayout()->lastLineLogicalBaseline());
 #endif
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should

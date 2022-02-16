@@ -88,8 +88,8 @@ public:
     LayoutUnit contentLogicalHeight() const;
     size_t lineCount() const;
 
-    LayoutUnit firstLineBaseline() const;
-    LayoutUnit lastLineBaseline() const;
+    LayoutUnit firstLinePhysicalBaseline() const;
+    LayoutUnit lastLineLogicalBaseline() const;
 
     void adjustForPagination();
     void collectOverflow();

@@ -58,6 +58,8 @@ public:
     float lineBoxBottom() const { return m_lineBoxRect.maxY(); }
     float lineBoxLeft() const { return m_lineBoxRect.x(); }
     float lineBoxRight() const { return m_lineBoxRect.maxX(); }
+    float lineBoxHeight() const { return m_lineBoxRect.height(); }
+    float lineBoxWidth() const { return m_lineBoxRect.width(); }
 
     float enclosingContentTop() const { return m_enclosingContentTop; }
     float enclosingContentBottom() const { return m_enclosingContentBottom; }
