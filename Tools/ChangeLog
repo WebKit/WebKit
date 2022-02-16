@@ -1,3 +1,40 @@
+2022-02-16  David Kilzer  <ddkilzer@apple.com>
+
+        Workaround ASAN false positive stack-buffer-underflow bmalloc_allocate_impl_casual_case
+        <https://bugs.webkit.org/show_bug.cgi?id=236001>
+        <rdar://problem/88364275>
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Kimmo Kinnunen.
+
+        Define a WK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE
+        macro so that the fix can be targeted to a specific function in
+        libpas.  This avoids disabling all stack-use-after-scope checks
+        in bmalloc when compiling with Address Sanitizer enabled.
+
+        * sanitizer/asan.xcconfig:
+        (WK_ADDRESS_SANITIZER_OTHER_CFLAGS_YES): Add.
+        - This variable contains the macro definition when the
+          workaround is needed.  It's used in sanitizer.xcconfig to add
+          the macro definition to $(OTHER_CFLAGS).
+        (WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND_FOR_bmalloc_YES): Add.
+        - The workaround is currently only needed in bmalloc.
+        (WK_NOT_): Add.
+        (WK_NOT_YES): Add.
+        - Add support for $(WK_NOT_$(X)) variables.
+        (WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND): Add.
+        - Sets when the workaround is needed based on the Xcode version.
+          Uses a $(WK_NOT_$(X)) variable to negate the result when the
+          workaround is not needed.
+        (WK_XCODE_VERSION_BEFORE_13_3_*): Add.
+        - List Xcode versions where the workaround is not needed.
+
+        * sanitizer/sanitizer.xcconfig:
+        (OTHER_CFLAGS):
+        - Add the value of $(WK_ADDRESS_SANITIZER_OTHER_CFLAGS_YES) from
+          asan.xcconfig when building with Address Sanitizer enabled.
+
 2022-02-15  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Support PRs when sending layout test failure emails

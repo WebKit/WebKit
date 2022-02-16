@@ -1,3 +1,17 @@
+2022-02-16  David Kilzer  <ddkilzer@apple.com>
+
+        Workaround ASAN false positive stack-buffer-underflow bmalloc_allocate_impl_casual_case
+        <https://bugs.webkit.org/show_bug.cgi?id=236001>
+        <rdar://problem/88364275>
+
+        Reviewed by Dean Jackson.
+
+        * libpas/src/libpas/pas_large_free_inlines.h:
+        (pas_large_free_create_merged):
+        - Turn off PAS_ALWAYS_INLINE when the
+          WK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE macro
+          is defined to avoid the bug.
+
 2022-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] compact pointers should load payload via memcpy
