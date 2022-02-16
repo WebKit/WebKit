@@ -1,5 +1,43 @@
 2022-02-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289883. rdar://problem/82142820
+
+    Floating point exception in RenderListBox::numVisibleItems
+    https://bugs.webkit.org/show_bug.cgi?id=229307
+    
+    Reviewed by Mark Lam.
+    
+    Source/WebCore:
+    
+    FontMetrics::height can return a negative value when setAscent() is called with
+    with a value that is too large to be represented as an int. Prevent this by
+    making setAscent() ensure that m_intAscent is set to a non-negative value.
+    
+    Test: fast/forms/listbox-zero-item-height.html
+    
+    * platform/graphics/FontMetrics.h:
+    (WebCore::FontMetrics::setAscent):
+    
+    LayoutTests:
+    
+    * fast/forms/listbox-zero-item-height-expected.txt: Added.
+    * fast/forms/listbox-zero-item-height.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289883 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-16  Ali Juma  <ajuma@chromium.org>
+
+            Floating point exception in RenderListBox::numVisibleItems
+            https://bugs.webkit.org/show_bug.cgi?id=229307
+
+            Reviewed by Mark Lam.
+
+            * fast/forms/listbox-zero-item-height-expected.txt: Added.
+            * fast/forms/listbox-zero-item-height.html: Added.
+
+2022-02-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289892. rdar://problem/88696673
 
     REGRESSION(r287293): EventListener::wasCreatedFromMarkup() is incorrect after replaceJSFunctionForAttributeListener()
