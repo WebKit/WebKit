@@ -35,13 +35,11 @@ class LaunchServicesDatabaseManager : public WebKit::XPCEndpointClient {
 public:
     static LaunchServicesDatabaseManager& singleton();
 
-    void waitForDatabaseUpdate();
+    bool waitForDatabaseUpdate(Seconds);
 
 private:
     void handleEvent(xpc_object_t) override;
     void didConnect() override;
-
-    bool waitForDatabaseUpdate(Seconds);
 
     std::atomic<bool> m_hasReceivedLaunchServicesDatabase { false };
     BinarySemaphore m_semaphore;

@@ -151,6 +151,7 @@ private:
     bool m_hasSentTCCDSandboxExtension { false };
     bool m_hasSentCameraSandboxExtension { false };
     bool m_hasSentMicrophoneSandboxExtension { false };
+    bool m_hasSentNetworkProcessXPCEndpoint { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
