@@ -1,5 +1,9 @@
 2022-02-16  Russell Epstein  <repstein@apple.com>
 
+        Revert r289919. rdar://problem/81337114
+
+2022-02-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289877. rdar://problem/81337114
 
     Defer TerminationsExceptions while in operationMaterializeObjectInOSR.
