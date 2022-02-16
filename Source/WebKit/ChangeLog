@@ -1,3 +1,14 @@
+2022-02-16  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix after r289872
+        https://bugs.webkit.org/show_bug.cgi?id=236716
+
+        Unreviewed build fix
+
+        Add Webcore/Frame.h to include set
+
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+
 2022-02-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add access to mach service in the Networking process for all users
