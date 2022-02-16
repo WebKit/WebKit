@@ -1,0 +1,20 @@
+<style>
+  b {
+    display: inline-table;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertText', false, 'a');
+    document.execCommand('SelectAll');
+    document.execCommand('Bold');
+    document.execCommand('Copy');
+    document.execCommand('PasteAsQuotation');
+    document.execCommand('InsertParagraph');
+    document.body.innerHTML = 'This test passes if it does not crash.';
+  };
+</script>
