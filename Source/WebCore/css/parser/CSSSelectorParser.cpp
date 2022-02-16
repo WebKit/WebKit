@@ -582,6 +582,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassMatches:
     case CSSSelector::PseudoClassWhere:
+    case CSSSelector::PseudoClassHas:
     case CSSSelector::PseudoClassNthChild:
     case CSSSelector::PseudoClassNthLastChild:
     case CSSSelector::PseudoClassNthOfType:

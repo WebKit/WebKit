@@ -1,3 +1,18 @@
+2022-02-10  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Nullptr crash with non-function :has
+        https://bugs.webkit.org/show_bug.cgi?id=236431
+        rdar://87061239
+
+        Reviewed by Cameron McCormack.
+
+        Test: fast/selectors/malformed-has.html
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isOnlyPseudoClassFunction):
+
+        :has() is legal, plain :has is not.
+
 2022-02-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] WebKit browser scrollbars not always correctly displayed if overlay scrollbars are disabled
