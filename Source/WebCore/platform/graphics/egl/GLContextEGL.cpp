@@ -534,7 +534,7 @@ void GLContextEGL::swapInterval(int interval)
     eglSwapInterval(m_display.eglDisplay(), interval);
 }
 
-PlatformGraphicsContextGL GLContextEGL::platformContext()
+GCGLContext GLContextEGL::platformContext()
 {
     return m_context;
 }

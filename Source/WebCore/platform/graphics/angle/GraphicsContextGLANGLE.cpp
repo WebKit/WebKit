@@ -38,7 +38,6 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
-#include "TemporaryANGLESetting.h"
 #include <algorithm>
 #include <cstring>
 #include <wtf/Seconds.h>
@@ -164,10 +163,10 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
             ASSERT_NOT_REACHED(); // All resources must have been destroyed.
             EGL_MakeCurrent(currentDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         }
-        constexpr EGLNativeDisplayType nativeDisplays[] = {
-            defaultDisplay,
+        const EGLNativeDisplayType nativeDisplays[] = {
+            reinterpret_cast<EGLNativeDisplayType>(defaultDisplay),
 #if PLATFORM(COCOA)
-            defaultOpenGLDisplay,
+            reinterpret_cast<EGLNativeDisplayType>(defaultOpenGLDisplay),
 #endif
         };
         for (auto nativeDisplay : nativeDisplays) {
@@ -322,8 +321,8 @@ void GraphicsContextGLANGLE::attachDepthAndStencilBufferIfNeeded(GLuint internal
 
 void GraphicsContextGLANGLE::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
-    TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-    TemporaryANGLESetting scopedDither(GL_DITHER, GL_FALSE);
+    ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
 
     GLint boundFrameBuffer = 0;
     GLint boundReadFrameBuffer = 0;
@@ -567,8 +566,8 @@ void GraphicsContextGLANGLE::prepareTextureImpl()
 #else
     if (m_preserveDrawingBufferTexture) {
         // Blit m_preserveDrawingBufferTexture into m_texture.
-        TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-        TemporaryANGLESetting scopedDither(GL_DITHER, GL_FALSE);
+        ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+        ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
         GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_preserveDrawingBufferFBO);
         GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, m_fbo);
         GL_BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
@@ -621,8 +620,8 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
     m_currentWidth = width;
     m_currentHeight = height;
 
-    TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-    TemporaryANGLESetting scopedDither(GL_DITHER, GL_FALSE);
+    ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
     ScopedBufferBinding scopedPixelUnpackBufferReset(GL_PIXEL_UNPACK_BUFFER, 0, m_isForWebGL2);
 
     bool mustRestoreFBO = reshapeFBOs(IntSize(width, height));
@@ -2782,7 +2781,7 @@ GCGLboolean GraphicsContextGLANGLE::isSync(GCGLsync sync)
     if (!makeContextCurrent())
         return GL_FALSE;
 
-    return GL_IsSync(sync);
+    return GL_IsSync(static_cast<GLsync>(sync));
 }
 
 void GraphicsContextGLANGLE::deleteSync(GCGLsync sync)
@@ -2790,7 +2789,7 @@ void GraphicsContextGLANGLE::deleteSync(GCGLsync sync)
     if (!makeContextCurrent())
         return;
 
-    GL_DeleteSync(sync);
+    GL_DeleteSync(static_cast<GLsync>(sync));
 }
 
 GCGLenum GraphicsContextGLANGLE::clientWaitSync(GCGLsync sync, GCGLbitfield flags, GCGLuint64 timeout)
@@ -2798,7 +2797,7 @@ GCGLenum GraphicsContextGLANGLE::clientWaitSync(GCGLsync sync, GCGLbitfield flag
     if (!makeContextCurrent())
         return GL_WAIT_FAILED;
 
-    return GL_ClientWaitSync(sync, flags, timeout);
+    return GL_ClientWaitSync(static_cast<GLsync>(sync), flags, timeout);
 }
 
 void GraphicsContextGLANGLE::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLint64 timeout)
@@ -2806,7 +2805,7 @@ void GraphicsContextGLANGLE::waitSync(GCGLsync sync, GCGLbitfield flags, GCGLint
     if (!makeContextCurrent())
         return;
 
-    GL_WaitSync(sync, flags, timeout);
+    GL_WaitSync(static_cast<GLsync>(sync), flags, timeout);
 }
 
 GCGLint GraphicsContextGLANGLE::getSynci(GCGLsync sync, GCGLenum pname)
@@ -2815,7 +2814,7 @@ GCGLint GraphicsContextGLANGLE::getSynci(GCGLsync sync, GCGLenum pname)
     if (!makeContextCurrent())
         return value;
 
-    GL_GetSynciv(sync, pname, 1, nullptr, &value);
+    GL_GetSynciv(static_cast<GLsync>(sync), pname, 1, nullptr, &value);
     return value;
 }
 
@@ -2976,7 +2975,7 @@ bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
         // This means the creation of this fence has already been flushed.
         flags = 0;
 #endif
-        GLenum result = GL_ClientWaitSync(fence, flags, maxFrameDuration.nanosecondsAs<GLuint64>());
+        GLenum result = GL_ClientWaitSync(static_cast<GLsync>(fence.get()), flags, maxFrameDuration.nanosecondsAs<GLuint64>());
         ASSERT(result != GL_WAIT_FAILED);
         success = result != GL_WAIT_FAILED && result != GL_TIMEOUT_EXPIRED;
     }

@@ -214,17 +214,17 @@ bool GCGLANGLELayer::ANGLEContext::makeContextCurrent()
     return true;
 }
 
-PlatformGraphicsContextGL GCGLANGLELayer::ANGLEContext::platformContext() const
+GCGLContext GCGLANGLELayer::ANGLEContext::platformContext() const
 {
     return m_context;
 }
 
-PlatformGraphicsContextGLDisplay GCGLANGLELayer::ANGLEContext::platformDisplay() const
+GCGLDisplay GCGLANGLELayer::ANGLEContext::platformDisplay() const
 {
     return m_display;
 }
 
-PlatformGraphicsContextGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() const
+GCGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() const
 {
     return m_config;
 }
@@ -248,19 +248,19 @@ bool GCGLANGLELayer::makeContextCurrent()
 
 }
 
-PlatformGraphicsContextGL GCGLANGLELayer::platformContext() const
+GCGLContext GCGLANGLELayer::platformContext() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();
 }
 
-PlatformGraphicsContextGLDisplay GCGLANGLELayer::platformDisplay() const
+GCGLDisplay GCGLANGLELayer::platformDisplay() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformDisplay();
 }
 
-PlatformGraphicsContextGLConfig GCGLANGLELayer::platformConfig() const
+GCGLConfig GCGLANGLELayer::platformConfig() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();

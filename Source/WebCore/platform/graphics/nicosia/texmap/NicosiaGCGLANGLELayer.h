@@ -62,9 +62,9 @@ public:
 
         bool makeContextCurrent();
 #if ENABLE(WEBGL)
-        PlatformGraphicsContextGL platformContext() const;
-        PlatformGraphicsContextGLDisplay platformDisplay() const;
-        PlatformGraphicsContextGLConfig platformConfig() const;
+        GCGLContext platformContext() const;
+        GCGLDisplay platformDisplay() const;
+        GCGLConfig platformConfig() const;
 #endif
 
     private:
@@ -80,9 +80,9 @@ public:
     virtual ~GCGLANGLELayer();
 
     bool makeContextCurrent();
-    PlatformGraphicsContextGL platformContext() const;
-    PlatformGraphicsContextGLDisplay platformDisplay() const;
-    PlatformGraphicsContextGLConfig platformConfig() const;
+    GCGLContext platformContext() const;
+    GCGLDisplay platformDisplay() const;
+    GCGLConfig platformConfig() const;
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     void swapBuffersIfNeeded() final;

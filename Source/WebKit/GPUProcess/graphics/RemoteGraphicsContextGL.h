@@ -132,12 +132,12 @@ protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
-    using PlatformGraphicsContextGL = WebCore::GraphicsContextGLCocoa;
+    using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #else
-    using PlatformGraphicsContextGL = WebCore::GraphicsContextGLTextureMapper;
+    using GCGLContext = WebCore::GraphicsContextGLTextureMapper;
 #endif
     
-    RefPtr<PlatformGraphicsContextGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
+    RefPtr<GCGLContext> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
 #if ENABLE(MEDIA_STREAM)

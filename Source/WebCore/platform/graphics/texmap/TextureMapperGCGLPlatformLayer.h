@@ -38,9 +38,9 @@ public:
     virtual ~TextureMapperGCGLPlatformLayer();
 
     bool makeContextCurrent();
-    PlatformGraphicsContextGL platformContext() const;
-    PlatformGraphicsContextGLDisplay platformDisplay() const;
-    PlatformGraphicsContextGLConfig platformConfig() const;
+    GCGLContext platformContext() const;
+    GCGLDisplay platformDisplay() const;
+    GCGLConfig platformConfig() const;
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;

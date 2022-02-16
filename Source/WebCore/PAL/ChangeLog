@@ -1,3 +1,20 @@
+2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE includes interfere with system header includes
+        https://bugs.webkit.org/show_bug.cgi?id=236636
+
+        Reviewed by Dean Jackson.
+
+        Remove the attempt to override system header logic with WebKit
+        ANGLE implementation. They are different implementations
+        and one cannot replace the other.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/mac/HIToolboxSPI.h:
+        Add missing CGCOLORTAGGEDPOINTER_H_ that makes the CocoaPriv.h
+        included CoreGraphics header skip the incompatible tagged pointer
+        declarations, similar to other *SPI.h headers.
+
 2022-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Big Sur build

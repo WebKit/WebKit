@@ -52,7 +52,6 @@
 #include <wtf/Scope.h>
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-#include "ANGLEHeaders.h"
 #include "GraphicsContextGLCocoa.h"
 #endif
 

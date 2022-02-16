@@ -45,11 +45,6 @@
 #endif
 #endif
 
-typedef void* PlatformGraphicsContextGL;
-typedef void* PlatformGraphicsContextGLDisplay;
-typedef void* PlatformGraphicsContextGLSurface;
-typedef void* PlatformGraphicsContextGLConfig;
-
 namespace WebCore {
 class ExtensionsGL;
 class HostWindow;

@@ -394,7 +394,7 @@ void GLContextGLX::swapInterval(int interval)
     glXSwapIntervalSGI(interval);
 }
 
-PlatformGraphicsContextGL GLContextGLX::platformContext()
+GCGLContext GLContextGLX::platformContext()
 {
     return m_context.get();
 }

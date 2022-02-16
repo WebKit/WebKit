@@ -33,6 +33,7 @@
 #include "WCContentBufferManager.h"
 #include "WCSceneContext.h"
 #include "WCUpateInfo.h"
+#include <WebCore/ANGLEHeaders.h>
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>

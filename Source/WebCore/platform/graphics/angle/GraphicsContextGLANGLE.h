@@ -68,8 +68,8 @@ class WEBCORE_EXPORT GraphicsContextGLANGLE : public GraphicsContextGL {
 public:
     virtual ~GraphicsContextGLANGLE();
 
-    PlatformGraphicsContextGLDisplay platformDisplay() const;
-    PlatformGraphicsContextGLConfig platformConfig() const;
+    GCGLDisplay platformDisplay() const;
+    GCGLConfig platformConfig() const;
     GCGLenum drawingBufferTextureTarget();
     static GCGLenum drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget);
     static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
@@ -363,9 +363,9 @@ public:
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
 
-    constexpr static EGLNativeDisplayType defaultDisplay = EGL_DEFAULT_DISPLAY;
+    constexpr static GCGLNativeDisplayType defaultDisplay = gcGLDefaultDisplay;
 #if PLATFORM(COCOA)
-    constexpr static EGLNativeDisplayType defaultOpenGLDisplay = EGL_CAST(EGLNativeDisplayType, -1);
+    constexpr static GCGLNativeDisplayType defaultOpenGLDisplay = static_cast<GCGLNativeDisplayType>(-1);
     static_assert(defaultDisplay != defaultOpenGLDisplay);
 #endif
 
@@ -406,7 +406,7 @@ protected:
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 #if PLATFORM(COCOA)
-    static bool makeCurrent(PlatformGraphicsContextGLDisplay, PlatformGraphicsContextGL);
+    static bool makeCurrent(GCGLDisplay, GCGLContext);
 #endif
     virtual bool reshapeDisplayBufferBacking() = 0;
 
@@ -439,7 +439,7 @@ protected:
     // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
     GCGLuint m_preserveDrawingBufferFBO { 0 };
     // Queried at display startup.
-    EGLint m_drawingBufferTextureTarget { -1 };
+    GCGLint m_drawingBufferTextureTarget { -1 };
     // Errors raised by synthesizeGLError().
     ListHashSet<GCGLenum> m_syntheticErrors;
     bool m_isForWebGL2 { false };
@@ -454,9 +454,9 @@ protected:
 #if PLATFORM(COCOA)
     // FIXME: Move these to GraphicsContextGLCocoa.
     GraphicsContextGLIOSurfaceSwapChain m_swapChain;
-    EGLDisplay m_displayObj { nullptr };
-    PlatformGraphicsContextGL m_contextObj { nullptr };
-    PlatformGraphicsContextGLConfig m_configObj { nullptr };
+    GCGLDisplay m_displayObj { nullptr };
+    GCGLContext m_contextObj { nullptr };
+    GCGLConfig m_configObj { nullptr };
     // Backing store for the the buffer which is eventually used for display.
     // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
@@ -473,7 +473,7 @@ protected:
     class EGLImageBacking {
     WTF_MAKE_FAST_ALLOCATED;
     public:
-        EGLImageBacking(PlatformGraphicsContextGLDisplay);
+        EGLImageBacking(GCGLDisplay);
         ~EGLImageBacking();
 
         bool reset(int width, int height, bool hasAlpha);
@@ -488,7 +488,7 @@ protected:
     private:
         void releaseResources();
 
-        PlatformGraphicsContextGLDisplay m_display;
+        GCGLDisplay m_display;
 
         gbm_bo* m_BO { nullptr };
         int m_FD { -1 };

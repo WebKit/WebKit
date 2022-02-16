@@ -28,19 +28,20 @@
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h"
 
+#import "ANGLEHeaders.h"
 #import "ANGLEUtilities.h"
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
+#import "PixelBuffer.h"
 #import "ProcessIdentity.h"
 #import "RuntimeApplicationChecks.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -57,16 +58,7 @@
 #include "MediaSampleAVFObjC.h"
 #endif
 
-WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
-
 namespace WebCore {
-
-bool platformIsANGLEAvailable()
-{
-    // The ANGLE is weak linked in full, and the EGL_Initialize is explicitly weak linked above
-    // so that we can detect the case where ANGLE is not present.
-    return !!EGL_Initialize;
-}
 
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
@@ -599,7 +591,7 @@ bool GraphicsContextGLCocoa::bindDisplayBufferBacking(std::unique_ptr<IOSurface>
     return true;
 }
 
-bool GraphicsContextGLANGLE::makeCurrent(PlatformGraphicsContextGLDisplay display, PlatformGraphicsContextGL context)
+bool GraphicsContextGLANGLE::makeCurrent(GCGLDisplay display, GCGLContext context)
 {
     currentContext = nullptr;
     return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context);
@@ -801,12 +793,12 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
 }
 #endif
 
-PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
+GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
     return m_displayObj;
 }
 
-PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
+GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
     return m_configObj;
 }

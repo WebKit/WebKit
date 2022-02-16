@@ -377,7 +377,6 @@ platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/SubimageCacheWithTimer.cpp
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
-platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp
 platform/graphics/cocoa/AudioTrackPrivateWebM.cpp
 platform/graphics/cocoa/ColorCocoa.mm
 platform/graphics/cocoa/FloatRectCocoa.mm
@@ -388,7 +387,6 @@ platform/graphics/cocoa/FontDescriptionCocoa.cpp
 platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
 platform/graphics/cocoa/FontPlatformDataCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
-platform/graphics/cocoa/GraphicsContextGLCocoa.mm
 platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm
 platform/graphics/cocoa/IOSurface.mm
@@ -414,7 +412,6 @@ platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/CVUtilities.mm
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
-platform/graphics/cv/GraphicsContextGLCVCocoa.cpp
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm
@@ -616,8 +613,10 @@ rendering/TextAutoSizing.cpp
 testing/cocoa/WebViewVisualIdentificationOverlay.mm
 
 // The following files aren't unified with others to prevent them from being merged
-// with files that use the system OpenGL.
+// with files that include system headers that include system OpenGL headers.
 
 platform/graphics/angle/ANGLEUtilities.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
-platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
+platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp @no-unify
+platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify
+platform/graphics/cv/GraphicsContextGLCVCocoa.cpp @no-unify

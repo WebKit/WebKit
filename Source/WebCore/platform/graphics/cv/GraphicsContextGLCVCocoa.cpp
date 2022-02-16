@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
+#include "ANGLEHeaders.h"
 #include "ANGLEUtilitiesCocoa.h"
 #include "FourCC.h"
 #include "GraphicsContextGLCocoa.h"

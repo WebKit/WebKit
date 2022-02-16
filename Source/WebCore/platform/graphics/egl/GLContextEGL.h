@@ -89,7 +89,7 @@ private:
     void swapInterval(int) override;
     bool isEGLContext() const override { return true; }
 
-    PlatformGraphicsContextGL platformContext() override;
+    GCGLContext platformContext() override;
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
 

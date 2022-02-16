@@ -49,7 +49,7 @@ public:
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     virtual bool makeContextCurrent();
-    virtual PlatformGraphicsContextGL platformContext() const;
+    virtual GCGLContext platformContext() const;
 
     void swapBuffersIfNeeded() override;
 

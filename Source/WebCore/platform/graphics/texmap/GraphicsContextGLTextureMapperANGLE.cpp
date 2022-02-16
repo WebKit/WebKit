@@ -125,7 +125,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 }
 
 #if USE(NICOSIA)
-GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking(PlatformGraphicsContextGLDisplay display)
+GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking(GCGLDisplay display)
     : m_display(display)
 {
 }
@@ -231,7 +231,7 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 #endif
 }
 
-PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
+GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformDisplay();
@@ -240,7 +240,7 @@ PlatformGraphicsContextGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 #endif
 }
 
-PlatformGraphicsContextGLConfig GraphicsContextGLANGLE::platformConfig() const
+GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformConfig();

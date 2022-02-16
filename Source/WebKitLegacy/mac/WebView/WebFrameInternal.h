@@ -28,13 +28,6 @@
 
 // This header contains WebFrame declarations that can be used anywhere in WebKit, but are neither SPI nor API.
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
-#ifndef GL_GLES_PROTOTYPES
-#define GL_GLES_PROTOTYPES 0
-#endif
-#include <ANGLE/entry_points_gles_ext_autogen.h>
-#endif
-
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
 #import <WebCore/EditAction.h>

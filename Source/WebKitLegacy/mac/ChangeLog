@@ -1,3 +1,16 @@
+2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE includes interfere with system header includes
+        https://bugs.webkit.org/show_bug.cgi?id=236636
+
+        Reviewed by Dean Jackson.
+
+        Remove the attempt to override system header logic with WebKit
+        ANGLE implementation. They are different implementations
+        and one cannot replace the other.
+
+        * WebView/WebFrameInternal.h:
+
 2022-02-16  David Kilzer  <ddkilzer@apple.com>
 
         [WebKitLegacy] Fix clang tidy bugprone-move-forwarding-reference static analyzer warnings

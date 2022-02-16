@@ -27,12 +27,23 @@
 #include "ANGLEUtilitiesCocoa.h"
 
 #if ENABLE(WEBGL)
-
+#include "ANGLEHeaders.h"
+#include "ANGLEUtilities.h"
 #include "Logging.h"
+#include <wtf/darwin/WeakLinking.h>
+
+WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
-void* createPbufferAndAttachIOSurface(EGLDisplay display, EGLConfig config, GLenum target, EGLint usageHint, GLenum internalFormat, GLsizei width, GLsizei height, GLenum type, IOSurfaceRef surface, GLuint plane)
+bool platformIsANGLEAvailable()
+{
+    // The ANGLE is weak linked in full, and the EGL_Initialize is explicitly weak linked above
+    // so that we can detect the case where ANGLE is not present.
+    return !!EGL_Initialize;
+}
+
+void* createPbufferAndAttachIOSurface(GCGLDisplay display, GCGLConfig config, GCGLenum target, GCGLint usageHint, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
 {
     auto eglTextureTarget = target == GL_TEXTURE_RECTANGLE_ANGLE ? EGL_TEXTURE_RECTANGLE_ANGLE : EGL_TEXTURE_2D;
 

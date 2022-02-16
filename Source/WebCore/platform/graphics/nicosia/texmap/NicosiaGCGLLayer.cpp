@@ -61,7 +61,7 @@ bool GCGLLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContextGL GCGLLayer::platformContext() const
+GCGLContext GCGLLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();

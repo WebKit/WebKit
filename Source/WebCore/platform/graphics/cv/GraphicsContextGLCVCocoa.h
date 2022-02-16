@@ -51,9 +51,9 @@ private:
 
 
     GraphicsContextGLCocoa& m_owner;
-    PlatformGraphicsContextGLDisplay m_display { nullptr };
-    PlatformGraphicsContextGL m_context { nullptr };
-    PlatformGraphicsContextGLConfig m_config { nullptr };
+    GCGLDisplay m_display { nullptr };
+    GCGLContext m_context { nullptr };
+    GCGLConfig m_config { nullptr };
 
     PlatformGLObject m_framebuffer { 0 };
     PlatformGLObject m_yuvVertexBuffer { 0 };

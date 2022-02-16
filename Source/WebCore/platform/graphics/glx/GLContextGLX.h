@@ -49,7 +49,7 @@ private:
     void swapInterval(int) override;
     bool isEGLContext() const override { return false; }
 
-    PlatformGraphicsContextGL platformContext() override;
+    GCGLContext platformContext() override;
 
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, GLNativeWindowType);
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniqueGLXPbuffer&&);

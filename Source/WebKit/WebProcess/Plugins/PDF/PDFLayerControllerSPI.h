@@ -27,13 +27,6 @@
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
-#ifndef GL_GLES_PROTOTYPES
-#define GL_GLES_PROTOTYPES 0
-#endif
-#include <ANGLE/entry_points_gles_ext_autogen.h>
-#endif
-
 #import <Quartz/Quartz.h>
 
 @class CPReadingModel;

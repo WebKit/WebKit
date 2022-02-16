@@ -47,7 +47,7 @@ typedef float GCGLfloat;
 typedef unsigned short GCGLhalffloat;
 typedef float GCGLclampf;
 typedef char GCGLchar;
-typedef struct __GLsync* GCGLsync;
+typedef void* GCGLsync;
 typedef void GCGLvoid;
 
 // These GCGL types do not strictly match the GL types as defined in OpenGL ES 2.0
@@ -59,10 +59,17 @@ typedef int64_t GCGLint64;
 typedef uint64_t GCGLuint64;
 
 typedef GCGLuint PlatformGLObject;
+using GCGLDisplay = void*;
+using GCGLConfig = void*;
+using GCGLContext = void*;
 
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;
 #endif
+
+using GCGLNativeDisplayType = int;
+
+inline constexpr GCGLNativeDisplayType gcGLDefaultDisplay = 0;
 
 inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
 
