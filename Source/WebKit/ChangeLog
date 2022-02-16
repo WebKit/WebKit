@@ -1,3 +1,19 @@
+2022-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Clean up some unused context menu identifier SPI constants
+        https://bugs.webkit.org/show_bug.cgi?id=236669
+        rdar://88924479
+
+        Reviewed by Dean Jackson.
+
+        Remove a couple of unused context menu item identifier constants for Quick Note, and add a new constant to
+        represent the "Copy Cropped Image" item added in r289851.
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+
 2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteVideoFrameProxy is missing reference field encode, decode

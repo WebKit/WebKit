@@ -522,6 +522,9 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return _WKMenuItemIdentifierTranslate;
 
+    case ContextMenuItemTagCopyCroppedImage:
+        return _WKMenuItemIdentifierCopyCroppedImage;
+
     case ContextMenuItemTagShareMenu:
         return _WKMenuItemIdentifierShareMenu;
 
