@@ -40,13 +40,13 @@ public:
     bool evaluate(const FilteredContainerQuery&) const;
 
 private:
-    struct EvaluationContext;
+    struct ResolvedContainer;
     enum class EvaluationResult : uint8_t { False, True, Unknown };
 
-    EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const EvaluationContext&) const;
-    EvaluationResult evaluateQuery(const CQ::SizeQuery&, const EvaluationContext&) const;
-    template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const EvaluationContext&) const;
-    EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const EvaluationContext&) const;
+    EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const ResolvedContainer&) const;
+    EvaluationResult evaluateQuery(const CQ::SizeQuery&, const ResolvedContainer&) const;
+    template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const ResolvedContainer&) const;
+    EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const ResolvedContainer&) const;
 
     const Vector<Ref<const Element>>& m_containers;
 };

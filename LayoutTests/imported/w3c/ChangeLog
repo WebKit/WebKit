@@ -1,5 +1,16 @@
 2022-02-16  Antti Koivisto  <antti@apple.com>
 
+        [CSS Container Queries] Size queries on unsupported axis should evaluate to unknown
+        https://bugs.webkit.org/show_bug.cgi?id=236702
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-contain/container-queries/aspect-ratio-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/unsupported-axis-expected.txt:
+
+2022-02-16  Antti Koivisto  <antti@apple.com>
+
         [CSS Container Queries] Serialize container shorthand in StyleProperties
         https://bugs.webkit.org/show_bug.cgi?id=236691
 

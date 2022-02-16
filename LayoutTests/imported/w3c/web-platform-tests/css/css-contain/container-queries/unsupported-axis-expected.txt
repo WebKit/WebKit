@@ -1,14 +1,14 @@
 Test
 
 PASS size(width > 0px)
-FAIL size(height > 0px) assert_equals: expected "" but got "true"
+PASS size(height > 0px)
 PASS size((height > 0px) or (width > 0px))
 PASS size((width > 0px) or (height > 0px))
 PASS size((orientation: landscape) or (width > 0px))
 PASS size((width > 0px) or (orientation: landscape))
-FAIL size((height > 0px) or (orientation: landscape)) assert_equals: expected "" but got "true"
-FAIL size((height > 0px) or (orientation: landscape)), with contain:size assert_equals: expected "" but got "true"
+PASS size((height > 0px) or (orientation: landscape))
+PASS size((height > 0px) or (orientation: landscape)), with contain:size
 PASS size(inline-size > 0px)
-FAIL size(block-size > 0px) assert_equals: expected "" but got "true"
-FAIL size(block-size > 0px), with writing-mode:vertical-rl assert_equals: expected "" but got "true"
+PASS size(block-size > 0px)
+PASS size(block-size > 0px), with writing-mode:vertical-rl
 

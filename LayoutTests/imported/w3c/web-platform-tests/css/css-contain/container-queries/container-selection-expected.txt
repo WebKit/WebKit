@@ -2,7 +2,7 @@
 PASS size(width: 16px) for .size > .inline > span
 PASS size(height: 16px) for .inline > .size > span
 PASS size(width: 16px) for .inline > .size > span
-FAIL size(height) for .size > .inline > span assert_equals: expected "" but got "true"
+PASS size(height) for .size > .inline > span
 FAIL type(inline-size) size(width: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
 FAIL type(inline-size) size(width: 16px) for .size > .inline > span assert_equals: expected "true" but got ""
 FAIL type(size) size(height: 16px) for .inline > .size > span assert_equals: expected "true" but got ""
