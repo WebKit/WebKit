@@ -1,3 +1,12 @@
+2022-02-15  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r289495): [ Monterey arm64 ] model-element/model-element-ready.html is a flaky assertion failure.
+        https://bugs.webkit.org/show_bug.cgi?id=236678
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapperGL] drop-shadow filter with blur-radius doesn't work as expected if it is the last filter
