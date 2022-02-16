@@ -1,3 +1,13 @@
+2022-02-16  Ziran Sun  <zsun@igalia.com>
+
+        [InputElement] Remove extra form data made by image submit button when "value" attribute is present.
+        https://bugs.webkit.org/show_bug.cgi?id=236703
+
+        Reviewed by Chris Dumez.
+
+        Update test expectation as the test is now passing.
+        * fast/forms/input-image-submit.html:
+
 2022-02-16  Truitt Savell  <tsavell@apple.com>
 
         Rebase http/tests/model/model-document.html after the changes in r289733
