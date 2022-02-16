@@ -46,7 +46,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard,
+                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -226,6 +226,44 @@ def uploadFileWithContentsOfString(string, timestamp=None):
         if timestamp:
             writer.remote_utime(timestamp)
     return behavior
+
+
+class TestGitHub(unittest.TestCase):
+    def test_pr_url(self):
+        self.assertEqual(
+            GitHub.pr_url(1234),
+            'https://github.com/WebKit/WebKit/pull/1234',
+        )
+
+    def test_pr_url_with_repository(self):
+        self.assertEqual(
+            GitHub.pr_url(1234, 'https://github.com/WebKit/WebKit'),
+            'https://github.com/WebKit/WebKit/pull/1234',
+        )
+
+    def test_pr_url_with_invalid_repository(self):
+        self.assertEqual(
+            GitHub.pr_url(1234, 'https://github.example.com/WebKit/WebKit'),
+            '',
+        )
+
+    def test_commit_url(self):
+        self.assertEqual(
+            GitHub.commit_url('936e3f7cab4a826519121a75bf4481fe56e727e2'),
+            'https://github.com/WebKit/WebKit/commit/936e3f7cab4a826519121a75bf4481fe56e727e2',
+        )
+
+    def test_commit_url_with_repository(self):
+        self.assertEqual(
+            GitHub.commit_url('936e3f7cab4a826519121a75bf4481fe56e727e2', 'https://github.com/WebKit/WebKit'),
+            'https://github.com/WebKit/WebKit/commit/936e3f7cab4a826519121a75bf4481fe56e727e2',
+        )
+
+    def test_commit_url_with_invalid_repository(self):
+        self.assertEqual(
+            GitHub.commit_url('936e3f7cab4a826519121a75bf4481fe56e727e2', 'https://github.example.com/WebKit/WebKit'),
+            '',
+        )
 
 
 class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.TestCase):
