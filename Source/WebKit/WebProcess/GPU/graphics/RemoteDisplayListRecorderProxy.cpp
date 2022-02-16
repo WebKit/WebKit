@@ -203,9 +203,9 @@ void RemoteDisplayListRecorderProxy::recordDrawNativeImage(RenderingResourceIden
     send(Messages::RemoteDisplayListRecorder::DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorderProxy::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawPattern(imageIdentifier, imageSize, destRect, tileRect, transform, phase, spacing, options));
+    send(Messages::RemoteDisplayListRecorder::DrawPattern(imageIdentifier, destRect, tileRect, transform, phase, spacing, options));
 }
 
 void RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer(float opacity)

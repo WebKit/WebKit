@@ -283,22 +283,22 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
 }
 
-void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    drawPatternWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, imageSize, destRect, tileRect, transform, phase, spacing, options);
+    drawPatternWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, destRect, tileRect, transform, phase, spacing, options);
 }
 
-void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
-    if (!image) {
+    auto sourceImage = resourceCache().cachedSourceImage(imageIdentifier);
+    if (!sourceImage) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::DrawPattern(imageIdentifier.object(), imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
+    handleItem(DisplayList::DrawPattern(imageIdentifier.object(), destRect, tileRect, transform, phase, spacing, options), *sourceImage);
 }
 
 void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)

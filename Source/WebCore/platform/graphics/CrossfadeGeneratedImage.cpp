@@ -112,7 +112,7 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatR
     drawCrossfade(graphicsContext);
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, dstRect, srcRect, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, dstRect, srcRect, patternTransform, phase, spacing, options);
 }
 
 void CrossfadeGeneratedImage::dump(TextStream& ts) const

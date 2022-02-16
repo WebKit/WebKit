@@ -182,9 +182,9 @@ void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdenti
     append<DrawNativeImage>(imageIdentifier, imageSize, destRect, srcRect, options);
 }
 
-void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    append<DrawPattern>(imageIdentifier, imageSize, destRect, tileRect, transform, phase, spacing, options);
+    append<DrawPattern>(imageIdentifier, destRect, tileRect, transform, phase, spacing, options);
 }
 
 void RecorderImpl::recordBeginTransparencyLayer(float opacity)

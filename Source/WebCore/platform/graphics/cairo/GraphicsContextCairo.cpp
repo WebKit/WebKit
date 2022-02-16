@@ -395,13 +395,13 @@ void GraphicsContextCairo::fillRectWithRoundedHole(const FloatRect& rect, const 
     Cairo::fillRectWithRoundedHole(*this, rect, roundedHoleRect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
-void GraphicsContextCairo::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContextCairo::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (!patternTransform.isInvertible())
         return;
 
     UNUSED_PARAM(spacing);
-    Cairo::drawPattern(*this, nativeImage.platformImage().get(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options);
+    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, options);
 }
 
 RenderingMode GraphicsContextCairo::renderingMode() const

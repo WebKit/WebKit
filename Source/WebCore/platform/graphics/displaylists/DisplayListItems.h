@@ -999,10 +999,9 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
-    FloatSize imageSize() const { return m_imageSize; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const { return m_patternTransform; }
@@ -1012,14 +1011,13 @@ public:
     bool isValid() const { return m_imageIdentifier.isValid(); }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    WEBCORE_EXPORT void apply(GraphicsContext&, NativeImage&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, SourceImage&) const;
 
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destination; }
 
 private:
     RenderingResourceIdentifier m_imageIdentifier;
-    FloatSize m_imageSize;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;

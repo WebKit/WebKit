@@ -68,6 +68,18 @@ inline static std::optional<RenderingResourceIdentifier> applyNativeImageItem(Gr
     return resourceIdentifier;
 }
 
+template<class T>
+inline static std::optional<RenderingResourceIdentifier> applySourceImageItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ItemHandle item)
+{
+    auto& sourceImageItem = item.get<T>();
+    auto resourceIdentifier = sourceImageItem.imageIdentifier();
+    if (auto sourceImage = resourceHeap.getSourceImage(resourceIdentifier)) {
+        sourceImageItem.apply(context, *sourceImage);
+        return std::nullopt;
+    }
+    return resourceIdentifier;
+}
+
 inline static std::optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ItemHandle item)
 {
     auto& setStateItem = item.get<SetState>();
@@ -134,7 +146,7 @@ std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdenti
     }
 
     if (item.is<DrawPattern>()) {
-        if (auto missingCachedResourceIdentifier = applyNativeImageItem<DrawPattern>(m_context, m_resourceHeap, item))
+        if (auto missingCachedResourceIdentifier = applySourceImageItem<DrawPattern>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
     }

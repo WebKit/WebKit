@@ -202,11 +202,23 @@ void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, c
     recordDrawNativeImage(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
-void Recorder::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(image);
-    recordDrawPattern(image.renderingResourceIdentifier(), imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+    recordDrawPattern(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
+}
+
+void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    appendStateChangeItemIfNecessary();
+
+    if (!recordResourceUse(imageBuffer)) {
+        GraphicsContext::drawPattern(imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
+        return;
+    }
+
+    recordDrawPattern(imageBuffer.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 void Recorder::save()

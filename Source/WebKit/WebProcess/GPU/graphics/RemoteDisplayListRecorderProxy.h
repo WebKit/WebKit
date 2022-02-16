@@ -91,7 +91,7 @@ private:
     void recordDrawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned count, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
     void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&) final;
-    void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions& = { }) final;
+    void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions& = { }) final;
     void recordBeginTransparencyLayer(float) final;
     void recordEndTransparencyLayer() final;
     void recordDrawRect(const WebCore::FloatRect&, float) final;

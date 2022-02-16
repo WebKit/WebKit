@@ -147,7 +147,7 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
     if (!tileImage)
         return;
 
-    ctxt.drawPattern(*tileImage, size(), destRect, tileRect, patternTransform, phase, spacing, options);
+    ctxt.drawPattern(*tileImage, destRect, tileRect, patternTransform, phase, spacing, options);
 
     if (imageObserver())
         imageObserver()->didDraw(*this);

@@ -86,7 +86,7 @@ protected:
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
     virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
     virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
-    virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
+    virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
     virtual void recordBeginTransparencyLayer(float) = 0;
     virtual void recordEndTransparencyLayer() = 0;
     virtual void recordDrawRect(const FloatRect&, float) = 0;
@@ -222,7 +222,8 @@ private:
 
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
     WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
-    WEBCORE_EXPORT void drawPattern(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
+    WEBCORE_EXPORT void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
+    WEBCORE_EXPORT void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
 
     WEBCORE_EXPORT void drawRect(const FloatRect&, float borderThickness) final;
     WEBCORE_EXPORT void drawLine(const FloatPoint&, const FloatPoint&) final;

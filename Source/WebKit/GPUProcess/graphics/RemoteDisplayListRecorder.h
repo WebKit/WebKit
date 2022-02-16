@@ -82,7 +82,7 @@ public:
     void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, IPC::FilterReference);
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
     void drawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
-    void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);
+    void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
     void drawRect(const WebCore::FloatRect&, float borderThickness);
@@ -135,7 +135,7 @@ private:
     void drawGlyphsWithQualifiedIdentifier(WebCore::DisplayList::DrawGlyphs&&, QualifiedRenderingResourceIdentifier fontIdentifier);
     void drawImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
     void drawNativeImageWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions&);
-    void drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);
+    void drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&);
 
     RemoteResourceCache& resourceCache();
     WebCore::GraphicsContext& drawingContext();

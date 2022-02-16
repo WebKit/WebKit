@@ -384,12 +384,13 @@ static void patternReleaseCallback(void* info)
     callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
 }
 
-void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (!patternTransform.isInvertible())
         return;
 
     auto image = nativeImage.platformImage();
+    auto imageSize = nativeImage.size();
 
     CGContextRef context = platformContext();
     CGContextStateSaver stateSaver(context);

@@ -73,7 +73,7 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     Theme::singleton().drawNamedImage(m_name, graphicsContext, size());
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, dstRect, srcRect, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, dstRect, srcRect, patternTransform, phase, spacing, options);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(dstRect);

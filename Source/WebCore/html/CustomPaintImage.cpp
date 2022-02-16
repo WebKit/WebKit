@@ -207,7 +207,7 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
     if (destContext.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    buffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
+    destContext.drawPattern(*buffer, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
     destContext.setDrawLuminanceMask(false);
 }
 

@@ -66,7 +66,7 @@ private:
 
     void drawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destination, const WebCore::FloatRect& source, const WebCore::ImagePaintingOptions&) override;
     void drawNativeImage(WebCore::NativeImage&, const WebCore::FloatSize&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::ImagePaintingOptions&) override;
-    void drawPattern(WebCore::NativeImage&, const WebCore::FloatSize&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, const WebCore::ImagePaintingOptions&) override;
+    void drawPattern(WebCore::NativeImage&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, const WebCore::ImagePaintingOptions&) override;
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;

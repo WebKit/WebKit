@@ -734,6 +734,11 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     scale(filter.filterScale());
 }
 
+void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    image.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, options);
+}
+
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 {
     Path path;

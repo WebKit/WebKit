@@ -398,9 +398,8 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     return ts;
 }
 
-DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     : m_imageIdentifier(imageIdentifier)
-    , m_imageSize(imageSize)
     , m_destination(destRect)
     , m_tileRect(tileRect)
     , m_patternTransform(patternTransform)
@@ -415,9 +414,19 @@ NO_RETURN_DUE_TO_ASSERT void DrawPattern::apply(GraphicsContext&) const
     ASSERT_NOT_REACHED();
 }
 
-void DrawPattern::apply(GraphicsContext& context, NativeImage& image) const
+void DrawPattern::apply(GraphicsContext& context, SourceImage& sourceImage) const
 {
-    context.drawPattern(image, m_imageSize, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    if (auto image = sourceImage.nativeImageIfExists()) {
+        context.drawPattern(*image, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+        return;
+    }
+
+    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
+        context.drawPattern(*imageBuffer, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPattern& item)
