@@ -2404,29 +2404,29 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
     NUM_FAILURES_TO_DISPLAY = 10
 
     def start(self):
-        stress_failures_with_patch = set(self.getProperty('jsc_stress_test_failures', []))
-        binary_failures_with_patch = set(self.getProperty('jsc_binary_failures', []))
+        stress_failures_with_change = set(self.getProperty('jsc_stress_test_failures', []))
+        binary_failures_with_change = set(self.getProperty('jsc_binary_failures', []))
         clean_tree_stress_failures = set(self.getProperty('jsc_clean_tree_stress_test_failures', []))
         clean_tree_binary_failures = set(self.getProperty('jsc_clean_tree_binary_failures', []))
         clean_tree_failures = list(clean_tree_binary_failures) + list(clean_tree_stress_failures)
         clean_tree_failures_string = ', '.join(clean_tree_failures[:self.NUM_FAILURES_TO_DISPLAY])
 
-        flaky_stress_failures_with_patch = set(self.getProperty('jsc_flaky_and_passed', {}).keys())
+        flaky_stress_failures_with_change = set(self.getProperty('jsc_flaky_and_passed', {}).keys())
         clean_tree_flaky_stress_failures = set(self.getProperty('jsc_clean_tree_flaky_and_passed', {}).keys())
-        flaky_stress_failures = sorted(list(flaky_stress_failures_with_patch) + list(clean_tree_flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
+        flaky_stress_failures = sorted(list(flaky_stress_failures_with_change) + list(clean_tree_flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_stress_failures)
 
-        new_stress_failures = stress_failures_with_patch - clean_tree_stress_failures
-        new_binary_failures = binary_failures_with_patch - clean_tree_binary_failures
+        new_stress_failures = stress_failures_with_change - clean_tree_stress_failures
+        new_binary_failures = binary_failures_with_change - clean_tree_binary_failures
         self.new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
         self.new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
 
-        self._addToLog('stderr', '\nFailures with patch: {}'.format(list(binary_failures_with_patch) + list(stress_failures_with_patch))[:self.NUM_FAILURES_TO_DISPLAY])
-        self._addToLog('stderr', '\nFlaky Tests with patch: {}'.format(', '.join(flaky_stress_failures_with_patch)))
+        self._addToLog('stderr', '\nFailures with change: {}'.format(list(binary_failures_with_change) + list(stress_failures_with_change))[:self.NUM_FAILURES_TO_DISPLAY])
+        self._addToLog('stderr', '\nFlaky Tests with change: {}'.format(', '.join(flaky_stress_failures_with_change)))
         self._addToLog('stderr', '\nFailures on clean tree: {}'.format(clean_tree_failures_string))
         self._addToLog('stderr', '\nFlaky Tests on clean tree: {}'.format(', '.join(clean_tree_flaky_stress_failures)))
 
-        if (not stress_failures_with_patch) and (not binary_failures_with_patch):
+        if (not stress_failures_with_change) and (not binary_failures_with_change):
             # If we've made it here, then jsc-tests and re-run-jsc-tests failed, which means
             # there should have been some test failures. Otherwise there is some unexpected issue.
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
@@ -2467,7 +2467,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
     def report_failure(self, new_binary_failures, new_stress_failures):
         message = ''
         if (not new_binary_failures) and (not new_stress_failures):
-            message = 'Found unexpected failure with patch'
+            message = 'Found unexpected failure with change'
         if new_binary_failures:
             pluralSuffix = 's' if len(new_binary_failures) > 1 else ''
             message = 'Found {} new JSC binary failure{}: {}'.format(len(new_binary_failures), pluralSuffix, self.new_binary_failures_to_display)

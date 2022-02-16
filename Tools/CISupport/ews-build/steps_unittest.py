@@ -1724,14 +1724,14 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
         return self.runStep()
 
-    def test_patch_breaking_jsc_test_suite(self):
+    def test_change_breaking_jsc_test_suite(self):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', [])
         self.setProperty('jsc_flaky_and_passed', {})
         self.setProperty('jsc_clean_tree_stress_test_failures', [])
         self.setProperty('jsc_clean_tree_flaky_and_passed', {})
         self.setProperty('clean_tree_run_status', SUCCESS)
-        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with patch (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
         return self.runStep()
 
 
