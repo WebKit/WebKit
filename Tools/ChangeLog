@@ -1,3 +1,32 @@
+2022-02-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EWS][GTK] Send only one e-mail with all the list of flakies
+        https://bugs.webkit.org/show_bug.cgi?id=236705
+
+        Reviewed by Adrian Perez de Castro.
+
+        Sending one e-mail per test was too much e-mails and we were
+        spaming the bot watchers. Change it to only send one e-mail
+        per run with all the list of flakies on the body of the e-mail.
+
+        Fix also some issues detected on the code for sending the e-mails
+        (like a few undefined variables and function calls with wrong
+        paramters) that happened when running the unit test.
+
+        Add also unit tests to be able to check the contents of the
+        e-mails generated and also fix a logic error deteted when
+        working on the unit tests related to reporting
+        the pre_existent_non_flaky_failures for the GTK EWS.
+
+        * CISupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure):
+        (AnalyzeLayoutTestsResultsRedTree.send_email_for_pre_existent_failures):
+        (AnalyzeLayoutTestsResultsRedTree.send_email_for_flaky_failures_and_steps):
+        (AnalyzeLayoutTestsResultsRedTree.start):
+        * CISupport/ews-build/steps_unittest.py:
+        (BuildStepMixinAdditions.setUpBuildStep):
+        (BuildStepMixinAdditions._send_email):
+
 2022-02-16  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback

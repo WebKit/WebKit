@@ -2171,7 +2171,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             if pr_number and not self.should_send_email_for_pr(pr_number):
                 return
             if not patch_id and not (pr_number and sha):
-                self._addToLog('Unrecognized change type')
+                self._addToLog('stderr', 'Unrecognized change type')
                 return
 
             change_string = None
@@ -2187,11 +2187,11 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                     self._addToLog('stdio', error)
 
             if not change_author:
-                self._addToLog('Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
                 return
 
             builder_name = self.getProperty('buildername', '')
-            issue_id = self.getProperty('bug_id', '') or pr_number
+            bug_id = self.getProperty('bug_id', '') or pr_number
             title = self.getProperty('bug_title', '') or self.getProperty('github.title', '')
             worker_name = self.getProperty('workername', '')
             platform = self.getProperty('platform', '')
@@ -3038,7 +3038,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             if pr_number and not self.should_send_email_for_pr(pr_number):
                 return
             if not patch_id and not (pr_number and sha):
-                self._addToLog('Unrecognized change type')
+                self._addToLog('stderr', 'Unrecognized change type')
                 return
 
             change_string = None
@@ -3054,11 +3054,11 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                     self._addToLog('stdio', error)
 
             if not change_author:
-                self._addToLog('Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
                 return
 
             builder_name = self.getProperty('buildername', '')
-            issue_id = self.getProperty('bug_id', '') or pr_number
+            bug_id = self.getProperty('bug_id', '') or pr_number
             title = self.getProperty('bug_title', '') or self.getProperty('github.title', '')
             worker_name = self.getProperty('workername', '')
             patch_author = self.getProperty('patch_author', '')
@@ -3377,14 +3377,38 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             pluralSuffix = 's' if number_failures > 1 else ''
 
             email_subject = 'Info about {} pre-existent failure{} at {}'.format(number_failures, pluralSuffix, builder_name)
-            email_test = 'Info about pre-existent (non-flaky) test failure{} at EWS:\n'.format(pluralSuffix)
-            email_text = '    - Build : {}\n'.format(build_url)
-            email_text = '    - Builder : {}\n'.format(builder_name)
-            email_text = '    - Worker : {}\n'.format(worker_name)
+            email_text = 'Info about pre-existent (non-flaky) test failure{} at EWS:\n'.format(pluralSuffix)
+            email_text += '  - Build : {}\n'.format(build_url)
+            email_text += '  - Builder : {}\n'.format(builder_name)
+            email_text += '  - Worker : {}\n'.format(worker_name)
             for test_name in sorted(test_names):
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
                 email_text += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
+        except Exception as e:
+            print('Error in sending email for flaky failure: {}'.format(e))
+
+    def send_email_for_flaky_failures_and_steps(self, test_names_steps_dict):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            number_failures = len(test_names_steps_dict)
+            pluralSuffix = 's' if number_failures > 1 else ''
+            email_subject = 'Info about {} flaky failure{} at {}'.format(number_failures, pluralSuffix, builder_name)
+            email_text = 'Info about {} flaky test failure{} at EWS:\n'.format(number_failures, pluralSuffix)
+            email_text += '  - Build : {}\n'.format(build_url)
+            email_text += '  - Builder : {}\n'.format(builder_name)
+            email_text += '  - Worker : {}\n'.format(worker_name)
+            flaky_number = 0
+            for test_name in test_names_steps_dict:
+                flaky_number += 1
+                history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+                number_steps_flaky = len(test_names_steps_dict[test_name])
+                pluralstepSuffix = 's' if number_steps_flaky > 1 else ''
+                step_names_str = '"{}"'.format('", "'.join(test_names_steps_dict[test_name]))
+                email_text += '\nFlaky #{}\n  - Test name: {}\n  - Flaky on step{}: {}\n  - History: {}\n'.format(flaky_number, test_name, pluralstepSuffix, step_names_str, history_url)
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(worker_name))
         except Exception as e:
             print('Error in sending email for flaky failure: {}'.format(e))
 
@@ -3453,6 +3477,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         # Warn EWS bot watchers about flakies so they can garden those. Include the step where the flaky was found in the e-mail to know if it was found with patch or without it.
         # Due to the way this class works most of the flakies are filtered on the step with patch even when those were pre-existent issues (so this is also useful for bot watchers).
         all_flaky_failures = first_run_flakies.union(with_patch_repeat_failures_results_flakies).union(without_patch_repeat_failures_results_flakies)
+        flaky_steps_dict = {}
         for flaky_failure in all_flaky_failures:
             step_names = []
             if flaky_failure in without_patch_repeat_failures_results_flakies:
@@ -3461,11 +3486,11 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
                 step_names.append('layout-tests-repeat-failures (with patch)')
             if flaky_failure in first_run_flakies:
                 step_names.append('layout-tests (with patch)')
-            step_names_str = '"{}"'.format('", "'.join(step_names))
-            self.send_email_for_flaky_failure(flaky_failure, step_names_str)
+            flaky_steps_dict[flaky_failure] = step_names
+        self.send_email_for_flaky_failures_and_steps(flaky_steps_dict)
 
         # Warn EWS bot watchers about pre-existent non-flaky failures (if any), but send only one e-mail with all the tests to avoid sending too much e-mails.
-        pre_existent_non_flaky_failures = without_patch_repeat_failures_results_nonflaky_failures - with_patch_repeat_failures_results_nonflaky_failures.union(all_flaky_failures)
+        pre_existent_non_flaky_failures = without_patch_repeat_failures_results_nonflaky_failures - all_flaky_failures
         if pre_existent_non_flaky_failures:
             self.send_email_for_pre_existent_failures(pre_existent_non_flaky_failures)
 
