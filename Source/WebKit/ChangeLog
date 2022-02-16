@@ -1,5 +1,18 @@
 2022-02-16  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, reverting r289150.
+
+        Start using adattributiond on iOS again now that it is
+        sandboxed
+
+        Reverted changeset:
+
+        "Don't use adattributiond on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=236157
+        https://commits.webkit.org/r289150
+
+2022-02-16  Alex Christensen  <achristensen@webkit.org>
+
         Effectively revert r289018
         https://bugs.webkit.org/show_bug.cgi?id=236000
 
