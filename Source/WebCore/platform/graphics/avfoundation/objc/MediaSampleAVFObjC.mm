@@ -28,6 +28,7 @@
 
 #import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
+#import "VideoFrameCV.h"
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
@@ -165,25 +166,14 @@ uint32_t MediaSampleAVFObjC::videoPixelFormat() const
     return CVPixelBufferGetPixelFormatType(pixelBuffer);
 }
 
-std::optional<MediaSampleVideoFrame> MediaSampleAVFObjC::videoFrame() const
+RefPtr<VideoFrameCV> MediaSampleAVFObjC::videoFrame() const
 {
+    if (!m_sample)
+        return nullptr;
     auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
     if (!pixelBuffer)
-        return std::nullopt;
-    ImageOrientation orientation = [&] {
-        // Sample transform first flips x-coordinates, then rotates.
-        switch (m_rotation) {
-        case MediaSample::VideoRotation::None:
-            return m_mirrored ? ImageOrientation::OriginTopRight : ImageOrientation::OriginTopLeft;
-        case MediaSample::VideoRotation::Right:
-            return m_mirrored ? ImageOrientation::OriginRightBottom : ImageOrientation::OriginRightTop;
-        case MediaSample::VideoRotation::UpsideDown:
-            return m_mirrored ? ImageOrientation::OriginBottomLeft : ImageOrientation::OriginBottomRight;
-        case MediaSample::VideoRotation::Left:
-            return m_mirrored ? ImageOrientation::OriginLeftTop : ImageOrientation::OriginLeftBottom;
-        }
-    }();
-    return MediaSampleVideoFrame { RetainPtr { pixelBuffer }, orientation };
+        return nullptr;
+    return VideoFrameCV::create(presentationTime(), m_mirrored, m_rotation, RetainPtr { pixelBuffer });
 }
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)

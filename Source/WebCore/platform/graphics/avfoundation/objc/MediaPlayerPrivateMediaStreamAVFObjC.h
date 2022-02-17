@@ -143,7 +143,7 @@ private:
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() override;
+    RefPtr<VideoFrame> videoFrameForCurrentTime() override;
     DestinationColorSpace colorSpace() override;
     bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
 

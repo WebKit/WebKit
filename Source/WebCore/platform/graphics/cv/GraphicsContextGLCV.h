@@ -30,7 +30,7 @@
 #include "GraphicsContextGL.h"
 
 namespace WebCore {
-class MediaSampleVideoFrame;
+class VideoFrameCV;
 
 // Interface to interact with CV objects and GraphicsContextGL.
 class GraphicsContextGLCV {
@@ -40,7 +40,7 @@ public:
     using FlipY = GraphicsContextGL::FlipY;
     // Copies CV pixel buffer to GraphicsContextGL TEXTURE_2D texture of the same size as the pixel buffer.
     // Returns true on success.
-    virtual bool copyVideoSampleToTexture(const MediaSampleVideoFrame&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) = 0;
+    virtual bool copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) = 0;
 };
 
 }

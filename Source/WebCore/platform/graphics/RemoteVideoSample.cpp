@@ -31,7 +31,8 @@
 #include "GraphicsContextCG.h"
 #include "IOSurface.h"
 #include "Logging.h"
-#include "MediaSample.h"
+#include "MediaSampleAVFObjC.h"
+#include "VideoFrameCV.h"
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -87,14 +88,19 @@ static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPi
 
 std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample, ShouldCheckForIOSurface shouldCheckForIOSurface)
 {
-    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-
-    RetainPtr imageBuffer = PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer);
-    if (!imageBuffer) {
-        RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: CMSampleBufferGetImageBuffer returned nullptr");
+    RetainPtr<CVPixelBufferRef> imageBuffer;
+    if (is<MediaSampleAVFObjC>(sample))
+        imageBuffer = downcast<MediaSampleAVFObjC>(sample).pixelBuffer();
+    else if (is<VideoFrameCV>(sample))
+        imageBuffer = downcast<VideoFrameCV>(sample).pixelBuffer();
+    else {
+        RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: cannot obtain CVPixelBuffer from sample. Unknown sample type.");
         return nullptr;
     }
-
+    if (!imageBuffer) {
+        RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: cannot obtain CVPixelBuffer from sample. No buffer.");
+        return nullptr;
+    }
     std::unique_ptr<IOSurface> ioSurface;
     auto surface = CVPixelBufferGetIOSurface(imageBuffer.get());
     if (!surface && shouldCheckForIOSurface == ShouldCheckForIOSurface::Yes) {

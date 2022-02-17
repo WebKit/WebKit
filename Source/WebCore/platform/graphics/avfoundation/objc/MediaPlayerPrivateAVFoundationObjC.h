@@ -262,7 +262,7 @@ private:
     bool updateLastPixelBuffer();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
-    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() final;
+    RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();

@@ -30,9 +30,10 @@
 
 #import "AudioTrackPrivateMediaStream.h"
 #import "GraphicsContextCG.h"
-#import "Logging.h"
 #import "LocalSampleBufferDisplayLayer.h"
+#import "Logging.h"
 #import "MediaPlayer.h"
+#import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
@@ -1022,15 +1023,18 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }
 
-std::optional<MediaSampleVideoFrame> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameForCurrentTime()
+RefPtr<VideoFrame> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameForCurrentTime()
 {
     if (m_displayMode == None || !metaDataAvailable())
-        return std::nullopt;
+        return nullptr;
     if (m_displayMode == PaintItBlack)
-        return std::nullopt;
+        return nullptr;
     if (!m_imagePainter.mediaSample)
-        return std::nullopt;
-    return m_imagePainter.mediaSample->videoFrame();
+        return nullptr;
+    if (is<VideoFrame>(*m_imagePainter.mediaSample))
+        return &downcast<VideoFrame>(*m_imagePainter.mediaSample);
+    ASSERT(is<MediaSampleAVFObjC>(*m_imagePainter.mediaSample));
+    return downcast<MediaSampleAVFObjC>(*m_imagePainter.mediaSample).videoFrame();
 }
 
 DestinationColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()

@@ -77,29 +77,21 @@ public:
 
     WebCore::IntSize size() const;
 
+    // WebCore::VideoFrame overrides.
+    WebCore::FloatSize presentationSize() const final { return m_size; }
+    uint32_t videoPixelFormat() const final;
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
 #endif
+    bool isRemoteProxy() const final { return true; }
 
 private:
     RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
 
-    // WebCore::VideoFrame overrides.
-    MediaTime presentationTime() const final;
-    VideoRotation videoRotation() const final;
-    bool videoMirrored() const final;
-    WebCore::FloatSize presentationSize() const final { return m_size; }
-    std::optional<WebCore::MediaSampleVideoFrame> videoFrame() const final;
-    uint32_t videoPixelFormat() const final;
-    // FIXME: When VideoFrame is not MediaSample, these will not be needed.
-    WebCore::PlatformSample platformSample() const final;
-    WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::RemoteVideoFrameProxyType; }
+
 
     const Ref<IPC::Connection> m_connection;
     RemoteVideoFrameReferenceTracker m_referenceTracker;
-    const MediaTime m_presentationTime;
-    const bool m_isMirrored;
-    const VideoRotation m_rotation;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
     // FIXME: Remove this.
@@ -133,9 +125,7 @@ TextStream& operator<<(TextStream&, const RemoteVideoFrameProxy::Properties&);
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteVideoFrameProxy)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
+    static bool isType(const WebCore::MediaSample& mediaSample) { return is<WebCore::VideoFrame>(mediaSample) && downcast<WebCore::VideoFrame>(mediaSample).isRemoteProxy(); }
 SPECIALIZE_TYPE_TRAITS_END()
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrame)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::RemoteVideoFrameProxyType; }
-SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

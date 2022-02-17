@@ -78,6 +78,12 @@ class MediaPlaybackTargetContext;
 class VideoTrackPrivate;
 
 struct FourCC;
+
+class VideoFrame;
+
+#if PLATFORM(COCOA)
+class VideoFrameCV;
+#endif
 }
 
 #if USE(AVFOUNDATION)
@@ -327,8 +333,8 @@ private:
 #if PLATFORM(COCOA)
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RefPtr<WebCore::VideoFrameCV>>&&, bool)>&&);
 #endif
-    void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<WebCore::MediaSampleVideoFrame>&&, bool)>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
@@ -384,7 +390,7 @@ private:
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 
     bool m_observingTimeChanges { false };
-    std::optional<WebCore::MediaSampleVideoFrame> m_videoFrameForCurrentTime;
+    RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;
 #endif

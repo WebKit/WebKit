@@ -39,6 +39,7 @@
 #include "VideoTrackPrivateRemote.h"
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/VideoFrame.h>
 #include <WebCore/VideoFrameMetadata.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
@@ -293,7 +294,7 @@ private:
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
 #endif
-    std::optional<WebCore::MediaSampleVideoFrame> videoFrameForCurrentTime() final;
+    RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
     WebCore::DestinationColorSpace colorSpace() final;
 
@@ -460,7 +461,7 @@ private:
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
     bool m_renderingCanBeAccelerated { false };
-    std::optional<WebCore::MediaSampleVideoFrame> m_videoFrameForCurrentTime;
+    RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)
     RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;

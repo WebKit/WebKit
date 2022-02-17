@@ -29,9 +29,9 @@
 
 #include "MediaPlayer.h"
 #include "MediaPlayerIdentifier.h"
-#include "MediaSampleVideoFrame.h"
 #include "NativeImage.h"
 #include "PlatformTimeRanges.h"
+#include "VideoFrame.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
 
@@ -181,7 +181,7 @@ public:
 #if !USE(AVFOUNDATION)
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
 #endif
-    virtual std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() { return std::nullopt; }
+    virtual RefPtr<VideoFrame> videoFrameForCurrentTime() { return nullptr; }
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;
 

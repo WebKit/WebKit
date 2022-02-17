@@ -67,6 +67,7 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/AudioSourceProviderAVFObjC.h>
+#include <WebCore/VideoFrameCV.h>
 #endif
 
 namespace WebKit {
@@ -107,7 +108,7 @@ void RemoteMediaPlayerProxy::invalidate()
     }
     m_renderingResourcesRequest = { };
 #if USE(AVFOUNDATION)
-    m_videoFrameForCurrentTime = std::nullopt;
+    m_videoFrameForCurrentTime = nullptr;
 #endif
 }
 
@@ -867,20 +868,28 @@ void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now(), !mediaPlayerPausedOrStalled()), m_id);
 }
 
-void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<WebCore::MediaSampleVideoFrame>&&, bool)>&& completionHandler)
+// FIXME: This will be turned into cross-platform code soon.
+#if PLATFORM(COCOA)
+void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RefPtr<WebCore::VideoFrameCV>>&&, bool)>&& completionHandler)
 {
-    std::optional<WebCore::MediaSampleVideoFrame> result;
+    std::optional<RefPtr<WebCore::VideoFrameCV>> result;
     bool changed = false;
-    std::optional<WebCore::MediaSampleVideoFrame> videoFrame;
+    RefPtr<WebCore::VideoFrame> videoFrame;
     if (m_player)
         videoFrame = m_player->videoFrameForCurrentTime();
-    if (!(m_videoFrameForCurrentTime == videoFrame)) {
+    if (m_videoFrameForCurrentTime != videoFrame) {
         m_videoFrameForCurrentTime = videoFrame;
         changed = true;
-        result = WTFMove(videoFrame);
+        RefPtr<VideoFrameCV> videoFrameCV;
+        if (videoFrame) {
+            ASSERT(is<VideoFrameCV>(*videoFrame));
+            videoFrameCV = &downcast<VideoFrameCV>(*videoFrame);
+        }
+        result = WTFMove(videoFrameCV);
     }
     completionHandler(WTFMove(result), changed);
 }
+#endif
 
 void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
 {

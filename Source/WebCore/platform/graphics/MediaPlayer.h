@@ -34,11 +34,11 @@
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
-#include "MediaSampleVideoFrame.h"
 #include "PlatformLayer.h"
 #include "PlatformTextTrack.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
+#include "VideoFrame.h"
 #include "VideoFrameMetadata.h"
 #include "VideoPlaybackQualityMetrics.h"
 #include <JavaScriptCore/Forward.h>
@@ -471,7 +471,7 @@ public:
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 #endif
-    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime();
+    RefPtr<VideoFrame> videoFrameForCurrentTime();
     RefPtr<NativeImage> nativeImageForCurrentTime();
     DestinationColorSpace colorSpace();
 

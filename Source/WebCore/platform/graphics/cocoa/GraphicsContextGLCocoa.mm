@@ -38,6 +38,7 @@
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
 #import "RuntimeApplicationChecks.h"
+#import "VideoFrameCV.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
@@ -782,6 +783,7 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
     auto videoFrame = player.videoFrameForCurrentTime();
     if (!videoFrame)
         return false;
+    ASSERT(is<VideoFrameCV>(*videoFrame));
 
     auto contextCV = asCV();
     if (!contextCV)
@@ -789,7 +791,7 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
 
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyVideoSampleToTexture(*videoFrame, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+    return contextCV->copyVideoSampleToTexture(downcast<VideoFrameCV>(*videoFrame), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 }
 #endif
 

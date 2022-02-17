@@ -383,6 +383,7 @@ def conditions_for_header(header):
         '<WebCore/CVUtilities.h>': ["PLATFORM(COCOA)", ],
         '<WebCore/DataDetectorType.h>': ["ENABLE(DATA_DETECTION)"],
         '<WebCore/MediaPlaybackTargetContext.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
+        '<WebCore/VideoFrameCV.h>': ["PLATFORM(COCOA)", ],
     }
     if not header in conditions:
         return None

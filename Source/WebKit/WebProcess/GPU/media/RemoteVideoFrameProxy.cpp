@@ -66,11 +66,9 @@ void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Propertie
 }
 
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
-    : m_connection(connection)
+    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation)
+    , m_connection(connection)
     , m_referenceTracker(properties.reference)
-    , m_presentationTime(properties.presentationTime)
-    , m_isMirrored(properties.isMirrored)
-    , m_rotation(properties.rotation)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
     , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
@@ -97,34 +95,9 @@ RemoteVideoFrameReadReference RemoteVideoFrameProxy::read() const
     return m_referenceTracker.read();
 }
 
-MediaTime RemoteVideoFrameProxy::presentationTime() const
-{
-    return m_presentationTime;
-}
-
-WebCore::PlatformSample RemoteVideoFrameProxy::platformSample() const
-{
-    return { WebCore::PlatformSample::RemoteVideoFrameProxyType, { } };
-}
-
-MediaSample::VideoRotation RemoteVideoFrameProxy::videoRotation() const
-{
-    return m_rotation;
-}
-
-bool RemoteVideoFrameProxy::videoMirrored() const
-{
-    return m_isMirrored;
-}
-
 uint32_t RemoteVideoFrameProxy::videoPixelFormat() const
 {
     return m_pixelFormat;
-}
-
-std::optional<WebCore::MediaSampleVideoFrame> RemoteVideoFrameProxy::videoFrame() const
-{
-    return std::nullopt;
 }
 
 #if PLATFORM(COCOA)

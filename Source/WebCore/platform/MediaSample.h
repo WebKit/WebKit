@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FloatSize.h"
-#include "MediaSampleVideoFrame.h"
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
@@ -50,7 +49,7 @@ struct PlatformSample {
         CMSampleBufferType,
         GStreamerSampleType,
         ByteRangeSampleType,
-        RemoteVideoFrameProxyType, // FIXME: To be removed when VideoFrame is not MediaSample.
+        VideoFrameType, // FIXME: To be removed when VideoFrame is not MediaSample.
     } type;
     union {
         const MockSampleBox* mockSampleBox;
@@ -109,9 +108,6 @@ public:
     virtual VideoRotation videoRotation() const { return VideoRotation::None; }
     virtual bool videoMirrored() const { return false; }
     virtual uint32_t videoPixelFormat() const { return 0; }
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    virtual std::optional<MediaSampleVideoFrame> videoFrame() const { return std::nullopt; };
-#endif
 #if PLATFORM(COCOA)
     virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
 #endif

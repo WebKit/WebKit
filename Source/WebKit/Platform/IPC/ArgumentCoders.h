@@ -265,6 +265,31 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
     }
 };
 
+template<typename T> struct ArgumentCoder<RefPtr<T>> {
+    template<typename U = T>
+    static void encode(Encoder& encoder, const RefPtr<U>& object)
+    {
+        if (object)
+            encoder << true << *object;
+        else
+            encoder << false;
+    }
+
+    template<typename U = T>
+    static std::optional<RefPtr<U>> decode(Decoder& decoder)
+    {
+        auto hasObject = decoder.template decode<bool>();
+        if (!hasObject)
+            return std::nullopt;
+        if (!*hasObject)
+            return RefPtr<U> { };
+        // Decoders of U held with RefPtr do not return std::optional<U> but
+        // std::optional<RefPtr<U>>. We cannot use `decoder.template decode<U>()`
+        // Currently expect "modern decoder" -like decode function.
+        return U::decode(decoder);
+    }
+};
+
 template<size_t index, typename... Elements>
 struct TupleEncoder {
     template<typename Encoder>

@@ -68,6 +68,7 @@
 #import "SourceBufferParserWebM.h"
 #import "TextTrackRepresentation.h"
 #import "UTIUtilities.h"
+#import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
@@ -2720,12 +2721,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-std::optional<MediaSampleVideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
+RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
 {
     updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
-        return std::nullopt;
-    return MediaSampleVideoFrame { RetainPtr { m_lastPixelBuffer }, ImageOrientation::None };
+        return nullptr;
+    return VideoFrameCV::create(currentMediaTime(), false, VideoFrameCV::VideoRotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

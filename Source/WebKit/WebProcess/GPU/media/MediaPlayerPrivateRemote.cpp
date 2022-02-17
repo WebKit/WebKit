@@ -80,8 +80,9 @@
 #endif
 
 #if PLATFORM(COCOA)
-#import <WebCore/PixelBufferConformerCV.h>
-#import <WebCore/VideoLayerManagerObjC.h>
+#include <WebCore/PixelBufferConformerCV.h>
+#include <WebCore/VideoFrameCV.h>
+#include <WebCore/VideoLayerManagerObjC.h>
 #endif
 
 namespace WebCore {
@@ -1002,14 +1003,21 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::Graphi
 }
 #endif
 
-std::optional<WebCore::MediaSampleVideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
+RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
 {
-    std::optional<WebCore::MediaSampleVideoFrame> result;
+// FIXME: This will be made cross-platform again soon. There are no other platforms using this at the moment.
+#if PLATFORM(COCOA)
+    std::optional<RefPtr<WebCore::VideoFrameCV>> result;
     bool changed = false;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged::Reply(result, changed), m_id))
-        return std::nullopt;
-    if (changed)
-        m_videoFrameForCurrentTime = WTFMove(result);
+        return m_videoFrameForCurrentTime;
+    if (changed) {
+        if (result)
+            m_videoFrameForCurrentTime = WTFMove(*result);
+        else
+            m_videoFrameForCurrentTime = nullptr;
+    }
+#endif
     return m_videoFrameForCurrentTime;
 }
 

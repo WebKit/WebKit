@@ -26,13 +26,43 @@
 #include "config.h"
 #include "VideoFrame.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 
 namespace WebCore {
 
-VideoFrame::VideoFrame() = default;
+VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, VideoRotation rotation)
+    : m_presentationTime(presentationTime)
+    , m_isMirrored(isMirrored)
+    , m_rotation(rotation)
+{
+}
 
 VideoFrame::~VideoFrame() = default;
+
+MediaTime VideoFrame::presentationTime() const
+{
+    return m_presentationTime;
+}
+
+MediaSample::VideoRotation VideoFrame::videoRotation() const
+{
+    return m_rotation;
+}
+
+bool VideoFrame::videoMirrored() const
+{
+    return m_isMirrored;
+}
+
+WebCore::PlatformSample VideoFrame::platformSample() const
+{
+    return { WebCore::PlatformSample::VideoFrameType, { } };
+}
+
+PlatformSample::Type VideoFrame::platformSampleType() const
+{
+    return WebCore::PlatformSample::VideoFrameType;
+}
 
 MediaTime VideoFrame::decodeTime() const
 {

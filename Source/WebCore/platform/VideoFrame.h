@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 
 #include "MediaSample.h"
 
@@ -38,8 +38,24 @@ class VideoFrame : public MediaSample {
 public:
     WEBCORE_EXPORT ~VideoFrame();
 
+    // WebCore::MediaSample overrides.
+    WEBCORE_EXPORT MediaTime presentationTime() const final;
+    WEBCORE_EXPORT VideoRotation videoRotation() const final;
+    WEBCORE_EXPORT bool videoMirrored() const final;
+    // FIXME: When VideoFrame is not MediaSample, these will not be needed.
+    WEBCORE_EXPORT WebCore::PlatformSample platformSample() const final;
+    WEBCORE_EXPORT PlatformSample::Type platformSampleType() const final;
+
+    virtual bool isRemoteProxy() const { return false; }
+#if USE(AVFOUNDATION)
+    virtual bool isCV() const { return false; }
+#endif
+
 protected:
-    WEBCORE_EXPORT VideoFrame();
+    WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, VideoRotation);
+    const MediaTime m_presentationTime;
+    const bool m_isMirrored;
+    const VideoRotation m_rotation;
 
 private:
     // FIXME: These are not intended to be used for these objects.
@@ -60,4 +76,7 @@ private:
 
 }
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrame)
+    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::VideoFrameType; }
+SPECIALIZE_TYPE_TRAITS_END()
 #endif

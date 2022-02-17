@@ -304,7 +304,6 @@ platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
-platform/graphics/avfoundation/MediaSampleVideoFrameAVF.mm
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
@@ -412,6 +411,7 @@ platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/CVUtilities.mm
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
+platform/graphics/cv/VideoFrameCV.mm
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm

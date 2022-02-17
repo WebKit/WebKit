@@ -1,3 +1,30 @@
+2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MediaPlayer::videoFrameForCurrentTime() should return VideoFrame
+        https://bugs.webkit.org/show_bug.cgi?id=236701
+
+        Reviewed by Eric Carlson.
+
+        Use added VideoFrameCV instead of removed MediaSampleVideoFrame.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::invalidate):
+        (WebKit::RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<RefPtr<T>>::encode):
+        (IPC::ArgumentCoder<RefPtr<T>>::decode):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        (WebKit::RemoteVideoFrameProxy::RemoteVideoFrameProxy):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        (isType):
+
 2022-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for setting RemoteLayerBackingStore buffers non-volatile in the GPU Process

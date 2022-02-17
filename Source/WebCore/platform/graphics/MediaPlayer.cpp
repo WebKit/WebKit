@@ -1088,7 +1088,7 @@ bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, 
 
 #endif
 
-std::optional<MediaSampleVideoFrame> MediaPlayer::videoFrameForCurrentTime()
+RefPtr<VideoFrame> MediaPlayer::videoFrameForCurrentTime()
 {
     return m_private->videoFrameForCurrentTime();
 }

@@ -37,6 +37,7 @@ namespace WebCore {
 
 class FragmentedSharedBuffer;
 class PixelBuffer;
+class VideoFrameCV;
 
 class MediaSampleAVFObjC : public MediaSample {
 public:
@@ -74,7 +75,6 @@ public:
     VideoRotation videoRotation() const override { return m_rotation; }
     bool videoMirrored() const override { return m_mirrored; }
     WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
-    WEBCORE_EXPORT std::optional<MediaSampleVideoFrame> videoFrame() const final;
     WEBCORE_EXPORT CVPixelBufferRef pixelBuffer() const final;
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
@@ -90,6 +90,8 @@ public:
     KeyIDs& keyIDs() { return m_keyIDs; }
 #endif
 
+    // FIXME: To be removed once VideoFrame is not a MediaSample.
+    WEBCORE_EXPORT RefPtr<VideoFrameCV> videoFrame() const;
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);

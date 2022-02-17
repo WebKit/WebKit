@@ -39,6 +39,7 @@
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
 #import "TextTrackRepresentation.h"
+#import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAsset.h>
@@ -725,7 +726,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-std::optional<MediaSampleVideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
+RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
     // a decompression session, even if that means the native video can't also be displayed
@@ -738,8 +739,8 @@ std::optional<MediaSampleVideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::video
     if (!m_isGatheringVideoFrameMetadata)
         updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
-        return std::nullopt;
-    return MediaSampleVideoFrame { RetainPtr { m_lastPixelBuffer }, ImageOrientation::None };
+        return nullptr;
+    return VideoFrameCV::create(currentMediaTime(), false, VideoFrameCV::VideoRotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
 DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()

@@ -43,7 +43,7 @@ public:
 
     ~GraphicsContextGLCVCocoa() final;
 
-    bool copyVideoSampleToTexture(const MediaSampleVideoFrame&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
+    bool copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
 
     void invalidateKnownTextureContent(GCGLuint texture);
 private:

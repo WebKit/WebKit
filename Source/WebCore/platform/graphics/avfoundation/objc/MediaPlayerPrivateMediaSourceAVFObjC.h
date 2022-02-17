@@ -222,7 +222,7 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-    std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() final;
+    RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
     bool supportsAcceleratedRendering() const override;
