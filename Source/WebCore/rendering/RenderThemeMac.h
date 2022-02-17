@@ -165,8 +165,6 @@ private:
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    bool shouldPaintCustomTextField(const RenderObject&) const;
-
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
