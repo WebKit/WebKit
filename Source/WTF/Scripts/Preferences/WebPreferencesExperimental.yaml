@@ -339,7 +339,7 @@ CSSMotionPathEnabled:
   humanReadableDescription: "Enable CSS Motion Path support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       default: true
     WebCore:
