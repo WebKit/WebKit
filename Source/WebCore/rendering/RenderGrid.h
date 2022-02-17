@@ -95,6 +95,7 @@ public:
     {
         return isSubgrid(ForColumns);
     }
+    bool isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const;
 
     const Grid& currentGrid() const
     {
@@ -105,6 +106,8 @@ public:
     {
         return numTracks(direction, m_grid);
     }
+
+    void placeItems();
 
 private:
     friend class GridTrackSizingAlgorithm;

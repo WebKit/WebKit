@@ -267,4 +267,20 @@ std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpa
     return nullptr;
 }
 
+GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer)
+{
+    ASSERT(subgrid.isSubgridInParentDirection(outer.direction()));
+    GridSpan fixedSpan = downcast<RenderGrid>(subgrid.parent())->gridSpanForChild(subgrid, outer.direction());
+
+    // Translate the current row/column indices into the coordinate
+    // space of the subgrid.
+    unsigned fixedIndex = (outer.direction() == ForColumns) ? outer.m_columnIndex : outer.m_rowIndex;
+    fixedIndex -= fixedSpan.startLine();
+
+    GridTrackSizingDirection innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*downcast<RenderGrid>(subgrid.parent()), subgrid, outer.direction());
+    ASSERT(subgrid.isSubgrid(innerDirection));
+
+    return GridIterator(subgrid.currentGrid(), innerDirection, fixedIndex);
+}
+
 } // namespace WebCore

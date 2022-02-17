@@ -647,6 +647,26 @@ unsigned RenderGrid::clampAutoRepeatTracks(GridTrackSizingDirection direction, u
     return std::min(autoRepeatTracks, maxTracks - insertionPoint);
 }
 
+void RenderGrid::placeItems()
+{
+    updateLogicalWidth();
+
+    LayoutUnit availableSpaceForColumns = availableLogicalWidth();
+    placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
+}
+
+static GridArea insertIntoGrid(Grid& grid, RenderBox& child, const GridArea& area)
+{
+    GridArea clamped = grid.insert(child, area);
+    if (!is<RenderGrid>(child))
+        return clamped;
+
+    RenderGrid& renderGrid = downcast<RenderGrid>(child);
+    if (renderGrid.isSubgridRows() || renderGrid.isSubgridColumns())
+        renderGrid.placeItems();
+    return clamped;
+}
+
 // FIXME: We shouldn't have to pass the available logical width as argument. The problem is that
 // availableLogicalWidth() does always return a value even if we cannot resolve it like when
 // computing the intrinsic size (preferred widths). That's why we pass the responsibility to the
@@ -700,7 +720,7 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
                 specifiedMajorAxisAutoGridItems.append(child);
             continue;
         }
-        grid.insert(*child, { area.rows, area.columns });
+        insertIntoGrid(grid, *child, { area.rows, area.columns });
     }
 
 #if ASSERT_ENABLED
@@ -830,7 +850,7 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Grid& grid, const Vector<Ren
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, *autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
 
-        *emptyGridArea = grid.insert(*autoGridItem, *emptyGridArea);
+        *emptyGridArea = insertIntoGrid(grid, *autoGridItem, *emptyGridArea);
 
         if (!isGridAutoFlowDense)
             minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.startLine() : emptyGridArea->columns.startLine());
@@ -902,7 +922,7 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(Grid& grid, RenderBox& gridItem, A
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, gridItem, autoPlacementMinorAxisDirection(), GridSpan::translatedDefiniteGridSpan(0, minorAxisSpanSize));
     }
 
-    grid.insert(gridItem, *emptyGridArea);
+    *emptyGridArea = insertIntoGrid(grid, gridItem, *emptyGridArea);
     autoPlacementCursor.first = emptyGridArea->rows.startLine();
     autoPlacementCursor.second = emptyGridArea->columns.startLine();
 }
@@ -1015,12 +1035,14 @@ void RenderGrid::layoutGridItems()
     populateGridPositionsForDirection(ForRows);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        
         if (m_grid.orderIterator().shouldSkipChild(*child)) {
             if (child->isOutOfFlowPositioned())
                 prepareChildForPositionedLayout(*child);
             continue;
         }
+
+        if (is<RenderGrid>(child) && (downcast<RenderGrid>(child)->isSubgridColumns() || downcast<RenderGrid>(child)->isSubgridRows()))
+            child->setNeedsLayout(MarkOnlyThis);
 
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
@@ -1636,6 +1658,14 @@ bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
     if ((direction == ForColumns) ? !style().gridSubgridColumns() : !style().gridSubgridRows())
         return false;
     return is<RenderGrid>(parent());
+}
+
+bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const
+{
+    if (!is<RenderGrid>(parent()))
+        return false;
+    GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(*downcast<RenderGrid>(parent()), *this, parentDirection);
+    return isSubgrid(direction);
 }
 
 LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction)

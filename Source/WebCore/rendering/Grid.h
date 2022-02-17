@@ -116,9 +116,16 @@ public:
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
     GridIterator(const Grid&, GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
+    static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer);
+
     RenderBox* nextGridItem();
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
     std::unique_ptr<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
+
+    GridTrackSizingDirection direction() const
+    {
+        return m_direction;
+    }
 
 private:
     const GridAsMatrix& m_grid;

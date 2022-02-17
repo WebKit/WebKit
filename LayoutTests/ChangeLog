@@ -1,3 +1,14 @@
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Include sub grid items in the track sizing algorithm of the outer grid
+        https://bugs.webkit.org/show_bug.cgi?id=236337
+
+        Reviewed by Dean Jackson.
+
+        Existing test expectations updated.
+
+        * TestExpectations:
+
 2022-02-17  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening. Add fuzzy data.
