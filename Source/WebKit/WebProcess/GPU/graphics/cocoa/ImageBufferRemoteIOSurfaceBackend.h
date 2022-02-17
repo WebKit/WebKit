@@ -71,9 +71,11 @@ private:
     bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }
 
     unsigned bytesPerRow() const final;
-    
+
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
+    void setBackendHandle(ImageBufferBackendHandle&&) final;
+    void clearBackendHandle() final;
 
     ImageBufferBackendHandle m_handle;
 };

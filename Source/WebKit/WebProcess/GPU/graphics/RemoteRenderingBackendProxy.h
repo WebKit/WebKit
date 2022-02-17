@@ -94,6 +94,20 @@ public:
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
+    WebCore::VolatilityState markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier);
+
+    struct BufferSet {
+        RefPtr<WebCore::ImageBuffer> front;
+        RefPtr<WebCore::ImageBuffer> back;
+        RefPtr<WebCore::ImageBuffer> secondaryBack;
+    };
+    
+    struct SwapBuffersResult {
+        BufferSet buffers;
+        bool frontBufferWasEmpty { false };
+    };
+    SwapBuffersResult swapToValidFrontBuffer(const BufferSet&);
+
     void finalizeRenderingUpdate();
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
     unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }

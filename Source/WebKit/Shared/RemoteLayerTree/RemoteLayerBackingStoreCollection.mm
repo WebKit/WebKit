@@ -106,6 +106,16 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
+void RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
+{
+    backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, false);
+}
+
+void RemoteLayerBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
+{
+    backingStore.swapToValidFrontBuffer();
+}
+
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
 {
     ASSERT(!m_inLayerFlush);

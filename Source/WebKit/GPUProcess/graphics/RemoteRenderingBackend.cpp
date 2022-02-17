@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "BufferIdentifierSet.h"
 #include "FilterReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
@@ -382,6 +383,72 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
 
     Locker locker { m_remoteDisplayListsLock };
     m_remoteDisplayLists.remove(renderingResourceIdentifier);
+}
+
+static std::optional<ImageBufferBackendHandle> handleFromBuffer(WebCore::ImageBuffer& buffer)
+{
+    auto* backend = buffer.ensureBackendCreated();
+    if (!backend)
+        return std::nullopt;
+
+    auto* sharing = backend->toBackendSharing();
+    if (is<ImageBufferBackendHandleSharing>(sharing))
+        return downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+
+    return std::nullopt;
+}
+
+void RemoteRenderingBackend::markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier identifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle> backendHandle, bool bufferWasEmpty)>&& completionHandler)
+{
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+    if (!imageBuffer) {
+        completionHandler({ }, false);
+        return;
+    }
+
+    auto backendHandle = handleFromBuffer(*imageBuffer);
+    auto previousState = imageBuffer->setNonVolatile();
+    completionHandler(WTFMove(backendHandle), previousState == VolatilityState::Empty);
+}
+
+// This is the GPU Process version of RemoteLayerBackingStore::swapToValidFrontBuffer().
+void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& bufferSet, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, bool frontBufferWasEmpty)>&& completionHandler)
+{
+    auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> ImageBuffer* {
+        return identifier ? m_remoteResourceCache.cachedImageBuffer({ *identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }) : nullptr;
+    };
+
+    auto frontBuffer = fetchBuffer(bufferSet.front);
+    auto backBuffer = fetchBuffer(bufferSet.back);
+    auto secondaryBackBuffer = fetchBuffer(bufferSet.secondaryBack);
+
+    if (!backBuffer || backBuffer->isInUse()) {
+        std::swap(backBuffer, secondaryBackBuffer);
+
+        // When pulling the secondary back buffer out of hibernation (to become
+        // the new front buffer), if it is somehow still in use (e.g. we got
+        // three swaps ahead of the render server), just give up and discard it.
+        if (backBuffer && backBuffer->isInUse())
+            backBuffer = nullptr;
+    }
+
+    std::swap(frontBuffer, backBuffer);
+
+    std::optional<ImageBufferBackendHandle> frontBufferHandle;
+    bool frontBufferWasEmpty = false;
+    if (frontBuffer) {
+        auto previousState = frontBuffer->setNonVolatile();
+        frontBufferWasEmpty = previousState == VolatilityState::Empty;
+        frontBufferHandle = handleFromBuffer(*frontBuffer);
+    }
+
+    auto bufferIdentifer = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+        if (!buffer)
+            return std::nullopt;
+        return buffer->renderingResourceIdentifier();
+    };
+
+    completionHandler({ bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) }, WTFMove(frontBufferHandle), frontBufferWasEmpty);
 }
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)

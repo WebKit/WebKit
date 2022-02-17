@@ -65,6 +65,7 @@ public:
     void setNeedsDisplay();
 
     void setContents(WTF::MachSendRight&& surfaceHandle);
+    // Returns true if the backing store changed.
     bool display();
 
     WebCore::FloatSize size() const { return m_size; }
@@ -89,6 +90,10 @@ public:
         return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
     }
 
+    // Just for RemoteBackingStoreCollection.
+    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, bool frontBufferNeedsDisplay);
+    void swapToValidFrontBuffer();
+
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
 
     enum class BufferType {
@@ -96,6 +101,11 @@ public:
         Back,
         SecondaryBack
     };
+
+    void willMakeBufferVolatile(BufferType);
+    void didMakeFrontBufferNonVolatile(WebCore::VolatilityState);
+
+    RefPtr<WebCore::ImageBuffer> bufferForType(BufferType) const;
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
     bool setBufferVolatility(BufferType, bool isVolatile);
@@ -108,17 +118,6 @@ private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
     void drawInContext(WebCore::GraphicsContext&);
-    void swapToValidFrontBuffer();
-
-    bool supportsPartialRepaint();
-
-    PlatformCALayerRemote* m_layer;
-
-    WebCore::FloatSize m_size;
-    float m_scale { 1.0f };
-    bool m_isOpaque { false };
-
-    WebCore::Region m_dirtyRegion;
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
@@ -134,6 +133,21 @@ private:
 
         void discard();
     };
+
+    bool setBufferVolatile(Buffer&);
+    WebCore::VolatilityState setBufferNonVolatile(Buffer&);
+
+    void swapBuffers();
+
+    bool supportsPartialRepaint() const;
+
+    PlatformCALayerRemote* m_layer;
+
+    WebCore::FloatSize m_size;
+    float m_scale { 1.0f };
+    bool m_isOpaque { false };
+
+    WebCore::Region m_dirtyRegion;
 
     // Used in the WebContent Process.
     Buffer m_frontBuffer;

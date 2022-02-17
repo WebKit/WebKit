@@ -53,6 +53,9 @@ public:
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
+    
+    virtual void makeFrontBufferNonVolatile(RemoteLayerBackingStore&);
+    virtual void swapToValidFrontBuffer(RemoteLayerBackingStore&);
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);

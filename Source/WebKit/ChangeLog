@@ -1,3 +1,67 @@
+2022-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for setting RemoteLayerBackingStore buffers non-volatile in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=236731
+
+        Reviewed by Tim Horton.
+
+        Calls to setVolatile() and isInUse() on IOSurface need to happen in the GPU Process,
+        so when RemoteLayerBackingStore swaps buffers in display(), and makes the front buffer
+        non-volatile, those things need to go via RemoteRenderingBackend.
+        
+        So plumb markSurfaceNonVolatile() and swapToValidFrontBuffer() through RemoteLayerBackingStoreCollection
+        and RemoteRenderingBackend, both as sync messages.
+        
+        In both cases, if the surface was purged (i.e. setNonVolatile returned Empty) we need
+        to trigger a setNeedsDisplay(), wired through RemoteLayerBackingStore::didMakeFrontBufferNonVolatile()
+        so there's only one call site.
+
+        We also need to always send the ImageBufferBackendHandle back from the GPU Process for
+        the front buffer, since a future patch will clear these out in the web process when
+        making buffers volatile.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::handleFromBuffer):
+        (WebKit::RemoteRenderingBackend::markSurfaceNonVolatile):
+        (WebKit::RemoteRenderingBackend::swapToValidFrontBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applySwappedBuffers):
+        (WebKit::RemoteLayerBackingStore::swapBuffers):
+        (WebKit::RemoteLayerBackingStore::supportsPartialRepaint const):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatile):
+        (WebKit::RemoteLayerBackingStore::setBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::willMakeBufferVolatile):
+        (WebKit::RemoteLayerBackingStore::didMakeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        (WebKit::RemoteLayerBackingStore::bufferForType const):
+        (WebKit::RemoteLayerBackingStore::supportsPartialRepaint): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::swapToValidFrontBuffer):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer):
+        * WebProcess/GPU/graphics/ImageBufferBackendHandleSharing.h:
+        (WebKit::ImageBufferBackendHandleSharing::setBackendHandle):
+        (WebKit::ImageBufferBackendHandleSharing::clearBackendHandle):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::putPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::swapToValidFrontBuffer):
+        (WebKit::RemoteRenderingBackendProxy::markSurfaceNonVolatile):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::setBackendHandle):
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::clearBackendHandle):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.h:
+
 2022-02-17  Chris Dumez  <cdumez@apple.com>
 
         Clean up / optimize call sites constructing vectors

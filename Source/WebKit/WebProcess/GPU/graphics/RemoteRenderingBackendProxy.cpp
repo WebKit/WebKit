@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBufferProxy.h"
@@ -145,7 +146,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
-bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, Span<uint8_t> result)
+bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
         SharedMemory::IPCHandle ipcHandle { WTFMove(*handle), m_getPixelBufferSharedMemory->size() };
@@ -164,7 +165,7 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(WebCore::Renderin
     return true;
 }
 
-void RemoteRenderingBackendProxy::putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void RemoteRenderingBackendProxy::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     sendToStream(Messages::RemoteRenderingBackend::PutPixelBufferForImageBuffer(imageBuffer, pixelBuffer, srcRect, destPoint, destFormat));
 }
@@ -262,6 +263,74 @@ void RemoteRenderingBackendProxy::deleteAllFonts()
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     sendToStream(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier));
+}
+
+auto RemoteRenderingBackendProxy::swapToValidFrontBuffer(const BufferSet& buffers) -> SwapBuffersResult
+{
+    auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+        if (!buffer)
+            return std::nullopt;
+        return buffer->renderingResourceIdentifier();
+    };
+
+    auto bufferSet = BufferIdentifierSet {
+        bufferIdentifier(buffers.front.get()),
+        bufferIdentifier(buffers.back.get()),
+        bufferIdentifier(buffers.secondaryBack.get())
+    };
+    
+    BufferIdentifierSet swappedBufferSet;
+    std::optional<ImageBufferBackendHandle> frontBufferHandle;
+    bool frontBufferWasEmpty = false;
+    
+    sendSyncToStream(Messages::RemoteRenderingBackend::SwapToValidFrontBuffer(bufferSet),
+        Messages::RemoteRenderingBackend::SwapToValidFrontBuffer::Reply(swappedBufferSet, frontBufferHandle, frontBufferWasEmpty));
+
+    auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt) -> RefPtr<ImageBuffer> {
+        if (!identifier)
+            return nullptr;
+
+        auto* buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
+        if (!buffer)
+            return nullptr;
+            
+        if (handle) {
+            if (auto* backend = buffer->ensureBackendCreated()) {
+                auto* sharing = backend->toBackendSharing();
+                if (is<ImageBufferBackendHandleSharing>(sharing))
+                    downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
+            }
+        }
+
+        return buffer;
+    };
+
+    return {
+        {
+            fetchBufferWithIdentifier(swappedBufferSet.front, WTFMove(frontBufferHandle)),
+            fetchBufferWithIdentifier(swappedBufferSet.back),
+            fetchBufferWithIdentifier(swappedBufferSet.secondaryBack)
+        },
+        frontBufferWasEmpty
+    };
+}
+
+VolatilityState RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingResourceIdentifier identifier)
+{
+    bool bufferWasEmpty;
+    std::optional<ImageBufferBackendHandle> backendHandle;
+    sendSyncToStream(Messages::RemoteRenderingBackend::MarkSurfaceNonVolatile(identifier), Messages::RemoteRenderingBackend::MarkSurfaceNonVolatile::Reply(backendHandle, bufferWasEmpty));
+
+    auto buffer = m_remoteResourceCacheProxy.cachedImageBuffer(identifier);
+    if (backendHandle && buffer) {
+        if (auto* backend = buffer->ensureBackendCreated()) {
+            auto* sharing = backend->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*backendHandle));
+        }
+    }
+
+    return bufferWasEmpty ? VolatilityState::Empty : VolatilityState::Valid;
 }
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()

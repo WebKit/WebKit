@@ -41,6 +41,30 @@ RemoteRenderingBackendProxy& RemoteLayerWithRemoteRenderingBackingStoreCollectio
     return layerTreeContext().ensureRemoteRenderingBackendProxy();
 }
 
+void RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
+{
+    auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
+    auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
+    if (!frontBuffer)
+        return;
+
+    auto result = remoteRenderingBackend.markSurfaceNonVolatile(frontBuffer->renderingResourceIdentifier());
+    backingStore.didMakeFrontBufferNonVolatile(result);
+}
+
+void RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
+{
+    auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
+
+    auto identifiers = RemoteRenderingBackendProxy::BufferSet {
+        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front),
+        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Back),
+        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack)
+    };
+    auto swapResult = remoteRenderingBackend.swapToValidFrontBuffer(WTFMove(identifiers));
+    backingStore.applySwappedBuffers(WTFMove(swapResult.buffers.front), WTFMove(swapResult.buffers.back), WTFMove(swapResult.buffers.secondaryBack), swapResult.frontBufferWasEmpty);
+}
+
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore(const RemoteLayerBackingStore& backingStore)
 {
     auto renderingMode = backingStore.type() == RemoteLayerBackingStore::Type::IOSurface ? WebCore::RenderingMode::Accelerated : WebCore::RenderingMode::Unaccelerated;

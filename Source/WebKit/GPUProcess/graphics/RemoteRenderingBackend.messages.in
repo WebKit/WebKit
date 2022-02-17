@@ -36,6 +36,10 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheFont(IPC::FontReference font) NotStreamEncodable
     DeleteAllFonts()
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+
+    MarkSurfaceNonVolatile(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (std::optional<WebKit::ImageBufferBackendHandle> backendHandle, bool bufferWasEmpty) Synchronous NotStreamEncodableReply
+    SwapToValidFrontBuffer(struct WebKit::BufferIdentifierSet bufferSet) -> (struct WebKit::BufferIdentifierSet swappedBufferSet, std::optional<WebKit::ImageBufferBackendHandle> frontBufferHandle, bool frontBufferWasEmpty) Synchronous NotStreamEncodableReply
+
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 }
 

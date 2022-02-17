@@ -27,29 +27,49 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ImageBufferBackendHandle.h"
-#include <WebCore/ImageBufferBackend.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebKit {
 
-class ImageBufferBackendHandleSharing : public WebCore::ImageBufferBackendSharing {
-public:
-    virtual ImageBufferBackendHandle createBackendHandle() const = 0;
+struct BufferIdentifierSet {
+    std::optional<WebCore::RenderingResourceIdentifier> front;
+    std::optional<WebCore::RenderingResourceIdentifier> back;
+    std::optional<WebCore::RenderingResourceIdentifier> secondaryBack;
 
-    virtual void setBackendHandle(ImageBufferBackendHandle&&) { }
-    virtual void clearBackendHandle() { }
-
-private:
-    bool isImageBufferBackendHandleSharing() const final { return true; }
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<BufferIdentifierSet> decode(Decoder&);
 };
 
+
+template<class Encoder>
+void BufferIdentifierSet::encode(Encoder& encoder) const
+{
+    encoder << front;
+    encoder << back;
+    encoder << secondaryBack;
+}
+
+template<class Decoder>
+std::optional<BufferIdentifierSet> BufferIdentifierSet::decode(Decoder& decoder)
+{
+    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> frontIdentifier;
+    decoder >> frontIdentifier;
+    if (!frontIdentifier)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> backIdentifier;
+    decoder >> backIdentifier;
+    if (!backIdentifier)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> secondaryBackIdentifier;
+    decoder >> secondaryBackIdentifier;
+    if (!secondaryBackIdentifier)
+        return std::nullopt;
+
+    return BufferIdentifierSet { *frontIdentifier, *backIdentifier, *secondaryBackIdentifier };
+}
+
 } // namespace WebKit
-
-#define SPECIALIZE_TYPE_TRAITS_IMAGE_BUFFER_BACKEND_SHARING(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::ImageBufferBackendSharing& backendSharing) { return backendSharing.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_IMAGE_BUFFER_BACKEND_SHARING(WebKit::ImageBufferBackendHandleSharing, isImageBufferBackendHandleSharing())
 
 #endif // ENABLE(GPU_PROCESS)

@@ -42,6 +42,9 @@ private:
     RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&) final;
     
     RemoteRenderingBackendProxy& remoteRenderingBackendProxy();
+
+    void makeFrontBufferNonVolatile(RemoteLayerBackingStore&) final;
+    void swapToValidFrontBuffer(RemoteLayerBackingStore&) final;
 };
 
 } // namespace WebKit

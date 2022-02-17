@@ -67,6 +67,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteDisplayListRecorder;
+struct BufferIdentifierSet;
 struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend : private IPC::MessageSender, public IPC::StreamMessageReceiver {
@@ -117,6 +118,9 @@ private:
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
+
+    void markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>, bool bufferWasEmpty)>&&);
+    void swapToValidFrontBuffer(const BufferIdentifierSet& bufferSet, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, bool frontBufferWasEmpty)>&&);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
