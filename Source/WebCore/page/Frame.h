@@ -57,6 +57,7 @@ typedef struct HBITMAP__* HBITMAP;
 #endif
 
 typedef const struct OpaqueJSContext* JSContextRef;
+typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace JSC { namespace Yarr {
 class RegularExpression;
@@ -181,6 +182,7 @@ public:
     String debugDescription() const;
 
     WEBCORE_EXPORT static Frame* fromJSContext(JSContextRef);
+    WEBCORE_EXPORT static Frame* contentFrameFromWindowOrFrameElement(JSContextRef, JSValueRef);
 
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 

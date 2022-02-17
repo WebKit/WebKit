@@ -67,6 +67,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "JSNode.h"
 #include "JSWindowProxy.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
@@ -1134,6 +1135,24 @@ Frame* Frame::fromJSContext(JSContextRef context)
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? &serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame() : nullptr;
 #endif
     return nullptr;
+}
+
+Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValueRef valueRef)
+{
+    ASSERT(context);
+    ASSERT(valueRef);
+
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::JSValue value = toJS(globalObject, valueRef);
+    JSC::VM& vm = globalObject->vm();
+
+    if (auto* window = JSDOMWindow::toWrapped(vm, value))
+        return window->frame();
+
+    auto* jsNode = JSC::jsDynamicCast<JSNode*>(vm, value);
+    if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
+        return nullptr;
+    return downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame();
 }
 
 #if ENABLE(DATA_DETECTION)

@@ -59,6 +59,11 @@
     return wrapper(WebKit::WebFrame::frameForContext(context.JSGlobalContextRef));
 }
 
++ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value
+{
+    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef));
+}
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInFrame.class, self))

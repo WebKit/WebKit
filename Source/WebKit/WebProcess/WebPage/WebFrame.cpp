@@ -719,6 +719,12 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
+WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
+{
+    auto* coreFrame = Frame::contentFrameFromWindowOrFrameElement(context, value);
+    return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
+}
+
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* cssStyleDeclarationHandle, InjectedBundleScriptWorld* world)
 {
     if (!m_coreFrame)

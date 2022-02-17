@@ -1,3 +1,18 @@
+2022-02-16  Timothy Hatcher  <timothy@apple.com>
+
+        Add -[WKWebProcessPlugInFrame lookUpFrameFromJSValue:].
+        https://bugs.webkit.org/show_bug.cgi?id=236714
+        rdar://problem/89030846
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpContentFrameFromWindowOrFrameElement:]): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentFrameForWindowOrFrameElement): Added.
+        * WebProcess/WebPage/WebFrame.h:
+
 2022-02-16  Sihui Liu  <sihui_liu@apple.com>
 
         Use FileSystem::readEntireFile everywhere

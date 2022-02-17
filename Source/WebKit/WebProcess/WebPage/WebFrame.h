@@ -146,6 +146,7 @@ public:
     void setAccessibleName(const String&);
 
     static WebFrame* frameForContext(JSContextRef);
+    static WebFrame* contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);
 
     JSValueRef jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
