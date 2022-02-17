@@ -30,8 +30,6 @@
 #include "GPUProcessConnection.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include <WebCore/VideoFrame.h>
-#include <wtf/Function.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace IPC {
 class Connection;
@@ -41,6 +39,7 @@ class Decoder;
 namespace WebKit {
 
 class GPUProcessConnection;
+class RemoteVideoFrameObjectHeapProxy;
 
 // A WebCore::VideoFrame class that points to a concrete WebCore::VideoFrame instance
 // in another process, GPU process.
@@ -64,15 +63,7 @@ public:
 
     static Properties properties(WebKit::RemoteVideoFrameReference&&, const WebCore::MediaSample&);
 
-#if PLATFORM(COCOA)
-    using PixelBufferResultCallback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
-#else
-    using PixelBufferResultCallback = Function<void()>;
-#endif
-    // PixelBufferCallback should always complete but it might not be called on the same thread it was created.
-    using PixelBufferCallback = Function<void(const RemoteVideoFrameProxy&, PixelBufferResultCallback&&)>;
-
-    static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, Properties, PixelBufferCallback&&);
+    static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
 
     // Called by the end-points that capture creation messages that are sent from GPUP but
     // whose destinations were released in WP before message was processed.
@@ -91,7 +82,7 @@ public:
 #endif
 
 private:
-    RemoteVideoFrameProxy(IPC::Connection&, Properties, PixelBufferCallback&&);
+    RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
 
     // WebCore::VideoFrame overrides.
     MediaTime presentationTime() const final;
@@ -104,10 +95,6 @@ private:
     WebCore::PlatformSample platformSample() const final;
     WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::RemoteVideoFrameProxyType; }
 
-#if PLATFORM(COCOA)
-    void getPixelBuffer();
-#endif
-
     const Ref<IPC::Connection> m_connection;
     RemoteVideoFrameReferenceTracker m_referenceTracker;
     const MediaTime m_presentationTime;
@@ -115,10 +102,12 @@ private:
     const VideoRotation m_rotation;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
+    // FIXME: Remove this.
+    mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#if PLATFORM(COCOA)
     mutable Lock m_pixelBufferLock;
-    RetainPtr<CVPixelBufferRef> m_pixelBuffer;
-    BinarySemaphore m_semaphore;
-    PixelBufferCallback m_pixelBufferCallback;
+    mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+#endif
 };
 
 template<typename Encoder> void RemoteVideoFrameProxy::Properties::encode(Encoder& encoder) const

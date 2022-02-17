@@ -186,7 +186,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
     gpuConnection.addClient(*this);
     m_connection = &gpuConnection.connection();
-    m_remoteVideoFrameObjectHeapProxy = &gpuConnection.remoteVideoFrameObjectHeapProxy();
+    m_videoFrameObjectHeapProxy = &gpuConnection.videoFrameObjectHeapProxy();
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
 
     if (m_loggingLevel)
@@ -327,13 +327,7 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (remoteFrameIdentifier) {
         Locker locker { m_connectionLock };
         RemoteVideoFrameProxy::Properties properties { { *remoteFrameIdentifier, 0 }, remoteSample.time(), remoteSample.mirrored(), remoteSample.rotation(), remoteSample.size(), remoteSample.videoFormat() };
-        remoteVideoFrame = RemoteVideoFrameProxy::create(*m_connection, properties, [proxy = m_remoteVideoFrameObjectHeapProxy](auto& frame, auto&& callback) {
-            if (!proxy) {
-                callback({ });
-                return;
-            }
-            proxy->getVideoFrameBuffer(frame, WTFMove(callback));
-        });
+        remoteVideoFrame = RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
     }
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);

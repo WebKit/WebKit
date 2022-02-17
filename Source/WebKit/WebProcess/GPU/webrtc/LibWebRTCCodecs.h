@@ -152,7 +152,7 @@ private:
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_remoteVideoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;

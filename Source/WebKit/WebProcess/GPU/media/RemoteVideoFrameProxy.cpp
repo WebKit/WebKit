@@ -29,7 +29,12 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/threads/BinarySemaphore.h>
+#endif
 
 namespace WebKit {
 
@@ -45,9 +50,9 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
     };
 }
 
-Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, Properties properties, PixelBufferCallback&& callback)
+Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
 {
-    return adoptRef(*new RemoteVideoFrameProxy(connection, WTFMove(properties), WTFMove(callback)));
+    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTFMove(properties)));
 }
 
 static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
@@ -60,7 +65,7 @@ void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Propertie
     releaseRemoteVideoFrameProxy(connection, { { properties.reference.identifier(), properties.reference.version() }, 0 });
 }
 
-RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Properties properties, PixelBufferCallback&& callback)
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
     : m_connection(connection)
     , m_referenceTracker(properties.reference)
     , m_presentationTime(properties.presentationTime)
@@ -68,7 +73,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Proper
     , m_rotation(properties.rotation)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
-    , m_pixelBufferCallback(WTFMove(callback))
+    , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
 {
 }
 
@@ -123,25 +128,22 @@ std::optional<WebCore::MediaSampleVideoFrame> RemoteVideoFrameProxy::videoFrame(
 }
 
 #if PLATFORM(COCOA)
-void RemoteVideoFrameProxy::getPixelBuffer()
-{
-    ASSERT(m_pixelBufferLock.isHeld());
-    std::exchange(m_pixelBufferCallback, { })(*this, [this](auto pixelBuffer) {
-        m_pixelBuffer = WTFMove(pixelBuffer);
-        if (!m_pixelBuffer) {
-            // some code paths do not like empty pixel buffers.
-            m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
-        }
-        m_semaphore.signal();
-    });
-    m_semaphore.wait();
-}
-
 CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
     Locker lock(m_pixelBufferLock);
-    if (!m_pixelBuffer && m_pixelBufferCallback)
-        const_cast<RemoteVideoFrameProxy*>(this)->getPixelBuffer();
+    if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
+        BinarySemaphore semaphore;
+        m_videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, [this, &semaphore](auto pixelBuffer) {
+            m_pixelBuffer = WTFMove(pixelBuffer);
+            if (!m_pixelBuffer) {
+                // Some code paths do not like empty pixel buffers.
+                m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
+            }
+            semaphore.signal();
+        });
+        semaphore.wait();
+        m_videoFrameObjectHeapProxy = nullptr;
+    }
     return m_pixelBuffer.get();
 }
 #endif

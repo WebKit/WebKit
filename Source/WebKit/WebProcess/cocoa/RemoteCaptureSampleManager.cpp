@@ -135,10 +135,10 @@ void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection* conn
     setConnection(connection);
 }
 
-void RemoteCaptureSampleManager::setRemoteVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy* proxy)
+void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy* proxy)
 {
-    Locker lock(m_remoteVideoFrameObjectHeapProxyLock);
-    m_remoteVideoFrameObjectHeapProxy = proxy;
+    Locker lock(m_videoFrameObjectHeapProxyLock);
+    m_videoFrameObjectHeapProxy = proxy;
 }
 
 void RemoteCaptureSampleManager::dispatchToThread(Function<void()>&& callback)
@@ -166,16 +166,9 @@ void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentif
     // We always create RemoteVideoFrameProxy so that we can release the corresponding GPUProcess IOSurface right away if there is no video source.
     if (remoteIdentifier) {
         RemoteVideoFrameProxy::Properties properties { { *remoteIdentifier, 0 }, sample.time(), sample.mirrored(), sample.rotation(), sample.size(), sample.videoFormat() };
-        
         // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
-        Locker lock(m_remoteVideoFrameObjectHeapProxyLock);
-        videoFrame = RemoteVideoFrameProxy::create(*m_connection, properties, [proxy = m_remoteVideoFrameObjectHeapProxy](auto& frame, auto&& callback) {
-            if (!proxy) {
-                callback({ });
-                return;
-            }
-            proxy->getVideoFrameBuffer(frame, WTFMove(callback));
-        });
+        Locker lock(m_videoFrameObjectHeapProxyLock);
+        videoFrame = RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
     }
 
     auto iterator = m_videoSources.find(identifier);

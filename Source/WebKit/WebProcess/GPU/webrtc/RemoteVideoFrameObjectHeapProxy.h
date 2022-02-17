@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
 
 #include "RemoteVideoFrameObjectHeapProxyProcessor.h"
 
@@ -37,15 +37,20 @@ public:
     static Ref<RemoteVideoFrameObjectHeapProxy> create(GPUProcessConnection& connection) { return adoptRef(*new RemoteVideoFrameObjectHeapProxy(connection)); }
     ~RemoteVideoFrameObjectHeapProxy() = default;
 
+#if PLATFORM(COCOA)
     void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, WTFMove(callback)); }
+#endif
 
 private:
     explicit RemoteVideoFrameObjectHeapProxy(GPUProcessConnection& connection)
+#if PLATFORM(COCOA)
         : m_processor(RemoteVideoFrameObjectHeapProxyProcessor::create(connection))
+#endif
     {
     }
-
+#if PLATFORM(COCOA)
     Ref<RemoteVideoFrameObjectHeapProxyProcessor> m_processor;
+#endif
 };
 
 } // namespace WebKit

@@ -63,7 +63,7 @@ public:
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     void didUpdateSourceConnection(IPC::Connection*);
-    void setRemoteVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
+    void setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -124,8 +124,8 @@ private:
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteVideo>> m_videoSources;
 
-    Lock m_remoteVideoFrameObjectHeapProxyLock;
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_remoteVideoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_remoteVideoFrameObjectHeapProxyLock);
+    Lock m_videoFrameObjectHeapProxyLock;
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_videoFrameObjectHeapProxyLock);
 };
 
 } // namespace WebKit

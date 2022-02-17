@@ -178,15 +178,7 @@ RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxy::paintCompositedResult
     }
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(m_gpuProcessConnection->connection(), WTFMove(*result),
-#if PLATFORM(COCOA)
-        [proxy = Ref { m_gpuProcessConnection->remoteVideoFrameObjectHeapProxy() }](auto& frame, auto&& callback) {
-            proxy->getVideoFrameBuffer(frame, WTFMove(callback));
-        }
-#else
-        [auto& frame, auto&& callback] { callback(); }
-#endif
-    );
+    return RemoteVideoFrameProxy::create(m_gpuProcessConnection->connection(), m_gpuProcessConnection->videoFrameObjectHeapProxy(), WTFMove(*result));
 }
 #endif
 

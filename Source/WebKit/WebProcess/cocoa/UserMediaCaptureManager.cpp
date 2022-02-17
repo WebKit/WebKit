@@ -33,6 +33,7 @@
 #include "RemoteRealtimeAudioSource.h"
 #include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -243,7 +244,7 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
     if (m_shouldCaptureInGPUProcess)
-        m_manager.m_remoteCaptureSampleManager.setRemoteVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().remoteVideoFrameObjectHeapProxy());
+        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
     bool shouldUseIOSurface = !m_manager.m_shouldUseGPUProcessRemoteFrames;
     return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess), shouldUseIOSurface));
