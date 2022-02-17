@@ -1,3 +1,16 @@
+2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ASSERTION FAILED: Thread::current().uid() == threadAssertion.m_uid for RemoteVideoFrameObjectHeap
+        https://bugs.webkit.org/show_bug.cgi?id=236786
+
+        Reviewed by Antti Koivisto.
+
+        The object is ok to destroy from any thread.
+        Reset the thread assertion.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap):
+
 2022-02-17  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure NetworkStorageManager::moveData performs move operation based on data types

@@ -51,6 +51,7 @@ RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(GPUConnectionToWebProcess
 RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
 {
     ASSERT(!m_gpuConnectionToWebProcess);
+    m_consumeThread.reset();
 }
 
 void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection)
