@@ -60,13 +60,19 @@ public:
     ScrollAnimationKinetic(ScrollAnimationClient&);
     virtual ~ScrollAnimationKinetic();
 
-    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, bool mayHScroll, bool mayVScroll);
+    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, const FloatSize& previousVelocity, bool mayHScroll, bool mayVScroll);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
 
     void appendToScrollHistory(const PlatformWheelEvent&);
     void clearScrollHistory();
 
     FloatSize computeVelocity();
+
+    MonotonicTime startTime() { return m_startTime; }
+    FloatSize initialVelocity() { return m_initialVelocity; }
+    FloatPoint initialOffset() { return m_initialOffset; }
+
+    FloatSize accumulateVelocityFromPreviousGesture(const MonotonicTime, const FloatPoint&, const FloatSize&);
 
 private:
     void serviceAnimation(MonotonicTime) final;
@@ -76,6 +82,8 @@ private:
     std::optional<PerAxisData> m_verticalData;
 
     Vector<PlatformWheelEvent> m_scrollHistory;
+    FloatPoint m_initialOffset;
+    FloatSize m_initialVelocity;
 };
 
 } // namespace WebCore

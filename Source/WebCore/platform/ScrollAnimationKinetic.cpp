@@ -150,8 +150,11 @@ FloatSize ScrollAnimationKinetic::computeVelocity()
     return FloatSize(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
 }
 
-bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, bool mayHScroll, bool mayVScroll)
+bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, const FloatSize& previousVelocity, bool mayHScroll, bool mayVScroll)
 {
+    m_initialOffset = initialOffset;
+    m_initialVelocity = velocity;
+
     stop();
 
     if (velocity.isZero()) {
@@ -160,19 +163,15 @@ bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatP
         return false;
     }
 
-    auto elapsedTime = 0_s;
     auto extents = m_client.scrollExtentsForAnimation(*this);
 
-    auto accumulateVelocity = [&](double velocity, std::optional<PerAxisData> axisData) -> double {
-        if (axisData && axisData.value().animateScroll(elapsedTime)) {
-            double lastVelocity = axisData.value().velocity();
-            if ((std::signbit(lastVelocity) == std::signbit(velocity))
-                && (std::abs(velocity) >= std::abs(lastVelocity * velocityAccumulationFloor))) {
-                double minVelocity = lastVelocity * velocityAccumulationFloor;
-                double maxVelocity = lastVelocity * velocityAccumulationCeil;
-                double accumulationMultiplier = (velocity - minVelocity) / (maxVelocity - minVelocity);
-                velocity += lastVelocity * std::min(accumulationMultiplier, velocityAccumulationMax);
-            }
+    auto accumulateVelocity = [&](double velocity, double previousVelocity) -> double {
+        if ((std::signbit(previousVelocity) == std::signbit(velocity))
+            && (std::abs(velocity) >= std::abs(previousVelocity * velocityAccumulationFloor))) {
+            double minVelocity = previousVelocity * velocityAccumulationFloor;
+            double maxVelocity = previousVelocity * velocityAccumulationCeil;
+            double accumulationMultiplier = (velocity - minVelocity) / (maxVelocity - minVelocity);
+            velocity += previousVelocity * std::min(accumulationMultiplier, velocityAccumulationMax);
         }
 
         return velocity;
@@ -181,14 +180,14 @@ bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatP
     if (mayHScroll) {
         m_horizontalData = PerAxisData(extents.minimumScrollOffset().x(),
             extents.maximumScrollOffset().x(),
-            initialOffset.x(), accumulateVelocity(velocity.width(), m_horizontalData));
+            initialOffset.x(), accumulateVelocity(velocity.width(), previousVelocity.width()));
     } else
         m_horizontalData = std::nullopt;
 
     if (mayVScroll) {
         m_verticalData = PerAxisData(extents.minimumScrollOffset().y(),
             extents.maximumScrollOffset().y(),
-            initialOffset.y(), accumulateVelocity(velocity.height(), m_verticalData));
+            initialOffset.y(), accumulateVelocity(velocity.height(), previousVelocity.height()));
     } else
         m_verticalData = std::nullopt;
 
@@ -232,5 +231,23 @@ String ScrollAnimationKinetic::debugDescription() const
     return textStream.release();
 }
 
+FloatSize ScrollAnimationKinetic::accumulateVelocityFromPreviousGesture(const MonotonicTime lastStartTime, const FloatPoint& lastInitialOffset, const FloatSize& lastInitialVelocity)
+{
+    auto elapsedTime = MonotonicTime::now() - lastStartTime;
+    auto extents = m_client.scrollExtentsForAnimation(*this);
+
+    auto horizontalData = PerAxisData(extents.minimumScrollOffset().x(),
+        extents.maximumScrollOffset().x(),
+        lastInitialOffset.x(), lastInitialVelocity.width());
+
+    auto verticalData = PerAxisData(extents.minimumScrollOffset().y(),
+        extents.maximumScrollOffset().y(),
+        lastInitialOffset.y(), lastInitialVelocity.height());
+
+    horizontalData.animateScroll(elapsedTime);
+    verticalData.animateScroll(elapsedTime);
+
+    return FloatSize(horizontalData.velocity(), verticalData.velocity());
+}
 
 } // namespace WebCore

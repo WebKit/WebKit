@@ -237,6 +237,12 @@ private:
     bool processWheelEventForKineticScrolling(const PlatformWheelEvent&);
 
     Deque<PlatformWheelEvent> m_scrollHistory;
+
+    struct {
+        MonotonicTime startTime;
+        FloatPoint initialOffset;
+        FloatSize initialVelocity;
+    } m_previousKineticAnimationInfo;
 #endif
 
     ScrollingEffectsControllerClient& m_client;
