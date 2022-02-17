@@ -45,7 +45,7 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
     )
 
     if (USE_OPENGL)
-        list(APPEND ANGLEGLESv2_LIBRARIES OpenGL::OpenGL)
+        list(APPEND ANGLEGLESv2_LIBRARIES ${OPENGL_LIBRARIES})
     else ()
         list(APPEND ANGLEGLESv2_LIBRARIES OpenGL::GLES)
     endif ()
