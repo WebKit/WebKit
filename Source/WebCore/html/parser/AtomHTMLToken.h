@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "HTMLAtomStringCache.h"
+#include "HTMLNameCache.h"
 #include "HTMLToken.h"
 
 namespace WebCore {
@@ -209,11 +209,11 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
         if (attribute.name.isEmpty())
             continue;
 
-        auto localName = HTMLAtomStringCache::makeTagOrAttributeName(attribute.name);
+        auto qualifiedName = HTMLNameCache::makeAttributeQualifiedName(attribute.name);
 
         // FIXME: This is N^2 for the number of attributes.
-        if (!hasAttribute(m_attributes, localName))
-            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom(), localName, nullAtom()), HTMLAtomStringCache::makeAttributeValue(attribute.value)));
+        if (!hasAttribute(m_attributes, qualifiedName.localName()))
+            m_attributes.uncheckedAppend(Attribute(WTFMove(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value)));
         else
             m_hasDuplicateAttribute = HasDuplicateAttribute::Yes;
     }
@@ -227,7 +227,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         ASSERT_NOT_REACHED();
         return;
     case HTMLToken::DOCTYPE:
-        m_name = HTMLAtomStringCache::makeTagOrAttributeName(token.name());
+        m_name = HTMLNameCache::makeTagName(token.name());
         m_doctypeData = token.releaseDoctypeData();
         return;
     case HTMLToken::EndOfFile:
@@ -235,7 +235,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     case HTMLToken::StartTag:
     case HTMLToken::EndTag:
         m_selfClosing = token.selfClosing();
-        m_name = HTMLAtomStringCache::makeTagOrAttributeName(token.name());
+        m_name = HTMLNameCache::makeTagName(token.name());
         initializeAttributes(token.attributes());
         return;
     case HTMLToken::Comment:

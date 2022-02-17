@@ -28,7 +28,7 @@
 
 #import "FontFamilySpecificationCoreText.h"
 #import "GCController.h"
-#import "HTMLAtomStringCache.h"
+#import "HTMLNameCache.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
@@ -101,7 +101,7 @@ void jettisonExpensiveObjectsOnTopLevelNavigation()
     GCController::singleton().deleteAllLinkedCode(JSC::DeleteAllCodeIfNotCollecting);
 #endif
 
-    HTMLAtomStringCache::clear();
+    HTMLNameCache::clear();
 }
 
 void registerMemoryReleaseNotifyCallbacks()
