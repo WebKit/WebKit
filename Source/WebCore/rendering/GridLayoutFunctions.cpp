@@ -82,6 +82,11 @@ bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)
     return child.isHorizontalWritingMode() != grid.isHorizontalWritingMode();
 }
 
+bool isOrthogonalParent(const RenderGrid& grid, const RenderElement& parent)
+{
+    return parent.isHorizontalWritingMode() != grid.isHorizontalWritingMode();
+}
+
 bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
 {
     return (child.style().hasAspectRatio() || child.hasIntrinsicAspectRatio()) && (child.hasRelativeLogicalHeight() || child.hasStretchedLogicalHeight());
@@ -90,6 +95,11 @@ bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, const RenderBox& child, GridTrackSizingDirection direction)
 {
     return !isOrthogonalChild(grid, child) ? direction : (direction == ForColumns ? ForRows : ForColumns);
+}
+
+GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, const RenderElement& parent, GridTrackSizingDirection direction)
+{
+    return isOrthogonalParent(grid, parent) ? (direction == ForColumns ? ForRows : ForColumns) : direction;
 }
 
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)

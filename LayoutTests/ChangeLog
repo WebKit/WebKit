@@ -1,3 +1,14 @@
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Copy track sizes from parent grid into subgrid
+        https://bugs.webkit.org/show_bug.cgi?id=236336
+
+        Reviewed by Dean Jackson.
+
+        Existing test expectations updated.
+
+        * TestExpectations:
+
 2022-02-16  Antoine Quint  <graouts@webkit.org>
 
         Use the animation frame rate during animation resolution and scheduling

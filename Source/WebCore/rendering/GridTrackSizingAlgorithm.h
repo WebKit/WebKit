@@ -193,6 +193,8 @@ private:
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
     void stretchAutoTracks();
 
+    bool copyUsedTrackSizesForSubgrid();
+
     // State machine.
     void advanceNextState();
     bool isValidTransition() const;

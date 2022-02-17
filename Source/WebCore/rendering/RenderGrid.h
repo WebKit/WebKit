@@ -107,6 +107,8 @@ public:
     }
 
 private:
+    friend class GridTrackSizingAlgorithm;
+
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
         ASSERT(child);

@@ -1399,10 +1399,69 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
     }
 }
 
+static void removeSubgridMarginBorderPaddingFromTracks(Vector<GridTrack>& tracks, LayoutUnit mbp, bool forwards)
+{
+    int numTracks = tracks.size();
+    int i = forwards ? 0 : numTracks - 1;
+    while (mbp > 0 && (forwards ? i < numTracks : i >= 0)) {
+        LayoutUnit size = tracks[i].baseSize();
+        if (size > mbp) {
+            size -= mbp;
+            mbp = 0;
+        } else {
+            mbp -= size;
+            size = 0;
+        }
+        tracks[i].setBaseSize(size);
+
+        forwards ? i++ : i--;
+    }
+}
+
+bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
+{
+    ASSERT(is<RenderGrid>(m_renderGrid->parent()));
+    RenderGrid* outer = downcast<RenderGrid>(m_renderGrid->parent());
+    GridTrackSizingAlgorithm& parentAlgo = outer->m_trackSizingAlgorithm;
+    GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForParent(*m_renderGrid, *outer, m_direction);
+    Vector<GridTrack>& parentTracks = parentAlgo.tracks(direction);
+
+    if (!parentTracks.size())
+        return false;
+
+    GridSpan span = outer->gridSpanForChild(*m_renderGrid, direction);
+    Vector<GridTrack>& allTracks = tracks(m_direction);
+    int numTracks = allTracks.size();
+    for (int i = 0; i < numTracks; i++)
+        allTracks[i] = parentTracks[i + span.startLine()];
+
+    if (GridLayoutFunctions::isSubgridReversedDirection(*outer, direction, *m_renderGrid))
+        allTracks.reverse();
+
+    LayoutUnit startMBP = (m_direction == ForColumns) ? m_renderGrid->marginAndBorderAndPaddingStart() : m_renderGrid->marginAndBorderAndPaddingBefore();
+    removeSubgridMarginBorderPaddingFromTracks(allTracks, startMBP, true);
+    LayoutUnit endMBP = (m_direction == ForColumns) ? m_renderGrid->marginAndBorderAndPaddingEnd() : m_renderGrid->marginAndBorderAndPaddingAfter();
+    removeSubgridMarginBorderPaddingFromTracks(allTracks, endMBP, false);
+
+    LayoutUnit gapDifference = (m_renderGrid->gridGap(m_direction) - outer->gridGap(direction)) / 2;
+    for (int i = 0; i < numTracks; i++) {
+        LayoutUnit size = allTracks[i].baseSize();
+        if (i)
+            size -= gapDifference;
+        if (i != numTracks - 1)
+            size -= gapDifference;
+        allTracks[i].setBaseSize(std::max(size, 0_lu));
+    }
+    return true;
+}
+
 void GridTrackSizingAlgorithm::run()
 {
     ASSERT(wasSetup());
     StateMachine stateMachine(*this);
+
+    if (m_renderGrid->isSubgrid(m_direction) && copyUsedTrackSizesForSubgrid())
+        return;
 
     // Step 1.
     const std::optional<LayoutUnit> initialFreeSpace = freeSpace(m_direction);
@@ -1453,6 +1512,11 @@ void GridTrackSizingAlgorithm::reset()
 #if ASSERT_ENABLED
 bool GridTrackSizingAlgorithm::tracksAreWiderThanMinTrackBreadth() const
 {
+    // Subgrids inherit their sizing directly from the parent, so may be unrelated
+    // to their initial base size.
+    if (m_renderGrid->isSubgrid(m_direction))
+        return true;
+
     const Vector<GridTrack>& allTracks = tracks(m_direction);
     for (size_t i = 0; i < allTracks.size(); ++i) {
         const auto& trackSize = allTracks[i].cachedTrackSize();

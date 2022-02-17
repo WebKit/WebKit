@@ -329,7 +329,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         }
 
         layoutGridItems();
-        m_trackSizingAlgorithm.reset();
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -340,6 +339,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         m_outOfFlowItemRow.clear();
 
         layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
+        m_trackSizingAlgorithm.reset();
 
         computeOverflow(clientLogicalRightAndBottomAfterRepositioning().height());
     }
@@ -362,8 +362,15 @@ LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, std::optional
 {
     ASSERT(!availableSize || *availableSize >= 0);
     const GapLength& gapLength = direction == ForColumns? style().columnGap() : style().rowGap();
-    if (gapLength.isNormal())
-        return 0_lu;
+    if (gapLength.isNormal()) {
+        if (!isSubgrid(direction))
+            return 0_lu;
+
+        GridTrackSizingDirection parentDirection = GridLayoutFunctions::flowAwareDirectionForParent(*this, *parent(), direction);
+        if (!availableSize)
+            return downcast<RenderGrid>(parent())->gridGap(parentDirection, std::nullopt);
+        return downcast<RenderGrid>(parent())->gridGap(parentDirection);
+    }
 
     return valueForLength(gapLength.length(), availableSize.value_or(0));
 }
@@ -1128,6 +1135,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
         // compute the gap between two consecutive tracks without examining the surrounding ones.
         LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
         unsigned nextToLastLine = numberOfLines - 2;
+
         for (unsigned i = 0; i < nextToLastLine; ++i)
             positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].baseSize() + gap;
         positions[lastLine] = positions[nextToLastLine] + tracks[nextToLastLine].baseSize();
