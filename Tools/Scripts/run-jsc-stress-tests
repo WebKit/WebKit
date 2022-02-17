@@ -2769,7 +2769,7 @@ def getStatusMap(map={})
         # well be test results on a remoteHost that got rebooted
         # (note, the test results are tagged with a run ID, so we'll
         # ignore any stale results from a previous run).
-        forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) { |_, host|
+        forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
             runnerDir = "#{host.remoteDirectory}/#{$outputDir.basename}/.runner"
             output = sshRead("if test -d #{runnerDir}; then cd #{runnerDir}; else false; fi && " + find_cmd, host, :ignoreFailure => true)
             output.split(/\n/).each {

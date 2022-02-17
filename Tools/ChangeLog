@@ -1,3 +1,21 @@
+2022-02-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Increase timeout to account for MIPS slowness
+        https://bugs.webkit.org/show_bug.cgi?id=236763
+
+        Reviewed by Adrian Perez de Castro.
+
+        Commit https://commits.webkit.org/247272@main parallelized the
+        status fetching but also introduced a timeout. Unfortunately, the
+        MIPS boards used in the build.webkit.org buildbot are not fast
+        enough to gather the test results in this timeout, so the bot can
+        never complete its testing. This wasn't caught in EWS as the
+        buildbots use faster MIPS hardware there.
+
+        Significantly bump the timeout when fetching results.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-02-16  Sihui Liu  <sihui_liu@apple.com>
 
         Use FileSystem::readEntireFile everywhere
