@@ -1,3 +1,20 @@
+2022-02-16  Joonghun Park  <jh718.park@samsung.com>
+
+        Change the canonical unit for time category from ms to s.
+        https://bugs.webkit.org/show_bug.cgi?id=236631
+
+        Reviewed by Darin Adler.
+
+        According to the spec, https://drafts.csswg.org/css-values-4/#time,
+        the canonical unit for <time> is Seconds.
+
+        * fast/css/calc-with-angle-time-frequency-expected.txt:
+        * fast/css/calc-with-angle-time-frequency.html:
+        * fast/css/getFloatValueForUnit-expected.txt:
+        * fast/css/getFloatValueForUnit.html:
+        * fast/css/transition-delay-calculated-value-expected.txt:
+        * fast/css/transition-delay-calculated-value.html:
+
 2022-02-16  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r285885) Unable to exit Trip Details in Amtrak app

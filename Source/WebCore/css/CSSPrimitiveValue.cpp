@@ -970,7 +970,7 @@ std::optional<double> CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(C
     // These are "canonical" units in their respective categories.
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_MS:
+    case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_DPPX:
         return 1.0;
@@ -1012,7 +1012,8 @@ std::optional<double> CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(C
     case CSSUnitType::CSS_TURN:
         return degreesPerTurnDouble;
 
-    case CSSUnitType::CSS_S:
+    case CSSUnitType::CSS_MS:
+        return 0.001;
     case CSSUnitType::CSS_KHZ:
         return 1000;
 

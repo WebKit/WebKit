@@ -164,7 +164,7 @@ CSSUnitType canonicalUnitTypeForCalculationCategory(CalculationCategory category
     case CalculationCategory::Length: return CSSUnitType::CSS_PX;
     case CalculationCategory::Percent: return CSSUnitType::CSS_PERCENTAGE;
     case CalculationCategory::Angle: return CSSUnitType::CSS_DEG;
-    case CalculationCategory::Time: return CSSUnitType::CSS_MS;
+    case CalculationCategory::Time: return CSSUnitType::CSS_S;
     case CalculationCategory::Frequency: return CSSUnitType::CSS_HZ;
     case CalculationCategory::Other:
     case CalculationCategory::PercentNumber:

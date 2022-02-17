@@ -1,3 +1,15 @@
+2022-02-16  Joonghun Park  <jh718.park@samsung.com>
+
+        Change the canonical unit for time category from ms to s.
+        https://bugs.webkit.org/show_bug.cgi?id=236631
+
+        Reviewed by Darin Adler.
+
+        According to the spec, https://drafts.csswg.org/css-values-4/#time,
+        the canonical unit for <time> is Seconds.
+
+        * web-platform-tests/css/css-values/minmax-time-serialize-expected.txt:
+
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
         Add fuzzy data for test failures seen on the iOS GPU Process bot

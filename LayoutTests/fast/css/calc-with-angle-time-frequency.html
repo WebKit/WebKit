@@ -39,27 +39,27 @@
 
             // Time units.
             evalAndLog("testDiv.style['transition-delay'] = 'calc(300ms/2)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(0.15s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.15s");
 
             evalAndLog("testDiv.style['transition-delay'] = 'calc(300s/2)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150000ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "150s");
 
             evalAndLog("testDiv.style['transition-delay'] = 'calc(10s + 100ms)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10100ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10.1s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "10.1s");
 
             evalAndLog("testDiv.style['transition-delay'] = 'calc(100ms + 10s)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10100ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10.1s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "10.1s");
 
             evalAndLog("testDiv.style['transition-delay'] = 'calc(4s + 1s)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(5000ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(5s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "5s");
 
             evalAndLog("testDiv.style['transition-delay'] = 'calc(4ms + 1ms)'");
-            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(5ms)");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(0.005s)");
             shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.005s");
 
             // Frequency units.

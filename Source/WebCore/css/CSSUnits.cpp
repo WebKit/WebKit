@@ -127,7 +127,7 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
     case CSSUnitCategory::Percent:
         return CSSUnitType::CSS_UNKNOWN; // Cannot convert between numbers and percent.
     case CSSUnitCategory::Time:
-        return CSSUnitType::CSS_MS;
+        return CSSUnitType::CSS_S;
     case CSSUnitCategory::Angle:
         return CSSUnitType::CSS_DEG;
     case CSSUnitCategory::Frequency:
