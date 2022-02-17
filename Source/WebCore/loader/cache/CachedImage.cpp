@@ -542,7 +542,7 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
 {
     if (!m_image || !m_data)
         return EncodedDataStatus::Error;
-    EncodedDataStatus result = m_image->setData(m_data.get(), allDataReceived);
+    EncodedDataStatus result = m_image->setData(m_data.copyRef(), allDataReceived);
     didUpdateImageData();
     return result;
 }

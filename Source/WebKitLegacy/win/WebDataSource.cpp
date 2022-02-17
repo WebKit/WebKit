@@ -349,7 +349,7 @@ HRESULT WebDataSource::subresourceForURL(_In_ BSTR url, _COM_Outptr_opt_ IWebRes
     if (!cachedResource)
         return E_FAIL;
 
-    *resource = WebResource::createInstance(cachedResource->resourceBuffer(), cachedResource->response());
+    *resource = WebResource::createInstance(cachedResource->resourceBuffer()->makeContiguous(), cachedResource->response());
     return S_OK;
 }
 
