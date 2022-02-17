@@ -1,3 +1,16 @@
+2022-02-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Build broken with ENABLE_X11_TARGET=OFF and no X11 headers present
+        https://bugs.webkit.org/show_bug.cgi?id=236770
+
+        Reviewed by Alejandro G. Castro.
+
+        * PlatformGTK.cmake: The USE_SYSTEM_EGL definition detaches the type definitions
+        from the EGL headers generic and prevents ANGLE's headers from including system X11
+        or Wayland headers from the system, so apply it always independently of whether the
+        USE_ANGLE_{EGL,WEBGL} options are enabled. While at it, fix a missing dollar sign in
+        the expansion of the ${GBM_INCLUDE_DIR} variable.
+
 2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (iOS 15.4b3): Catastrophic (20x) performance regression in texImage2D from mp4 video
