@@ -110,7 +110,7 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         }
     }
 
-    if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
+    if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || implicitGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
         || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()))
         dirtyGrid();
 }
@@ -129,6 +129,12 @@ bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) 
 {
     return oldStyle.namedGridRowLines() != style().namedGridRowLines()
         || oldStyle.namedGridColumnLines() != style().namedGridColumnLines();
+}
+
+bool RenderGrid::implicitGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
+{
+    return oldStyle.implicitNamedGridRowLines() != style().implicitNamedGridRowLines()
+        || oldStyle.implicitNamedGridColumnLines() != style().implicitNamedGridColumnLines();
 }
 
 // This method optimizes the gutters computation by skiping the available size

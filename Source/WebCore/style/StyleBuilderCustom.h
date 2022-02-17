@@ -1934,10 +1934,6 @@ inline void BuilderCustom::applyValueGridTemplateColumns(BuilderState& builderSt
     BuilderConverter::TracksData tracksData;
     if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
         return;
-    const NamedGridAreaMap& namedGridAreas = builderState.style().namedGridArea();
-    if (!namedGridAreas.isEmpty())
-        BuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForColumns);
-
     SET_TRACKS_DATA(tracksData, builderState.style(), Column);
 }
 
@@ -1957,9 +1953,6 @@ inline void BuilderCustom::applyValueGridTemplateRows(BuilderState& builderState
     BuilderConverter::TracksData tracksData;
     if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
         return;
-    const NamedGridAreaMap& namedGridAreas = builderState.style().namedGridArea();
-    if (!namedGridAreas.isEmpty())
-        BuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForRows);
 
     SET_TRACKS_DATA(tracksData, builderState.style(), Row);
 }

@@ -124,6 +124,7 @@ private:
 
     bool explicitGridDidResize(const RenderStyle&) const;
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
+    bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 

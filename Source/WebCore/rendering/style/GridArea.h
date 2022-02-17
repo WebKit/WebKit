@@ -166,6 +166,19 @@ public:
             m_startLine = m_endLine - 1;
     }
 
+    bool clamp(int min, int max)
+    {
+        ASSERT(min < max);
+        ASSERT(m_startLine < m_endLine);
+        ASSERT(m_type != Indefinite);
+        if (min >= m_endLine || max <= m_startLine)
+            return false;
+        m_startLine = std::max(m_startLine, min);
+        m_endLine = std::min(m_endLine, max);
+        ASSERT(m_startLine < m_endLine);
+        return true;
+    }
+
 private:
 
     enum GridSpanType {UntranslatedDefinite, TranslatedDefinite, Indefinite};

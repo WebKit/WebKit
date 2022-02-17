@@ -1,3 +1,16 @@
+2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Lookup line names for sub grids using line names from ancestor grids
+        https://bugs.webkit.org/show_bug.cgi?id=236287
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-001-expected.txt:
+        * web-platform-tests/css/css-grid/subgrid/line-names-005-expected.html:
+        * web-platform-tests/css/css-grid/subgrid/line-names-005.html:
+
+        Make line-names-005.html slightly harder by having the multiple definitions of the 'a' grid area be different at both edges.
+
 2022-02-16  Joonghun Park  <jh718.park@samsung.com>
 
         Change the canonical unit for time category from ms to s.

@@ -1,3 +1,14 @@
+2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Lookup line names for sub grids using line names from ancestor grids
+        https://bugs.webkit.org/show_bug.cgi?id=236287
+
+        Reviewed by Simon Fraser.
+
+        Update expectations for newly passing tests. 
+
+        * TestExpectations:
+
 2022-02-16  Joonghun Park  <jh718.park@samsung.com>
 
         Change the canonical unit for time category from ms to s.
