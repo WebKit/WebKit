@@ -1,3 +1,14 @@
+2022-02-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Unskip test on mips
+        https://bugs.webkit.org/show_bug.cgi?id=236645
+
+        Unreviewed gardening.
+
+        Can't reproduce this locally after 20 iterations.
+
+        * stress/sampling-profiler-richards.js:
+
 2022-02-16  Geza Lore  <glore@igalia.com>
 
         [JSC][32-bit] Fix and re-enable flaky test

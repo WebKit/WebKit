@@ -1,4 +1,3 @@
-//@ skip if $architecture == "mips" and $hostOS == "linux"
 //@ skip if not $jitTests
 //@ skip if $architecture == "x86"
 //@ runDefault("--collectContinuously=1", "--useSamplingProfiler=1", "--collectExtraSamplingProfilerData=1")
