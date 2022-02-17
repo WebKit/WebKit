@@ -21,16 +21,16 @@ PASS size(not (width: 100px))
 PASS size((width: 100px) and (height: 100px))
 PASS size((width: 50px) or (height: 100px))
 PASS size(width < 100px)
-FAIL size(100px < width) assert_equals: expected 2 but got 0
-FAIL size(100px < width < 200px) assert_equals: expected 2 but got 0
+PASS size(100px < width)
+PASS size(100px < width < 200px)
 PASS foo(width)
 PASS size(asdf)
-FAIL size(resolution > 100dpi) assert_equals: expected 2 but got 0
-FAIL size(resolution: 150dpi) assert_equals: expected 2 but got 0
+PASS size(resolution > 100dpi)
+PASS size(resolution: 150dpi)
 PASS size(color)
-FAIL size(min-color: 1) assert_equals: expected 2 but got 0
-FAIL size(color-index >= 1) assert_equals: expected 2 but got 0
-FAIL (color-index >= 1) assert_equals: expected 2 but got 0
+PASS size(min-color: 1)
+PASS size(color-index >= 1)
+PASS (color-index >= 1)
 PASS size(grid)
 PASS (grid)
 PASS screen

@@ -136,7 +136,7 @@ std::optional<ConditionType> ContainerQueryParser::consumeCondition(CSSParserTok
 
 std::optional<CQ::SizeQuery> ContainerQueryParser::consumeSizeQuery(CSSParserTokenRange& range)
 {
-    if (range.peek().type() != IdentToken || range.peek().id() == CSSValueNot) {
+    if (range.peek().type() == LeftParenthesisToken || (range.peek().type() == IdentToken && range.peek().id() == CSSValueNot)) {
         auto sizeCondition = consumeCondition<CQ::SizeCondition>(range);
         if (!sizeCondition)
             return { };
@@ -147,82 +147,142 @@ std::optional<CQ::SizeQuery> ContainerQueryParser::consumeSizeQuery(CSSParserTok
     if (!sizeFeature)
         return { };
 
-    range.consumeWhitespace();
-    if (!range.atEnd())
-        return { };
-
     return { *sizeFeature };
 }
 
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParserTokenRange& range)
 {
-    // FIXME: Support value-first (100px < width) and full range (100px < width < 200px) notations.
+    auto rangeCopy = range;
+    if (auto sizeFeature = consumePlainSizeFeature(range))
+        return sizeFeature;
 
-    auto nameToken = range.consumeIncludingWhitespace();
-    ASSERT(nameToken.type() == IdentToken);
+    range = rangeCopy;
+    return consumeRangeSizeFeature(range);
+}
 
-    auto name = nameToken.value();
-
-    if (range.atEnd())
-        return CQ::SizeFeature { CQ::ComparisonOperator::True, name.toAtomString(), { } };
-
-    auto consumeOperator = [&]() -> std::optional<CQ::ComparisonOperator> {
-        auto opToken = range.consume();
-        if (range.atEnd())
+std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSSParserTokenRange& range)
+{
+    auto consumePlainFeatureName = [&]() -> std::pair<AtomString, CQ::ComparisonOperator> {
+        if (range.peek().type() != IdentToken)
             return { };
-        if (opToken.type() == ColonToken) {
-            if (name.startsWith("min-")) {
-                name = name.substring(4);
-                return CQ::ComparisonOperator::GreaterThanOrEqual;
-            }
-            if (name.startsWith("max-")) {
-                name = name.substring(4);
-                return CQ::ComparisonOperator::LessThanOrEqual;
-            }
-            return CQ::ComparisonOperator::Equal;
-        }
-        if (opToken.type() == DelimiterToken) {
-            switch (opToken.delimiter()) {
-            case '=':
-                return CQ::ComparisonOperator::Equal;
-            case '<':
-                if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
-                    range.consume();
-                    return CQ::ComparisonOperator::LessThanOrEqual;
-                }
-                return CQ::ComparisonOperator::LessThan;
-            case '>':
-                if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
-                    range.consume();
-                    return CQ::ComparisonOperator::GreaterThanOrEqual;
-                }
-                return CQ::ComparisonOperator::GreaterThan;
-            default:
-                return { };
-            }
-        }
-        return { };
+        auto token = range.consumeIncludingWhitespace();
+        auto name = token.value();
+        if (name.startsWith("min-"))
+            return { name.substring(4).toAtomString(), CQ::ComparisonOperator::GreaterThanOrEqual };
+        if (name.startsWith("max-"))
+            return { name.substring(4).toAtomString(), CQ::ComparisonOperator::LessThanOrEqual };
+
+        return { name.toAtomString(), CQ::ComparisonOperator::Equal };
     };
 
-    auto op = consumeOperator();
-    if (!op)
+    auto [featureName, op] = consumePlainFeatureName();
+    if (featureName.isEmpty())
         return { };
 
     range.consumeWhitespace();
 
-    auto featureName = name.toAtomString();
+    if (range.atEnd()) {
+        if (op != CQ::ComparisonOperator::Equal)
+            return { };
+        return CQ::SizeFeature { featureName, { }, { } };
+    }
 
-    auto consumeValue = [&]() -> RefPtr<CSSValue> {
-        if (featureName == CQ::FeatureNames::orientation())
-            return CSSPropertyParserHelpers::consumeIdent(range);
-        if (featureName == CQ::FeatureNames::aspectRatio())
-            return CSSPropertyParserHelpers::consumeAspectRatioValue(range);
-        return CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All);
+    if (range.peek().type() != ColonToken)
+        return { };
+
+    range.consumeIncludingWhitespace();
+    if (range.atEnd())
+        return { };
+
+    auto value = consumeValue(range);
+    
+    return CQ::SizeFeature { featureName, { }, CQ::Comparison { op, WTFMove(value) } };
+}
+
+std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSSParserTokenRange& range)
+{
+    auto consumeFeatureName = [&]() -> AtomString {
+        if (range.peek().type() != IdentToken)
+            return { };
+        return range.consumeIncludingWhitespace().value().toAtomString();
     };
 
-    auto value = consumeValue();
+    auto consumeRangeOperator = [&]() -> std::optional<CQ::ComparisonOperator> {
+        if (range.atEnd())
+            return { };
+        auto opToken = range.consume();
+        if (range.atEnd() || opToken.type() != DelimiterToken)
+            return { };
 
-    return CQ::SizeFeature { *op, WTFMove(featureName), WTFMove(value) };
+        switch (opToken.delimiter()) {
+        case '=':
+            range.consumeWhitespace();
+            return CQ::ComparisonOperator::Equal;
+        case '<':
+            if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+                range.consumeIncludingWhitespace();
+                return CQ::ComparisonOperator::LessThanOrEqual;
+            }
+            range.consumeWhitespace();
+            return CQ::ComparisonOperator::LessThan;
+        case '>':
+            if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '=') {
+                range.consumeIncludingWhitespace();
+                return CQ::ComparisonOperator::GreaterThanOrEqual;
+            }
+            range.consumeWhitespace();
+            return CQ::ComparisonOperator::GreaterThan;
+        default:
+            return { };
+        }
+    };
+
+    auto consumeLeftComparison = [&]() -> std::optional<CQ::Comparison> {
+        if (range.peek().type() == IdentToken)
+            return { };
+        auto value = consumeValue(range);
+        auto op = consumeRangeOperator();
+        if (!op)
+            return { };
+
+        return CQ::Comparison { *op, WTFMove(value) };
+    };
+
+    auto consumeRightComparison = [&]() -> std::optional<CQ::Comparison> {
+        auto op = consumeRangeOperator();
+        if (!op)
+            return { };
+        auto value = consumeValue(range);
+
+        return CQ::Comparison { *op, WTFMove(value) };
+    };
+
+    auto leftComparison = consumeLeftComparison();
+
+    auto featureName = consumeFeatureName();
+    if (featureName.isEmpty())
+        return { };
+
+    auto rightComparison = consumeRightComparison();
+
+    if (!leftComparison && !rightComparison)
+        return { };
+
+    return CQ::SizeFeature { WTFMove(featureName), WTFMove(leftComparison), WTFMove(rightComparison) };
+}
+
+RefPtr<CSSValue> ContainerQueryParser::consumeValue(CSSParserTokenRange& range)
+{
+    if (range.atEnd())
+        return nullptr;
+    if (auto value = CSSPropertyParserHelpers::consumeIdent(range))
+        return value;
+    if (auto value = CSSPropertyParserHelpers::consumeLength(range, m_context.mode, ValueRange::All))
+        return value;
+    if (auto value = CSSPropertyParserHelpers::consumeAspectRatioValue(range))
+        return value;
+    range.consumeIncludingWhitespace();
+    return nullptr;
 }
 
 }

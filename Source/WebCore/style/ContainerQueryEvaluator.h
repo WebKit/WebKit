@@ -33,6 +33,8 @@ class Element;
 
 namespace Style {
 
+enum class EvaluationResult : uint8_t { False, True, Unknown };
+
 class ContainerQueryEvaluator {
 public:
     ContainerQueryEvaluator(const Vector<Ref<const Element>>& containers);
@@ -41,7 +43,6 @@ public:
 
 private:
     struct ResolvedContainer;
-    enum class EvaluationResult : uint8_t { False, True, Unknown };
 
     EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const ResolvedContainer&) const;
     EvaluationResult evaluateQuery(const CQ::SizeQuery&, const ResolvedContainer&) const;
@@ -50,6 +51,32 @@ private:
 
     const Vector<Ref<const Element>>& m_containers;
 };
+
+inline EvaluationResult toEvaluationResult(bool boolean)
+{
+    return boolean ? EvaluationResult::True : EvaluationResult::False;
+};
+
+inline EvaluationResult operator&(EvaluationResult left, EvaluationResult right)
+{
+    if (left == EvaluationResult::Unknown || right == EvaluationResult::Unknown)
+        return EvaluationResult::Unknown;
+    if (left == EvaluationResult::True && right == EvaluationResult::True)
+        return EvaluationResult::True;
+    return EvaluationResult::False;
+}
+
+inline EvaluationResult operator!(EvaluationResult result)
+{
+    switch (result) {
+    case EvaluationResult::True:
+        return EvaluationResult::False;
+    case EvaluationResult::False:
+        return EvaluationResult::True;
+    case EvaluationResult::Unknown:
+        return EvaluationResult::Unknown;
+    }
+}
 
 }
 }

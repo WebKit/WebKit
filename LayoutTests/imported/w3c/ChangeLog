@@ -1,3 +1,12 @@
+2022-02-17  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Support full range notation in size queries
+        https://bugs.webkit.org/show_bug.cgi?id=236771
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+
 2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
 
         Fix abs-pos breadth issue when using 'auto'
