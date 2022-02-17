@@ -49,7 +49,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
-                   ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                   ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
@@ -4235,7 +4235,7 @@ All tests successfully passed!
         return self.runStep()
 
 
-class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'api_test_results.json'
@@ -4245,7 +4245,7 @@ class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success_mac(self):
-        self.setupStep(RunAPITestsWithoutPatch())
+        self.setupStep(RunAPITestsWithoutChange())
         self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
@@ -4277,11 +4277,11 @@ All tests successfully passed!
 ''')
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='run-api-tests-without-patch')
+        self.expectOutcome(result=SUCCESS, state_string='run-api-tests-without-change')
         return self.runStep()
 
     def test_one_failure(self):
-        self.setupStep(RunAPITestsWithoutPatch())
+        self.setupStep(RunAPITestsWithoutChange())
         self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'ios-simulator')
         self.setProperty('configuration', 'debug')
@@ -4331,7 +4331,7 @@ Testing completed, Exit status: 3
         return self.runStep()
 
     def test_multiple_failures_gtk(self):
-        self.setupStep(RunAPITestsWithoutPatch())
+        self.setupStep(RunAPITestsWithoutChange())
         self.setProperty('fullPlatform', 'gtk')
         self.setProperty('platform', 'gtk')
         self.setProperty('configuration', 'debug')

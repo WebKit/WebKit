@@ -3710,7 +3710,7 @@ class ReRunAPITests(RunAPITests):
             steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
             steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
-            steps_to_add.append(RunAPITestsWithoutPatch())
+            steps_to_add.append(RunAPITestsWithoutChange())
             steps_to_add.append(AnalyzeAPITestsResults())
             # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
             self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -3718,8 +3718,8 @@ class ReRunAPITests(RunAPITests):
         return rc
 
 
-class RunAPITestsWithoutPatch(RunAPITests):
-    name = 'run-api-tests-without-patch'
+class RunAPITestsWithoutChange(RunAPITests):
+    name = 'run-api-tests-without-change'
 
     def evaluateCommand(self, cmd):
         return TestWithFailureCount.evaluateCommand(self, cmd)
@@ -3735,7 +3735,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         self.results = {}
         d = self.getTestsResults(RunAPITests.name)
         d.addCallback(lambda res: self.getTestsResults(ReRunAPITests.name))
-        d.addCallback(lambda res: self.getTestsResults(RunAPITestsWithoutPatch.name))
+        d.addCallback(lambda res: self.getTestsResults(RunAPITestsWithoutChange.name))
         d.addCallback(lambda res: self.analyzeResults())
         return defer.succeed(None)
 
@@ -3748,7 +3748,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
 
         first_run_results = self.results.get(RunAPITests.name)
         second_run_results = self.results.get(ReRunAPITests.name)
-        clean_tree_results = self.results.get(RunAPITestsWithoutPatch.name)
+        clean_tree_results = self.results.get(RunAPITestsWithoutChange.name)
 
         if not (first_run_results and second_run_results):
             self.finished(RETRY)
