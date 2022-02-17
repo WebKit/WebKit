@@ -601,7 +601,7 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
         // m_beganSelectingText to prevent handleMouseReleaseEvent
         // from setting caret selection.
         m_selectionInitiationState = ExtendedSelection;
-    else
+    else if (mouseDownMayStartSelect())
         selectClosestWordFromHitTestResult(event.hitTestResult(), shouldAppendTrailingWhitespace(event, m_frame));
 
     return true;
