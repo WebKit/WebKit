@@ -1434,8 +1434,6 @@ imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-001.ht
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-001.html [ Crash ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-002.html [ Crash ]
 
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]

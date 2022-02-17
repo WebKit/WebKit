@@ -898,6 +898,37 @@ private:
     unsigned m_autoRepeatTrackListLength;
 };
 
+class OrderedNamedLinesCollectorInSubgridLayout : public OrderedNamedLinesCollector {
+public:
+    OrderedNamedLinesCollectorInSubgridLayout(const RenderStyle& style, bool isRowAxis, unsigned totalTracksCount)
+        : OrderedNamedLinesCollector(style, isRowAxis)
+        , m_insertionPoint(isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint())
+        , m_autoRepeatLineSetListLength((isRowAxis ? style.autoRepeatOrderedNamedGridColumnLines() : style.autoRepeatOrderedNamedGridRowLines()).size())
+        , m_totalLines(totalTracksCount + 1)
+    {
+        if (!m_autoRepeatLineSetListLength) {
+            m_autoRepeatTotalLineSets = 0;
+            return;
+        }
+        unsigned named = (isRowAxis ? style.orderedNamedGridColumnLines() : style.orderedNamedGridRowLines()).size();
+        if (named >= m_totalLines) {
+            m_autoRepeatTotalLineSets = 0;
+            return;
+        }
+        m_autoRepeatTotalLineSets = (m_totalLines - named) / m_autoRepeatLineSetListLength;
+        m_autoRepeatTotalLineSets *= m_autoRepeatLineSetListLength;
+    }
+
+    void collectLineNamesForIndex(CSSGridLineNamesValue&, unsigned index) const override;
+
+    int namedGridLineCount() const override { return m_totalLines; }
+private:
+    unsigned m_insertionPoint;
+    unsigned m_autoRepeatTotalLineSets;
+    unsigned m_autoRepeatLineSetListLength;
+    unsigned m_totalLines;
+};
+
 void OrderedNamedLinesCollector::appendLines(CSSGridLineNamesValue& lineNamesValue, unsigned index, NamedLinesType type) const
 {
     auto iter = type == NamedLines ? m_orderedNamedGridLines.find(index) : m_orderedNamedAutoRepeatGridLines.find(index);
@@ -955,9 +986,25 @@ void OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex(CSSGridLin
     appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, AutoRepeatNamedLines);
 }
 
+void OrderedNamedLinesCollectorInSubgridLayout::collectLineNamesForIndex(CSSGridLineNamesValue& lineNamesValue, unsigned i) const
+{
+    if (!m_autoRepeatLineSetListLength || i < m_insertionPoint) {
+        appendLines(lineNamesValue, i, NamedLines);
+        return;
+    }
+
+    if (i >= m_insertionPoint + m_autoRepeatTotalLineSets) {
+        appendLines(lineNamesValue, i - m_autoRepeatTotalLineSets, NamedLines);
+        return;
+    }
+
+    unsigned autoRepeatIndexInFirstRepetition = (i - m_insertionPoint) % m_autoRepeatLineSetListLength;
+    appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, AutoRepeatNamedLines);
+}
+
 static void addValuesForNamedGridLinesAtIndex(OrderedNamedLinesCollector& collector, unsigned i, CSSValueList& list, bool renderEmpty = false)
 {
-    if (collector.isEmpty())
+    if (collector.isEmpty() && !renderEmpty)
         return;
 
     auto lineNames = CSSGridLineNamesValue::create();
@@ -1035,9 +1082,15 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
 
     // If the element is a grid container, the resolved value is the used value,
     // specifying track sizes in pixels and expanding the repeat() notation.
-    if (isRenderGrid) {
-        // FIXME: We need to handle computed subgrid here.
+    // If subgrid was specified, but the element isn't a subgrid (due to not having
+    // an appropriate grid parent), then we fall back to using the specified value.
+    if (isRenderGrid && (!isSubgrid || downcast<RenderGrid>(renderer)->isSubgrid(direction))) {
         auto* grid = downcast<RenderGrid>(renderer);
+        if (isSubgrid) {
+            OrderedNamedLinesCollectorInSubgridLayout collector(style, isRowAxis, grid->numTracks(direction));
+            populateSubgridLineNameList(list.get(), collector);
+            return list;
+        }
         OrderedNamedLinesCollectorInGridLayout collector(style, isRowAxis, grid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
         // Named grid line indices are relative to the explicit grid, but we are including all tracks.
         // So we need to subtract the number of leading implicit tracks in order to get the proper line index.

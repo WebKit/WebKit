@@ -101,6 +101,11 @@ public:
         return m_grid;
     }
 
+    unsigned numTracks(GridTrackSizingDirection direction) const
+    {
+        return numTracks(direction, m_grid);
+    }
+
 private:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {

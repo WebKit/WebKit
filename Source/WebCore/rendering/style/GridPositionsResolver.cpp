@@ -79,6 +79,11 @@ NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, 
     m_insertionPoint = isRowAxis ? gridContainerStyle.gridAutoRepeatColumnsInsertionPoint() : gridContainerStyle.gridAutoRepeatRowsInsertionPoint();
 
     m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle.gridAutoRepeatColumns().size() : gridContainerStyle.gridAutoRepeatRows().size();
+    // FIXME: Handle subgrid auto repeat tracks
+    if (isRowAxis ? gridContainerStyle.gridSubgridColumns() : gridContainerStyle.gridSubgridRows()) {
+        m_autoRepeatTrackListLength = 0;
+        m_autoRepeatNamedLinesIndexes = nullptr;
+    }
 }
 
 bool NamedLineCollection::hasExplicitNamedLines() const
