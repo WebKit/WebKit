@@ -1,3 +1,16 @@
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Fix abs-pos breadth issue when using 'auto'
+        https://bugs.webkit.org/show_bug.cgi?id=236626
+
+        Reviewed by Dean Jackson.
+
+        Adds new test that uses RTL and abs-pos items over the padding area, with
+        padding defined in physical coords.
+
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-025-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-025.html: Added.
+
 2022-02-16  Antoine Quint  <graouts@webkit.org>
 
         SVG SMIL restart="never" does not behave correctly

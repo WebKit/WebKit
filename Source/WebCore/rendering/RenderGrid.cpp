@@ -1662,6 +1662,10 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
     else {
         outOfFlowItemLine.set(&child, startLine);
         start = positions[startLine];
+        if (isRowAxis && !style().isLeftToRightDirection()) {
+            start -= borderAndPaddingLogicalLeft();
+            start += borderLogicalRight() + paddingLogicalRight();
+        }
     }
     if (endIsAuto)
         end = resolveAutoEndGridPosition(direction) + borderEdge;
@@ -1673,6 +1677,11 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
             ASSERT(!m_grid.needsItemsPlacement());
             end -= guttersSize(m_grid, direction, endLine - 1, 2, availableSizeForGutters);
             end -= isRowAxis ? m_offsetBetweenColumns.distributionOffset : m_offsetBetweenRows.distributionOffset;
+        }
+
+        if (isRowAxis && !style().isLeftToRightDirection()) {
+            end -= borderAndPaddingLogicalLeft();
+            end += borderLogicalRight() + paddingLogicalRight();
         }
     }
     return std::max(end - start, 0_lu);
