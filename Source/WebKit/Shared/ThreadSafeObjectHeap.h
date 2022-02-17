@@ -51,6 +51,7 @@ public:
     using ReadReference = typename ObjectIdentifierReferenceTracker<Identifier>::ReadReference;
     using WriteReference = typename ObjectIdentifierReferenceTracker<Identifier>::WriteReference;
     using Reference = typename ObjectIdentifierReferenceTracker<Identifier>::Reference;
+    virtual ~ThreadSafeObjectHeap() = default;
 
     void add(Identifier, HeldType&&);
 

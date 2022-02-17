@@ -1,3 +1,20 @@
+2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Crash while destroying RemoteVideoFrameObjectHeap
+        https://bugs.webkit.org/show_bug.cgi?id=236765
+        <rdar://89003650>
+
+        Reviewed by Antti Koivisto.
+
+        Add virtual destructor to ThreadSafeObjectHeap. (ThreadSafe)RefCounted<T> deletes
+        the object through the T pointer. In this case, T is ThreadSafeObjectHeap, but
+        the underlying type is RemoteVideoFrameObjectHeap. This causes delete through non-virtual
+        pointer and skips ~ThreadSafeObjectHeap().
+
+        No new tests, tested by existing tests under ASAN.
+
+        * Shared/ThreadSafeObjectHeap.h:
+
 2022-02-17  Tim Horton  <timothy_horton@apple.com>
 
         Add some more debug triggers for WKHoverPlatter
