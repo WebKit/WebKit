@@ -1,3 +1,27 @@
+2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (iOS 15.4b3): Catastrophic (20x) performance regression in texImage2D from mp4 video
+        https://bugs.webkit.org/show_bug.cgi?id=236699
+
+        Reviewed by Darin Adler.
+
+        Disable the validation for IOSurface pixel formats.
+        We might pass non-public formats that do not have sensible IOSurfaceGetBytesPerElementOfPlane
+        to verify with this logic.
+
+        Will add test in bug 236759.
+
+        Previous bugs of the same:
+        EAGL:
+        Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]
+        bug 218637, r273582, 234632@main
+        CGL:
+        REGRESSION(Safari 15, BigSur): Poor video texture upload performance with MacBook M1, ANGLE OpenGL backend
+        bug 232235, r286960, 245183@main
+
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        (rx::IOSurfaceSurfaceMtl::ValidateAttributes):
+
 2022-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289949.
