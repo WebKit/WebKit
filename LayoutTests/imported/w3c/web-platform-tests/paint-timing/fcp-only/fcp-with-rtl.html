@@ -10,30 +10,20 @@
   body {
     direction: rtl;
   }
-
-  #dummy {
-    background: yellow;
-    width: 10px;
-    height: 10px;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
 </style>
 </head>
 <body>
 <script src="../resources/utils.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<div id="dummy"></div>
 <div id="text">TEXT</div>
 <script>
+  setup({"hide_test_state": true});
   promise_test(async t => {
-      assert_precondition(window.PerformancePaintTiming, "Paint Timing isn't supported.");
+      assert_implements(window.PerformancePaintTiming, "Paint Timing isn't supported.");
       await new Promise(r => window.addEventListener('load', r));
       await assertNoFirstContentfulPaint(t);
       document.body.style.direction = 'ltr'
-      document.getElementById('dummy').style.background = 'green'
       await assertFirstContentfulPaint(t);
   }, 'FCP should fire when coordinates are negative, if within document scrollable area');
 </script>

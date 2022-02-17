@@ -1,3 +1,62 @@
+2022-02-17  Noam Rosenthal  <noam@webkit.org>
+
+        Resync web-platform-tests/paint-timing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=236717
+
+        Reviewed by Simon Fraser.
+
+        Resync to af3b9946eb6f0955360282176848af4be7e58304
+
+        * web-platform-tests/paint-timing/fcp-only/buffered-flag.window.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/buffered-flag.window.js: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-background-size.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-set.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-two-steps-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-two-steps.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-canvas-context-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-canvas-context.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-gradient-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-gradient.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-iframe-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-iframe.html: Copied from LayoutTests/imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-ignore-from-subframe.html.
+        * web-platform-tests/paint-timing/fcp-only/fcp-ignore-from-subframe.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-transition-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-text-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity-descendant-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-translate-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-display-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-image-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-image.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-opacity-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-text-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibility-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-svg-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-text-input-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-text-input.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-typographic-pseudo-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-frame-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-poster-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-poster.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-whitespace-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-whitespace.html:
+        * web-platform-tests/paint-timing/fcp-only/fcp-with-rtl-expected.txt:
+        * web-platform-tests/paint-timing/fcp-only/fcp-with-rtl.html:
+        * web-platform-tests/paint-timing/fcp-only/svg-in-iframe-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/svg-in-iframe.html: Added.
+        * web-platform-tests/paint-timing/resources/svg.html: Added.
+        * web-platform-tests/paint-timing/resources/utils.js:
+        (async assertFirstContentfulPaint.return.new.Promise):
+        (async assertFirstContentfulPaint):
+        (async test_fcp):
+
 2022-02-17  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening. Add fuzzy data.

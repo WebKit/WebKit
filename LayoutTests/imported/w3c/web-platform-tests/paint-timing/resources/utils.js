@@ -25,23 +25,27 @@ async function assertFirstContentfulPaint(t) {
       if (performance.getEntriesByName('first-contentful-paint').length === 1) {
         resolve();
       } else {
-        requestAnimationFrame(checkFCP)
+        t.step_timeout(checkFCP, 0);
       }
     }
     t.step(checkFCP);
   });
 }
 
-async function test_fcp(label) {
+async function test_fcp(label, before_assert_fcp_func) {
+  setup({"hide_test_state": true});
   const style = document.createElement('style');
   document.head.appendChild(style);
   await promise_test(async t => {
-    assert_precondition(window.PerformancePaintTiming, "Paint Timing isn't supported.");
+    assert_implements(window.PerformancePaintTiming, "Paint Timing isn't supported.");
     const main = document.getElementById('main');
     await new Promise(r => window.addEventListener('load', r));
     await assertNoFirstContentfulPaint(t);
     main.className = 'preFCP';
     await assertNoFirstContentfulPaint(t);
+    if (before_assert_fcp_func) {
+      await before_assert_fcp_func();
+    }
     main.className = 'contentful';
     await assertFirstContentfulPaint(t);
   }, label);
