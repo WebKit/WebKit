@@ -1,3 +1,17 @@
+2022-02-16  Antoine Quint  <graouts@webkit.org>
+
+        Use the animation frame rate during animation resolution and scheduling
+        https://bugs.webkit.org/show_bug.cgi?id=234202
+        rdar://85983678
+
+        Reviewed by Simon Fraser.
+
+        Update this test to not rely on hard values but rather check that throttling
+        has the expected effect of doubling the interval between frames.
+
+        * fast/animation/css-animation-throttling-lowPowerMode-expected.txt:
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+
 2022-02-16  Tim Horton  <timothy_horton@apple.com>
 
         Revert r275772: inflated FloatSize memory layout unnecessarily

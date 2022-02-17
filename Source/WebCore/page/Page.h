@@ -54,6 +54,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashMap.h>
@@ -460,7 +461,12 @@ public:
     // This can return nullopt if throttling reasons result in a frequency less than one, in which case
     // preferredRenderingUpdateInterval provides the frequency.
     // FIXME: Have a single function that returns a std::variant<>.
-    std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const;
+    enum class PreferredRenderingUpdateOption : uint8_t {
+        IncludeThrottlingReasons    = 1 << 0,
+        IncludeAnimationsFrameRate  = 1 << 1
+    };
+    static constexpr OptionSet<PreferredRenderingUpdateOption> allPreferredRenderingUpdateOptions = { PreferredRenderingUpdateOption::IncludeThrottlingReasons, PreferredRenderingUpdateOption::IncludeAnimationsFrameRate };
+    std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> = allPreferredRenderingUpdateOptions) const;
     Seconds preferredRenderingUpdateInterval() const;
 
     float topContentInset() const { return m_topContentInset; }
@@ -944,6 +950,8 @@ public:
     void setIsAwaitingLayerTreeTransactionFlush(bool isAwaiting) { m_isAwaitingLayerTreeTransactionFlush = isAwaiting; }
     bool isAwaitingLayerTreeTransactionFlush() const { return m_isAwaitingLayerTreeTransactionFlush; }
 #endif
+
+    void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
 
 private:
     struct Navigation {

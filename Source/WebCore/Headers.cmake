@@ -404,6 +404,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/DocumentTimelinesController.h
     animation/EffectTiming.h
     animation/FillMode.h
+    animation/FrameRateAligner.h
     animation/GetAnimationsOptions.h
     animation/IterationCompositeOperation.h
     animation/KeyframeAnimationOptions.h

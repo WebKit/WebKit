@@ -630,6 +630,10 @@ void WebAnimation::setEffectiveFrameRate(std::optional<FramesPerSecond> effectiv
         return;
 
     m_effectiveFrameRate = adjustedEffectiveFrameRate;
+
+    // FIXME: When the effective frame rate of an animation changes, this could have implications
+    // on the time until the next animation update is scheduled. We should notify the timeline such
+    // that it may schedule an update if our update cadence is now longer (or shorter).
 }
 
 auto WebAnimation::playState() const -> PlayState
