@@ -904,6 +904,9 @@ void SVGSMILElement::beginListChanged(SMILTime eventTime)
     if (m_isWaitingForFirstInterval)
         resolveFirstInterval();
     else {
+        if (restart() == RestartNever)
+            return;
+
         SMILTime newBegin = findInstanceTime(Begin, eventTime, true);
         if (newBegin.isFinite() && (m_intervalEnd <= eventTime || newBegin < m_intervalBegin)) {
             // Begin time changed, re-resolve the interval.
