@@ -37,6 +37,7 @@
 
 #import <AVFoundation/AVAssetCache_Private.h>
 #import <AVFoundation/AVCaptureSession_Private.h>
+#import <AVFoundation/AVContentKeySession_Private.h>
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
@@ -224,6 +225,8 @@ NS_ASSUME_NONNULL_END
 #import <AVFoundation/AVPlayerLayer.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
+
+#if !USE(APPLE_INTERNAL_SDK) || !HAVE(AVCONTENTKEYREPORTGROUP)
 @interface AVContentKeyReportGroup : NSObject
 @property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
 - (void)expire;
@@ -235,14 +238,17 @@ NS_ASSUME_NONNULL_END
 @property (readonly, nullable) AVContentKeyReportGroup *defaultContentKeyGroup;
 - (nonnull AVContentKeyReportGroup *)makeContentKeyGroup;
 @end
+#endif
 
+#if !USE(APPLE_INTERNAL_SDK) || !HAVE(AVCONTENTKEYSESSIONWILLOUTPUTBEOBSCURED)
 @interface AVContentKeyRequest (OutputObscured)
 NS_ASSUME_NONNULL_BEGIN
 - (BOOL)willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:(NSArray<NSNumber *> *)displays;
 NS_ASSUME_NONNULL_END
 @end
+#endif
 
-#if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
+#if !USE(APPLE_INTERNAL_SDK) || !HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
     AVExternalContentProtectionStatusPending      = 0,
     AVExternalContentProtectionStatusSufficient   = 1,

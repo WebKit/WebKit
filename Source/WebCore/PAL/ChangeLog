@@ -1,3 +1,39 @@
+2022-02-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r290076. rdar://problem/89076606
+
+    [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+    https://bugs.webkit.org/show_bug.cgi?id=236787
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore/PAL:
+    
+    Only re-declare classes and add categories for non-Apple Internal builds, or when those
+    definitions would be missing from system headers. The presence of the classes and their
+    methods are already checked at runtime, so this is a build-only change.
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290076 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-17  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+            https://bugs.webkit.org/show_bug.cgi?id=236787
+
+            Reviewed by Eric Carlson.
+
+            Only re-declare classes and add categories for non-Apple Internal builds, or when those
+            definitions would be missing from system headers. The presence of the classes and their
+            methods are already checked at runtime, so this is a build-only change.
+
+            * pal/spi/cocoa/AVFoundationSPI.h:
+
 2022-02-12  Jer Noble  <jer.noble@apple.com>
 
         Add settings to restrict media containers and codecs when in Captive Portal mode
