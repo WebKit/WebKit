@@ -1,5 +1,5 @@
 framework module WebGPU [extern_c] {
-  header "WebGPU.h"
+  umbrella header "WebGPU.h"
   header "WebGPUExt.h"
   export *
   module * { export * }
