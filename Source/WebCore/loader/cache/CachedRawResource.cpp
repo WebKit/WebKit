@@ -48,7 +48,7 @@ CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type,
     ASSERT(isMainOrMediaOrIconOrRawResource());
 }
 
-std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer& data) const
+std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const FragmentedSharedBuffer& data) const
 {
     size_t previousDataLength = encodedSize();
     if (data.size() <= previousDataLength)
@@ -68,7 +68,8 @@ void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
     auto protectedData = Ref { data };
 
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    m_data = data.makeContiguous();
+    // While m_data is immutable, we need to drop the const, this will be removed in bug 236736.
+    m_data = const_cast<FragmentedSharedBuffer*>(&data);
 
     // Notify clients only of the newly appended content since the last run.
     auto previousDataSize = encodedSize();
@@ -112,15 +113,13 @@ void CachedRawResource::finishLoading(const FragmentedSharedBuffer* data, const 
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == DataBufferingPolicy::BufferData) {
+        m_data = const_cast<FragmentedSharedBuffer*>(data);
         if (data) {
-            if (data != m_data.get())
-                m_data = data->makeContiguous();
-            if (auto incrementalData = calculateIncrementalDataChunk(*m_data)) {
+            if (auto incrementalData = calculateIncrementalDataChunk(*data)) {
                 setEncodedSize(data->size());
                 notifyClientsDataWasReceived(incrementalData->createSharedBuffer());
             }
-        } else
-            m_data = nullptr;
+        }
     }
 
 #if USE(QUICK_LOOK)
