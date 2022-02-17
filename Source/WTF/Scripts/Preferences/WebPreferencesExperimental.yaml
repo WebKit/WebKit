@@ -230,11 +230,11 @@ CSSContainerQueriesEnabled:
   humanReadableDescription: "Enable CSS Container Queries"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSContainmentEnabled:
   type: bool
