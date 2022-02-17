@@ -549,29 +549,11 @@ std::optional<uint64_t> Engine::readSizeFile(const String& path)
     ASSERT(!RunLoop::isMain());
 
     Locker locker { globalSizeFileLock };
-    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
-    auto closeFileHandle = makeScopeExit([&] {
-        FileSystem::closeFile(fileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(fileHandle))
+    auto buffer = FileSystem::readEntireFile(path);
+    if (!buffer)
         return std::nullopt;
 
-    auto fileSize = FileSystem::fileSize(path).value_or(0);
-    if (!fileSize)
-        return std::nullopt;
-
-    unsigned bytesToRead;
-    if (!WTF::convertSafely(fileSize, bytesToRead))
-        return std::nullopt;
-
-    // FIXME: No reason we need a heap buffer to read an arbitrary number of bytes when we only support small files that contain numerals.
-    Vector<char> buffer(bytesToRead);
-    unsigned totalBytesRead = FileSystem::readFromFile(fileHandle, buffer.data(), buffer.size());
-    if (totalBytesRead != bytesToRead)
-        return std::nullopt;
-
-    return parseInteger<uint64_t>({ buffer.data(), totalBytesRead });
+    return parseInteger<uint64_t>({ buffer->data(), static_cast<unsigned>(buffer->size()) });
 }
 
 class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {

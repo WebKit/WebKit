@@ -1,3 +1,16 @@
+2022-02-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Use FileSystem::readEntireFile everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=233818
+        <rdar://problem/86324895>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readSizeFile):
+        * Shared/PersistencyUtils.cpp:
+        (WebKit::createForFile):
+
 2022-02-16  Per Arne Vollan  <pvollan@apple.com>
 
         Send icons to the WebContent process for rendering of the attachment element
