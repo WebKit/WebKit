@@ -1,3 +1,10 @@
+2022-02-17  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening. Add fuzzy data.
+
+        * fast/borders/border-radius-on-html.html:
+        * fast/images/exif-orientation-svg-feimage.html:
+
 2022-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] css/css-color/t422-rgba-onscreen-b.xht and css/css-color/t425-hsla-onscreen-b.xht are consistently failing

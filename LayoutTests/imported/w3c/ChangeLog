@@ -1,3 +1,10 @@
+2022-02-17  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening. Add fuzzy data.
+
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-003.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001.html:
+
 2022-02-17  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support full range notation in size queries
