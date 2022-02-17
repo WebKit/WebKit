@@ -238,7 +238,7 @@ class Land(Command):
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             repository.checkout(target)
 
-        commit = repository.commit(branch=target, include_log=False)
+        commit = repository.commit(branch=target, include_log=True)
         if identifier_template and commit.identifier:
             land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash[:Commit.HASH_LABEL_SIZE])
         else:

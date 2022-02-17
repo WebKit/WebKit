@@ -1,3 +1,16 @@
+2022-02-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Comment and close issue when landing PR (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=236715
+        <rdar://problem/89031529>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version instead of decrement.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): Grab log of commit, which may contain revision, if there is one.
+
 2022-02-15  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Rename 'patch' to 'change' in layout-test steps
