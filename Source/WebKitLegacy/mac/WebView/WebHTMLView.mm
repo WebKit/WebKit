@@ -3542,8 +3542,8 @@ static RetainPtr<NSMenuItem> createShareMenuItem(const WebCore::HitTestResult& h
     }
 
     if (auto* image = hitTestResult.image()) {
-        if (RefPtr<WebCore::FragmentedSharedBuffer> buffer = image->data())
-            [items addObject:adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:buffer->makeContiguous()->data() length:buffer->size()]]).get()];
+        if (RefPtr<const WebCore::FragmentedSharedBuffer> buffer = image->data())
+            [items addObject:adoptNS([[NSImage alloc] initWithData:buffer->makeContiguous()->createNSData().get()]).get()];
     }
 
     if (!hitTestResult.selectedText().isEmpty()) {
