@@ -124,6 +124,8 @@ private:
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         RefPtr<WebCore::ImageBuffer> displayListImageBuffer;
 #endif
+        // FIXME: This flag needs to be part of ImageBuffer[Backend]. Currently it's not correctly maintained
+        // in the GPU Process code path.
         bool isVolatile = false;
 
         explicit operator bool() const

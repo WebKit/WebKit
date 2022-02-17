@@ -26,14 +26,14 @@
 #import "config.h"
 #import "RemoteLayerBackingStoreCollection.h"
 
+#import "Logging.h"
 #import "PlatformCALayerRemote.h"
 #import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 #import <WebCore/ConcreteImageBuffer.h>
+#import <wtf/text/TextStream.h>
 
-const Seconds volatileBackingStoreAgeThreshold = 1_s;
-const Seconds volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 const Seconds volatilityTimerInterval = 200_ms;
 
 namespace WebKit {
@@ -159,6 +159,11 @@ void RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable(RemoteLaye
 
     // This will not succeed in marking all buffers as volatile, because the commit unparenting the layer hasn't
     // made it to the UI process yet. The volatility timer will finish marking the remaining buffers later.
+    markBackingStoreVolatileAfterReachabilityChange(backingStore);
+}
+
+void RemoteLayerBackingStoreCollection::markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore& backingStore)
+{
     markBackingStoreVolatile(backingStore);
 }
 
@@ -182,11 +187,18 @@ void RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile(Completio
     completionHandler(successfullyMadeBackingStoreVolatile);
 }
 
-void RemoteLayerBackingStoreCollection::volatilityTimerFired()
+void RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer()
 {
     bool successfullyMadeBackingStoreVolatile = markAllBackingStoreVolatile(VolatilityMarkingBehavior::ConsiderTimeSinceLastDisplay, { });
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer() - live " << m_liveBackingStore.size() << ", unparented " << m_unparentedBackingStore.size() << "; successfullyMadeBackingStoreVolatile " << successfullyMadeBackingStoreVolatile);
+
     if (successfullyMadeBackingStoreVolatile)
         m_volatilityTimer.stop();
+}
+
+void RemoteLayerBackingStoreCollection::volatilityTimerFired()
+{
+    markAllBackingStoreVolatileFromTimer();
 }
 
 void RemoteLayerBackingStoreCollection::scheduleVolatilityTimer()

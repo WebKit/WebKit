@@ -118,6 +118,7 @@ private:
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
+    void markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>&, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& inUseBufferIdentifiers)>&&);
 
     void markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>, bool bufferWasEmpty)>&&);
     void swapToValidFrontBuffer(const BufferIdentifierSet& bufferSet, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, bool frontBufferWasEmpty)>&&);

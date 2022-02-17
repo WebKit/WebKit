@@ -451,6 +451,30 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
     completionHandler({ bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) }, WTFMove(frontBufferHandle), frontBufferWasEmpty);
 }
 
+void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& inUseBufferIdentifiers)>&& completionHandler)
+{
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
+
+    auto makeVolatile = [](ImageBuffer& imageBuffer) {
+        imageBuffer.releaseGraphicsContext();
+        return imageBuffer.setVolatile();
+    };
+
+    Vector<WebCore::RenderingResourceIdentifier> inUseBufferIdentifiers;
+    for (auto identifier : identifiers) {
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+        if (imageBuffer) {
+            if (!makeVolatile(*imageBuffer))
+                inUseBufferIdentifiers.append(identifier);
+        } else
+            LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " failed to find ImageBuffer for identifier " << identifier);
+    }
+
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfacesVolatile - in-use surfaces " << inUseBufferIdentifiers);
+
+    completionHandler(inUseBufferIdentifiers);
+}
+
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);

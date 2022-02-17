@@ -29,6 +29,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OptionSet.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ImageBuffer;
@@ -40,7 +41,7 @@ class RemoteLayerBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 
-class RemoteLayerBackingStoreCollection {
+class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -61,7 +62,7 @@ public:
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     void didFlushLayers();
 
-    void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
+    virtual void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
 
     void scheduleVolatilityTimer();
 
@@ -70,15 +71,23 @@ public:
 protected:
     RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 
-private:
     enum class VolatilityMarkingBehavior : uint8_t {
         IgnoreReachability              = 1 << 0,
         ConsiderTimeSinceLastDisplay    = 1 << 1,
     };
-    bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
 
+    virtual void markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore&);
+    virtual void markAllBackingStoreVolatileFromTimer();
+
+private:
+    bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
     bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
+
     void volatilityTimerFired();
+
+protected:
+    static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
+    static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 
     RemoteLayerTreeContext& m_layerTreeContext;
 

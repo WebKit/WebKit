@@ -45,6 +45,16 @@ private:
 
     void makeFrontBufferNonVolatile(RemoteLayerBackingStore&) final;
     void swapToValidFrontBuffer(RemoteLayerBackingStore&) final;
+
+    bool collectBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior>, MonotonicTime now, Vector<WebCore::RenderingResourceIdentifier>&);
+
+    bool collectAllBufferIdentifiersToMarkVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior, Vector<WebCore::RenderingResourceIdentifier>&);
+
+    void markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore&) final;
+    void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&) final;
+    void markAllBackingStoreVolatileFromTimer() final;
+    
+    void sendMarkBuffersVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool)>&&);
 };
 
 } // namespace WebKit

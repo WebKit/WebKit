@@ -1,3 +1,42 @@
+2022-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Move setting RemoteLayerBackingStore surfaces volatile into the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=236791
+
+        Reviewed by Tim Horton.
+        
+        Setting RemoteLayerBackingStore IOSurfaces volatile has to happen in the GPU process with
+        DOM rendering enabled. Add overrides in RemoteLayerWithRemoteRenderingBackingStoreCollection
+        to handle this, sending batches of buffer identifiers to RemoteRenderingBackend. Because
+        surface in-use counts can cause this to fail, we return a list of identifiers that we failed
+        to mark volatile. A future patch will use these to maintain web process-side buffer volatile
+        status.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::markSurfacesVolatile):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Platform/Logging.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreBecameUnreachable):
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatileAfterReachabilityChange):
+        (WebKit::RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer):
+        (WebKit::RemoteLayerBackingStoreCollection::volatilityTimerFired):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBufferIdentifiersToMarkVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::collectAllBufferIdentifiersToMarkVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::markBackingStoreVolatileAfterReachabilityChange):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::tryMarkAllBackingStoreVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::markAllBackingStoreVolatileFromTimer):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolatile):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::markSurfacesVolatile):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2022-02-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [macOS] Non-unified build fixes

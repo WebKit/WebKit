@@ -93,6 +93,7 @@ public:
     void cacheFont(Ref<WebCore::Font>&&);
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(Vector<WebCore::RenderingResourceIdentifier>&& inUseBufferIdentifiers)>&&);
 
     WebCore::VolatilityState markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier);
 

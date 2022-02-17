@@ -38,6 +38,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 
@@ -331,6 +332,15 @@ VolatilityState RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingRes
     }
 
     return bufferWasEmpty ? VolatilityState::Empty : VolatilityState::Valid;
+}
+
+void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(Vector<WebCore::RenderingResourceIdentifier>&&)>&& completionHandler)
+{
+    Vector<WebCore::RenderingResourceIdentifier> inUseBufferIdentifiers;
+    // FIXME: This should become async when webkit.org/b/235965 is fixed.
+    sendSyncToStream(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(identifiers), Messages::RemoteRenderingBackend::MarkSurfacesVolatile::Reply(inUseBufferIdentifiers));
+
+    completionHandler(WTFMove(inUseBufferIdentifiers));
 }
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
