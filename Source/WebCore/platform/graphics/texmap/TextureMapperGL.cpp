@@ -108,7 +108,7 @@ private:
 
         SharedGLData() = default;
 
-        HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram>> m_programs;
+        HashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
     };
 
     Ref<SharedGLData> m_sharedGLData;
@@ -172,7 +172,8 @@ GLuint TextureMapperGLData::getVAO()
 
 Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMapperShaderProgram::Options options)
 {
-    auto addResult = m_sharedGLData->m_programs.ensure(options,
+    ASSERT(!options.isEmpty());
+    auto addResult = m_sharedGLData->m_programs.ensure(options.toRaw(),
         [options] { return TextureMapperShaderProgram::create(options); });
     return *addResult.iterator->value;
 }
@@ -313,29 +314,30 @@ static TextureMapperShaderProgram::Options optionsForFilterType(FilterOperation:
 {
     switch (type) {
     case FilterOperation::GRAYSCALE:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::GrayscaleFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::GrayscaleFilter };
     case FilterOperation::SEPIA:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::SepiaFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SepiaFilter };
     case FilterOperation::SATURATE:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::SaturateFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::SaturateFilter };
     case FilterOperation::HUE_ROTATE:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::HueRotateFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::HueRotateFilter };
     case FilterOperation::INVERT:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::InvertFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::InvertFilter };
     case FilterOperation::BRIGHTNESS:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::BrightnessFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::BrightnessFilter };
     case FilterOperation::CONTRAST:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::ContrastFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::ContrastFilter };
     case FilterOperation::OPACITY:
-        return TextureMapperShaderProgram::TextureRGB | TextureMapperShaderProgram::OpacityFilter;
+        return { TextureMapperShaderProgram::TextureRGB, TextureMapperShaderProgram::OpacityFilter };
     case FilterOperation::BLUR:
-        return TextureMapperShaderProgram::BlurFilter;
+        return { TextureMapperShaderProgram::BlurFilter };
     case FilterOperation::DROP_SHADOW:
-        return TextureMapperShaderProgram::AlphaBlur
-            | (pass ? TextureMapperShaderProgram::ContentTexture | TextureMapperShaderProgram::SolidColor: 0);
+        if (!pass)
+            return { TextureMapperShaderProgram::AlphaBlur };
+        return { TextureMapperShaderProgram::AlphaBlur, TextureMapperShaderProgram::ContentTexture, TextureMapperShaderProgram::SolidColor };
     default:
         ASSERT_NOT_REACHED();
-        return 0;
+        return { };
     }
 }
 
@@ -472,17 +474,17 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
-    TextureMapperShaderProgram::Options options = 0;
+    TextureMapperShaderProgram::Options options;
     if (useRect)
-        options |= TextureMapperShaderProgram::Rect;
+        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
-        options |= TextureMapperShaderProgram::Opacity;
+        options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
-        options |= TextureMapperShaderProgram::Antialiasing;
+        options.add(TextureMapperShaderProgram::Antialiasing);
         flags |= ShouldAntialias;
     }
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
-        options |= TextureMapperShaderProgram::ManualRepeat;
+        options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
@@ -490,22 +492,22 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     if (filter) {
         if (data().filterInfo->contentTexture)
             filterContentTextureID = toBitmapTextureGL(data().filterInfo->contentTexture.get())->id();
-        options |= optionsForFilterType(filter->type(), data().filterInfo->pass);
+        options.add(optionsForFilterType(filter->type(), data().filterInfo->pass));
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
     } else
-        options |= TextureMapperShaderProgram::TextureRGB;
+        options.add(TextureMapperShaderProgram::TextureRGB);
 
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
     if (clipStack().isRoundedRectClipEnabled()) {
-        options |= TextureMapperShaderProgram::RoundedRectClip;
+        options.add(TextureMapperShaderProgram::RoundedRectClip);
         flags |= ShouldBlend;
     }
 
     if (flags & ShouldPremultiply)
-        options |= TextureMapperShaderProgram::Premultiply;
+        options.add(TextureMapperShaderProgram::Premultiply);
 
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
@@ -549,15 +551,15 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
 
     TextureMapperShaderProgram::Options options = alphaPlane ? TextureMapperShaderProgram::TextureYUVA : TextureMapperShaderProgram::TextureYUV;
     if (useRect)
-        options |= TextureMapperShaderProgram::Rect;
+        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
-        options |= TextureMapperShaderProgram::Opacity;
+        options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
-        options |= TextureMapperShaderProgram::Antialiasing;
+        options.add(TextureMapperShaderProgram::Antialiasing);
         flags |= ShouldAntialias;
     }
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
-        options |= TextureMapperShaderProgram::ManualRepeat;
+        options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
@@ -565,7 +567,7 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
     if (filter) {
         if (data().filterInfo->contentTexture)
             filterContentTextureID = toBitmapTextureGL(data().filterInfo->contentTexture.get())->id();
-        options |= optionsForFilterType(filter->type(), data().filterInfo->pass);
+        options.add(optionsForFilterType(filter->type(), data().filterInfo->pass));
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
     }
@@ -574,12 +576,12 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
         flags |= ShouldBlend;
 
     if (clipStack().isRoundedRectClipEnabled()) {
-        options |= TextureMapperShaderProgram::RoundedRectClip;
+        options.add(TextureMapperShaderProgram::RoundedRectClip);
         flags |= ShouldBlend;
     }
 
     if (flags & ShouldPremultiply)
-        options |= TextureMapperShaderProgram::Premultiply;
+        options.add(TextureMapperShaderProgram::Premultiply);
 
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
@@ -613,15 +615,15 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
     TextureMapperShaderProgram::Options options = uvReversed ?
         TextureMapperShaderProgram::TextureNV21 : TextureMapperShaderProgram::TextureNV12;
     if (useRect)
-        options |= TextureMapperShaderProgram::Rect;
+        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
-        options |= TextureMapperShaderProgram::Opacity;
+        options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
-        options |= TextureMapperShaderProgram::Antialiasing;
+        options.add(TextureMapperShaderProgram::Antialiasing);
         flags |= ShouldAntialias;
     }
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
-        options |= TextureMapperShaderProgram::ManualRepeat;
+        options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
@@ -629,7 +631,7 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
     if (filter) {
         if (data().filterInfo->contentTexture)
             filterContentTextureID = toBitmapTextureGL(data().filterInfo->contentTexture.get())->id();
-        options |= optionsForFilterType(filter->type(), data().filterInfo->pass);
+        options.add(optionsForFilterType(filter->type(), data().filterInfo->pass));
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
     }
@@ -638,7 +640,7 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
         flags |= ShouldBlend;
 
     if (clipStack().isRoundedRectClipEnabled()) {
-        options |= TextureMapperShaderProgram::RoundedRectClip;
+        options.add(TextureMapperShaderProgram::RoundedRectClip);
         flags |= ShouldBlend;
     }
 
@@ -669,15 +671,15 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
 
     TextureMapperShaderProgram::Options options = TextureMapperShaderProgram::TexturePackedYUV;
     if (useRect)
-        options |= TextureMapperShaderProgram::Rect;
+        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
-        options |= TextureMapperShaderProgram::Opacity;
+        options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
-        options |= TextureMapperShaderProgram::Antialiasing;
+        options.add(TextureMapperShaderProgram::Antialiasing);
         flags |= ShouldAntialias;
     }
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
-        options |= TextureMapperShaderProgram::ManualRepeat;
+        options.add(TextureMapperShaderProgram::ManualRepeat);
 
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
@@ -685,7 +687,7 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
     if (filter) {
         if (data().filterInfo->contentTexture)
             filterContentTextureID = toBitmapTextureGL(data().filterInfo->contentTexture.get())->id();
-        options |= optionsForFilterType(filter->type(), data().filterInfo->pass);
+        options.add(optionsForFilterType(filter->type(), data().filterInfo->pass));
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
     }
@@ -694,7 +696,7 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
         flags |= ShouldBlend;
 
     if (clipStack().isRoundedRectClipEnabled()) {
-        options |= TextureMapperShaderProgram::RoundedRectClip;
+        options.add(TextureMapperShaderProgram::RoundedRectClip);
         flags |= ShouldBlend;
     }
 
@@ -720,12 +722,12 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     Flags flags = 0;
     TextureMapperShaderProgram::Options options = TextureMapperShaderProgram::SolidColor;
     if (!matrix.mapQuad(rect).isRectilinear()) {
-        options |= TextureMapperShaderProgram::Antialiasing;
+        options.add(TextureMapperShaderProgram::Antialiasing);
         flags |= ShouldAntialias | (isBlendingAllowed ? ShouldBlend : 0);
     }
 
     if (clipStack().isRoundedRectClipEnabled()) {
-        options |= TextureMapperShaderProgram::RoundedRectClip;
+        options.add(TextureMapperShaderProgram::RoundedRectClip);
         flags |= ShouldBlend;
     }
 
