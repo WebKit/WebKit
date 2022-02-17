@@ -712,7 +712,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
                         return false;
                     layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(enumerator, layout_node_ptr);
                     if (!layout_node)
-                        return false;
+                        break;
                 }
                 
                 if (pas_is_wrapped_segregated_size_directory(layout_node)) {

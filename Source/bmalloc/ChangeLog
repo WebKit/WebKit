@@ -1,3 +1,11 @@
+2022-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix heap enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=236662
+
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (pas_enumerate_segregated_heaps):
+
 2022-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Use segmented vector for TLC layout list
