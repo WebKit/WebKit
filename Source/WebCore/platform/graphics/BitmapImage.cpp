@@ -137,8 +137,9 @@ RefPtr<NativeImage> BitmapImage::frameImageAtIndexCacheIfNeeded(size_t index, Su
     return m_source->frameImageAtIndexCacheIfNeeded(index, subsamplingLevel);
 }
 
-RefPtr<NativeImage> BitmapImage::nativeImage()
+RefPtr<NativeImage> BitmapImage::nativeImage(const DestinationColorSpace&)
 {
+    // FIXME: Handle the case when the requested colorSpace is not equal to BitmapImage::colorSpace().
     return frameImageAtIndexCacheIfNeeded(0, SubsamplingLevel::Default);
 }
 

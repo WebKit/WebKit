@@ -54,7 +54,6 @@ public:
     }
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final;
-    ImageDrawResult drawForCanvas(GraphicsContext&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&, DestinationColorSpace) final;
 
     void drawPattern(GraphicsContext&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions& = { }) final;
 

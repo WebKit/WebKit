@@ -142,7 +142,7 @@ public:
 #endif
 #endif
 
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage() override;
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) override;
     RefPtr<NativeImage> nativeImageForCurrentFrame() override;
     RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation) override;
 #if USE(CG)

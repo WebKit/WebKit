@@ -1554,17 +1554,17 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImageForCanvas(*image, normalizedDstRect, normalizedSrcRect, options, colorSpace());
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         repaintEntireCanvas = true;
     } else if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op);
         repaintEntireCanvas = true;
     } else if (op == CompositeOperator::Copy) {
         clearCanvas();
-        c->drawImageForCanvas(*image, normalizedDstRect, normalizedSrcRect, options, colorSpace());
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         repaintEntireCanvas = true;
     } else
-        c->drawImageForCanvas(*image, normalizedDstRect, normalizedSrcRect, options, colorSpace());
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
 
     didDraw(repaintEntireCanvas, normalizedDstRect);
 
@@ -1808,12 +1808,12 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     c->restore();
 }
 
-static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options, DestinationColorSpace colorSpace)
+static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options)
 {
-    context.drawImageForCanvas(image, dest, src, options, colorSpace);
+    context.drawImage(image, dest, src, options);
 }
 
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options, DestinationColorSpace)
+static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, const ImagePaintingOptions& options)
 {
     context.drawImageBuffer(imageBuffer, dest, src, options);
 }
@@ -1844,7 +1844,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     buffer->context().translate(-transformedAdjustedRect.location());
     buffer->context().translate(croppedOffset);
     buffer->context().concatCTM(effectiveTransform);
-    drawImageToContext(image, buffer->context(), adjustedDest, src, { CompositeOperator::SourceOver }, colorSpace());
+    drawImageToContext(image, buffer->context(), adjustedDest, src, { CompositeOperator::SourceOver });
 
     compositeBuffer(*buffer, bufferRect, op);
 }
