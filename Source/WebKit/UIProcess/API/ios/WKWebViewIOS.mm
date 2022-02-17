@@ -40,6 +40,7 @@
 #import "ViewGestureController.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKContentView.h"
+#import "WKHoverPlatterParameters.h"
 #import "WKPasswordView.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
@@ -1565,6 +1566,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)_allowsDoubleTapGestures
 {
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForDoubleTap)
+        return YES;
+#endif
+
     if (_fastClickingIsDisabled)
         return YES;
 

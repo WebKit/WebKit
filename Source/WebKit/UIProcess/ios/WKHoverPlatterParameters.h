@@ -31,6 +31,8 @@
 
 @property (nonatomic) BOOL platterEnabledForMouse;
 @property (nonatomic) BOOL platterEnabledForLongPress;
+@property (nonatomic) BOOL platterEnabledForSingleTap;
+@property (nonatomic) BOOL platterEnabledForDoubleTap;
 
 @property (nonatomic, readonly) BOOL enabled;
 

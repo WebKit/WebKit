@@ -44,6 +44,8 @@
 
 - (void)didReceiveMouseEvent:(const WebKit::NativeWebMouseEvent&)event;
 - (void)didLongPressAtPoint:(WebCore::FloatPoint)point;
+- (void)didSingleTapAtPoint:(WebCore::FloatPoint)point;
+- (void)didDoubleTapAtPoint:(WebCore::FloatPoint)point;
 
 - (WebCore::FloatPoint)adjustedPointForPoint:(WebCore::FloatPoint)point;
 - (WebKit::NativeWebMouseEvent)adjustedEventForEvent:(const WebKit::NativeWebMouseEvent&)event;
@@ -52,7 +54,7 @@
 
 - (void)invalidate;
 
-@property (nonatomic, assign) WebCore::FloatPoint hoverPoint;
+- (BOOL)isVisible;
 
 @end
 

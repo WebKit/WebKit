@@ -3239,6 +3239,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_inputPeripheral setSingleTapShouldEndEditing:[_inputPeripheral isEditing]];
 
     bool shouldRequestMagnificationInformation = _page->preferences().fasterClicksEnabled();
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForDoubleTap)
+        shouldRequestMagnificationInformation = NO;
+#endif
+
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
 
@@ -3329,6 +3335,14 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [_inputPeripheral endEditing];
 
     RELEASE_LOG(ViewGestures, "Single tap recognized - commit potential tap (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
+    
+    
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForSingleTap && ![_hoverPlatter isVisible]) {
+        [_hoverPlatter didSingleTapAtPoint:_lastInteractionLocation];
+        return;
+    }
+#endif
 
     WebCore::PointerID pointerId = WebCore::mousePointerID;
     if (auto* singleTapTouchIdentifier = [_singleTapGestureRecognizer lastActiveTouchIdentifier]) {
@@ -3349,6 +3363,14 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     auto location = [self _locationForGesture:gestureRecognizer];
     _lastInteractionLocation = location;
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForDoubleTap) {
+        [_hoverPlatter didDoubleTapAtPoint:location];
+        return;
+    }
+#endif
+
     _smartMagnificationController->handleSmartMagnificationGesture(location);
 }
 

@@ -55,10 +55,17 @@
 {
     [super setDefaultValues];
 
-    _platterEnabledForMouse = NO;
-    _platterEnabledForLongPress = NO;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    auto boolDefault = ^(NSString *name) {
+        return [defaults boolForKey:name];
+    };
 
-    _showDebugOverlay = NO;
+    _platterEnabledForMouse = boolDefault(@"WKHoverPlatterEnabledForMouse");
+    _platterEnabledForLongPress = boolDefault(@"WKHoverPlatterEnabledForLongPress");
+    _platterEnabledForSingleTap = boolDefault(@"WKHoverPlatterEnabledForSingleTap");
+    _platterEnabledForDoubleTap = boolDefault(@"WKHoverPlatterEnabledForDoubleTap");
+
+    _showDebugOverlay = boolDefault(@"WKHoverPlatterShowDebugOverlay");
 
     _platterRadius = 200;
     _platterScale = 2;
@@ -75,7 +82,10 @@
 
 - (BOOL)enabled
 {
-    return _platterEnabledForMouse || _platterEnabledForLongPress;
+    return _platterEnabledForMouse
+        || _platterEnabledForLongPress
+        || _platterEnabledForSingleTap
+        || _platterEnabledForDoubleTap;
 }
 
 + (PTModule *)settingsControllerModule
@@ -83,6 +93,8 @@
     PTSection *enablementSection = [PTModule sectionWithRows:@[
         [PTSwitchRow rowWithTitle:@"Enable Platter For Mouse" valueKeyPath:@"platterEnabledForMouse"],
         [PTSwitchRow rowWithTitle:@"Enable Platter For Long Press" valueKeyPath:@"platterEnabledForLongPress"],
+        [PTSwitchRow rowWithTitle:@"Enable Platter For Single Tap" valueKeyPath:@"platterEnabledForSingleTap"],
+        [PTSwitchRow rowWithTitle:@"Enable Platter For Double Tap" valueKeyPath:@"platterEnabledForDoubleTap"],
     ] title:@"Platter"];
 
     PTSection *debugSection = [PTModule sectionWithRows:@[

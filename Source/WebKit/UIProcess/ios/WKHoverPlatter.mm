@@ -66,7 +66,7 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
 @implementation WKHoverPlatter {
     __weak UIView *_view;
     __weak id <WKHoverPlatterDelegate> _delegate;
-    WebCore::FloatPoint _hoverPoint;
+    WebCore::FloatPoint _platterCenter;
 
     BOOL _isSittingDown;
 
@@ -81,7 +81,7 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
 - (instancetype)initWithView:(UIView *)view delegate:(id <WKHoverPlatterDelegate>)delegate
 {
     auto parameters = WKHoverPlatterDomain.rootSettings;
-    if (!parameters.platterEnabledForMouse && !parameters.platterEnabledForLongPress) {
+    if (!parameters.enabled) {
         [self release];
         return nil;
     }
@@ -103,9 +103,9 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
     _delegate = nil;
 }
 
-- (WebCore::FloatPoint)hoverPoint
+- (BOOL)isVisible
 {
-    return _hoverPoint;
+    return !_isSittingDown;
 }
 
 - (void)didReceiveMouseEvent:(const WebKit::NativeWebMouseEvent&)event
@@ -113,7 +113,7 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
     auto point = event.position();
 
     if (WKHoverPlatterDomain.rootSettings.platterEnabledForMouse) {
-        _hoverPoint = point;
+        _platterCenter = point;
         [self update];
         return;
     }
@@ -128,20 +128,38 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
     if (!WKHoverPlatterDomain.rootSettings.platterEnabledForLongPress)
         return;
 
-    _hoverPoint = point;
+    _platterCenter = point;
+    [self update];
+}
+
+- (void)didSingleTapAtPoint:(WebCore::FloatPoint)point
+{
+    if (!WKHoverPlatterDomain.rootSettings.platterEnabledForSingleTap)
+        return;
+
+    _platterCenter = point;
+    [self update];
+}
+
+- (void)didDoubleTapAtPoint:(WebCore::FloatPoint)point
+{
+    if (!WKHoverPlatterDomain.rootSettings.platterEnabledForDoubleTap)
+        return;
+
+    _platterCenter = point;
     [self update];
 }
 
 - (WebCore::FloatRect)platterBoundingRect
 {
     auto radius = WKHoverPlatterDomain.rootSettings.platterRadius;
-    return { _hoverPoint - WebCore::FloatSize(radius, radius), WebCore::FloatSize(radius * 2, radius * 2) };
+    return { _platterCenter - WebCore::FloatSize(radius, radius), WebCore::FloatSize(radius * 2, radius * 2) };
 }
 
 - (WebCore::FloatRect)linkSearchRect
 {
     auto radius = WKHoverPlatterDomain.rootSettings.linkSearchRadius;
-    return { _hoverPoint - WebCore::FloatSize(radius, radius), WebCore::FloatSize(radius * 2, radius * 2) };
+    return { _platterCenter - WebCore::FloatSize(radius, radius), WebCore::FloatSize(radius * 2, radius * 2) };
 }
 
 - (void)update
@@ -296,9 +314,9 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
     if (_isSittingDown)
         return point;
 
-    auto delta = point - _hoverPoint;
+    auto delta = point - _platterCenter;
     delta.scale(1.f / WKHoverPlatterDomain.rootSettings.platterScale);
-    return _hoverPoint + delta;
+    return _platterCenter + delta;
 }
 
 - (WebKit::NativeWebMouseEvent)adjustedEventForEvent:(const WebKit::NativeWebMouseEvent&)event
