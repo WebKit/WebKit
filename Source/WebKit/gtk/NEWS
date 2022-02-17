@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.34.6
+================
+
+What's new in WebKitGTK 2.34.6?
+
+  - Fix accessibility not working when the Bubblewrap sandbox is enabled.
+  - Fix rendering of scrollbars when overlay scrollbars are disabled.
+  - Fix the build when the X11 support is disabled.
+  - Fix the build in a number of situations where the main OpenGL library is
+    not called libGL or libgl, as is the case on systems that use libglvnd.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.34.5
 ================
 
