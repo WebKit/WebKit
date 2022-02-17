@@ -1,5 +1,33 @@
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
+        Add fuzzy data for test failures seen on the iOS GPU Process bot
+        Unreviewed.
+
+        * compositing/backgrounds/fixed-backgrounds.html:
+        * compositing/images/positioned-image-content-rect.html:
+        * css3/background/background-repeat-space-border.html:
+        * css3/background/background-repeat-space-content.html:
+        * css3/background/background-repeat-space-padding.html:
+        * css3/masking/clip-path-ellipse.html:
+        * css3/masking/clip-path-inset-corners.html:
+        * css3/masking/clip-path-restore.html:
+        * fast/backgrounds/gradient-background-shadow.html:
+        * fast/filter-image/filter-image-blur.html:
+        * fast/layers/overflow-scroll-transform-border-radius.html:
+        * fast/masking/clip-path-inset-large-radii.html:
+        * fast/overflow/line-clamp-with-text-shadow.html:
+        * fast/text/decorations-vertical-underline.html:
+        * fast/text/fitzpatrick-combination.html:
+        * fast/text/simple-line-layout-text-position-with-stroke.html:
+        * gpu-process/TestExpectations:
+        * svg/clip-path/clip-opacity.html:
+        * svg/clip-path/clip-path-objectboundingbox-003.svg:
+        * svg/clip-path/svg-in-html.html:
+        * svg/clip-path/webkit-clip-path-after.svg:
+        * svg/clip-path/webkit-clip-path-before.svg:
+
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening for GPU Process.
 
         * gpu-process/TestExpectations:

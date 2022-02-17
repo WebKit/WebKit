@@ -1,3 +1,28 @@
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
+        Add fuzzy data for test failures seen on the iOS GPU Process bot
+        Unreviewed.
+
+        * web-platform-tests/css/css-backgrounds/background-rounded-image-clip.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-001.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-002.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-003.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-004.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-005.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-006.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-007.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-circle-008.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-001.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-002.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-003.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-004.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-005.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-006.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-007.html:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-008.html:
+        * web-platform-tests/css/css-transforms/css-skew-002.html:
+        * web-platform-tests/css/css-transforms/transforms-skewY.html:
+
 2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
 
         Inherit track count from parent grid for subgridded axes and clamp item placement to that explicit grid.

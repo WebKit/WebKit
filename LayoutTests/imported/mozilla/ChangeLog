@@ -1,3 +1,12 @@
+2022-02-16  Jon Lee  <jonlee@apple.com>
+
+        Add fuzzy data for test failures seen on the iOS GPU Process bot
+        Unreviewed.
+
+        * svg/blend-exclusion.svg:
+        * svg/blend-overlay.svg:
+        * svg/text-gradient-01.svg:
+
 2022-02-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
