@@ -178,18 +178,17 @@ public:
             deleteSessionStorageData();
     }
 
-    void moveData(const String& path, const String& localStoragePath)
+    void moveData(OptionSet<WebsiteDataType> types, const String&, const String& localStoragePath)
     {
-        m_fileSystemStorageManager = nullptr;
-        if (m_localStorageManager)
-            m_localStorageManager->close();
+        // This is only supported for LocalStorage now.
+        if (types.contains(WebsiteDataType::LocalStorage) && !localStoragePath.isEmpty()) {
+            if (m_localStorageManager)
+                m_localStorageManager->close();
 
-        FileSystem::makeAllDirectories(FileSystem::parentPath(path));
-        FileSystem::moveFile(m_rootPath, path);
-
-        if (!m_localStoragePath.isEmpty() && !localStoragePath.isEmpty()) {
-            FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
-            WebCore::SQLiteFileSystem::moveDatabaseFile(m_localStoragePath, localStoragePath);
+            if (!m_localStoragePath.isEmpty()) {
+                FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
+                WebCore::SQLiteFileSystem::moveDatabaseFile(m_localStoragePath, localStoragePath);
+            }
         }
     }
 
@@ -349,11 +348,11 @@ void OriginStorageManager::deleteData(OptionSet<WebsiteDataType> types, WallTime
     defaultBucket().deleteData(types, modifiedSince);
 }
 
-void OriginStorageManager::moveData(const String& newPath, const String& localStoragePath)
+void OriginStorageManager::moveData(OptionSet<WebsiteDataType> types, const String& newPath, const String& localStoragePath)
 {
     ASSERT(!RunLoop::isMain());
 
-    defaultBucket().moveData(newPath, localStoragePath);
+    defaultBucket().moveData(types, newPath, localStoragePath);
 }
 
 } // namespace WebKit
