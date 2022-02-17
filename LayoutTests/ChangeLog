@@ -1,3 +1,14 @@
+2022-02-16  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r285885) Unable to exit Trip Details in Amtrak app
+        https://bugs.webkit.org/show_bug.cgi?id=236732
+        <rdar://87462825>
+
+        Reviewed by Simon Fraser.
+
+        * fast/flexbox/incorrect-min-size-with-paint-contain-expected.html: Added.
+        * fast/flexbox/incorrect-min-size-with-paint-contain.html: Added.
+
 2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
 
         Implement getComputedStyle for subgrids
