@@ -69,6 +69,10 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     success = initialize();
     ASSERT_UNUSED(success, success);
 
+    // We require this extension to render into the dmabuf-backed EGLImage.
+    RELEASE_ASSERT(supportsExtension("GL_OES_EGL_image"));
+    GL_RequestExtensionANGLE("GL_OES_EGL_image");
+
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
 

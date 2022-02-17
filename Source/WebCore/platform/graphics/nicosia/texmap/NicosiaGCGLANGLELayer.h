@@ -56,7 +56,7 @@ public:
         static const char* errorString(int statusCode);
         static const char* lastErrorString();
 
-        static std::unique_ptr<ANGLEContext> createContext();
+        static std::unique_ptr<ANGLEContext> createContext(bool isForWebGL2);
         virtual ~ANGLEContext();
 
         bool makeContextCurrent();

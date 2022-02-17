@@ -121,7 +121,7 @@ const char* GCGLANGLELayer::ANGLEContext::lastErrorString()
     return errorString(EGL_GetError());
 }
 
-std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext()
+std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext(bool isForWebGL2)
 {
     EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
     if (display == EGL_NO_DISPLAY)
@@ -144,6 +144,8 @@ std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::crea
         EGL_GREEN_SIZE, 8,
         EGL_BLUE_SIZE, 8,
         EGL_ALPHA_SIZE, 8,
+        EGL_DEPTH_SIZE, 0,
+        EGL_STENCIL_SIZE, 0,
         EGL_NONE
     };
     EGLint numberConfigsReturned = 0;
@@ -161,12 +163,31 @@ std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::crea
     }
 
     std::vector<EGLint> contextAttributes;
-    contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
-    contextAttributes.push_back(2);
+    if (isForWebGL2) {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(3);
+    } else {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(2);
+        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+        contextAttributes.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        contextAttributes.push_back(EGL_FALSE);
+    }
     contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
-    contextAttributes.push_back(EGL_EXTENSIONS_ENABLED_ANGLE);
+
+    // WebGL requires that all resources are cleared at creation.
+    contextAttributes.push_back(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
+
+    // WebGL doesn't allow client arrays.
+    contextAttributes.push_back(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    contextAttributes.push_back(EGL_FALSE);
+
+    // WebGL doesn't allow implicit creation of objects on bind.
+    contextAttributes.push_back(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    contextAttributes.push_back(EGL_FALSE);
+
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         contextAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
@@ -231,7 +252,7 @@ GCGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() const
 
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLANGLE& context)
     : m_context(context)
-    , m_angleContext(ANGLEContext::createContext())
+    , m_angleContext(ANGLEContext::createContext(context.m_isForWebGL2))
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
 }
