@@ -29,8 +29,9 @@ from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
 from argparse import Namespace
+from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
-from webkitscmpy import local, log, remote
+from webkitscmpy import Commit, local, log, remote
 
 
 class Land(Command):
@@ -151,6 +152,12 @@ class Land(Command):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1
 
+        issue = None
+        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
+            issue = Tracker.from_string(line)
+            if issue:
+                break
+
         target = pull_request.base if pull_request else branch_point.branch
         log.info("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
         if repository.fetch(branch=target, remote=cls.REMOTE):
@@ -233,13 +240,17 @@ class Land(Command):
 
         commit = repository.commit(branch=target, include_log=False)
         if identifier_template and commit.identifier:
-            land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash)
+            land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash[:Commit.HASH_LABEL_SIZE])
         else:
-            land_message = 'Landed {}!'.format(commit.hash)
+            land_message = 'Landed {}!'.format(commit.hash[:Commit.HASH_LABEL_SIZE])
         print(land_message)
 
         if pull_request:
             pull_request.comment(land_message)
+        if issue:
+            if canonical_svn and commit.revision:
+                land_message = land_message.replace(commit.hash[:Commit.HASH_LABEL_SIZE], 'r{}'.format(commit.revision))
+            issue.close(why=land_message)
 
         if args.defaults or Terminal.choose("Delete branch '{}'?".format(source_branch), default='Yes') == 'Yes':
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(source_branch))

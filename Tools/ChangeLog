@@ -1,3 +1,30 @@
+2022-02-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Comment and close issue when landing PR
+        https://bugs.webkit.org/show_bug.cgi?id=236715
+        <rdar://problem/89031529>
+
+        Reviewed by Ryan Haddad.
+
+        When we land pull requests, we should make a comment on the associated issue
+        indicating where the code change is and close that issue.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): Comment on and close issue associated with the final commit in
+        the landed series, shorten displayed hash to 12 characters.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (repository): Allow caller to specify issue URL in commit message, append git-svn
+        tag if in a git-svn repository.
+        (TestLand):
+        (TestLand.test_default):
+        (TestLand.test_canonicalize):
+        (TestLand.test_svn):
+        (TestLand.test_default_with_radar):
+        (TestLand.test_canonicalize_with_bugzilla):
+        (TestLand.test_svn_with_bugzilla):
+
 2022-02-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Execute API test by name
