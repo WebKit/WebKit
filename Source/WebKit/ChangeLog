@@ -1,3 +1,18 @@
+2022-02-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [macOS] Non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=236752
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        (WebKit::toWKRectEdge):
+        (WebKit::toRectEdges):
+        * UIProcess/mac/WKSharingServicePickerDelegate.h:
+
 2022-02-17  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required syscall to sandbox

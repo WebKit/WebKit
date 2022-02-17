@@ -55,6 +55,7 @@
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
 #import <WebCore/WebAuthenticationUtils.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <objc/runtime.h>
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
