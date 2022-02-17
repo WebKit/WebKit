@@ -2900,11 +2900,11 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         super(RunWebKitTestsWithoutChange, self).setLayoutTestCommand()
-        # In order to speed up testing, on the step that retries running the layout tests without patch
+        # In order to speed up testing, on the step that retries running the layout tests without change
         # only run the subset of tests that failed on the previous steps.
         # But only do that if the previous steps didn't exceed the test failure limit
         # Also pass '--skipped=always' to avoid running a test that is skipped on the clean tree and that
-        # the patch removed from the TestExpectations file meanwhile it still fails with the patch (so
+        # the change removed from the TestExpectations file meanwhile it still fails with the change (so
         # it is passed as an argument on the command-line)
         # The flag '--skip-failing-tests' that is passed by default (in combination with '--skipped=always')
         # avoids running tests marked as failing on the Expectation files even when those are passed as arguments.
@@ -2913,9 +2913,9 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
         if not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit:
             first_results_failing_tests = set(self.getProperty('first_run_failures', set()))
             second_results_failing_tests = set(self.getProperty('second_run_failures', set()))
-            list_failed_tests_with_patch = sorted(first_results_failing_tests.union(second_results_failing_tests))
-            if list_failed_tests_with_patch:
-                self.setCommand(self.command + ['--skipped=always'] + list_failed_tests_with_patch)
+            list_failed_tests_with_change = sorted(first_results_failing_tests.union(second_results_failing_tests))
+            if list_failed_tests_with_change:
+                self.setCommand(self.command + ['--skipped=always'] + list_failed_tests_with_change)
 
 
 class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
@@ -2928,7 +2928,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         self.finished(FAILURE)
         self.build.results = FAILURE
         if not new_failures:
-            message = 'Found unexpected failure with patch'
+            message = 'Found unexpected failure with change'
         else:
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
@@ -2978,7 +2978,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 
     def retry_build(self, message=''):
         if not message:
-            message = 'Unable to confirm if test failures are introduced by patch, retrying build'
+            message = 'Unable to confirm if test failures are introduced by change, retrying build'
         self.descriptionDone = message
 
         triggered_by = self.getProperty('triggered_by', None)
@@ -3111,7 +3111,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
             if clean_tree_run_status == SUCCESS:
                 return self.report_failure(set())
-            self.send_email_for_infrastructure_issue('Both first and second layout-test runs with patch generated no list of results but exited with error, and the clean_tree without patch retry also failed.')
+            self.send_email_for_infrastructure_issue('Both first and second layout-test runs with patch generated no list of results but exited with error, and the clean_tree without change retry also failed.')
             return self.retry_build('Unexpected infrastructure issue, retrying build')
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
@@ -3242,14 +3242,14 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests))
 
     def evaluateCommand(self, cmd):
-        with_patch_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_patch_repeat_failures_results_nonflaky_failures', []))
-        with_patch_repeat_failures_results_flakies = set(self.getProperty('with_patch_repeat_failures_results_flakies', []))
-        with_patch_repeat_failures_timedout = self.getProperty('with_patch_repeat_failures_timedout', False)
+        with_change_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
+        with_change_repeat_failures_results_flakies = set(self.getProperty('with_change_repeat_failures_results_flakies', []))
+        with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
         first_results_flaky_tests = set(self.getProperty('first_run_flakies', []))
         rc = self.evaluateResult(cmd)
-        self.setProperty('with_patch_repeat_failures_retcode', rc)
+        self.setProperty('with_change_repeat_failures_retcode', rc)
         next_steps = [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
-        if with_patch_repeat_failures_results_nonflaky_failures or with_patch_repeat_failures_timedout:
+        if with_change_repeat_failures_results_nonflaky_failures or with_change_repeat_failures_timedout:
             next_steps.extend([
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
@@ -3257,7 +3257,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
                 RevertPullRequestChanges(),
                 CompileWebKitWithoutChange(retry_build_on_failure=True),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                RunWebKitTestsRepeatFailuresWithoutPatchRedTree(),
+                RunWebKitTestsRepeatFailuresWithoutChangeRedTree(),
             ])
         else:
             next_steps.append(AnalyzeLayoutTestsResultsRedTree())
@@ -3269,15 +3269,15 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         shell.Test.commandComplete(self, cmd)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
-        with_patch_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
-        if with_patch_repeat_failures_results:
-            self.setProperty('with_patch_repeat_failures_results_exceed_failure_limit', with_patch_repeat_failures_results.did_exceed_test_failure_limit)
-            self.setProperty('with_patch_repeat_failures_results_nonflaky_failures', sorted(with_patch_repeat_failures_results.failing_tests))
-            self.setProperty('with_patch_repeat_failures_results_flakies', sorted(with_patch_repeat_failures_results.flaky_tests))
-            if with_patch_repeat_failures_results.failing_tests:
-                self._addToLog(self.test_failures_log_name, '\n'.join(with_patch_repeat_failures_results.failing_tests))
+        with_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
+        if with_change_repeat_failures_results:
+            self.setProperty('with_change_repeat_failures_results_exceed_failure_limit', with_change_repeat_failures_results.did_exceed_test_failure_limit)
+            self.setProperty('with_change_repeat_failures_results_nonflaky_failures', sorted(with_change_repeat_failures_results.failing_tests))
+            self.setProperty('with_change_repeat_failures_results_flakies', sorted(with_change_repeat_failures_results.flaky_tests))
+            if with_change_repeat_failures_results.failing_tests:
+                self._addToLog(self.test_failures_log_name, '\n'.join(with_change_repeat_failures_results.failing_tests))
         command_timedout = self._did_command_timed_out(self.log_observer.getHeaders())
-        self.setProperty('with_patch_repeat_failures_timedout', command_timedout)
+        self.setProperty('with_change_repeat_failures_timedout', command_timedout)
         self._parseRunWebKitTestsOutput(logText)
 
     def start(self):
@@ -3285,8 +3285,8 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         return super().start(BufferLogObserverClass=BufferLogHeaderObserver)
 
 
-class RunWebKitTestsRepeatFailuresWithoutPatchRedTree(RunWebKitTestsRedTree):
-    name = 'layout-tests-repeat-failures-without-patch'
+class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
+    name = 'layout-tests-repeat-failures-without-change'
     NUM_REPEATS_PER_TEST = 10
     EXIT_AFTER_FAILURES = None
     MAX_SECONDS_STEP_RUN = 10800  # 3h
@@ -3296,35 +3296,35 @@ class RunWebKitTestsRepeatFailuresWithoutPatchRedTree(RunWebKitTestsRedTree):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
-        with_patch_nonflaky_failures = set(self.getProperty('with_patch_repeat_failures_results_nonflaky_failures', []))
+        with_change_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
         first_run_failures = set(self.getProperty('first_run_failures', []))
-        with_patch_repeat_failures_timedout = self.getProperty('with_patch_repeat_failures_timedout', False)
-        failures_to_repeat = first_run_failures if with_patch_repeat_failures_timedout else with_patch_nonflaky_failures
+        with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
+        failures_to_repeat = first_run_failures if with_change_repeat_failures_timedout else with_change_nonflaky_failures
         # Pass '--skipped=always' to ensure that any test passed via command line arguments
         # is skipped anyways if is marked as such on the Expectation files or if is marked
         # as failure (since we are passing also '--skip-failing-tests'). That way we ensure
-        # to report the case of a patch removing an expectation that still fails with it.
+        # to report the case of a change removing an expectation that still fails with it.
         self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST, '--skipped=always'] + sorted(failures_to_repeat))
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        self.setProperty('without_patch_repeat_failures_retcode', rc)
-        self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='repeat-failures-without-patch'), ExtractTestResults(identifier='repeat-failures-without-patch'), AnalyzeLayoutTestsResultsRedTree()])
+        self.setProperty('without_change_repeat_failures_retcode', rc)
+        self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='repeat-failures-without-change'), ExtractTestResults(identifier='repeat-failures-without-change'), AnalyzeLayoutTestsResultsRedTree()])
         return rc
 
     def commandComplete(self, cmd):
         shell.Test.commandComplete(self, cmd)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
-        without_patch_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
-        if without_patch_repeat_failures_results:
-            self.setProperty('without_patch_repeat_failures_results_exceed_failure_limit', without_patch_repeat_failures_results.did_exceed_test_failure_limit)
-            self.setProperty('without_patch_repeat_failures_results_nonflaky_failures', sorted(without_patch_repeat_failures_results.failing_tests))
-            self.setProperty('without_patch_repeat_failures_results_flakies', sorted(without_patch_repeat_failures_results.flaky_tests))
-            if without_patch_repeat_failures_results.failing_tests:
-                self._addToLog(self.test_failures_log_name, '\n'.join(without_patch_repeat_failures_results.failing_tests))
+        without_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
+        if without_change_repeat_failures_results:
+            self.setProperty('without_change_repeat_failures_results_exceed_failure_limit', without_change_repeat_failures_results.did_exceed_test_failure_limit)
+            self.setProperty('without_change_repeat_failures_results_nonflaky_failures', sorted(without_change_repeat_failures_results.failing_tests))
+            self.setProperty('without_change_repeat_failures_results_flakies', sorted(without_change_repeat_failures_results.flaky_tests))
+            if without_change_repeat_failures_results.failing_tests:
+                self._addToLog(self.test_failures_log_name, '\n'.join(without_change_repeat_failures_results.failing_tests))
         command_timedout = self._did_command_timed_out(self.log_observer.getHeaders())
-        self.setProperty('without_patch_repeat_failures_timedout', command_timedout)
+        self.setProperty('without_change_repeat_failures_timedout', command_timedout)
         self._parseRunWebKitTestsOutput(logText)
 
     def start(self):
@@ -3363,7 +3363,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
     def report_infrastructure_issue_and_maybe_retry_build(self, message):
         retry_count = int(self.getProperty('retry_count', 0))
         if retry_count >= self.MAX_RETRY:
-            message += '\nReached the maximum number of retries ({}). Unable to determine if patch is bad or there is a pre-existent infrastructure issue.'.format(self.MAX_RETRY)
+            message += '\nReached the maximum number of retries ({}). Unable to determine if change is bad or there is a pre-existent infrastructure issue.'.format(self.MAX_RETRY)
             self.send_email_for_infrastructure_issue(message)
             return self.report_warning(message)
         message += "\nRetrying build [retry count is {} of {}]".format(retry_count, self.MAX_RETRY)
@@ -3416,89 +3416,89 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             print('Error in sending email for flaky failure: {}'.format(e))
 
     def start(self):
-        # Run with patch, running the whole layout test suite
+        # Run with change, running the whole layout test suite
         first_results_exceed_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
         first_run_failures = set(self.getProperty('first_run_failures', []))
         first_run_flakies = set(self.getProperty('first_run_flakies', []))
 
-        # Run with patch, running first_run_failures 10 times each test
-        with_patch_repeat_failures_results_exceed_failure_limit = self.getProperty('with_patch_repeat_failures_results_exceed_failure_limit', False)
-        with_patch_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_patch_repeat_failures_results_nonflaky_failures', []))
-        with_patch_repeat_failures_results_flakies = set(self.getProperty('with_patch_repeat_failures_results_flakies', []))
-        with_patch_repeat_failures_timedout = self.getProperty('with_patch_repeat_failures_timedout', False)
+        # Run with change, running first_run_failures 10 times each test
+        with_change_repeat_failures_results_exceed_failure_limit = self.getProperty('with_change_repeat_failures_results_exceed_failure_limit', False)
+        with_change_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
+        with_change_repeat_failures_results_flakies = set(self.getProperty('with_change_repeat_failures_results_flakies', []))
+        with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
 
-        # Run without patch, running with_patch_repeat_failures_results_nonflaky_failures 10 times each test
-        without_patch_repeat_failures_results_exceed_failure_limit = self.getProperty('without_patch_repeat_failures_results_exceed_failure_limit', False)
-        without_patch_repeat_failures_results_nonflaky_failures = set(self.getProperty('without_patch_repeat_failures_results_nonflaky_failures', []))
-        without_patch_repeat_failures_results_flakies = set(self.getProperty('without_patch_repeat_failures_results_flakies', []))
-        without_patch_repeat_failures_timedout = self.getProperty('without_patch_repeat_failures_timedout', False)
+        # Run without change, running with_change_repeat_failures_results_nonflaky_failures 10 times each test
+        without_change_repeat_failures_results_exceed_failure_limit = self.getProperty('without_change_repeat_failures_results_exceed_failure_limit', False)
+        without_change_repeat_failures_results_nonflaky_failures = set(self.getProperty('without_change_repeat_failures_results_nonflaky_failures', []))
+        without_change_repeat_failures_results_flakies = set(self.getProperty('without_change_repeat_failures_results_flakies', []))
+        without_change_repeat_failures_timedout = self.getProperty('without_change_repeat_failures_timedout', False)
 
         # If we've made it here that means that the first_run failed (non-zero status) but we don't have a list of failures or flakies. That is not expected.
         if (not first_run_failures) and (not first_run_flakies):
             # If we are not on the last retry, then try to retry the whole testing with the hope it was a random infrastructure error.
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
-                return self.report_infrastructure_issue_and_maybe_retry_build('The layout-test run with patch generated no list of results and exited with error, retrying with the hope it was a random infrastructure error.')
+                return self.report_infrastructure_issue_and_maybe_retry_build('The layout-test run with change generated no list of results and exited with error, retrying with the hope it was a random infrastructure error.')
             # Otherwise (last retry) report and error or a warning, since we already gave it enough retries for the issue to not be caused by a random infrastructure error.
             # The clean tree run that only happens when the first run gives an error code without generating a list of failures or flakies.
             clean_tree_run_failures = set(self.getProperty('clean_tree_run_failures', []))
             clean_tree_run_flakies = set(self.getProperty('clean_tree_run_flakies', []))
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
-            # If the clean-tree run generated some results then we assume this patch broke the script run-webkit-tests or something like that.
+            # If the clean-tree run generated some results then we assume this change broke the script run-webkit-tests or something like that.
             if (clean_tree_run_status in [SUCCESS, WARNINGS]) or clean_tree_run_failures or clean_tree_run_flakies:
                 return self.report_failure(set(), first_results_exceed_failure_limit)
             # This will end the testing as retry_count will be now self.MAX_RETRY and a warning will be reported.
-            return self.report_infrastructure_issue_and_maybe_retry_build('The layout-test run with patch generated no list of results and exited with error, and the clean_tree without patch run did the same thing.')
+            return self.report_infrastructure_issue_and_maybe_retry_build('The layout-test run with change generated no list of results and exited with error, and the clean_tree without change run did the same thing.')
 
-        if with_patch_repeat_failures_results_exceed_failure_limit or without_patch_repeat_failures_results_exceed_failure_limit:
+        if with_change_repeat_failures_results_exceed_failure_limit or without_change_repeat_failures_results_exceed_failure_limit:
             return self.report_infrastructure_issue_and_maybe_retry_build('One of the steps for retrying the failed tests has exited early, but this steps should run without "--exit-after-n-failures" switch, so they should not exit early.')
 
-        if without_patch_repeat_failures_timedout:
-            return self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-patch" was interrumped because it reached the timeout.')
+        if without_change_repeat_failures_timedout:
+            return self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.')
 
-        if with_patch_repeat_failures_timedout:
-            # The patch is causing the step 'layout-tests-repeat-failures-with-patch' to timeout, likely the patch is adding many failures or long timeouts needing lot of time to test the repeats.
-            # Report the tests that failed on the first run as we don't have the information of the ones that failed on 'layout-tests-repeat-failures-with-patch' because it was interrupted due to the timeout.
+        if with_change_repeat_failures_timedout:
+            # The change is causing the step 'layout-tests-repeat-failures-with-change' to timeout, likely the change is adding many failures or long timeouts needing lot of time to test the repeats.
+            # Report the tests that failed on the first run as we don't have the information of the ones that failed on 'layout-tests-repeat-failures-with-change' because it was interrupted due to the timeout.
             # There is no point in repeating this run, it would happen the same on next runs and consume lot of time.
-            likely_new_non_flaky_failures = first_run_failures - without_patch_repeat_failures_results_nonflaky_failures.union(without_patch_repeat_failures_results_flakies)
-            self.send_email_for_infrastructure_issue('The step "layout-tests-repeat-failures-with-patch" reached the timeout but the step "layout-tests-repeat-failures-without-patch" ended. Not trying to repeat this. Reporting {} failures from the first run.'.format(len(likely_new_non_flaky_failures)))
+            likely_new_non_flaky_failures = first_run_failures - without_change_repeat_failures_results_nonflaky_failures.union(without_change_repeat_failures_results_flakies)
+            self.send_email_for_infrastructure_issue('The step "layout-tests-repeat-failures-with-change" reached the timeout but the step "layout-tests-repeat-failures-without-change" ended. Not trying to repeat this. Reporting {} failures from the first run.'.format(len(likely_new_non_flaky_failures)))
             return self.report_failure(likely_new_non_flaky_failures, first_results_exceed_failure_limit)
 
         # The checks below need to be after the timeout ones (above) because when a timeout is trigerred no results will be generated for the step.
-        # The step with_patch_repeat_failures generated no list of failures or flakies, which should only happen when the return code of the step is SUCESS or WARNINGS.
-        if not with_patch_repeat_failures_results_nonflaky_failures and not with_patch_repeat_failures_results_flakies:
-            with_patch_repeat_failures_retcode = self.getProperty('with_patch_repeat_failures_retcode', FAILURE)
-            if with_patch_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+        # The step with_change_repeat_failures generated no list of failures or flakies, which should only happen when the return code of the step is SUCESS or WARNINGS.
+        if not with_change_repeat_failures_results_nonflaky_failures and not with_change_repeat_failures_results_flakies:
+            with_change_repeat_failures_retcode = self.getProperty('with_change_repeat_failures_retcode', FAILURE)
+            if with_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
                 return self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures" failed to generate any list of failures or flakies and returned an error code.')
 
-        # Check the same for the step without_patch_repeat_failures
-        if not without_patch_repeat_failures_results_nonflaky_failures and not without_patch_repeat_failures_results_flakies:
-            without_patch_repeat_failures_retcode = self.getProperty('without_patch_repeat_failures_retcode', FAILURE)
-            if without_patch_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
-                return self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-patch" failed to generate any list of failures or flakies and returned an error code.')
+        # Check the same for the step without_change_repeat_failures
+        if not without_change_repeat_failures_results_nonflaky_failures and not without_change_repeat_failures_results_flakies:
+            without_change_repeat_failures_retcode = self.getProperty('without_change_repeat_failures_retcode', FAILURE)
+            if without_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+                return self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures-without-change" failed to generate any list of failures or flakies and returned an error code.')
 
-        # Warn EWS bot watchers about flakies so they can garden those. Include the step where the flaky was found in the e-mail to know if it was found with patch or without it.
-        # Due to the way this class works most of the flakies are filtered on the step with patch even when those were pre-existent issues (so this is also useful for bot watchers).
-        all_flaky_failures = first_run_flakies.union(with_patch_repeat_failures_results_flakies).union(without_patch_repeat_failures_results_flakies)
+        # Warn EWS bot watchers about flakies so they can garden those. Include the step where the flaky was found in the e-mail to know if it was found with change or without it.
+        # Due to the way this class works most of the flakies are filtered on the step with change even when those were pre-existent issues (so this is also useful for bot watchers).
+        all_flaky_failures = first_run_flakies.union(with_change_repeat_failures_results_flakies).union(without_change_repeat_failures_results_flakies)
         flaky_steps_dict = {}
         for flaky_failure in all_flaky_failures:
             step_names = []
-            if flaky_failure in without_patch_repeat_failures_results_flakies:
-                step_names.append('layout-tests-repeat-failures-without-patch')
-            if flaky_failure in with_patch_repeat_failures_results_flakies:
-                step_names.append('layout-tests-repeat-failures (with patch)')
+            if flaky_failure in without_change_repeat_failures_results_flakies:
+                step_names.append('layout-tests-repeat-failures-without-change')
+            if flaky_failure in with_change_repeat_failures_results_flakies:
+                step_names.append('layout-tests-repeat-failures (with change)')
             if flaky_failure in first_run_flakies:
-                step_names.append('layout-tests (with patch)')
+                step_names.append('layout-tests (with change)')
             flaky_steps_dict[flaky_failure] = step_names
         self.send_email_for_flaky_failures_and_steps(flaky_steps_dict)
 
         # Warn EWS bot watchers about pre-existent non-flaky failures (if any), but send only one e-mail with all the tests to avoid sending too much e-mails.
-        pre_existent_non_flaky_failures = without_patch_repeat_failures_results_nonflaky_failures - all_flaky_failures
+        pre_existent_non_flaky_failures = without_change_repeat_failures_results_nonflaky_failures - all_flaky_failures
         if pre_existent_non_flaky_failures:
             self.send_email_for_pre_existent_failures(pre_existent_non_flaky_failures)
 
-        # Finally check if there are new consistent (non-flaky) failures caused by the patch and warn the patch author stetting the status for the build.
-        new_non_flaky_failures = with_patch_repeat_failures_results_nonflaky_failures - without_patch_repeat_failures_results_nonflaky_failures.union(without_patch_repeat_failures_results_flakies)
+        # Finally check if there are new consistent (non-flaky) failures caused by the change and warn the change author stetting the status for the build.
+        new_non_flaky_failures = with_change_repeat_failures_results_nonflaky_failures - without_change_repeat_failures_results_nonflaky_failures.union(without_change_repeat_failures_results_flakies)
         if new_non_flaky_failures:
             return self.report_failure(new_non_flaky_failures, first_results_exceed_failure_limit)
 

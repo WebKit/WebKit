@@ -1,3 +1,26 @@
+2022-02-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Rename 'patch' to 'change' in layout-test steps
+        https://bugs.webkit.org/show_bug.cgi?id=236674
+        <rdar://problem/88992222>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (RunWebKitTestsWithoutChange.setLayoutTestCommand):
+        (AnalyzeLayoutTestsResults.report_failure):
+        (AnalyzeLayoutTestsResults.retry_build):
+        (RunWebKitTestsRepeatFailuresRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresRedTree.commandComplete):
+        (RunWebKitTestsRepeatFailuresWithoutChangeRedTree): Renamed.
+        (RunWebKitTestsRepeatFailuresWithoutChangeRedTree.setLayoutTestCommand):
+        (RunWebKitTestsRepeatFailuresWithoutChangeRedTree.evaluateCommand):
+        (RunWebKitTestsRepeatFailuresWithoutChangeRedTree.commandComplete):
+        (RunWebKitTestsRepeatFailuresWithoutPatchRedTree): Renamed.
+        (AnalyzeLayoutTestsResultsRedTree.report_infrastructure_issue_and_maybe_retry_build):
+        (AnalyzeLayoutTestsResultsRedTree.start):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-02-16  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Comment and close issue when landing PR
