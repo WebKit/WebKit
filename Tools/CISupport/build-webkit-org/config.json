@@ -8,7 +8,6 @@
                     { "name": "bot141", "platform": "mac-monterey" },
                     { "name": "bot165", "platform": "mac-monterey" },
                     { "name": "bot179", "platform": "mac-monterey" },
-                    { "name": "bot183", "platform": "mac-monterey" },
                     { "name": "bot185", "platform": "mac-monterey" },
                     { "name": "bot187", "platform": "mac-monterey" },
                     { "name": "bot198", "platform": "mac-monterey" },
@@ -29,6 +28,7 @@
                     { "name": "bot140", "platform": "mac-bigsur" },
                     { "name": "bot142", "platform": "mac-bigsur" },
                     { "name": "bot178", "platform": "mac-bigsur" },
+                    { "name": "bot183", "platform": "mac-bigsur" },
                     { "name": "bot184", "platform": "mac-bigsur" },
                     { "name": "bot260", "platform": "mac-bigsur" },
                     { "name": "bot302", "platform": "mac-bigsur" },
@@ -291,6 +291,11 @@
                       "name": "Apple-BigSur-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "bigsur-release-perf-tests",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "workernames": ["bot184"]
+                    },
+                    { "name": "Apple-BigSur-XCBuild-Release-Build", "factory": "BuildFactory", "builddir": "bigsur-xcbuild-release",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--use-workspace"],
+                      "workernames": ["bot183"]
                     },
                     {
                       "name": "Apple-iOS-15-Release-Build", "factory": "BuildFactory", "builddir": "ios-15-release",
@@ -653,7 +658,7 @@
                       "builderNames": ["Apple-Monterey-AppleSilicon-Release-JSC-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-BigSur-Release-Build", "Apple-BigSur-Debug-Build", "Apple-BigSur-LLINT-CLoop-BuildAndTest"]
+                      "builderNames": ["Apple-BigSur-Release-Build", "Apple-BigSur-Debug-Build", "Apple-BigSur-LLINT-CLoop-BuildAndTest", "Apple-BigSur-XCBuild-Release-Build"]
                     },
                     { "type": "Triggerable", "name": "bigsur-release-tests-jsc",
                       "builderNames": ["Apple-BigSur-Release-JSC-Tests"]
