@@ -1518,19 +1518,17 @@ VorbisDecoderEnabled:
     WebKit:
       default: true
 
-# FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 WebAnimationsCompositeOperationsEnabled:
   type: bool
   humanReadableName: "Web Animations composite operations"
   humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)" : true
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebAnimationsCustomEffectsEnabled:
   type: bool
