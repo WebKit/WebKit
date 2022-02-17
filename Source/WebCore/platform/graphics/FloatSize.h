@@ -70,9 +70,6 @@ public:
     float minDimension() const { return std::min(m_width, m_height); }
     float maxDimension() const { return std::max(m_width, m_height); }
 
-    bool hasIntrinsicWidth = false;
-    bool hasIntrinsicHeight = false;
-
     void setWidth(float width) { m_width = width; }
     void setHeight(float height) { m_height = height; }
 

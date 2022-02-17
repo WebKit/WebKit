@@ -1,3 +1,12 @@
+2022-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r275772: inflated FloatSize memory layout unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=236743
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
 
         Lookup line names for sub grids using line names from ancestor grids

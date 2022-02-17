@@ -562,10 +562,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
 
     if (style().logicalWidth().isAuto()) {
         bool computedHeightIsAuto = style().logicalHeight().isAuto();
-        // FIXME: The hasIntrinsicWidth and hasIntrinsicHeight flags here are only updated for SVG elements. Ideally, it can be used in
-        // all the cases so we don't need constrainedSize.width() > 0 and constrainedSize.height() > 0 clauses.
-        bool hasIntrinsicWidth = constrainedSize.hasIntrinsicWidth || constrainedSize.width() > 0;
-        bool hasIntrinsicHeight = constrainedSize.hasIntrinsicHeight || constrainedSize.height() > 0;
+        bool hasIntrinsicWidth = constrainedSize.width() > 0;
+        bool hasIntrinsicHeight = constrainedSize.height() > 0;
 
         // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
         // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
@@ -634,10 +632,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio);
 
     bool widthIsAuto = style().logicalWidth().isAuto();
-    // FIXME: The hasIntrinsicHeight and hasIntrinsicWidth flags here are only updated for SVG elements. Ideally, it can be used in
-    // all the cases so we don't need constrainedSize.height() > 0 and constrainedSize.width() > 0 clauses.
-    bool hasIntrinsicHeight = constrainedSize.hasIntrinsicHeight || constrainedSize.height() > 0;
-    bool hasIntrinsicWidth = constrainedSize.hasIntrinsicWidth || constrainedSize.width() > 0;
+    bool hasIntrinsicHeight = constrainedSize.height() > 0;
+    bool hasIntrinsicWidth = constrainedSize.width() > 0;
 
     // See computeReplacedLogicalHeight() for a similar check for heights.
     if (intrinsicRatio && (isFlexItem() || isGridItem()) && hasOverridingLogicalWidth() && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight))
