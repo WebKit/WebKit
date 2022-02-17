@@ -59,11 +59,13 @@ public:
     SessionStorageManager* existingSessionStorageManager();
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
     IDBStorageManager* existingIDBStorageManager();
+    String resolvedLocalStoragePath();
+    String resolvedIDBStoragePath();
     bool isActive();
     bool isEmpty();
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
-    void moveData(const String& newPath, const String& localStoragePath, const String& idbStoragePath);
+    void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
 
 private:
     enum class StorageBucketMode : bool;

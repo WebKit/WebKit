@@ -1,3 +1,14 @@
+2022-02-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure NetworkStorageManager::moveData performs move operation based on data types
+        https://bugs.webkit.org/show_bug.cgi?id=236727
+        rdar://89009881
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2022-02-17  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Increase timeout to account for MIPS slowness

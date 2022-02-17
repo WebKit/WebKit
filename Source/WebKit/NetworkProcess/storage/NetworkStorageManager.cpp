@@ -609,27 +609,22 @@ void NetworkStorageManager::deleteDataForRegistrableDomains(OptionSet<WebsiteDat
     });
 }
 
-void NetworkStorageManager::moveData(const WebCore::SecurityOriginData& source, const WebCore::SecurityOriginData& target, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageManager::moveData(OptionSet<WebsiteDataType> types, const WebCore::SecurityOriginData& source, const WebCore::SecurityOriginData& target, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_closed);
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, source = crossThreadCopy(source), target = crossThreadCopy(target), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, types, source = crossThreadCopy(source), target = crossThreadCopy(target), completionHandler = WTFMove(completionHandler)]() mutable {
         auto sourceOrigin = WebCore::ClientOrigin { source, source };
         auto targetOrigin = WebCore::ClientOrigin { target, target };
         
         // Clear existing data of target origin.
-        OptionSet<WebsiteDataType> types = {
-            WebsiteDataType::FileSystem,
-            WebsiteDataType::LocalStorage,
-            WebsiteDataType::SessionStorage,
-            WebsiteDataType::IndexedDBDatabases
-        };
         localOriginStorageManager(targetOrigin).deleteData(types, -WallTime::infinity());
-        removeOriginStorageManagerIfPossible(targetOrigin);
 
         // Move data from source origin to target origin.
-        localOriginStorageManager(sourceOrigin).moveData(originDirectoryPath(m_path, targetOrigin, m_salt), LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, targetOrigin), IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, targetOrigin));
+        localOriginStorageManager(sourceOrigin).moveData(types, localOriginStorageManager(targetOrigin).resolvedLocalStoragePath(), localOriginStorageManager(targetOrigin).resolvedIDBStoragePath());
+
+        removeOriginStorageManagerIfPossible(targetOrigin);
         removeOriginStorageManagerIfPossible(sourceOrigin);
 
         RunLoop::main().dispatch(WTFMove(completionHandler));

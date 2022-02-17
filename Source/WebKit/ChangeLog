@@ -1,3 +1,34 @@
+2022-02-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure NetworkStorageManager::moveData performs move operation based on data types
+        https://bugs.webkit.org/show_bug.cgi?id=236727
+        rdar://89009881
+
+        Reviewed by Chris Dumez.
+
+        In r286936, we introduced NetworkStorageManager::moveData to move data from one origin to another. However, the 
+        function does not take dataTypes parameter as NetworkProcess::renameOriginInWebsiteData does, and 
+        NetworkStorageManager would try to move every storage type it manages. This has caused an unexpected failure, as
+        FileSystem storage needs special handling before data can be moved. To address the regression, let's revert 
+        the behavior change by making sure NetworkStorageManager checks the types value, and only performs move 
+        operation for IndexedDB and LocalStorage data.
+
+        Updated existing API test to ensure only expected data types are moved.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::moveData):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::deleteIDBStorageData):
+        (WebKit::OriginStorageManager::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::resolvedIDBStoragePath):
+        (WebKit::OriginStorageManager::moveData):
+        * NetworkProcess/storage/OriginStorageManager.h:
+
 2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         MediaPlayer::videoFrameForCurrentTime() should return VideoFrame

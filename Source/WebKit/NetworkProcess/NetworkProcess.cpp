@@ -2247,7 +2247,7 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
 
     auto* session = networkSession(sessionID);
     if (auto* manager = session ? session->storageManager() : nullptr)
-        manager->moveData(oldOrigin, newOrigin, [aggregator] { });
+        manager->moveData(dataTypes, oldOrigin, newOrigin, [aggregator] { });
 }
 
 #if ENABLE(SERVICE_WORKER)

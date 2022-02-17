@@ -218,29 +218,51 @@ public:
             deleteIDBStorageData(modifiedSinceTime);
     }
 
-    void moveData(const String& path, const String& localStoragePath, const String& idbStoragePath)
+    void moveData(OptionSet<WebsiteDataType> types, const String& localStoragePath, const String& idbStoragePath)
     {
-        m_fileSystemStorageManager = nullptr;
-        if (m_localStorageManager)
-            m_localStorageManager->close();
+        // This is only supported for IndexedDB and LocalStorage now.
+        if (types.contains(WebsiteDataType::LocalStorage) && !localStoragePath.isEmpty()) {
+            if (m_localStorageManager)
+                m_localStorageManager->close();
 
-        if (m_idbStorageManager)
-            m_idbStorageManager->closeDatabasesForDeletion();
-
-        FileSystem::makeAllDirectories(FileSystem::parentPath(path));
-        FileSystem::moveFile(m_rootPath, path);
-
-        auto currentLocalStoragePath = resolvedLocalStoragePath();
-        if (!currentLocalStoragePath.isEmpty() && !localStoragePath.isEmpty()) {
-            FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
-            WebCore::SQLiteFileSystem::moveDatabaseFile(currentLocalStoragePath, localStoragePath);
+            auto currentLocalStoragePath = resolvedLocalStoragePath();
+            if (!currentLocalStoragePath.isEmpty()) {
+                FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
+                WebCore::SQLiteFileSystem::moveDatabaseFile(currentLocalStoragePath, localStoragePath);
+            }
         }
 
-        auto currentIDBStoragePath = resolvedIDBStoragePath();
-        if (!currentIDBStoragePath.isEmpty() && !idbStoragePath.isEmpty()) {
-            FileSystem::makeAllDirectories(FileSystem::parentPath(idbStoragePath));
-            WebCore::SQLiteFileSystem::moveDatabaseFile(currentIDBStoragePath, idbStoragePath);
+        if (types.contains(WebsiteDataType::IndexedDBDatabases) && !idbStoragePath.isEmpty()) {
+            if (m_idbStorageManager)
+                m_idbStorageManager->closeDatabasesForDeletion();
+
+            auto currentIDBStoragePath = resolvedIDBStoragePath();
+            if (!currentIDBStoragePath.isEmpty()) {
+                FileSystem::makeAllDirectories(FileSystem::parentPath(idbStoragePath));
+                FileSystem::moveFile(currentIDBStoragePath, idbStoragePath);
+            }
         }
+    }
+
+    String resolvedLocalStoragePath()
+    {
+        if (!m_resolvedLocalStoragePath.isNull())
+            return m_resolvedLocalStoragePath;
+
+        if (m_shouldUseCustomPaths) {
+            ASSERT(m_customLocalStoragePath.isEmpty() == m_rootPath.isEmpty());
+            m_resolvedLocalStoragePath = m_customLocalStoragePath;
+        } else {
+            auto localStoragePath = LocalStorageManager::localStorageFilePath(typeStoragePath(StorageType::LocalStorage));
+            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath)) {
+                FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
+                WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
+            }
+
+            m_resolvedLocalStoragePath = localStoragePath;
+        }
+
+        return m_resolvedLocalStoragePath;
     }
 
     String resolvedIDBStoragePath()
@@ -352,27 +374,6 @@ private:
 
         FileSystem::deleteAllFilesModifiedSince(resolvedIDBStoragePath(), time);
     }
-    
-    String resolvedLocalStoragePath()
-    {
-        if (!m_resolvedLocalStoragePath.isNull())
-            return m_resolvedLocalStoragePath;
-
-        if (m_shouldUseCustomPaths) {
-            ASSERT(m_customLocalStoragePath.isEmpty() == m_rootPath.isEmpty());
-            m_resolvedLocalStoragePath = m_customLocalStoragePath;
-        } else {
-            auto localStoragePath = LocalStorageManager::localStorageFilePath(typeStoragePath(StorageType::LocalStorage));
-            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath)) {
-                FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
-                WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
-            }
-
-            m_resolvedLocalStoragePath = localStoragePath;
-        }
-
-        return m_resolvedLocalStoragePath;
-    }
 
     String m_rootPath;
     String m_identifier;
@@ -481,6 +482,16 @@ IDBStorageManager* OriginStorageManager::existingIDBStorageManager()
     return defaultBucket().existingIDBStorageManager();
 }
 
+String OriginStorageManager::resolvedLocalStoragePath()
+{
+    return defaultBucket().resolvedLocalStoragePath();
+}
+
+String OriginStorageManager::resolvedIDBStoragePath()
+{
+    return defaultBucket().resolvedIDBStoragePath();
+}
+
 bool OriginStorageManager::isActive()
 {
     return defaultBucket().isActive();
@@ -513,11 +524,11 @@ void OriginStorageManager::deleteData(OptionSet<WebsiteDataType> types, WallTime
     defaultBucket().deleteData(types, modifiedSince);
 }
 
-void OriginStorageManager::moveData(const String& newPath, const String& localStoragePath, const String& idbStoragePath)
+void OriginStorageManager::moveData(OptionSet<WebsiteDataType> types, const String& localStoragePath, const String& idbStoragePath)
 {
     ASSERT(!RunLoop::isMain());
 
-    defaultBucket().moveData(newPath, localStoragePath, idbStoragePath);
+    defaultBucket().moveData(types, localStoragePath, idbStoragePath);
 }
 
 } // namespace WebKit

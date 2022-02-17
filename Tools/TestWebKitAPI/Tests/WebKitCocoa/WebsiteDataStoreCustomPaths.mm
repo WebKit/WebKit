@@ -542,6 +542,7 @@ TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
 
     [webView loadHTMLString:testString baseURL:exampleURL];
     EXPECT_WK_STREQ("database is created", getNextMessage().body);
+    [webView stringByEvaluatingJavaScript:@"localStorage.setItem('testkey', 'testvalue')"];
 
     auto dataStore = webView.get().configuration.websiteDataStore;
     auto indexedDBType = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
@@ -554,6 +555,8 @@ TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
     
     [webView loadHTMLString:testString baseURL:webKitURL];
     EXPECT_WK_STREQ("database exists", getNextMessage().body);
+    // Ensure LocalStorage data is not moved.
+    EXPECT_WK_STREQ("<null>", [webView stringByEvaluatingJavaScript:@"localStorage.getItem('testkey')"]);
 
     [webView loadHTMLString:testString baseURL:exampleURL];
     EXPECT_WK_STREQ("database is created", getNextMessage().body);
