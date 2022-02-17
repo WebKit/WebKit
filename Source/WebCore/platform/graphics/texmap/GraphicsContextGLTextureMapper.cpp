@@ -31,7 +31,6 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
-#include "GLContext.h"
 #include "GraphicsContextGLOpenGLManager.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "PixelBuffer.h"
@@ -44,6 +43,7 @@
 #elif USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #elif !USE(OPENGL_ES)
+#include "GLContext.h"
 #include "OpenGLShims.h"
 #endif
 

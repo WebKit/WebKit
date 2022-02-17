@@ -30,7 +30,6 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "GLContext.h"
 #include "GraphicsContextGLANGLE.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
 #include <memory>
