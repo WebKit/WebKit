@@ -1,3 +1,12 @@
+2022-02-17  Truitt Savell  <tsavell@apple.com>
+
+        Remove the Catalina specific expectation added in r289834
+        https://bugs.webkit.org/show_bug.cgi?id=236619
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fonts/monospace-expected.txt: Removed.
+
 2022-02-17  Jon Lee  <jonlee@apple.com>
 
         Unreviewed GPU Process bot gardening.
