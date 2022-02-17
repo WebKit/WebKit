@@ -1,3 +1,17 @@
+2022-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Add required syscall to sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=236781
+        <rdar://89072361>
+
+        Reviewed by Chris Dumez.
+
+        Add required syscall to the WebContent process' sandbox on macOS. This patch also adds back a set of
+        syscalls that were removed in https://commits.webkit.org/r286778 for current and previous versions
+        of macOS. These syscalls will be denied going forward.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ASSERTION FAILED: Thread::current().uid() == threadAssertion.m_uid for RemoteVideoFrameObjectHeap
