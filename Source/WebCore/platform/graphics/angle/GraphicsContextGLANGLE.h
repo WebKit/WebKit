@@ -48,6 +48,8 @@ class GCGLLayer;
 
 struct gbm_device;
 struct gbm_bo;
+
+typedef void *EGLImage;
 #endif
 
 namespace WebCore {
@@ -492,7 +494,7 @@ protected:
 
         gbm_bo* m_BO { nullptr };
         int m_FD { -1 };
-        EGLImage m_image { EGL_NO_IMAGE };
+        EGLImage m_image;
     };
 
     std::unique_ptr<EGLImageBacking> m_textureBacking;

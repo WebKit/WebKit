@@ -127,6 +127,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 #if USE(NICOSIA)
 GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking(GCGLDisplay display)
     : m_display(display)
+    , m_image(EGL_NO_IMAGE)
 {
 }
 
