@@ -1439,13 +1439,10 @@ elseif (USE_LIBEPOXY)
     add_definitions(${LIBEPOXY_DEFINITIONS})
 else ()
     if (USE_OPENGL)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGL_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${OPENGL_LIBRARIES}
-        )
-        add_definitions(${OPENGL_DEFINITIONS})
+        list(APPEND WebCore_LIBRARIES OpenGL::OpenGL)
+        if (TARGET OpenGL::GLX)
+            list(APPEND WebCore_LIBRARIES OpenGL::GLX)
+        endif ()
     elseif (USE_OPENGL_ES)
         list(APPEND WebCore_LIBRARIES OpenGL::GLES)
     endif ()

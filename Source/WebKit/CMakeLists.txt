@@ -334,18 +334,6 @@ elseif (USE_ANGLE_EGL)
         ANGLE::EGL
     )
 else ()
-    if (USE_OPENGL)
-        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGL_INCLUDE_DIRS}
-        )
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            ${OPENGL_LIBRARIES}
-        )
-        add_definitions(${OPENGL_DEFINITIONS})
-    elseif (USE_OPENGL_ES)
-        list(APPEND WebKit_PRIVATE_LIBRARIES OpenGL::GLES)
-    endif ()
-
     if (USE_EGL)
         list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
             ${EGL_INCLUDE_DIRS}
