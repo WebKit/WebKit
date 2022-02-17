@@ -1940,6 +1940,15 @@ RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 
 inline bool RenderLayer::shouldRepaintAfterLayout() const
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // The SVG containers themselves never trigger repaints, only their contents are allowed to.
+    // SVG container sizes/positions are only ever determined by their children, so they will
+    // change as a reaction on a re-position/re-sizing of the children - which already properly
+    // trigger repaints.
+    if (is<RenderSVGContainer>(renderer()) && !paintsWithFilters())
+        return false;
+#endif
+
     if (m_repaintStatus == NeedsNormalRepaint)
         return true;
 
@@ -3126,6 +3135,23 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
             if (paintFlags.contains(PaintLayerFlag::PaintingOverflowContents))
                 paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            // Always apply SVG viewport clipping in coordinate system before the SVG viewBox transformation is applied.
+            if (is<RenderSVGRoot>(renderer())) {
+                auto& svgRoot = downcast<RenderSVGRoot>(renderer());
+                if (svgRoot.shouldApplyViewportClip()) {
+                    auto newRect = svgRoot.borderBoxRect();
+
+                    auto offsetFromParent = offsetFromAncestor(clipRectsContext.rootLayer);
+                    auto offsetForThisLayer = offsetFromParent + paintingInfo.subpixelOffset;
+                    auto devicePixelSnappedOffsetForThisLayer = toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), renderer().document().deviceScaleFactor()));
+                    newRect.move(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
+
+                    clipRect.intersect(newRect);
+                }
+            }
+#endif
+
             // Push the parent coordinate space's clip.
             parent()->clipToRect(context, stateSaver, eventRegionStateSaver, paintingInfo, paintBehavior, clipRect);
         }
@@ -3190,6 +3216,10 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
         if (is<RenderBox>(renderer())) {
             referenceBox = downcast<RenderBox>(renderer()).referenceBox(clipPath.referenceBox());
             referenceBox.move(offsetFromRoot);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        } else if (is<RenderSVGModelObject>(renderer())) {
+            // FIXME: [LBSE] Upstream clipping support for RenderSVGModelObject derived renderers
+#endif
         } else {
             // Reference box for inlines is not well defined: https://github.com/w3c/csswg-drafts/issues/6383
             referenceBox = rootRelativeBoundsForNonBoxes;
