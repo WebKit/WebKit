@@ -27,6 +27,7 @@
 
 #include "AnimationFrameRate.h"
 #include "ReducedResolutionSeconds.h"
+#include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
