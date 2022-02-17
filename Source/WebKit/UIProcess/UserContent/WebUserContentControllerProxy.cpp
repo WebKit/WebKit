@@ -218,11 +218,9 @@ void WebUserContentControllerProxy::removeAllUserScripts()
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         worlds.add(const_cast<API::ContentWorld*>(&userScript->contentWorld()));
 
-    Vector<ContentWorldIdentifier> worldIdentifiers;
-    worldIdentifiers.reserveInitialCapacity(worlds.size());
-    for (const auto& worldCountPair : worlds)
-        worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());
-
+    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
+        return entry.key->identifier();
+    });
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserScripts(worldIdentifiers), identifier());
 
@@ -267,11 +265,9 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         worlds.add(const_cast<API::ContentWorld*>(&userStyleSheet->contentWorld()));
 
-    Vector<ContentWorldIdentifier> worldIdentifiers;
-    worldIdentifiers.reserveInitialCapacity(worlds.size());
-    for (const auto& worldCountPair : worlds)
-        worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());
-
+    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
+        return entry.key->identifier();
+    });
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets(worldIdentifiers), identifier());
 

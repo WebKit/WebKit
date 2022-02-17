@@ -1121,7 +1121,7 @@ void AXObjectCache::notificationPostTimerFired()
 
     // Filter out the notifications that are not going to be posted to platform clients.
     Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> notificationsToPost;
-    notificationsToPost.reserveCapacity(notifications.size());
+    notificationsToPost.reserveInitialCapacity(notifications.size());
     for (const auto& note : notifications) {
         ASSERT(note.first);
         if (!note.first->objectID() || !note.first->axObjectCache())
@@ -1143,7 +1143,7 @@ void AXObjectCache::notificationPostTimerFired()
                 continue;
         }
 
-        notificationsToPost.append(note);
+        notificationsToPost.uncheckedAppend(note);
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

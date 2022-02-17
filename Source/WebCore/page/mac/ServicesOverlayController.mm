@@ -392,9 +392,6 @@ void ServicesOverlayController::buildSelectionHighlight()
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
-    Vector<CGRect> cgRects;
-    cgRects.reserveCapacity(m_currentSelectionRects.size());
-
     if (auto selectionRange = m_page.selection().firstRange()) {
         FrameView* mainFrameView = mainFrame().view();
         if (!mainFrameView)
@@ -404,10 +401,13 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!viewForRange)
             return;
 
+        Vector<CGRect> cgRects;
+        cgRects.reserveInitialCapacity(m_currentSelectionRects.size());
+
         for (auto& rect : m_currentSelectionRects) {
             IntRect currentRect = snappedIntRect(rect);
             currentRect.setLocation(mainFrameView->windowToContents(viewForRange->contentsToWindow(currentRect.location())));
-            cgRects.append(currentRect);
+            cgRects.uncheckedAppend(currentRect);
         }
 
         if (!cgRects.isEmpty()) {
@@ -639,13 +639,11 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
     IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
 
     if (highlight.type() == DataDetectorHighlight::Type::Selection) {
-        auto telephoneNumberRanges = telephoneNumberRangesForFocusedFrame();
-        Vector<String> selectedTelephoneNumbers;
-        selectedTelephoneNumbers.reserveCapacity(telephoneNumberRanges.size());
-        for (auto& range : telephoneNumberRanges)
-            selectedTelephoneNumbers.append(plainText(range));
+        auto selectedTelephoneNumbers = telephoneNumberRangesForFocusedFrame().map([](auto& range) {
+            return plainText(range);
+        });
 
-        m_page.chrome().client().handleSelectionServiceClick(CheckedRef(m_page.focusController())->focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
+        m_page.chrome().client().handleSelectionServiceClick(CheckedRef(m_page.focusController())->focusedOrMainFrame().selection(), WTFMove(selectedTelephoneNumbers), windowPoint);
     } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
         m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().firstRectForRange(highlight.range())));
 }

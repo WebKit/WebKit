@@ -43,13 +43,6 @@ enum class IDBKeyPathParseError {
 };
 
 void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
-IDBKeyPath isolatedCopy(const IDBKeyPath&);
-inline std::optional<IDBKeyPath> isolatedCopy(const std::optional<IDBKeyPath>& variant)
-{
-    if (!variant)
-        return { };
-    return isolatedCopy(variant.value());
-}
 
 #if !LOG_DISABLED
 String loggingString(const IDBKeyPath&);

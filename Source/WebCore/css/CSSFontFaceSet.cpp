@@ -428,11 +428,9 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
         }
     }
 
-    Vector<std::reference_wrapper<CSSFontFace>> result;
-    result.reserveInitialCapacity(resultConstituents.size());
-    for (auto* constituent : resultConstituents)
-        result.uncheckedAppend(*constituent);
-    return result;
+    return WTF::map(resultConstituents, [](auto* constituent) -> std::reference_wrapper<CSSFontFace> {
+        return *constituent;
+    });
 }
 
 ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
@@ -486,12 +484,9 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
     }
 
     if (!candidateFontFaces.isEmpty()) {
-        Vector<FontSelectionCapabilities> capabilities;
-        capabilities.reserveInitialCapacity(candidateFontFaces.size());
-        for (auto& face : candidateFontFaces) {
-            auto fontSelectionCapabilities = face.get().fontSelectionCapabilities();
-            capabilities.uncheckedAppend(*fontSelectionCapabilities);
-        }
+        auto capabilities = candidateFontFaces.map([](auto& face) {
+            return *face.get().fontSelectionCapabilities();
+        });
         FontSelectionAlgorithm fontSelectionAlgorithm(request, capabilities);
         std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), [&fontSelectionAlgorithm](const CSSFontFace& first, const CSSFontFace& second) {
             auto firstCapabilities = first.fontSelectionCapabilities();

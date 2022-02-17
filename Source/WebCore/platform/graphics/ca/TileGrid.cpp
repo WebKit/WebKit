@@ -290,7 +290,7 @@ unsigned TileGrid::blankPixelCount() const
     return TileController::blankPixelCountForTiles(tiles, m_controller.visibleRect(), IntPoint(0, 0));
 }
 
-void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)
+void TileGrid::removeTiles(const Vector<TileGrid::TileIndex>& toRemove)
 {
     for (size_t i = 0; i < toRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(toRemove[i]);
@@ -302,13 +302,7 @@ void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)
 
 void TileGrid::removeAllTiles()
 {
-    Vector<TileIndex> tilesToRemove;
-    tilesToRemove.reserveInitialCapacity(m_tiles.size());
-
-    for (auto& entry : m_tiles)
-        tilesToRemove.uncheckedAppend(entry.key);
-
-    removeTiles(tilesToRemove);
+    removeTiles(copyToVector(m_tiles.keys()));
 }
 
 void TileGrid::removeAllSecondaryTiles()

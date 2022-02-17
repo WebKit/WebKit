@@ -163,9 +163,9 @@ static inline void findEscapeRbspPatterns(const Vector<uint8_t>& frame, size_t o
 void toRbsp(Vector<uint8_t>& frame, size_t offset)
 {
     size_t count = 0;
-    findEscapeRbspPatterns(frame, offset, [&count](size_t, bool shoudlBeEscaped) {
-        if (shoudlBeEscaped)
-            count++;
+    findEscapeRbspPatterns(frame, offset, [&count](size_t, bool shouldBeEscaped) {
+        if (shouldBeEscaped)
+            ++count;
     });
     if (!count)
         return;
@@ -174,8 +174,8 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
     newFrame.reserveInitialCapacity(frame.size() + count);
     newFrame.append(frame.data(), offset);
 
-    findEscapeRbspPatterns(frame, offset, [data = frame.data(), &newFrame](size_t position, bool shoudlBeEscaped) {
-        if (shoudlBeEscaped)
+    findEscapeRbspPatterns(frame, offset, [data = frame.data(), &newFrame](size_t position, bool shouldBeEscaped) {
+        if (shouldBeEscaped)
             newFrame.uncheckedAppend(3);
         newFrame.uncheckedAppend(data[position]);
     });

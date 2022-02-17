@@ -789,12 +789,9 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
 
 static Vector<RenderedDocumentMarker> copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers)
 {
-    Vector<RenderedDocumentMarker> markers;
-    markers.reserveInitialCapacity(markerPointers.size());
-    for (auto& markerPointer : markerPointers)
-        markers.uncheckedAppend(*markerPointer);
-
-    return markers;
+    return markerPointers.map([](auto& markerPointer) {
+        return *markerPointer;
+    });
 }
 
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsigned offset, unsigned count, const String& replacementText)

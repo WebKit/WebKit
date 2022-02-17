@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/Language.h>
 
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Logging.h>
@@ -122,15 +123,6 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
     languageDidChange();
 }
 
-static Vector<String> isolatedCopy(const Vector<String>& strings)
-{
-    Vector<String> copy;
-    copy.reserveInitialCapacity(strings.size());
-    for (auto& language : strings)
-        copy.uncheckedAppend(language.isolatedCopy());
-    return copy;
-}
-
 Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     {
@@ -138,7 +130,7 @@ Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLang
         Vector<String>& override = preferredLanguagesOverride();
         if (!override.isEmpty()) {
             LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
-            return isolatedCopy(override);
+            return crossThreadCopy(override);
         }
     }
 
@@ -149,7 +141,7 @@ Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLang
         languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
     } else
         LOG(Language, "userPreferredLanguages() cache hit");
-    return isolatedCopy(languages);
+    return crossThreadCopy(languages);
 }
 
 #if !PLATFORM(COCOA)

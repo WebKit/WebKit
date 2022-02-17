@@ -94,7 +94,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 #else
         auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        m_dataDetectorContainersAndHighlights.append({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
+        m_dataDetectorContainersAndHighlights.uncheckedAppend({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
     }
 }
 

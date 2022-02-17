@@ -363,18 +363,13 @@ static String headerValueForVary(const ResourceRequest& request, const String& h
 
 static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, Function<String(const String& headerName)>&& headerValueForVaryFunction)
 {
-    String varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
+    auto varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
     if (varyValue.isEmpty())
         return { };
-    Vector<String> varyingHeaderNames = varyValue.split(',');
-    Vector<std::pair<String, String>> varyingRequestHeaders;
-    varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
-    for (auto& varyHeaderName : varyingHeaderNames) {
-        String headerName = varyHeaderName.stripWhiteSpace();
-        String headerValue = headerValueForVaryFunction(headerName);
-        varyingRequestHeaders.append(std::make_pair(headerName, headerValue));
-    }
-    return varyingRequestHeaders;
+    return varyValue.split(',').map([&](auto& varyHeaderName) {
+        auto headerName = varyHeaderName.stripWhiteSpace();
+        return std::make_pair(headerName, headerValueForVaryFunction(headerName));
+    });
 }
 
 Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)

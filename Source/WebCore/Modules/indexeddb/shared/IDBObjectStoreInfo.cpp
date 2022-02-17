@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "IDBObjectStoreInfo.h"
+
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -92,7 +94,7 @@ IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(uint64_t identifier)
 
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 {
-    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), WebCore::isolatedCopy(m_keyPath), m_autoIncrement };
+    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_autoIncrement };
 
     for (auto& iterator : m_indexMap)
         result.m_indexMap.set(iterator.key, iterator.value.isolatedCopy());
@@ -102,12 +104,9 @@ IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 
 Vector<String> IDBObjectStoreInfo::indexNames() const
 {
-    Vector<String> names;
-    names.reserveCapacity(m_indexMap.size());
-    for (auto& index : m_indexMap.values())
-        names.uncheckedAppend(index.name());
-
-    return names;
+    return WTF::map(m_indexMap, [](auto& pair) -> String {
+        return pair.value.name();
+    });
 }
 
 void IDBObjectStoreInfo::deleteIndex(const String& indexName)

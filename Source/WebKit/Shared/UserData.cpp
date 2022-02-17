@@ -101,15 +101,11 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
     if (object.type() == API::Object::Type::Array) {
         auto& array = static_cast<API::Array&>(object);
 
-        Vector<RefPtr<API::Object>> elements;
-        elements.reserveInitialCapacity(array.elements().size());
-        for (const auto& element : array.elements()) {
+        auto elements = array.elements().map([&](auto& element) -> RefPtr<API::Object> {
             if (!element)
-                elements.uncheckedAppend(nullptr);
-            else
-                elements.uncheckedAppend(transformGraph(*element, transformer));
-        }
-
+                return nullptr;
+            return transformGraph(*element, transformer);
+        });
         return API::Array::create(WTFMove(elements));
     }
 

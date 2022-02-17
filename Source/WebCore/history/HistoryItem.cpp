@@ -95,10 +95,12 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_displayTitle(item.m_displayTitle)
     , m_scrollPosition(item.m_scrollPosition)
     , m_pageScaleFactor(item.m_pageScaleFactor)
+    , m_children(item.m_children.map([](auto& child) { return child->copy(); }))
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
     , m_isTargetItem(item.m_isTargetItem)
     , m_itemSequenceNumber(item.m_itemSequenceNumber)
     , m_documentSequenceNumber(item.m_documentSequenceNumber)
+    , m_formData(item.m_formData ? RefPtr<FormData> { item.m_formData->copy() } : nullptr)
     , m_formContentType(item.m_formContentType)
     , m_pruningReason(PruningReason::None)
 #if PLATFORM(IOS_FAMILY)
@@ -108,13 +110,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
 #endif
     , m_identifier(item.m_identifier)
 {
-    if (item.m_formData)
-        m_formData = item.m_formData->copy();
-        
-    unsigned size = item.m_children.size();
-    m_children.reserveInitialCapacity(size);
-    for (unsigned i = 0; i < size; ++i)
-        m_children.uncheckedAppend(item.m_children[i]->copy());
 }
 
 Ref<HistoryItem> HistoryItem::copy() const

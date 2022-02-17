@@ -64,7 +64,6 @@ void MessageParser::pushReceivedData(const uint8_t* data, size_t size)
     if (!data || !size || !m_listener)
         return;
 
-    m_buffer.reserveCapacity(m_buffer.size() + size);
     m_buffer.append(data, size);
 
     if (!parse())

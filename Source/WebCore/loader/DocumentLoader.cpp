@@ -2282,14 +2282,11 @@ void DocumentLoader::startIconLoading()
     if (!m_linkIcons.size())
         return;
 
-    Vector<std::pair<WebCore::LinkIcon&, uint64_t>> iconDecisions;
-    iconDecisions.reserveInitialCapacity(m_linkIcons.size());
-    for (auto& icon : m_linkIcons) {
+    auto iconDecisions = WTF::map(m_linkIcons, [&](auto& icon) -> std::pair<WebCore::LinkIcon&, uint64_t> {
         auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);
-        iconDecisions.uncheckedAppend({ icon, result.iterator->key });
-    }
-
-    m_frame->loader().client().getLoadDecisionForIcons(iconDecisions);
+        return { icon, result.iterator->key };
+    });
+    m_frame->loader().client().getLoadDecisionForIcons(WTFMove(iconDecisions));
 }
 
 void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&& completionHandler)
@@ -2449,6 +2446,7 @@ void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String
             if (parsedPattern.isValid())
                 patternVector.uncheckedAppend(WTFMove(parsedPattern));
         }
+        patternVector.shrinkToFit();
         parsedPatternMap.set(pair.key, WTFMove(patternVector));
     }
 

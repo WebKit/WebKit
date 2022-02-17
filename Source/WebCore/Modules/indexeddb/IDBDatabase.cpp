@@ -317,15 +317,8 @@ void IDBDatabase::stop()
 
     removeAllEventListeners();
 
-    Vector<IDBResourceIdentifier> transactionIdentifiers;
-    transactionIdentifiers.reserveInitialCapacity(m_activeTransactions.size());
-
-    for (auto& id : m_activeTransactions.keys())
-        transactionIdentifiers.uncheckedAppend(id);
-
-    for (auto& id : transactionIdentifiers) {
-        IDBTransaction* transaction = m_activeTransactions.get(id);
-        if (transaction)
+    for (auto& id : copyToVector(m_activeTransactions.keys())) {
+        if (auto* transaction = m_activeTransactions.get(id))
             transaction->stop();
     }
 

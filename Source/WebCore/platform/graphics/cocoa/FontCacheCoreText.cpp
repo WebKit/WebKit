@@ -1153,11 +1153,10 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
 
 static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::InstalledFontFamily& familyFonts, FontSelectionRequest fontSelectionRequest)
 {
-    Vector<FontSelectionCapabilities> capabilities;
-    capabilities.reserveInitialCapacity(familyFonts.size());
-    for (auto& font : familyFonts.installedFonts)
-        capabilities.uncheckedAppend(font.capabilities);
-    FontSelectionAlgorithm fontSelectionAlgorithm(fontSelectionRequest, capabilities, familyFonts.capabilities);
+    auto capabilities = familyFonts.installedFonts.map([](auto& font) {
+        return font.capabilities;
+    });
+    FontSelectionAlgorithm fontSelectionAlgorithm(fontSelectionRequest, WTFMove(capabilities), familyFonts.capabilities);
     auto index = fontSelectionAlgorithm.indexOfBestCapabilities();
     if (index == notFound)
         return nullptr;
@@ -1169,14 +1168,9 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 {
     auto& fontDatabase = allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
     const auto& fonts = fontDatabase.collectionForFamily(familyName.string());
-    if (fonts.isEmpty())
-        return { };
-
-    Vector<FontSelectionCapabilities> result;
-    result.reserveInitialCapacity(fonts.size());
-    for (const auto& font : fonts.installedFonts)
-        result.uncheckedAppend(font.capabilities);
-    return result;
+    return fonts.installedFonts.map([](auto& font) {
+        return font.capabilities;
+    });
 }
 
 struct FontLookup {

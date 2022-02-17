@@ -493,12 +493,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
     if (m_contextMap.isEmpty())
         return;
 
-    Vector<ModelInterfaceTuple> values;
-    values.reserveInitialCapacity(m_contextMap.size());
-    for (auto& value : m_contextMap.values())
-        values.uncheckedAppend(value);
-
-    for (auto& value : values) {
+    for (auto& value : copyToVector(m_contextMap.values())) {
         RefPtr<VideoFullscreenModelContext> model;
         RefPtr<PlatformVideoFullscreenInterface> interface;
         std::tie(model, interface) = value;

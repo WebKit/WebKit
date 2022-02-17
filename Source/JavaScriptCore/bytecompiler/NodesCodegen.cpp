@@ -5374,7 +5374,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
     Vector<RefPtr<RegisterID>> registers;
-    registers.reserveCapacity(m_targetPatterns.size());
+    registers.reserveInitialCapacity(m_targetPatterns.size());
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         registers.uncheckedAppend(generator.newTemporary());
         generator.emitNode(registers.last().get(), elements[i]);

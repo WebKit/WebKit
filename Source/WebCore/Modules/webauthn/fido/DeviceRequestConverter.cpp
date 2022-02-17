@@ -68,14 +68,12 @@ static CBORValue convertUserEntityToCBOR(const PublicKeyCredentialCreationOption
 
 static CBORValue convertParametersToCBOR(const Vector<PublicKeyCredentialCreationOptions::Parameters>& parameters)
 {
-    CBORValue::ArrayValue credentialParamArray;
-    credentialParamArray.reserveInitialCapacity(parameters.size());
-    for (const auto& credential : parameters) {
+    auto credentialParamArray = parameters.map([](auto& credential) {
         CBORValue::MapValue cborCredentialMap;
         cborCredentialMap.emplace(CBORValue(kCredentialTypeMapKey), CBORValue(publicKeyCredentialTypeToString(credential.type)));
         cborCredentialMap.emplace(CBORValue(kCredentialAlgorithmMapKey), CBORValue(credential.alg));
-        credentialParamArray.append(WTFMove(cborCredentialMap));
-    }
+        return CBORValue { WTFMove(cborCredentialMap) };
+    });
     return CBORValue(WTFMove(credentialParamArray));
 }
 

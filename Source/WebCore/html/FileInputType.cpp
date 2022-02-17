@@ -385,13 +385,8 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     protectedInputElement->setFormControlValueMatchesRenderer(true);
     protectedInputElement->updateValidity();
 
-    if (shouldRequestIcon == RequestIcon::Yes) {
-        Vector<String> paths;
-        paths.reserveInitialCapacity(length);
-        for (auto& file : m_fileList->files())
-            paths.uncheckedAppend(file->path());
-        requestIcon(paths);
-    }
+    if (shouldRequestIcon == RequestIcon::Yes)
+        requestIcon(m_fileList->paths());
 
     if (protectedInputElement->renderer())
         protectedInputElement->renderer()->repaint();
@@ -447,7 +442,7 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
     for (size_t i = 0; i < size; ++i)
         files.uncheckedAppend({ paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } });
 
-    filesChosen(files);
+    filesChosen(WTFMove(files));
 }
 
 void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)

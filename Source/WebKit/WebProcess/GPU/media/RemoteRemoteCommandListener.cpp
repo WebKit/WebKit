@@ -94,12 +94,7 @@ void RemoteRemoteCommandListener::updateSupportedCommands()
     m_currentCommands = supportedCommands;
     m_currentSupportSeeking = supportsSeeking();
 
-    Vector<PlatformMediaSession::RemoteControlCommandType> commands;
-    commands.reserveInitialCapacity(supportedCommands.size());
-    for (auto command : supportedCommands)
-        commands.uncheckedAppend(command);
-
-    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { WTFMove(commands), m_currentSupportSeeking }, m_identifier);
+    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, m_identifier);
 }
 
 }

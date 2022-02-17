@@ -26,11 +26,11 @@
 #include "config.h"
 #include "IndexKey.h"
 
+#include <wtf/CrossThreadCopier.h>
+
 namespace WebCore {
 
-IndexKey::IndexKey()
-{
-}
+IndexKey::IndexKey() = default;
 
 IndexKey::IndexKey(Vector<IDBKeyData>&& keys)
 {
@@ -39,12 +39,7 @@ IndexKey::IndexKey(Vector<IDBKeyData>&& keys)
 
 IndexKey IndexKey::isolatedCopy() const
 {
-    Vector<IDBKeyData> keys;
-    keys.reserveInitialCapacity(m_keys.size());
-    for (auto& key : m_keys)
-        keys.uncheckedAppend(key.isolatedCopy());
-
-    return { WTFMove(keys) };
+    return { crossThreadCopy(m_keys) };
 }
 
 IDBKeyData IndexKey::asOneKey() const

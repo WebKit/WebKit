@@ -1,3 +1,32 @@
+2022-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236748
+
+        Reviewed by Dean Jackson.
+
+        Clean up / optimize call sites constructing vectors:
+        - Use Vector::map() / WTF::map() where appropriate
+        - Replace Vector::reserveCapacity() with Vector::reserveInitialCapacity() 
+          where appropriate
+        - Replace Vector::append() with Vector::uncheckedAppend() where appropriate
+        - Leverage the fact that Vector<Ref<Foo>> is now copyable (Because Ref<> now has
+          a copy constructor)
+        - Call crossThreadCopy() to isolate-copy a Vector() without iterating.
+        - Leverage Vector constructor that takes in an intialization list in more cases
+        - Leverage Vector::from() in more cases to simplify vector construction in some
+          case.
+        - Drop unnecessary calls to Vector::reserve*Capacity() before calling
+          Vector::append(T*, size_t) since the append() implementation already does this
+          for us.
+        - Leverage copyToVector() and copyToVectorOf<> in more cases
+        - Call shrinkToFit() in some cases where we reserve capacity and then append()
+          but may not append() as much as we reserved. 
+
+        * wtf/Language.cpp:
+        (WTF::userPreferredLanguages):
+        (WTF::isolatedCopy): Deleted.
+
 2022-02-17  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Enable by default

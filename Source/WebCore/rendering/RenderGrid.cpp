@@ -939,10 +939,10 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     ASSERT(!m_grid.needsItemsPlacement());
     bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
     LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
-    tracks.reserveCapacity(numPositions - 1);
+    tracks.reserveInitialCapacity(numPositions - 1);
     for (size_t i = 0; i < numPositions - 2; ++i)
-        tracks.append(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
-    tracks.append(positions[numPositions - 1] - positions[numPositions - 2]);
+        tracks.uncheckedAppend(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
+    tracks.uncheckedAppend(positions[numPositions - 1] - positions[numPositions - 2]);
 
     if (!hasCollapsedTracks)
         return tracks;

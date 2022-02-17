@@ -269,10 +269,8 @@ void IDBTransaction::abortInProgressOperations(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::abortInProgressOperations");
 
-    Vector<RefPtr<IDBClient::TransactionOperation>> inProgressAbortVector;
-    inProgressAbortVector.reserveInitialCapacity(m_transactionOperationsInProgressQueue.size());
-    while (!m_transactionOperationsInProgressQueue.isEmpty())
-        inProgressAbortVector.uncheckedAppend(m_transactionOperationsInProgressQueue.takeFirst());
+    auto inProgressAbortVector = copyToVectorOf<RefPtr<IDBClient::TransactionOperation>>(m_transactionOperationsInProgressQueue);
+    m_transactionOperationsInProgressQueue.clear();
 
     for (auto& operation : inProgressAbortVector) {
         m_transactionOperationsInProgressQueue.append(operation.get());

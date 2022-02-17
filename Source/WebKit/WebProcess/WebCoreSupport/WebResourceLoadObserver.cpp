@@ -127,12 +127,9 @@ String WebResourceLoadObserver::statisticsForURL(const URL& url)
 
 Vector<ResourceLoadStatistics> WebResourceLoadObserver::takeStatistics()
 {
-    Vector<ResourceLoadStatistics> statistics;
-    statistics.reserveInitialCapacity(m_resourceStatisticsMap.size());
-    for (auto& statistic : m_resourceStatisticsMap.values())
-        statistics.uncheckedAppend(ResourceLoadStatistics(WTFMove(*statistic)));
-    m_resourceStatisticsMap.clear();
-    return statistics;
+    return WTF::map(std::exchange(m_resourceStatisticsMap, { }), [](auto&& entry) {
+        return ResourceLoadStatistics { WTFMove(*entry.value) };
+    });
 }
 
 void WebResourceLoadObserver::clearState()

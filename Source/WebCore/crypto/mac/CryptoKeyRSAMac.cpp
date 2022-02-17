@@ -342,7 +342,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 
     // Per https://tools.ietf.org/html/rfc5280#section-4.1. subjectPublicKeyInfo.
     Vector<uint8_t> result;
-    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(RSAOIDHeader, sizeof(RSAOIDHeader));
@@ -401,7 +401,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 
     // Per https://tools.ietf.org/html/rfc5208#section-5. PrivateKeyInfo.
     Vector<uint8_t> result;
-    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(Version, sizeof(Version));

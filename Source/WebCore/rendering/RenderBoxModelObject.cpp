@@ -2213,13 +2213,9 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     //         0----------------3
     //
     Vector<FloatPoint> quad;
-    quad.reserveInitialCapacity(4);
     switch (side) {
     case BoxSide::Top:
-        quad.uncheckedAppend(outerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMinYCorner());
-        quad.uncheckedAppend(outerRect.maxXMinYCorner());
+        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMinYCorner(), outerRect.maxXMinYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -2229,10 +2225,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Left:
-        quad.uncheckedAppend(outerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMaxYCorner());
-        quad.uncheckedAppend(outerRect.minXMaxYCorner());
+        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), outerRect.minXMaxYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -2242,10 +2235,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Bottom:
-        quad.uncheckedAppend(outerRect.minXMaxYCorner());
-        quad.uncheckedAppend(innerRect.minXMaxYCorner());
-        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
-        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
+        quad = { outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().bottomLeft().isZero())
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
@@ -2255,10 +2245,7 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Right:
-        quad.uncheckedAppend(outerRect.maxXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
-        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
+        quad = { outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().topRight().isZero())
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);

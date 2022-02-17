@@ -206,21 +206,6 @@ bool isIDBKeyPathValid(const IDBKeyPath& keyPath)
     return std::visit(visitor, keyPath);
 }
 
-IDBKeyPath isolatedCopy(const IDBKeyPath& keyPath)
-{
-    auto visitor = WTF::makeVisitor([](const String& string) -> IDBKeyPath {
-        return string.isolatedCopy();
-    }, [](const Vector<String>& vector) -> IDBKeyPath {
-        Vector<String> vectorCopy;
-        vectorCopy.reserveInitialCapacity(vector.size());
-        for (auto& string : vector)
-            vectorCopy.uncheckedAppend(string.isolatedCopy());
-        return vectorCopy;
-    });
-
-    return std::visit(visitor, keyPath);
-}
-
 #if !LOG_DISABLED
 String loggingString(const IDBKeyPath& path)
 {

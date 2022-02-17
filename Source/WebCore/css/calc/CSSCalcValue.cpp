@@ -69,11 +69,10 @@ static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr
     Vector<Ref<CSSCalcExpressionNode>> values;
     values.reserveInitialCapacity(nodes.size());
     for (auto& node : nodes) {
-        auto cssNode = createCSS(*node, style);
-        if (!cssNode)
-            continue;
-        values.uncheckedAppend(cssNode.releaseNonNull());
+        if (auto cssNode = createCSS(*node, style))
+            values.uncheckedAppend(cssNode.releaseNonNull());
     }
+    values.shrinkToFit();
     return values;
 }
 

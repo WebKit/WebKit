@@ -1,3 +1,114 @@
+2022-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236748
+
+        Reviewed by Dean Jackson.
+
+        Clean up / optimize call sites constructing vectors:
+        - Use Vector::map() / WTF::map() where appropriate
+        - Replace Vector::reserveCapacity() with Vector::reserveInitialCapacity() 
+          where appropriate
+        - Replace Vector::append() with Vector::uncheckedAppend() where appropriate
+        - Leverage the fact that Vector<Ref<Foo>> is now copyable (Because Ref<> now has
+          a copy constructor)
+        - Call crossThreadCopy() to isolate-copy a Vector() without iterating.
+        - Leverage Vector constructor that takes in an intialization list in more cases
+        - Leverage Vector::from() in more cases to simplify vector construction in some
+          case.
+        - Drop unnecessary calls to Vector::reserve*Capacity() before calling
+          Vector::append(T*, size_t) since the append() implementation already does this
+          for us.
+        - Leverage copyToVector() and copyToVectorOf<> in more cases
+        - Call shrinkToFit() in some cases where we reserve capacity and then append()
+          but may not append() as much as we reserved. 
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::originDetailsCrossThreadCopy):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::cacheInfos):
+        * Shared/API/APIArray.cpp:
+        (API::Array::createStringArray):
+        (API::Array::copy):
+        * Shared/API/APIDictionary.cpp:
+        (API::Dictionary::keys const):
+        * Shared/UserData.cpp:
+        (WebKit::transformGraph):
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::create):
+        (WebKit::WebContextMenuItem::submenuItemsAsAPIArray const):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::kitItems):
+        (WebKit::coreItems):
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/C/WKPage.cpp:
+        (API::toAPIObjectVector):
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageFindMatchesClient):
+        (WKPageSetPageLoaderClient):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::forEachSession):
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::snapshotGamepads):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::allNetworkProcesses):
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::clearNotifications):
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::StatisticsRequest::completedRequest):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::selectAssertionResponse const):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::clear):
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPageProxy::speechSynthesisVoiceList):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::parametersFromEachWebsiteDataStore):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient replaceMatches:withString:inSelectionOnly:resultCollector:]):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.cpp:
+        (WebKit::RemoteRemoteCommandListener::updateSupportedCommands):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (contextMenuItems):
+        (WKBundlePageCopyOriginsWithApplicationCache):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didAssociateFormControls):
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::networkProcessCrashed):
+        * WebProcess/Network/webrtc/WebRTCResolver.cpp:
+        (WebKit::WebRTCResolver::setResolvedAddress):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::takeStatistics):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::replaceMatches):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::toKeyframeValueVector):
+        (WebKit::PlatformCAAnimationRemote::setValues):
+        (WebKit::PlatformCAAnimationRemote::setTimingFunctions):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::trackedRepaintRects):
+        (WebKit::dumpHistoryItem):
+
 2022-02-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash while destroying RemoteVideoFrameObjectHeap

@@ -118,11 +118,9 @@ static bool shouldTerminateNetworkProcessBySendingMessage()
 
 Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
 {
-    Vector<Ref<NetworkProcessProxy>> processes;
-    processes.reserveInitialCapacity(networkProcessesSet().size());
-    for (auto* networkProcess : networkProcessesSet())
-        processes.uncheckedAppend(*networkProcess);
-    return processes;
+    return WTF::map(networkProcessesSet(), [](auto* networkProcess) {
+        return Ref { *networkProcess };
+    });
 }
 
 RefPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
@@ -623,13 +621,7 @@ void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID
         completionHandler();
         return;
     }
-
-    Vector<RegistrableDomain> registrableDomainsToBlock;
-    registrableDomainsToBlock.reserveInitialCapacity(domainsToBlock.size());
-    for (auto& domain : domainsToBlock)
-        registrableDomainsToBlock.uncheckedAppend(domain);
-
-    sendWithAsyncReply(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, registrableDomainsToBlock), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::isPrevalentResource(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)

@@ -135,7 +135,7 @@ private:
     TileCohort newestTileCohort() const;
     TileCohort oldestTileCohort() const;
 
-    void removeTiles(Vector<TileGrid::TileIndex>& toRemove);
+    void removeTiles(const Vector<TileGrid::TileIndex>& toRemove);
 
     // PlatformCALayerClient
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;

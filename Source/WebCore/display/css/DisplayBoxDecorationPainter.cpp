@@ -487,13 +487,9 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
     //         0----------------3
     //
     Vector<FloatPoint> quad;
-    quad.reserveInitialCapacity(4);
     switch (side) {
     case BoxSide::Top:
-        quad.uncheckedAppend(outerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMinYCorner());
-        quad.uncheckedAppend(outerRect.maxXMinYCorner());
+        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMinYCorner(), outerRect.maxXMinYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -503,10 +499,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
         break;
 
     case BoxSide::Left:
-        quad.uncheckedAppend(outerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMinYCorner());
-        quad.uncheckedAppend(innerRect.minXMaxYCorner());
-        quad.uncheckedAppend(outerRect.minXMaxYCorner());
+        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), outerRect.minXMaxYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -516,10 +509,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
         break;
 
     case BoxSide::Bottom:
-        quad.uncheckedAppend(outerRect.minXMaxYCorner());
-        quad.uncheckedAppend(innerRect.minXMaxYCorner());
-        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
-        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
+        quad = { outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().bottomLeft().isZero())
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
@@ -529,10 +519,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
         break;
 
     case BoxSide::Right:
-        quad.uncheckedAppend(outerRect.maxXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMinYCorner());
-        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
-        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
+        quad = { outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().topRight().isZero())
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
@@ -796,31 +783,38 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
         y2 = roundToDevicePixel(y2, deviceScaleFactor);
 
         Vector<FloatPoint> quad;
-        quad.reserveInitialCapacity(4);
         switch (side) {
         case BoxSide::Top:
-            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y1 });
-            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y1 });
+            quad = {
+                { x1 + std::max<float>(-adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y1 }
+            };
             break;
         case BoxSide::Bottom:
-            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y1 });
-            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y1 });
+            quad = {
+                { x1 + std::max<float>(adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(-adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y1 }
+            };
             break;
         case BoxSide::Left:
-            quad.uncheckedAppend({ x1, y1 + std::max<float>(-adjacentWidth1, 0) });
-            quad.uncheckedAppend({ x1, y2 - std::max<float>(-adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y2 - std::max<float>( adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y1 + std::max<float>( adjacentWidth1, 0) });
+            quad = {
+                { x1, y1 + std::max<float>(-adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(adjacentWidth1, 0) }
+            };
             break;
         case BoxSide::Right:
-            quad.uncheckedAppend({ x1, y1 + std::max<float>( adjacentWidth1, 0) });
-            quad.uncheckedAppend({ x1, y2 - std::max<float>( adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y2 - std::max<float>(-adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y1 + std::max<float>(-adjacentWidth1, 0) });
+            quad = {
+                { x1, y1 + std::max<float>(adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(-adjacentWidth1, 0) }
+            };
             break;
         }
 

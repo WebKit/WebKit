@@ -4033,7 +4033,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
     }
 
     Vector<TextList> textLists;
-    textLists.reserveCapacity(enclosingLists.size());
+    textLists.reserveInitialCapacity(enclosingLists.size());
     for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
         auto& list = iterator->get();
         bool ordered = is<HTMLOListElement>(list);

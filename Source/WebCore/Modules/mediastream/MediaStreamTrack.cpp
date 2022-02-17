@@ -321,11 +321,9 @@ static LongRange capabilityIntRange(const CapabilityValueOrRange& value)
 
 static Vector<String> capabilityStringVector(const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& modes)
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(modes.size());
-    for (auto& mode : modes)
-        result.uncheckedAppend(RealtimeMediaSourceSettings::facingMode(mode));
-    return result;
+    return modes.map([](auto& mode) {
+        return RealtimeMediaSourceSettings::facingMode(mode);
+    });
 }
 
 static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::EchoCancellation cancellation)

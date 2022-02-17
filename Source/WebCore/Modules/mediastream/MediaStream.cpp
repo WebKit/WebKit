@@ -119,13 +119,10 @@ RefPtr<MediaStream> MediaStream::clone()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    MediaStreamTrackVector clonedTracks;
-    clonedTracks.reserveInitialCapacity(m_trackSet.size());
-
-    for (auto& track : m_trackSet.values())
-        clonedTracks.uncheckedAppend(track->clone());
-
-    return MediaStream::create(*document(), clonedTracks);
+    auto clonedTracks = WTF::map(m_trackSet, [](auto& entry) {
+        return entry.value->clone();
+    });
+    return MediaStream::create(*document(), WTFMove(clonedTracks));
 }
 
 void MediaStream::addTrack(MediaStreamTrack& track)

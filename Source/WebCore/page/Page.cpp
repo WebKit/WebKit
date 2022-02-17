@@ -970,7 +970,7 @@ uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace,
         if (!highestRoot || highestRoot != highestEditableRoot(makeDeprecatedLegacyPosition(range.end)) || !highestRoot->document().frame())
             continue;
         auto scope = makeRangeSelectingNodeContents(*highestRoot);
-        replacementRanges.append({ WTFMove(highestRoot), characterRange(scope, range) });
+        replacementRanges.uncheckedAppend({ WTFMove(highestRoot), characterRange(scope, range) });
     }
 
     replaceRanges(*this, replacementRanges, replacementText);

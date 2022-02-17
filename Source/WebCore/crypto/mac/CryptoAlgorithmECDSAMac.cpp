@@ -63,7 +63,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     // FIXME: <rdar://problem/31618371>
     // convert the DER binary into r + s
     Vector<uint8_t> newSignature;
-    newSignature.reserveCapacity(keyLengthInBytes * 2);
+    newSignature.reserveInitialCapacity(keyLengthInBytes * 2);
     size_t offset = 1; // skip tag
     offset += bytesUsedToEncodedLength(signature[offset]); // skip length
     ++offset; // skip tag
@@ -71,7 +71,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     // If r < keyLengthInBytes, fill the head of r with 0s.
     size_t bytesToCopy = keyLengthInBytes;
     if (signature[offset] < keyLengthInBytes) {
-        newSignature.resize(keyLengthInBytes - signature[offset]);
+        newSignature.grow(keyLengthInBytes - signature[offset]);
         memset(newSignature.data(), InitialOctet, keyLengthInBytes - signature[offset]);
         bytesToCopy = signature[offset];
     } else if (signature[offset] > keyLengthInBytes) // Otherwise skip the leading 0s of r.
@@ -134,7 +134,7 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
 
     // Construct the DER signature.
     Vector<uint8_t> newSignature;
-    newSignature.reserveCapacity(6 + keyLengthInBytes * 3  + rNeedsInitialOctet + sNeedsInitialOctet - rStart - sStart);
+    newSignature.reserveInitialCapacity(6 + keyLengthInBytes * 3  + rNeedsInitialOctet + sNeedsInitialOctet - rStart - sStart);
     newSignature.append(SequenceMark);
     addEncodedASN1Length(newSignature, 4 + keyLengthInBytes * 3  + rNeedsInitialOctet + sNeedsInitialOctet - rStart - sStart);
     newSignature.append(IntegerMark);

@@ -159,12 +159,12 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
 {
     AXTRACE("AXIsolatedTree::objectsForIDs");
     Vector<RefPtr<AXCoreObject>> result;
-    result.reserveCapacity(axIDs.size());
-
-    for (const auto& axID : axIDs) {
+    result.reserveInitialCapacity(axIDs.size());
+    for (auto& axID : axIDs) {
         if (auto object = nodeForID(axID))
             result.uncheckedAppend(object);
     }
+    result.shrinkToFit();
 
     return result;
 }
@@ -285,15 +285,11 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject, AXID p
         idsBeingChanged->add(nodeChange.isolatedObject->objectID());
     changes.append(WTFMove(nodeChange));
 
-    auto axChildren = axObject.children();
-    Vector<AXID> axChildrenIDs;
-    axChildrenIDs.reserveInitialCapacity(axChildren.size());
-    for (const auto& axChild : axChildren) {
+    auto axChildrenIDs = axObject.children().map([&](auto& axChild) {
         collectNodeChangesForSubtree(*axChild, axObject.objectID(), attachWrapper, changes, idsBeingChanged);
-        axChildrenIDs.uncheckedAppend(axChild->objectID());
-    }
-
-    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { parentID, axChildrenIDs });
+        return axChild->objectID();
+    });
+    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { parentID, WTFMove(axChildrenIDs) });
 }
 
 void AXIsolatedTree::updateNode(AXCoreObject& axObject)

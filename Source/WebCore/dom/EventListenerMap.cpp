@@ -97,13 +97,9 @@ void EventListenerMap::clear()
 
 Vector<AtomString> EventListenerMap::eventTypes() const
 {
-    Vector<AtomString> types;
-    types.reserveInitialCapacity(m_entries.size());
-
-    for (auto& entry : m_entries)
-        types.uncheckedAppend(entry.first);
-
-    return types;
+    return m_entries.map([](auto& entry) {
+        return entry.first;
+    });
 }
 
 static inline size_t findListener(const EventListenerVector& listeners, EventListener& listener, bool useCapture)

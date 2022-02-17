@@ -46,11 +46,9 @@ Vector<Ref<FileSystemEntry>> HTMLInputElementEntriesAPI::webkitEntries(ScriptExe
     if (!fileList)
         return { };
 
-    Vector<Ref<FileSystemEntry>> entries;
-    entries.reserveInitialCapacity(fileList->files().size());
-    for (auto& file : fileList->files())
-        entries.uncheckedAppend(DOMFileSystem::createEntryForFile(context, file.copyRef()));
-    return entries;
+    return fileList->files().map([&](auto& file) {
+        return DOMFileSystem::createEntryForFile(context, file.copyRef());
+    });
 }
 
 }

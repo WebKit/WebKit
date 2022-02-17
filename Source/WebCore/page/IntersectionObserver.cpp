@@ -101,8 +101,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 
     Vector<double> thresholds;
     WTF::switchOn(init.threshold, [&thresholds] (double initThreshold) {
-        thresholds.reserveInitialCapacity(1);
-        thresholds.uncheckedAppend(initThreshold);
+        thresholds.append(initThreshold);
     }, [&thresholds] (Vector<double>& initThresholds) {
         thresholds = WTFMove(initThresholds);
     });

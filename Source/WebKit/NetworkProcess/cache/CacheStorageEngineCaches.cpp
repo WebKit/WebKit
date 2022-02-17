@@ -658,9 +658,9 @@ void Caches::cacheInfos(uint64_t updateCounter, CacheInfosCallback&& callback)
 
     Vector<CacheInfo> cacheInfos;
     if (isDirty(updateCounter)) {
-        cacheInfos.reserveInitialCapacity(m_caches.size());
-        for (auto& cache : m_caches)
-            cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
+        cacheInfos = m_caches.map([](auto& cache) {
+            return CacheInfo { cache.identifier(), cache.name() };
+        });
     }
     callback(CacheInfos { WTFMove(cacheInfos), m_updateCounter });
 }

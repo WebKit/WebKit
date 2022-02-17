@@ -145,10 +145,7 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
     m_inlineStyle = other.m_inlineStyle;
 
-    unsigned otherLength = other.length();
-    m_attributeVector.reserveCapacity(otherLength);
-    for (unsigned i = 0; i < otherLength; ++i)
-        m_attributeVector.uncheckedAppend(other.m_attributeArray[i]);
+    m_attributeVector.append(other.m_attributeArray, other.length());
 }
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const

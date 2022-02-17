@@ -88,9 +88,9 @@ void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTrans
     destination.m_durability = source.m_durability;
     destination.m_newVersion = source.m_newVersion;
 
-    destination.m_objectStores.reserveCapacity(source.m_objectStores.size());
-    for (auto& objectStore : source.m_objectStores)
-        destination.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
+    destination.m_objectStores = source.m_objectStores.map([](auto& objectStore) {
+        return objectStore.isolatedCopy();
+    });
 
     if (source.m_originalDatabaseInfo)
         destination.m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(*source.m_originalDatabaseInfo, IDBDatabaseInfo::IsolatedCopy);

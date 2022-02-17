@@ -46,7 +46,7 @@ public:
 
     RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
-    Vector<AtomString> supportedPropertyNames();
+    Vector<AtomString> supportedPropertyNames() const;
 
     const Vector<Ref<DOMMimeType>>& mimeTypes() const { return m_mimeTypes; }
 

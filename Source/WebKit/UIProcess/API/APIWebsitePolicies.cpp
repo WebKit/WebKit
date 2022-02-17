@@ -59,18 +59,8 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-    
-    Vector<WebCore::HTTPHeaderField> legacyCustomHeaderFields;
-    legacyCustomHeaderFields.reserveInitialCapacity(m_legacyCustomHeaderFields.size());
-    for (auto& field : m_legacyCustomHeaderFields)
-        legacyCustomHeaderFields.uncheckedAppend(field);
-    policies->setLegacyCustomHeaderFields(WTFMove(legacyCustomHeaderFields));
-
-    Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
-    for (auto& field : m_customHeaderFields)
-        customHeaderFields.uncheckedAppend(field);
-    policies->setCustomHeaderFields(WTFMove(customHeaderFields));
+    policies->setLegacyCustomHeaderFields(Vector { m_legacyCustomHeaderFields });
+    policies->setCustomHeaderFields(Vector { m_customHeaderFields });
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
@@ -98,8 +88,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     bool hasLegacyCustomHeaderFields = legacyCustomHeaderFields().size();
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size() + hasLegacyCustomHeaderFields);
-    for (auto& field : this->customHeaderFields())
-        customHeaderFields.uncheckedAppend(field);
+    customHeaderFields.appendVector(this->customHeaderFields());
     if (hasLegacyCustomHeaderFields)
         customHeaderFields.uncheckedAppend({ legacyCustomHeaderFields(), { }});
 

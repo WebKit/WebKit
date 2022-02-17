@@ -187,14 +187,9 @@ void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef ite
 #if ENABLE(CONTEXT_MENUS)
 static Ref<API::Array> contextMenuItems(const WebKit::WebContextMenu& contextMenu)
 {
-    auto items = contextMenu.items();
-
-    Vector<RefPtr<API::Object>> menuItems;
-    menuItems.reserveInitialCapacity(items.size());
-
-    for (const auto& item : items)
-        menuItems.uncheckedAppend(WebKit::WebContextMenuItem::create(item));
-
+    auto menuItems = contextMenu.items().map([](auto& item) -> RefPtr<API::Object> {
+        return WebKit::WebContextMenuItem::create(item);
+    });
     return API::Array::create(WTFMove(menuItems));
 }
 #endif
@@ -845,13 +840,9 @@ void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKString
 WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
 {
     auto origins = WebKit::toImpl(page)->corePage()->applicationCacheStorage().originsWithCache();
-
-    Vector<RefPtr<API::Object>> originIdentifiers;
-    originIdentifiers.reserveInitialCapacity(origins.size());
-
-    for (const auto& origin : origins)
-        originIdentifiers.uncheckedAppend(API::String::create(origin.databaseIdentifier()));
-
+    auto originIdentifiers = WTF::map(origins, [](auto& origin) -> RefPtr<API::Object> {
+        return API::String::create(origin.databaseIdentifier());
+    });
     return WebKit::toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }
 

@@ -324,11 +324,9 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         {
             ASSERT(RunLoop::isMain());
 
-            Vector<WebsiteDataRecord> records;
-            records.reserveInitialCapacity(m_websiteDataRecords.size());
-            for (auto& record : m_websiteDataRecords.values())
-                records.uncheckedAppend(m_queue.ptr() != &WorkQueue::main() ? crossThreadCopy(record) : WTFMove(record));
-
+            auto records = WTF::map(WTFMove(m_websiteDataRecords), [this](auto&& entry) {
+                return m_queue.ptr() != &WorkQueue::main() ? crossThreadCopy(WTFMove(entry.value)) : WTFMove(entry.value);
+            });
             m_queue->dispatch([apply = WTFMove(m_apply), records = WTFMove(records)] () mutable {
                 apply(WTFMove(records));
             });
@@ -1728,11 +1726,9 @@ void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheMode
 
 Vector<WebsiteDataStoreParameters> WebsiteDataStore::parametersFromEachWebsiteDataStore()
 {
-    Vector<WebsiteDataStoreParameters> parameters;
-    parameters.reserveInitialCapacity(allDataStores().size());
-    for (auto* dataStore : allDataStores().values())
-        parameters.uncheckedAppend(dataStore->parameters());
-    return parameters;
+    return WTF::map(allDataStores(), [](auto& entry) {
+        return entry.value->parameters();
+    });
 }
 
 WebsiteDataStoreParameters WebsiteDataStore::parameters()

@@ -4390,10 +4390,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
             return callbackFunction(makeUnexpected(WTFMove(*details)));
         if (dataReference.empty())
             return callbackFunction({ nullptr });
-        Vector<uint8_t> data;
-        data.reserveInitialCapacity(dataReference.size());
-        data.append(dataReference.data(), dataReference.size());
-        callbackFunction({ API::SerializedScriptValue::adopt(WTFMove(data)).ptr() });
+        callbackFunction({ API::SerializedScriptValue::adopt(Vector(dataReference)).ptr() });
     });
 }
 
@@ -10692,11 +10689,9 @@ WebPageProxy::SpeechSynthesisData& WebPageProxy::speechSynthesisData()
 
 void WebPageProxy::speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&& completionHandler)
 {
-    auto& voiceList = speechSynthesisData().synthesizer->voiceList();
-    Vector<WebSpeechSynthesisVoice> result;
-    result.reserveInitialCapacity(voiceList.size());
-    for (auto& voice : voiceList)
-        result.uncheckedAppend(WebSpeechSynthesisVoice { voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault() });
+    auto result = speechSynthesisData().synthesizer->voiceList().map([](auto& voice) {
+        return WebSpeechSynthesisVoice { voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault() };
+    });
     completionHandler(WTFMove(result));
 }
 

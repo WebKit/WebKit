@@ -4240,13 +4240,7 @@ void Document::updateElementsAffectedByMediaQueries()
             themeColorChanged();
     }
 
-    // FIXME: copyToVector doesn't work with WeakHashSet
-    Vector<Ref<HTMLImageElement>> images;
-    images.reserveInitialCapacity(m_dynamicMediaQueryDependentImages.computeSize());
-    for (auto& image : m_dynamicMediaQueryDependentImages)
-        images.append(image);
-
-    for (auto& image : images)
+    for (auto& image : copyToVectorOf<Ref<HTMLImageElement>>(m_dynamicMediaQueryDependentImages))
         image->evaluateDynamicMediaQueryDependencies();
 }
 
@@ -7610,6 +7604,7 @@ void Document::didAssociateFormControlsTimerFired()
         if (element.isConnected())
             controls.uncheckedAppend(&element);
     }
+    controls.shrinkToFit();
 
     if (auto page = this->page(); page && !controls.isEmpty()) {
         ASSERT(m_frame);

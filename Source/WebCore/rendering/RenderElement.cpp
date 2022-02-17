@@ -1968,31 +1968,38 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         y2 = roundToDevicePixel(y2, deviceScaleFactor);
 
         Vector<FloatPoint> quad;
-        quad.reserveInitialCapacity(4);
         switch (side) {
         case BoxSide::Top:
-            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y1 });
-            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y1 });
+            quad = {
+                { x1 + std::max<float>(-adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y1 }
+            };
             break;
         case BoxSide::Bottom:
-            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y1 });
-            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y2 });
-            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y1 });
+            quad = {
+                { x1 + std::max<float>(adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(-adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y1 }
+            };
             break;
         case BoxSide::Left:
-            quad.uncheckedAppend({ x1, y1 + std::max<float>(-adjacentWidth1, 0) });
-            quad.uncheckedAppend({ x1, y2 - std::max<float>(-adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y2 - std::max<float>( adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y1 + std::max<float>( adjacentWidth1, 0) });
+            quad = {
+                { x1, y1 + std::max<float>(-adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(adjacentWidth1, 0) }
+            };
             break;
         case BoxSide::Right:
-            quad.uncheckedAppend({ x1, y1 + std::max<float>( adjacentWidth1, 0) });
-            quad.uncheckedAppend({ x1, y2 - std::max<float>( adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y2 - std::max<float>(-adjacentWidth2, 0) });
-            quad.uncheckedAppend({ x2, y1 + std::max<float>(-adjacentWidth1, 0) });
+            quad = {
+                { x1, y1 + std::max<float>(adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(-adjacentWidth1, 0) }
+            };
             break;
         }
 

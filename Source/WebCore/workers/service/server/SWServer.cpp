@@ -252,11 +252,9 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
     std::sort(matchingRegistrations.begin(), matchingRegistrations.end(), [](auto& a, auto& b) {
         return a->creationTime() < b->creationTime();
     });
-    Vector<ServiceWorkerRegistrationData> matchingRegistrationDatas;
-    matchingRegistrationDatas.reserveInitialCapacity(matchingRegistrations.size());
-    for (auto* registration : matchingRegistrations)
-        matchingRegistrationDatas.uncheckedAppend(registration->data());
-    return matchingRegistrationDatas;
+    return matchingRegistrations.map([](auto& registration) {
+        return registration->data();
+    });
 }
 
 void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)

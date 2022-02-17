@@ -282,7 +282,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     size_t totalSize = sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(keySize + 1) + keySize + 4;
 
     Vector<uint8_t> result;
-    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(SequenceMark);
@@ -388,7 +388,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     size_t totalSize = sizeof(Version) + sizeof(IdEcPublicKey) + oidSize + bytesNeededForEncodedLength(privateKeySize) + privateKeySize + 3;
 
     Vector<uint8_t> result;
-    result.reserveCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(Version, sizeof(Version));

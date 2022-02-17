@@ -420,25 +420,19 @@ static ScrollSnapOffsetsInfo<OutputType, OutputRectType> convertOffsetInfo(const
 {
     auto convertOffsets = [scaleFactor](const Vector<SnapOffset<InputType>>& input)
     {
-        Vector<SnapOffset<OutputType>> output;
-        output.reserveInitialCapacity(input.size());
-        for (auto& offset : input)
-            output.uncheckedAppend({ convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.hasSnapAreaLargerThanViewport, offset.snapAreaIndices });
-        return output;
+        return input.map([scaleFactor](auto& offset) -> SnapOffset<OutputType> {
+            return { convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.hasSnapAreaLargerThanViewport, offset.snapAreaIndices };
+        });
     };
 
     auto convertRects = [scaleFactor](const Vector<InputRectType>& input)
     {
-        Vector<OutputRectType> output;
-        output.reserveInitialCapacity(input.size());
-        for (auto& rect : input) {
-            OutputRectType outputRect(
+        return input.map([scaleFactor](auto& rect) -> OutputRectType {
+            return {
                 convertOffsetUnit(rect.x(), scaleFactor), convertOffsetUnit(rect.y(), scaleFactor),
-                convertOffsetUnit(rect.width(), scaleFactor), convertOffsetUnit(rect.height(), scaleFactor));
-            output.uncheckedAppend(outputRect);
-        }
-
-        return output;
+                convertOffsetUnit(rect.width(), scaleFactor), convertOffsetUnit(rect.height(), scaleFactor)
+            };
+        });
     };
 
     return {

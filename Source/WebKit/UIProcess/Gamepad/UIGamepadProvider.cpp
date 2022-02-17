@@ -194,17 +194,9 @@ void UIGamepadProvider::stopMonitoringGamepads()
 
 Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
 {
-    Vector<GamepadData> gamepadDatas;
-    gamepadDatas.reserveInitialCapacity(m_gamepads.size());
-
-    for (auto& gamepad : m_gamepads) {
-        if (gamepad)
-            gamepadDatas.uncheckedAppend(gamepad->gamepadData());
-        else
-            gamepadDatas.uncheckedAppend({ });
-    }
-
-    return gamepadDatas;
+    return m_gamepads.map([](auto& gamepad) {
+        return gamepad ? gamepad->gamepadData() : GamepadData { };
+    });
 }
 
 #if !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX))

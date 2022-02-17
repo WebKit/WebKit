@@ -278,9 +278,8 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
     
     Vector<String> originStrings;
     originStrings.reserveInitialCapacity(size);
-    
     for (size_t i = 0; i < size; ++i)
-        originStrings.append(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
+        originStrings.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
 
     WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
 

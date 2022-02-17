@@ -179,10 +179,9 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        Vector<Ref<ClipboardItem>> clipboardItems;
-        clipboardItems.reserveInitialCapacity(allInfo->size());
-        for (auto& itemInfo : *allInfo)
-            clipboardItems.uncheckedAppend(ClipboardItem::create(*this, itemInfo));
+        auto clipboardItems = allInfo->map([this](auto& itemInfo) {
+            return ClipboardItem::create(*this, itemInfo);
+        });
         m_activeSession = {{ WTFMove(pasteboard), WTFMove(clipboardItems), changeCountAtStart }};
     }
 
@@ -368,7 +367,7 @@ void Clipboard::ItemWriter::didSetAllData()
             reject();
             return;
         }
-        customData.append(*data);
+        customData.uncheckedAppend(*data);
     }
 
     m_pasteboard->writeCustomData(WTFMove(customData));

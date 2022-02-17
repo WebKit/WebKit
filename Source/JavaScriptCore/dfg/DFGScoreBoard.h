@@ -45,7 +45,7 @@ public:
         : m_highWatermark(nextMachineLocal + 1)
     {
         m_used.fill(max(), nextMachineLocal);
-        m_free.reserveCapacity(nextMachineLocal);
+        m_free.reserveInitialCapacity(nextMachineLocal);
     }
 
     ~ScoreBoard()

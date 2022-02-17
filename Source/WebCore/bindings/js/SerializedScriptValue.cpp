@@ -2456,11 +2456,11 @@ private:
         ptr += length * sizeof(UChar);
 #else
         Vector<UChar> buffer;
-        buffer.reserveCapacity(length);
+        buffer.reserveInitialCapacity(length);
         for (unsigned i = 0; i < length; i++) {
             uint16_t ch;
             readLittleEndian(ptr, end, ch);
-            buffer.append(ch);
+            buffer.uncheckedAppend(ch);
         }
         str = String::adopt(WTFMove(buffer));
 #endif
@@ -4572,12 +4572,9 @@ uint32_t SerializedScriptValue::wireFormatVersion()
 
 Vector<String> SerializedScriptValue::blobURLs() const
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(m_blobHandles.size());
-    for (auto& handle : m_blobHandles)
-        result.uncheckedAppend(handle.url().string());
-
-    return result;
+    return m_blobHandles.map([](auto& handle) {
+        return handle.url().string();
+    });
 }
 
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&& completionHandler)

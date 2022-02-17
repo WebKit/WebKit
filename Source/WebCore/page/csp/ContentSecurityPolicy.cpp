@@ -161,9 +161,9 @@ ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() co
 {
     if (!m_cachedResponseHeaders) {
         ContentSecurityPolicyResponseHeaders result;
-        result.m_headers.reserveInitialCapacity(m_policies.size());
-        for (auto& policy : m_policies)
-            result.m_headers.uncheckedAppend({ policy->header(), policy->headerType() });
+        result.m_headers = m_policies.map([](auto& policy) {
+            return std::make_pair(policy->header(), policy->headerType());
+        });
         result.m_httpStatusCode = m_httpStatusCode;
         m_cachedResponseHeaders = WTFMove(result);
     }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBIndexInfo.h"
 
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ IDBIndexInfo::IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, 
 
 IDBIndexInfo IDBIndexInfo::isolatedCopy() const
 {
-    return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), WebCore::isolatedCopy(m_keyPath), m_unique, m_multiEntry };
+    return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_unique, m_multiEntry };
 }
 
 #if !LOG_DISABLED

@@ -63,13 +63,11 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
-Vector<AtomString> DOMMimeTypeArray::supportedPropertyNames()
+Vector<AtomString> DOMMimeTypeArray::supportedPropertyNames() const
 {
-    Vector<AtomString> result;
-    result.reserveInitialCapacity(m_types.size());
-    for (auto& type : m_types)
-        result.uncheckedAppend(type->type());
-    return result;
+    return m_types.map([](auto& type) -> AtomString {
+        return type->type();
+    });
 }
 
 } // namespace WebCore

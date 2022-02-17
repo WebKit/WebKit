@@ -126,11 +126,8 @@ CBORValue::CBORValue(const String& inString)
 
 CBORValue::CBORValue(const ArrayValue& inArray)
     : m_type(Type::Array)
-    , m_arrayValue()
+    , m_arrayValue(inArray.map([](auto& value) { return value.clone(); }))
 {
-    m_arrayValue.reserveCapacity(inArray.size());
-    for (const auto& val : inArray)
-        m_arrayValue.append(val.clone());
 }
 
 CBORValue::CBORValue(ArrayValue&& inArray)

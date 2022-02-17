@@ -58,9 +58,7 @@ void WebSocketStream::networkProcessCrashed()
     Vector<RefPtr<WebSocketStream>> sockets;
     {
         Locker stateLocker { globalWebSocketStreamMapLock };
-        sockets.reserveInitialCapacity(globalWebSocketStreamMap().size());
-        for (auto& stream : globalWebSocketStreamMap().values())
-            sockets.uncheckedAppend(stream);
+        sockets = copyToVectorOf<RefPtr<WebSocketStream>>(globalWebSocketStreamMap().values());
     }
 
     for (auto& stream : sockets) {

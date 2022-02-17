@@ -225,11 +225,9 @@ const RefPtr<KeyHandle>& KeyStore::keyHandle(const KeyIDType& keyID) const
 
 CDMInstanceSession::KeyStatusVector KeyStore::convertToJSKeyStatusVector() const
 {
-    CDMInstanceSession::KeyStatusVector keyStatusVector;
-    keyStatusVector.reserveInitialCapacity(numKeys());
-    for (const auto& key : m_keys)
-        keyStatusVector.uncheckedAppend(std::pair<Ref<FragmentedSharedBuffer>, CDMInstanceSession::KeyStatus> { key->idAsSharedBuffer(), key->status() });
-    return keyStatusVector;
+    return m_keys.map([](auto& key) {
+        return std::make_pair(key->idAsSharedBuffer(), key->status());
+    });
 }
 
 void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)

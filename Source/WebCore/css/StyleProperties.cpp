@@ -1725,6 +1725,7 @@ Ref<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSProper
         if (auto value = getPropertyCSSValue(set[i]))
             list.uncheckedAppend(CSSProperty(set[i], WTFMove(value), false));
     }
+    list.shrinkToFit();
     return MutableStyleProperties::create(WTFMove(list));
 }
 
@@ -1805,7 +1806,6 @@ DeferredStyleProperties::DeferredStyleProperties(const CSSParserTokenRange& rang
     , m_parser(parser)
 {
     size_t length = range.end() - range.begin();
-    m_tokens.reserveCapacity(length);
     m_tokens.append(range.begin(), length);
 }
     

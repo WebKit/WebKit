@@ -118,21 +118,13 @@ void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
 void GeolocationController::positionChanged(const std::optional<GeolocationPositionData>& position)
 {
     m_lastPosition = position;
-    Vector<Ref<Geolocation>> observersVector;
-    observersVector.reserveInitialCapacity(m_observers.size());
-    for (auto& observer : m_observers)
-        observersVector.uncheckedAppend(observer.copyRef());
-    for (auto& observer : observersVector)
+    for (auto& observer : copyToVectorOf<Ref<Geolocation>>(m_observers))
         observer->positionChanged();
 }
 
 void GeolocationController::errorOccurred(GeolocationError& error)
 {
-    Vector<Ref<Geolocation>> observersVector;
-    observersVector.reserveInitialCapacity(m_observers.size());
-    for (auto& observer : m_observers)
-        observersVector.uncheckedAppend(observer.copyRef());
-    for (auto& observer : observersVector)
+    for (auto& observer : copyToVectorOf<Ref<Geolocation>>(m_observers))
         observer->setError(error);
 }
 

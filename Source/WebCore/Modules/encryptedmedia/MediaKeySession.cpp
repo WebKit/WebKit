@@ -700,10 +700,9 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         return MediaKeyStatus::InternalError;
     };
 
-    m_statuses.clear();
-    m_statuses.reserveCapacity(inputStatuses.size());
-    for (auto& status : inputStatuses)
-        m_statuses.uncheckedAppend({ WTFMove(status.first), toMediaKeyStatus(status.second) });
+    m_statuses = WTF::map(WTFMove(inputStatuses), [](auto&& status) {
+        return std::make_pair(WTFMove(status.first), toMediaKeyStatus(status.second));
+    });
 
     // 5. Queue a task to fire a simple event named keystatuseschange at the session.
     queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventNames().keystatuseschangeEvent, Event::CanBubble::No, Event::IsCancelable::No));

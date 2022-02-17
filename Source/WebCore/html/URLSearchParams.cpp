@@ -122,6 +122,7 @@ Vector<String> URLSearchParams::getAll(const String& name) const
         if (pair.key == name)
             values.uncheckedAppend(pair.value);
     }
+    values.shrinkToFit();
     return values;
 }
 

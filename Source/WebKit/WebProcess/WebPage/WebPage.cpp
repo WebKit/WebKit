@@ -1388,12 +1388,9 @@ Ref<API::Array> WebPage::trackedRepaintRects()
     if (!view)
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> repaintRects;
-    repaintRects.reserveInitialCapacity(view->trackedRepaintRects().size());
-
-    for (const auto& repaintRect : view->trackedRepaintRects())
-        repaintRects.uncheckedAppend(API::Rect::create(toAPI(repaintRect)));
-
+    auto repaintRects = view->trackedRepaintRects().map([](auto& repaintRect) -> RefPtr<API::Object> {
+        return API::Rect::create(toAPI(repaintRect));
+    });
     return API::Array::create(WTFMove(repaintRects));
 }
 
@@ -2131,10 +2128,7 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
 
     stringBuilder.append('\n');
 
-    Vector<Ref<HistoryItem>> children;
-    children.reserveInitialCapacity(item.children().size());
-    for (auto& child : item.children())
-        children.uncheckedAppend(child.copyRef());
+    auto children = item.children();
     std::stable_sort(children.begin(), children.end(), [] (auto& a, auto& b) {
         return codePointCompare(a->target(), b->target()) < 0;
     });

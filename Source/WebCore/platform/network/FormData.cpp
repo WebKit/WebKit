@@ -111,15 +111,9 @@ Ref<FormData> FormData::isolatedCopy() const
 {
     // FIXME: isolatedCopy() does not copy m_identifier, m_boundary, or m_containsPasswordData.
     // Is all of that correct and intentional?
-
     auto formData = create();
-
     formData->m_alwaysStream = m_alwaysStream;
-
-    formData->m_elements.reserveInitialCapacity(m_elements.size());
-    for (auto& element : m_elements)
-        formData->m_elements.uncheckedAppend(element.isolatedCopy());
-
+    formData->m_elements = crossThreadCopy(m_elements);
     return formData;
 }
 

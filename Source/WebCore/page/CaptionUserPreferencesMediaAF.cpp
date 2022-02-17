@@ -616,9 +616,9 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
     Vector<String> userPreferredAudioCharacteristics;
-    userPreferredAudioCharacteristics.reserveCapacity(characteristicCount);
+    userPreferredAudioCharacteristics.reserveInitialCapacity(characteristicCount);
     for (CFIndex i = 0; i < characteristicCount; i++)
-        userPreferredAudioCharacteristics.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
+        userPreferredAudioCharacteristics.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
 
     return userPreferredAudioCharacteristics;
 }

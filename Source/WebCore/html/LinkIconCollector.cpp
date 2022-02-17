@@ -102,8 +102,8 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
 
         Vector<std::pair<String, String>> attributes;
         if (linkElement.hasAttributes()) {
-            attributes.reserveCapacity(linkElement.attributeCount());
-            for (const Attribute& attribute : linkElement.attributesIterator())
+            attributes.reserveInitialCapacity(linkElement.attributeCount());
+            for (auto& attribute : linkElement.attributesIterator())
                 attributes.uncheckedAppend({ attribute.localName(), attribute.value() });
         }
 

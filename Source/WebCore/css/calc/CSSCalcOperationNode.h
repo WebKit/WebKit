@@ -85,10 +85,8 @@ private:
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
         : CSSCalcExpressionNode(category)
         , m_operator(op)
+        , m_children({ WTFMove(leftSide), WTFMove(rightSide) })
     {
-        m_children.reserveInitialCapacity(2);
-        m_children.uncheckedAppend(WTFMove(leftSide));
-        m_children.uncheckedAppend(WTFMove(rightSide));
     }
 
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)

@@ -282,10 +282,7 @@ bool Length::isCalculatedEqual(const Length& other) const
 
 static Length makeCalculated(CalcOperator calcOperator, const Length& a, const Length& b)
 {
-    Vector<std::unique_ptr<CalcExpressionNode>> lengths;
-    lengths.reserveInitialCapacity(2);
-    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(a));
-    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(b));
+    auto lengths = Vector<std::unique_ptr<CalcExpressionNode>>::from(makeUnique<CalcExpressionLength>(a), makeUnique<CalcExpressionLength>(b));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), calcOperator);
     return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
 }

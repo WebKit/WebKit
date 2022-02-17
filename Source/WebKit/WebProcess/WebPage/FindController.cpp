@@ -98,7 +98,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     const uint32_t maximumNumberOfMatchesToReplace = 1000;
 
     Vector<SimpleRange> rangesToReplace;
-    rangesToReplace.reserveCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
+    rangesToReplace.reserveInitialCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
             rangesToReplace.uncheckedAppend(m_findMatches[index]);

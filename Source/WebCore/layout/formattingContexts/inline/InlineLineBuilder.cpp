@@ -350,8 +350,8 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
                 continue;
             }
 
-            runLevels.append(lineRuns[i].bidiLevel());
-            runIndexOffsetMap.append(accumulatedOffset);
+            runLevels.uncheckedAppend(lineRuns[i].bidiLevel());
+            runIndexOffsetMap.uncheckedAppend(accumulatedOffset);
         }
 
         Vector<int32_t> visualOrderList(runLevels.size());

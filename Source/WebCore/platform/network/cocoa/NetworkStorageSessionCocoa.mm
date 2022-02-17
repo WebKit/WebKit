@@ -89,6 +89,8 @@ static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies
         if (!filter || filter(nsCookie))
             cookies.uncheckedAppend(nsCookie);
     }
+    if (filter)
+        cookies.shrinkToFit();
     return cookies;
 }
 

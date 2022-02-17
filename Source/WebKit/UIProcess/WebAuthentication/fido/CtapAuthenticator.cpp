@@ -208,12 +208,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
 
     if (!m_remainingAssertionResponses) {
         if (auto* observer = this->observer()) {
-            Vector<Ref<AuthenticatorAssertionResponse>> responsesCopy;
-            responsesCopy.reserveInitialCapacity(m_assertionResponses.size());
-            for (auto& response : m_assertionResponses)
-                responsesCopy.uncheckedAppend(response.copyRef());
-
-            observer->selectAssertionResponse(WTFMove(responsesCopy), WebAuthenticationSource::External, [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
+            observer->selectAssertionResponse(Vector { m_assertionResponses }, WebAuthenticationSource::External, [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;

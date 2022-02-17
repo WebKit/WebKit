@@ -54,13 +54,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
 template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients, T callback)
 {
-    Vector<Ref<CSSFontFace::Client>> clientsCopy;
-    clientsCopy.reserveInitialCapacity(clients.size());
-    for (auto* client : clients)
-        clientsCopy.uncheckedAppend(*client);
-
-    for (auto& client : clientsCopy)
-        callback(client);
+    for (auto& client : copyToVectorOf<RefPtr<CSSFontFace::Client>>(clients))
+        callback(*client);
 }
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)

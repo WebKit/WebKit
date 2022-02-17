@@ -409,13 +409,7 @@ void RemotePlayback::availabilityChanged(bool available)
             return;
 
         // Protect m_callbackMap against mutation while it's being iterated over.
-        Vector<Ref<RemotePlaybackAvailabilityCallback>> callbacks;
-        callbacks.reserveInitialCapacity(m_callbackMap.size());
-
-        // Can't use copyValuesToVector() here because Ref<> has a deleted assignment operator.
-        for (auto& callback : m_callbackMap.values())
-            callbacks.uncheckedAppend(callback.copyRef());
-        for (auto& callback : callbacks)
+        for (auto& callback : copyToVector(m_callbackMap.values()))
             callback->handleEvent(available);
     });
 }

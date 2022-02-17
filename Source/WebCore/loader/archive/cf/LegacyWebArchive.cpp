@@ -610,11 +610,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" + frame->loader().documentLoader()->response().url().string() + "\"></iframe>";
     auto iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), aboutBlankURL(), "text/html", "UTF-8", String());
 
-    Vector<Ref<LegacyWebArchive>> subframeArchives;
-    subframeArchives.reserveInitialCapacity(1);
-    subframeArchives.uncheckedAppend(archive.releaseNonNull());
-
-    return create(iframeResource.releaseNonNull(), { }, WTFMove(subframeArchives));
+    return create(iframeResource.releaseNonNull(), { }, Vector { archive.releaseNonNull() });
 }
 
 }

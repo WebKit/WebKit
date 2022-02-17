@@ -105,6 +105,15 @@
 namespace API {
 using namespace WebCore;
 using namespace WebKit;
+
+#if ENABLE(CONTEXT_MENUS)
+static Vector<RefPtr<API::Object>> toAPIObjectVector(const Vector<Ref<WebContextMenuItem>>& menuItemsVector)
+{
+    return menuItemsVector.map([](auto& menuItem) -> RefPtr<API::Object> {
+        return menuItem.ptr();
+    });
+}
+#endif
     
 template<> struct ClientTraits<WKPageLoaderClientBase> {
     typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3, WKPageLoaderClientV4, WKPageLoaderClientV5, WKPageLoaderClientV6> Versions;
@@ -945,12 +954,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
         void getContextMenuFromProposedMenu(WebPageProxy& page, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenuVector, WebKit::WebContextMenuListenerProxy& contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
         {
             if (m_client.base.version >= 4 && m_client.getContextMenuFromProposedMenuAsync) {
-                Vector<RefPtr<API::Object>> proposedMenuItems;
-                proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
-                
-                for (const auto& menuItem : proposedMenuVector)
-                    proposedMenuItems.uncheckedAppend(menuItem.ptr());
-                
+                auto proposedMenuItems = toAPIObjectVector(proposedMenuVector);
                 auto webHitTestResult = API::HitTestResult::create(hitTestResultData);
                 m_client.getContextMenuFromProposedMenuAsync(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), toAPI(&contextMenuListener), toAPI(webHitTestResult.ptr()), toAPI(userData), m_client.base.clientInfo);
                 return;
@@ -966,11 +970,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
                 return;
             }
 
-            Vector<RefPtr<API::Object>> proposedMenuItems;
-            proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
-
-            for (const auto& menuItem : proposedMenuVector)
-                proposedMenuItems.uncheckedAppend(menuItem.ptr());
+            auto proposedMenuItems = toAPIObjectVector(proposedMenuVector);
 
             WKArrayRef newMenu = nullptr;
             if (m_client.base.version >= 2) {
@@ -1010,12 +1010,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             if (!canShowContextMenu())
                 return;
 
-            Vector<RefPtr<API::Object>> menuItems;
-            menuItems.reserveInitialCapacity(menuItemsVector.size());
-
-            for (const auto& menuItem : menuItemsVector)
-                menuItems.uncheckedAppend(menuItem.ptr());
-
+            auto menuItems = toAPIObjectVector(menuItemsVector);
             m_client.showContextMenu(toAPI(&page), toAPI(menuLocation), toAPI(API::Array::create(WTFMove(menuItems)).ptr()), m_client.base.clientInfo);
         }
 
@@ -1102,19 +1097,12 @@ void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesCl
             if (!m_client.didFindStringMatches)
                 return;
 
-            Vector<RefPtr<API::Object>> matches;
-            matches.reserveInitialCapacity(matchRects.size());
-
-            for (const auto& rects : matchRects) {
-                Vector<RefPtr<API::Object>> apiRects;
-                apiRects.reserveInitialCapacity(rects.size());
-
-                for (const auto& rect : rects)
-                    apiRects.uncheckedAppend(API::Rect::create(toAPI(rect)));
-
-                matches.uncheckedAppend(API::Array::create(WTFMove(apiRects)));
-            }
-
+            auto matches = matchRects.map([](auto& rects) -> RefPtr<API::Object> {
+                auto apiRects = rects.map([](auto& rect) -> RefPtr<API::Object> {
+                    return API::Rect::create(toAPI(rect));
+                });
+                return API::Array::create(WTFMove(apiRects));
+            });
             m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(API::Array::create(WTFMove(matches)).ptr()), index, m_client.base.clientInfo);
         }
 
@@ -1267,11 +1255,9 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
             RefPtr<API::Array> removedItemsArray;
             if (!removedItems.isEmpty()) {
-                Vector<RefPtr<API::Object>> removedItemsVector;
-                removedItemsVector.reserveInitialCapacity(removedItems.size());
-                for (auto& removedItem : removedItems)
-                removedItemsVector.append(WTFMove(removedItem));
-
+                auto removedItemsVector = WTF::map(WTFMove(removedItems), [](auto&& removedItem) -> RefPtr<API::Object> {
+                    return WTFMove(removedItem);
+                });
                 removedItemsArray = API::Array::create(WTFMove(removedItemsVector));
             }
 

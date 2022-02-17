@@ -676,12 +676,9 @@ Vector<ScrollingNodeID> AsyncScrollingCoordinator::childrenOfNode(ScrollingNodeI
     if (!children || children->isEmpty())
         return { };
     
-    Vector<ScrollingNodeID> childNodeIDs;
-    childNodeIDs.reserveInitialCapacity(children->size());
-    for (const auto& childNode : *children)
-        childNodeIDs.uncheckedAppend(childNode->scrollingNodeID());
-
-    return childNodeIDs;
+    return children->map([](auto& child) {
+        return child->scrollingNodeID();
+    });
 }
 
 void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction action)

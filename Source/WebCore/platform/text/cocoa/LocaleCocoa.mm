@@ -110,11 +110,11 @@ const Vector<String>& LocaleCocoa::monthLabels()
     NSArray *array = [shortDateFormatter().get() monthSymbols];
     if ([array count] == 12) {
         for (unsigned i = 0; i < 12; ++i)
-            m_monthLabels.append(String([array objectAtIndex:i]));
+            m_monthLabels.uncheckedAppend(String([array objectAtIndex:i]));
         return m_monthLabels;
     }
     for (auto& name : WTF::monthFullName)
-        m_monthLabels.append(name);
+        m_monthLabels.uncheckedAppend(name);
     return m_monthLabels;
 }
 
@@ -204,11 +204,11 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
     NSArray *array = [shortDateFormatter().get() shortMonthSymbols];
     if ([array count] == 12) {
         for (unsigned i = 0; i < 12; ++i)
-            m_shortMonthLabels.append([array objectAtIndex:i]);
+            m_shortMonthLabels.uncheckedAppend([array objectAtIndex:i]);
         return m_shortMonthLabels;
     }
     for (auto& name : WTF::monthName)
-        m_shortMonthLabels.append(name);
+        m_shortMonthLabels.uncheckedAppend(name);
     return m_shortMonthLabels;
 }
 
@@ -220,7 +220,7 @@ const Vector<String>& LocaleCocoa::standAloneMonthLabels()
     if ([array count] == 12) {
         m_standAloneMonthLabels.reserveCapacity(12);
         for (unsigned i = 0; i < 12; ++i)
-            m_standAloneMonthLabels.append([array objectAtIndex:i]);
+            m_standAloneMonthLabels.uncheckedAppend([array objectAtIndex:i]);
         return m_standAloneMonthLabels;
     }
     m_standAloneMonthLabels = shortMonthLabels();
@@ -235,7 +235,7 @@ const Vector<String>& LocaleCocoa::shortStandAloneMonthLabels()
     if ([array count] == 12) {
         m_shortStandAloneMonthLabels.reserveCapacity(12);
         for (unsigned i = 0; i < 12; ++i)
-            m_shortStandAloneMonthLabels.append([array objectAtIndex:i]);
+            m_shortStandAloneMonthLabels.uncheckedAppend([array objectAtIndex:i]);
         return m_shortStandAloneMonthLabels;
     }
     m_shortStandAloneMonthLabels = shortMonthLabels();
@@ -248,8 +248,8 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
         return m_timeAMPMLabels;
     m_timeAMPMLabels.reserveCapacity(2);
     RetainPtr<NSDateFormatter> formatter = shortTimeFormatter();
-    m_timeAMPMLabels.append([formatter AMSymbol]);
-    m_timeAMPMLabels.append([formatter PMSymbol]);
+    m_timeAMPMLabels.uncheckedAppend([formatter AMSymbol]);
+    m_timeAMPMLabels.uncheckedAppend([formatter PMSymbol]);
     return m_timeAMPMLabels;
 }
 

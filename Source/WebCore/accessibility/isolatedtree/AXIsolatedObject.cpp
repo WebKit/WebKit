@@ -444,17 +444,10 @@ void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject&
     if (!mathSize)
         return;
 
-    Vector<std::pair<AXID, AXID>> idPairs;
-    idPairs.reserveCapacity(mathSize);
-    for (auto mathPair : pairs) {
-        std::pair<AXID, AXID> idPair;
-        if (mathPair.first)
-            idPair.first = mathPair.first->objectID();
-        if (mathPair.second)
-            idPair.second = mathPair.second->objectID();
-        idPairs.uncheckedAppend(idPair);
-    }
-    setProperty(propertyName, idPairs);
+    auto idPairs = pairs.map([](auto& mathPair) {
+        return std::make_pair(mathPair.first ? mathPair.first->objectID() : AXID(), mathPair.second ? mathPair.second->objectID() : AXID());
+    });
+    setProperty(propertyName, WTFMove(idPairs));
 }
 
 void AXIsolatedObject::setObjectProperty(AXPropertyName propertyName, AXCoreObject* object)
@@ -467,16 +460,13 @@ void AXIsolatedObject::setObjectProperty(AXPropertyName propertyName, AXCoreObje
 
 void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, const AccessibilityChildrenVector& children)
 {
-    if (!children.size())
+    if (children.isEmpty())
         return;
 
-    Vector<AXID> childIDs;
-    childIDs.reserveCapacity(children.size());
-
-    for (auto child : children)
-        childIDs.uncheckedAppend(child->objectID());
-
-    setProperty(propertyName, childIDs);
+    auto childIDs = children.map([](auto& child) {
+        return child->objectID();
+    });
+    setProperty(propertyName, WTFMove(childIDs));
 }
 
 void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueVariant&& value, bool shouldRemove)
