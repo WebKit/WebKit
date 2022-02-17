@@ -1,5 +1,16 @@
 2022-02-16  Jonathan Bedard  <jbedard@apple.com>
 
+        Broken pipes during iOS simulator testing
+        https://bugs.webkit.org/show_bug.cgi?id=230513
+        <rdar://problem/83325409>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.Popen.poll): Close stdin, stdout and stderr when process ends.
+
+2022-02-16  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Rename 'patch' to 'change' in transfer-archive-to-s3
         https://bugs.webkit.org/show_bug.cgi?id=236706
         <rdar://problem/89025868>
