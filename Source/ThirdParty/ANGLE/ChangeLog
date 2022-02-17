@@ -1,3 +1,15 @@
+2022-02-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Build broken with ENABLE_X11_TARGET=OFF and no X11 headers present
+
+        Unreviewed build fix.
+
+        This is a fix in the same vein as the one in https://bugs.webkit.org/show_bug.cgi?id=236770
+        for the stable 2.34 release branch.
+
+        * PlatformGTK.cmake: Make sure that ANGLE_USE_X11, WL_EGL_PLATFORM, or USE_SYSTEM_EGL
+        are always defined independently of the USE_ANGLE_EGL and USE_ANGLE_WEBGL options.
+
 2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
