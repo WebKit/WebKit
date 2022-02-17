@@ -1,5 +1,19 @@
 2022-02-16  Jonathan Bedard  <jbedard@apple.com>
 
+        [EWS] Rename 'patch' to 'change' in transfer-archive-to-s3
+        https://bugs.webkit.org/show_bug.cgi?id=236706
+        <rdar://problem/89025868>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/Shared/transfer-archive-to-s3: Change --patch_id argument
+        to --change-id.
+        * CISupport/ews-build/steps.py:
+        (TransferToS3): Invoke transfer-archive-to-s3 with --change-id.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-02-16  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Comment and close issue when landing PR (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=236715
         <rdar://problem/89031529>

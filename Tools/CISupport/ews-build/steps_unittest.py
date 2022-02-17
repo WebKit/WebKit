@@ -3953,7 +3953,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/transfer-archive-to-s3',
-                                              '--patch_id', '1234',
+                                              '--change-id', '1234',
                                               '--identifier', 'mac-highsierra-x86_64-release',
                                               '--archive', 'public_html/archives/mac-highsierra-x86_64-release/1234.zip',
                                               ])
@@ -3972,7 +3972,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/transfer-archive-to-s3',
-                                              '--patch_id', '1234',
+                                              '--change-id', '1234',
                                               '--identifier', 'ios-simulator-12-x86_64-debug',
                                               '--archive', 'public_html/archives/ios-simulator-12-x86_64-debug/1234.zip',
                                               ])
