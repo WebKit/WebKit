@@ -254,6 +254,8 @@ private:
 
     void destroyedNodesTimerFired();
 
+    void relayoutDocument();
+
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;

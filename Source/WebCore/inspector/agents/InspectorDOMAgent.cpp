@@ -309,8 +309,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     m_document = m_inspectedPage.mainFrame().document();
 
     // Force a layout so that we can collect additional information from the layout process.
-    if (m_document)
-        m_document->updateLayout();
+    relayoutDocument();
 
 #if ENABLE(VIDEO)
     if (m_document)
@@ -362,7 +361,6 @@ void InspectorDOMAgent::reset()
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
     m_document = nullptr;
-    m_flexibleBoxRendererCachedItemsAtStartOfLine.clear();
 
     m_destroyedDetachedNodeIdentifiers.clear();
     m_destroyedAttachedNodeIdentifiers.clear();
@@ -379,12 +377,25 @@ void InspectorDOMAgent::setDocument(Document* document)
 
     m_document = document;
 
+    // Force a layout so that we can collect additional information from the layout process.
+    relayoutDocument();
+
     if (!m_documentRequested)
         return;
 
     // Immediately communicate null document or document that has finished loading.
     if (!document || !document->parsing())
         m_frontendDispatcher->documentUpdated();
+}
+
+void InspectorDOMAgent::relayoutDocument()
+{
+    if (!m_document)
+        return;
+
+    m_flexibleBoxRendererCachedItemsAtStartOfLine.clear();
+    
+    m_document->updateLayout();
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
