@@ -1,4 +1,4 @@
-//@ defaultNoNoLLIntRun if $architecture == "arm64" or $architecture == "arm"
+//@ defaultNoNoLLIntRun if $architecture == "arm64"
 
 function assert(b) {
     if (!b)

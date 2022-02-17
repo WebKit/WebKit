@@ -91,8 +91,6 @@ static constexpr size_t minimumPoolSizeForSegregatedHeap = 256 * MB;
 
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
 static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * MB;
-#elif CPU(ARM)
-static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
 #elif CPU(ARM64)
 #if ENABLE(JUMP_ISLANDS)
 static constexpr size_t fixedExecutableMemoryPoolSize = 512 * MB;

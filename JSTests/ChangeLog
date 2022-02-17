@@ -1,3 +1,25 @@
+2022-02-17  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [32bit] Increase fixedExecutableMemoryPoolSize on ARM to 32MB
+        https://bugs.webkit.org/show_bug.cgi?id=236606
+
+        Reviewed by Mark Lam.
+
+        Increased executable memory on ARM to 32MB and make it consistent with
+        other 32 bit platforms (MIPS and x86). This patch also enables some
+        tests that now pass because of the increased memory; each test was
+        executed 1000 times and there was no failure.
+
+        let-const-tdz-environment-parsing-and-hash-consing-speed.js was disabled
+        on MIPS because the jitted code is still a bit too bigger for the 32MB,
+        but it can probably be enable when the EXTRA_CTI_THUNKS patch lands.
+
+        * microbenchmarks/let-const-tdz-environment-parsing-and-hash-consing-speed.js:
+        * stress/arrowfunction-lexical-bind-superproperty.js:
+        * stress/proxy-revoke.js:
+        * stress/regress-169445.js:
+        * stress/tagged-template-object-collect.js:
+
 2022-02-17  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Unskip test on mips
