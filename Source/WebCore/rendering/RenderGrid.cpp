@@ -446,8 +446,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     LayoutUnit childMaxWidth;
     bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
 
-    Grid grid(const_cast<RenderGrid&>(*this));
-    GridTrackSizingAlgorithm algorithm(this, grid);
+    GridTrackSizingAlgorithm algorithm(this, const_cast<Grid&>(m_grid));
     placeItemsOnGrid(algorithm, std::nullopt);
 
     performGridItemsPreLayout(algorithm);
@@ -641,7 +640,6 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
     Grid& grid = algorithm.mutableGrid();
     unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, availableLogicalWidth);
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, availableLogicalHeightForPercentageComputation());
-
     autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
     autoRepeatColumns = clampAutoRepeatTracks(ForColumns, autoRepeatColumns);
 
@@ -670,6 +668,7 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
             child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = grid.gridItemArea(*child);
+        grid.clampAreaToSubgridIfNeeded(area);
         if (!area.rows.isIndefinite())
             area.rows.translate(grid.explicitGridStart(ForRows));
         if (!area.columns.isIndefinite())
@@ -690,8 +689,8 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
 
 #if ASSERT_ENABLED
     if (grid.hasGridItems()) {
-        ASSERT(grid.numTracks(ForRows) >= GridPositionsResolver::explicitGridRowCount(style(), grid.autoRepeatTracks(ForRows)));
-        ASSERT(grid.numTracks(ForColumns) >= GridPositionsResolver::explicitGridColumnCount(style(), grid.autoRepeatTracks(ForColumns)));
+        ASSERT(grid.numTracks(ForRows) >= GridPositionsResolver::explicitGridRowCount(*this));
+        ASSERT(grid.numTracks(ForColumns) >= GridPositionsResolver::explicitGridColumnCount(*this));
     }
 #endif
 
@@ -745,33 +744,35 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
     OrderIteratorPopulator populator(grid.orderIterator());
     unsigned explicitRowStart = 0;
     unsigned explicitColumnStart = 0;
-    unsigned autoRepeatRows = grid.autoRepeatTracks(ForRows);
-    unsigned autoRepeatColumns = grid.autoRepeatTracks(ForColumns);
-    unsigned maximumRowIndex = GridPositionsResolver::explicitGridRowCount(style(), autoRepeatRows);
-    unsigned maximumColumnIndex = GridPositionsResolver::explicitGridColumnCount(style(), autoRepeatColumns);
+    unsigned maximumRowIndex = GridPositionsResolver::explicitGridRowCount(*this);
+    unsigned maximumColumnIndex = GridPositionsResolver::explicitGridColumnCount(*this);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (!populator.collectChild(*child))
             continue;
         
-        GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(style(), *child, ForRows, autoRepeatRows);
-        if (!rowPositions.isIndefinite()) {
-            explicitRowStart = std::max<int>(explicitRowStart, -rowPositions.untranslatedStartLine());
-            maximumRowIndex = std::max<int>(maximumRowIndex, rowPositions.untranslatedEndLine());
-        } else {
-            // Grow the grid for items with a definite row span, getting the largest such span.
-            unsigned spanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(*child, ForRows);
-            maximumRowIndex = std::max(maximumRowIndex, spanSize);
+        GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*child, ForRows);
+        if (!isSubgridRows()) {
+            if (!rowPositions.isIndefinite()) {
+                explicitRowStart = std::max<int>(explicitRowStart, -rowPositions.untranslatedStartLine());
+                maximumRowIndex = std::max<int>(maximumRowIndex, rowPositions.untranslatedEndLine());
+            } else {
+                // Grow the grid for items with a definite row span, getting the largest such span.
+                unsigned spanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(*child, ForRows);
+                maximumRowIndex = std::max(maximumRowIndex, spanSize);
+            }
         }
 
-        GridSpan columnPositions = GridPositionsResolver::resolveGridPositionsFromStyle(style(), *child, ForColumns, autoRepeatColumns);
-        if (!columnPositions.isIndefinite()) {
-            explicitColumnStart = std::max<int>(explicitColumnStart, -columnPositions.untranslatedStartLine());
-            maximumColumnIndex = std::max<int>(maximumColumnIndex, columnPositions.untranslatedEndLine());
-        } else {
-            // Grow the grid for items with a definite column span, getting the largest such span.
-            unsigned spanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(*child, ForColumns);
-            maximumColumnIndex = std::max(maximumColumnIndex, spanSize);
+        GridSpan columnPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*child, ForColumns);
+        if (!isSubgridColumns()) {
+            if (!columnPositions.isIndefinite()) {
+                explicitColumnStart = std::max<int>(explicitColumnStart, -columnPositions.untranslatedStartLine());
+                maximumColumnIndex = std::max<int>(maximumColumnIndex, columnPositions.untranslatedEndLine());
+            } else {
+                // Grow the grid for items with a definite column span, getting the largest such span.
+                unsigned spanSize = GridPositionsResolver::spanSizeForAutoPlacedItem(*child, ForColumns);
+                maximumColumnIndex = std::max(maximumColumnIndex, spanSize);
+            }
         }
 
         grid.setGridItemArea(*child, { rowPositions, columnPositions });
@@ -779,6 +780,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
 
     grid.setExplicitGridStart(explicitRowStart, explicitColumnStart);
     grid.ensureGridSize(maximumRowIndex + explicitRowStart, maximumColumnIndex + explicitColumnStart);
+    grid.setClampingForSubgrid(isSubgridRows() ? maximumRowIndex : 0, isSubgridColumns() ? maximumColumnIndex : 0);
 }
 
 std::unique_ptr<GridArea> RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid& grid, const RenderBox& gridItem, GridTrackSizingDirection specifiedDirection, const GridSpan& specifiedPositions) const
@@ -812,7 +814,7 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Grid& grid, const Vector<Ren
         if (!emptyGridArea)
             emptyGridArea = createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(grid, *autoGridItem, autoPlacementMajorAxisDirection(), majorAxisPositions);
 
-        grid.insert(*autoGridItem, *emptyGridArea);
+        *emptyGridArea = grid.insert(*autoGridItem, *emptyGridArea);
 
         if (!isGridAutoFlowDense)
             minorAxisCursors.set(majorAxisInitialPosition, isForColumns ? emptyGridArea->rows.startLine() : emptyGridArea->columns.startLine());
@@ -1610,23 +1612,25 @@ LayoutUnit RenderGrid::resolveAutoEndGridPosition(GridTrackSizingDirection direc
     return clientLogicalWidth();
 }
 
+bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
+{
+    if (isOutOfFlowPositioned() || isExcludedFromNormalLayout())
+        return false;
+    if ((direction == ForColumns) ? !style().gridSubgridColumns() : !style().gridSubgridRows())
+        return false;
+    return is<RenderGrid>(parent());
+}
+
 LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     ASSERT(child.isOutOfFlowPositioned());
     bool isRowAxis = direction == ForColumns;
-    GridSpan span = GridPositionsResolver::resolveGridPositionsFromStyle(style(), child, direction, autoRepeatCountForDirection(direction));
-    if (span.isIndefinite())
-        return isRowAxis ? clientLogicalWidth() : clientLogicalHeight();
-
-    unsigned explicitStart = m_grid.explicitGridStart(direction);
-    int startLine = span.untranslatedStartLine() + explicitStart;
-    int endLine = span.untranslatedEndLine() + explicitStart;
     int lastLine = numTracks(direction, m_grid);
-    GridPosition startPosition = direction == ForColumns ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
-    GridPosition endPosition = direction == ForColumns ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
 
-    bool startIsAuto = startPosition.isAuto() || startLine < 0 || startLine > lastLine;
-    bool endIsAuto = endPosition.isAuto() || endLine < 0 || endLine > lastLine;
+    int startLine, endLine;
+    bool startIsAuto, endIsAuto;
+    if (!computeGridPositionsForOutOfFlowChild(child, direction, startLine, startIsAuto, endLine, endIsAuto))
+        return isRowAxis ? clientLogicalWidth() : clientLogicalHeight();
 
     if (startIsAuto && endIsAuto)
         return isRowAxis ? clientLogicalWidth() : clientLogicalHeight();
@@ -1920,7 +1924,7 @@ unsigned RenderGrid::numTracks(GridTrackSizingDirection direction, const Grid& g
         return grid.numTracks(ForRows);
 
     // FIXME: This still requires knowledge about m_grid internals.
-    return grid.numTracks(ForRows) ? grid.numTracks(ForColumns) : GridPositionsResolver::explicitGridColumnCount(style(), grid.autoRepeatTracks(ForColumns));
+    return grid.numTracks(ForRows) ? grid.numTracks(ForColumns) : GridPositionsResolver::explicitGridColumnCount(*this);
 }
 
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
@@ -1975,6 +1979,64 @@ bool RenderGrid::hasAutoSizeInRowAxis(const RenderBox& child) const
         }
     }
     return isHorizontalWritingMode() ? child.style().width().isAuto() : child.style().height().isAuto();
+}
+
+bool RenderGrid::computeGridPositionsForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction, int& startLine, bool& startIsAuto, int& endLine, bool& endIsAuto) const
+{
+    ASSERT(child.isOutOfFlowPositioned());
+    int lastLine = numTracks(direction, m_grid);
+    GridSpan span = GridPositionsResolver::resolveGridPositionsFromStyle(child, direction);
+    if (span.isIndefinite())
+        return false;
+
+    unsigned explicitStart = m_grid.explicitGridStart(direction);
+    startLine = span.untranslatedStartLine() + explicitStart;
+    endLine = span.untranslatedEndLine() + explicitStart;
+
+    GridPosition startPosition = direction == ForColumns ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
+    GridPosition endPosition = direction == ForColumns ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
+
+    startIsAuto = startPosition.isAuto() || startLine < 0 || startLine > lastLine;
+    endIsAuto = endPosition.isAuto() || endLine < 0 || endLine > lastLine;
+    return true;
+}
+
+GridSpan RenderGrid::gridSpanForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction) const
+{
+    int lastLine = numTracks(direction, m_grid);
+    int startLine, endLine;
+    bool startIsAuto, endIsAuto;
+    if (!computeGridPositionsForOutOfFlowChild(child, direction, startLine, startIsAuto, endLine, endIsAuto))
+        return GridSpan::translatedDefiniteGridSpan(0, lastLine);
+    return GridSpan::translatedDefiniteGridSpan(startIsAuto ? 0 : startLine, endIsAuto ? lastLine : endLine);
+}
+
+GridSpan RenderGrid::gridSpanForChild(const RenderBox& child, GridTrackSizingDirection direction) const
+{
+    ASSERT(is<RenderGrid>(child.parent()));
+
+    RenderGrid* renderGrid = downcast<RenderGrid>(child.parent());
+    // |direction| is specified relative to this grid, switch it if |child|'s direct parent grid
+    // is using a different writing mode.
+    direction = GridLayoutFunctions::flowAwareDirectionForChild(*this, *renderGrid, direction);
+    GridSpan span = child.isOutOfFlowPositioned() ? renderGrid->gridSpanForOutOfFlowChild(child, direction) : renderGrid->currentGrid().gridItemSpan(child, direction);
+
+    while (renderGrid != this) {
+        ASSERT(is<RenderGrid>(renderGrid->parent()));
+        RenderGrid* parent = downcast<RenderGrid>(renderGrid->parent());
+
+        bool isSubgrid = renderGrid->isSubgrid(direction);
+
+        direction = GridLayoutFunctions::flowAwareDirectionForChild(*parent, *renderGrid, direction);
+
+        GridSpan parentSpan = renderGrid->isOutOfFlowPositioned() ? parent->gridSpanForOutOfFlowChild(*renderGrid, direction) :  parent->currentGrid().gridItemSpan(*renderGrid, direction);
+        if (isSubgrid)
+            span.translateTo(parentSpan, GridLayoutFunctions::isSubgridReversedDirection(*parent, direction, *renderGrid));
+        else
+            span = parentSpan;
+        renderGrid = parent;
+    }
+    return span;
 }
 
 } // namespace WebCore

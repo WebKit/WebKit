@@ -45,6 +45,9 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const Ren
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 
+bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
+bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
+
 }
 
 } // namespace WebCore

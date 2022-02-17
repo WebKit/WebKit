@@ -102,6 +102,20 @@ std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const Ren
     return direction == ForColumns ? child.overridingContainingBlockContentLogicalWidth() : child.overridingContainingBlockContentLogicalHeight();
 }
 
+bool isFlippedDirection(const RenderGrid& grid, GridTrackSizingDirection direction)
+{
+    if (direction == ForColumns)
+        return !grid.style().isLeftToRightDirection();
+    return grid.style().isFlippedBlocksWritingMode();
+}
+
+bool isSubgridReversedDirection(const RenderGrid& grid, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid)
+{
+    GridTrackSizingDirection childDirection = flowAwareDirectionForChild(grid, subgrid, outerDirection);
+    ASSERT(subgrid.isSubgrid(childDirection));
+    return isFlippedDirection(grid, outerDirection) != isFlippedDirection(subgrid, childDirection);
+}
+
 } // namespace GridLayoutFunctions
 
 } // namespace WebCore

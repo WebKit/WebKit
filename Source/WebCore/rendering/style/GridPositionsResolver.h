@@ -36,6 +36,7 @@ namespace WebCore {
 
 class GridSpan;
 class RenderBox;
+class RenderGrid;
 class RenderStyle;
 
 enum GridTrackSizingDirection {
@@ -73,9 +74,9 @@ public:
     static GridPositionSide initialPositionSide(GridTrackSizingDirection);
     static GridPositionSide finalPositionSide(GridTrackSizingDirection);
     static unsigned spanSizeForAutoPlacedItem(const RenderBox&, GridTrackSizingDirection);
-    static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, unsigned autoRepeatTracksCount);
-    static unsigned explicitGridColumnCount(const RenderStyle&, unsigned autoRepeatColumnsCount);
-    static unsigned explicitGridRowCount(const RenderStyle&, unsigned autoRepeatRowsCount);
+    static GridSpan resolveGridPositionsFromStyle(const RenderBox&, GridTrackSizingDirection);
+    static unsigned explicitGridColumnCount(const RenderGrid&);
+    static unsigned explicitGridRowCount(const RenderGrid&);
 };
 
 } // namespace WebCore

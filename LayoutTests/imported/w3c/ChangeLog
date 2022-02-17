@@ -1,3 +1,15 @@
+2022-02-16  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Inherit track count from parent grid for subgridded axes and clamp item placement to that explicit grid.
+        https://bugs.webkit.org/show_bug.cgi?id=236122
+
+        Reviewed by Dean Jackson.
+
+        Test changes to match latest spec, submitted upstream as https://github.com/web-platform-tests/wpt/pull/32629
+
+        * web-platform-tests/css/css-grid/subgrid/line-names-002-expected.html:
+        * web-platform-tests/css/css-grid/subgrid/line-names-005-expected.html:
+
 2022-02-16  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Enable drawing the SVGImage in the GPU Process

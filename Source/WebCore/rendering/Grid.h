@@ -48,7 +48,7 @@ public:
     unsigned numTracks(GridTrackSizingDirection) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
-    void insert(RenderBox&, const GridArea&);
+    GridArea insert(RenderBox&, const GridArea&);
 
     // Note that each in flow child of a grid container becomes a grid item. This means that
     // this method will return false for a grid container with only out of flow children.
@@ -66,6 +66,10 @@ public:
 
     unsigned autoRepeatTracks(GridTrackSizingDirection) const;
     void setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
+
+    void setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
+
+    void clampAreaToSubgridIfNeeded(GridArea&);
 
     void setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet>);
     void setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet>);
@@ -91,6 +95,9 @@ private:
 
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
+
+    unsigned m_maxColumns { 0 };
+    unsigned m_maxRows { 0 };
 
     bool m_needsItemsPlacement { true };
 

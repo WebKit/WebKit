@@ -82,6 +82,25 @@ public:
 
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
 
+    // Computes the span relative to this RenderGrid, even if the RenderBox is a child
+    // of a descendant subgrid.
+    GridSpan gridSpanForChild(const RenderBox&, GridTrackSizingDirection) const;
+
+    bool isSubgrid(GridTrackSizingDirection) const;
+    bool isSubgridRows() const
+    {
+        return isSubgrid(ForRows);
+    }
+    bool isSubgridColumns() const
+    {
+        return isSubgrid(ForColumns);
+    }
+
+    const Grid& currentGrid() const
+    {
+        return m_grid;
+    }
+
 private:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
@@ -150,8 +169,6 @@ private:
     void setLogicalPositionForChild(RenderBox&) const;
     void setLogicalOffsetForChild(RenderBox&, GridTrackSizingDirection) const;
     LayoutUnit logicalOffsetForChild(const RenderBox&, GridTrackSizingDirection) const;
-    GridArea cachedGridArea(const RenderBox&) const;
-    GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
     LayoutUnit gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox&, GridTrackSizingDirection) const;
 
@@ -192,6 +209,9 @@ private:
     bool aspectRatioPrefersInline(const RenderBox& child, bool blockFlowIsColumnAxis);
 
     Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems();
+
+    GridSpan gridSpanForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection) const;
+    bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
 
     Grid m_grid;
 
