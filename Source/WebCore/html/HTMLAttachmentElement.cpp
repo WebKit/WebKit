@@ -28,6 +28,7 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include "AttachmentElementClient.h"
 #include "DOMURL.h"
 #include "Document.h"
 #include "Editor.h"
@@ -262,6 +263,23 @@ void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
     
     if (auto* renderer = this->renderer())
         renderer->invalidate();
+}
+
+void HTMLAttachmentElement::updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+{
+    m_icon = icon;
+    m_iconSize = iconSize;
+
+    if (auto* renderer = this->renderer())
+        renderer->invalidate();
+}
+
+void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
+{
+    if (!document().page() || !document().page()->attachmentElementClient())
+        return;
+
+    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);
 }
 
 } // namespace WebCore

@@ -46,6 +46,7 @@ namespace WebCore {
 
 class AlternativeTextClient;
 class ApplicationCacheStorage;
+class AttachmentElementClient;
 class AuthenticatorCoordinatorClient;
 class BackForwardClient;
 class BroadcastChannelRegistry;
@@ -152,6 +153,9 @@ public:
     UniqueRef<StorageProvider> storageProvider;
 
     UniqueRef<ModelPlayerProvider> modelPlayerProvider;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    std::unique_ptr<AttachmentElementClient> attachmentElementClient;
+#endif
 };
 
 }

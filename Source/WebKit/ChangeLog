@@ -1,3 +1,42 @@
+2022-02-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Send icons to the WebContent process for rendering of the attachment element
+        https://bugs.webkit.org/show_bug.cgi?id=236386
+
+        Reviewed by Darin Adler.
+
+        In order to avoid connecting to the Icon Services daemon in the WebContent process, we should send the icons for the attachment
+        element to the WebContent process from the UI process. The icon will be sent to the WebContent process when the attachment
+        attributes are updated, or the WebContent process has requested the icon. The new client class WebAttachmentElementClient is
+        responsible for requesting icons from the UI process.
+
+        * Sources.txt:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        (WebKit::WebPageProxy::iconForAttachment):
+        (WebKit::WebPageProxy::requestThumbnailWithOperation):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestAttachmentIcon):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::updateAttachmentThumbnail):
+        (WebKit::WebPageProxy::updateAttachmentIcon): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebAttachmentElementClient.cpp: Added.
+        (WebKit::WebAttachmentElementClient::WebAttachmentElementClient):
+        (WebKit::WebAttachmentElementClient::requestAttachmentIcon):
+        * WebProcess/WebCoreSupport/WebAttachmentElementClient.h: Added.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didInsertAttachmentWithIdentifier):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+        (WebKit::WebPage::updateAttachmentThumbnail):
+        (WebKit::WebPage::updateAttachmentIcon):
+        (WebKit::WebPage::requestAttachmentIcon):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-02-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Update IDLs and stubs to latest version of the spec

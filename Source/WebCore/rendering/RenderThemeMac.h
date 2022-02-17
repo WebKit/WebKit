@@ -100,6 +100,8 @@ public:
     // A view associated to the contained document.
     NSView* documentViewFor(const RenderObject&) const;
 
+    WEBCORE_EXPORT static RetainPtr<NSImage> iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
+
 private:
     RenderThemeMac();
 

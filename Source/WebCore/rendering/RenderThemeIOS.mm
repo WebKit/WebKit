@@ -1681,7 +1681,7 @@ struct RenderAttachmentInfo {
     BOOL hasProgress { NO };
     float progress;
 
-    RetainPtr<UIImage> icon;
+    RefPtr<Image> icon;
     RefPtr<Image> thumbnailIcon;
 
     int baseline { 0 };
@@ -1793,21 +1793,14 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
     return validProgress;
 }
 
-static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, FloatSize& size)
+RenderThemeIOS::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    String fileName;
-    if (File* file = attachment.attachmentElement().file())
-        fileName = file->name();
+    [documentInteractionController setName:fileName.isEmpty() ? title : fileName];
 
-    if (fileName.isEmpty())
-        fileName = attachment.attachmentElement().attachmentTitle();
-    [documentInteractionController setName:fileName];
-
-    String attachmentType = attachment.attachmentElement().attachmentType();
     if (!attachmentType.isEmpty()) {
         String UTI;
         if (isDeclaredUTI(attachmentType))
@@ -1824,7 +1817,7 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
 #if PLATFORM(IOS)
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
-        return nil;
+        return IconAndSize { nil, FloatSize() };
 
     result = icons.lastObject;
 
@@ -1845,9 +1838,9 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
     }
 #endif
     CGFloat iconAspect = [result size].width / [result size].height;
-    size = largestRectWithAspectRatioInsideRect(iconAspect, FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
+    auto size = largestRectWithAspectRatioInsideRect(iconAspect, FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
 
-    return result;
+    return IconAndSize { result, size };
 }
 
 RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
@@ -1868,8 +1861,10 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
     }
 
     if (action.isEmpty() && !hasProgress) {
-        FloatSize iconSize;
-        icon = iconForAttachment(attachment, iconSize);
+        FloatSize iconSize = attachment.attachmentElement().iconSize();
+        icon = attachment.attachmentElement().icon();
+        if (!icon)
+            attachment.attachmentElement().requestIconWithSize(FloatSize());
         thumbnailIcon = attachment.attachmentElement().thumbnail();
         if (thumbnailIcon)
             iconSize = largestRectWithAspectRatioInsideRect(thumbnailIcon->size().aspectRatio(), FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
@@ -1914,7 +1909,7 @@ static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& 
     if (info.thumbnailIcon)
         iconImage = info.thumbnailIcon;
     else if (info.icon)
-        iconImage = BitmapImage::create([info.icon CGImage]);
+        iconImage = info.icon;
     
     context.drawImage(*iconImage, info.iconRect);
 }

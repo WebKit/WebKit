@@ -584,7 +584,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType) -> () Async
     UpdateAttachmentAttributes(String identifier, std::optional<uint64_t> fileSize, String contentType, String fileName, IPC::SharedBufferCopy enclosingImageData) -> () Async
-    UpdateAttachmentIcon(String identifier, WebKit::ShareableBitmap::Handle qlThumbnailHandle)
+    UpdateAttachmentThumbnail(String identifier, WebKit::ShareableBitmap::Handle qlThumbnailHandle)
+    UpdateAttachmentIcon(String identifier, WebKit::ShareableBitmap::Handle icon, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

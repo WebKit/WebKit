@@ -28,6 +28,7 @@
 
 #include "AlternativeTextClient.h"
 #include "ApplicationCacheStorage.h"
+#include "AttachmentElementClient.h"
 #include "BackForwardClient.h"
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"

@@ -36,6 +36,7 @@
 #endif
 
 OBJC_CLASS CIContext;
+OBJC_CLASS UIImage;
 
 namespace WebCore {
     
@@ -66,6 +67,13 @@ public:
     WEBCORE_EXPORT static void setFocusRingColor(const Color&);
 
     WEBCORE_EXPORT static Color systemFocusRingColor();
+
+    struct IconAndSize {
+        RetainPtr<UIImage> icon;
+        FloatSize size;
+    };
+
+    WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
 private:
     bool canPaint(const PaintInfo&, const Settings&) const final;

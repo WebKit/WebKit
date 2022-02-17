@@ -59,6 +59,7 @@ public:
     WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename);
     WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
     WEBCORE_EXPORT void updateThumbnail(const RefPtr<Image>& thumbnail);
+    WEBCORE_EXPORT void updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
@@ -68,9 +69,12 @@ public:
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentTitleForDisplay() const;
-    String attachmentType() const;
+    WEBCORE_EXPORT String attachmentType() const;
     String attachmentPath() const;
     RefPtr<Image> thumbnail() const { return m_thumbnail; }
+    RefPtr<Image> icon() const { return m_icon; }
+    void requestIconWithSize(const FloatSize&) const;
+    FloatSize iconSize() const { return m_iconSize; }
     RenderAttachment* renderer() const;
 
 private:
@@ -91,6 +95,8 @@ private:
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
     RefPtr<Image> m_thumbnail;
+    RefPtr<Image> m_icon;
+    FloatSize m_iconSize;
 };
 
 } // namespace WebCore

@@ -10230,6 +10230,17 @@ void WebPageProxy::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachme
     pageClient().writePromisedAttachmentToPasteboard(WTFMove(info));
 }
 
+void WebPageProxy::requestAttachmentIcon(const String& identifier, const String& contentType, const String& fileName, const String& title, const FloatSize& requestedSize)
+{
+    FloatSize size = requestedSize;
+    ShareableBitmap::Handle handle;
+#if PLATFORM(COCOA)
+    if (auto icon = iconForAttachment(fileName, contentType, title, size))
+        icon->createHandle(handle);
+#endif
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, size));
+}
+
 RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& identifier) const
 {
     if (identifier.isEmpty())
@@ -10251,7 +10262,7 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
 }
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
-void WebPageProxy::updateAttachmentIcon(const String& identifier, const RefPtr<ShareableBitmap>& bitmap)
+void WebPageProxy::updateAttachmentThumbnail(const String& identifier, const RefPtr<ShareableBitmap>& bitmap)
 {
     if (!hasRunningProcess())
         return;
@@ -10260,7 +10271,7 @@ void WebPageProxy::updateAttachmentIcon(const String& identifier, const RefPtr<S
     if (bitmap)
         bitmap->createHandle(handle);
 
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle));
+    send(Messages::WebPage::UpdateAttachmentThumbnail(identifier, handle));
 }
 #endif
 

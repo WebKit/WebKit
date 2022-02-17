@@ -96,6 +96,7 @@ class ApplePayAMSUIPaymentHandler;
 class ActivityStateChangeObserver;
 class AlternativeTextClient;
 class ApplicationCacheStorage;
+class AttachmentElementClient;
 class AuthenticatorCoordinator;
 class BackForwardController;
 class BroadcastChannelRegistry;
@@ -930,6 +931,10 @@ public:
 
     ModelPlayerProvider& modelPlayerProvider();
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    AttachmentElementClient* attachmentElementClient() { return m_attachmentElementClient.get(); }
+#endif
+
 #if USE(ATSPI)
     AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
     void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
@@ -1285,6 +1290,10 @@ private:
     Ref<PermissionController> m_permissionController;
     UniqueRef<StorageProvider> m_storageProvider;
     UniqueRef<ModelPlayerProvider> m_modelPlayerProvider;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;

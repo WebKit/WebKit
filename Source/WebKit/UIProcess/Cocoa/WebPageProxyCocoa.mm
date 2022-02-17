@@ -85,6 +85,12 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 #import <UIKit/UIImage.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <WebCore/RenderThemeIOS.h>
+#else
+#import <WebCore/RenderThemeMac.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 
@@ -287,6 +293,43 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
 {
     toAttachment->setFileWrapper(fromAttachment->fileWrapper());
+}
+
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
+{
+    FloatSize originalThumbnailSize([image size]);
+    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
+    resultRect.setLocation({ });
+
+    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
+    if (!bitmap)
+        return nullptr;
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    LocalCurrentGraphicsContext savedContext(*graphicsContext);
+#if PLATFORM(IOS_FAMILY)
+    [image drawInRect:resultRect];
+#elif USE(APPKIT)
+    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
+#endif
+
+    return bitmap;
+}
+
+RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto imageAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
+    auto image = imageAndSize.icon;
+    size = imageAndSize.size;
+#else
+    auto image = RenderThemeMac::iconForAttachment(fileName, contentType, title);
+#endif
+    return convertPlatformImageToBitmap(image.get(), size);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -524,31 +567,6 @@ void WebPageProxy::fullscreenVideoExtractionTimerFired()
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& fittingSize)
-{
-    FloatSize originalThumbnailSize([image size]);
-    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
-    resultRect.setLocation({ });
-
-    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
-    if (!bitmap)
-        return nullptr;
-
-    auto graphicsContext = bitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    LocalCurrentGraphicsContext savedContext(*graphicsContext);
-#if PLATFORM(IOS_FAMILY)
-    [image drawInRect:resultRect];
-#elif USE(APPKIT)
-    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-#endif
-
-    return bitmap;
-}
-
 void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
 {
     [operation setCompletionBlock:^{
@@ -557,7 +575,7 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
             auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
             if (!convertedImage)
                 return;
-            this->updateAttachmentIcon(identifier, convertedImage);
+            this->updateAttachmentThumbnail(identifier, convertedImage);
         });
     }];
         

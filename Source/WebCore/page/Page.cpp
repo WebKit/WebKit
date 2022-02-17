@@ -25,6 +25,7 @@
 #include "AnimationFrameRate.h"
 #include "AppHighlightStorage.h"
 #include "ApplicationCacheStorage.h"
+#include "AttachmentElementClient.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorCoordinatorClient.h"
 #include "BackForwardCache.h"
@@ -343,6 +344,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_permissionController(WTFMove(pageConfiguration.permissionController))
     , m_storageProvider(WTFMove(pageConfiguration.storageProvider))
     , m_modelPlayerProvider(WTFMove(pageConfiguration.modelPlayerProvider))
+#if ENABLE(ATTACHMENT_ELEMENT)
+    , m_attachmentElementClient(WTFMove(pageConfiguration.attachmentElementClient))
+#endif
 {
     updateTimerThrottlingState();
 

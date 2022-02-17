@@ -49,6 +49,7 @@
 #include "DummySpeechRecognitionProvider.h"
 #include "DummyStorageProvider.h"
 #include "EditorClient.h"
+#include "EmptyAttachmentElementClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FileChooser.h"
 #include "FormState.h"
@@ -1255,6 +1256,10 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
     pageConfiguration.storageNamespaceProvider = adoptRef(*new EmptyStorageNamespaceProvider);
     pageConfiguration.visitedLinkStore = adoptRef(*new EmptyVisitedLinkStore);
     
+#if ENABLE(ATTACHMENT_ELEMENT)
+    pageConfiguration.attachmentElementClient = makeUnique<EmptyAttachmentElementClient>();
+#endif
+
     return pageConfiguration;
 }
 

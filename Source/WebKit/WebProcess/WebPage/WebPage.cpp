@@ -72,6 +72,7 @@
 #include "WKRetainPtr.h"
 #include "WKSharedAPICast.h"
 #include "WebAlternativeTextClient.h"
+#include "WebAttachmentElementClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
 #include "WebBroadcastChannelRegistry.h"
@@ -650,6 +651,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    pageConfiguration.attachmentElementClient = makeUnique<WebAttachmentElementClient>(*this);
+#endif
 
 #if PLATFORM(COCOA)
     // FIXME(207716): The following should be removed when the GPU process is complete.
@@ -7352,11 +7357,29 @@ void WebPage::updateAttachmentAttributes(const String& identifier, std::optional
     callback();
 }
 
-void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
+void WebPage::updateAttachmentThumbnail(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         if (RefPtr<ShareableBitmap> thumbnail = !qlThumbnailHandle.isNull() ? ShareableBitmap::create(qlThumbnailHandle) : nullptr)
             attachment->updateThumbnail(thumbnail->createImage());
+    }
+}
+
+void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& iconHandle, const WebCore::FloatSize& size)
+{
+    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
+        if (auto icon = !iconHandle.isNull() ? ShareableBitmap::create(iconHandle) : nullptr)
+            attachment->updateIcon(icon->createImage(), size);
+    }
+}
+
+void WebPage::requestAttachmentIcon(const String& identifier, const WebCore::FloatSize& size)
+{
+    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
+        String fileName;
+        if (File* file = attachment->file())
+            fileName = file->path();
+        send(Messages::WebPageProxy::RequestAttachmentIcon(identifier, attachment->attachmentType(), fileName, attachment->attachmentTitle(), size));
     }
 }
 

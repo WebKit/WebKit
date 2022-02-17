@@ -6449,6 +6449,8 @@
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E3612FF026F90862007B1175 /* Sandbox */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sandbox; sourceTree = "<group>"; };
+		E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAttachmentElementClient.h; sourceTree = "<group>"; };
+		E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAttachmentElementClient.cpp; sourceTree = "<group>"; };
 		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
 		E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderProxy.h; path = ios/WebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
 		E3866AED2398471A00F88FE9 /* WebDeviceOrientationUpdateProviderProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebDeviceOrientationUpdateProviderProxy.messages.in; path = ios/WebDeviceOrientationUpdateProviderProxy.messages.in; sourceTree = "<group>"; };
@@ -10900,6 +10902,8 @@
 				F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */,
 				F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */,
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
+				E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */,
+				E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */,
 				46EE2847269E049B00DD48AB /* WebBroadcastChannelRegistry.cpp */,
 				46EE2848269E049B00DD48AB /* WebBroadcastChannelRegistry.h */,
 				46E9760A2757F6C900ACDD37 /* WebBroadcastChannelRegistry.messages.in */,

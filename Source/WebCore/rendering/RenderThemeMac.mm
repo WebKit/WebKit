@@ -2564,6 +2564,48 @@ int RenderThemeMac::attachmentBaseline(const RenderAttachment& attachment) const
     return layout.baseline;
 }
 
+static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
+{
+    if (!attachmentType.isEmpty()) {
+        if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            auto type = kUTTypeFolder;
+ALLOW_DEPRECATED_DECLARATIONS_END
+            if (auto icon = Icon::createIconForUTI(type))
+                return icon;
+        } else {
+            String type;
+            if (isDeclaredUTI(attachmentType))
+                type = attachmentType;
+            else
+                type = UTIFromMIMEType(attachmentType);
+
+            if (auto icon = Icon::createIconForUTI(type))
+                return icon;
+        }
+    }
+
+    if (!fileName.isEmpty()) {
+        if (auto icon = Icon::createIconForFiles({ fileName }))
+            return icon;
+    }
+
+    NSString *cocoaTitle = title;
+    if (auto fileExtension = cocoaTitle.pathExtension; fileExtension.length) {
+        if (auto icon = Icon::createIconForFileExtension(fileExtension))
+            return icon;
+    }
+
+    return Icon::createIconForUTI("public.data");
+}
+
+RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
+{
+    if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title))
+        return icon->nsImage();
+    return nil;
+}
+
 static void paintAttachmentIconBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     if (layout.style == AttachmentLayoutStyle::NonSelected)
@@ -2595,52 +2637,29 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
     }
 }
 
-static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
-{
-    String attachmentType = attachment.attachmentElement().attachmentType();
-    
-    if (!attachmentType.isEmpty()) {
-        if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto icon = Icon::createIconForUTI(kUTTypeFolder))
-                return icon;
-ALLOW_DEPRECATED_DECLARATIONS_END
-        } else {
-            String UTI;
-            if (isDeclaredUTI(attachmentType))
-                UTI = attachmentType;
-            else
-                UTI = UTIFromMIMEType(attachmentType);
-
-            if (auto icon = Icon::createIconForUTI(UTI))
-                return icon;
-        }
-    }
-
-    if (File* file = attachment.attachmentElement().file()) {
-        if (auto icon = Icon::createIconForFiles({ file->path() }))
-            return icon;
-    }
-
-    NSString *fileExtension = [static_cast<NSString *>(attachment.attachmentElement().attachmentTitle()) pathExtension];
-    if (fileExtension.length) {
-        if (auto icon = Icon::createIconForFileExtension(fileExtension))
-            return icon;
-    }
-
-    return Icon::createIconForUTI("public.data");
-}
-
 static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     if (auto thumbnailIcon = attachment.attachmentElement().thumbnail()) {
         context.drawImage(*thumbnailIcon, layout.iconRect);
         return;
     }
-    auto icon = iconForAttachment(attachment);
-    if (!icon)
+
+    if (context.paintingDisabled())
         return;
-    icon->paint(context, layout.iconRect);
+
+    auto icon = attachment.attachmentElement().icon();
+    if (!icon) {
+        attachment.attachmentElement().requestIconWithSize(layout.iconRect.size());
+        return;
+    }
+
+    auto image = icon->nsImage();
+    if (!image)
+        return;
+    
+    LocalCurrentGraphicsContext localCurrentGC(context);
+
+    [image drawInRect:layout.iconRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
 }
 
 static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)

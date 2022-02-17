@@ -526,6 +526,7 @@ messages -> WebPageProxy {
     DidRemoveAttachmentWithIdentifier(String identifier)
     SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
     WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info)
+    RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)

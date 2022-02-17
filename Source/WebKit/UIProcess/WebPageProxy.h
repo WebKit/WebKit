@@ -1755,7 +1755,7 @@ public:
     void registerAttachmentIdentifier(const String&);
     void didInvalidateDataForAttachment(API::Attachment&);
 #if HAVE(QUICKLOOK_THUMBNAILING)
-    void updateAttachmentIcon(const String&, const RefPtr<ShareableBitmap>&);
+    void updateAttachmentThumbnail(const String&, const RefPtr<ShareableBitmap>&);
     void requestThumbnailWithPath(const String&, const String&);
     void requestThumbnailWithFileWrapper(NSFileWrapper *, const String&);
     void requestThumbnailWithOperation(WKQLThumbnailLoadOperation *);
@@ -2536,6 +2536,10 @@ private:
     void invalidateAllAttachments();
 
     void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&);
+
+    void requestAttachmentIcon(const String& identifier, const String& type, const String& path, const String& title, const WebCore::FloatSize&);
+
+    RefPtr<WebKit::ShareableBitmap> iconForAttachment(const String& fileName, const String& contentType, const String& title, WebCore::FloatSize&);
 #endif
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });
