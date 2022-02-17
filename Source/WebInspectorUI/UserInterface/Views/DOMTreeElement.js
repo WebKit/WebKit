@@ -2023,9 +2023,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this.representedObject.layoutContextType)
             return;
 
-        if (this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Flex && !WI.settings.engineeringEnableFlexboxInspector.value)
-            return;
-
         this._layoutBadgeElement = this.title.appendChild(document.createElement("span"));
         this._layoutBadgeElement.className = "layout-badge";
 

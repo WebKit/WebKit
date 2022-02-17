@@ -1,3 +1,24 @@
+2022-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Flexbox] Enable Flexbox Inspector feature
+        https://bugs.webkit.org/show_bug.cgi?id=235820
+        <rdar://87886409>
+
+        Reviewed by Patrick Angle.
+
+        Remove the engineering setting and enable the feature by default.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateLayoutBadge):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._refreshNodeSets):
+        (WI.LayoutDetailsSidebarPanel):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createEngineeringSettingsView):
+
 2022-02-14  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: [Flexbox] List flex containers in Layout sidebar

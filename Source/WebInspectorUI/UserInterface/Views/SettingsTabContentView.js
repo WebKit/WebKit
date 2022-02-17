@@ -443,7 +443,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let elementsGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Elements:"));
         elementsGroup.addSetting(WI.settings.engineeringAllowEditingUserAgentShadowTrees, WI.unlocalizedString("Allow editing UserAgent shadow trees"));
-        elementsGroup.addSetting(WI.settings.engineeringEnableFlexboxInspector, WI.unlocalizedString("Enable Flexbox Inspector"));
 
         engineeringSettingsView.addSeparator();
 

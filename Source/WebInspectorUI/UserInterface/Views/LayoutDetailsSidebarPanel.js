@@ -105,10 +105,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
         this._gridSection = new WI.CSSGridNodeOverlayListSection;
 
-        // FIXME: <https://webkit.org/b/235820> Enable Flexbox Inspector feature
-        if (!WI.settings.engineeringEnableFlexboxInspector.value)
-            return;
-
         this._flexDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Flex Containers", "No CSS Flex Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Flex containers on the inspected page."));
         let flexDetailsSection = new WI.DetailsSection("layout-css-flexbox", WI.UIString("Flexbox", "Flexbox @ Elements details sidebar", "Flexbox layout section name"), [new WI.DetailsSectionGroup([this._flexDetailsSectionRow])]);
         this.contentView.element.appendChild(flexDetailsSection.element);
@@ -134,10 +130,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
             if (this._gridSection.isAttached)
                 this.removeSubview(this._gridSection);
         }
-
-        // FIXME: <https://webkit.org/b/235820> Enable Flexbox Inspector feature
-        if (!WI.settings.engineeringEnableFlexboxInspector.value)
-            return;
 
         if (this._flexNodeSet.size) {
             this._flexDetailsSectionRow.hideEmptyMessage();
@@ -203,9 +195,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     _refreshNodeSets()
     {
         this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
-
-        // FIXME: <https://webkit.org/b/235820> Enable Flexbox Inspector feature
-        if (WI.settings.engineeringEnableFlexboxInspector.value)
-            this._flexNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Flex));
+        this._flexNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Flex));
     }
 };
