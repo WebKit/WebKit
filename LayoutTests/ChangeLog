@@ -1,3 +1,12 @@
+2022-02-17  Matteo Flores  <matteo_flores@apple.com>
+
+        [css-grid] Incorrectly stretched SVGs without an aspect-ratio.
+        https://bugs.webkit.org/show_bug.cgi?id=216145
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Adding failure expectation for tests that were missed.
+
 2022-02-17  Truitt Savell  <tsavell@apple.com>
 
         Remove the Catalina specific expectation added in r289834
