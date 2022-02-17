@@ -32,6 +32,7 @@
 #include "MediaPlayer.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -234,6 +235,8 @@ bool PlatformMediaSession::clientWillBeginPlayback()
         return true;
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
+
+    SetForScope<bool> preparingToPlay(m_preparingToPlay, true);
 
     if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)
