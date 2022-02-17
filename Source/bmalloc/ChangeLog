@@ -1,3 +1,73 @@
+2022-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Use segmented vector for TLC layout list
+        https://bugs.webkit.org/show_bug.cgi?id=236662
+
+        Reviewed by Saam Barati.
+
+        We add segmented vector for pas_thread_local_cache_layout_node iteration instead of using
+        linked-list of that to accelerate iteration performance. It does not affect on Speedometer2,
+        JetStream2, PLT5 etc., but we do this iteration frequently in scavenger thread, and reducing
+        time of this makes it efficient. While speeding up scavenger does not matter for throughput
+        of non scavenger threads since libpas works well without taking a lock in most times which
+        is blocked by scavenger, making scavenger faster is good for energy efficiency.
+
+        1. Use segmented vector for (concurrently read) pas_thread_local_cache_layout_node list.
+           We still keep nice for-loop abstraction for list of pas_thread_local_cache_layout_node.
+        2. Remove pas_local_view_cache_node since we no longer need it. It was introduced just to
+           make it linked-list node for pas_thread_local_cache_layout_node. But now, segmented vector
+           is holding it separately.
+        3. Move pas_segregated_size_directory_data's allocator_index to pas_segregated_size_directory.
+           Because of (1) change, we can make pas_segregated_size_directory linked-list-node, which
+           saves 4 bytes. So we can move pas_segregated_size_directory_data's allocator_index to
+           pas_segregated_size_directory since it is heavily accessed from the scavenger.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/pas_designated_intrinsic_heap.c:
+        (set_up_range):
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_local_view_cache_node.c: Removed.
+        * libpas/src/libpas/pas_local_view_cache_node.h: Removed.
+        * libpas/src/libpas/pas_redundant_local_allocator_node.c:
+        (pas_redundant_local_allocator_node_create):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.h:
+        * libpas/src/libpas/pas_root.c:
+        (pas_root_construct):
+        * libpas/src/libpas/pas_root.h:
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (recompute_size_lookup):
+        (pas_segregated_heap_ensure_allocator_index):
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_create):
+        (pas_segregated_size_directory_ensure_data):
+        (pas_segregated_size_directory_create_tlc_allocator):
+        (pas_segregated_size_directory_get_allocator_from_tlc):
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_has_tlc_allocator):
+        (pas_segregated_size_directory_get_tlc_allocator_index):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (decommit_allocator_range):
+        (pas_thread_local_cache_for_all):
+        * libpas/src/libpas/pas_thread_local_cache_layout.c:
+        (pas_thread_local_cache_layout_add_node):
+        (pas_thread_local_cache_layout_add_view_cache):
+        (pas_thread_local_cache_layout_get_last_node):
+        * libpas/src/libpas/pas_thread_local_cache_layout.h:
+        (pas_thread_local_cache_layout_segment_get_node):
+        (pas_thread_local_cache_layout_segment_next_node):
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.c:
+        (pas_thread_local_cache_layout_node_get_directory):
+        (allocator_index_ptr):
+        (next_ptr): Deleted.
+        (pas_thread_local_cache_layout_node_get_next): Deleted.
+        (pas_thread_local_cache_layout_node_set_next): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.h:
+        (pas_wrap_local_view_cache_node):
+        (pas_unwrap_local_view_cache_node):
+
 2022-02-16  David Kilzer  <ddkilzer@apple.com>
 
         Workaround ASAN false positive stack-buffer-underflow bmalloc_allocate_impl_casual_case

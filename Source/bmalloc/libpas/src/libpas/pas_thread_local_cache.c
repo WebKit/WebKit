@@ -833,10 +833,12 @@ static void resume(pas_thread_local_cache* cache)
 #endif
 
 static void decommit_allocator_range(pas_thread_local_cache* cache,
-                                     pas_thread_local_cache_layout_node begin_layout_node,
+                                     pas_thread_local_cache_layout_segment* begin_segment,
+                                     uintptr_t begin_node_index,
                                      uintptr_t start_of_possible_decommit,
                                      uintptr_t end_of_possible_decommit,
-                                     pas_thread_local_cache_layout_node end_layout_node)
+                                     pas_thread_local_cache_layout_segment* end_segment,
+                                     uintptr_t end_node_index)
 {
 #if PAS_OS(DARWIN)
     static const bool verbose = false;
@@ -865,10 +867,10 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
     decommit_range = pas_range_create(begin_page_index << page_size_shift,
                                       end_page_index << page_size_shift);
 
-    if (begin_layout_node) {
-        for (inner_node = begin_layout_node;
-             inner_node != end_layout_node;
-             inner_node = pas_thread_local_cache_layout_node_get_next(inner_node))
+    if (begin_segment) {
+        pas_thread_local_cache_layout_segment* segment = begin_segment;
+        uintptr_t node_index = begin_node_index;
+        for (inner_node = pas_thread_local_cache_layout_segment_get_node(segment, node_index); !(segment == end_segment && node_index == end_node_index); inner_node = pas_thread_local_cache_layout_segment_next_node(&segment, &node_index))
             pas_thread_local_cache_layout_node_prepare_to_decommit(inner_node, cache, decommit_range);
     }
     
@@ -892,10 +894,12 @@ static void decommit_allocator_range(pas_thread_local_cache* cache,
     }
 #else /* PAS_OS(DARWIN) -> so !PAS_OS(DARWIN) */
     PAS_UNUSED_PARAM(cache);
-    PAS_UNUSED_PARAM(begin_layout_node);
+    PAS_UNUSED_PARAM(begin_segment);
+    PAS_UNUSED_PARAM(begin_node_index);
     PAS_UNUSED_PARAM(start_of_possible_decommit);
     PAS_UNUSED_PARAM(end_of_possible_decommit);
-    PAS_UNUSED_PARAM(end_layout_node);
+    PAS_UNUSED_PARAM(end_segment);
+    PAS_UNUSED_PARAM(end_node_index);
 #endif /* PAS_OS(DARWIN) -> so end of !PAS_OS(DARWIN) */
 }
 
@@ -1052,21 +1056,27 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         if (allocator_action != pas_allocator_scavenge_no_action) {
             bool did_suspend;
             pas_thread_local_cache_layout_node layout_node;
-            pas_thread_local_cache_layout_node begin_layout_node;
+            pas_thread_local_cache_layout_segment* segment;
+            pas_thread_local_cache_layout_segment* begin_segment;
             uintptr_t start_of_possible_decommit;
             uintptr_t begin_page_index;
             uintptr_t end_page_index;
             uintptr_t page_index;
+            uintptr_t node_index;
+            uintptr_t begin_node_index;
             
             did_suspend = false;
 
-            begin_layout_node = NULL;
             start_of_possible_decommit =
                 pas_thread_local_cache_offset_of_allocator(PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
 
             PAS_ASSERT(!did_suspend);
 
-            for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
+            begin_segment = NULL;
+            begin_node_index = 0;
+            segment = pas_thread_local_cache_layout_first_segment;
+            node_index = 0;
+            for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR_WITH_SEGMENT_AND_INDEX(layout_node, segment, node_index)) {
                 pas_allocator_index allocator_index;
                 pas_allocator_index end_allocator_index;
                 pas_local_allocator_scavenger_data* scavenger_data;
@@ -1095,12 +1105,12 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                         cache, allocator_action, allocator_index, scavenger_data, &result, &did_suspend);
 
                     if (pas_local_allocator_scavenger_data_is_stopped(scavenger_data)) {
-                        if (!begin_layout_node)
-                            begin_layout_node = layout_node;
-                        else {
+                        if (!begin_segment) {
+                            begin_segment = segment;
+                            begin_node_index = node_index;
+                        } else {
                             PAS_TESTING_ASSERT(
-                                pas_thread_local_cache_layout_node_get_allocator_index_generic(
-                                    begin_layout_node)
+                                pas_thread_local_cache_layout_node_get_allocator_index_generic(pas_thread_local_cache_layout_segment_get_node(begin_segment, begin_node_index))
                                 < allocator_index);
                         }
                     } else {
@@ -1111,10 +1121,11 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
 
                 if (pas_decommit_exclusion_range_is_inverted(decommit_exclusion_range)) {
                     decommit_allocator_range(
-                        cache, begin_layout_node, start_of_possible_decommit,
-                        decommit_exclusion_range.end_of_possible_decommit, layout_node);
+                        cache, begin_segment, begin_node_index, start_of_possible_decommit,
+                        decommit_exclusion_range.end_of_possible_decommit, segment, node_index);
                     start_of_possible_decommit = decommit_exclusion_range.start_of_possible_decommit;
-                    begin_layout_node = NULL;
+                    begin_segment = NULL;
+                    begin_node_index = 0;
                 }
             }
             
@@ -1133,18 +1144,19 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
             for (page_index = begin_page_index; page_index < end_page_index; ++page_index) {
                 if (!pas_bitvector_get(cache->pages_committed, page_index)) {
                     decommit_allocator_range(
-                        cache, begin_layout_node, start_of_possible_decommit,
+                        cache, begin_segment, begin_node_index, start_of_possible_decommit,
                         page_index << page_size_shift,
-                        layout_node);
+                        segment, node_index);
                     start_of_possible_decommit = (page_index + 1) << page_size_shift;
-                    begin_layout_node = NULL;
+                    begin_segment = NULL;
+                    begin_node_index = 0;
                 }
             }
             
             decommit_allocator_range(
-                cache, begin_layout_node, start_of_possible_decommit,
+                cache, begin_segment, begin_node_index, start_of_possible_decommit,
                 pas_thread_local_cache_size_for_allocator_index_capacity(cache->allocator_index_capacity),
-                layout_node);
+                segment, node_index);
         }
         
         pas_lock_unlock(&node->scavenger_lock);

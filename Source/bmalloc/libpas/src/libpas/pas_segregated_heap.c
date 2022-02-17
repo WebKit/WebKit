@@ -681,15 +681,10 @@ static void recompute_size_lookup(pas_segregated_heap* heap,
          directory = pas_compact_atomic_segregated_size_directory_ptr_load(&directory->next_for_heap)) {
         size_t index;
         pas_allocator_index allocator_index;
-        pas_segregated_size_directory_data* data;
         size_t extra_index_for_allocator;
         bool have_extra_index_for_allocator;
 
-        data = pas_segregated_size_directory_data_ptr_load(&directory->data);
-        if (data)
-            allocator_index = data->allocator_index;
-        else
-            allocator_index = 0;
+        allocator_index = directory->allocator_index;
 
         PAS_ASSERT(allocator_index != (pas_allocator_index)UINT_MAX);
 
@@ -743,14 +738,9 @@ static void recompute_size_lookup(pas_segregated_heap* heap,
          (directory = size_directory_min_heap_take_min(&min_heap));
          medium_tuple_index++) {
         pas_segregated_heap_medium_directory_tuple tuple;
-        pas_segregated_size_directory_data* data;
-        
+
         pas_compact_atomic_segregated_size_directory_ptr_store(&tuple.directory, directory);
-        data = pas_segregated_size_directory_data_ptr_load(&directory->data);
-        if (data)
-            tuple.allocator_index = data->allocator_index;
-        else
-            tuple.allocator_index = 0;
+        tuple.allocator_index = directory->allocator_index;
         PAS_ASSERT(tuple.allocator_index != (pas_allocator_index)UINT_MAX);
         tuple.begin_index = pas_segregated_size_directory_min_index(directory);
         PAS_ASSERT(tuple.begin_index);
@@ -872,8 +862,7 @@ pas_segregated_heap_ensure_allocator_index(
     if (verbose)
         pas_log("index = %zu\n", index);
 
-    allocator_index =
-        pas_segregated_size_directory_data_ptr_load(&directory->data)->allocator_index;
+    allocator_index = directory->allocator_index;
     PAS_ASSERT(allocator_index);
     PAS_ASSERT((pas_allocator_index)allocator_index == allocator_index);
     PAS_ASSERT(allocator_index < (unsigned)(pas_allocator_index)UINT_MAX);

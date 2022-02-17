@@ -34,12 +34,10 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_local_view_cache_node;
 struct pas_redundant_local_allocator_node;
 struct pas_segregated_size_directory;
 struct pas_thread_local_cache;
 struct pas_thread_local_cache_layout_node_opaque;
-typedef struct pas_local_view_cache_node pas_local_view_cache_node;
 typedef struct pas_redundant_local_allocator_node pas_redundant_local_allocator_node;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_thread_local_cache pas_thread_local_cache;
@@ -88,10 +86,10 @@ pas_wrap_redundant_local_allocator_node(pas_redundant_local_allocator_node* node
 }
 
 static inline pas_thread_local_cache_layout_node
-pas_wrap_local_view_cache_node(pas_local_view_cache_node* node)
+pas_wrap_local_view_cache_node(pas_segregated_size_directory* directory)
 {
     return pas_thread_local_cache_layout_node_create(
-        pas_thread_local_cache_layout_local_view_cache_node_kind, node);
+        pas_thread_local_cache_layout_local_view_cache_node_kind, directory);
 }
 
 static inline bool
@@ -129,11 +127,11 @@ pas_unwrap_redundant_local_allocator_node(pas_thread_local_cache_layout_node nod
     return (pas_redundant_local_allocator_node*)pas_thread_local_cache_layout_node_get_ptr(node);
 }
 
-static inline pas_local_view_cache_node*
+static inline pas_segregated_size_directory*
 pas_unwrap_local_view_cache_node(pas_thread_local_cache_layout_node node)
 {
     PAS_ASSERT(pas_is_wrapped_local_view_cache_node(node));
-    return (pas_local_view_cache_node*)pas_thread_local_cache_layout_node_get_ptr(node);
+    return (pas_segregated_size_directory*)pas_thread_local_cache_layout_node_get_ptr(node);
 }
 
 PAS_API pas_segregated_size_directory*
@@ -169,13 +167,6 @@ pas_thread_local_cache_layout_node_get_allocator_index_for_view_cache(
 PAS_API void
 pas_thread_local_cache_layout_node_set_allocator_index(pas_thread_local_cache_layout_node node,
                                                        pas_allocator_index index);
-
-PAS_API pas_thread_local_cache_layout_node
-pas_thread_local_cache_layout_node_get_next(pas_thread_local_cache_layout_node node);
-
-PAS_API void
-pas_thread_local_cache_layout_node_set_next(pas_thread_local_cache_layout_node node,
-                                            pas_thread_local_cache_layout_node next_node);
 
 PAS_API void pas_thread_local_cache_layout_node_commit_and_construct(pas_thread_local_cache_layout_node node,
                                                                      pas_thread_local_cache* cache);

@@ -31,13 +31,15 @@
 
 #include "pas_heap_lock.h"
 #include "pas_large_utility_free_heap.h"
-#include "pas_local_view_cache_node.h"
 #include "pas_redundant_local_allocator_node.h"
 #include "pas_segregated_size_directory_inlines.h"
+#include "pas_utility_heap.h"
 #include "pas_utils.h"
 
-pas_thread_local_cache_layout_node pas_thread_local_cache_layout_first_node = NULL;
-pas_thread_local_cache_layout_node pas_thread_local_cache_layout_last_node = NULL;
+pas_thread_local_cache_layout_segment* pas_thread_local_cache_layout_first_segment = NULL;
+static pas_thread_local_cache_layout_segment* pas_thread_local_cache_layout_last_segment = NULL;
+static unsigned pas_thread_local_cache_layout_last_segment_size = 0;
+
 pas_allocator_index pas_thread_local_cache_layout_next_allocator_index =
     PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES;
 pas_thread_local_cache_layout_hashtable pas_thread_local_cache_layout_hashtable_instance =
@@ -67,8 +69,6 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
         break;
     }
 
-    PAS_ASSERT(!pas_thread_local_cache_layout_node_get_next(node));
-    
     result = pas_thread_local_cache_layout_next_allocator_index;
 
     PAS_ASSERT(result < (pas_allocator_index)UINT_MAX);
@@ -86,18 +86,30 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
         &pas_thread_local_cache_layout_next_allocator_index);
     PAS_ASSERT(!did_overflow);
 
-    pas_fence();
-    
-    if (!pas_thread_local_cache_layout_first_node) {
-        PAS_ASSERT(!pas_thread_local_cache_layout_last_node);
-        PAS_ASSERT(result == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
-        pas_thread_local_cache_layout_first_node = node;
-        pas_thread_local_cache_layout_last_node = node;
+    if (!pas_thread_local_cache_layout_last_segment || pas_thread_local_cache_layout_last_segment_size == PAS_THREAD_LOCAL_CACHE_LAYOUT_SEGMENT_SIZE) {
+        pas_thread_local_cache_layout_segment* segment;
+
+        segment = (pas_thread_local_cache_layout_segment*)pas_utility_heap_allocate(sizeof(pas_thread_local_cache_layout_segment), "pas_thread_local_cache_layout_segment");
+        pas_zero_memory(segment, sizeof(pas_thread_local_cache_layout_segment));
+
+        pas_compact_atomic_thread_local_cache_layout_node_store(&segment->nodes[0], node);
+        pas_thread_local_cache_layout_last_segment_size = 1;
+
+        pas_fence();
+        if (!pas_thread_local_cache_layout_last_segment) {
+            PAS_ASSERT(!pas_thread_local_cache_layout_first_segment);
+            PAS_ASSERT(result == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
+            pas_thread_local_cache_layout_first_segment = segment;
+            pas_thread_local_cache_layout_last_segment = segment;
+        } else {
+            pas_thread_local_cache_layout_last_segment->next = segment;
+            pas_thread_local_cache_layout_last_segment = segment;
+        }
     } else {
-        PAS_ASSERT(pas_thread_local_cache_layout_last_node);
+        PAS_ASSERT(pas_thread_local_cache_layout_last_segment);
         PAS_ASSERT(result > PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
-        pas_thread_local_cache_layout_node_set_next(pas_thread_local_cache_layout_last_node, node);
-        pas_thread_local_cache_layout_last_node = node;
+        pas_fence();
+        pas_compact_atomic_thread_local_cache_layout_node_store(&pas_thread_local_cache_layout_last_segment->nodes[pas_thread_local_cache_layout_last_segment_size++], node);
     }
 
     pas_thread_local_cache_layout_hashtable_lock_lock();
@@ -139,11 +151,7 @@ pas_allocator_index pas_thread_local_cache_layout_duplicate(
 pas_allocator_index pas_thread_local_cache_layout_add_view_cache(
     pas_segregated_size_directory* directory)
 {
-    pas_local_view_cache_node* cache_node;
-
-    cache_node = pas_local_view_cache_node_create(directory);
-
-    return pas_thread_local_cache_layout_add_node(pas_wrap_local_view_cache_node(cache_node));
+    return pas_thread_local_cache_layout_add_node(pas_wrap_local_view_cache_node(directory));
 }
 
 pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_index(pas_allocator_index index)
@@ -156,6 +164,15 @@ pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_in
     pas_thread_local_cache_layout_hashtable_lock_unlock();
 
     return pas_compact_thread_local_cache_layout_node_load(&compact_node);
+}
+
+pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node()
+{
+    pas_heap_lock_assert_held();
+    if (!pas_thread_local_cache_layout_last_segment)
+        return NULL;
+    PAS_ASSERT(pas_thread_local_cache_layout_last_segment_size);
+    return pas_thread_local_cache_layout_segment_get_node(pas_thread_local_cache_layout_last_segment, pas_thread_local_cache_layout_last_segment_size - 1);
 }
 
 #endif /* LIBPAS_ENABLED */

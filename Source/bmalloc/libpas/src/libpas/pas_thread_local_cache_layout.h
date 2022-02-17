@@ -27,6 +27,7 @@
 #define PAS_THREAD_LOCAL_CACHE_LAYOUT_H
 
 #include "pas_allocator_index.h"
+#include "pas_compact_atomic_thread_local_cache_layout_node.h"
 #include "pas_config.h"
 #include "pas_hashtable.h"
 #include "pas_lock.h"
@@ -36,8 +37,15 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API extern pas_thread_local_cache_layout_node pas_thread_local_cache_layout_first_node;
-PAS_API extern pas_thread_local_cache_layout_node pas_thread_local_cache_layout_last_node;
+#define PAS_THREAD_LOCAL_CACHE_LAYOUT_SEGMENT_SIZE 257
+struct pas_thread_local_cache_layout_segment {
+    pas_compact_atomic_thread_local_cache_layout_node nodes[PAS_THREAD_LOCAL_CACHE_LAYOUT_SEGMENT_SIZE];
+    pas_compact_atomic_thread_local_cache_layout_node sentinel;
+    struct pas_thread_local_cache_layout_segment* next;
+};
+typedef struct pas_thread_local_cache_layout_segment pas_thread_local_cache_layout_segment;
+
+PAS_API extern pas_thread_local_cache_layout_segment* pas_thread_local_cache_layout_first_segment;
 
 PAS_CREATE_HASHTABLE(pas_thread_local_cache_layout_hashtable,
                      pas_thread_local_cache_layout_entry,
@@ -68,11 +76,39 @@ PAS_API pas_allocator_index pas_thread_local_cache_layout_add_view_cache(
 PAS_API pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_index(
     pas_allocator_index index);
 
+PAS_API pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node(void);
+
+static PAS_ALWAYS_INLINE pas_thread_local_cache_layout_node pas_thread_local_cache_layout_segment_get_node(pas_thread_local_cache_layout_segment* segment, uintptr_t index)
+{
+    if (!segment)
+        return NULL;
+    return pas_compact_atomic_thread_local_cache_layout_node_load(&segment->nodes[index]);
+}
+
+static PAS_ALWAYS_INLINE pas_thread_local_cache_layout_node pas_thread_local_cache_layout_segment_next_node(pas_thread_local_cache_layout_segment** segment, uintptr_t* index)
+{
+    PAS_TESTING_ASSERT(segment);
+    PAS_TESTING_ASSERT(*segment);
+    uintptr_t next_index = *index + 1;
+    pas_thread_local_cache_layout_node next = pas_thread_local_cache_layout_segment_get_node(*segment, next_index);
+    if (next) {
+        *index = next_index;
+        return next;
+    }
+    *segment = (*segment)->next;
+    *index = 0;
+    return pas_thread_local_cache_layout_segment_get_node(*segment, 0);
+}
+
 #define PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(node) \
-    node = pas_thread_local_cache_layout_first_node; \
+    uintptr_t internal_node_index = 0, internal_segment = (uintptr_t)pas_thread_local_cache_layout_first_segment, internal_node = (uintptr_t)pas_thread_local_cache_layout_segment_get_node((pas_thread_local_cache_layout_segment*)internal_segment, internal_node_index); \
+    (node = ((pas_thread_local_cache_layout_node)internal_node)); \
+    internal_node = (uintptr_t)pas_thread_local_cache_layout_segment_next_node((pas_thread_local_cache_layout_segment**)&internal_segment, &internal_node_index)
+
+#define PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR_WITH_SEGMENT_AND_INDEX(node, segment, index) \
+    node = pas_thread_local_cache_layout_segment_get_node(segment, index); \
     node; \
-    node = pas_thread_local_cache_layout_node_get_next(node)
-        
+    node = pas_thread_local_cache_layout_segment_next_node(&segment, &index)
 
 PAS_END_EXTERN_C;
 

@@ -33,7 +33,6 @@
 #include "pas_enumerator_internal.h"
 #include "pas_full_alloc_bits.h"
 #include "pas_hashtable.h"
-#include "pas_local_view_cache_node.h"
 #include "pas_ptr_hash_set.h"
 #include "pas_redundant_local_allocator_node.h"
 #include "pas_root.h"
@@ -43,6 +42,7 @@
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_view.h"
 #include "pas_shared_handle_or_page_boundary_inlines.h"
+#include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
 
 static const bool verbose = false;
@@ -629,7 +629,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
 {
     pas_thread_local_cache_node** tlc_node_first_ptr;
     pas_thread_local_cache_node* tlc_node;
-    pas_thread_local_cache_layout_node* tlc_layout_first_node_ptr;
+    pas_thread_local_cache_layout_segment** tlc_layout_first_segment_ptr;
     enumeration_context context;
     pas_baseline_allocator** baseline_allocator_table_ptr;
     size_t index;
@@ -644,15 +644,12 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
     if (!tlc_node_first_ptr)
         return false;
 
-    tlc_layout_first_node_ptr = pas_enumerator_read(enumerator,
-                                                    enumerator->root->thread_local_cache_layout_first_node,
-                                                    sizeof(pas_thread_local_cache_layout_node));
-    if (!tlc_layout_first_node_ptr)
+    tlc_layout_first_segment_ptr = pas_enumerator_read(enumerator, enumerator->root->thread_local_cache_layout_first_segment, sizeof(pas_thread_local_cache_layout_segment*));
+    if (!tlc_layout_first_segment_ptr)
         return false;
 
     for (tlc_node = *tlc_node_first_ptr; tlc_node; tlc_node = tlc_node->next) {
         pas_thread_local_cache* tlc;
-        pas_thread_local_cache_layout_node layout_node;
         unsigned index;
         
         tlc_node = pas_enumerator_read(enumerator,
@@ -687,58 +684,78 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
             }
         }
 
-        layout_node = pas_enumerator_read_compact(enumerator, *tlc_layout_first_node_ptr);
-        while (layout_node) {
-            bool has_allocator;
-            unsigned allocator_index;
-            
-            if (pas_is_wrapped_segregated_size_directory(layout_node)) {
-                pas_segregated_size_directory* directory;
-                pas_segregated_size_directory_data* data;
+        if (*tlc_layout_first_segment_ptr) {
+            pas_thread_local_cache_layout_segment** tlc_layout_segment_ptr;
+            uintptr_t node_index = 0;
+            pas_thread_local_cache_layout_node layout_node;
+            pas_compact_atomic_thread_local_cache_layout_node* layout_node_ptr;
 
-                directory = pas_unwrap_segregated_size_directory(layout_node);
+            tlc_layout_segment_ptr = tlc_layout_first_segment_ptr;
 
-                data = pas_segregated_size_directory_data_ptr_load_remote(
-                    enumerator, &directory->data);
+            layout_node_ptr = pas_enumerator_read(enumerator, &((*tlc_layout_segment_ptr)->nodes[node_index]), sizeof(pas_compact_atomic_thread_local_cache_layout_node));
+            if (!layout_node_ptr)
+                return false;
+            layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(enumerator, layout_node_ptr);
+            while (1) {
+                bool has_allocator;
+                unsigned allocator_index;
 
-                layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
-                    enumerator, &data->next_for_layout);
-
-                allocator_index = data->allocator_index;
-                has_allocator = true;
-            } else if (pas_is_wrapped_redundant_local_allocator_node(layout_node)) {
-                pas_redundant_local_allocator_node* redundant_node;
-
-                redundant_node = pas_unwrap_redundant_local_allocator_node(layout_node);
-
-                layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
-                    enumerator, &redundant_node->next);
-
-                allocator_index = redundant_node->allocator_index;
-                has_allocator = true;
-            } else {
-                pas_local_view_cache_node* cache_node;
+                if (!layout_node) {
+                    tlc_layout_segment_ptr = pas_enumerator_read(enumerator, &((*tlc_layout_segment_ptr)->next), sizeof(pas_thread_local_cache_layout_segment*));
+                    if (!tlc_layout_segment_ptr)
+                        return false;
+                    if (!*tlc_layout_segment_ptr)
+                        break;
+                    node_index = 0;
+                    layout_node_ptr = pas_enumerator_read(enumerator, &((*tlc_layout_segment_ptr)->nodes[node_index]), sizeof(pas_compact_atomic_thread_local_cache_layout_node));
+                    if (!layout_node_ptr)
+                        return false;
+                    layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(enumerator, layout_node_ptr);
+                    if (!layout_node)
+                        return false;
+                }
                 
-                PAS_ASSERT(pas_is_wrapped_local_view_cache_node(layout_node));
+                if (pas_is_wrapped_segregated_size_directory(layout_node)) {
+                    pas_segregated_size_directory* directory;
 
-                cache_node = pas_unwrap_local_view_cache_node(layout_node);
+                    directory = pas_unwrap_segregated_size_directory(layout_node);
 
-                layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
-                    enumerator, &cache_node->next);
+                    allocator_index = directory->allocator_index;
+                    has_allocator = true;
+                } else if (pas_is_wrapped_redundant_local_allocator_node(layout_node)) {
+                    pas_redundant_local_allocator_node* redundant_node;
 
-                allocator_index = 0;
-                has_allocator = false;
-            }
+                    redundant_node = pas_unwrap_redundant_local_allocator_node(layout_node);
 
-            if (has_allocator) {
-                pas_local_allocator* allocator;
-                
-                if (!allocator_index || allocator_index >= tlc->allocator_index_upper_bound)
-                    break;
+                    allocator_index = redundant_node->allocator_index;
+                    has_allocator = true;
+                } else {
+                    pas_segregated_size_directory* directory;
+                    
+                    PAS_ASSERT(pas_is_wrapped_local_view_cache_node(layout_node));
 
-                allocator = pas_thread_local_cache_get_local_allocator_direct(tlc, allocator_index);
-                
-                consider_allocator(enumerator, &context, allocator);
+                    directory = pas_unwrap_local_view_cache_node(layout_node);
+
+                    allocator_index = 0;
+                    has_allocator = false;
+                }
+
+                if (has_allocator) {
+                    pas_local_allocator* allocator;
+                    
+                    if (!allocator_index || allocator_index >= tlc->allocator_index_upper_bound)
+                        break;
+
+                    allocator = pas_thread_local_cache_get_local_allocator_direct(tlc, allocator_index);
+                    
+                    consider_allocator(enumerator, &context, allocator);
+                }
+
+                ++node_index;
+                layout_node_ptr = pas_enumerator_read(enumerator, &((*tlc_layout_segment_ptr)->nodes[node_index]), sizeof(pas_compact_atomic_thread_local_cache_layout_node));
+                if (!layout_node_ptr)
+                    return false;
+                layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(enumerator, layout_node_ptr);
             }
         }
     }

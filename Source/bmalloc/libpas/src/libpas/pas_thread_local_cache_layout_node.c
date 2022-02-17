@@ -30,7 +30,6 @@
 #include "pas_thread_local_cache_layout_node.h"
 
 #include "pas_local_view_cache.h"
-#include "pas_local_view_cache_node.h"
 #include "pas_redundant_local_allocator_node.h"
 #include "pas_segregated_size_directory_inlines.h"
 
@@ -45,8 +44,7 @@ pas_thread_local_cache_layout_node_get_directory(pas_thread_local_cache_layout_n
             &pas_unwrap_redundant_local_allocator_node(node)->directory);
     }
 
-    return pas_compact_segregated_size_directory_ptr_load_non_null(
-        &pas_unwrap_local_view_cache_node(node)->directory);
+    return pas_unwrap_local_view_cache_node(node);
 }
 
 pas_allocator_index
@@ -67,15 +65,13 @@ static pas_allocator_index*
 allocator_index_ptr(pas_thread_local_cache_layout_node node)
 {
     if (pas_is_wrapped_segregated_size_directory(node)) {
-        return &pas_segregated_size_directory_data_ptr_load(
-            &pas_unwrap_segregated_size_directory(node)->data)->allocator_index;
+        return &pas_unwrap_segregated_size_directory(node)->allocator_index;
     }
 
     if (pas_is_wrapped_redundant_local_allocator_node(node))
         return &pas_unwrap_redundant_local_allocator_node(node)->allocator_index;
 
-    return &pas_compact_segregated_size_directory_ptr_load_non_null(
-        &pas_unwrap_local_view_cache_node(node)->directory)->view_cache_index;
+    return &pas_unwrap_local_view_cache_node(node)->view_cache_index;
 }
 
 pas_allocator_index
@@ -103,32 +99,6 @@ pas_thread_local_cache_layout_node_set_allocator_index(pas_thread_local_cache_la
                                                        pas_allocator_index index)
 {
     *allocator_index_ptr(node) = index;
-}
-
-static pas_compact_atomic_thread_local_cache_layout_node*
-next_ptr(pas_thread_local_cache_layout_node node)
-{
-    if (pas_is_wrapped_segregated_size_directory(node)) {
-        return &pas_segregated_size_directory_data_ptr_load(
-            &pas_unwrap_segregated_size_directory(node)->data)->next_for_layout;
-    }
-
-    if (pas_is_wrapped_redundant_local_allocator_node(node))
-        return &pas_unwrap_redundant_local_allocator_node(node)->next;
-
-    return &pas_unwrap_local_view_cache_node(node)->next;
-}
-
-pas_thread_local_cache_layout_node
-pas_thread_local_cache_layout_node_get_next(pas_thread_local_cache_layout_node node)
-{
-    return pas_compact_atomic_thread_local_cache_layout_node_load(next_ptr(node));
-}
-
-void pas_thread_local_cache_layout_node_set_next(pas_thread_local_cache_layout_node node,
-                                                 pas_thread_local_cache_layout_node next_node)
-{
-    pas_compact_atomic_thread_local_cache_layout_node_store(next_ptr(node), next_node);
 }
 
 void pas_thread_local_cache_layout_node_commit_and_construct(pas_thread_local_cache_layout_node node,

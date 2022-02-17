@@ -126,7 +126,6 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_local_allocator.c
     libpas/src/libpas/pas_local_allocator_scavenger_data.c
     libpas/src/libpas/pas_local_view_cache.c
-    libpas/src/libpas/pas_local_view_cache_node.c
     libpas/src/libpas/pas_lock.c
     libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.c
     libpas/src/libpas/pas_log.c
@@ -513,7 +512,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_local_allocator_result.h
     libpas/src/libpas/pas_local_allocator_scavenger_data.h
     libpas/src/libpas/pas_local_view_cache.h
-    libpas/src/libpas/pas_local_view_cache_node.h
     libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.h
     libpas/src/libpas/pas_lock.h
     libpas/src/libpas/pas_log.h
