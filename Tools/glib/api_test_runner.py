@@ -87,6 +87,11 @@ class TestRunner(object):
             if os.path.isdir(test):
                 tests.extend(self._get_tests_from_dir(test))
             else:
+                if not os.path.exists(test):
+                    candidate = os.path.join(self._test_programs_base_dir(), test)
+                    if not os.path.exists(candidate):
+                        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), test)
+                    test = candidate
                 tests.append(test)
         if tests:
             return tests
