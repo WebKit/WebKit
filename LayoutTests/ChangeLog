@@ -1,3 +1,11 @@
+2022-02-18  Jon Lee  <jonlee@apple.com>
+
+        imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-* fail
+        https://bugs.webkit.org/show_bug.cgi?id=203514
+
+        Unreviewed.
+        * TestExpectations: No longer happening. Removing.
+
 2022-02-18  Antoine Quint  <graouts@webkit.org>
 
         [frame-rate] [custom-effect] allow setting frameRate as an option passed to document.timeline.animate()
