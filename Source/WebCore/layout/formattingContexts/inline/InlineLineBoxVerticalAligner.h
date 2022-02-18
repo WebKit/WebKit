@@ -41,8 +41,14 @@ public:
 private:
     InlineLayoutUnit simplifiedVerticalAlignment(LineBox&) const;
 
-    InlineLayoutUnit computeLineBoxLogicalHeight(LineBox&) const;
-    void computeRootInlineBoxVerticalPosition(LineBox&) const;
+    struct LineBoxHeight {
+        InlineLayoutUnit value() const { return std::max(nonBottomAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight.value_or(0.f)); }
+
+        InlineLayoutUnit nonBottomAlignedBoxesMaximumHeight { 0 };
+        std::optional<InlineLayoutUnit> bottomAlignedBoxesMaximumHeight { };
+    };
+    LineBoxHeight computeLineBoxLogicalHeight(LineBox&) const;
+    void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxHeight&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
