@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static bool isCSPDirectiveName(const String& name)
+static bool isCSPDirectiveName(StringView name)
 {
     return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::baseURI)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::connectSrc)
@@ -205,7 +205,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
                 continue;
             if (isCSPDirectiveName(source->host.value))
                 m_policy.reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
-            m_list.append(ContentSecurityPolicySource(m_policy, source->scheme, source->host.value, source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard));
+            m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.toString(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard));
         } else
             m_policy.reportInvalidSourceExpression(m_directiveName, String(beginSource, buffer.position() - beginSource));
 
@@ -305,7 +305,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             return std::nullopt;
 
         source.host = WTFMove(*host);
-        source.path = WTFMove(*path);
+        source.path = WTFMove(path);
         return source;
     }
 
@@ -317,7 +317,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             if (!scheme)
                 return std::nullopt;
 
-            source.scheme = WTFMove(*scheme);
+            source.scheme = WTFMove(scheme);
             return source;
         }
 
@@ -333,7 +333,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             if (buffer.atEnd())
                 return std::nullopt;
 
-            source.scheme = WTFMove(*scheme);
+            source.scheme = WTFMove(scheme);
 
             beginHost = buffer.position();
             skipWhile<isNotColonOrSlash>(buffer);
@@ -373,7 +373,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         if (!path)
             return std::nullopt;
 
-        source.path = WTFMove(*path);
+        source.path = WTFMove(path);
     }
 
     source.host = WTFMove(*host);
@@ -383,24 +383,24 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
 //                     ; <scheme> production from RFC 3986
 // scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 //
-template<typename CharacterType> std::optional<String> ContentSecurityPolicySourceList::parseScheme(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> StringView ContentSecurityPolicySourceList::parseScheme(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
 
     if (buffer.atEnd())
-        return std::nullopt;
+        return { };
 
     auto begin = buffer.position();
 
     if (!skipExactly<isASCIIAlpha>(buffer))
-        return std::nullopt;
+        return { };
 
     skipWhile<isSchemeContinuationCharacter>(buffer);
 
     if (!buffer.atEnd())
-        return std::nullopt;
+        return { };
 
-    return String(begin, buffer.position() - begin);
+    return StringView(begin, buffer.position() - begin);
 }
 
 // host              = [ "*." ] 1*host-char *( "." 1*host-char )
@@ -439,11 +439,11 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     }
 
     ASSERT(buffer.atEnd());
-    host.value = String(hostBegin, buffer.position() - hostBegin);
+    host.value = StringView(hostBegin, buffer.position() - hostBegin);
     return host;
 }
 
-template<typename CharacterType> std::optional<String> ContentSecurityPolicySourceList::parsePath(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> String ContentSecurityPolicySourceList::parsePath(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
     

@@ -61,7 +61,7 @@ public:
 
 private:
     struct Host {
-        String value;
+        StringView value;
         bool hasWildcard { false };
     };
     struct Port {
@@ -69,7 +69,7 @@ private:
         bool hasWildcard { false };
     };
     struct Source {
-        String scheme;
+        StringView scheme;
         Host host;
         Port port;
         String path;
@@ -79,10 +79,10 @@ private:
 
     template<typename CharacterType> void parse(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> std::optional<Source> parseSource(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> std::optional<String> parseScheme(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> StringView parseScheme(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> std::optional<Host> parseHost(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> std::optional<Port> parsePort(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> std::optional<String> parsePath(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> String parsePath(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> bool parseHashSource(StringParsingBuffer<CharacterType>);
 
