@@ -1358,7 +1358,15 @@ void DocumentLoader::setupForReplace()
     m_writer.end();
     frameLoader()->setReplacing();
     m_gotFirstByte = false;
-    
+
+#if ENABLE(SERVICE_WORKER)
+    unregisterReservedServiceWorkerClient();
+    if (m_resultingClientId) {
+        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+        m_resultingClientId = { };
+    }
+#endif
+
     stopLoadingSubresources();
     stopLoadingPlugIns();
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -2109,12 +2117,14 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         CachingPolicy::AllowCaching);
 
 #if ENABLE(SERVICE_WORKER)
-    // The main navigation load will trigger the registration of the client.
-    if (m_resultingClientId)
-        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
-    m_resultingClientId = ScriptExecutionContextIdentifier::generate();
-    ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
-    scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
+        // The main navigation load will trigger the registration of the client.
+        if (m_resultingClientId)
+            scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+        m_resultingClientId = ScriptExecutionContextIdentifier::generate();
+        ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
+        scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
+    }
 #endif
 
     CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);
