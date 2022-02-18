@@ -61,6 +61,7 @@ typedef struct pas_root pas_root;
 typedef struct pas_small_large_map_hashtable pas_small_large_map_hashtable;
 typedef struct pas_small_large_map_hashtable_in_flux_stash pas_small_large_map_hashtable_in_flux_stash;
 typedef struct pas_thread_local_cache_node pas_thread_local_cache_node;
+typedef struct pas_thread_local_cache_layout_segment pas_thread_local_cache_layout_segment;
 typedef struct pas_tiny_large_map_hashtable pas_tiny_large_map_hashtable;
 typedef struct pas_tiny_large_map_hashtable_in_flux_stash pas_tiny_large_map_hashtable_in_flux_stash;
 typedef struct pas_tiny_large_map_second_level_hashtable_in_flux_stash pas_tiny_large_map_second_level_hashtable_in_flux_stash;
@@ -76,7 +77,7 @@ struct pas_root {
     pas_enumerable_range_list* large_heap_physical_page_sharing_cache_page_list;
     pas_enumerable_range_list* payload_reservation_page_list;
     pas_thread_local_cache_node** thread_local_cache_node_first;
-    pas_thread_local_cache_layout_node* thread_local_cache_layout_first_node;
+    pas_thread_local_cache_layout_segment** thread_local_cache_layout_first_segment;
     pas_heap** all_heaps_first_heap;
     pas_heap** static_heaps;
     size_t num_static_heaps;

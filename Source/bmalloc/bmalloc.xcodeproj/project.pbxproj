@@ -88,11 +88,9 @@
 		0F7C92E926E57F75006AF012 /* pas_heap_runtime_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C92D926E57F75006AF012 /* pas_heap_runtime_config.c */; };
 		0F7C92EA26E57F75006AF012 /* pas_local_allocator_scavenger_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C92DA26E57F75006AF012 /* pas_local_allocator_scavenger_data.c */; };
 		0F7C92EB26E57F75006AF012 /* pas_compact_segregated_size_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92DB26E57F75006AF012 /* pas_compact_segregated_size_directory_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F7C92EC26E57F75006AF012 /* pas_local_view_cache_node.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92DC26E57F75006AF012 /* pas_local_view_cache_node.h */; };
 		0F7C92ED26E57F75006AF012 /* pas_segregated_size_directory_creation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92DD26E57F75006AF012 /* pas_segregated_size_directory_creation_mode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7C92EE26E57F75006AF012 /* pas_local_view_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92DE26E57F75006AF012 /* pas_local_view_cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7C92F026E57F75006AF012 /* pas_local_allocator_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92E026E57F75006AF012 /* pas_local_allocator_kind.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F7C92F126E57F75006AF012 /* pas_local_view_cache_node.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C92E126E57F75006AF012 /* pas_local_view_cache_node.c */; };
 		0F7EB8231F9541B000F1ABCB /* EligibilityResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FC1F9541AD00F1ABCB /* EligibilityResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7EB8241F9541B000F1ABCB /* IsoHeapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FD1F9541AD00F1ABCB /* IsoHeapImplInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7EB8251F9541B000F1ABCB /* DeferredTriggerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7EB7FE1F9541AD00F1ABCB /* DeferredTriggerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -747,11 +745,9 @@
 		0F7C92D926E57F75006AF012 /* pas_heap_runtime_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_heap_runtime_config.c; path = libpas/src/libpas/pas_heap_runtime_config.c; sourceTree = "<group>"; };
 		0F7C92DA26E57F75006AF012 /* pas_local_allocator_scavenger_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_local_allocator_scavenger_data.c; path = libpas/src/libpas/pas_local_allocator_scavenger_data.c; sourceTree = "<group>"; };
 		0F7C92DB26E57F75006AF012 /* pas_compact_segregated_size_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_segregated_size_directory_ptr.h; path = libpas/src/libpas/pas_compact_segregated_size_directory_ptr.h; sourceTree = "<group>"; };
-		0F7C92DC26E57F75006AF012 /* pas_local_view_cache_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_local_view_cache_node.h; path = libpas/src/libpas/pas_local_view_cache_node.h; sourceTree = "<group>"; };
 		0F7C92DD26E57F75006AF012 /* pas_segregated_size_directory_creation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_size_directory_creation_mode.h; path = libpas/src/libpas/pas_segregated_size_directory_creation_mode.h; sourceTree = "<group>"; };
 		0F7C92DE26E57F75006AF012 /* pas_local_view_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_local_view_cache.h; path = libpas/src/libpas/pas_local_view_cache.h; sourceTree = "<group>"; };
 		0F7C92E026E57F75006AF012 /* pas_local_allocator_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_local_allocator_kind.h; path = libpas/src/libpas/pas_local_allocator_kind.h; sourceTree = "<group>"; };
-		0F7C92E126E57F75006AF012 /* pas_local_view_cache_node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_local_view_cache_node.c; path = libpas/src/libpas/pas_local_view_cache_node.c; sourceTree = "<group>"; };
 		0F7EB7FC1F9541AD00F1ABCB /* EligibilityResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EligibilityResult.h; path = bmalloc/EligibilityResult.h; sourceTree = SOURCE_ROOT; };
 		0F7EB7FD1F9541AD00F1ABCB /* IsoHeapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoHeapImplInlines.h; path = bmalloc/IsoHeapImplInlines.h; sourceTree = SOURCE_ROOT; };
 		0F7EB7FE1F9541AD00F1ABCB /* DeferredTriggerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredTriggerInlines.h; path = bmalloc/DeferredTriggerInlines.h; sourceTree = SOURCE_ROOT; };
@@ -1730,8 +1726,6 @@
 				0F7C92D426E57F74006AF012 /* pas_local_allocator_scavenger_data.h */,
 				0F7C92D626E57F75006AF012 /* pas_local_view_cache.c */,
 				0F7C92DE26E57F75006AF012 /* pas_local_view_cache.h */,
-				0F7C92E126E57F75006AF012 /* pas_local_view_cache_node.c */,
-				0F7C92DC26E57F75006AF012 /* pas_local_view_cache_node.h */,
 				0FC40BD9245243A400876DA0 /* pas_lock.c */,
 				0FC40A8B2451498C00876DA0 /* pas_lock.h */,
 				0FC40A562451498800876DA0 /* pas_lock_free_read_ptr_ptr_hashtable.c */,
@@ -2416,7 +2410,6 @@
 				0FC40B2E2451499400876DA0 /* pas_local_allocator_result.h in Headers */,
 				0F7C92E426E57F75006AF012 /* pas_local_allocator_scavenger_data.h in Headers */,
 				0F7C92EE26E57F75006AF012 /* pas_local_view_cache.h in Headers */,
-				0F7C92EC26E57F75006AF012 /* pas_local_view_cache_node.h in Headers */,
 				0FC40B672451499400876DA0 /* pas_lock.h in Headers */,
 				0FC40B7F2451499400876DA0 /* pas_lock_free_read_ptr_ptr_hashtable.h in Headers */,
 				0FC40B9C2451499400876DA0 /* pas_log.h in Headers */,
@@ -2776,7 +2769,6 @@
 				0FC40B072451499400876DA0 /* pas_local_allocator.c in Sources */,
 				0F7C92EA26E57F75006AF012 /* pas_local_allocator_scavenger_data.c in Sources */,
 				0F7C92E626E57F75006AF012 /* pas_local_view_cache.c in Sources */,
-				0F7C92F126E57F75006AF012 /* pas_local_view_cache_node.c in Sources */,
 				0FC40BDA245243A400876DA0 /* pas_lock.c in Sources */,
 				0FC40B342451499400876DA0 /* pas_lock_free_read_ptr_ptr_hashtable.c in Sources */,
 				0FC40BB22451499400876DA0 /* pas_log.c in Sources */,
