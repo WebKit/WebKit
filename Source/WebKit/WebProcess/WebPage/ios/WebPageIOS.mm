@@ -3543,9 +3543,11 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
+    if (!m_viewportConfiguration.isKnownToLayOutWiderThanViewport())
+        m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(0);
+
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
-    auto clampedMinimumEffectiveDevice = m_viewportConfiguration.isKnownToLayOutWiderThanViewport() ? std::nullopt : std::optional<double>(minimumEffectiveDeviceWidth);
-    if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, WTFMove(clampedMinimumEffectiveDevice)))
+    if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth))
         return;
 
     auto zoomToInitialScale = ZoomToInitialScale::No;
@@ -3897,7 +3899,7 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
         return;
 
     auto changeMinimumEffectiveDeviceWidth = [this, mainDocument] (int targetLayoutWidth) -> bool {
-        if (m_viewportConfiguration.setMinimumEffectiveDeviceWidth(targetLayoutWidth)) {
+        if (m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(targetLayoutWidth)) {
             viewportConfigurationChanged();
             mainDocument->updateLayout();
             return true;
