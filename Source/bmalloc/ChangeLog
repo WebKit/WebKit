@@ -1,5 +1,25 @@
 2022-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [libpas] scavenger should not call pthread_mach_thread_np after suspension
+        https://bugs.webkit.org/show_bug.cgi?id=236798
+        rdar://89020902
+
+        Reviewed by Mark Lam and Keith Miller.
+
+        pthread_mach_thread_np can take a lock internally. So we should not call it after suspending a thread.
+        This patch refactors libpas scavenger so that we call pthread_mach_thread_np before suspending a thread.
+        We also avoid calling pthread_self() after suspension to make suspending safer (while it does not take
+        a lock, it also depends on an internal implementation).
+
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (scavenger_thread_suspend_data_create):
+        (suspend):
+        (resume):
+        (stop_allocator):
+        (pas_thread_local_cache_for_all):
+
+2022-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, fix heap enumeration
         https://bugs.webkit.org/show_bug.cgi?id=236662
 
