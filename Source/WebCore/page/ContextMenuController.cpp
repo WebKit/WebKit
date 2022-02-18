@@ -840,7 +840,7 @@ void ContextMenuController::populate()
 #if PLATFORM(GTK) || PLATFORM(WIN)
     ContextMenuItem ShareMenuItem;
 #else
-    ContextMenuItem ShareMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
+    ContextMenuItem ShareMenuItem(ActionType, ContextMenuItemTagShareMenu, emptyString());
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

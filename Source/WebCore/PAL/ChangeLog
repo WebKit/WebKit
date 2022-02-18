@@ -1,3 +1,13 @@
+2022-02-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Refactor share menu item presentation
+        https://bugs.webkit.org/show_bug.cgi?id=236806
+        <rdar://problem/88858606>
+
+        Reviewed by Aditya Keerthi.
+
+        * pal/spi/mac/NSSharingServicePickerSPI.h:
+
 2022-02-17  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
