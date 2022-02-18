@@ -252,15 +252,18 @@ public:
         if (m_shouldUseCustomPaths) {
             ASSERT(m_customLocalStoragePath.isEmpty() == m_rootPath.isEmpty());
             m_resolvedLocalStoragePath = m_customLocalStoragePath;
-        } else {
-            auto localStoragePath = LocalStorageManager::localStorageFilePath(typeStoragePath(StorageType::LocalStorage));
-            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath)) {
-                FileSystem::makeAllDirectories(FileSystem::parentPath(localStoragePath));
+        } else if (!m_rootPath.isEmpty()) {
+            auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
+            FileSystem::makeAllDirectories(localStorageDirectory);
+            FileSystem::excludeFromBackup(localStorageDirectory);
+
+            auto localStoragePath = LocalStorageManager::localStorageFilePath(localStorageDirectory);
+            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath))
                 WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
-            }
 
             m_resolvedLocalStoragePath = localStoragePath;
-        }
+        } else
+            m_resolvedLocalStoragePath = emptyString();
 
         return m_resolvedLocalStoragePath;
     }

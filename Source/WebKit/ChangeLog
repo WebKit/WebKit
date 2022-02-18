@@ -1,3 +1,19 @@
+2022-02-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Exclude new LocalStorage directory from backup on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236423
+        <rdar://problem/89060863>
+
+        Reviewed by Chris Dumez.
+
+        We've been excluding LocalStorage data from backup on iOS since r212555, and we need to make sure this applies
+        to new LocalStorage directory after migration (r289878).
+
+        Manually tested on iOS device.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+
 2022-02-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Debian Stable build is broken after r290026
