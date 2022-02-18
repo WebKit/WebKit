@@ -1,3 +1,10 @@
+2022-02-18  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening for GPU Process bots. Update fuzzy data.
+
+        * web-platform-tests/css/css-images/gradients-with-transparent.html:
+        * web-platform-tests/svg/coordinate-systems/viewBox-scaling-text-001.html:
+
 2022-02-18  Joseph Griego  <jgriego@igalia.com>
 
         [JSC] Enable Shadow Realms support by default

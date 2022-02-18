@@ -1,3 +1,10 @@
+2022-02-18  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening for GPU Process bots. Update fuzzy data.
+
+        * gpu-process/TestExpectations:
+        * platform/ios/TestExpectations: A couple tests are happening on all iOS bots and not uniquely on GPU Process bots.
+
 2022-02-17  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] 'vertical-align: bottom' makes inline level boxes stick out of their parent block box
