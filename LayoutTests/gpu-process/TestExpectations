@@ -1,77 +1,6 @@
-
-# To be triaged
-fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
-fast/css/background-svg-image-loading.html [ ImageOnlyFailure ]
-fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html [ Crash ]
-fast/css/clip-zooming.html [ Crash ]
-fast/css/getComputedStyle/computed-style-border-image.html [ Crash ]
-fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
-fast/css/variables/test-suite/005.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
-fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
-fast/forms/autofocus-readonly-attribute.html [ ImageOnlyFailure ]
-fast/hidpi/device-scale-factor-paint.html [ Crash ]
-fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailure ]
-fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
-fast/inline/inline-background-clip-text-multiline.html [ Crash ]
-fast/inline/inline-background-clip-text.html [ Crash ]
-fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Crash ]
-fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash ]
-fast/mediastream/captureStream/canvas3d.html [ Crash ]
-fast/shadow-dom/nth-node-on-shadow-child-invalidation.html [ ImageOnlyFailure ]
-fast/shadow-dom/nth-node-on-shadow-child-no-jit.html [ ImageOnlyFailure ]
-fast/shadow-dom/nth-node-on-shadow-child.html [ ImageOnlyFailure ]
-fast/shapes/shape-outside-floats/shape-outside-polygon-zero-vertex.html [ ImageOnlyFailure ]
-fast/shapes/shape-outside-floats/shape-outside-relative-size-svg.html [ ImageOnlyFailure ]
-fast/text/text-decoration-currentcolor-fill-color.html [ Crash ]
-fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ ImageOnlyFailure ]
+# Possibly fixed-- need more results from bots
 http/tests/security/css-mask-image-credentials.html [ ImageOnlyFailure ]
 http/tests/security/css-mask-image.html [ ImageOnlyFailure ]
-http/tests/svg/svg-fragment-background.html [ ImageOnlyFailure ]
-http/tests/svg/svg-fragment-image.html [ ImageOnlyFailure ]
-http/tests/svg/svg-fragment-url-special-cases.html [ ImageOnlyFailure ]
-ietestcenter/css3/multicolumn/column-containing-block-003.htm [ ImageOnlyFailure ]
-imported/blink/fast/backgrounds/bug420029.html [ Crash ]
-imported/blink/fast/multicol/tall-line-in-short-block.html [ ImageOnlyFailure ]
-imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
-imported/blink/fast/multicol/vertical-rl/float-content-break.html [ ImageOnlyFailure ]
-imported/blink/svg/as-image/svg-as-image-object-fit-contain.html [ ImageOnlyFailure ]
-imported/blink/svg/as-image/svg-as-image-object-fit-cover.html [ ImageOnlyFailure ]
-imported/blink/svg/as-image/svgview-references.html [ ImageOnlyFailure ]
-imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/background-resize-3.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/background-resize-4.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/background-stretch-1.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/img-simple-3.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/img-simple-5.html [ ImageOnlyFailure ]
-imported/mozilla/svg/as-image/img-simple-7.html [ ImageOnlyFailure ]
-imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/pattern-transformed-01.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-inline.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-010.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/color-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html [ ImageOnlyFailure ]
-js/dom/Promise-reject-large-string.html [ ImageOnlyFailure ]
-media/track/track-css-visible-stroke.html [ ImageOnlyFailure ]
-svg/gradients/gradient-flipped-start-end-points.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethod.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodAlpha.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal2.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal3.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal4.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDuplicateStop.svg [ ImageOnlyFailure ]
-svg/gradients/spreadMethodReversed.svg [ ImageOnlyFailure ]
-svg/gradients/stopAlpha.svg [ ImageOnlyFailure ]
-svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
-webrtc/canvas-to-peer-connection.html [ ImageOnlyFailure ]
-
-# Possibly fixed
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-022.html [ ImageOnlyFailure ]
@@ -125,15 +54,15 @@ svg/as-image/svg-no-intrinsic-size-switching.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/box-sizing-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/box-sizing-021.html [ ImageOnlyFailure ]
 
-
-
-
 # Incorrect size
 css3/blending/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure ]
 fast/borders/border-image-fill-no-intrinsic-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-breaks-001.html [ ImageOnlyFailure ]
 
 # There is text in/near the box
+fast/shadow-dom/nth-node-on-shadow-child-invalidation.html [ ImageOnlyFailure ]
+fast/shadow-dom/nth-node-on-shadow-child-no-jit.html [ ImageOnlyFailure ]
+fast/shadow-dom/nth-node-on-shadow-child.html [ ImageOnlyFailure ]
 fast/shadow-dom/css-scoping-shadow-slot-style.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-slot-style.html [ ImageOnlyFailure ]
 mathml/presentation/mroot-pref-width.html [ ImageOnlyFailure ]
@@ -147,6 +76,12 @@ fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 
+# Text decoration failures
+fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
+
 # Red text pokes out
 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 
@@ -154,9 +89,13 @@ fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure ]
 
 # Wrong text color
+fast/css/variables/test-suite/005.html [ ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/insert-spanner-after-content.html [ ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/insert-spanner-before-content.html [ ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/insert-spanner-after-spanner-before-content.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-rl/float-content-break.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/tall-line-in-short-block.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-suppress-baseline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-004.html [ ImageOnlyFailure ]
@@ -215,7 +154,7 @@ imported/w3c/web-platform-tests/css/css-values/ic-unit-010.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-values/ic-unit-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/ic-unit-012.html [ ImageOnlyFailure ]
 
-# Transform ImageOnlyfailure
+# Transform failures
 imported/w3c/web-platform-tests/css/css-transforms/transform-list-separation/svg-transform-list-separations-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-list-separation/svg-transform-list-separations-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-list-separation/svg-transform-list-separations-003.html [ ImageOnlyFailure ]
@@ -310,7 +249,8 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-r
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-012.html [ ImageOnlyFailure ]
 
 
-# Multicol ImageOnlyfailure
+# Multicol failures
+ietestcenter/css3/multicolumn/column-containing-block-003.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-block-no-clip-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-block-no-clip-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-clip-001.xht [ ImageOnlyFailure ]
@@ -327,6 +267,7 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-count-non-integer-002.
 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-non-integer-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-gap-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-gap-003.xht [ ImageOnlyFailure ]
@@ -360,7 +301,15 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-small-001.xht [ 
 imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols.html [ ImageOnlyFailure ]
 
-# Writing mode ImageOnlyfailures
+# CSS Shapes failures
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-002.html
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-003.html
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-005.html
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-007.html
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-014.html
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-017.html
+
+# Writing mode failures
 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-020.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
@@ -380,24 +329,56 @@ svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 # Colors are significantly different enough
 system-preview/badge.html [ ImageOnlyFailure ]
 
-# Crash WebKit::ImageBufferRemoteIOSurfaceBackend::draw
-fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
+# No/bad colored boxes
+fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
+imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/color-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-inline.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001.html [ ImageOnlyFailure ]
 
-# Crash WebKit::ImageBufferRemoteIOSurfaceBackend::drawPattern
-imported/blink/animations/base-render-style-body-crash.html [ Crash ]
-
-# Crash on x86_64 https://results.webkit.org/?suite=layout-tests&test=editing%2Fspelling%2Fediting-word-with-marker-2.html
-editing/spelling/editing-word-with-marker-2.html [ Crash Pass ]
+# No/bad gradient/pattern
+imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/pattern-transformed-01.svg [ ImageOnlyFailure ]
+svg/gradients/gradient-flipped-start-end-points.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethod.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodAlpha.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodDiagonal.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodDiagonal2.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodDiagonal3.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodDiagonal4.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodDuplicateStop.svg [ ImageOnlyFailure ]
+svg/gradients/spreadMethodReversed.svg [ ImageOnlyFailure ]
+svg/gradients/stopAlpha.svg [ ImageOnlyFailure ]
+svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Crashes
 compositing/background-color/background-color-text-clip.html [ Crash ]
 fast/canvas/canvas-composite-canvas.html [ Crash ]
 fast/clip/hidpi-background-clip-with-text-fill-color.html [ Crash ]
+fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Crash ]
 fast/css/appearance-apple-pay-button.html [ Crash ]
+fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html [ Crash ]
+fast/inline/inline-background-clip-text-multiline.html [ Crash ]
+fast/inline/inline-background-clip-text.html [ Crash ]
+fast/text/text-decoration-currentcolor-fill-color.html [ Crash ]
+# arm64 only (which has Whippet enabled)
+fast/css/getComputedStyle/computed-style-border-image.html [ Crash ]
+fast/css/clip-zooming.html [ Crash ]
+fast/hidpi/device-scale-factor-paint.html [ Crash ]
+# x86_64 only (which does not have Whippet enabled)
+webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Crash ]
 
-# Flaky failure; missing green clipping pink
+
+# Flaky failure
 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ Pass Failure ]
+svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Pass ImageOnlyFailure ]
+# Also happening on Mac...
+webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
+js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 # Flaky crash
 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ Crash ImageOnlyImageOnlyFailure ]
@@ -409,23 +390,29 @@ imported/blink/fast/backgrounds/bug420029.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
 
+# Media failure
+fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Crash ]
+fast/mediastream/captureStream/canvas3d.html [ Crash ]
+media/track/track-css-visible-stroke.html [ ImageOnlyFailure ]
+webrtc/canvas-to-peer-connection.html [ Failure ]
+# arm64 only (which has Whippet enabled)
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure ]
 
-# Flaky timeout
+# Forms failures
 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
+fast/forms/autofocus-readonly-attribute.html [ Failure ]
 
-# Timeout on GPU Process only
-fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Timeout ]
-
-# arm64 only
-fast/canvas/webgl/gl-teximage.html [ ImageOnlyFailure ]
-fast/canvas/webgl/premultiplyalpha-test.html [ ImageOnlyFailure ]
-webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ ImageOnlyFailure ]
+# arm64 only (which has Whippet enabled)
+fast/canvas/webgl/gl-teximage.html [ Failure ]
+fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
+http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
+webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.3/conformance/textures/gl-teximage.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ ImageOnlyFailure ]
 
-# x86_64 only
+# x86_64 only (which does not have Whippet enabled)
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
-
 
 #####
 # Progressions with GPU Process (when turned on, need to find other citations of these tests and update expectations)
@@ -434,7 +421,6 @@ media/video-seek-to-current-time.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ Pass ]
 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Pass ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]
-http/tests/appcache/fail-on-update-2.html [ Pass ]
 
 # arm64 only
 compositing/overlap-blending/nested-overlap.html [ Pass ]

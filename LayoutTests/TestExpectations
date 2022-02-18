@@ -2106,8 +2106,7 @@ webkit.org/b/207798 webrtc/connection-state.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Slow ]
 imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html [ Failure ]
 
 # Skip timing out test
 imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html [ Skip ]

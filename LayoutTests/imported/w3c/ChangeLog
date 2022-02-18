@@ -1,3 +1,9 @@
+2022-02-17  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening. Update fuzzy data.
+
+        * web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-003.html:
+
 2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
 
         Account for subgrid MBP when sizing
