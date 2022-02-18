@@ -549,6 +549,59 @@ Rebased 'eng/pr-branch' on 'main!'
             ],
         )
 
+    def test_github_reopen_bugzilla(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch(
+                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+
+            Tracker.instance().issue(1).close(why='Looks like we will not get to this')
+            repo.commits['eng/pr-branch'] = [Commit(
+                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                branch='eng/pr-branch',
+                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                identifier="5.1@eng/pr-branch",
+                timestamp=int(time.time()),
+                message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1'
+            )]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Re-opening for pull request https://github.example.com/WebKit/WebKit/pull/1',
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | [Testing] Existing commit'!\n"
+            'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'https://github.example.com/WebKit/WebKit/pull/1\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                "Using committed changes...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+            ],
+        )
+
     def test_bitbucket(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
@@ -755,6 +808,53 @@ Rebased 'eng/pr-branch' on 'main!'
             self.assertEqual(
                 Tracker.instance().issue(1).comments[-1].content,
                 'Pull request: https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview',
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | <rdar://problem/1> [Testing] Existing commit'!\n"
+            'Posted pull request link to <rdar://1>\n'
+            'https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                "Using committed changes...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                "    Found 1 commit...",
+                "Pushing 'eng/pr-branch' to 'origin'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+            ],
+        )
+
+    def test_bitbucket_reopen_radar(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(
+            self.path, remote='ssh://git@{}/{}/{}.git'.format(remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3]),
+        ) as repo, mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+
+            Tracker.instance().issue(1).close(why='Looks like we will not get to this')
+            repo.commits['eng/pr-branch'] = [Commit(
+                hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                branch='eng/pr-branch',
+                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                identifier="5.1@eng/pr-branch",
+                timestamp=int(time.time()),
+                message='<rdar://problem/1> [Testing] Existing commit\n'
+            )]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Re-opening for pull request https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview',
             )
 
         self.assertEqual(

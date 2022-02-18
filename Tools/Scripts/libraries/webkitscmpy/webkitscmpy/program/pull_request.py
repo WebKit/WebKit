@@ -258,7 +258,10 @@ class PullRequest(Command):
                 print('Assigning associated issue to {}'.format(issue.tracker.me()))
             log.info('Checking for pull request link in associated issue...')
             if pr.url and not any([pr.url in comment.content for comment in issue.comments]):
-                issue.add_comment('Pull request: {}'.format(pr.url))
+                if issue.opened:
+                    issue.add_comment('Pull request: {}'.format(pr.url))
+                else:
+                    issue.open(why='Re-opening for pull request {}'.format(pr.url))
                 print('Posted pull request link to {}'.format(issue.link))
 
         if pr.url:
