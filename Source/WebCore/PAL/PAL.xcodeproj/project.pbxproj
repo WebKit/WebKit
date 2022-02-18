@@ -379,6 +379,7 @@
 		CDACB361238742740018D7CE /* MediaToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */; };
 		CDF91113220E4EEC001EA39E /* CelestialSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF91112220E4EEC001EA39E /* CelestialSPI.h */; };
 		CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5673862151A7B9002F92D7 /* IOKitSPI.h */; };
+		DD05A36027BF0ACE0096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD05A35F27BF0AC40096EFAB /* libWTF.a */; };
 		DDB04F32278E4F1B008D3678 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE99300278D07B800F60D26 /* libWebKitAdditions.a */; };
 		DF83E209263734F1000825EF /* CryptoKitPrivateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */; };
 		E327C0DF260BE436002281C5 /* NotifySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E327C0DE260BDC90002281C5 /* NotifySPI.h */; };
@@ -423,6 +424,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				DDB04F32278E4F1B008D3678 /* libWebKitAdditions.a in Product Dependencies */,
+				DD05A36027BF0ACE0096EFAB /* libWTF.a in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -842,6 +844,7 @@
 		CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSoftLink.h; sourceTree = "<group>"; };
 		CDF91112220E4EEC001EA39E /* CelestialSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestialSPI.h; sourceTree = "<group>"; };
 		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
+		DD05A35F27BF0AC40096EFAB /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE99300278D07B800F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKitPrivateSPI.h; sourceTree = "<group>"; };
 		E327C0DE260BDC90002281C5 /* NotifySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotifySPI.h; sourceTree = "<group>"; };
@@ -1527,6 +1530,7 @@
 			isa = PBXGroup;
 			children = (
 				DDE99300278D07B800F60D26 /* libWebKitAdditions.a */,
+				DD05A35F27BF0AC40096EFAB /* libWTF.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

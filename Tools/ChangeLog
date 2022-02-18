@@ -1,3 +1,16 @@
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add product dependency on WebKit. LayoutTestHelper uses headers from WebKit and lower
+        frameworks without linking against them.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/LayoutTestHelper.xcconfig:
+
 2022-02-18  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Add credentialID to _WKWebAuthenticationAssertionResponse and userHandle in getAllLocalAuthenticatorCredentials

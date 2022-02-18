@@ -1,3 +1,14 @@
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add product dependency on WTF, since PAL uses its headers without linking against it.
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2022-02-18  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make AVFoundationSPI.h robust against changes in system headers

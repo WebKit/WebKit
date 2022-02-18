@@ -3884,7 +3884,7 @@
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "SOURCE_DIR=\"${SRCROOT}/Source/third_party/libvpx/source\"\nSOURCE_FILE=\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\"\nOBJECT_FILE=\"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o\"\n\"${BUILT_PRODUCTS_DIR}/yasm\" -fmacho64 -I \"${SOURCE_DIR}/config\" -I \"${SOURCE_DIR}/config/mac/x64\" -I \"${SOURCE_DIR}/libvpx\" -o \"${OBJECT_FILE}.tmp\" \"${SOURCE_FILE}\"\ncmp -s \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\" && rm -f \"${OBJECT_FILE}.tmp\" || mv \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\"\n[[ \"${SOURCE_FILE}\" -nt \"${OBJECT_FILE}\" ]] && touch \"${OBJECT_FILE}\" || true\n";
+			script = "set -e\nSOURCE_DIR=\"${SRCROOT}/Source/third_party/libvpx/source\"\nSOURCE_FILE=\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\"\nOBJECT_FILE=\"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o\"\n\"${BUILT_PRODUCTS_DIR}/yasm\" -fmacho64 -I \"${SOURCE_DIR}/config\" -I \"${SOURCE_DIR}/config/mac/x64\" -I \"${SOURCE_DIR}/libvpx\" -o \"${OBJECT_FILE}.tmp\" \"${SOURCE_FILE}\"\ncmp -s \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\" && rm -f \"${OBJECT_FILE}.tmp\" || mv \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\"\n[[ \"${SOURCE_FILE}\" -nt \"${OBJECT_FILE}\" ]] && touch \"${OBJECT_FILE}\" || true\n";
 		};
 /* End PBXBuildRule section */
 
@@ -17230,6 +17230,7 @@
 			buildConfigurationList = 4105EB7F212E01D2008C0C20 /* Build configuration list for PBXNativeTarget "vpx" */;
 			buildPhases = (
 				4105EB6C212E01D2008C0C20 /* Headers */,
+				DD05A35A27BF00DF0096EFAB /* (Legacy) Ensure yasm is built */,
 				4105EB74212E01D2008C0C20 /* Sources */,
 				4105EB7C212E01D2008C0C20 /* Frameworks */,
 				4105EB7D212E01D2008C0C20 /* CopyFiles */,
@@ -17531,6 +17532,25 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		DD05A35A27BF00DF0096EFAB /* (Legacy) Ensure yasm is built */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/yasm",
+			);
+			name = "(Legacy) Ensure yasm is built";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Once support for the legacy build system is dropped, delete this build phase\n# and move its input file to the \"Assembly files\" build rule.\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

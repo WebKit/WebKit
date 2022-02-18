@@ -1,3 +1,15 @@
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add product dependency on WTF. WGSL uses its headers without linking against it.
+        
+        * Configurations/WGSL.xcconfig:
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
 
         Generate compile_commands.json on macOS Builds

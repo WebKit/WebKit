@@ -1,3 +1,15 @@
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Nothing particularly interesting here, but should fix build failures on
+        Apple-BigSur-XCBuild-Release-Build <https://build.webkit.org/#/builders/463>.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Ensure yasm is built before using it.
+
 2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
 
         Generate compile_commands.json on macOS Builds
