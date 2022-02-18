@@ -1,3 +1,19 @@
+2022-02-18  Sam Sneddon  <gsnedders@apple.com>
+
+        ServiceWorkerGlobalScope+PushAPI requires PushAPIEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=236846
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/push-api/onpush-disabled-expected.txt: Added.
+        * http/wpt/push-api/onpush-disabled.html: Added.
+        * http/wpt/push-api/onpush-disabled.js: Added.
+        (test):
+        * http/wpt/push-api/onpush-enabled-expected.txt: Added.
+        * http/wpt/push-api/onpush-enabled.html: Added.
+        * http/wpt/push-api/onpush-enabled.js: Added.
+        (test):
+
 2022-02-18  Jon Lee  <jonlee@apple.com>
 
         Follow up to b236802. Unreviewed.
