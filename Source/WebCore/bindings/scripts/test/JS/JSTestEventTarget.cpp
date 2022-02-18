@@ -266,7 +266,7 @@ JSC::GCClient::IsoSubspace* JSTestEventTarget::subspaceForImpl(JSC::VM& vm)
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestEventTarget.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestEventTarget> || !JSTestEventTarget::needsDestruction);

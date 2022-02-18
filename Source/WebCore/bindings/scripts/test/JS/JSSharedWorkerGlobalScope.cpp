@@ -159,7 +159,7 @@ JSC::GCClient::IsoSubspace* JSSharedWorkerGlobalScope::subspaceForImpl(JSC::VM& 
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForSharedWorkerGlobalScope.get();
     if (!space) {
         Heap& heap = vm.heap;
         space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heapData.m_heapCellTypeForJSSharedWorkerGlobalScope, JSSharedWorkerGlobalScope);

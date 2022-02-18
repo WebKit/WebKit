@@ -370,7 +370,7 @@ JSC::GCClient::IsoSubspace* JSTestMapLike::subspaceForImpl(JSC::VM& vm)
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestMapLike.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestMapLike> || !JSTestMapLike::needsDestruction);

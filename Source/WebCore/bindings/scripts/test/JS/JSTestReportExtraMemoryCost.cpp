@@ -175,7 +175,7 @@ JSC::GCClient::IsoSubspace* JSTestReportExtraMemoryCost::subspaceForImpl(JSC::VM
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestReportExtraMemoryCost.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestReportExtraMemoryCost> || !JSTestReportExtraMemoryCost::needsDestruction);

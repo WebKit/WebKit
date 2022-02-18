@@ -4888,7 +4888,7 @@ sub GenerateImplementation
     push(@implContent, "    Locker locker { heapData.lock() };\n");
     push(@implContent, "\n");
     push(@implContent, "    auto& spaces = heapData.subspaces();\n");
-    push(@implContent, "    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();\n");
+    push(@implContent, "    IsoSubspace* space = spaces.m_subspaceFor${interfaceName}.get();\n");
     push(@implContent, "    if (!space) {\n");
     push(@implContent, "        Heap& heap = vm.heap;\n");
 

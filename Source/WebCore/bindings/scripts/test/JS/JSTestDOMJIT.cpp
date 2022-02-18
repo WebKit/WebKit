@@ -1256,7 +1256,7 @@ JSC::GCClient::IsoSubspace* JSTestDOMJIT::subspaceForImpl(JSC::VM& vm)
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestDOMJIT.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDOMJIT> || !JSTestDOMJIT::needsDestruction);

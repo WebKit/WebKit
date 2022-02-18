@@ -191,7 +191,7 @@ JSC::GCClient::IsoSubspace* JSTestInterfaceLeadingUnderscore::subspaceForImpl(JS
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestInterfaceLeadingUnderscore.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterfaceLeadingUnderscore> || !JSTestInterfaceLeadingUnderscore::needsDestruction);

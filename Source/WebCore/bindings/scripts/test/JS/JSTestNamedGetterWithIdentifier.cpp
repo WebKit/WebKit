@@ -250,7 +250,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedGetterWithIdentifier::subspaceForImpl(JSC
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestNamedGetterWithIdentifier.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedGetterWithIdentifier> || !JSTestNamedGetterWithIdentifier::needsDestruction);

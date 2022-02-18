@@ -304,7 +304,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterThrowingException::subspaceForImpl(
     Locker locker { heapData.lock() };
 
     auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForGPUMapMode.get();
+    IsoSubspace* space = spaces.m_subspaceForTestNamedSetterThrowingException.get();
     if (!space) {
         Heap& heap = vm.heap;
         static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterThrowingException> || !JSTestNamedSetterThrowingException::needsDestruction);
