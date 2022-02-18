@@ -58,6 +58,18 @@ RefPtr<Data> WebAuthenticationAssertionResponse::userHandle() const
     return data;
 }
 
+RefPtr<Data> WebAuthenticationAssertionResponse::credentialID() const
+{
+    RefPtr<API::Data> data;
+    if (auto* rawId = m_response->rawId()) {
+        rawId->ref();
+        data = API::Data::createWithoutCopying(static_cast<unsigned char*>(rawId->data()), rawId->byteLength(), [] (unsigned char*, const void* data) {
+            static_cast<ArrayBuffer*>(const_cast<void*>(data))->deref();
+        }, rawId);
+    }
+    return data;
+}
+
 } // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

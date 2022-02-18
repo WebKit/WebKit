@@ -180,6 +180,7 @@ static bool laContextRequested = false;
     EXPECT_EQ(source, _WKWebAuthenticationSourceExternal);
     EXPECT_EQ(responses.count, 2ul);
     for (_WKWebAuthenticationAssertionResponse *response in responses) {
+        EXPECT_TRUE([[response.credentialID base64EncodedStringWithOptions:0] isEqual:@"KAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4A=="] || !response.credentialID);
         EXPECT_TRUE([response.name isEqual:@"johnpsmith@example.com"] || [response.name isEqual:@""]);
         EXPECT_TRUE([response.displayName isEqual:@"John P. Smith"] || [response.displayName isEqual:@""]);
         EXPECT_TRUE([[response.userHandle base64EncodedStringWithOptions:0] isEqual:@"MIIBkzCCATigAwIBAjCCAZMwggE4oAMCAQIwggGTMII="] || !response.userHandle);
@@ -2174,6 +2175,7 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     EXPECT_NOT_NULL([credentials firstObject]);
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
     EXPECT_WK_STREQ([[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
+    EXPECT_WK_STREQ([[credentials firstObject][_WKLocalAuthenticatorCredentialUserHandleKey] base64EncodedStringWithOptions:0], "AAECAwQFBgcICQ==");
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialRelyingPartyIDKey], "example.com");
 
     EXPECT_GE([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:before.get()], 0);

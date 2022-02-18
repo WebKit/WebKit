@@ -1,3 +1,19 @@
+2022-02-18  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add credentialID to _WKWebAuthenticationAssertionResponse and userHandle in getAllLocalAuthenticatorCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=236657
+        rdar://problem/88979279
+
+        Reviewed by Brent Fulgham.
+
+        Adjusted existing API tests, GetAllCredential and MultipleAccounts, to test for new fields
+        being returned and that they match the values expected. These values stem from testUserEntityBundleBase64
+        and testAssertionMessageLongBase64.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:selectAssertionResponse:source:completionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
 
         Generate compile_commands.json on macOS Builds

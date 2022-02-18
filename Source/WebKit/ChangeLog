@@ -1,3 +1,23 @@
+2022-02-18  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Add credentialID to _WKWebAuthenticationAssertionResponse and userHandle in getAllLocalAuthenticatorCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=236657
+        rdar://problem/88979279
+
+        Reviewed by Brent Fulgham.
+
+        Modified API tests to verify new fields present and populated.
+
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.cpp:
+        (API::WebAuthenticationAssertionResponse::credentialID const):
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm:
+        (-[_WKWebAuthenticationAssertionResponse credentialID]):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (getAllLocalAuthenticatorCredentialsImpl):
+
 2022-02-18  Tim Horton  <timothy_horton@apple.com>
 
         Client-set minimum effective device width is not respected if AllowViewportShrinkToFitContent is enabled

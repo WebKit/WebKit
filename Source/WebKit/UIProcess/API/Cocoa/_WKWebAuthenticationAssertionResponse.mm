@@ -68,6 +68,11 @@
     return _response->group();
 }
 
+- (NSData *)credentialID
+{
+    return wrapper(_response->credentialID());
+}
+
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)setLAContext:(LAContext *)context

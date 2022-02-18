@@ -114,6 +114,7 @@ NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey = @"_WKL
 NSString * const _WKLocalAuthenticatorCredentialCreationDateKey = @"_WKLocalAuthenticatorCredentialCreationDateKey";
 NSString * const _WKLocalAuthenticatorCredentialGroupKey = @"_WKLocalAuthenticatorCredentialGroupKey";
 NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey = @"_WKLocalAuthenticatorCredentialSynchronizableKey";
+NSString * const _WKLocalAuthenticatorCredentialUserHandleKey = @"_WKLocalAuthenticatorCredentialUserHandleKey";
 
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
@@ -274,12 +275,21 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
             return nullptr;
         }
         auto& username = it->second.getString();
+
+        it = responseMap.find(cbor::CBORValue(fido::kEntityIdMapKey));
+        if (it == responseMap.end() || !it->second.isByteString()) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        auto& userHandle = it->second.getByteString();
+
         auto credential = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
             username, _WKLocalAuthenticatorCredentialNameKey,
             attributes[bridge_cast(kSecAttrApplicationLabel)], _WKLocalAuthenticatorCredentialIDKey,
             attributes[bridge_cast(kSecAttrLabel)], _WKLocalAuthenticatorCredentialRelyingPartyIDKey,
             attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastModificationDateKey,
             attributes[bridge_cast(kSecAttrCreationDate)], _WKLocalAuthenticatorCredentialCreationDateKey,
+            adoptNS([[NSData alloc] initWithBytes:userHandle.data() length:userHandle.size()]).get(), _WKLocalAuthenticatorCredentialUserHandleKey,
             nil
         ]);
         updateCredentialIfNecessary(credential.get(), attributes);

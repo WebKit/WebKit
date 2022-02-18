@@ -94,6 +94,7 @@ WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialLastModificatio
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialGroupKey;
 WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey;
+WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialUserHandleKey;
 
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
