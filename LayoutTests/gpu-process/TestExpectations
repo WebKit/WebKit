@@ -1,6 +1,4 @@
 # Incorrect size
-css3/blending/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure ]
-fast/borders/border-image-fill-no-intrinsic-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-breaks-001.html [ ImageOnlyFailure ]
 
 # There is text in/near the box
@@ -33,7 +31,7 @@ fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure ]
 
 # Wrong text color
-fast/css/variables/test-suite/005.html [ ImageOnlyFailure ]
+fast/css/variables/test-suite/005.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/multicol/dynamic/insert-spanner-after-content.html [ ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/insert-spanner-before-content.html [ ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/insert-spanner-after-spanner-before-content.html [ ImageOnlyFailure ]
@@ -254,13 +252,11 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-i
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-017.html
 
 # Writing mode failures
-imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-020.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-vlr-007.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
@@ -298,6 +294,7 @@ svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Crashes
 compositing/background-color/background-color-text-clip.html [ Crash ]
+fast/backgrounds/background-fast-path-simple-color.html [ Crash ]
 fast/canvas/canvas-composite-canvas.html [ Crash ]
 fast/clip/hidpi-background-clip-with-text-fill-color.html [ Crash ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
@@ -309,11 +306,8 @@ fast/inline/inline-background-clip-text.html [ Crash ]
 fast/text/text-decoration-currentcolor-fill-color.html [ Crash ]
 # arm64 only (which has Whippet enabled)
 fast/css/getComputedStyle/computed-style-border-image.html [ Crash ]
-fast/css/clip-zooming.html [ Crash ]
 fast/hidpi/device-scale-factor-paint.html [ Crash ]
 # x86_64 only (which does not have Whippet enabled)
-webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Crash ]
-
 
 # Flaky failure
 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
@@ -329,10 +323,12 @@ svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 # Flaky crash
 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 ddcss3/images/cross-fade-simple.html [ Crash Pass ]
+webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-on-body.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-with-simple-container.html [ Crash Pass ]
 fast/backgrounds/background-clip-text.html [ Crash Pass ]
 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ Crash ImageOnlyFailure ]
+fast/css/clip-zooming.html [ Crash Pass ]
 fast/hidpi/clip-text-in-hidpi.html [ Crash Pass ]
 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash Pass ]
 imported/blink/fast/backgrounds/bug420029.html [ Crash Pass ]
@@ -340,32 +336,28 @@ imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
 imported/w3c/web-platform-tests/webstorage/storage_session_window_open.window.html [ Crash Pass ]
 
+
 # Media failure
-fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Crash ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout ]
-media/track/track-css-visible-stroke.html [ ImageOnlyFailure ]
 webrtc/canvas-to-peer-connection.html [ Failure ]
 # arm64 only (which has Whippet enabled)
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Timeout ]
-media/video-src-blob-replay.html [ Timeout ]
+media/video-src-blob-replay.html [ Timeout Pass ]
 webrtc/vp9-profile2.html [ Timeout ]
 
 # Forms failures
 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
-fast/forms/autofocus-readonly-attribute.html [ Failure ]
+fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
 
 # arm64 only (which has Whippet enabled)
 fast/canvas/webgl/gl-teximage.html [ Failure ]
 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
+fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure Pass ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure ]
-
-# x86_64 only (which does not have Whippet enabled)
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
 
 #####
 # Progressions with GPU Process (when turned on, need to find other citations of these tests and update expectations)
@@ -374,9 +366,20 @@ media/video-seek-to-current-time.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ Pass ]
 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Pass ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass ]
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass ]
 
 # arm64 only
 compositing/overlap-blending/nested-overlap.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ]
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 
+# iPhone simulator
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Pass ]
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-modify.html [ Pass ]
+webkit.org/b/178588 fast/css/button-height.html [ Pass ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ Pass ]
+webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Pass ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass ]
+webkit.org/b/292090 media/video-canvas-createPattern.html [ Pass ]

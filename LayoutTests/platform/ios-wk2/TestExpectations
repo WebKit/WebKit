@@ -1310,7 +1310,7 @@ webkit.org/b/231602 imported/w3c/web-platform-tests/webrtc/simulcast/getStats.ht
 
 webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
-webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Failure ]
+webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Timeout Failure ]
 
 webkit.org/b/230513 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
 
@@ -2152,10 +2152,10 @@ webkit.org/b/231612 imported/blink/fast/dom/importNode-cdata.html [ Pass Timeout
 
 webkit.org/b/231610 applicationmanifest/developer-warnings.html [ Pass Timeout ]
 
-webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-confirmation.html [ Pass Timeout ]
-webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html [ Pass Timeout ]
+webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-confirmation.html [ Pass Timeout ]
+webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html [ Pass Timeout Failure ]
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
-webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Timeout ]
+webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Timeout ]
 
 webkit.org/b/231622 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout ]
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]

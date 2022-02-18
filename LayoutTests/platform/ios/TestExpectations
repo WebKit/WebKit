@@ -3361,7 +3361,7 @@ webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/232181 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html [ Pass Failure ]
 
 # These three tests will be fixed by rdar://80384564.
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Failure ]
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Pass Failure ]
 editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
 
@@ -3472,3 +3472,4 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 [ Release ] editing/spelling/toggle-spellchecking.html [ Failure Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
+imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
