@@ -123,7 +123,13 @@ const char* GCGLANGLELayer::ANGLEContext::lastErrorString()
 
 std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext(bool isForWebGL2)
 {
-    EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+    Vector<EGLint> displayAttributes {
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
+        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE,
+        EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, EGL_PLATFORM_SURFACELESS_MESA,
+        EGL_NONE,
+    };
+    EGLDisplay display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes.data());
     if (display == EGL_NO_DISPLAY)
         return nullptr;
 

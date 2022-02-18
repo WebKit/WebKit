@@ -25,21 +25,10 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
 
     list(APPEND ANGLE_DEFINITIONS
         ANGLE_ENABLE_OPENGL
-        ANGLE_USE_GBM
-    )
-
-    find_package(LibDRM REQUIRED)
-    find_package(GBM REQUIRED)
-
-    list(APPEND ANGLE_PRIVATE_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-        ${GBM_INCLUDE_DIR}
     )
 
     list(APPEND ANGLEGLESv2_LIBRARIES
         ${CMAKE_DL_LIBS}
-        ${LIBDRM_LIBRARIES}
-        ${GBM_LIBRARIES}
         Threads::Threads
     )
 

@@ -9,7 +9,6 @@ elseif (WIN32)
     set(angle_is_winuwp FALSE)
 elseif (UNIX)
     set(is_linux TRUE)
-    set(ozone_platform_gbm TRUE)
 endif ()
 
 include(Compiler.cmake)

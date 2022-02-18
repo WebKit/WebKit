@@ -1,3 +1,19 @@
+2022-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Don't use ANGLE's GBM-based display
+        https://bugs.webkit.org/show_bug.cgi?id=236772
+
+        Reviewed by Alejandro G. Castro.
+
+        With DisplayGbm functionality not necessary anymore, we can stop
+        building the associated code and linking against libgbm and libdrm at
+        the ANGLE level. These two libraries are still dependencies that have
+        since become necessary in WebCore.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2022-02-18  Saam Barati  <sbarati@apple.com>
 
         Add LC_SOURCE_VERSION to compile targets
