@@ -214,6 +214,10 @@ class ViewGestureController;
     std::optional<WebKit::TransactionID> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+    Vector<RetainPtr<id<_UIInvalidatable>>> _resizeAssertions;
+#endif
+
     BOOL _allowsBackForwardNavigationGestures;
 
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;

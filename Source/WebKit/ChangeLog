@@ -1,3 +1,30 @@
+2022-02-17  Devin Rousso  <drousso@apple.com>
+
+        [MacCatalyst] improve support for resizing
+        https://bugs.webkit.org/show_bug.cgi?id=236745
+        <rdar://problem/86494393>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView setFrame:]):
+        (-[WKWebView setBounds:]):
+        (-[WKWebView _acquireResizeAssertionForReason:]): Added.
+        Acquire a UIKit assertion whenever the `frame`/`bounds` of the `WKWebView` is changed that
+        is `invalidate` once the visible contect rect has been updated. UIKit can use this to know
+        both when WebKit is processing `WKWebView` resize changes and get notified once it's done.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _doAfterNextVisibleContentRectUpdate:]): Added.
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _doAfterNextVisibleContentRectUpdate:]): Deleted.
+        Allow this to be used outside of testing code (just like `-[WKWebView _doAfterNextPresentationUpdate:]`).
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2022-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Move setting RemoteLayerBackingStore surfaces volatile into the GPU Process

@@ -58,7 +58,6 @@ struct WKAppPrivacyReportTestingData {
 - (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback;
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock;
-- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock;
 
 - (void)_disableBackForwardSnapshotVolatilityForTesting;
 

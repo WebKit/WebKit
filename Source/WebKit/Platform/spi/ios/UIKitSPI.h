@@ -1537,6 +1537,22 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 #endif
 
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+
+#if __has_include(<UIKit/_UIInvalidatable.h>)
+#include <UIKit/_UIInvalidatable.h>
+#else
+@protocol _UIInvalidatable <NSObject>
+- (void)_invalidate;
+@end
+#endif
+
+@interface UIWindowScene (Staging_86494115)
+- (id<_UIInvalidatable>)_holdLiveResizeSnapshotForReason:(NSString *)reason;
+@end
+
+#endif // HAVE(MAC_CATALYST_LIVE_RESIZE)
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

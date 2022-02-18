@@ -3706,6 +3706,18 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:YES withoutWaitingForAnimatedResize:NO];
 }
 
+- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock
+{
+#if PLATFORM(IOS_FAMILY)
+    _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
+    [self _scheduleVisibleContentRectUpdate];
+#else
+    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+        updateBlock();
+    });
+#endif
+}
+
 - (WKDisplayCaptureSurfaces) _displayCaptureSurfaces
 {
     auto pageState = _page->reportedMediaState();

@@ -144,18 +144,6 @@
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:NO withoutWaitingForAnimatedResize:YES];
 }
 
-- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock
-{
-#if PLATFORM(IOS_FAMILY)
-    _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
-    [self _scheduleVisibleContentRectUpdate];
-#else
-    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
-        updateBlock();
-    });
-#endif
-}
-
 - (void)_disableBackForwardSnapshotVolatilityForTesting
 {
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
