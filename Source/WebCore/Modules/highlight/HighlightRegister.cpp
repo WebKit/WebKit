@@ -53,19 +53,6 @@ bool HighlightRegister::remove(const String& key)
     return m_map.remove(key);
 }
 #if ENABLE(APP_HIGHLIGHTS)
-ASCIILiteral HighlightRegister::appHighlightKey()
-{
-    return "appHighlightKey"_s;
-}
-
-void HighlightRegister::addAppHighlight(Ref<StaticRange>&& value)
-{
-    if (m_map.contains(appHighlightKey()))
-        m_map.get(appHighlightKey())->addToSetLike(value);
-    else
-        setFromMapLike(appHighlightKey(), Highlight::create(WTFMove(value)));
-}
-
 void HighlightRegister::setHighlightVisibility(HighlightVisibility highlightVisibility)
 {
     if (m_highlightVisibility == highlightVisibility)
@@ -76,6 +63,18 @@ void HighlightRegister::setHighlightVisibility(HighlightVisibility highlightVisi
     for (auto& highlight : m_map)
         highlight.value->repaint();
 }
-
 #endif
+static ASCIILiteral annotationHighlightKey()
+{
+    return "annotationHighlightKey"_s;
+}
+
+void HighlightRegister::addAnnotationHighlightWithRange(Ref<StaticRange>&& value)
+{
+    if (m_map.contains(annotationHighlightKey()))
+        m_map.get(annotationHighlightKey())->addToSetLike(value);
+    else
+        setFromMapLike(annotationHighlightKey(), Highlight::create(WTFMove(value)));
+}
+
 }

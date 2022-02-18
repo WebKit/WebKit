@@ -1,3 +1,13 @@
+2022-02-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Draw highlights for Scroll To Text Fragment
+        https://bugs.webkit.org/show_bug.cgi?id=236693
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (WebCore::operator<<):
+
 2022-02-17  Aditya Keerthi  <akeerthi@apple.com>
 
         '-webkit-user-select: all' is not respected in editable views

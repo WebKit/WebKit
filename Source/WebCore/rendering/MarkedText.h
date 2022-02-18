@@ -45,6 +45,7 @@ struct MarkedText {
         TextMatch,
         DictationAlternatives,
         Highlight,
+        FragmentHighlight,
 #if ENABLE(APP_HIGHLIGHTS)
         AppHighlight,
 #endif

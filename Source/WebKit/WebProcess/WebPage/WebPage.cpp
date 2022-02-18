@@ -7874,7 +7874,7 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     if (!selectionRange)
         return false;
 
-    document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
+    document->appHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(selectionRange.value()));
     document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()));
 
     return true;

@@ -390,13 +390,11 @@ Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColorOptio
     return colorFromCocoaColor([NSColor findHighlightColor]);
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColorOptions>) const
+Color RenderThemeMac::platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const
 {
     // FIXME: expose the real value from AppKit.
     return SRGBA<uint8_t> { 255, 238, 190 };
 }
-#endif
 
 Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColorOptions> options) const
 {

@@ -173,9 +173,7 @@ private:
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
     Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
 
-#if ENABLE(APP_HIGHLIGHTS)
-    Color platformAppHighlightColor(OptionSet<StyleColorOptions>) const final;
-#endif
+    Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const final;
 
 #if ENABLE(TOUCH_EVENTS)
     Color platformTapHighlightColor() const override { return SRGBA<uint8_t> { 26, 26, 26, 77 } ; }

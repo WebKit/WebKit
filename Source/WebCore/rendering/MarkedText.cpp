@@ -129,6 +129,22 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
             }
         }
     }
+    
+    if (renderer.document().settings().scrollToTextFragmentEnabled()) {
+        if (auto fragmentHighlightRegister = renderer.document().fragmentHighlightRegisterIfExists()) {
+            for (auto& highlight : fragmentHighlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
+
+                    auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
+                    if (highlightStart < highlightEnd)
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::FragmentHighlight });
+                }
+            }
+        }
+    }
+    
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto appHighlightRegister = renderer.document().appHighlightRegisterIfExists()) {
         if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {

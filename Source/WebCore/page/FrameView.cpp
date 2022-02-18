@@ -48,6 +48,7 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "FragmentDirectiveParser.h"
+#include "FragmentDirectiveRangeFinder.h"
 #include "Frame.h"
 #include "FrameFlattening.h"
 #include "FrameLoader.h"
@@ -65,6 +66,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPlugInImageElement.h"
+#include "HighlightRegister.h"
 #include "ImageDocument.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -2243,7 +2245,15 @@ bool FrameView::scrollToFragment(const URL& url)
             document->setFragmentDirective(fragmentDirective);
             
             auto parsedTextDirectives = fragmentDirectiveParser.parsedTextDirectives();
-            // FIXME: Scroll to the range specified by the directive.
+            
+            auto highlightRanges = FragmentDirectiveRangeFinder::rangesForFragments(parsedTextDirectives, document);
+            for (auto range : highlightRanges)
+                document->fragmentHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(range));
+            
+            if (highlightRanges.size()) {
+                TemporarySelectionChange selectionChange(document, { highlightRanges.first() }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::RevealSelectionBounds });
+                // FIXME: add a textIndicator after the scroll has completed.
+            }
             
         } else
             fragmentIdentifier = fragmentDirectiveParser.remainingURLFragment();

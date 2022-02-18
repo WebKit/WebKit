@@ -1555,20 +1555,18 @@ Color RenderTheme::platformTextSearchHighlightColor(OptionSet<StyleColorOptions>
     return Color::yellow;
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-Color RenderTheme::appHighlightColor(OptionSet<StyleColorOptions> options) const
+Color RenderTheme::annotationHighlightColor(OptionSet<StyleColorOptions> options) const
 {
     auto& cache = colorCache(options);
-    if (!cache.appHighlightColor.isValid())
-        cache.appHighlightColor = transformSelectionBackgroundColor(platformAppHighlightColor(options), options);
-    return cache.appHighlightColor;
+    if (!cache.annotationHighlightColor.isValid())
+        cache.annotationHighlightColor = transformSelectionBackgroundColor(platformAnnotationHighlightColor(options), options);
+    return cache.annotationHighlightColor;
 }
 
-Color RenderTheme::platformAppHighlightColor(OptionSet<StyleColorOptions>) const
+Color RenderTheme::platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const
 {
     return Color::yellow;
 }
-#endif
 
 Color RenderTheme::defaultButtonTextColor(OptionSet<StyleColorOptions> options) const
 {

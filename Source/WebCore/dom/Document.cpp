@@ -819,6 +819,8 @@ void Document::commonTeardown()
 
     if (m_highlightRegister)
         m_highlightRegister->clear();
+    if (m_fragmentHighlightRegister)
+        m_fragmentHighlightRegister->clear();
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
         m_appHighlightRegister->clear();
@@ -2822,6 +2824,14 @@ HighlightRegister& Document::highlightRegister()
         m_highlightRegister = HighlightRegister::create();
     return *m_highlightRegister;
 }
+
+HighlightRegister& Document::fragmentHighlightRegister()
+{
+    if (!m_fragmentHighlightRegister)
+        m_fragmentHighlightRegister = HighlightRegister::create();
+    return *m_fragmentHighlightRegister;
+}
+
 #if ENABLE(APP_HIGHLIGHTS)
 HighlightRegister& Document::appHighlightRegister()
 {
@@ -2858,6 +2868,8 @@ void Document::updateHighlightPositions()
     Vector<WeakPtr<HighlightRangeData>> rangesData;
     if (m_highlightRegister)
         collectRangeDataFromRegister(rangesData, *m_highlightRegister.get());
+    if (m_fragmentHighlightRegister)
+        collectRangeDataFromRegister(rangesData, *m_fragmentHighlightRegister.get());
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
         collectRangeDataFromRegister(rangesData, *m_appHighlightRegister.get());

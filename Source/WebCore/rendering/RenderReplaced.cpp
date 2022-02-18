@@ -160,7 +160,7 @@ Color RenderReplaced::calculateHighlightColor() const
                         continue;
 
                     OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
-                    return theme().appHighlightColor(styleColorOptions);
+                    return theme().annotationHighlightColor(styleColorOptions);
                 }
             }
         }
@@ -179,6 +179,23 @@ Color RenderReplaced::calculateHighlightColor() const
 
                     if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
                         return highlightStyle->backgroundColor();
+                }
+            }
+        }
+    }
+    if (document().settings().scrollToTextFragmentEnabled()) {
+        if (auto highlightRegister = document().fragmentHighlightRegisterIfExists()) {
+            for (auto& highlight : highlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
+
+                    auto state = highlightData.highlightStateForRenderer(*this);
+                    if (!isHighlighted(state, highlightData))
+                        continue;
+
+                    OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
+                    return theme().annotationHighlightColor(styleColorOptions);
                 }
             }
         }

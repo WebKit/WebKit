@@ -161,10 +161,8 @@ public:
     // Highlighting color for search matches.
     Color textSearchHighlightColor(OptionSet<StyleColorOptions>) const;
 
-#if ENABLE(APP_HIGHLIGHTS)
     // Default highlighting color for app highlights.
-    Color appHighlightColor(OptionSet<StyleColorOptions>) const;
-#endif
+    Color annotationHighlightColor(OptionSet<StyleColorOptions>) const;
 
     Color defaultButtonTextColor(OptionSet<StyleColorOptions>) const;
 
@@ -287,9 +285,7 @@ protected:
     virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
     virtual Color platformTextSearchHighlightColor(OptionSet<StyleColorOptions>) const;
-#if ENABLE(APP_HIGHLIGHTS)
-    virtual Color platformAppHighlightColor(OptionSet<StyleColorOptions>) const;
-#endif
+    virtual Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const;
 
     virtual Color platformDefaultButtonTextColor(OptionSet<StyleColorOptions>) const;
 
@@ -454,10 +450,7 @@ protected:
         Color inactiveListBoxSelectionForegroundColor;
 
         Color textSearchHighlightColor;
-
-#if ENABLE(APP_HIGHLIGHTS)
-        Color appHighlightColor;
-#endif
+        Color annotationHighlightColor;
 
         Color defaultButtonTextColor;
     };

@@ -1624,7 +1624,11 @@ public:
 
     HighlightRegister* highlightRegisterIfExists() { return m_highlightRegister.get(); }
     HighlightRegister& highlightRegister();
-        void updateHighlightPositions();
+    void updateHighlightPositions();
+
+    HighlightRegister* fragmentHighlightRegisterIfExists() { return m_fragmentHighlightRegister.get(); }
+    HighlightRegister& fragmentHighlightRegister();
+        
 #if ENABLE(APP_HIGHLIGHTS)
     HighlightRegister* appHighlightRegisterIfExists() { return m_appHighlightRegister.get(); }
     WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
@@ -2018,6 +2022,7 @@ private:
 #endif
         
     RefPtr<HighlightRegister> m_highlightRegister;
+    RefPtr<HighlightRegister> m_fragmentHighlightRegister;
 #if ENABLE(APP_HIGHLIGHTS)
     RefPtr<HighlightRegister> m_appHighlightRegister;
     std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;

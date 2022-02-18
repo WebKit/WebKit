@@ -2960,6 +2960,7 @@ imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-003.html
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-004.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002.html [ ImageOnlyFailure ]
+# WPT support ::target-text (webkit.org/b/236817)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-003.html [ ImageOnlyFailure ]
@@ -2968,7 +2969,9 @@ imported/w3c/web-platform-tests/css/css-pseudo/target-text-005.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-text-decoration-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/177799 accessibility/table-detection.html [ Pass Failure ]
 

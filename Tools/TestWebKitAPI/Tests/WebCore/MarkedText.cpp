@@ -57,6 +57,8 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
         return os << "TextMatch";
     case MarkedText::Highlight:
         return os << "Highlight";
+    case MarkedText::FragmentHighlight:
+        return os << "FragmentHighlight";
 #if ENABLE(APP_HIGHLIGHTS)
     case MarkedText::AppHighlight:
         return os << "AppHighlight";
