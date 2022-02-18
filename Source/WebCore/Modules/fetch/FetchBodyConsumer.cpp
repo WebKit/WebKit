@@ -269,8 +269,9 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
     if (!context)
         return;
 
-    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, promise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, capturedPromise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
         if (result.hasException()) {
+            auto promise = WTFMove(capturedPromise);
             promise->reject(result.releaseException());
             return;
         }
@@ -278,7 +279,7 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
         auto& value = result.returnValue();
         if (value.empty()) {
             auto buffer = builder.takeAsContiguous();
-            resolveWithData(WTFMove(promise), contentType, buffer->data(), buffer->size());
+            resolveWithData(WTFMove(capturedPromise), contentType, buffer->data(), buffer->size());
             return;
         }
 
