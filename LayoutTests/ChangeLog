@@ -25,6 +25,22 @@
 
         * platform/ios/TestExpectations: Mark tests as failing.
 
+2022-02-17  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal ANGLE: vertex array does not correctly observe contents of data buffers
+        https://bugs.webkit.org/show_bug.cgi?id=236733
+        <rdar://problem/88713302>
+        <rdar://problem/88499073>
+
+        Reviewed by Dean Jackson.
+
+        Similar to previous bug (236427), we were not correctly observing changes to the
+        vertex buffer data. This caused us to miss rebinding vertex buffers
+        when data was updated without causing conversion
+
+        * fast/canvas/webgl/buffer-data-subdata-dynamic-buffer.html: Added.
+        * fast/canvas/webgl/buffer-data-subdata-dynamic-buffer-expected.txt: Added.
+
 2022-02-17  Matteo Flores  <matteo_flores@apple.com>
 
         [css-grid] Incorrectly stretched SVGs without an aspect-ratio.

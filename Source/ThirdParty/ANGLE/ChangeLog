@@ -1,3 +1,22 @@
+2022-02-17  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal ANGLE: vertex array does not correctly observe contents of data buffers
+        https://bugs.webkit.org/show_bug.cgi?id=236733
+        <rdar://problem/88713302>
+        <rdar://problem/88499073>
+
+        Reviewed by Dean Jackson.
+
+        Similar to previous bug (236427), we were not correctly observing changes to the
+        vertex buffer data. This caused us to miss rebinding vertex buffers
+        when data was updated without causing conversion
+
+        * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::syncState):
+        (rx::VertexArrayMtl::setupDraw):
+        (rx::VertexArrayMtl::syncDirtyAttrib):
+
 2022-02-17  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Build broken with ENABLE_X11_TARGET=OFF and no X11 headers present
