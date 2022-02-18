@@ -83,7 +83,7 @@ DEBUG_DEFINES[config=Debug] = ;
 GCC_OPTIMIZATION_LEVEL = s;
 GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
-// This is overridden in ANGLE-dynamic.xcconfig, but is set to NO for ANGLE-static.xcconfig to have symbols.
+// This is overridden in ANGLE-dynamic.xcconfig.
 STRIP_INSTALLED_PRODUCT = NO;
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;

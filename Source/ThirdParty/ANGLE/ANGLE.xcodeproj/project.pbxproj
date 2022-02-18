@@ -1003,7 +1003,6 @@
 		31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemInfo_ios.cpp; sourceTree = "<group>"; };
 		31B15721236B803300CAA4FD /* SystemInfo_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo_internal.h; sourceTree = "<group>"; };
 		31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ANGLE-dynamic.xcconfig"; sourceTree = "<group>"; };
-		31CDFDEF24917F8900486F27 /* ANGLE-static.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ANGLE-static.xcconfig"; sourceTree = "<group>"; };
 		31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
@@ -2693,7 +2692,6 @@
 			isa = PBXGroup;
 			children = (
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
-				31CDFDEF24917F8900486F27 /* ANGLE-static.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
