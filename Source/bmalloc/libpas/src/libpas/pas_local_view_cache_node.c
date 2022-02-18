@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,23 +27,22 @@
 
 #if LIBPAS_ENABLED
 
-#include "pas_redundant_local_allocator_node.h"
+#include "pas_local_view_cache_node.h"
 
 #include "pas_immortal_heap.h"
 
-pas_redundant_local_allocator_node*
-pas_redundant_local_allocator_node_create(pas_segregated_size_directory* directory)
+pas_local_view_cache_node*
+pas_local_view_cache_node_create(pas_segregated_size_directory* directory)
 {
-    pas_redundant_local_allocator_node* result;
+    pas_local_view_cache_node* result;
 
     result = pas_immortal_heap_allocate(
-        sizeof(pas_redundant_local_allocator_node),
-        "pas_redundant_local_allocator_node",
+        sizeof(pas_local_view_cache_node),
+        "pas_local_view_cache_node",
         pas_object_allocation);
 
     pas_compact_atomic_thread_local_cache_layout_node_store(&result->next, NULL);
     pas_compact_segregated_size_directory_ptr_store(&result->directory, directory);
-    result->allocator_index = 0;
 
     return result;
 }

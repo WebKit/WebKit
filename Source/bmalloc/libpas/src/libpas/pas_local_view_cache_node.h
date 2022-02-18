@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_THREAD_LOCAL_CACHE_LAYOUT_H
-#define PAS_THREAD_LOCAL_CACHE_LAYOUT_H
+#ifndef PAS_LOCAL_VIEW_CACHE_NODE_H
+#define PAS_LOCAL_VIEW_CACHE_NODE_H
 
+#include "pas_compact_segregated_size_directory_ptr.h"
+#include "pas_compact_atomic_thread_local_cache_layout_node.h"
 #include "pas_allocator_index.h"
-#include "pas_config.h"
-#include "pas_thread_local_cache_layout_node.h"
-#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API extern pas_thread_local_cache_layout_node pas_thread_local_cache_layout_first_node;
-PAS_API extern pas_thread_local_cache_layout_node pas_thread_local_cache_layout_last_node;
+struct pas_local_view_cache_node;
+typedef struct pas_local_view_cache_node pas_local_view_cache_node;
 
-/* Clients can use this to force the next call to add to go to this index. */
-PAS_API extern pas_allocator_index pas_thread_local_cache_layout_next_allocator_index;
+struct pas_local_view_cache_node {
+    pas_compact_atomic_thread_local_cache_layout_node next;
+    pas_compact_segregated_size_directory_ptr directory;
+};
 
-PAS_API pas_allocator_index pas_thread_local_cache_layout_add_node(
-    pas_thread_local_cache_layout_node node);
-
-PAS_API pas_allocator_index pas_thread_local_cache_layout_add(
-    pas_segregated_size_directory* directory);
-
-PAS_API pas_allocator_index pas_thread_local_cache_layout_duplicate(
-    pas_segregated_size_directory* directory);
-
-PAS_API pas_allocator_index pas_thread_local_cache_layout_add_view_cache(
-    pas_segregated_size_directory* directory);
-
-#define PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(node) \
-    node = pas_thread_local_cache_layout_first_node; \
-    node; \
-    node = pas_thread_local_cache_layout_node_get_next(node)
-        
+PAS_API pas_local_view_cache_node*
+pas_local_view_cache_node_create(pas_segregated_size_directory* directory);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_THREAD_LOCAL_CACHE_LAYOUT_H */
+#endif /* PAS_LOCAL_VIEW_CACHE_NODE_H */
 
