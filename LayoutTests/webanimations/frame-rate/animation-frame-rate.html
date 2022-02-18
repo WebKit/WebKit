@@ -51,5 +51,20 @@ test(t => {
         assert_throws_js(TypeError, () => animation(value), `providing the invalid value "${value}" throws`);
 }, "Calling element.animate() allows setting animation.frameRate");
 
+test(t => {
+    const animation = frameRate => document.timeline.animate(() => { }, { frameRate });
+
+    // Numeric value.
+    assert_equals(animation(30).frameRate, 30, "frameRate can be set to a numeric value");
+
+    // Presets.
+    for (let value of presets)
+        assert_equals(animation(value).frameRate, value, "frameRate can be set to a preset value");
+
+    // Invalid values.
+    for (let value of invalidValues)
+        assert_throws_js(TypeError, () => animation(value), `providing the invalid value "${value}" throws`);
+}, "Calling document.timeline.animate() allows setting animation.frameRate");
+
 </script>
 </body>

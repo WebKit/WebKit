@@ -453,6 +453,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
         return Exception { InvalidStateError };
 
     String id = "";
+    std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<std::variant<double, EffectTiming>> customEffectOptions;
 
     if (options) {
@@ -462,6 +463,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
         else {
             auto customEffectOptions = std::get<CustomAnimationOptions>(*options);
             id = customEffectOptions.id;
+            frameRate = customEffectOptions.frameRate;
             customEffectOptionsVariant = WTFMove(customEffectOptions);
         }
         customEffectOptions = customEffectOptionsVariant;
@@ -473,6 +475,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
 
     auto animation = WebAnimation::create(*document(), &customEffectResult.returnValue().get());
     animation->setId(id);
+    animation->setBindingsFrameRate(WTFMove(frameRate));
 
     auto animationPlayResult = animation->play();
     if (animationPlayResult.hasException())

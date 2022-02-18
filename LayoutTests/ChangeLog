@@ -1,3 +1,13 @@
+2022-02-18  Antoine Quint  <graouts@webkit.org>
+
+        [frame-rate] [custom-effect] allow setting frameRate as an option passed to document.timeline.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=236831
+
+        Reviewed by Dean Jackson.
+
+        * webanimations/frame-rate/animation-frame-rate-expected.txt:
+        * webanimations/frame-rate/animation-frame-rate.html:
+
 2022-02-18  Ziran Sun  <zsun@igalia.com>
 
         [InputElement] Return empty string for an invalid floating-point number that ends with "."
