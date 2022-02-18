@@ -1,3 +1,22 @@
+2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+        
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+
+        Steps to generate the compile commands file:
+        make r EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Release
+
+        * DecoderTest/Configurations/DebugRelease.xcconfig:
+        * MediaTime/Configurations/DebugRelease.xcconfig:
+
 2022-01-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed performance test gardening.

@@ -80,6 +80,7 @@ my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
 my $useCCache = -1;
+my $exportCompileCommands = 0;
 
 my @features = getFeatureOptionList();
 
@@ -146,6 +147,8 @@ Usage: $programName [options] [options to pass to build system]
 
   --[no-]use-ccache                 Enable (or disable) CCache, if available
 
+  --export-compile-commands         Generate compile_commands.json (Apple platforms only)
+
 EOF
 
 my %options = (
@@ -167,6 +170,7 @@ my %options = (
     'use-workspace!' => \$useWorkspace,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
+    'export-compile-commands' => \$exportCompileCommands
 );
 
 # Build usage text and options list from features
@@ -191,6 +195,7 @@ if ($useCCache == 1) {
     $ENV{'WK_USE_CCACHE'} = "NO";
 }
 
+$ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 my $productDir = productDir();
 

@@ -47,6 +47,13 @@ ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	endif
 endif
 
+ifneq (,$(EXPORT_COMPILE_COMMANDS))
+		XCODE_OPTIONS += EXPORT_COMPILE_COMMANDS=YES
+		XCODE_OPTIONS += GCC_PRECOMPILE_PREFIX_HEADER=NO
+		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
+		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
+endif
+
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 

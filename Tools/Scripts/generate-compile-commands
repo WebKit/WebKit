@@ -1,0 +1,60 @@
+#!/bin/sh -e
+
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to generate compile_commands.json file
+
+# Change to the root of WebKit Directory
+cd "$(dirname "$0")/../../"
+
+# Check compile_commands folder exists
+if ! [ -d $1/compile_commands/ ]; then
+    echo "Please specify the build directory with compile_commands."
+    echo "Example: generate-compile-commands WebKitBuild/Release"
+    exit 1
+fi
+
+# Remove any previous compile_commands.json
+rm -f compile_commands.json
+
+# Generate compile_commands.json
+echo "[" > compile_commands.json
+awk '{print}' $1/compile_commands/*.json >> compile_commands.json
+
+# Remove last comma
+sed -i '' '$ s/,$//' compile_commands.json
+
+echo "]" >> compile_commands.json
+
+# Workaround issue where clangd fails with -gmodules flag
+sed -i '' 's/"-gmodules"/"-Xclang -fmodule-format=raw"/g' compile_commands.json
+
+# Remove ThirdParty components from indexing
+# This is quite large and probably unnecessary for most.
+sed -i '' '/Source\/ThirdParty/d' compile_commands.json
+
+echo "Generated compile_commands.json"

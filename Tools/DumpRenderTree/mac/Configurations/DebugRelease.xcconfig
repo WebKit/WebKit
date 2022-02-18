@@ -37,5 +37,8 @@ SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
 
+OTHER_CFLAGS = $(inherited) $(COMPILE_COMMANDS_$(EXPORT_COMPILE_COMMANDS));
+COMPILE_COMMANDS_YES = '-gen-cdb-fragment-path' '$(BUILT_PRODUCTS_DIR)/compile_commands';
+
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;
 #include "../../../ccache/ccache.xcconfig"
