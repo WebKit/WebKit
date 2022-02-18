@@ -56,6 +56,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "LocalizedStrings.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
@@ -1019,6 +1020,22 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     }
 }
 
+static bool rendererIsFlexboxItem(RenderObject& renderer)
+{
+    if (auto* parentFlexRenderer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
+        return !parentFlexRenderer->orderIterator().shouldSkipChild(renderer);
+
+    return false;
+}
+
+static bool rendererIsGridItem(RenderObject& renderer)
+{
+    if (is<RenderGrid>(renderer.parent()))
+        return !renderer.isOutOfFlowPositioned() && !renderer.isExcludedFromNormalLayout();
+
+    return false;
+}
+
 Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
 {
     if (bounds.isEmpty())
@@ -1072,6 +1089,18 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         elementHeight = String::number(boundingBox.height());
     }
 
+    Vector<String> layoutContextBubbleStrings;
+    
+    if (rendererIsFlexboxItem(*renderer))
+        layoutContextBubbleStrings.append(WEB_UI_STRING_KEY("Flex Item", "Flex Item (Inspector Element Selection)", "Inspector element selection tooltip text for items inside a Flexbox Container."));
+    else if (rendererIsGridItem(*renderer))
+        layoutContextBubbleStrings.append(WEB_UI_STRING_KEY("Grid Item", "Grid Item (Inspector Element Selection)", "Inspector element selection tooltip text for items inside a Grid Container."));
+
+    if (is<RenderFlexibleBox>(renderer))
+        layoutContextBubbleStrings.append(WEB_UI_STRING_KEY("Flex", "Flex (Inspector Element Selection)", "Inspector element selection tooltip text for Flexbox containers."));
+    else if (is<RenderGrid>(renderer))
+        layoutContextBubbleStrings.append(WEB_UI_STRING_KEY("Grid", "Grid (Inspector Element Selection)", "Inspector element selection tooltip text for Grid containers."));
+
     // Need to enable AX to get the computed role.
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
@@ -1085,7 +1114,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     constexpr auto elementTitleTagColor = SRGBA<uint8_t> { 136, 18, 128 }; // Keep this in sync with XMLViewer.css (.tag)
     constexpr auto elementTitleAttributeValueColor = SRGBA<uint8_t> { 26, 26, 166 }; // Keep this in sync with XMLViewer.css (.attribute-value)
     constexpr auto elementTitleAttributeNameColor = SRGBA<uint8_t> { 153, 69, 0 }; // Keep this in sync with XMLViewer.css (.attribute-name)
-    constexpr auto elementTitleRoleColor = SRGBA<uint8_t> { 170, 13, 145 };
+    constexpr auto elementTitleRoleBubbleColor = SRGBA<uint8_t> { 170, 13, 145, 48 };
+    constexpr auto elementTitleLayoutBubbleColor = Color::gray.colorWithAlphaByte(64);
 
     Vector<InspectorOverlayLabel::Content> labelContents = {
         { elementTagName, elementTitleTagColor },
@@ -1098,9 +1128,19 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         { "px"_s, Color::darkGray },
     };
 
-    if (!elementRole.isEmpty()) {
-        labelContents.append({ "\nRole "_s, elementTitleRoleColor });
-        labelContents.append({ elementRole, Color::black });
+    if (!elementRole.isEmpty() || !layoutContextBubbleStrings.isEmpty()) {
+        labelContents.append({ "\n"_s, Color::black });
+
+        if (!elementRole.isEmpty())
+            labelContents.append({ makeString("Role: "_s, elementRole), Color::black, { InspectorOverlayLabel::Content::Decoration::Type::Bordered, elementTitleRoleBubbleColor } });
+
+        auto isFirstBubble = elementRole.isEmpty();
+        for (auto& layoutContextBubbleString : layoutContextBubbleStrings) {
+            if (!isFirstBubble)
+                labelContents.append({ "  "_s, Color::black });
+            labelContents.append({ layoutContextBubbleString, Color::black, { InspectorOverlayLabel::Content::Decoration::Type::Bordered, elementTitleLayoutBubbleColor } });
+            isFirstBubble = false;
+        }
     }
 
     FrameView* pageView = m_page.mainFrame().view();

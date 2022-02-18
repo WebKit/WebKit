@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InspectorOverlayLabel.h"
 
+#include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
@@ -39,6 +40,8 @@ namespace WebCore {
 
 static constexpr float labelPadding = 4;
 static constexpr float labelArrowSize = 6;
+static constexpr float labelAdditionalLineSpacing = 1;
+static constexpr float labelContentDecorationBorderedLeadingAndTrailingPadding = 1;
 
 InspectorOverlayLabel::InspectorOverlayLabel(Vector<Content>&& contents, FloatPoint location, Color backgroundColor, Arrow arrow)
     : m_contents(WTFMove(contents))
@@ -193,6 +196,14 @@ static Path backgroundPath(float width, float height, InspectorOverlayLabel::Arr
     return path;
 }
 
+struct ComputedContentRun {
+    TextRun textRun;
+    Color textColor;
+    InspectorOverlayLabel::Content::Decoration decoration;
+    bool startsNewLine;
+    float computedWidth;
+};
+
 Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidth)
 {
     constexpr UChar ellipsis = 0x2026;
@@ -201,27 +212,25 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
     float lineHeight = font.metricsOfPrimaryFont().floatHeight();
     float lineDescent = font.metricsOfPrimaryFont().floatDescent();
 
-    Vector<TextRun> textRuns;
-    Vector<Color> textColors;
-    Vector<float> textWidths;
-    Vector<size_t> lineStartIndexes;
+    Vector<ComputedContentRun> computedContentRuns;
+
     float longestLineWidth = 0;
     int currentLine = 0;
 
     float currentLineWidth = 0;
     for (auto content : m_contents) {
         auto lines = content.text.splitAllowingEmptyEntries('\n');
+
+        ASSERT(content.decoration.type == Content::Decoration::Type::None || lines.size() <= 1);
+
         for (size_t i = 0; i < lines.size(); ++i) {
-            if (i) {
-                lineStartIndexes.append(textRuns.size());
+            auto startsNewLine = !!i;
+            if (startsNewLine) {
                 currentLineWidth = 0;
                 ++currentLine;
             }
 
             auto text = lines[i];
-            if (text.isEmpty())
-                continue;
-
             auto textRun = TextRun(text);
             float textWidth = font.width(textRun);
 
@@ -235,9 +244,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
                 }
             }
 
-            textRuns.append(WTFMove(textRun));
-            textColors.append(content.textColor);
-            textWidths.append(textWidth);
+            computedContentRuns.append({ textRun, content.textColor, content.decoration, startsNewLine, textWidth });
 
             currentLineWidth += textWidth;
             if (currentLineWidth > longestLineWidth)
@@ -245,7 +252,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
         }
     }
 
-    float totalTextHeight = lineHeight * (currentLine + 1);
+    float totalTextHeight = (lineHeight * (currentLine + 1)) + (currentLine * labelAdditionalLineSpacing);
 
     FloatPoint textPosition;
     switch (m_arrow.direction) {
@@ -325,16 +332,42 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 
     int line = 0;
     float xOffset = 0;
-    for (size_t i = 0; i < textRuns.size(); ++i) {
-        if (lineStartIndexes.contains(i)) {
+    float yOffset = 0;
+    for (auto& computedContentRun : computedContentRuns) {
+        if (computedContentRun.startsNewLine) {
             xOffset = 0;
             ++line;
+            yOffset += lineHeight + labelAdditionalLineSpacing;
         }
 
-        context.setFillColor(textColors[i]);
-        context.drawText(font, textRuns[i], textPosition + FloatPoint(xOffset, line * lineHeight));
+        switch (computedContentRun.decoration.type) {
+        case Content::Decoration::Type::Bordered: {
+            auto backgroundRect = FloatRoundedRect({
+                textPosition.x() + xOffset - labelContentDecorationBorderedLeadingAndTrailingPadding,
+                textPosition.y() + yOffset - lineHeight + lineDescent,
+                computedContentRun.computedWidth + (labelContentDecorationBorderedLeadingAndTrailingPadding * 2),
+                lineHeight,
+            }, FloatRoundedRect::Radii(2));
 
-        xOffset += textWidths[i];
+            Path backgroundPath;
+            backgroundPath.addRoundedRect(backgroundRect);
+
+            context.setFillColor(computedContentRun.decoration.color);
+            context.setStrokeColor(computedContentRun.decoration.color.darkened());
+
+            context.fillPath(backgroundPath);
+            context.strokePath(backgroundPath);
+            break;
+        }
+
+        case Content::Decoration::Type::None:
+            break;
+        }
+
+        context.setFillColor(computedContentRun.textColor);
+        context.drawText(font, computedContentRun.textRun, textPosition + FloatPoint(xOffset, yOffset));
+
+        xOffset += computedContentRun.computedWidth;
     }
 
     return labelPath;
@@ -367,7 +400,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
         }
     }
 
-    float totalTextHeight = lineHeight * (currentLine + 1);
+    float totalTextHeight = (lineHeight * (currentLine + 1)) + (currentLine * labelAdditionalLineSpacing);
 
     switch (direction) {
     case Arrow::Direction::Down:

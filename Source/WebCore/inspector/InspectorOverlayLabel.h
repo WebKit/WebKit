@@ -79,8 +79,24 @@ public:
     struct Content {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
+        struct Decoration {
+            enum class Type : uint8_t {
+                None,
+                Bordered,
+            };
+
+            Type type;
+            Color color;
+
+#if PLATFORM(IOS_FAMILY)
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InspectorOverlayLabel::Content::Decoration> decode(Decoder&);
+#endif
+        };
+
         String text;
         Color textColor;
+        Decoration decoration { Decoration::Type::None, Color::transparentBlack };
 
 #if PLATFORM(IOS_FAMILY)
         template<class Encoder> void encode(Encoder&) const;
@@ -173,6 +189,7 @@ template<class Encoder> void InspectorOverlayLabel::Content::encode(Encoder& enc
 {
     encoder << text;
     encoder << textColor;
+    encoder << decoration;
 }
 
 template<class Decoder> std::optional<InspectorOverlayLabel::Content> InspectorOverlayLabel::Content::decode(Decoder& decoder)
@@ -187,7 +204,33 @@ template<class Decoder> std::optional<InspectorOverlayLabel::Content> InspectorO
     if (!textColor)
         return std::nullopt;
 
-    return { { *text, *textColor } };
+    std::optional<Decoration> decoration;
+    decoder >> decoration;
+    if (!decoration)
+        return std::nullopt;
+
+    return { { *text, *textColor, *decoration } };
+}
+
+template<class Encoder> void InspectorOverlayLabel::Content::Decoration::encode(Encoder& encoder) const
+{
+    encoder << type;
+    encoder << color;
+}
+
+template<class Decoder> std::optional<InspectorOverlayLabel::Content::Decoration> InspectorOverlayLabel::Content::Decoration::decode(Decoder& decoder)
+{
+    std::optional<Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<Color> color;
+    decoder >> color;
+    if (!color)
+        return std::nullopt;
+
+    return { { *type, *color } };
 }
 
 #endif
@@ -214,6 +257,14 @@ template<> struct EnumTraits<WebCore::InspectorOverlayLabel::Arrow::Alignment> {
         WebCore::InspectorOverlayLabel::Arrow::Alignment::Leading,
         WebCore::InspectorOverlayLabel::Arrow::Alignment::Middle,
         WebCore::InspectorOverlayLabel::Arrow::Alignment::Trailing
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InspectorOverlayLabel::Content::Decoration::Type> {
+    using values = EnumValues<
+        WebCore::InspectorOverlayLabel::Content::Decoration::Type,
+        WebCore::InspectorOverlayLabel::Content::Decoration::Type::None,
+        WebCore::InspectorOverlayLabel::Content::Decoration::Type::Bordered
     >;
 };
 

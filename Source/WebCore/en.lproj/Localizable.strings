@@ -478,6 +478,12 @@
 /* Default application name for Open With context menu */
 "Finder" = "Finder";
 
+/* Inspector element selection tooltip text for Flexbox containers. */
+"Flex (Inspector Element Selection)" = "Flex";
+
+/* Inspector element selection tooltip text for items inside a Flexbox Container. */
+"Flex Item (Inspector Element Selection)" = "Flex Item";
+
 /* Font context sub-menu item */
 "Font" = "Font";
 
@@ -501,6 +507,12 @@
 
 /* Google Safe Browsing */
 "Google Safe Browsing" = "Google Safe Browsing";
+
+/* Inspector element selection tooltip text for Grid containers. */
+"Grid (Inspector Element Selection)" = "Grid";
+
+/* Inspector element selection tooltip text for items inside a Grid Container. */
+"Grid Item (Inspector Element Selection)" = "Grid Item";
 
 /* accessibility role description for web area */
 "HTML content" = "HTML content";
