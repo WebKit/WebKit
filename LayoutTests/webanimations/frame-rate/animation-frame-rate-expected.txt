@@ -1,4 +1,5 @@
 
 PASS Valid animation.frameRate values
 PASS Invalid animation.frameRate values
+PASS Calling element.animate() allows setting animation.frameRate
 

@@ -8,13 +8,16 @@
 <script>
 'use strict';
 
+const presets = ["low", "high", "highest", "auto"];
+const invalidValues = ["default", "120", null, [], {}];
+
 test(t => {
     const animation = new Animation;
 
     assert_equals(animation.frameRate, "auto", "The default value for frameRate is 'auto'");
 
     // AnimationFrameRatePreset values.
-    for (let value of ["low", "high", "highest", "auto"]) {
+    for (let value of presets) {
         animation.frameRate = value;
         assert_equals(animation.frameRate, value, `The value "${value}" can be set`);
     }
@@ -26,11 +29,27 @@ test(t => {
 
 test(t => {
     const animation = new Animation;
-    for (let value of ["default", "120", null, undefined, [], {}]) {
+    for (let value of invalidValues.concat(undefined)) {
         assert_throws_js(TypeError, () => animation.frameRate = value, `Setting the value ${value} throws`);
         assert_equals(animation.frameRate, "auto", `Setting the invalid value "${value}" does not change the value`);
     }
 }, "Invalid animation.frameRate values");
+
+test(t => {
+    const target = document.createElement("div");
+    const animation = frameRate => target.animate(null, { frameRate });
+
+    // Numeric value.
+    assert_equals(animation(30).frameRate, 30, "frameRate can be set to a numeric value");
+
+    // Presets.
+    for (let value of presets)
+        assert_equals(animation(value).frameRate, value, "frameRate can be set to a preset value");
+
+    // Invalid values.
+    for (let value of invalidValues)
+        assert_throws_js(TypeError, () => animation(value), `providing the invalid value "${value}" throws`);
+}, "Calling element.animate() allows setting animation.frameRate");
 
 </script>
 </body>

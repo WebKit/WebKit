@@ -1,5 +1,15 @@
 2022-02-18  Antoine Quint  <graouts@webkit.org>
 
+        [frame-rate] allow setting frameRate as an option passed to Element.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=236830
+
+        Reviewed by Dean Jackson.
+
+        * webanimations/frame-rate/animation-frame-rate-expected.txt:
+        * webanimations/frame-rate/animation-frame-rate.html:
+
+2022-02-18  Antoine Quint  <graouts@webkit.org>
+
         [custom-effect] Animations associated with a custom effect should appear in document.getAnimations() result
         https://bugs.webkit.org/show_bug.cgi?id=236828
 
