@@ -26,13 +26,15 @@
 #include "config.h"
 #include "RemoteVideoFrameObjectHeap.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
 
+#if PLATFORM(COCOA)
 #include <pal/cf/CoreMediaSoftLink.h>
+#endif
 
 namespace WebKit {
 
@@ -57,7 +59,9 @@ RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
 void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection)
 {
     assertIsCurrent(m_consumeThread);
+#if PLATFORM(COCOA)
     m_sharedVideoFrameWriter.disable();
+#endif
 
     if (auto* gpuConnectionToWebProcess = std::exchange(m_gpuConnectionToWebProcess, nullptr)) {
         gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName());
@@ -82,6 +86,7 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
     retireRemove(WTFMove(write));
 }
 
+#if PLATFORM(COCOA)
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     auto identifier = read.identifier();
@@ -99,6 +104,7 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
     );
     m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier }, 0);
 }
+#endif
 
 }
 

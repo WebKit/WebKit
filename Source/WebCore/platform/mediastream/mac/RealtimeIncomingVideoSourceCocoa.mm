@@ -33,7 +33,6 @@
 #import "CVUtilities.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
-#import "RealtimeVideoUtilities.h"
 #import <wtf/cf/TypeCastsCF.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -60,33 +59,6 @@ Ref<RealtimeIncomingVideoSourceCocoa> RealtimeIncomingVideoSourceCocoa::create(r
 RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
     : RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(videoTrackId))
 {
-}
-
-RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
-{
-    OSType format = preferedPixelBufferFormat();
-    ASSERT(format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
-
-    CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, nullptr, &pixelBuffer);
-    ASSERT_UNUSED(status, status == noErr);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    ASSERT(status == noErr);
-
-    auto* yPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-    size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
-    for (unsigned i = 0; i < height; ++i)
-        memset(&yPlane[i * yStride], 0, width);
-
-    auto* uvPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
-    size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
-    for (unsigned i = 0; i < height / 2; ++i)
-        memset(&uvPlane[i * uvStride], 128, width);
-
-    status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-    ASSERT(!status);
-    return adoptCF(pixelBuffer);
 }
 
 CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height, webrtc::BufferType bufferType)

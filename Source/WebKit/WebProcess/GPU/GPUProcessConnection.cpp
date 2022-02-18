@@ -76,7 +76,7 @@
 #include "UserMediaCaptureManagerMessages.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
 #endif
@@ -166,7 +166,7 @@ void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioM
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy()
 {
     if (!m_videoFrameObjectHeapProxy)

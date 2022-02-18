@@ -25,13 +25,14 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(VIDEO)
 
 #include "Connection.h"
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedVideoFrame.h"
+
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

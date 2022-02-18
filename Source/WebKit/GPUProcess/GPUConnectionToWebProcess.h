@@ -106,7 +106,7 @@ struct RemoteRenderingBackendCreationParameters;
 class RemoteWCLayerTreeHost;
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeap;
 #endif
 
@@ -145,9 +145,10 @@ public:
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }
     bool allowsVideoCapture() const { return m_allowsVideoCapture; }
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
+#endif
+#if ENABLE(VIDEO)
     RemoteVideoFrameObjectHeap& videoFrameObjectHeap() const;
 #endif
-
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void startCapturingAudio();
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
@@ -307,6 +308,8 @@ private:
     bool m_allowsAudioCapture { false };
     bool m_allowsVideoCapture { false };
     bool m_allowsDisplayCapture { false };
+#endif
+#if ENABLE(VIDEO)
     IPC::ScopedActiveMessageReceiveQueue<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

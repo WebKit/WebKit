@@ -26,13 +26,15 @@
 #include "config.h"
 #include "RemoteVideoFrameProxy.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
-#include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/CVUtilities.h>
+#include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
+#include <WebCore/VideoFrameCV.h>
 #include <wtf/threads/BinarySemaphore.h>
 #endif
 
@@ -119,6 +121,15 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
     }
     return m_pixelBuffer.get();
 }
+
+RefPtr<WebCore::VideoFrameCV> RemoteVideoFrameProxy::asVideoFrameCV()
+{
+    auto buffer = pixelBuffer();
+    if (!buffer)
+        return nullptr;
+    return VideoFrameCV::create(m_presentationTime, m_isMirrored, m_rotation, RetainPtr { buffer });
+}
+
 #endif
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)

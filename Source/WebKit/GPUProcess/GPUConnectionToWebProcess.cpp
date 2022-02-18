@@ -141,7 +141,6 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "RemoteVideoFrameObjectHeap.h"
 #include <WebCore/SecurityOrigin.h>
 #endif
 
@@ -152,6 +151,10 @@
 
 #if ENABLE(IPC_TESTING_API)
 #include "IPCTesterMessages.h"
+#endif
+
+#if ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeap.h"
 #endif
 
 namespace WebKit {
@@ -244,7 +247,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if ENABLE(MEDIA_STREAM)
     , m_captureOrigin(SecurityOrigin::createUnique())
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
     , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(*this))
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -305,7 +308,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
         m_audioSessionProxy = nullptr;
     }
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
     m_videoFrameObjectHeap.reset();
 #endif
     // RemoteRenderingBackend objects ref their GPUConnectionToWebProcess so we need to make sure
@@ -948,13 +951,14 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString() const
 {
 }
 #endif
+#endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(VIDEO)
 RemoteVideoFrameObjectHeap& GPUConnectionToWebProcess::videoFrameObjectHeap() const
 {
     return *m_videoFrameObjectHeap.get();
 }
-
-#endif // ENABLE(MEDIA_STREAM)
+#endif
 
 #if PLATFORM(MAC)
 void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)

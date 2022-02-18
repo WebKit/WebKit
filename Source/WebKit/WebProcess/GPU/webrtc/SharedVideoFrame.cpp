@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SharedVideoFrame.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(VIDEO)
 
 #include "Logging.h"
 #include <WebCore/SharedVideoFrameInfo.h>
@@ -152,4 +152,4 @@ bool SharedVideoFrameReader::setSharedMemory(const SharedMemory::IPCHandle& ipcH
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#endif

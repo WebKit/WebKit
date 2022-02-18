@@ -44,6 +44,8 @@
 #include "RemoteMediaResourceLoader.h"
 #include "RemoteMediaResourceManager.h"
 #include "RemoteTextTrackProxy.h"
+#include "RemoteVideoFrameObjectHeap.h"
+#include "RemoteVideoFrameProxy.h"
 #include "RemoteVideoTrackProxy.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteConfiguration.h"
@@ -74,7 +76,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration)
+RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, RemoteVideoFrameObjectHeap& videoFrameObjectHeap)
     : m_id(identifier)
     , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
@@ -82,6 +84,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
     , m_configuration(configuration)
     , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
+    , m_videoFrameObjectHeap(videoFrameObjectHeap)
 #if !RELEASE_LOG_DISABLED
     , m_logger(manager.logger())
 #endif
@@ -868,11 +871,9 @@ void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now(), !mediaPlayerPausedOrStalled()), m_id);
 }
 
-// FIXME: This will be turned into cross-platform code soon.
-#if PLATFORM(COCOA)
-void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RefPtr<WebCore::VideoFrameCV>>&&, bool)>&& completionHandler)
+void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&& completionHandler)
 {
-    std::optional<RefPtr<WebCore::VideoFrameCV>> result;
+    std::optional<RemoteVideoFrameProxy::Properties> result;
     bool changed = false;
     RefPtr<WebCore::VideoFrame> videoFrame;
     if (m_player)
@@ -880,16 +881,15 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     if (m_videoFrameForCurrentTime != videoFrame) {
         m_videoFrameForCurrentTime = videoFrame;
         changed = true;
-        RefPtr<VideoFrameCV> videoFrameCV;
         if (videoFrame) {
-            ASSERT(is<VideoFrameCV>(*videoFrame));
-            videoFrameCV = &downcast<VideoFrameCV>(*videoFrame);
+            auto write = RemoteVideoFrameWriteReference::generateForAdd();
+            auto newFrameReference = write.retiredReference();
+            result = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), *videoFrame);
+            m_videoFrameObjectHeap->retire(WTFMove(write), WTFMove(videoFrame), std::nullopt);
         }
-        result = WTFMove(videoFrameCV);
     }
     completionHandler(WTFMove(result), changed);
 }
-#endif
 
 void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
 {

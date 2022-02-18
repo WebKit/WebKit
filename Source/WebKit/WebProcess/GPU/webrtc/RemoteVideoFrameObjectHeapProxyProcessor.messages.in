@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 messages -> RemoteVideoFrameObjectHeapProxyProcessor {
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
@@ -29,4 +29,4 @@ messages -> RemoteVideoFrameObjectHeapProxyProcessor {
     NewVideoFrameBuffer(WebKit::RemoteVideoFrameIdentifier identifier)
 }
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#endif

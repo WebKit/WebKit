@@ -47,9 +47,10 @@ public:
     template<typename Decoder> static std::optional<RefPtr<VideoFrameCV>> decode(Decoder&);
 
     // VideoFrame overrides.
-    WebCore::FloatSize presentationSize() const final;
-    uint32_t videoPixelFormat() const final;
+    WEBCORE_EXPORT WebCore::FloatSize presentationSize() const final;
+    WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
     bool isCV() const final { return true; }
+    WEBCORE_EXPORT RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() final;
 
 private:
     WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);

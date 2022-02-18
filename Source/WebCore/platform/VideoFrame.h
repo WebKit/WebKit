@@ -31,6 +31,11 @@
 
 namespace WebCore {
 
+#if USE(AVFOUNDATION)
+class VideoFrameCV;
+#endif
+
+
 // A class representing a video frame from a decoder, capture source, or similar.
 // FIXME: Currently for implementation purposes inherts from MediaSample until capture code
 // stops referring to MediaSample
@@ -49,6 +54,7 @@ public:
     virtual bool isRemoteProxy() const { return false; }
 #if USE(AVFOUNDATION)
     virtual bool isCV() const { return false; }
+    virtual RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() = 0;
 #endif
 
 protected:

@@ -38,7 +38,6 @@
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
 #import "RuntimeApplicationChecks.h"
-#import "VideoFrameCV.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
@@ -50,13 +49,14 @@
 #endif
 
 #if ENABLE(VIDEO)
-#include "GraphicsContextGLCVCocoa.h"
-#include "MediaPlayerPrivate.h"
+#import "GraphicsContextGLCVCocoa.h"
+#import "MediaPlayerPrivate.h"
+#import "VideoFrameCV.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "ImageRotationSessionVT.h"
-#include "MediaSampleAVFObjC.h"
+#import "ImageRotationSessionVT.h"
+#import "MediaSampleAVFObjC.h"
 #endif
 
 namespace WebCore {
@@ -783,15 +783,16 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
     auto videoFrame = player.videoFrameForCurrentTime();
     if (!videoFrame)
         return false;
-    ASSERT(is<VideoFrameCV>(*videoFrame));
-
+    auto videoFrameCV = videoFrame->asVideoFrameCV();
+    if (!videoFrameCV)
+        return false;
     auto contextCV = asCV();
     if (!contextCV)
         return false;
 
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyVideoSampleToTexture(downcast<VideoFrameCV>(*videoFrame), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+    return contextCV->copyVideoSampleToTexture(*videoFrameCV, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 }
 #endif
 

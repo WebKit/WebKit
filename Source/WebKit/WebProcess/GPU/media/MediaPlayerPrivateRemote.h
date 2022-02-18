@@ -34,6 +34,8 @@
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#include "RemoteVideoFrameProxy.h"
 #include "TextTrackPrivateRemote.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include "VideoTrackPrivateRemote.h"
@@ -413,6 +415,7 @@ private:
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
 #endif
+    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return m_manager.gpuProcessConnection().videoFrameObjectHeapProxy(); }
 
     WeakPtr<WebCore::MediaPlayer> m_player;
     Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
@@ -461,7 +464,7 @@ private:
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
     bool m_renderingCanBeAccelerated { false };
-    RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
+    RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)
     RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;

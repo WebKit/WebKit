@@ -2211,10 +2211,5 @@ webkit.org/b/234536 webgl/max-active-contexts-console-warning.html
 webkit.org/b/234536 webgl/max-active-contexts-gc.html
 webkit.org/b/234536 webgl/max-active-contexts-oldest-context-lost.html
 webkit.org/b/234536 webxr/high-performance.html
-webkit.org/b/234536 fast/mediastream/getUserMedia-to-canvas-1.html [ Crash ]
-webkit.org/b/234536 fast/mediastream/getUserMedia-to-canvas-2.html [ Crash ]
 webkit.org/b/234536 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 webkit.org/b/234536 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
-
-# Captured WebGL to another context2d or WebGL not implemented yet.
-webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]

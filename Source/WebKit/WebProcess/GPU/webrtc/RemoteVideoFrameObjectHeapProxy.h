@@ -25,11 +25,22 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
+#include <wtf/Ref.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+#if PLATFORM(COCOA)
 #include "RemoteVideoFrameObjectHeapProxyProcessor.h"
+#endif
 
 namespace WebKit {
+
+class GPUProcessConnection;
+
+#if PLATFORM(COCOA)
+class RemoteVideoFrameProxy;
+#endif
 
 // Wrapper around RemoteVideoFrameObjectHeapProxyProcessor that will always be destroeyd on main thread.
 class RemoteVideoFrameObjectHeapProxy : public ThreadSafeRefCounted<RemoteVideoFrameObjectHeapProxy, WTF::DestructionThread::MainRunLoop> {

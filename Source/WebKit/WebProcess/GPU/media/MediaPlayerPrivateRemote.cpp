@@ -1005,19 +1005,16 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::Graphi
 
 RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
 {
-// FIXME: This will be made cross-platform again soon. There are no other platforms using this at the moment.
-#if PLATFORM(COCOA)
-    std::optional<RefPtr<WebCore::VideoFrameCV>> result;
+    std::optional<RemoteVideoFrameProxy::Properties> result;
     bool changed = false;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged::Reply(result, changed), m_id))
-        return m_videoFrameForCurrentTime;
+        return nullptr;
     if (changed) {
         if (result)
-            m_videoFrameForCurrentTime = WTFMove(*result);
+            m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(connection(), videoFrameObjectHeapProxy(), WTFMove(*result));
         else
             m_videoFrameForCurrentTime = nullptr;
     }
-#endif
     return m_videoFrameForCurrentTime;
 }
 

@@ -25,12 +25,15 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "RemoteVideoFrameIdentifier.h"
-#include "SharedVideoFrame.h"
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/MediaSample.h>
 #include <wtf/ThreadAssertions.h>
+
+#if PLATFORM(COCOA)
+#include "SharedVideoFrame.h"
+#endif
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
@@ -57,12 +60,16 @@ private:
 
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
+#if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
+#endif
 
     GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_LOCK(m_consumeThread);
     const Ref<IPC::Connection> m_connection;
     ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
+#if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
+#endif
 };
 
 

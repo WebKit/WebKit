@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "CVUtilities.h"
 #include "ImageRotationSessionVT.h"
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"

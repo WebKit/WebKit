@@ -32,11 +32,11 @@
 #include "GPUProcessConnection.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
-#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
 #endif
 
@@ -182,10 +182,15 @@ RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxy::paintCompositedResult
 }
 #endif
 
+#if ENABLE(VIDEO)
 bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
+    auto videoFrame = mediaPlayer.videoFrameForCurrentTime();
+    // Video in WP while WebGL in GPUP is not supported.
+    if (!videoFrame || !is<RemoteVideoFrameProxy>(*videoFrame))
+        return false;
     bool result = false;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromMedia(mediaPlayer.identifier(), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY), Messages::RemoteGraphicsContextGL::CopyTextureFromMedia::Reply(result));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(downcast<RemoteVideoFrameProxy>(*videoFrame).read(), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY), Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame::Reply(result));
     if (!sendResult) {
         markContextLost();
         return false;
@@ -193,6 +198,7 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer
 
     return result;
 }
+#endif
 
 void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
 {

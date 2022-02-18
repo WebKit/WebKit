@@ -30,6 +30,7 @@
 
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
+#include "CVUtilities.h"
 #include "Logging.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
 #include "MediaSampleAVFObjC.h"

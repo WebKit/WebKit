@@ -68,8 +68,6 @@ private:
     webrtc::BufferType m_pixelBufferPoolBufferType;
 };
 
-WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height);
-
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

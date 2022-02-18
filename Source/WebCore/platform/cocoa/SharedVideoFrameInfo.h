@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
 
 #include <wtf/RetainPtr.h>
 #include <wtf/Span.h>

@@ -1,3 +1,55 @@
+2022-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPUP: Crash when running fast/mediastream/getUserMedia-to-canvas-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=236502
+
+        The crash is about MediaPlayerPrivateMediaStreamAVFObjC being in WP while other
+        media player private variants are proxied to GPUP. The previous implementation
+        would send media player identifiers to GPUP for copying.
+        This patch will implement the copy by the media player creating a reference
+        to VideoFrame. WebGL would send reference of the VideoFrame to GPUP for copying.
+
+        Make WP MediaPlayerPrivateRemote always return RemoteVideoFrameProxy objects
+        instead of WP in-process VideoFrame instances (for Cocoa VideoFrameCV) that
+        would hold the video data in process.
+
+        WP MediaPlayerPrivateMediaStreamAVFObjC already returns RemoteVideoFrameProxy
+        objects. This way GPUP WebGL implementation can obtain the read reference
+        to the remote object and send it in copyTextureFromVideoFrame message.
+
+        The WP in-process WebGL implementation converts the RemoteVideoFrameProxy
+        to VideoFrameCV with the new RemoteVideoFrameProxy::asVideoFrameCV.
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromVideoFrame):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromVideoFrame):
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa):
+        (WebKit::RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        (WebKit::RemoteVideoFrameProxy::asVideoFrameCV):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+
 2022-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Allow screen and window capture to be done in the GPU Process

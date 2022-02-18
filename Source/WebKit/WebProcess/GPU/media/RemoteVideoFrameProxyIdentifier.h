@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "ObjectIdentifierReferenceTracker.h"
 #include <WebCore/RemoteVideoFrameIdentifier.h>
@@ -39,4 +39,4 @@ using RemoteVideoFrameReferenceTracker = ObjectIdentifierReferenceTracker<WebCor
 
 } // namespace WebKit
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif

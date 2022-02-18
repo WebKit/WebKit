@@ -54,6 +54,11 @@ uint32_t VideoFrameCV::videoPixelFormat() const
 {
     return CVPixelBufferGetPixelFormatType(m_pixelBuffer.get());
 }
+RefPtr<WebCore::VideoFrameCV> VideoFrameCV::asVideoFrameCV()
+{
+    return this;
+}
+
 
 ImageOrientation VideoFrameCV::orientation() const
 {

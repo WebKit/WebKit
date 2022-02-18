@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "GPUProcessConnection.h"
 #include "RemoteVideoFrameIdentifier.h"
@@ -34,6 +34,12 @@
 namespace IPC {
 class Connection;
 class Decoder;
+}
+
+namespace WebCore {
+#if PLATFORM(COCOA)
+class VideoFrameCV;
+#endif
 }
 
 namespace WebKit {
@@ -80,15 +86,14 @@ public:
     // WebCore::VideoFrame overrides.
     WebCore::FloatSize presentationSize() const final { return m_size; }
     uint32_t videoPixelFormat() const final;
+    bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
+    RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() final;
 #endif
-    bool isRemoteProxy() const final { return true; }
 
 private:
     RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
-
-
 
     const Ref<IPC::Connection> m_connection;
     RemoteVideoFrameReferenceTracker m_referenceTracker;

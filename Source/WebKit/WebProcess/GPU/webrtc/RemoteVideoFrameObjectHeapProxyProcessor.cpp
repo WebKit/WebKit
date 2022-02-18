@@ -26,10 +26,11 @@
 #include "config.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
+#include "RemoteVideoFrameProxy.h"
 
 namespace WebKit {
 

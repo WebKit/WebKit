@@ -35,6 +35,7 @@
 #include "RemoteVideoFrameProxy.h"
 #include "WebProcess.h"
 #include <WebCore/CARingBuffer.h>
+#include <WebCore/CVUtilities.h>
 #include <WebCore/MediaStreamPrivate.h>
 #include <WebCore/MediaStreamTrackPrivate.h>
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>

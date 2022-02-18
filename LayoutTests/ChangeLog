@@ -1,3 +1,14 @@
+2022-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPUP: Crash when running fast/mediastream/getUserMedia-to-canvas-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=236502
+
+        Unskip the previous crashes caused by the lack of implementation.
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-02-18  Jon Lee  <jonlee@apple.com>
 
         REGRESSION (r289990): [iOS] fast/backgrounds/gradient-background-shadow.html is consistently failing

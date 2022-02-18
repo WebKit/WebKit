@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SharedVideoFrameInfo.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
 
 #include "CVUtilities.h"
 #include "IOSurface.h"

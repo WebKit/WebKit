@@ -38,11 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(AVFOUNDATION)
-#include <WebCore/GraphicsContextGLCV.h>
-#endif
-
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
@@ -72,7 +68,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
     , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
 #endif
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
@@ -280,51 +276,14 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
     completionHandler();
 }
 
-void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifier mediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+#if ENABLE(VIDEO) && !USE(AVFOUNDATION)
+void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t, uint32_t, int32_t, uint32_t, uint32_t, uint32_t, bool, bool , CompletionHandler<void(bool)>&& completionHandler)
 {
-    assertIsCurrent(m_streamThread);
-#if USE(AVFOUNDATION)
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
-
-    RefPtr<VideoFrame> videoFrame;
-    auto getVideoFrame = [&] {
-        if (!m_gpuConnectionToWebProcess)
-            return;
-
-        if (auto mediaPlayer = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier))
-            videoFrame = mediaPlayer->videoFrameForCurrentTime();
-    };
-
-    callOnMainRunLoopAndWait(WTFMove(getVideoFrame));
-
-    if (!videoFrame || !is<VideoFrameCV>(*videoFrame)) {
-        completionHandler(false);
-        return;
-    }
-
-    auto contextCV = m_context->asCV();
-    if (!contextCV) {
-        completionHandler(false);
-        return;
-    }
-
-    completionHandler(contextCV->copyVideoSampleToTexture(downcast<VideoFrameCV>(*videoFrame), texture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY)));
-#else
-    UNUSED_VARIABLE(mediaPlayerIdentifier);
-    UNUSED_VARIABLE(texture);
-    UNUSED_VARIABLE(target);
-    UNUSED_VARIABLE(level);
-    UNUSED_VARIABLE(internalFormat);
-    UNUSED_VARIABLE(format);
-    UNUSED_VARIABLE(type);
-    UNUSED_VARIABLE(premultiplyAlpha);
-    UNUSED_VARIABLE(flipY);
-
     notImplemented();
+    m_videoFrameObjectHeap->retire(WTFMove(read), defaultTimeout);
     completionHandler(false);
-#endif
 }
+#endif
 
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 {

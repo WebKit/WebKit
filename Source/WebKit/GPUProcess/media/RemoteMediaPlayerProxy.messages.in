@@ -125,8 +125,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if PLATFORM(COCOA)
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight, WebCore::DestinationColorSpace colorSpace) Synchronous
     ColorSpace() -> (WebCore::DestinationColorSpace colorSpace) Synchronous
-    VideoFrameForCurrentTimeIfChanged() -> (std::optional<RefPtr<WebCore::VideoFrameCV>> videoFrame, bool changed) Synchronous
 #endif
+    VideoFrameForCurrentTimeIfChanged() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> videoFrame, bool changed) Synchronous
 
     PlayAtHostTime(MonotonicTime time)
     PauseAtHostTime(MonotonicTime time)

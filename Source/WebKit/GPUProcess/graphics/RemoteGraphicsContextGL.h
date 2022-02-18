@@ -53,7 +53,7 @@
 #include "WCContentBufferIdentifier.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #endif
@@ -65,7 +65,7 @@ class MachSendRight;
 #endif
 
 namespace WebKit {
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeap;
 #endif
 
@@ -118,7 +118,9 @@ protected:
 #if ENABLE(MEDIA_STREAM)
     void paintCompositedResultsToMediaSample(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif
-    void copyTextureFromMedia(WebCore::MediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+#if ENABLE(VIDEO)
+    void copyTextureFromVideoFrame(RemoteVideoFrameReadReference, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+#endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
@@ -131,6 +133,7 @@ private:
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
+    static constexpr Seconds defaultTimeout = 10_s;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #else
@@ -140,7 +143,7 @@ protected:
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(VIDEO)
 
 #include "IPCSemaphore.h"
 #include "SharedMemory.h"
@@ -97,7 +97,6 @@ inline SharedVideoFrameReader::SharedVideoFrameReader(UseIOSurfaceBufferPool use
 {
 }
 
-
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif

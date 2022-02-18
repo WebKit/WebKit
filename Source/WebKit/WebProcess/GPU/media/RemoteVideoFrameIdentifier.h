@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "ObjectIdentifierReferenceTracker.h"
 #include <WebCore/ProcessQualified.h>

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 #include "IPCTester.h"
 #include "ObjectIdentifierReferenceTracker.h"
 #include <wtf/Condition.h>
@@ -200,4 +199,3 @@ void ThreadSafeObjectHeap<Identifier, HeldType>::add(Identifier identifier, Held
 }
 
 }
-#endif
