@@ -50,6 +50,7 @@
 #endif
 
 namespace WebCore {
+class CaptureDevice;
 struct MockMediaDevice;
 struct ScreenProperties;
 struct SecurityOriginData;
@@ -86,6 +87,12 @@ public:
     void removeMockMediaDevice(const String&);
     void resetMockMediaDevices();
     void setMockCameraIsInterrupted(bool);
+    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 
     void removeSession(PAL::SessionID);
@@ -136,8 +143,6 @@ private:
     void terminateWebProcess(WebCore::ProcessIdentifier);
     void processIsReadyToExit();
 
-    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture);
-
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
@@ -155,6 +160,7 @@ private:
     bool m_hasSentTCCDSandboxExtension { false };
     bool m_hasSentCameraSandboxExtension { false };
     bool m_hasSentMicrophoneSandboxExtension { false };
+    bool m_hasSentDisplayCaptureSandboxExtension { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
@@ -175,6 +181,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     bool m_hasEnabledMediaSourceInlinePainting { false };
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool m_hasEnabledScreenCaptureKit { false };
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

@@ -32,6 +32,8 @@
 #import "MediaPermissionUtilities.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import "WebProcess.h"
+#import "WebProcessPool.h"
 #import <WebCore/CaptureDeviceManager.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -201,7 +203,14 @@ void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const We
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
     if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
-        WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
+        if (!page.preferences().useGPUProcessForDisplayCapture()) {
+            WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
+            return;
+        }
+
+        auto& gpuProcess = page.process().processPool().ensureGPUProcess();
+        gpuProcess.updateSandboxAccess(false, false, true);
+        gpuProcess.showWindowPicker(WTFMove(completionHandler));
         return;
     }
 #endif
@@ -218,7 +227,7 @@ void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const We
     });
 }
 
-void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy& page, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
     if (m_indexOfDeviceSelectedForTesting) {
         completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Screen));
@@ -227,7 +236,14 @@ void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy&, const WebCore
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
     if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
-        WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
+        if (!page.preferences().useGPUProcessForDisplayCapture()) {
+            WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
+            return;
+        }
+
+        auto& gpuProcess = page.process().processPool().ensureGPUProcess();
+        gpuProcess.updateSandboxAccess(false, false, true);
+        gpuProcess.showScreenPicker(WTFMove(completionHandler));
         return;
     }
 #endif

@@ -49,6 +49,7 @@
 #endif
 
 namespace WebCore {
+class CaptureDevice;
 class NowPlayingManager;
 struct MockMediaDevice;
 struct ScreenProperties;
@@ -154,6 +155,10 @@ private:
     void setMockCameraIsInterrupted(bool);
     bool setCaptureAttributionString(const String&);
 #endif
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+#endif
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     void setScreenProperties(const WebCore::ScreenProperties&);
@@ -181,6 +186,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     void setMediaSourceInlinePaintingEnabled(bool);
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void setUseScreenCaptureKit(bool);
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
@@ -221,6 +230,7 @@ private:
     HashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
+    String m_applicationVisibleName;
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
@@ -244,7 +254,9 @@ private:
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
-    String m_applicationVisibleName;
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool m_useScreenCaptureKit { false };
+#endif
 };
 
 } // namespace WebKit

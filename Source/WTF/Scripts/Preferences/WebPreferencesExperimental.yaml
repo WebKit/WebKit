@@ -1420,6 +1420,17 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
+UseGPUProcessForDisplayCapture:
+  type: bool
+  humanReadableName: "GPU Process: Screen and Window capture"
+  humanReadableDescription: "Display capture in GPU Process"
+  webcoreBinding: none
+  condition: HAVE(SC_CONTENT_SHARING_SESSION)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 UseGPUProcessForWebGLEnabled:
   type: bool
   humanReadableName: "GPU Process: WebGL"

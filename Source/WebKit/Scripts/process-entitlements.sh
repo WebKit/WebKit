@@ -105,6 +105,9 @@ function mac_process_gpu_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
             plistbuddy Add :com.apple.private.gpu-restricted bool YES
+            plistbuddy Add :com.apple.private.screencapturekit.sharingsession bool YES
+            plistbuddy Add :com.apple.private.tcc.allow array
+            plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES

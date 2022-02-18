@@ -30,6 +30,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS SCContentFilter;
 OBJC_CLASS SCContentSharingSession;
 OBJC_CLASS WebDisplayMediaPromptHelper;
 
@@ -39,33 +40,14 @@ class CaptureDevice;
 
 class ScreenCaptureKitSharingSessionManager : public CanMakeWeakPtr<ScreenCaptureKitSharingSessionManager> {
 public:
-    class SharingSessionObserver : public CanMakeWeakPtr<SharingSessionObserver> {
-    public:
-        virtual ~SharingSessionObserver() = default;
-
-        enum class Type { Screen, Window };
-        virtual Type sessionType() const = 0;
-        virtual uint32_t sessionID() const = 0;
-
-        virtual void sessionChanged() = 0;
-        virtual void sessionEnded() = 0;
-
-        bool operator==(const SharingSessionObserver& other) const
-        {
-            return sessionType() == other.sessionType() && sessionID() == other.sessionID();
-        }
-    };
-
     WEBCORE_EXPORT static ScreenCaptureKitSharingSessionManager& singleton();
     WEBCORE_EXPORT static bool isAvailable();
+    WEBCORE_EXPORT static bool shouldUseSystemPicker();
 
     ScreenCaptureKitSharingSessionManager();
     ~ScreenCaptureKitSharingSessionManager();
 
     RetainPtr<SCContentSharingSession> takeSharingSessionForFilter(SCContentFilter*);
-
-    RetainPtr<SCContentSharingSession> addSharingSessionObserver(SharingSessionObserver&);
-    void removeSharingSessionObserver(SharingSessionObserver&);
 
     void sessionDidChangeContent(RetainPtr<SCContentSharingSession>);
     void pickerCanceledForSession(RetainPtr<SCContentSharingSession>);

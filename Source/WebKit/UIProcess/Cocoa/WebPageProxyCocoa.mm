@@ -98,6 +98,10 @@ SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+#import <WebCore/ScreenCaptureKitSharingSessionManager.h>
+#endif
+
 #if ENABLE(APPLE_PAY_AMS_UI)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServices)
 SOFT_LINK_CLASS_OPTIONAL(AppleMediaServices, AMSEngagementRequest)

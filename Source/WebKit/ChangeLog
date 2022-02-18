@@ -1,3 +1,57 @@
+2022-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Allow screen and window capture to be done in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=236815
+        <rdar://problem/89117278>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::showWindowPicker): Call the picker.
+        (WebKit::GPUProcess::showScreenPicker): Ditto.
+        (WebKit::GPUProcess::setUseScreenCaptureKit): 
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in: Add rule to allow sandbox
+        to be extended dynamically with the mach-lookups required for the picker.
+        * Scripts/process-entitlements.sh: Add entitlements required for picker.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const): Encode shouldCaptureDisplayInGPUProcess.
+        (WebKit::WebPageCreationParameters::decode): Decode shouldCaptureDisplayInGPUProcess.
+        * Shared/WebPageCreationParameters.h:
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::addDisplayCaptureSandboxExtension): Create extensions required to use the
+        system picker.
+        (WebKit::GPUProcessProxy::updateSandboxAccess): Add display capture.
+        (WebKit::GPUProcessProxy::updateCaptureAccess): Pass "allowDisplayCapture" to updateSandboxAccess.
+        (WebKit::GPUProcessProxy::showWindowPicker):
+        (WebKit::GPUProcessProxy::showScreenPicker):
+        (WebKit::GPUProcessProxy::updatePreferences):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Set shouldCaptureDisplayInGPUProcess.
+
+        * UIProcess/mac/DisplayCaptureSessionManager.mm:
+        (WebKit::DisplayCaptureSessionManager::showWindowPicker): Send message to GPU
+        process when necessary.
+        (WebKit::DisplayCaptureSessionManager::showScreenPicker): Ditto.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformInitialize): Pass shouldCaptureDisplayInGPUProcess to setupCaptureProcesses.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::setupCaptureProcesses): Add shouldCaptureDisplayInGPUProcess
+        parameter.
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource): Deal
+        with GPU process capture.
+        (WebKit::UserMediaCaptureManager::DisplayFactory::setShouldCaptureInGPUProcess):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2022-02-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Use async NSSharingServicePicker menu if available

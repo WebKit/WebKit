@@ -57,7 +57,7 @@ public:
     static const char* supplementName();
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldUseGPUProcessRemoteFrames);
+    void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames);
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
@@ -98,12 +98,14 @@ private:
     class DisplayFactory : public WebCore::DisplayCaptureFactory {
     public:
         explicit DisplayFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
+        void setShouldCaptureInGPUProcess(bool);
 
     private:
         WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*) final;
         WebCore::DisplayCaptureManager& displayCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 
         UserMediaCaptureManager& m_manager;
+        bool m_shouldCaptureInGPUProcess { false };
     };
 
     class NoOpCaptureDeviceManager : public WebCore::DisplayCaptureManager {

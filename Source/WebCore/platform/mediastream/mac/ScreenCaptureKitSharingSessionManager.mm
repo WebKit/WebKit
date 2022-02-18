@@ -127,9 +127,7 @@ static bool screenCaptureKitPickerFeatureEnabled()
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
     return screenCaptureKitPickerFeatureEnabled()
-            && WTF::processHasEntitlement("com.apple.private.screencapturekit.sharingsession")
-            && PAL::getSCContentSharingSessionClass()
-            && ScreenCaptureKitCaptureSource::isAvailable();
+        && PAL::getSCContentSharingSessionClass();
 }
 
 ScreenCaptureKitSharingSessionManager& ScreenCaptureKitSharingSessionManager::singleton()
@@ -208,11 +206,13 @@ void ScreenCaptureKitSharingSessionManager::sessionDidChangeContent(RetainPtr<SC
     std::optional<CaptureDevice> device;
     SCContentFilter* content = [session content];
     switch (content.type) {
-    case SCContentFilterTypeDesktopIndependentWindow:
-        device = ScreenCaptureKitCaptureSource::windowCaptureDeviceWithPersistentID(String::number(content.desktopIndependentWindowInfo.window.windowID));
+    case SCContentFilterTypeDesktopIndependentWindow: {
+        auto *window = content.desktopIndependentWindowInfo.window;
+        device = CaptureDevice(String::number(window.windowID), CaptureDevice::DeviceType::Window, window.title, emptyString(), true);
         break;
+    }
     case SCContentFilterTypeDisplay:
-        device = ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(String::number(content.displayInfo.display.displayID));
+        device = CaptureDevice(String::number(content.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen "), emptyString(), true);
         break;
     case SCContentFilterTypeNothing:
     case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
@@ -240,8 +240,10 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(PromptType 
     ASSERT(isAvailable());
     ASSERT(!m_completionHandler);
 
-    if (!isAvailable() || m_completionHandler)
+    if (!isAvailable()) {
+        completionHandler(std::nullopt);
         return;
+    }
 
     SCContentSharingSession* session = [[PAL::getSCContentSharingSessionClass() alloc] initWithTitle:@"WebKit getDisplayMedia Prompt"];
     if (!session) {

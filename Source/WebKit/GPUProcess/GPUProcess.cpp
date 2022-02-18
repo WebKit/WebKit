@@ -74,6 +74,14 @@
 #include <pal/spi/cg/ImageIOSPI.h>
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+#include <WebCore/ScreenCaptureKitCaptureSource.h>
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+#include <WebCore/ScreenCaptureKitSharingSessionManager.h>
+#endif
+
 namespace WebKit {
 
 // We wouldn't want the GPUProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
@@ -347,8 +355,19 @@ void GPUProcess::setMockCameraIsInterrupted(bool isInterrupted)
 {
     MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(isInterrupted);
 }
+#endif // ENABLE(MEDIA_STREAM)
 
-#endif
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+void GPUProcess::showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
+}
+
+void GPUProcess::showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
+}
+#endif // HAVE(SC_CONTENT_SHARING_SESSION)
 
 #if PLATFORM(MAC)
 void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
@@ -499,6 +518,16 @@ void GPUProcess::setMediaSourceInlinePaintingEnabled(bool enabled)
         return;
     m_mediaSourceInlinePaintingEnabled = enabled;
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaSourceInlinePaintingEnabled(m_mediaSourceInlinePaintingEnabled);
+}
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+void GPUProcess::setUseScreenCaptureKit(bool use)
+{
+    if (m_useScreenCaptureKit == use)
+        return;
+    m_useScreenCaptureKit = use;
+    WebCore::ScreenCaptureKitCaptureSource::setEnabled(m_useScreenCaptureKit);
 }
 #endif
 

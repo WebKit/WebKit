@@ -245,6 +245,38 @@ static inline bool addMicrophoneSandboxExtension(Vector<SandboxExtension::Handle
     return true;
 }
 
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+static inline bool addDisplayCaptureSandboxExtension(std::optional<audit_token_t> auditToken, Vector<SandboxExtension::Handle>& extensions)
+{
+    if (!auditToken) {
+        RELEASE_LOG_ERROR(WebRTC, "NULL audit token");
+        return false;
+    }
+
+    auto handle = SandboxExtension::createHandleForMachLookup("com.apple.replaykit.sharingsession.notification"_s, *auditToken);
+    if (!handle)
+        return false;
+    extensions.append(WTFMove(*handle));
+
+    handle = SandboxExtension::createHandleForMachLookup("com.apple.replaykit.sharingsession"_s, *auditToken);
+    if (!handle)
+        return false;
+    extensions.append(WTFMove(*handle));
+
+    handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd.system"_s, *auditToken);
+    if (!handle)
+        return false;
+    extensions.append(WTFMove(*handle));
+
+    handle = SandboxExtension::createHandleForMachLookup("com.apple.replayd"_s, *auditToken);
+    if (!handle)
+        return false;
+    extensions.append(WTFMove(*handle));
+
+    return true;
+}
+#endif
+
 #if PLATFORM(IOS)
 static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& extensions)
 {
@@ -258,7 +290,7 @@ static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& ext
 }
 #endif
 
-void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture)
+void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
 {
     if (m_useMockCaptureDevices)
         return;
@@ -272,6 +304,11 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
     if (allowAudioCapture && !m_hasSentMicrophoneSandboxExtension && addMicrophoneSandboxExtension(extensions))
         m_hasSentMicrophoneSandboxExtension = true;
 
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(connection()->getAuditToken(), extensions))
+        m_hasSentDisplayCaptureSandboxExtension = true;
+#endif
+
 #if PLATFORM(IOS)
     if ((allowAudioCapture || allowVideoCapture) && !m_hasSentTCCDSandboxExtension && addTCCDSandboxExtension(extensions))
         m_hasSentTCCDSandboxExtension = true;
@@ -284,7 +321,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
 
 void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
 {
-    updateSandboxAccess(allowAudioCapture, allowVideoCapture);
+    updateSandboxAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
 
@@ -316,6 +353,18 @@ void GPUProcessProxy::resetMockMediaDevices()
 void GPUProcessProxy::setMockCameraIsInterrupted(bool isInterrupted)
 {
     send(Messages::GPUProcess::SetMockCameraIsInterrupted { isInterrupted }, 0);
+}
+#endif // ENABLE(MEDIA_STREAM)
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+void GPUProcessProxy::showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::ShowWindowPicker { }, WTFMove(completionHandler));
+}
+
+void GPUProcessProxy::showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::ShowScreenPicker { }, WTFMove(completionHandler));
 }
 #endif
 
@@ -622,6 +671,14 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
             send(Messages::GPUProcess::SetMediaSourceInlinePaintingEnabled(m_hasEnabledMediaSourceInlinePainting), 0);
         }
 #endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+        if (!m_hasEnabledScreenCaptureKit && preferences.useScreenCaptureKit()) {
+            m_hasEnabledScreenCaptureKit = true;
+            send(Messages::GPUProcess::SetUseScreenCaptureKit(m_hasEnabledScreenCaptureKit), 0);
+        }
+#endif
+
     }
 }
 

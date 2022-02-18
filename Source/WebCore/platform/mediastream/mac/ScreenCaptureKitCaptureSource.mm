@@ -216,7 +216,7 @@ bool ScreenCaptureKitCaptureSource::start()
 {
     ASSERT(isAvailable());
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (m_isRunning)
         return true;
@@ -232,7 +232,7 @@ void ScreenCaptureKitCaptureSource::stop()
     if (!m_isRunning)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_isRunning = false;
 
@@ -274,12 +274,14 @@ void ScreenCaptureKitCaptureSource::sessionDidChangeContent(RetainPtr<SCContentS
     std::optional<CaptureDevice> device;
     SCContentFilter* content = [session content];
     switch (content.type) {
-    case SCContentFilterTypeDesktopIndependentWindow:
-        device = windowCaptureDeviceWithPersistentID(String::number(content.desktopIndependentWindowInfo.window.windowID));
+    case SCContentFilterTypeDesktopIndependentWindow: {
+        auto *window = content.desktopIndependentWindowInfo.window;
+        device = CaptureDevice(String::number(window.windowID), CaptureDevice::DeviceType::Window, window.title, emptyString(), true);
         m_content = content.desktopIndependentWindowInfo.window;
         break;
+    }
     case SCContentFilterTypeDisplay:
-        device = screenCaptureDeviceWithPersistentID(String::number(content.displayInfo.display.displayID));
+        device = CaptureDevice(String::number(content.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen"), emptyString(), true);
         m_content = content.displayInfo.display;
         break;
     case SCContentFilterTypeNothing:
@@ -289,7 +291,7 @@ void ScreenCaptureKitCaptureSource::sessionDidChangeContent(RetainPtr<SCContentS
         return;
     }
     if (!device) {
-        streamFailedWithError(nil, "Failed find CaptureDevice after content change"_s);
+        streamFailedWithError(nil, "Failed to find CaptureDevice after content changed"_s);
         return;
     }
 
@@ -308,50 +310,61 @@ DisplayCaptureSourceCocoa::DisplayFrameType ScreenCaptureKitCaptureSource::gener
     return m_currentFrame;
 }
 
-void ScreenCaptureKitCaptureSource::processSharableContent(RetainPtr<SCShareableContent>&& shareableContent, RetainPtr<NSError>&& error)
+static void findSharableDevice(RetainPtr<SCShareableContent>&& shareableContent, CaptureDevice::DeviceType deviceType, uint32_t deviceID, CompletionHandler<void(std::optional<ScreenCaptureKitCaptureSource::Content>, uint32_t)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
-    if (error) {
-        streamFailedWithError(WTFMove(error), "-[SCStream getShareableContentWithCompletionHandler:] failed"_s);
-        return;
-    }
-
-    if (m_captureDevice.type() == CaptureDevice::DeviceType::Screen) {
+    uint32_t index = 0;
+    std::optional<ScreenCaptureKitCaptureSource::Content> content;
+    if (deviceType == CaptureDevice::DeviceType::Screen) {
         [[shareableContent displays] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCDisplay *display, NSUInteger, BOOL *stop) {
-            if (display.displayID == m_deviceID) {
-                m_content = display;
+            if (display.displayID == deviceID) {
+                content = display;
                 *stop = YES;
             }
+            ++index;
         }).get()];
-    } else if (m_captureDevice.type() == CaptureDevice::DeviceType::Window) {
+    } else if (deviceType == CaptureDevice::DeviceType::Window) {
         [[shareableContent windows] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCWindow *window, NSUInteger, BOOL *stop) {
-            if (window.windowID == m_deviceID) {
-                m_content = window;
+            if (window.windowID == deviceID) {
+                content = window;
                 *stop = YES;
             }
+            ++index;
         }).get()];
     } else {
         ASSERT_NOT_REACHED();
-        return;
     }
 
-    if (!m_content) {
-        streamFailedWithError(nil, "capture device not found"_s);
-        return;
-    }
-
-    startContentStream();
+    completionHandler(WTFMove(content), index);
 }
 
 void ScreenCaptureKitCaptureSource::findShareableContent()
 {
     ASSERT(!m_content);
 
-    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }] (SCShareableContent *shareableContent, NSError *error) mutable {
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), shareableContent = RetainPtr { shareableContent }, error = RetainPtr { error }]() mutable {
-            if (weakThis)
-                weakThis->processSharableContent(WTFMove(shareableContent), WTFMove(error));
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
+    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER] (SCShareableContent *shareableContent, NSError *error) mutable {
+        callOnMainRunLoop([this, weakThis = WTFMove(weakThis), shareableContent = RetainPtr { shareableContent }, error = RetainPtr { error }, identifier]() mutable {
+            if (!weakThis)
+                return;
+
+            if (error) {
+                streamFailedWithError(WTFMove(error), "-[SCStream getShareableContentWithCompletionHandler:] failed"_s);
+                return;
+            }
+
+            ALWAYS_LOG_IF_POSSIBLE(identifier, "have content list");
+
+            findSharableDevice(WTFMove(shareableContent), m_captureDevice.type(), m_deviceID, [this, weakThis = WTFMove(weakThis)] (std::optional<Content> content, uint32_t) mutable {
+                if (!content) {
+                    streamFailedWithError(nil, "capture device not found"_s);
+                    return;
+                }
+                m_content = WTFMove(content);
+                startContentStream();
+            });
         });
     }).get()];
 }
@@ -360,6 +373,8 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
 {
     if (m_streamConfiguration)
         return m_streamConfiguration;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_streamConfiguration = adoptNS([PAL::allocSCStreamConfigurationInstance() init]);
     [m_streamConfiguration setPixelFormat:preferedPixelBufferFormat()];
@@ -385,6 +400,8 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
 
 void ScreenCaptureKitCaptureSource::startContentStream()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     if (m_contentStream)
         return;
 
@@ -430,7 +447,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
 
 
     if (!m_contentStream) {
-        streamFailedWithError(nil, "Failed to allocate ContentStream"_s);
+        streamFailedWithError(nil, "Failed to allocate SCStream"_s);
         return;
     }
 
@@ -443,13 +460,15 @@ void ScreenCaptureKitCaptureSource::startContentStream()
         }
     }
 
-    auto completionHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
-        if (!error)
-            return;
+    auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER] (NSError *error) mutable {
+        callOnMainRunLoop([this, weakThis = WTFMove(weakThis), error = RetainPtr { error }, identifier]() mutable {
+            if (!weakThis)
+                return;
 
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
-            if (weakThis)
-                weakThis->streamFailedWithError(WTFMove(error), "-[SCStream startCaptureWithFrameHandler:completionHandler:] failed"_s);
+            if (error)
+                streamFailedWithError(WTFMove(error), "-[SCStream startCaptureWithFrameHandler:completionHandler:] failed"_s);
+            else
+                ALWAYS_LOG_IF_POSSIBLE(identifier, "stream started");
         });
     });
 
@@ -621,6 +640,38 @@ CaptureDevice::DeviceType ScreenCaptureKitCaptureSource::deviceType() const
 RealtimeMediaSourceSettings::DisplaySurfaceType ScreenCaptureKitCaptureSource::surfaceType() const
 {
     return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window;
+}
+
+void ScreenCaptureKitCaptureSource::captureDeviceWithPersistentID(CaptureDevice::DeviceType deviceType, uint32_t deviceID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
+{
+    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), deviceID, deviceType] (SCShareableContent *shareableContent, NSError *error) mutable {
+        callOnMainRunLoop([shareableContent = RetainPtr { shareableContent }, error = RetainPtr { error }, completionHandler = WTFMove(completionHandler), deviceID, deviceType]() mutable {
+
+            if (error) {
+                RELEASE_LOG_ERROR(WebRTC, "getShareableContentWithCompletionHandler failed with error %s", [[error localizedDescription] UTF8String]);
+                completionHandler(std::nullopt);
+                return;
+            }
+
+            findSharableDevice(WTFMove(shareableContent), deviceType, deviceID, [completionHandler = WTFMove(completionHandler)] (std::optional<Content> content, uint32_t index) mutable {
+                if (!content) {
+                    RELEASE_LOG_ERROR(WebRTC, "capture device not found");
+                    return;
+                }
+
+                auto device = switchOn(content.value(),
+                    [index] (const RetainPtr<SCDisplay> display) -> std::optional<CaptureDevice> {
+                        return CaptureDevice(String::number([display displayID]), CaptureDevice::DeviceType::Screen, makeString("Screen ", index), emptyString(), true);
+                    },
+                    [] (const RetainPtr<SCWindow> window)  -> std::optional<CaptureDevice> {
+                        return CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
+                    }
+                );
+
+                completionHandler(WTFMove(device));
+            });
+        });
+    }).get()];
 }
 
 std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(const String& displayIDString)

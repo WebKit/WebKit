@@ -162,6 +162,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInUIProcess;
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
+    encoder << shouldCaptureDisplayInGPUProcess;
     encoder << shouldRenderCanvasInGPUProcess;
     encoder << shouldRenderDOMInGPUProcess;
     encoder << shouldPlayMediaInGPUProcess;
@@ -554,6 +555,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
     if (!decoder.decode(parameters.shouldCaptureDisplayInUIProcess))
+        return std::nullopt;
+
+    if (!decoder.decode(parameters.shouldCaptureDisplayInGPUProcess))
         return std::nullopt;
 
     if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))

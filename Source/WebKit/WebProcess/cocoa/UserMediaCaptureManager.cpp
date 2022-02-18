@@ -71,16 +71,17 @@ const char* UserMediaCaptureManager::supplementName()
     return "UserMediaCaptureManager";
 }
 
-void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldUseGPUProcessRemoteFrames)
+void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames)
 {
     m_shouldUseGPUProcessRemoteFrames = shouldUseGPUProcessRemoteFrames;
     // FIXME(rdar://84278146): Adopt AVCaptureSession attribution API for camera access in the web process if shouldCaptureVideoInGPUProcess is false.
     MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!shouldCaptureAudioInUIProcess && !shouldCaptureAudioInGPUProcess);
     MockRealtimeMediaSourceCenter::singleton().setMockVideoCaptureEnabled(!shouldCaptureVideoInUIProcess && !shouldCaptureVideoInGPUProcess);
-    MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!shouldCaptureDisplayInUIProcess);
+    MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!shouldCaptureDisplayInUIProcess && !shouldCaptureDisplayInGPUProcess);
 
     m_audioFactory.setShouldCaptureInGPUProcess(shouldCaptureAudioInGPUProcess);
     m_videoFactory.setShouldCaptureInGPUProcess(shouldCaptureVideoInGPUProcess);
+    m_displayFactory.setShouldCaptureInGPUProcess(shouldCaptureDisplayInGPUProcess);
 
     if (shouldCaptureAudioInGPUProcess) {
         WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction([](auto&& renderCallback, auto&& resetCallback) {
@@ -92,7 +93,7 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
         RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(m_audioFactory);
     if (shouldCaptureVideoInUIProcess || shouldCaptureVideoInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setVideoCaptureFactory(m_videoFactory);
-    if (shouldCaptureDisplayInUIProcess)
+    if (shouldCaptureDisplayInUIProcess || shouldCaptureDisplayInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setDisplayCaptureFactory(m_displayFactory);
 }
 
@@ -252,9 +253,22 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
 
 CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, false);
-}
-
-}
-
+#if !ENABLE(GPU_PROCESS)
+    if (m_shouldCaptureInGPUProcess)
+        return CaptureSourceOrError { "Display capture in GPUProcess is not implemented"_s };
 #endif
+    if (m_shouldCaptureInGPUProcess)
+        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
+
+    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+}
+
+void UserMediaCaptureManager::DisplayFactory::setShouldCaptureInGPUProcess(bool value)
+{
+    m_shouldCaptureInGPUProcess = value;
+}
+
+
+}
+
+#endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

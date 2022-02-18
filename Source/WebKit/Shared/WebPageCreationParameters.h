@@ -233,6 +233,7 @@ struct WebPageCreationParameters {
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureVideoInGPUProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
+    bool shouldCaptureDisplayInGPUProcess { false };
     bool shouldRenderCanvasInGPUProcess { false };
     bool shouldRenderDOMInGPUProcess { false };
     bool shouldPlayMediaInGPUProcess { false };

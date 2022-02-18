@@ -851,7 +851,22 @@
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
+
 #endif // PLATFORM(MAC)
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.replaykit.sharingsession.notification"
+            "com.apple.replaykit.sharingsession"
+            "com.apple.tccd.system"
+            "com.apple.replayd"
+        )
+    )
+)
+#endif
 
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.relatived.tempest")

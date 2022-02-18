@@ -66,6 +66,9 @@ public:
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
     WEBCORE_EXPORT static void windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>&);
 
+    static void captureDeviceWithPersistentID(CaptureDevice::DeviceType, uint32_t, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+
+    using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamFailedWithError(RetainPtr<NSError>&&, const String&);
     enum class SampleType { Video };
     void streamDidOutputSampleBuffer(RetainPtr<CMSampleBufferRef>, SampleType);
@@ -87,7 +90,6 @@ private:
     const char* logClassName() const final { return "ScreenCaptureKitCaptureSource"; }
 
     void startContentStream();
-    void processSharableContent(RetainPtr<SCShareableContent>&&, RetainPtr<NSError>&&);
     void findShareableContent();
     RetainPtr<SCStreamConfiguration> streamConfiguration();
     void updateStreamConfiguration();
@@ -97,9 +99,7 @@ private:
 
     dispatch_queue_t captureQueue();
 
-    using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     std::optional<Content> m_content;
-
     RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RetainPtr<SCContentFilter> m_contentFilter;
