@@ -224,7 +224,10 @@ static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
 static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 {
     bool authenticated = false;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), Messages::WebProcessProxy::IsAXAuthenticated::Reply(authenticated), 0);
+    // IPC must be done on the main runloop, so dispatch it to avoid crashes when the secondary AX thread handles this callback.
+    callOnMainRunLoopAndWait([&authenticated, auditToken] {
+        WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), Messages::WebProcessProxy::IsAXAuthenticated::Reply(authenticated), 0);
+    });
     return authenticated;
 }
 #endif

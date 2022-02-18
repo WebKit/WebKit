@@ -1,3 +1,19 @@
+2022-02-18  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: isAXAuthenticatedCallback must be handled on the main runloop
+        https://bugs.webkit.org/show_bug.cgi?id=236789
+
+        Reviewed by Chris Fleizach.
+
+        isAXAuthenticatedCallback in WebProcessCocoa.mm performs IPC to the UI process
+        to determine if the given auditToken is valid. This causes a crash with isolated
+        tree mode enabled as IPC must be performed on the main thread / runloop.
+
+        This patch changes this function to dispatch to the main runloop.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::isAXAuthenticatedCallback):
+
 2022-02-18  Saam Barati  <sbarati@apple.com>
 
         Add LC_SOURCE_VERSION to compile targets
