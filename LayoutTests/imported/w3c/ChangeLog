@@ -1,3 +1,13 @@
+2022-02-17  Jon Lee  <jonlee@apple.com>
+
+        [iOS] css/css-color/t422-rgba-onscreen-b.xht and css/css-color/t425-hsla-onscreen-b.xht are consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=236802
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht: Expand maxDifference range to accommodate iOS.
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht:
+
 2022-02-18  Ziran Sun  <zsun@igalia.com>
 
         [InputElement] Return empty string for an invalid floating-point number that ends with "."
