@@ -283,14 +283,21 @@ void ThreadedScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTree
 
 void ThreadedScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
 {
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, timestamp, reasons] {
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, reasons] {
         scrollingCoordinator->reportSynchronousScrollingReasonsChanged(timestamp, reasons);
     });
 }
 
 void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
 {
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, timestamp, unfilledArea] {
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
+        return;
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, unfilledArea] {
         scrollingCoordinator->reportExposedUnfilledArea(timestamp, unfilledArea);
     });
 }
@@ -298,10 +305,11 @@ void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, u
 #if PLATFORM(COCOA)
 void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
-    if (!m_scrollingCoordinator)
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID, horizontal, vertical] {
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontal, vertical] {
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontal, vertical);
     });
 }
@@ -310,20 +318,22 @@ void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nod
 #if PLATFORM(MAC)
 void ThreadedScrollingTree::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {
-    if (!m_scrollingCoordinator)
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID, phase] {
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, phase] {
         scrollingCoordinator->handleWheelEventPhase(nodeID, phase);
     });
 }
 
 void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex)
 {
-    if (!m_scrollingCoordinator)
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
         return;
     
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID, horizontalIndex, verticalIndex] {
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontalIndex, verticalIndex] {
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontalIndex, verticalIndex);
     });
 }
@@ -377,10 +387,11 @@ Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchroniza
 
 void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
 {
-    if (!m_scrollingCoordinator)
+    auto scrollingCoordinator = m_scrollingCoordinator;
+    if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, hasNodeWithAnimatedScroll] {
+    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), hasNodeWithAnimatedScroll] {
         scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
     });
 }
