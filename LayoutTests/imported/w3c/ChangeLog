@@ -1,3 +1,17 @@
+2022-02-18  Joseph Griego  <jgriego@igalia.com>
+
+        [JSC] Enable Shadow Realms support by default
+        https://bugs.webkit.org/show_bug.cgi?id=236673
+
+        Reviewed by Yusuke Suzuki.
+
+        Enabling this flag causes the new WPT test to partially pass (since
+        ShadowRealm is available on Window) but does not completely pass
+        because shadow realm contexts do not yet have the required web APIs
+        exposed.
+
+        * web-platform-tests/dom/idlharness-shadowrealm.window-expected.txt:
+
 2022-02-17  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening. Update fuzzy data.

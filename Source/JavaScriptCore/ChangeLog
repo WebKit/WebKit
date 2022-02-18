@@ -1,3 +1,17 @@
+2022-02-18  Joseph Griego  <jgriego@igalia.com>
+
+        [JSC] Enable Shadow Realms support by default
+        https://bugs.webkit.org/show_bug.cgi?id=236673
+
+        Reviewed by Yusuke Suzuki.
+
+        The implementaiton in JSC is complete and should be correct and
+        reasonably fast now; so, enable it without requiring the flag.
+
+        Should be covered by EWS and existing tests of shadow realms functionality.
+
+        * runtime/OptionsList.h:
+
 2022-02-18  Saam Barati  <sbarati@apple.com>
 
         Add LC_SOURCE_VERSION to compile targets
