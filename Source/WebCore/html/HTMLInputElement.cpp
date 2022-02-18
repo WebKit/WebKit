@@ -167,7 +167,7 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 void HTMLInputElement::createShadowSubtreeAndUpdateInnerTextElementEditability()
 {
     Ref<InputType> protectedInputType(*m_inputType);
-    protectedInputType->createShadowSubtreeAndUpdateInnerTextElementEditability(m_parsingInProgress ? ChildChange::Source::Parser : ChildChange::Source::API, isInnerTextElementEditable());
+    protectedInputType->createShadowSubtreeAndUpdateInnerTextElementEditability(isInnerTextElementEditable());
 }
 
 HTMLInputElement::~HTMLInputElement()

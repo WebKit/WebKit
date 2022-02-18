@@ -241,7 +241,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     return ShouldCallBaseEventHandler::Yes;
 }
 
-void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
+void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
@@ -250,10 +250,10 @@ void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(Con
     Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
     track->setPseudo(ShadowPseudoIds::webkitSliderRunnableTrack());
-    track->appendChild(source, SliderThumbElement::create(document));
+    track->appendChild(ContainerNode::ChildChange::Source::Parser, SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
-    container->appendChild(source, track);
-    element()->userAgentShadowRoot()->appendChild(source, container);
+    container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const

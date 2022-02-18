@@ -306,7 +306,7 @@ public:
 
     // Shadow tree handling.
 
-    virtual void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool);
+    virtual void createShadowSubtreeAndUpdateInnerTextElementEditability(bool);
     virtual void destroyShadowSubtree();
 
     virtual HTMLElement* containerElement() const { return nullptr; }

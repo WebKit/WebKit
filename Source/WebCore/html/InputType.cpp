@@ -561,7 +561,7 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
-void InputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
+void InputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
 }
 

@@ -316,7 +316,7 @@ bool TextFieldInputType::shouldHaveCapsLockIndicator() const
     return RenderTheme::singleton().shouldHaveCapsLockIndicator(*element());
 }
 
-void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool isInnerTextElementEditable)
+void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool isInnerTextElementEditable)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
@@ -336,7 +336,7 @@ void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability
     m_innerText = TextControlInnerTextElement::create(document, isInnerTextElementEditable);
 
     if (!createsContainer) {
-        element()->userAgentShadowRoot()->appendChild(source, *m_innerText);
+        element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerText);
         updatePlaceholderText();
         return;
     }
@@ -346,7 +346,7 @@ void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability
 
     if (shouldHaveSpinButton) {
         m_innerSpinButton = SpinButtonElement::create(document, *this);
-        m_container->appendChild(source, *m_innerSpinButton);
+        m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerSpinButton);
     }
 
     if (shouldHaveCapsLockIndicator) {
@@ -356,7 +356,7 @@ void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
         m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
 
-        m_container->appendChild(source, *m_capsLockIndicator);
+        m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_capsLockIndicator);
     }
     updateAutoFillButton();
 }

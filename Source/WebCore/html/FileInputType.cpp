@@ -175,7 +175,6 @@ bool FileInputType::appendFormData(DOMFormData& formData) const
         return true;
     }
 
-
     for (auto& file : fileList->files())
         formData.append(name, file.get());
     return true;
@@ -263,12 +262,12 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     element()->invalidateStyleForSubtree();
 }
 
-void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
+void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->shadowRoot());
-    element()->userAgentShadowRoot()->appendChild(source, element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));
 }
 
 void FileInputType::disabledStateChanged()
