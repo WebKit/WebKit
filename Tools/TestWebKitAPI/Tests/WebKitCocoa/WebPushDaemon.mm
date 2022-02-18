@@ -707,6 +707,100 @@ TEST_F(WebPushDTest, UnsubscribeTest)
     ASSERT_TRUE([obj isEqual:expected]);
 }
 
+#if ENABLE(INSTALL_COORDINATION_BUNDLES)
+#if USE(APPLE_INTERNAL_SDK)
+static void deleteAllRegistrationsForDataStore(WKWebsiteDataStore *dataStore)
+{
+    __block bool originOperationDone = false;
+    __block RetainPtr<NSSet<WKSecurityOrigin *>> originSet;
+    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
+        originSet = origins;
+        originOperationDone = true;
+    }];
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+    if (![originSet count])
+        return;
+
+    __block size_t deletedOrigins = 0;
+    originOperationDone = false;
+    for (WKSecurityOrigin *origin in originSet.get()) {
+        [dataStore _deletePushAndNotificationRegistration:origin completionHandler:^(NSError *error) {
+            EXPECT_FALSE(!!error);
+            if (++deletedOrigins == [originSet count])
+                originOperationDone = true;
+        }];
+    }
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+    originOperationDone = false;
+    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
+        EXPECT_EQ([origins count], 0u);
+        originOperationDone = true;
+    }];
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+}
+
+TEST(WebPushD, InstallCoordinationBundles)
+{
+    NSURL *tempDirectory = setUpTestWebPushD();
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    deleteAllRegistrationsForDataStore(dataStore.get());
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+    [configuration.get().preferences _setNotificationsEnabled:YES];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://main/index.html"]]];
+    TestWebKitAPI::Util::run(&alertReceived);
+
+    alertReceived = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://secondary/index.html"]]];
+    TestWebKitAPI::Util::run(&alertReceived);
+
+    static bool originOperationDone = false;
+    static RetainPtr<NSSet<WKSecurityOrigin *>> origins;
+    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *rawOrigins) {
+        EXPECT_EQ([rawOrigins count], 2u);
+        origins = rawOrigins;
+        originOperationDone = true;
+    }];
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+    for (WKSecurityOrigin *origin in origins.get()) {
+        EXPECT_TRUE([origin.protocol isEqualToString:@"testing"]);
+        EXPECT_TRUE([origin.host isEqualToString:@"main"] || [origin.host isEqualToString:@"secondary"]);
+    }
+
+    deleteAllRegistrationsForDataStore(dataStore.get());
+    cleanUpTestWebPushD(tempDirectory);
+}
+#endif // #if USE(APPLE_INTERNAL_SDK)
+#endif // ENABLE(INSTALL_COORDINATION_BUNDLES)
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS)

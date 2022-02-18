@@ -1,3 +1,50 @@
+2022-02-18  Brady Eidson  <beidson@apple.com>
+
+        Add an InstallCoordination webpushd backend
+        https://bugs.webkit.org/show_bug.cgi?id=233714
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+        
+        This patch lets the iOS build create a placeholder app bundle to represent a registration using InstallCoordination.
+        
+        * Configurations/webpushd.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+        
+        * webpushd/AppBundleRequest.mm:
+        (WebPushD::AppBundleRequest::start): Use the ICAppBundle implementation when appropriate.
+        
+        * webpushd/ICAppBundle.h: Copied from Source/WebKit/webpushd/PushAppBundle.h.
+        (WebPushD::ICAppBundle::create):
+        
+        * webpushd/ICAppBundle.mm: Added.
+        (-[WebAppInstallCoordinatorObserver initWithICAppBundle:]):
+        (-[WebAppInstallCoordinatorObserver coordinatorDidCompleteSuccessfully:forApplicationRecord:]):
+        (-[WebAppInstallCoordinatorObserver coordinator:canceledWithReason:client:]):
+        (WebPushD::broadcastDebugMessage):
+        (WebPushD::ICAppBundle::ICAppBundle):
+        (WebPushD::encodeOriginStringForBundleIdentifier):
+        (WebPushD::originStringFromEncodedBundleIdentifier):
+        (WebPushD::bundlePrefixForHostAppIdentifier):
+        (WebPushD::bundleNameForOriginStringAndHostAppIdentifier):
+        (WebPushD::ICAppBundle::getOriginsWithRegistrations):
+        (WebPushD::ICAppBundle::getBundleIdentifier):
+        (WebPushD::ICAppBundle::checkForExistingBundle):
+        (WebPushD::ICAppBundle::deleteExistingBundle):
+        (WebPushD::ICAppBundle::didDeleteExistingBundleWithError):
+        (WebPushD::ICAppBundle::stop):
+        (WebPushD::ICAppBundle::createBundle):
+        (WebPushD::ICAppBundle::bundleCreationSucceeded):
+        (WebPushD::ICAppBundle::bundleCreationFailed):
+        
+        * webpushd/InstallCoordinationSPI.h: Added.
+        * webpushd/LaunchServicesSPI.h: Copied from Source/WebKit/webpushd/PushAppBundle.h.
+        * webpushd/PushAppBundle.h:
+        
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::getOriginsWithPushAndNotificationPermissions): Use the ICAppBundle implementation when appropriate.
+
 2022-02-18  Gavin Phillips  <gavin.p@apple.com>
 
         Change domain used to hold whether CaptivePortalMode is active

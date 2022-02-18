@@ -31,6 +31,7 @@
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
 #import "HandleMessage.h"
+#import "ICAppBundle.h"
 #import "MockAppBundleRegistry.h"
 
 #import <WebCore/PushPermissionState.h>
@@ -441,8 +442,11 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
         return;
     }
 
-    // FIXME: This will need platform-specific implementations for real world bundles once implemented.
-    replySender({ });
+#if ENABLE(INSTALL_COORDINATION_BUNDLES)
+    ICAppBundle::getOriginsWithRegistrations(*connection, WTFMove(replySender));
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
 }
 
 void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)

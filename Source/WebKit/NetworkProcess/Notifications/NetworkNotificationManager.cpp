@@ -70,6 +70,7 @@ void NetworkNotificationManager::maybeSendConnectionConfiguration() const
 
 void NetworkNotificationManager::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& completionHandler)
 {
+    LOG(Push, "Network process passing permission request to webpushd");
     sendMessageWithReply<WebPushD::MessageType::RequestSystemNotificationPermission>(WTFMove(completionHandler), originString);
 }
 

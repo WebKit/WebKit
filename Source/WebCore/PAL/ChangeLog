@@ -1,3 +1,16 @@
+2022-02-18  Brady Eidson  <beidson@apple.com>
+
+        Add an InstallCoordination webpushd backend
+        https://bugs.webkit.org/show_bug.cgi?id=233714
+
+        Reviewed by Alex Christensen.
+
+        Expose "toHexString" so we can SHA256 an arbitrary string to a hex representation.
+
+        * pal/crypto/CryptoDigest.h:
+        * pal/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp:
+        (PAL::CryptoDigest::toHexString):
+
 2022-02-18  Saam Barati  <sbarati@apple.com>
 
         Add LC_SOURCE_VERSION to compile targets

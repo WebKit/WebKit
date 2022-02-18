@@ -667,6 +667,7 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
+
         completionHandler(result);
     }).get()];
 }

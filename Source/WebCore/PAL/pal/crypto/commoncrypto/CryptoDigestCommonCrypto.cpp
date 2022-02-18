@@ -182,4 +182,19 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
+String CryptoDigest::toHexString()
+{
+    auto hash = computeHash();
+
+    char* start = 0;
+    unsigned hashLength = hash.size();
+    CString result = CString::newUninitialized(hashLength * 2, start);
+    char* buffer = start;
+    for (size_t i = 0; i < hashLength; ++i) {
+        snprintf(buffer, 3, "%02X", hash.at(i));
+        buffer += 2;
+    }
+    return String::fromUTF8(result);
+}
+
 } // namespace PAL

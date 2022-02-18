@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK)
 
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+// This space intentionally left blank
 
-namespace PAL {
+#else
 
-struct CryptoDigestContext;
+NS_ASSUME_NONNULL_BEGIN
 
-class CryptoDigest {
-    WTF_MAKE_NONCOPYABLE(CryptoDigest);
-public:
-    enum class Algorithm {
-        SHA_1,
-        SHA_224,
-        SHA_256,
-        SHA_384,
-        SHA_512,
-    };
-    PAL_EXPORT static std::unique_ptr<CryptoDigest> create(Algorithm);
-    PAL_EXPORT ~CryptoDigest();
-
-    PAL_EXPORT void addBytes(const void* input, size_t length);
-    PAL_EXPORT Vector<uint8_t> computeHash();
-    PAL_EXPORT String toHexString();
-
-private:
-    CryptoDigest();
-
-    std::unique_ptr<CryptoDigestContext> m_context;
+typedef NS_ENUM(NSUInteger, LSInstallType) {
+    LSInstallTypeIntentionalDowngrade = 8
 };
 
-} // namespace PAL
+@interface LSRecord : NSObject
+@end
+
+@interface LSBundleRecord : LSRecord
+@property (readonly, nullable) NSString *bundleIdentifier;
+@end
+
+@interface LSApplicationRecord : LSBundleRecord
+@property (readonly) BOOL placeholder;
+@property (readonly) NSString *managementDomain;
+
+- (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier allowPlaceholder:(BOOL)allowPlaceholder error:(NSError **)outError;
+@end
+
+@interface LSEnumerator<__covariant ObjectType> : NSEnumerator<ObjectType>
+@end
+
+typedef NS_OPTIONS(uint64_t, LSApplicationEnumerationOptions) {
+    LSApplicationEnumerationOptionsEnumeratePlaceholders = (1 << 6)
+};
+
+@interface LSApplicationRecord (Enumeration)
++ (LSEnumerator<LSApplicationRecord *> *)enumeratorWithOptions:(LSApplicationEnumerationOptions)options;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // PLATFORM(IOS)

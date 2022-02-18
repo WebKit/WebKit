@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 @class NSError;
 
@@ -52,7 +52,7 @@ public:
     virtual void didCreateAppBundle(PushAppBundle&, PushAppBundleCreationResult) = 0;
 };
 
-class PushAppBundle : public RefCounted<PushAppBundle> {
+class PushAppBundle : public ThreadSafeRefCounted<PushAppBundle> {
 public:
     virtual ~PushAppBundle();
     void detachFromClient();
