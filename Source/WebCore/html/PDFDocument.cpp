@@ -107,12 +107,14 @@ private:
 
 void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    auto* iframe = dynamicDowncast<HTMLIFrameElement>(event.target());
-    ASSERT(iframe, "Should have event target");
-
-    if (event.type() == eventNames().loadEvent) {
-        m_document->injectContentScript(*iframe->contentDocument());
-    }
+    if (is<HTMLIFrameElement>(event.target()) && event.type() == eventNames().loadEvent) {
+        m_document->injectContentScript();
+    } else if (is<HTMLScriptElement>(event.target()) && event.type() == eventNames().loadEvent) {
+        m_document->setContentScriptLoaded(true);
+        if (m_document->isFinishedParsing())
+            m_document->sendPDFArrayBuffer();
+    } else
+        ASSERT_NOT_REACHED();
 }
 
 bool PDFDocumentEventListener::operator==(const EventListener& other) const
@@ -135,6 +137,7 @@ Ref<DocumentParser> PDFDocument::createParser()
 
 void PDFDocument::createDocumentStructure()
 {
+    // The empty file parameter prevents default pdf from loading.
     auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=";
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
@@ -146,35 +149,68 @@ void PDFDocument::createDocumentStructure()
     body->setAttribute(styleAttr, AtomString("margin: 0px;height: 100vh;", AtomString::ConstructFromLiteral));
     rootElement->appendChild(body);
 
-    auto iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, *this);
-    iframe->setAttribute(srcAttr, makeString(viewerURL, encodeWithURLEscapeSequences(url().string())));
-    iframe->setAttribute(styleAttr, AtomString("width: 100%; height: 100%; border: 0; display: block;", AtomString::ConstructFromLiteral));
-    body->appendChild(iframe);
+    m_iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, *this);
+    m_iframe->setAttribute(srcAttr, AtomString(viewerURL));
+    m_iframe->setAttribute(styleAttr, AtomString("width: 100%; height: 100%; border: 0; display: block;", AtomString::ConstructFromLiteral));
 
-    auto listener = PDFDocumentEventListener::create(*this);
-    iframe->addEventListener("load", listener.copyRef(), false);
+    m_listener = PDFDocumentEventListener::create(*this);
+    m_iframe->addEventListener("load", *m_listener, false);
 
-    m_viewerRendered = true;
+    body->appendChild(*m_iframe);
 }
 
 void PDFDocument::updateDuringParsing()
 {
-    if (!m_viewerRendered)
+    if (!m_iframe)
         createDocumentStructure();
 }
 
 void PDFDocument::finishedParsing()
 {
-    ASSERT(m_viewerRendered);
+    ASSERT(m_iframe);
+    m_isFinishedParsing = true;
+    if (m_isContentScriptLoaded)
+        sendPDFArrayBuffer();
 }
 
-void PDFDocument::injectContentScript(Document& contentDocument)
+void PDFDocument::sendPDFArrayBuffer()
 {
-    ASSERT(contentDocument.body());
+    using namespace JSC;
 
-    auto script = HTMLScriptElement::create(scriptTag, contentDocument, false, false);
+    auto* frame = m_iframe->contentFrame();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=236668 - Use postMessage
+    auto openFunction = frame->script().executeScriptIgnoringException("PDFJSContentScript.open").getObject();
+
+    auto globalObject = this->globalObject();
+    auto& vm = globalObject->vm();
+
+    JSLockHolder lock(vm);
+    auto callData = getCallData(vm, openFunction);
+    ASSERT(callData.type != CallData::Type::None);
+    MarkedArgumentBuffer arguments;
+    auto arrayBuffer = loader()->mainResourceData()->tryCreateArrayBuffer();
+    if (!arrayBuffer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto sharingMode = arrayBuffer->sharingMode();
+    arguments.append(JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTFMove(arrayBuffer)));
+    ASSERT(!arguments.hasOverflowed());
+
+    call(globalObject, openFunction, callData, globalObject, arguments);
+}
+
+void PDFDocument::injectContentScript()
+{
+    auto contentDocument = m_iframe->contentDocument();
+    ASSERT(contentDocument->body());
+
+    auto script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
+    script->addEventListener("load", m_listener.releaseNonNull(), false);
+
     script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js");
-    contentDocument.body()->appendChild(script);
+    contentDocument->body()->appendChild(script);
 }
 
 }

@@ -31,6 +31,9 @@ const PDFJSContentScript = {
     },
     init() {
         this.injectStyle();
+    },
+    open(data) {
+        PDFViewerApplication.open(data);
     }
 };
 
