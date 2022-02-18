@@ -1,3 +1,18 @@
+2022-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace trac URLs in Introduction.md by equivalent GitHub URLs
+        https://bugs.webkit.org/show_bug.cgi?id=236826
+
+        Reviewed by Sihui Liu.
+
+        Replaced track links by equivalent Github links in Introduction.md.
+
+        Also replaced an example of a reference test since the previously referenced test
+        had been converted to a manual test, and updated documentations around preferences
+        as they had been refactored since this was originally written. 
+
+        * Introduction.md:
+
 2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
 
         Generate compile_commands.json on macOS Builds
