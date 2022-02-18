@@ -53,6 +53,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentfulPaintChecker.h"
 #include "CookieJar.h"
+#include "CustomEffect.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "CustomEvent.h"
@@ -8515,12 +8516,21 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
     updateStyleIfNeeded();
 
     Vector<RefPtr<WebAnimation>> animations;
-    for (auto* animation : WebAnimation::instances()) {
-        if (!animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
-            continue;
 
-        auto* target = downcast<KeyframeEffect>(*animation->effect()).target();
-        if (target && target->isConnected() && &target->document() == this && function(*target))
+    auto effectCanBeListed = [&](AnimationEffect* effect) {
+        if (is<CustomEffect>(effect))
+            return true;
+
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect)) {
+            auto* target = keyframeEffect->target();
+            return target && target->isConnected() && &target->document() == this && function(*target);
+        }
+
+        return false;
+    };
+
+    for (auto* animation : WebAnimation::instances()) {
+        if (animation->isRelevant() && effectCanBeListed(animation->effect()))
             animations.append(animation);
     }
 
