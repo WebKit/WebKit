@@ -1,3 +1,17 @@
+2022-02-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Link issue to pull requests (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=236339
+        <rdar://problem/88657772>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Re-open associated closed PRs.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2022-02-18  Sihui Liu  <sihui_liu@apple.com>
 
         Add test coverage for data migration introduced in r289878
