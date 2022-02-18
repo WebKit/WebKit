@@ -74,9 +74,14 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
     if (!self)
         return nil;
 
-    // FIXME: Call initWithWebsiteIdentifier and pass the websiteIdentifier when HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS) and !websiteIdentifier.isEmpty() once <rdar://88834301> is fixed.
+#if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS) && defined(CL_HAS_RADAR_88834301)
+    if (!websiteIdentifier.isEmpty())
+        _locationManager = adoptNS([allocCLLocationManagerInstance() initWithWebsiteIdentifier:websiteIdentifier]);
+#else
     UNUSED_PARAM(websiteIdentifier);
-    _locationManager = adoptNS([allocCLLocationManagerInstance() init]);
+#endif
+    if (!_locationManager)
+        _locationManager = adoptNS([allocCLLocationManagerInstance() init]);
     _client = &client;
     _websiteIdentifier = websiteIdentifier;
     [_locationManager setDelegate:self];
