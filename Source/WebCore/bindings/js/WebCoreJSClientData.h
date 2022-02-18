@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -25,54 +25,26 @@
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
 #include "WorkerThreadType.h"
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class DOMClientIsoSubspaces;
 class DOMIsoSubspaces;
 
-class JSVMClientData : public JSC::VM::ClientData {
-    WTF_MAKE_NONCOPYABLE(JSVMClientData); WTF_MAKE_FAST_ALLOCATED;
-    friend class VMWorldIterator;
-
+class JSHeapData {
+    WTF_MAKE_NONCOPYABLE(JSHeapData);
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class JSVMClientData;
 public:
-    explicit JSVMClientData(JSC::VM&);
+    JSHeapData(JSC::Heap&);
 
-    virtual ~JSVMClientData();
-    
-    WEBCORE_EXPORT static void initNormalWorld(JSC::VM*, WorkerThreadType);
+    static JSHeapData* ensureHeapData(JSC::Heap&);
 
-    DOMWrapperWorld& normalWorld() { return *m_normalWorld; }
-
-    void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
-
-    void rememberWorld(DOMWrapperWorld& world)
-    {
-        ASSERT(!m_worldSet.contains(&world));
-        m_worldSet.add(&world);
-    }
-
-    void forgetWorld(DOMWrapperWorld& world)
-    {
-        ASSERT(m_worldSet.contains(&world));
-        m_worldSet.remove(&world);
-    }
-
-    WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
-    JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
-    
-    JSC::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
-    JSC::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
-    JSC::IsoSubspace& domNamespaceObjectSpace() { return m_domNamespaceObjectSpace; }
-    JSC::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
-    JSC::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
-    JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
-    JSC::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
-    JSC::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
-    JSC::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
-    JSC::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
-    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
+    Lock& lock() { return m_lock; }
+    DOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
 
     Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
 
@@ -83,14 +55,11 @@ public:
             func(*space);
     }
 
-    DOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
+    JSC::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
+    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
 
 private:
-    HashSet<DOMWrapperWorld*> m_worldSet;
-    RefPtr<DOMWrapperWorld> m_normalWorld;
-
-    JSBuiltinFunctions m_builtinFunctions;
-    WebCoreBuiltinNames m_builtinNames;
+    Lock m_lock;
 
     JSC::IsoHeapCellType m_runtimeArrayHeapCellType;
     JSC::IsoHeapCellType m_runtimeObjectHeapCellType;
@@ -125,8 +94,78 @@ private:
     JSC::IsoSubspace m_windowProxySpace;
     JSC::IsoSubspace m_idbSerializationSpace;
     std::unique_ptr<JSC::IsoSubspace> m_fileSystemDirectoryHandleIteratorSpace;
+
     std::unique_ptr<DOMIsoSubspaces> m_subspaces;
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
+};
+
+
+class JSVMClientData : public JSC::VM::ClientData {
+    WTF_MAKE_NONCOPYABLE(JSVMClientData); WTF_MAKE_FAST_ALLOCATED;
+    friend class VMWorldIterator;
+
+public:
+    explicit JSVMClientData(JSC::VM&);
+
+    virtual ~JSVMClientData();
+    
+    WEBCORE_EXPORT static void initNormalWorld(JSC::VM*, WorkerThreadType);
+
+    DOMWrapperWorld& normalWorld() { return *m_normalWorld; }
+
+    void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
+
+    void rememberWorld(DOMWrapperWorld& world)
+    {
+        ASSERT(!m_worldSet.contains(&world));
+        m_worldSet.add(&world);
+    }
+
+    void forgetWorld(DOMWrapperWorld& world)
+    {
+        ASSERT(m_worldSet.contains(&world));
+        m_worldSet.remove(&world);
+    }
+
+    JSHeapData& heapData() { return *m_heapData; }
+
+    WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
+    JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
+    
+    JSC::GCClient::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domNamespaceObjectSpace() { return m_domNamespaceObjectSpace; }
+    JSC::GCClient::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
+    JSC::GCClient::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
+    JSC::GCClient::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
+    JSC::GCClient::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
+    JSC::GCClient::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
+    JSC::GCClient::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+    JSC::GCClient::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
+    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::GCClient::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
+
+    DOMClientIsoSubspaces& clientSubspaces() { return *m_clientSubspaces.get(); }
+
+private:
+    HashSet<DOMWrapperWorld*> m_worldSet;
+    RefPtr<DOMWrapperWorld> m_normalWorld;
+
+    JSBuiltinFunctions m_builtinFunctions;
+    WebCoreBuiltinNames m_builtinNames;
+
+    JSHeapData* m_heapData;
+    JSC::GCClient::IsoSubspace m_domBuiltinConstructorSpace;
+    JSC::GCClient::IsoSubspace m_domConstructorSpace;
+    JSC::GCClient::IsoSubspace m_domNamespaceObjectSpace;
+    JSC::GCClient::IsoSubspace m_domWindowPropertiesSpace;
+    JSC::GCClient::IsoSubspace m_runtimeArraySpace;
+    JSC::GCClient::IsoSubspace m_runtimeMethodSpace;
+    JSC::GCClient::IsoSubspace m_runtimeObjectSpace;
+    JSC::GCClient::IsoSubspace m_windowProxySpace;
+    JSC::GCClient::IsoSubspace m_idbSerializationSpace;
+
+    std::unique_ptr<JSC::GCClient::IsoSubspace> m_fileSystemDirectoryHandleIteratorSpace;
+    std::unique_ptr<DOMClientIsoSubspaces> m_clientSubspaces;
 };
 
 } // namespace WebCore

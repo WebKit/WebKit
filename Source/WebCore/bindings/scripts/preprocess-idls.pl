@@ -41,6 +41,7 @@ my $idlFileNamesList;
 my $testGlobalContextName;
 my $supplementalDependencyFile;
 my $isoSubspacesHeaderFile;
+my $clientISOSubspacesHeaderFile;
 my $constructorsHeaderFile;
 my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
@@ -81,6 +82,7 @@ GetOptions('defines=s' => \$defines,
            'testGlobalContextName=s' => \$testGlobalContextName,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'isoSubspacesHeaderFile=s' => \$isoSubspacesHeaderFile,
+           'clientISOSubspacesHeaderFile=s' => \$clientISOSubspacesHeaderFile,
            'constructorsHeaderFile=s' => \$constructorsHeaderFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
@@ -114,6 +116,7 @@ die('Must specify IDL attributes file using --idlAttributesFile.') unless define
 
 $supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
 $isoSubspacesHeaderFile = CygwinPathIfNeeded($isoSubspacesHeaderFile);
+$clientISOSubspacesHeaderFile = CygwinPathIfNeeded($clientISOSubspacesHeaderFile);
 $constructorsHeaderFile = CygwinPathIfNeeded($constructorsHeaderFile);
 $windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
 $workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
@@ -175,12 +178,29 @@ my $isoSubspacesHeaderCode = <<END;
 #pragma once
 
 namespace WebCore {
+using namespace JSC;
 
 class DOMIsoSubspaces {
     WTF_MAKE_NONCOPYABLE(DOMIsoSubspaces);
     WTF_MAKE_FAST_ALLOCATED(DOMIsoSubspaces);
 public:
     DOMIsoSubspaces() = default;
+END
+
+my $clientISOSubspacesHeaderCode = <<END;
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+
+#pragma once
+
+namespace WebCore {
+using namespace JSC;
+
+class DOMClientIsoSubspaces {
+    WTF_MAKE_NONCOPYABLE(DOMClientIsoSubspaces);
+    WTF_MAKE_FAST_ALLOCATED(DOMClientIsoSubspaces);
+public:
+    DOMClientIsoSubspaces() = default;
 END
 
 my @constructors = ();
@@ -248,9 +268,11 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
 
     my $isCallbackInterface = isCallbackInterfaceFromIDL($idlFile);
     if (!$isCallbackInterface) {
-        $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName};\n";
+        $isoSubspacesHeaderCode .= "    std::unique_ptr<IsoSubspace> m_subspaceFor${interfaceName};\n";
+        $clientISOSubspacesHeaderCode .= "    std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceFor${interfaceName};\n";
         if (containsIterableInterfaceFromIDL($idlFile)) {
-            $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
+            $isoSubspacesHeaderCode .= "    std::unique_ptr<IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
+            $clientISOSubspacesHeaderCode .= "    std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceFor${interfaceName}Iterator;\n";
         }
     }
 
@@ -324,6 +346,12 @@ if ($isoSubspacesHeaderFile) {
     $isoSubspacesHeaderCode .= "};\n";
     $isoSubspacesHeaderCode .= "} // namespace WebCore\n";
     WriteFileIfChanged($isoSubspacesHeaderFile, $isoSubspacesHeaderCode);
+}
+
+if ($clientISOSubspacesHeaderFile) {
+    $clientISOSubspacesHeaderCode .= "};\n";
+    $clientISOSubspacesHeaderCode .= "} // namespace WebCore\n";
+    WriteFileIfChanged($clientISOSubspacesHeaderFile, $clientISOSubspacesHeaderCode);
 }
 
 if ($constructorsHeaderFile) {

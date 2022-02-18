@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  *  This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ public:
     using Base = JSWrapperObject;
 
     template<typename, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.symbolObjectSpace<mode>();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,27 +47,39 @@ const JSC::ClassInfo JSFileSystemDirectoryHandleIterator::s_info = { "Directory 
 template<>
 const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorPrototype) };
 
-IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
+GCClient::IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
 {
-    JSC::JSLockHolder apiLocker(vm);
+    JSLockHolder apiLocker(vm);
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    if (auto* space = clientData.fileSystemDirectoryHandleIteratorSpace())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator> || !JSFileSystemDirectoryHandleIterator::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator>)
-        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSFileSystemDirectoryHandleIterator));
-    else
-        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSFileSystemDirectoryHandleIterator));
-    auto* space = clientData.fileSystemDirectoryHandleIteratorSpace();
+    if (auto* clientSpace = clientData.fileSystemDirectoryHandleIteratorSpace())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    IsoSubspace* space = heapData.fileSystemDirectoryHandleIteratorSpace();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator> || !JSFileSystemDirectoryHandleIterator::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSFileSystemDirectoryHandleIterator);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSFileSystemDirectoryHandleIterator);
+        heapData.setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<IsoSubspace>(space));
+
 IGNORE_WARNINGS_BEGIN("unreachable-code")
 IGNORE_WARNINGS_BEGIN("tautological-compare")
-    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSFileSystemDirectoryHandleIterator::visitOutputConstraints;
-    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-        clientData.outputConstraintSpaces().append(space);
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSFileSystemDirectoryHandleIterator::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
-    return space;
+    }
+
+    auto* clientSpace = new GCClient::IsoSubspace(*space);
+    clientData.setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<GCClient::IsoSubspace>(clientSpace));
+    return clientSpace;
 }
 
 inline JSC::EncodedJSValue jsFileSystemDirectoryHandleIterator_onPromiseSettledBody(JSGlobalObject* globalObject, JSC::CallFrame*, JSFileSystemDirectoryHandleIterator* castedThis)

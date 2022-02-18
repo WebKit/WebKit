@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008-2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -313,7 +313,7 @@ Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject* lexicalGlobalObj
     return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
 }
 
-JSC::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)
+JSC::GCClient::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->runtimeObjectSpace();
 }

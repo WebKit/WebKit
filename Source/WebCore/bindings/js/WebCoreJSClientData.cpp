@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCoreJSClientData.h"
 
+#include "DOMClientIsoSubspaces.h"
 #include "DOMGCOutputConstraint.h"
 #include "DOMIsoSubspaces.h"
 #include "JSAudioWorkletGlobalScope.h"
@@ -53,15 +54,14 @@
 #include "runtime_array.h"
 #include "runtime_method.h"
 #include "runtime_object.h"
+#include <mutex>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 using namespace JSC;
 
-JSVMClientData::JSVMClientData(VM& vm)
-    : m_builtinFunctions(vm)
-    , m_builtinNames(vm)
-    , m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
+JSHeapData::JSHeapData(Heap& heap)
+    : m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
     , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
     , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
     , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
@@ -81,18 +81,52 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSAudioWorkletGlobalScope>())
 #endif
     , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::Args<JSIDBSerializationGlobalObject>())
-    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMBuiltinConstructorBase)
-    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMConstructorBase)
-    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMObject)
-    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSDOMWindowProperties)
-    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeArrayHeapCellType, RuntimeArray)
-    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), RuntimeMethod) // Hash:0xf70c4a85
-    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
-    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType, JSWindowProxy)
-    , m_idbSerializationSpace ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
+    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMBuiltinConstructorBase)
+    , m_domConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMConstructorBase)
+    , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMObject)
+    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMWindowProperties)
+    , m_runtimeArraySpace ISO_SUBSPACE_INIT(heap, m_runtimeArrayHeapCellType, RuntimeArray)
+    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, RuntimeMethod) // Hash:0xf70c4a85
+    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
+    , m_windowProxySpace ISO_SUBSPACE_INIT(heap, m_windowProxyHeapCellType, JSWindowProxy)
+    , m_idbSerializationSpace ISO_SUBSPACE_INIT(heap, m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
     , m_subspaces(makeUnique<DOMIsoSubspaces>())
 {
 }
+
+JSHeapData* JSHeapData::ensureHeapData(Heap& heap)
+{
+    if (!Options::useGlobalGC())
+        return new JSHeapData(heap);
+
+    static JSHeapData* singleton = nullptr;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        singleton = new JSHeapData(heap);
+    });
+    return singleton;
+}
+
+#define CLIENT_ISO_SUBSPACE_INIT(subspace) subspace(m_heapData->subspace)
+
+JSVMClientData::JSVMClientData(VM& vm)
+    : m_builtinFunctions(vm)
+    , m_builtinNames(vm)
+    , m_heapData(JSHeapData::ensureHeapData(vm.heap))
+    , CLIENT_ISO_SUBSPACE_INIT(m_domBuiltinConstructorSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_domConstructorSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_domNamespaceObjectSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_domWindowPropertiesSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_runtimeArraySpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_runtimeMethodSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_runtimeObjectSpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_windowProxySpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_idbSerializationSpace)
+    , m_clientSubspaces(makeUnique<DOMClientIsoSubspaces>())
+{
+}
+
+#undef CLIENT_ISO_SUBSPACE_INIT
 
 JSVMClientData::~JSVMClientData()
 {
@@ -142,7 +176,7 @@ void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
     JSVMClientData* clientData = new JSVMClientData(*vm);
     vm->clientData = clientData; // ~VM deletes this pointer.
 
-    vm->heap.addMarkingConstraint(makeUnique<DOMGCOutputConstraint>(*vm, *clientData));
+    vm->heap.addMarkingConstraint(makeUnique<DOMGCOutputConstraint>(*vm, clientData->heapData()));
 
     clientData->m_normalWorld = DOMWrapperWorld::create(*vm, DOMWrapperWorld::Type::Normal);
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController(type == WorkerThreadType::DedicatedWorker || type == WorkerThreadType::Worklet));

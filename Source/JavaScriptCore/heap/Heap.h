@@ -73,6 +73,7 @@ class Heap;
 class HeapProfiler;
 class HeapVerifier;
 class IncrementalSweeper;
+class IsoSubspacePerVM;
 class JITStubRoutine;
 class JITStubRoutineSet;
 class JSCell;
@@ -105,6 +106,172 @@ class JSCGLibWrapperObject;
 namespace DFG {
 class SpeculativeJIT;
 }
+
+namespace GCClient {
+class Heap;
+}
+
+#define FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
+    v(arraySpace, cellHeapCellType, JSArray) \
+    v(bigIntSpace, cellHeapCellType, JSBigInt) \
+    v(calleeSpace, cellHeapCellType, JSCallee) \
+    v(clonedArgumentsSpace, cellHeapCellType, ClonedArguments) \
+    v(customGetterSetterSpace, cellHeapCellType, CustomGetterSetter) \
+    v(dateInstanceSpace, dateInstanceHeapCellType, DateInstance) \
+    v(domAttributeGetterSetterSpace, cellHeapCellType, DOMAttributeGetterSetter) \
+    v(exceptionSpace, destructibleCellHeapCellType, Exception) \
+    v(executableToCodeBlockEdgeSpace, cellHeapCellType, ExecutableToCodeBlockEdge) \
+    v(functionSpace, cellHeapCellType, JSFunction) \
+    v(getterSetterSpace, cellHeapCellType, GetterSetter) \
+    v(globalLexicalEnvironmentSpace, globalLexicalEnvironmentHeapCellType, JSGlobalLexicalEnvironment) \
+    v(internalFunctionSpace, cellHeapCellType, InternalFunction) \
+    v(jsProxySpace, cellHeapCellType, JSProxy) \
+    v(nativeExecutableSpace, destructibleCellHeapCellType, NativeExecutable) \
+    v(numberObjectSpace, cellHeapCellType, NumberObject) \
+    v(plainObjectSpace, cellHeapCellType, JSNonFinalObject) \
+    v(promiseSpace, cellHeapCellType, JSPromise) \
+    v(propertyNameEnumeratorSpace, cellHeapCellType, JSPropertyNameEnumerator) \
+    v(propertyTableSpace, destructibleCellHeapCellType, PropertyTable) \
+    v(regExpSpace, destructibleCellHeapCellType, RegExp) \
+    v(regExpObjectSpace, cellHeapCellType, RegExpObject) \
+    v(ropeStringSpace, stringHeapCellType, JSRopeString) \
+    v(scopedArgumentsSpace, cellHeapCellType, ScopedArguments) \
+    v(sparseArrayValueMapSpace, destructibleCellHeapCellType, SparseArrayValueMap) \
+    v(stringSpace, stringHeapCellType, JSString) \
+    v(stringObjectSpace, cellHeapCellType, StringObject) \
+    v(structureChainSpace, cellHeapCellType, StructureChain) \
+    v(structureRareDataSpace, destructibleCellHeapCellType, StructureRareData) \
+    v(symbolTableSpace, destructibleCellHeapCellType, SymbolTable)
+    
+#define FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(v) \
+    v(structureSpace, destructibleCellHeapCellType, Structure) \
+    v(brandedStructureSpace, destructibleCellHeapCellType, BrandedStructure) \
+
+#define FOR_EACH_JSC_ISO_SUBSPACE(v) \
+    FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
+    FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(v)
+
+#if JSC_OBJC_API_ENABLED
+#define FOR_EACH_JSC_OBJC_API_DYNAMIC_ISO_SUBSPACE(v) \
+    v(apiWrapperObjectSpace, apiWrapperObjectHeapCellType, JSCallbackObject<JSAPIWrapperObject>) \
+    v(objCCallbackFunctionSpace, objCCallbackFunctionHeapCellType, ObjCCallbackFunction)
+#else
+#define FOR_EACH_JSC_OBJC_API_DYNAMIC_ISO_SUBSPACE(v)
+#endif
+
+#ifdef JSC_GLIB_API_ENABLED
+#define FOR_EACH_JSC_GLIB_API_DYNAMIC_ISO_SUBSPACE(v) \
+    v(apiWrapperObjectSpace, apiWrapperObjectHeapCellType, JSCallbackObject<JSAPIWrapperObject>) \
+    v(jscCallbackFunctionSpace, jscCallbackFunctionHeapCellType, JSCCallbackFunction) \
+    v(callbackAPIWrapperGlobalObjectSpace, callbackAPIWrapperGlobalObjectHeapCellType, JSCallbackObject<JSAPIWrapperGlobalObject>)
+#else
+#define FOR_EACH_JSC_GLIB_API_DYNAMIC_ISO_SUBSPACE(v)
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+#define FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v) \
+    v(jsToWasmICCalleeSpace, cellHeapCellType, JSToWasmICCallee) \
+    v(webAssemblyExceptionSpace, webAssemblyExceptionHeapCellType, JSWebAssemblyException) \
+    v(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType, WebAssemblyFunction) \
+    v(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType, JSWebAssemblyGlobal) \
+    v(webAssemblyInstanceSpace, webAssemblyInstanceHeapCellType, JSWebAssemblyInstance) \
+    v(webAssemblyMemorySpace, webAssemblyMemoryHeapCellType, JSWebAssemblyMemory) \
+    v(webAssemblyModuleSpace, webAssemblyModuleHeapCellType, JSWebAssemblyModule) \
+    v(webAssemblyModuleRecordSpace, webAssemblyModuleRecordHeapCellType, WebAssemblyModuleRecord) \
+    v(webAssemblyTableSpace, webAssemblyTableHeapCellType, JSWebAssemblyTable) \
+    v(webAssemblyTagSpace, webAssemblyTagHeapCellType, JSWebAssemblyTag) \
+    v(webAssemblyWrapperFunctionSpace, cellHeapCellType, WebAssemblyWrapperFunction)
+#else
+#define FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v)
+#endif
+
+#define FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(v) \
+    FOR_EACH_JSC_OBJC_API_DYNAMIC_ISO_SUBSPACE(v) \
+    FOR_EACH_JSC_GLIB_API_DYNAMIC_ISO_SUBSPACE(v) \
+    \
+    v(apiGlobalObjectSpace, apiGlobalObjectHeapCellType, JSAPIGlobalObject) \
+    v(apiValueWrapperSpace, cellHeapCellType, JSAPIValueWrapper) \
+    v(arrayBufferSpace, cellHeapCellType, JSArrayBuffer) \
+    v(arrayIteratorSpace, cellHeapCellType, JSArrayIterator) \
+    v(asyncGeneratorSpace, cellHeapCellType, JSAsyncGenerator) \
+    v(bigInt64ArraySpace, cellHeapCellType, JSBigInt64Array) \
+    v(bigIntObjectSpace, cellHeapCellType, BigIntObject) \
+    v(bigUint64ArraySpace, cellHeapCellType, JSBigUint64Array) \
+    v(booleanObjectSpace, cellHeapCellType, BooleanObject) \
+    v(boundFunctionSpace, cellHeapCellType, JSBoundFunction) \
+    v(callbackConstructorSpace, callbackConstructorHeapCellType, JSCallbackConstructor) \
+    v(callbackGlobalObjectSpace, callbackGlobalObjectHeapCellType, JSCallbackObject<JSGlobalObject>) \
+    v(callbackFunctionSpace, cellHeapCellType, JSCallbackFunction) \
+    v(callbackObjectSpace, callbackObjectHeapCellType, JSCallbackObject<JSNonFinalObject>) \
+    v(customGetterFunctionSpace, customGetterFunctionHeapCellType, JSCustomGetterFunction) \
+    v(customSetterFunctionSpace, customSetterFunctionHeapCellType, JSCustomSetterFunction) \
+    v(dataViewSpace, cellHeapCellType, JSDataView) \
+    v(debuggerScopeSpace, cellHeapCellType, DebuggerScope) \
+    v(errorInstanceSpace, errorInstanceHeapCellType, ErrorInstance) \
+    v(finalizationRegistrySpace, finalizationRegistryCellType, JSFinalizationRegistry) \
+    v(float32ArraySpace, cellHeapCellType, JSFloat32Array) \
+    v(float64ArraySpace, cellHeapCellType, JSFloat64Array) \
+    v(functionRareDataSpace, destructibleCellHeapCellType, FunctionRareData) \
+    v(generatorSpace, cellHeapCellType, JSGenerator) \
+    v(globalObjectSpace, globalObjectHeapCellType, JSGlobalObject) \
+    v(injectedScriptHostSpace, injectedScriptHostSpaceHeapCellType, Inspector::JSInjectedScriptHost) \
+    v(int8ArraySpace, cellHeapCellType, JSInt8Array) \
+    v(int16ArraySpace, cellHeapCellType, JSInt16Array) \
+    v(int32ArraySpace, cellHeapCellType, JSInt32Array) \
+    v(intlCollatorSpace, intlCollatorHeapCellType, IntlCollator) \
+    v(intlDateTimeFormatSpace, intlDateTimeFormatHeapCellType, IntlDateTimeFormat) \
+    v(intlDisplayNamesSpace, intlDisplayNamesHeapCellType, IntlDisplayNames) \
+    v(intlListFormatSpace, intlListFormatHeapCellType, IntlListFormat) \
+    v(intlLocaleSpace, intlLocaleHeapCellType, IntlLocale) \
+    v(intlNumberFormatSpace, intlNumberFormatHeapCellType, IntlNumberFormat) \
+    v(intlPluralRulesSpace, intlPluralRulesHeapCellType, IntlPluralRules) \
+    v(intlRelativeTimeFormatSpace, intlRelativeTimeFormatHeapCellType, IntlRelativeTimeFormat) \
+    v(intlSegmentIteratorSpace, intlSegmentIteratorHeapCellType, IntlSegmentIterator) \
+    v(intlSegmenterSpace, intlSegmenterHeapCellType, IntlSegmenter) \
+    v(intlSegmentsSpace, intlSegmentsHeapCellType, IntlSegments) \
+    v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
+    v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
+    v(mapBucketSpace, cellHeapCellType, JSMap::BucketType) \
+    v(mapIteratorSpace, cellHeapCellType, JSMapIterator) \
+    v(mapSpace, cellHeapCellType, JSMap) \
+    v(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType, JSModuleNamespaceObject) \
+    v(nativeStdFunctionSpace, nativeStdFunctionHeapCellType, JSNativeStdFunction) \
+    v(proxyObjectSpace, cellHeapCellType, ProxyObject) \
+    v(proxyRevokeSpace, cellHeapCellType, ProxyRevoke) \
+    v(remoteFunctionSpace, cellHeapCellType, JSRemoteFunction) \
+    v(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable) \
+    v(scriptFetchParametersSpace, destructibleCellHeapCellType, JSScriptFetchParameters) \
+    v(scriptFetcherSpace, destructibleCellHeapCellType, JSScriptFetcher) \
+    v(setBucketSpace, cellHeapCellType, JSSet::BucketType) \
+    v(setIteratorSpace, cellHeapCellType, JSSetIterator) \
+    v(setSpace, cellHeapCellType, JSSet) \
+    v(shadowRealmSpace, cellHeapCellType, ShadowRealmObject) \
+    v(strictEvalActivationSpace, cellHeapCellType, StrictEvalActivation) \
+    v(stringIteratorSpace, cellHeapCellType, JSStringIterator) \
+    v(sourceCodeSpace, destructibleCellHeapCellType, JSSourceCode) \
+    v(symbolSpace, destructibleCellHeapCellType, Symbol) \
+    v(symbolObjectSpace, cellHeapCellType, SymbolObject) \
+    v(templateObjectDescriptorSpace, destructibleCellHeapCellType, JSTemplateObjectDescriptor) \
+    v(temporalCalendarSpace, cellHeapCellType, TemporalCalendar) \
+    v(temporalDurationSpace, cellHeapCellType, TemporalDuration) \
+    v(temporalInstantSpace, cellHeapCellType, TemporalInstant) \
+    v(temporalPlainTimeSpace, cellHeapCellType, TemporalPlainTime) \
+    v(temporalTimeZoneSpace, cellHeapCellType, TemporalTimeZone) \
+    v(uint8ArraySpace, cellHeapCellType, JSUint8Array) \
+    v(uint8ClampedArraySpace, cellHeapCellType, JSUint8ClampedArray) \
+    v(uint16ArraySpace, cellHeapCellType, JSUint16Array) \
+    v(uint32ArraySpace, cellHeapCellType, JSUint32Array) \
+    v(unlinkedEvalCodeBlockSpace, destructibleCellHeapCellType, UnlinkedEvalCodeBlock) \
+    v(unlinkedFunctionCodeBlockSpace, destructibleCellHeapCellType, UnlinkedFunctionCodeBlock) \
+    v(unlinkedModuleProgramCodeBlockSpace, destructibleCellHeapCellType, UnlinkedModuleProgramCodeBlock) \
+    v(unlinkedProgramCodeBlockSpace, destructibleCellHeapCellType, UnlinkedProgramCodeBlock) \
+    v(weakObjectRefSpace, cellHeapCellType, JSWeakObjectRef) \
+    v(weakMapSpace, weakMapHeapCellType, JSWeakMap) \
+    v(weakSetSpace, weakSetHeapCellType, JSWeakSet) \
+    v(withScopeSpace, cellHeapCellType, JSWithScope) \
+    \
+    FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_ISO_SUBSPACE(v)
+
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
@@ -406,6 +573,7 @@ private:
     friend class HandleSet;
     friend class HeapUtil;
     friend class HeapVerifier;
+    friend class IsoSubspacePerVM;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
     friend class MarkStackMergingConstraint;
@@ -425,6 +593,8 @@ private:
     class HeapThread;
     friend class HeapThread;
 
+    friend class GCClient::Heap;
+
     static constexpr size_t minExtraMemory = 256;
     
     class CFinalizerOwner final : public WeakHandleOwner {
@@ -434,6 +604,8 @@ private:
     class LambdaFinalizerOwner final : public WeakHandleOwner {
         void finalize(Handle<Unknown>, void* context) final;
     };
+
+    Lock& lock() { return m_lock; }
 
     JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(size_t);
     JS_EXPORT_PRIVATE void deprecatedReportExtraMemorySlowCase(size_t);
@@ -575,6 +747,7 @@ private:
     
     void verifyGC();
 
+    Lock m_lock;
     const HeapType m_heapType;
     MutatorState m_mutatorState { MutatorState::Running };
     const size_t m_ramSize;
@@ -835,40 +1008,13 @@ public:
     CompleteSubspace variableSizedCellSpace; // FIXME: This space is problematic because we have things in here like DirectArguments and ScopedArguments; those should be split into JSValueOOB cells and JSValueStrict auxiliaries. https://bugs.webkit.org/show_bug.cgi?id=182858
     CompleteSubspace destructibleObjectSpace;
 
-    IsoSubspace arraySpace;
-    IsoSubspace bigIntSpace;
-    IsoSubspace calleeSpace;
-    IsoSubspace clonedArgumentsSpace;
-    IsoSubspace customGetterSetterSpace;
-    IsoSubspace dateInstanceSpace;
-    IsoSubspace domAttributeGetterSetterSpace;
-    IsoSubspace exceptionSpace;
-    IsoSubspace executableToCodeBlockEdgeSpace;
-    IsoSubspace functionSpace;
-    IsoSubspace getterSetterSpace;
-    IsoSubspace globalLexicalEnvironmentSpace;
-    IsoSubspace internalFunctionSpace;
-    IsoSubspace jsProxySpace;
-    IsoSubspace nativeExecutableSpace;
-    IsoSubspace numberObjectSpace;
-    IsoSubspace plainObjectSpace;
-    IsoSubspace promiseSpace;
-    IsoSubspace propertyNameEnumeratorSpace;
-    IsoSubspace propertyTableSpace;
-    IsoSubspace regExpSpace;
-    IsoSubspace regExpObjectSpace;
-    IsoSubspace ropeStringSpace;
-    IsoSubspace scopedArgumentsSpace;
-    IsoSubspace sparseArrayValueMapSpace;
-    IsoSubspace stringSpace;
-    IsoSubspace stringObjectSpace;
-    IsoSubspace structureChainSpace;
-    IsoSubspace structureRareDataSpace;
-    IsoSubspace structureSpace;
-    IsoSubspace brandedStructureSpace;
-    IsoSubspace symbolTableSpace;
+#define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \
+    IsoSubspace name;
 
-#define DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(name) \
+    FOR_EACH_JSC_ISO_SUBSPACE(DECLARE_ISO_SUBSPACE)
+#undef DECLARE_ISO_SUBSPACE
+
+#define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER(name, heapCellType, type) \
     template<SubspaceAccess mode> \
     IsoSubspace* name() \
     { \
@@ -879,111 +1025,8 @@ public:
     JS_EXPORT_PRIVATE IsoSubspace* name##Slow(); \
     std::unique_ptr<IsoSubspace> m_##name;
 
-
-#if JSC_OBJC_API_ENABLED
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiWrapperObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(objCCallbackFunctionSpace)
-#endif
-#ifdef JSC_GLIB_API_ENABLED
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiWrapperObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jscCallbackFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackAPIWrapperGlobalObjectSpace)
-#endif
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiGlobalObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiValueWrapperSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(arrayBufferSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(arrayIteratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(asyncGeneratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(bigInt64ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(bigIntObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(bigUint64ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(booleanObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(boundFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackConstructorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackGlobalObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customSetterFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(dataViewSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(debuggerScopeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(errorInstanceSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(float32ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(float64ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(functionRareDataSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(generatorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(globalObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(injectedScriptHostSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int8ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int16ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(javaScriptCallFrameSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsModuleRecordSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapBucketSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapIteratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(moduleNamespaceObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(remoteFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scopedArgumentsTableSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetchParametersSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetcherSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setBucketSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setIteratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(shadowRealmSpace);
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(strictEvalActivationSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(stringIteratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(sourceCodeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolObjectSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(templateObjectDescriptorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalCalendarSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalDurationSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalInstantSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalPlainTimeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalTimeZoneSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint16ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint32ArraySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedEvalCodeBlockSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedFunctionCodeBlockSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedModuleProgramCodeBlockSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedProgramCodeBlockSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(finalizationRegistrySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakObjectRefSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakSetSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakMapSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(withScopeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlCollatorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlDateTimeFormatSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlDisplayNamesSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlListFormatSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlLocaleSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlNumberFormatSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlRelativeTimeFormatSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentIteratorSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmenterSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentsSpace)
-#if ENABLE(WEBASSEMBLY)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyExceptionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyFunctionSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyGlobalSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyInstanceSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyMemorySpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyModuleRecordSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTableSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyTagSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyWrapperFunctionSpace)
-#endif
-
-#undef DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER
+    FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER)
+#undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER
     
     IsoCellSet executableToCodeBlockEdgesWithConstraints;
     IsoCellSet executableToCodeBlockEdgesWithFinalizers;
@@ -1022,34 +1065,94 @@ public:
                 OBJECT_OFFSETOF(SpaceAndSet, set));
         }
     };
-    
-    SpaceAndSet codeBlockSpace;
+
+    SpaceAndSet codeBlockSpaceAndSet;
 
     template<typename Func>
     void forEachCodeBlockSpace(const Func& func)
     {
-        func(codeBlockSpace);
+        func(codeBlockSpaceAndSet);
     }
 
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace)
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(moduleProgramExecutableSpace)
-    SpaceAndSet functionExecutableSpace;
-    SpaceAndSet programExecutableSpace;
+    SpaceAndSet functionExecutableSpaceAndSet;
+    SpaceAndSet programExecutableSpaceAndSet;
 
     template<typename Func>
     void forEachScriptExecutableSpace(const Func& func)
     {
         if (m_evalExecutableSpace)
             func(*m_evalExecutableSpace);
-        func(functionExecutableSpace);
+        func(functionExecutableSpaceAndSet);
         if (m_moduleProgramExecutableSpace)
             func(*m_moduleProgramExecutableSpace);
-        func(programExecutableSpace);
+        func(programExecutableSpaceAndSet);
     }
 
-    SpaceAndSet unlinkedFunctionExecutableSpace;
+    SpaceAndSet unlinkedFunctionExecutableSpaceAndSet;
 
+    Vector<IsoSubspacePerVM*> perVMIsoSubspaces;
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER
 };
+
+namespace GCClient {
+
+class Heap {
+    WTF_MAKE_NONCOPYABLE(Heap);
+public:
+    Heap(JSC::Heap&);
+    ~Heap();
+
+    VM& vm() const;
+    JSC::Heap& server() { return m_server; }
+
+    // FIXME GlobalGC: need a GCClient::Heap::lastChanceToFinalize() and in there,
+    // relinquish memory from the IsoSubspace LocalAllocators back to the server.
+    // Currently, this is being handled by BlockDirectory::stopAllocatingForGood().
+
+private:
+    JSC::Heap& m_server;
+
+#define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \
+    IsoSubspace name;
+
+    FOR_EACH_JSC_ISO_SUBSPACE(DECLARE_ISO_SUBSPACE)
+#undef DECLARE_ISO_SUBSPACE
+
+#define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_IMPL(name, heapCellType, type) \
+    template<SubspaceAccess mode> \
+    IsoSubspace* name() \
+    { \
+        if (m_##name || mode == SubspaceAccess::Concurrently) \
+            return m_##name.get(); \
+        return name##Slow(); \
+    } \
+    JS_EXPORT_PRIVATE IsoSubspace* name##Slow(); \
+    std::unique_ptr<IsoSubspace> m_##name;
+
+#define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER(name) \
+    DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_IMPL(name, unused, unused2)
+
+    FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_IMPL)
+
+    DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER(evalExecutableSpace)
+    DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER(moduleProgramExecutableSpace)
+
+#undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_IMPL
+#undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER
+
+    IsoSubspace codeBlockSpace;
+    IsoSubspace functionExecutableSpace;
+    IsoSubspace programExecutableSpace;
+    IsoSubspace unlinkedFunctionExecutableSpace;
+
+    Vector<IsoSubspacePerVM*> perVMIsoSubspaces;
+
+    friend class JSC::VM;
+    friend class JSC::IsoSubspacePerVM;
+};
+
+} // namespace GCClient
 
 } // namespace JSC

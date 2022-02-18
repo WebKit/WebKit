@@ -9,6 +9,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ColorData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CommandLineAPIModuleSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CountQueuingStrategyBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DOMClientIsoSubspaces.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DOMConstructors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DOMIsoSubspaces.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/DOMJITAbstractHeapRepository.h

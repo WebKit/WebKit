@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,13 @@ public:
     static JSIDBSerializationGlobalObject* create(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&);
 
     template<typename, JSC::SubspaceAccess mode>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
         return subspaceForImpl(vm);
     }
-    static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     DECLARE_INFO;
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@ class VM;
 
 namespace WebCore {
 
-class JSVMClientData;
+class JSHeapData;
 
 class DOMGCOutputConstraint : public JSC::MarkingConstraint {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DOMGCOutputConstraint(JSC::VM&, JSVMClientData&);
+    DOMGCOutputConstraint(JSC::VM&, JSHeapData&);
     ~DOMGCOutputConstraint();
     
 protected:
@@ -49,7 +49,7 @@ private:
     template<typename Visitor> void executeImplImpl(Visitor&);
 
     JSC::VM& m_vm;
-    JSVMClientData& m_clientData;
+    JSHeapData& m_heapData;
     uint64_t m_lastExecutionVersion;
 };
 

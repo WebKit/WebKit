@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ bool RuntimeMethod::getOwnPropertySlot(JSObject* object, JSGlobalObject* exec, P
     return InternalFunction::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-IsoSubspace* RuntimeMethod::subspaceForImpl(VM& vm)
+GCClient::IsoSubspace* RuntimeMethod::subspaceForImpl(VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->runtimeMethodSpace();
 }

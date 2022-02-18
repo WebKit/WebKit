@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, JSC::SubspaceAccess>
-    static IsoSubspace* subspaceFor(JSC::VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(RuntimeObject), "RuntimeObject subclasses that add fields need to override subspaceFor<>()");
         static_assert(CellType::destroy == RuntimeObject::destroy);
@@ -86,7 +86,7 @@ protected:
     void finishCreation(VM&);
 
 private:
-    static IsoSubspace* subspaceForImpl(VM&);
+    static GCClient::IsoSubspace* subspaceForImpl(VM&);
 
     RefPtr<Instance> m_instance;
 };

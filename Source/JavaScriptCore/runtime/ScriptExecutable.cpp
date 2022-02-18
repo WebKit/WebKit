@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
         break;
     }
 
-    ASSERT(&VM::SpaceAndSet::setFor(*subspace()) == &clearableCodeSet);
+    ASSERT(&Heap::SpaceAndSet::setFor(*subspace()) == &clearableCodeSet);
     clearableCodeSet.remove(this);
 }
 
@@ -187,7 +187,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         break;
     }
 
-    auto& clearableCodeSet = VM::SpaceAndSet::setFor(*subspace());
+    auto& clearableCodeSet = Heap::SpaceAndSet::setFor(*subspace());
     if (hasClearableCode(vm))
         clearableCodeSet.add(this);
     else

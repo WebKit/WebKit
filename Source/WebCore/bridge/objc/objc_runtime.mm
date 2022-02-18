@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -332,13 +332,13 @@ bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const
     return false;
 }
 
-JSC::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
+JSC::GCClient::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
 {
-    static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::VM& vm) {
-        return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType(), ObjcFallbackObjectImp);
+    static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::Heap& heap) {
+        return ISO_SUBSPACE_PARAMETERS(heap.destructibleObjectHeapCellType, ObjcFallbackObjectImp);
     });
-    return &perVM.get().forVM(vm);
+    return &perVM.get().clientIsoSubspaceforVM(vm);
 }
 
-}
-}
+} // namespace Bindings
+} // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1076,7 +1076,7 @@ void CodeBlock::visitChildren(Visitor& visitor)
     stronglyVisitStrongReferences(locker, visitor);
     stronglyVisitWeakReferences(locker, visitor);
     
-    VM::SpaceAndSet::setFor(*subspace()).add(this);
+    Heap::SpaceAndSet::setFor(*subspace()).add(this);
 }
 
 template<typename Visitor>
@@ -1664,7 +1664,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     };
     updateActivity();
 
-    VM::SpaceAndSet::setFor(*subspace()).remove(this);
+    Heap::SpaceAndSet::setFor(*subspace()).remove(this);
 
     // In CodeBlock::shouldVisitStrongly() we may have decided to skip visiting this
     // codeBlock. By the time we get here, we're done with the verifier GC. So, let's

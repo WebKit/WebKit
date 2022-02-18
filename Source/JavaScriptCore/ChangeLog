@@ -1,3 +1,361 @@
+2022-02-18  Mark Lam  <mark.lam@apple.com>
+
+        Split IsoSubspace into a GCClient allocator used by VM and a backend managed by Heap.
+        https://bugs.webkit.org/show_bug.cgi?id=233878
+        rdar://problem/86108394
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Add a useGlobalGC option.  We're currently only using this to guard some code
+           for GlobalGC.  We're not ready to run with GlobalGC enabled yet.
+
+        2. Create a new GCClient namespace in JSC.  The Heap is now split into 2 parts:
+           a. VM / GCClient / client side: JSC::GCClient::Heap
+           b. GlobalGC / server side: JSC::Heap
+
+           The eventual goal is to have many GCClient Heaps backed by a singleton server
+           Heap.  Currently, we still have a 1 to 1 correspondence between the client and
+           server side i.e. VM embeds both one instance each of GCClient::Heap and Heap.
+
+        3. Split IsoSubspace into:
+           a. VM / GCClient / client side: JSC::GCClient::IsoSubspace
+           b. GlobalGC / server side: JSC::IsoSubspace
+
+           The client side will now manage a LocalAllocator for the IsoSubspace.
+
+           The eventual goal is to have many GCClient::IsoSubspace allocators fed from
+           a server IsoSubspace.  Currently, we still have a 1 to 1 correspondence
+           between the client and server side.  GCClient::IsoSubspace instances will be
+           managed by GCClient::Heap.  Server side IsoSubspaces continue to be managed
+           by Heap.
+
+        3. IsoSubspacePerVM is also now client-server aware.
+
+           Previously, IsoSubspacePerVM was relying on AutoremovingIsoSubspace to
+           "automatically" unregister IsoSubspaces from IsoSubspacePerVM via its
+           destructor.  However, there is a bug where the AutoremovingIsoSubspace is
+           never associated with the VM, and there is nothing that will trigger its
+           destruction when the VM shuts down.
+
+           This patch fixes this issue by having IsoSubspacePerVM register with the VM's
+           GCClient::Heap and Heap.  On destruction, those Heaps will now be aware of
+           the IsoSubspacePerVM in use, and will tell the IsoSubspacePerVM to release
+           the associated IsoSubspaces.
+
+           The IsoSubspacePerVM::AutoremovingIsoSubspace class is now removed since it
+           is not needed.
+
+        4. Previously, in Heap, we have some SpaceAndSet members that were named simply as
+           "Space".  Renamed these to be "SpaceAndSet" explicitly to more accurately
+           reflect what they are.
+
+        * API/JSAPIGlobalObject.h:
+        * API/JSAPIValueWrapper.h:
+        * API/JSAPIWrapperObject.mm:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObject<JSNonFinalObject>::subspaceForImpl):
+        (JSC::JSCallbackObject<JSGlobalObject>::subspaceForImpl):
+        * API/JSCallbackObject.h:
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::subspaceFor):
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::subspaceForImpl):
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl):
+        * API/glib/JSCCallbackFunction.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/EvalCodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.h:
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::UnlinkedFunctionExecutable::finalizeUnconditionally):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * debugger/DebuggerScope.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::GCClient::Heap::Heap):
+        (JSC::GCClient::Heap::~Heap):
+        * heap/Heap.h:
+        (JSC::Heap::lock):
+        (JSC::Heap::forEachCodeBlockSpace):
+        (JSC::Heap::forEachScriptExecutableSpace):
+        (JSC::GCClient::Heap::server):
+        * heap/HeapInlines.h:
+        (JSC::GCClient::Heap::vm const):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::GCClient::IsoSubspace::IsoSubspace):
+        * heap/IsoSubspace.h:
+        (JSC::GCClient::IsoSubspace::cellSize):
+        (JSC::IsoSubspace::allocatorFor): Deleted.
+        * heap/IsoSubspaceInlines.h:
+        (JSC::IsoSubspace::allocate): Deleted.
+        * heap/IsoSubspacePerVM.cpp:
+        (JSC::IsoSubspacePerVM::IsoSubspacePerVM):
+        (JSC::IsoSubspacePerVM::isoSubspaceforHeap):
+        (JSC::IsoSubspacePerVM::clientIsoSubspaceforVM):
+        (JSC::IsoSubspacePerVM::releaseIsoSubspace):
+        (JSC::IsoSubspacePerVM::releaseClientIsoSubspace):
+        (): Deleted.
+        (JSC::IsoSubspacePerVM::forVM): Deleted.
+        * heap/IsoSubspacePerVM.h:
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        (JSC::LocalAllocator::doTestCollectionsIfNeeded):
+        * heap/LocalAllocator.h:
+        (JSC::LocalAllocator::directory const):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        * heap/MutatorState.h:
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * runtime/AggregateErrorPrototype.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/AsyncFromSyncIteratorPrototype.h:
+        * runtime/AsyncFunctionPrototype.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AsyncGeneratorPrototype.h:
+        * runtime/AsyncIteratorPrototype.h:
+        * runtime/AtomicsObject.h:
+        * runtime/BigIntObject.h:
+        * runtime/BigIntPrototype.h:
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::subspaceFor):
+        * runtime/BrandedStructure.h:
+        * runtime/ClonedArguments.h:
+        * runtime/ConsoleObject.h:
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::subspaceFor):
+        * runtime/DOMAttributeGetterSetter.h:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::subspaceFor):
+        * runtime/ErrorPrototype.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::subspaceFor):
+        * runtime/Exception.h:
+        * runtime/FinalizationRegistryPrototype.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.h:
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/HashMapImpl.h:
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::subspaceFor):
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlDisplayNames.h:
+        * runtime/IntlDisplayNamesPrototype.h:
+        * runtime/IntlListFormat.h:
+        * runtime/IntlListFormatPrototype.h:
+        * runtime/IntlLocale.h:
+        * runtime/IntlLocalePrototype.h:
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IntlRelativeTimeFormat.h:
+        * runtime/IntlRelativeTimeFormatPrototype.h:
+        * runtime/IntlSegmentIterator.h:
+        * runtime/IntlSegmentIteratorPrototype.h:
+        * runtime/IntlSegmenter.h:
+        * runtime/IntlSegmenterPrototype.h:
+        * runtime/IntlSegments.h:
+        * runtime/IntlSegmentsPrototype.h:
+        * runtime/IteratorPrototype.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::subspaceFor):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSArrayIterator.h:
+        * runtime/JSAsyncGenerator.h:
+        * runtime/JSBigInt.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.h:
+        (JSC::JSCallee::subspaceFor):
+        * runtime/JSCustomGetterFunction.h:
+        * runtime/JSCustomSetterFunction.h:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSFinalizationRegistry.h:
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::subspaceFor):
+        * runtime/JSGenerator.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::subspaceFor):
+        * runtime/JSMap.h:
+        * runtime/JSMapIterator.h:
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSModuleRecord.h:
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSONObject.h:
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::subspaceFor):
+        * runtime/JSPromisePrototype.h:
+        (JSC::JSPromisePrototype::subspaceFor):
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::subspaceFor):
+        * runtime/JSRemoteFunction.h:
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/JSSet.h:
+        * runtime/JSSetIterator.h:
+        * runtime/JSSourceCode.h:
+        * runtime/JSString.h:
+        (JSC::JSString::subspaceFor):
+        * runtime/JSStringIterator.h:
+        * runtime/JSTemplateObjectDescriptor.h:
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/JSWeakObjectRef.h:
+        * runtime/JSWithScope.h:
+        * runtime/MapIteratorPrototype.h:
+        * runtime/MapPrototype.h:
+        * runtime/MathObject.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NativeExecutable.h:
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::subspaceFor):
+        * runtime/ObjectPrototype.h:
+        * runtime/OptionsList.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/PropertyTable.h:
+        * runtime/ProxyObject.h:
+        * runtime/ProxyRevoke.h:
+        * runtime/ReflectObject.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/RegExpStringIteratorPrototype.h:
+        * runtime/ScopedArguments.h:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        * runtime/SetIteratorPrototype.h:
+        * runtime/SetPrototype.h:
+        * runtime/ShadowRealmObject.h:
+        * runtime/ShadowRealmPrototype.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/StringObject.h:
+        (JSC::StringObject::subspaceFor):
+        * runtime/Structure.h:
+        (JSC::Structure::subspaceFor):
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.h:
+        * runtime/Symbol.h:
+        * runtime/SymbolObject.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/SymbolTable.h:
+        * runtime/TemporalCalendar.h:
+        * runtime/TemporalCalendarPrototype.h:
+        * runtime/TemporalDuration.h:
+        * runtime/TemporalDurationPrototype.h:
+        * runtime/TemporalInstant.h:
+        * runtime/TemporalInstantPrototype.h:
+        * runtime/TemporalNow.h:
+        * runtime/TemporalObject.h:
+        * runtime/TemporalPlainTime.h:
+        * runtime/TemporalPlainTimePrototype.h:
+        * runtime/TemporalTimeZone.h:
+        * runtime/TemporalTimeZonePrototype.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::codeBlockSpace):
+        (JSC::VM::functionExecutableSpace):
+        (JSC::VM::programExecutableSpace):
+        (JSC::VM::unlinkedFunctionExecutableSpace):
+        (JSC::VM::arraySpace): Deleted.
+        (JSC::VM::bigIntSpace): Deleted.
+        (JSC::VM::calleeSpace): Deleted.
+        (JSC::VM::clonedArgumentsSpace): Deleted.
+        (JSC::VM::customGetterSetterSpace): Deleted.
+        (JSC::VM::dateInstanceSpace): Deleted.
+        (JSC::VM::domAttributeGetterSetterSpace): Deleted.
+        (JSC::VM::exceptionSpace): Deleted.
+        (JSC::VM::executableToCodeBlockEdgeSpace): Deleted.
+        (JSC::VM::functionSpace): Deleted.
+        (JSC::VM::getterSetterSpace): Deleted.
+        (JSC::VM::globalLexicalEnvironmentSpace): Deleted.
+        (JSC::VM::internalFunctionSpace): Deleted.
+        (JSC::VM::jsProxySpace): Deleted.
+        (JSC::VM::nativeExecutableSpace): Deleted.
+        (JSC::VM::numberObjectSpace): Deleted.
+        (JSC::VM::plainObjectSpace): Deleted.
+        (JSC::VM::promiseSpace): Deleted.
+        (JSC::VM::propertyNameEnumeratorSpace): Deleted.
+        (JSC::VM::propertyTableSpace): Deleted.
+        (JSC::VM::regExpSpace): Deleted.
+        (JSC::VM::regExpObjectSpace): Deleted.
+        (JSC::VM::ropeStringSpace): Deleted.
+        (JSC::VM::scopedArgumentsSpace): Deleted.
+        (JSC::VM::sparseArrayValueMapSpace): Deleted.
+        (JSC::VM::stringSpace): Deleted.
+        (JSC::VM::stringObjectSpace): Deleted.
+        (JSC::VM::structureChainSpace): Deleted.
+        (JSC::VM::structureRareDataSpace): Deleted.
+        (JSC::VM::structureSpace): Deleted.
+        (JSC::VM::brandedStructureSpace): Deleted.
+        (JSC::VM::symbolTableSpace): Deleted.
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::subspaceFor):
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakObjectRefPrototype.h:
+        * runtime/WeakSetPrototype.h:
+        * wasm/js/JSToWasmICCallee.h:
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/JSWebAssemblyException.h:
+        * wasm/js/JSWebAssemblyGlobal.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/JSWebAssemblyTag.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyExceptionPrototype.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyGlobalPrototype.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+        * wasm/js/WebAssemblyTagPrototype.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2022-02-18  Joseph Griego  <jgriego@igalia.com>
 
         [JSC] Enable Shadow Realms support by default

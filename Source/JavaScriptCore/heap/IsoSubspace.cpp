@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@ namespace JSC {
 IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
-    , m_localAllocator(&m_directory)
     , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
 {
     m_remainingLowerTierCellCount = numberOfLowerTierCells;
@@ -118,6 +117,15 @@ void IsoSubspace::destroyLowerTierFreeList()
         allocation->destroy();
     });
 }
+
+namespace GCClient {
+
+IsoSubspace::IsoSubspace(JSC::IsoSubspace& server)
+    : m_localAllocator(&server.m_directory)
+{
+}
+
+} // namespace GCClient
 
 } // namespace JSC
 
