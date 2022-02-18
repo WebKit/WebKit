@@ -66,7 +66,7 @@ public:
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }
     float y() const { return lineBoxTop(); }
     float logicalHeight() const { return lineBoxBottom() - lineBoxTop(); }
-    bool isHorizontal() const { return true; }
+    bool isHorizontal() const { return line().isHorizontal(); }
     FontBaseline baselineType() const { return line().baselineType(); }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }

@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -48,6 +48,7 @@ public:
         , m_contentLogicalOffset(contentLogicalOffset)
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
+        , m_isHorizontal(isHorizontal)
     {
     }
 
@@ -70,6 +71,8 @@ public:
     float baseline() const { return m_baseline; }
     FontBaseline baselineType() const { return m_baselineType; }
 
+    bool isHorizontal() const { return m_isHorizontal; }
+
     float contentLogicalOffset() const { return m_contentLogicalOffset; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
@@ -88,7 +91,8 @@ private:
     float m_baseline { 0 };
     float m_contentLogicalOffset { 0 };
     float m_contentLogicalWidth { 0 };
-    FontBaseline m_baselineType { AlphabeticBaseline }; 
+    FontBaseline m_baselineType { AlphabeticBaseline };
+    bool m_isHorizontal { true };
 };
 
 }

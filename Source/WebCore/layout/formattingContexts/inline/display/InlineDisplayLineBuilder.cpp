@@ -103,6 +103,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , lineBox.baselineType()
         , contentVisualLeft
         , rootInlineBox.logicalWidth()
+        , lineBox.isHorizontal()
     };
 }
 

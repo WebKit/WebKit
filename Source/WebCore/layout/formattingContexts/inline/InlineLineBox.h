@@ -81,6 +81,7 @@ public:
 
     InlineLayoutUnit rootInlineBoxAlignmentOffset() const { return m_rootInlineBoxAlignmentOffset; }
     FontBaseline baselineType() const { return m_baselineType; }
+    bool isHorizontal() const { return m_rootInlineBox.layoutBox().style().isHorizontalWritingMode(); }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 
