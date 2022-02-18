@@ -944,3 +944,130 @@ TEST(WebKit, MigrateIndexedDBDataToGeneralStorageDirectory)
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:indexedDBFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:newIndexedDBFile.path]);
 }
+
+TEST(WebKit, FetchDataAfterEnablingGeneralStorageDirectory)
+{
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceLocalStorageFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory-localstorage" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceIndexedDBFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory-indexeddb" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceOriginFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"origin" subdirectory:@"TestWebKitAPI.resources"];
+
+    NSURL *customLocalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *appleCustomLocalStorageFile = [customLocalStorageDirectory URLByAppendingPathComponent:@"https_apple.com_0.localstorage"];
+    NSURL *customIndexedDBStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *appleCustomIndexedDBDatabaseDirectory = [customIndexedDBStorageDirectory URLByAppendingPathComponent:@"v1/https_apple.com_0/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9"];
+    NSURL *appleCustomIndexedDBDatabaseFile = [appleCustomIndexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *webkitGeneralStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *webkitGeneralLocalStorageDirectory = [webkitGeneralStorageDirectory URLByAppendingPathComponent:@"LocalStorage"];
+    NSURL *webKitGeneralLocalStorageFile = [webkitGeneralLocalStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
+    NSURL *appleGeneralLocalStorageFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/LocalStorage/localstorage.sqlite3"];
+    NSURL *appleGeneralIndexedDBDatabaseFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/IndexedDB/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9/IndexedDB.sqlite3"];
+
+    // Copy apple.com files to custom path.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:customLocalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:customLocalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceLocalStorageFile toURL:appleCustomLocalStorageFile error:nil];
+    [fileManager createDirectoryAtURL:appleCustomIndexedDBDatabaseDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceIndexedDBFile toURL:appleCustomIndexedDBDatabaseFile error:nil];
+
+    // Copy webkit.org files to new path.
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:webkitGeneralLocalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager copyItemAtURL:resourceOriginFile toURL:[webkitGeneralStorageDirectory URLByAppendingPathComponent:@"origin"] error:nil];
+    [fileManager copyItemAtURL:resourceLocalStorageFile toURL:webKitGeneralLocalStorageFile error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._webStorageDirectory = customLocalStorageDirectory;
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = customIndexedDBStorageDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    // Ensure data is fetched from both custom path and new path.
+    auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, nil];
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 2u);
+        auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
+            return [record1.displayName compare:record2.displayName];
+        };
+        auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
+        auto appleRecord = [sortedRecords objectAtIndex:0];
+        EXPECT_WK_STREQ(@"apple.com", [appleRecord displayName]);
+        EXPECT_TRUE([[appleRecord dataTypes] isEqualToSet:dataTypes]);
+        auto webkitRecord = [sortedRecords objectAtIndex:1];
+        EXPECT_WK_STREQ(@"webkit.org", [webkitRecord displayName]);
+        EXPECT_TRUE([[webkitRecord dataTypes] isEqualToSet:[NSSet setWithObject:WKWebsiteDataTypeLocalStorage]]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Ensure apple.com data is moved to new path after fetch.
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomLocalStorageFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomIndexedDBDatabaseFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:appleGeneralLocalStorageFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:appleGeneralIndexedDBDatabaseFile.path]);
+}
+
+TEST(WebKit, DeleteDataAfterEnablingGeneralStorageDirectory)
+{
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceLocalStorageFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory-localstorage" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceIndexedDBFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory-indexeddb" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceOriginFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"origin" subdirectory:@"TestWebKitAPI.resources"];
+
+    NSURL *customLocalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *appleCustomLocalStorageFile = [customLocalStorageDirectory URLByAppendingPathComponent:@"https_apple.com_0.localstorage"];
+    NSURL *customIndexedDBStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *appleCustomIndexedDBDatabaseDirectory = [customIndexedDBStorageDirectory URLByAppendingPathComponent:@"v1/https_apple.com_0/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9"];
+    NSURL *appleCustomIndexedDBDatabaseFile = [appleCustomIndexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *webkitGeneralStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *webkitGeneralLocalStorageDirectory = [webkitGeneralStorageDirectory URLByAppendingPathComponent:@"LocalStorage"];
+    NSURL *webKitGeneralLocalStorageFile = [webkitGeneralLocalStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
+    NSURL *appleGeneralLocalStorageFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/LocalStorage/localstorage.sqlite3"];
+    NSURL *appleGeneralIndexedDBDatabaseFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/IndexedDB/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9/IndexedDB.sqlite3"];
+
+    // Copy apple.com files to custom path.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:customLocalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:customLocalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceLocalStorageFile toURL:appleCustomLocalStorageFile error:nil];
+    [fileManager createDirectoryAtURL:appleCustomIndexedDBDatabaseDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceIndexedDBFile toURL:appleCustomIndexedDBDatabaseFile error:nil];
+
+    // Copy webkit.org files to new path.
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:webkitGeneralLocalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager copyItemAtURL:resourceOriginFile toURL:[webkitGeneralStorageDirectory URLByAppendingPathComponent:@"origin"] error:nil];
+    [fileManager copyItemAtURL:resourceLocalStorageFile toURL:webKitGeneralLocalStorageFile error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._webStorageDirectory = customLocalStorageDirectory;
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = customIndexedDBStorageDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, nil];
+    done = false;
+    [websiteDataStore removeDataOfTypes:dataTypes modifiedSince:[NSDate distantPast] completionHandler:^ {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Ensure data is deleted from both custom path and new path.
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomLocalStorageFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomIndexedDBDatabaseFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:webKitGeneralLocalStorageFile.path]);
+
+    // Ensure apple.com data is not just moved but actually deleted.
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleGeneralLocalStorageFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:appleGeneralIndexedDBDatabaseFile.path]);
+}

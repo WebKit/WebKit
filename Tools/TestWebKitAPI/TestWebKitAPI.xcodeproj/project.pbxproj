@@ -757,6 +757,9 @@
 		93A2749D251EF90700A1B6D4 /* IDBIndexUpgradeToV2WithMultipleIndices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A2749A251EF52A00A1B6D4 /* IDBIndexUpgradeToV2WithMultipleIndices.html */; };
 		93A274A2252163EE00A1B6D4 /* IndexUpgradeWithMultipleIndices.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A274A1252163D600A1B6D4 /* IndexUpgradeWithMultipleIndices.sqlite3 */; };
 		93A274A5252241DE00A1B6D4 /* IndexUpgradeWithMultipleIndicesHaveSameID.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A274A4252241D000A1B6D4 /* IndexUpgradeWithMultipleIndicesHaveSameID.sqlite3 */; };
+		93A9BF5F27BF3686000B44D3 /* general-storage-directory-localstorage.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A9BF5E27BF3678000B44D3 /* general-storage-directory-localstorage.sqlite3 */; };
+		93A9BF6127BF5AF0000B44D3 /* general-storage-directory.origin in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A9BF6027BF5AE4000B44D3 /* general-storage-directory.origin */; };
+		93A9BF6327BF6804000B44D3 /* general-storage-directory-indexeddb.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93A9BF6227BF67F4000B44D3 /* general-storage-directory-indexeddb.sqlite3 */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
 		93BCBC8423CC6F4400CA2221 /* IDBObjectStoreInfoUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93BCBC8223CC6EF500CA2221 /* IDBObjectStoreInfoUpgradeToV2.html */; };
@@ -1358,6 +1361,9 @@
 				3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */,
 				CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */,
 				CDBFCC461A9FF49E00A7B691 /* FullscreenZoomInitialFrame.html in Copy Resources */,
+				93A9BF6327BF6804000B44D3 /* general-storage-directory-indexeddb.sqlite3 in Copy Resources */,
+				93A9BF5F27BF3686000B44D3 /* general-storage-directory-localstorage.sqlite3 in Copy Resources */,
+				93A9BF6127BF5AF0000B44D3 /* general-storage-directory.origin in Copy Resources */,
 				936EC36627BA3B0D00AFA8AE /* general-storage-directory.salt in Copy Resources */,
 				26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */,
 				636353A71E98665D0009F8AF /* GeolocationGetCurrentPositionResult.html in Copy Resources */,
@@ -2541,6 +2547,9 @@
 		93A427AD180DA60F00CD24D7 /* RefLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefLogger.h; sourceTree = "<group>"; };
 		93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoxPtr.cpp; sourceTree = "<group>"; };
 		93A720E518F1A0E800A848E1 /* CalculationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculationValue.cpp; sourceTree = "<group>"; };
+		93A9BF5E27BF3678000B44D3 /* general-storage-directory-localstorage.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "general-storage-directory-localstorage.sqlite3"; sourceTree = "<group>"; };
+		93A9BF6027BF5AE4000B44D3 /* general-storage-directory.origin */ = {isa = PBXFileReference; lastKnownFileType = file; path = "general-storage-directory.origin"; sourceTree = "<group>"; };
+		93A9BF6227BF67F4000B44D3 /* general-storage-directory-indexeddb.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "general-storage-directory-indexeddb.sqlite3"; sourceTree = "<group>"; };
 		93ABA80816DDAB91002DB2FA /* StringHasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringHasher.cpp; sourceTree = "<group>"; };
 		93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages.cpp; sourceTree = "<group>"; };
 		93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp; sourceTree = "<group>"; };
@@ -4120,6 +4129,9 @@
 				CD78E11B1DB7EA360014A2DE /* FullscreenDelegate.html */,
 				3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */,
 				CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */,
+				93A9BF6227BF67F4000B44D3 /* general-storage-directory-indexeddb.sqlite3 */,
+				93A9BF5E27BF3678000B44D3 /* general-storage-directory-localstorage.sqlite3 */,
+				93A9BF6027BF5AE4000B44D3 /* general-storage-directory.origin */,
 				936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */,
 				636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */,
 				07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */,
