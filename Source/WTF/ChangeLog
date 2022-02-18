@@ -1,3 +1,12 @@
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Enable subgrid by default.
+        https://bugs.webkit.org/show_bug.cgi?id=236821
+
+        Reviewed by Alan Bujtas.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         GeneratePreferences.rb: warning: Passing safe_level with the 2nd argument of ERB.new is deprecated
