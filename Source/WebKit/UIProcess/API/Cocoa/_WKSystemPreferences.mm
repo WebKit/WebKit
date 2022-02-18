@@ -36,14 +36,14 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 + (BOOL)isCaptivePortalModeEnabled
 {
     auto changedNotificationKey = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey, kCFStringEncodingUTF8));
-    auto preferenceValue = adoptCF(CFPreferencesCopyValue(changedNotificationKey.get(), kCFPreferencesAnyApplication, kCFPreferencesAnyUser, kCFPreferencesCurrentHost));
+    auto preferenceValue = adoptCF(CFPreferencesCopyValue(changedNotificationKey.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost));
     return preferenceValue.get() == kCFBooleanTrue;
 }
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
 {
     auto changedNotificationKey = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey, kCFStringEncodingUTF8));
-    CFPreferencesSetValue(changedNotificationKey.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesAnyUser, kCFPreferencesCurrentHost);
+    CFPreferencesSetValue(changedNotificationKey.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesAnyUser, kCFPreferencesAnyHost);
 }
 
