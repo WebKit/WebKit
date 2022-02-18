@@ -1,5 +1,11 @@
 2022-02-18  Jon Lee  <jonlee@apple.com>
 
+        Follow up to b236802. Unreviewed.
+
+        * platform/ios/TestExpectations: Remove the test expectations.
+
+2022-02-18  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening for GPU Process bot.
 
         * TestExpectations:

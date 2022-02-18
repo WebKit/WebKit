@@ -3415,9 +3415,6 @@ css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 webkit.org/b/178588 fast/css/button-height.html [ Failure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/236802 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ ImageOnlyFailure ]
-webkit.org/b/236802 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht [ ImageOnlyFailure ]
-
 # Passing only on iOS
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
