@@ -1,0 +1,4 @@
+
+PASS onpush should be exposed on ServiceWorkerGlobalScope
+PASS onpushsubscriptionchange should be exposed on ServiceWorkerGlobalScope
+
