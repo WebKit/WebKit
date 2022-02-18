@@ -26,16 +26,20 @@
 #include "config.h"
 #include "ImageOverlay.h"
 
+#include "Blob.h"
 #include "CharacterRange.h"
 #include "DOMTokenList.h"
+#include "DOMURL.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
+#include "FloatRect.h"
 #include "FloatSize.h"
 #include "GeometryUtilities.h"
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLStyleElement.h"
 #include "ImageOverlayController.h"
@@ -45,6 +49,7 @@
 #include "RenderImage.h"
 #include "RenderText.h"
 #include "ShadowRoot.h"
+#include "SharedBuffer.h"
 #include "SimpleRange.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -95,6 +100,18 @@ static const AtomString& imageOverlayBlockClass()
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+static const AtomString& imageOverlayCroppedImageIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay-cropped-image", AtomString::ConstructFromLiteral);
+    return identifier;
+}
+
+static const AtomString& imageOverlayCroppedImageBackdropIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay-cropped-image-backdrop", AtomString::ConstructFromLiteral);
+    return identifier;
+}
 
 bool hasOverlay(const HTMLElement& element)
 {
@@ -178,7 +195,7 @@ bool isOverlayText(const Node& node)
     if (!host)
         return false;
 
-    if (RefPtr overlay = static_cast<TreeScope&>(*host->userAgentShadowRoot()).getElementById(imageOverlayElementIdentifier()))
+    if (RefPtr overlay = host->userAgentShadowRoot()->getElementById(imageOverlayElementIdentifier()))
         return node.isDescendantOf(*overlay);
 
     return false;
@@ -198,7 +215,7 @@ void removeOverlaySoonIfNeeded(HTMLElement& element)
         if (!shadowRoot)
             return;
 
-        if (RefPtr overlay = static_cast<TreeScope&>(*shadowRoot).getElementById(imageOverlayElementIdentifier()))
+        if (RefPtr overlay = shadowRoot->getElementById(imageOverlayElementIdentifier()))
             overlay->remove();
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -208,7 +225,13 @@ void removeOverlaySoonIfNeeded(HTMLElement& element)
     });
 }
 
-#if ENABLE(IMAGE_ANALYSIS)
+static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
+{
+    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
+    auto style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.document(), false);
+    style->setTextContent(shadowStyle);
+    shadowRoot.appendChild(WTFMove(style));
+}
 
 IntRect containerRect(HTMLElement& element)
 {
@@ -221,6 +244,8 @@ IntRect containerRect(HTMLElement& element)
 
     return enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
 
 struct LineElements {
     Ref<HTMLDivElement> line;
@@ -280,6 +305,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         }
     }
 
+    bool canUseExistingElements = false;
     if (elements.root) {
         for (auto& childElement : childrenOfType<HTMLDivElement>(*elements.root)) {
             if (!childElement.hasClass())
@@ -303,7 +329,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             elements.lines.append({ childElement, WTFMove(lineChildren), childrenOfType<HTMLBRElement>(childElement).first() });
         }
 
-        bool canUseExistingElements = ([&] {
+        canUseExistingElements = ([&] {
             if (result.dataDetectors.size() != elements.dataDetectors.size())
                 return false;
 
@@ -340,8 +366,8 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         })();
 
         if (!canUseExistingElements) {
-            elements.root->remove();
-            elements = { };
+            elements.root->removeChildren();
+            elements = { elements.root, { }, { }, { } };
         }
     }
 
@@ -350,23 +376,25 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
     Ref document = element.document();
     Ref shadowRoot = element.ensureUserAgentShadowRoot();
-    if (!elements.root) {
-        auto rootContainer = HTMLDivElement::create(document.get());
-        rootContainer->setIdAttribute(imageOverlayElementIdentifier());
-        rootContainer->setTranslate(false);
-        if (document->isImageDocument())
-            rootContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
+    if (!canUseExistingElements) {
+        if (!elements.root) {
+            auto rootContainer = HTMLDivElement::create(document.get());
+            rootContainer->setIdAttribute(imageOverlayElementIdentifier());
+            rootContainer->setTranslate(false);
+            if (document->isImageDocument())
+                rootContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
 
-        if (mediaControlsContainer)
-            mediaControlsContainer->appendChild(rootContainer);
-        else
-            shadowRoot->appendChild(rootContainer);
-        elements.root = rootContainer.copyRef();
+            if (mediaControlsContainer)
+                mediaControlsContainer->appendChild(rootContainer);
+            else
+                shadowRoot->appendChild(rootContainer);
+            elements.root = rootContainer.copyRef();
+        }
         elements.lines.reserveInitialCapacity(result.lines.size());
         for (auto& line : result.lines) {
             auto lineContainer = HTMLDivElement::create(document.get());
             lineContainer->classList().add(imageOverlayLineClass());
-            rootContainer->appendChild(lineContainer);
+            elements.root->appendChild(lineContainer);
             LineElements lineElements { lineContainer, { }, { } };
             lineElements.children.reserveInitialCapacity(line.children.size());
             for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
@@ -391,7 +419,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         for (auto& dataDetector : result.dataDetectors) {
             auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document.get(), dataDetector);
             dataDetectorContainer->classList().add(imageOverlayDataDetectorClass());
-            rootContainer->appendChild(dataDetectorContainer);
+            elements.root->appendChild(dataDetectorContainer);
             elements.dataDetectors.uncheckedAppend(WTFMove(dataDetectorContainer));
         }
 #endif // ENABLE(DATA_DETECTION)
@@ -400,7 +428,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         for (auto& block : result.blocks) {
             auto blockContainer = HTMLDivElement::create(document.get());
             blockContainer->classList().add(imageOverlayBlockClass());
-            rootContainer->appendChild(blockContainer);
+            elements.root->appendChild(blockContainer);
             blockContainer->appendChild(Text::create(document.get(), makeString('\n', block.text)));
             elements.blocks.uncheckedAppend(WTFMove(blockContainer));
         }
@@ -411,12 +439,8 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         }
     }
 
-    if (!hadExistingElements) {
-        static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
-        auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-        style->setTextContent(shadowStyle);
-        shadowRoot->appendChild(WTFMove(style));
-    }
+    if (!hadExistingElements)
+        installImageOverlayStyleSheet(shadowRoot.get());
 
     return elements;
 }
@@ -648,6 +672,88 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+std::unique_ptr<CroppedImage> CroppedImage::install(HTMLElement& host, Ref<SharedBuffer>&& imageData, const String& mimeType, FloatRect normalizedRect)
+{
+    Ref document = host.document();
+    Ref shadowRoot = host.ensureUserAgentShadowRoot();
+    RefPtr imageOverlayRoot = dynamicDowncast<HTMLDivElement>(shadowRoot->getElementById(imageOverlayElementIdentifier()));
+    if (!imageOverlayRoot) {
+        imageOverlayRoot = HTMLDivElement::create(document.get());
+        imageOverlayRoot->setIdAttribute(imageOverlayElementIdentifier());
+        imageOverlayRoot->setTranslate(false);
+        shadowRoot->appendChild(*imageOverlayRoot);
+        installImageOverlayStyleSheet(shadowRoot.get());
+    }
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    if (auto* renderer = dynamicDowncast<RenderImage>(host.renderer()))
+        renderer->setHasImageOverlay();
+
+    auto containerRect = ImageOverlay::containerRect(host);
+    auto cropRect = normalizedRect;
+    cropRect.scale(containerRect.width(), containerRect.height());
+    cropRect.move(containerRect.x(), containerRect.y());
+
+    auto croppedImageBackdrop = HTMLDivElement::create(document.get());
+    croppedImageBackdrop->setIdAttribute(imageOverlayCroppedImageBackdropIdentifier());
+    imageOverlayRoot->appendChild(croppedImageBackdrop.get());
+
+    auto croppedImage = HTMLImageElement::create(document.get());
+    auto croppedImageURL = DOMURL::createObjectURL(document.get(), Blob::create(document.ptr(), imageData->extractData(), mimeType));
+    croppedImage->setIdAttribute(imageOverlayCroppedImageIdentifier());
+    croppedImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, croppedImageURL);
+    croppedImage->setInlineStyleProperty(CSSPropertyLeft, cropRect.x(), CSSUnitType::CSS_PX);
+    croppedImage->setInlineStyleProperty(CSSPropertyTop, cropRect.y(), CSSUnitType::CSS_PX);
+    croppedImage->setInlineStyleProperty(CSSPropertyWidth, cropRect.width(), CSSUnitType::CSS_PX);
+    croppedImage->setInlineStyleProperty(CSSPropertyHeight, cropRect.height(), CSSUnitType::CSS_PX);
+    imageOverlayRoot->appendChild(croppedImage.get());
+
+    document->updateLayoutIgnorePendingStylesheets();
+    croppedImageBackdrop->setInlineStyleProperty(CSSPropertyOpacity, 0.5, CSSUnitType::CSS_NUMBER);
+
+    return makeUnique<CroppedImage>(document.get(), host, croppedImageBackdrop.get(), croppedImageURL);
+}
+
+CroppedImage::CroppedImage(Document& document, HTMLElement& host, HTMLElement& croppedImageBackdrop, const String& imageURL)
+    : m_document(document)
+    , m_host(host)
+    , m_croppedImageBackdrop(croppedImageBackdrop)
+    , m_imageURL(imageURL)
+{
+    setVisibility(true);
+}
+
+CroppedImage::~CroppedImage()
+{
+    if (RefPtr document = m_document.get())
+        DOMURL::revokeObjectURL(*document, m_imageURL);
+
+    RefPtr host = m_host.get();
+    if (!host)
+        return;
+
+    RefPtr shadowRoot = host->shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
+        return;
+
+    if (RefPtr croppedImage = shadowRoot->getElementById(imageOverlayCroppedImageIdentifier()))
+        croppedImage->remove();
+
+    if (RefPtr croppedImageBackdrop = shadowRoot->getElementById(imageOverlayCroppedImageBackdropIdentifier()))
+        croppedImageBackdrop->remove();
+}
+
+void CroppedImage::setVisibility(bool visible)
+{
+    RefPtr croppedImageBackdrop = m_croppedImageBackdrop.get();
+    if (!croppedImageBackdrop)
+        return;
+
+    croppedImageBackdrop->document().updateLayoutIgnorePendingStylesheets();
+    croppedImageBackdrop->setInlineStyleProperty(CSSPropertyOpacity, visible ? 0.5 : 0, CSSUnitType::CSS_NUMBER);
+}
 
 } // namespace ImageOverlay
 } // namespace WebCore

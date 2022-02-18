@@ -978,6 +978,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=IMAGE_ANALYSIS] readonly attribute Element? textRecognitionCandidate;
     [Conditional=IMAGE_ANALYSIS] undefined requestTextRecognition(Element element, VoidCallback callback);
     undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = [], optional sequence<ImageOverlayDataDetector> dataDetectors = []);
+    undefined installCroppedImageOverlay(Element element, DOMRectReadOnly normalizedCropRect);
+    undefined uninstallCroppedImageOverlay();
     readonly attribute boolean hasActiveDataDetectorHighlight;
 
     boolean usingAppleInternalSDK();

@@ -106,6 +106,7 @@ class RenderedDocumentMarker;
 class SVGSVGElement;
 class ScrollableArea;
 class SerializedScriptValue;
+class SharedBuffer;
 class SourceBuffer;
 class StringCallback;
 class StyleSheet;
@@ -150,6 +151,10 @@ class MediaSessionCoordinator;
 class MockMediaSessionCoordinator;
 #endif
 #endif
+
+namespace ImageOverlay {
+class CroppedImage;
+}
 
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -950,6 +955,8 @@ public:
     };
 
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&, Vector<ImageOverlayBlock>&& = { }, Vector<ImageOverlayDataDetector>&& = { });
+    void installCroppedImageOverlay(Element&, Ref<DOMRectReadOnly>&&);
+    void uninstallCroppedImageOverlay();
     bool hasActiveDataDetectorHighlight() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -1275,6 +1282,8 @@ private:
     static DDScannerResult *fakeDataDetectorResultForTesting();
 #endif
 
+    static RefPtr<SharedBuffer> pngDataForTesting();
+
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API
     void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
@@ -1308,6 +1317,8 @@ private:
 #if ENABLE(VIDEO)
     std::unique_ptr<CaptionUserPreferencesTestingModeToken> m_testingModeToken;
 #endif
+
+    std::unique_ptr<ImageOverlay::CroppedImage> m_croppedImageOverlay;
 };
 
 } // namespace WebCore

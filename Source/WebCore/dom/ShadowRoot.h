@@ -61,6 +61,7 @@ public:
 
     virtual ~ShadowRoot();
 
+    using TreeScope::getElementById;
     using TreeScope::rootNode;
 
     WEBCORE_EXPORT Style::Scope& styleScope();

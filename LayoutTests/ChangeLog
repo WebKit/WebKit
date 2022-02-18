@@ -1,3 +1,15 @@
+2022-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Add a mechanism to inject images into image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=236842
+
+        Reviewed by Aditya Keerthi.
+
+        Add a layout test that exercises the new cropped image overlay code.
+
+        * fast/images/text-recognition/image-overlay-cropped-image-expected.txt: Added.
+        * fast/images/text-recognition/image-overlay-cropped-image.html: Added.
+
 2022-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPUP: Crash when running fast/mediastream/getUserMedia-to-canvas-1.html

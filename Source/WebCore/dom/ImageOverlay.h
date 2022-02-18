@@ -26,11 +26,15 @@
 #pragma once
 
 #include "IntRect.h"
+#include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class FloatRect;
 class HTMLElement;
 class Node;
+class SharedBuffer;
 class VisibleSelection;
 
 struct CharacterRange;
@@ -54,6 +58,24 @@ bool isInsideOverlay(const VisibleSelection&);
 enum class CacheTextRecognitionResults : bool { No, Yes };
 WEBCORE_EXPORT void updateWithTextRecognitionResult(HTMLElement&, const TextRecognitionResult&, CacheTextRecognitionResults = CacheTextRecognitionResults::Yes);
 #endif
+
+class CroppedImage {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CroppedImage);
+public:
+    WEBCORE_EXPORT static std::unique_ptr<CroppedImage> install(HTMLElement&, Ref<SharedBuffer>&&, const String&, FloatRect);
+
+    CroppedImage(Document&, HTMLElement&, HTMLElement&, const String& imageURL);
+    WEBCORE_EXPORT ~CroppedImage();
+
+    WEBCORE_EXPORT void setVisibility(bool);
+
+private:
+    WeakPtr<Document> m_document;
+    WeakPtr<HTMLElement> m_host;
+    WeakPtr<HTMLElement> m_croppedImageBackdrop;
+    String m_imageURL;
+};
 
 } // namespace ImageOverlay
 

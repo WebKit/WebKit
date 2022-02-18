@@ -35,6 +35,7 @@
 #import "HitTestResult.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
+#import "SharedBuffer.h"
 #import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
@@ -197,4 +198,10 @@ DDScannerResult *Internals::fakeDataDetectorResultForTesting()
 
 #endif // ENABLE(DATA_DETECTION)
 
+RefPtr<SharedBuffer> Internals::pngDataForTesting()
+{
+    NSBundle *webCoreBundle = [NSBundle bundleForClass:NSClassFromString(@"WebCoreBundleFinder")];
+    return SharedBuffer::createWithContentsOfFile([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]);
 }
+
+} // namespace WebCore
