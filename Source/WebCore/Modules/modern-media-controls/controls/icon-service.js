@@ -35,6 +35,7 @@ const Icons = {
     InvalidCircle   : { name: "InvalidCircle", type: "pdf", label: UIString("Invalid") },
     InvalidPlacard  : { name: "invalid-placard", type: "png", label: UIString("Invalid") },
     Overflow        : { name: "Overflow", type: "svg", label: UIString("More\u2026") },
+    OverflowCircle  : { name: "OverflowCircle", type: "svg", label: UIString("More\u2026") },
     Pause           : { name: "Pause", type: "svg", label: UIString("Pause") },
     PiPPlacard      : { name: "pip-placard", type: "png", label: UIString("Picture in Picture") },
     Play            : { name: "Play", type: "svg", label: UIString("Play") },

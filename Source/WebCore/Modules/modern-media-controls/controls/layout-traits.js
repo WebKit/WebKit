@@ -91,6 +91,11 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
+    overflowButtonHasCircle()
+    {
+        return false;
+    }
+
     additionalControlScaleFactor()
     {
         return 1;
