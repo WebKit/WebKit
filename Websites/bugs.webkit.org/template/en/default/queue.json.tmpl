@@ -1,0 +1,47 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0. #%]
+
+[% RAWPERL %]
+my @display_columns = ('requester', 'requestee', 'type', 'created', 'category',
+                       'restricted', 'bug_id', 'bug_summary', 'attach_id',
+                       'attach_summary', 'attach_mimetype', 'attach_ispatch');
+my $requests    = $stash->get('requests');
+my $time_filter = $context->filter('time', [ '%Y-%m-%dT%H:%M:%SZ', 'UTC' ]);
+my $mail_filter = $context->filter('email');
+
+my @results;
+foreach my $request (@$requests) {
+    my %item = ();
+    foreach my $column (@display_columns) {
+        my $val;
+        if ( $column eq 'created' ) {
+            $val = $time_filter->( $request->{$column} );
+        }
+        elsif ( $column =~ /^requeste/ ) {
+            $val = $request->{$column} ? {
+                email => $request->{$column}->email
+            } : undef;
+        }
+        elsif ( $column =~ /_id$/ ) {
+            $val = $request->{$column} ? 0 + $request->{$column} : undef;
+        }
+        elsif ( $column =~ /^(restricted|attach_ispatch)$/ ) {
+            $val = $request->{$column} ? \1 : \0;
+        }
+        else {
+            $val = $request->{$column};
+        }
+        $item{$column} = $val;
+    }
+    push @results, \%item;
+}
+{
+    use feature 'state';
+    state $json = JSON::XS->new->utf8->ascii;
+    $output .= $json->encode( \@results );
+}
+[% END %]
