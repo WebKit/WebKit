@@ -1653,11 +1653,9 @@ LayoutUnit RenderGrid::resolveAutoEndGridPosition(GridTrackSizingDirection direc
 
 bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
 {
-    if (isOutOfFlowPositioned() || isExcludedFromNormalLayout())
+    if (!mayBeSubgridExcludingAbsPos(direction))
         return false;
-    if ((direction == ForColumns) ? !style().gridSubgridColumns() : !style().gridSubgridRows())
-        return false;
-    return is<RenderGrid>(parent());
+    return downcast<RenderGrid>(parent())->gridSpanCoversRealTracks(*this, direction);
 }
 
 bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const
@@ -1666,6 +1664,18 @@ bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirec
         return false;
     GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(*downcast<RenderGrid>(parent()), *this, parentDirection);
     return isSubgrid(direction);
+}
+
+bool RenderGrid::mayBeSubgridExcludingAbsPos(GridTrackSizingDirection direction) const
+{
+    // Should exclude cases where we establish an IFC, like contain layout.
+    if (isExcludedFromNormalLayout())
+        return false;
+    if (direction == ForColumns ? !style().gridSubgridColumns() : !style().gridSubgridRows())
+        return false;
+    if (!is<RenderGrid>(parent()))
+        return false;
+    return true;
 }
 
 LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction)
@@ -1852,6 +1862,11 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     bool isRowAxis = direction == ForColumns;
     auto& offset =
         isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
+    if (isRowAxis ? isSubgridColumns() : isSubgridRows()) {
+        offset.positionOffset = 0_lu;
+        offset.distributionOffset = 0_lu;
+        return;
+    }
     auto contentAlignmentData = contentAlignment(direction);
     auto position = contentAlignmentData.position();
     // If <content-distribution> value can't be applied, 'position' will become the associated
@@ -2093,6 +2108,28 @@ GridSpan RenderGrid::gridSpanForChild(const RenderBox& child, GridTrackSizingDir
         renderGrid = parent;
     }
     return span;
+}
+
+bool RenderGrid::gridSpanCoversRealTracks(const RenderBox& child, GridTrackSizingDirection direction) const
+{
+    // Only out of flow positioned items can span to the special line that covers
+    // the padding area.
+    if (!child.isOutOfFlowPositioned())
+        return true;
+
+    int lastLine = numTracks(direction, m_grid);
+    int startLine, endLine;
+    bool startIsAuto, endIsAuto;
+    if (!computeGridPositionsForOutOfFlowChild(child, direction, startLine, startIsAuto, endLine, endIsAuto))
+        return lastLine > 0;
+
+    // If the resulting span covers only the padding area, then it's not a real
+    // track that could be used for a subgrid.
+    if (startIsAuto && !endLine)
+        return false;
+    if (endIsAuto && startLine == lastLine)
+        return false;
+    return true;
 }
 
 } // namespace WebCore

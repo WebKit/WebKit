@@ -125,8 +125,13 @@ static bool shouldClearOverridingContainingBlockContentSizeForChild(const Render
     return hasRelativeOrIntrinsicSizeForChild(child, direction) || hasRelativeMarginOrPaddingForChild(child, direction);
 }
 
-static void setOverridingContainingBlockContentSizeForChild(RenderBox& child, GridTrackSizingDirection direction, std::optional<LayoutUnit> size)
+static void setOverridingContainingBlockContentSizeForChild(const RenderGrid& grid, RenderBox& child, GridTrackSizingDirection direction, std::optional<LayoutUnit> size)
 {
+    // This function sets the dimension based on the writing mode of the containing block.
+    // For subgrids, this might not be the outermost grid, but could be a subgrid. If the
+    // writing mode of the CB and the grid for which we're doing sizing don't match, swap
+    // the directions.
+    direction = GridLayoutFunctions::flowAwareDirectionForChild(grid, *child.containingBlock(), direction);
     if (direction == ForColumns)
         child.setOverridingContainingBlockContentLogicalWidth(size);
     else
@@ -794,7 +799,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForChild(RenderBox& ch
     // If |child| has a relative logical height, we shouldn't let it override its intrinsic height, which is
     // what we are interested in here. Thus we need to set the block-axis override size to nullopt (no possible resolution).
     if (shouldClearOverridingContainingBlockContentSizeForChild(child, ForRows)) {
-        setOverridingContainingBlockContentSizeForChild(child, childBlockDirection, std::nullopt);
+        setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, childBlockDirection, std::nullopt);
         child.setNeedsLayout(MarkOnlyThis);
     }
 
@@ -959,10 +964,11 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
 {
     if (!overrideSize)
         overrideSize = m_algorithm.gridAreaBreadthForChild(child, direction);
+
     if (GridLayoutFunctions::hasOverridingContainingBlockContentSizeForChild(child, direction) && GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction) == overrideSize)
         return false;
 
-    setOverridingContainingBlockContentSizeForChild(child, direction, overrideSize);
+    setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, direction, overrideSize);
     return true;
 }
 
@@ -1122,7 +1128,7 @@ LayoutUnit DefiniteSizeStrategy::minLogicalSizeForChild(RenderBox& child, const 
     GridTrackSizingDirection flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, direction());
     if (hasRelativeMarginOrPaddingForChild(child, flowAwareDirection) || (direction() != childInlineDirection && hasRelativeOrIntrinsicSizeForChild(child, flowAwareDirection))) {
         auto indefiniteSize = direction() == childInlineDirection ? std::make_optional(0_lu) : std::nullopt;
-        setOverridingContainingBlockContentSizeForChild(child, direction(), indefiniteSize);
+        setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, direction(), indefiniteSize);
     }
     return GridTrackSizingAlgorithmStrategy::minLogicalSizeForChild(child, childMinSize, availableSize);
 }
@@ -1167,7 +1173,7 @@ LayoutUnit DefiniteSizeStrategy::minContentForChild(RenderBox& child) const
 {
     GridTrackSizingDirection childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, ForColumns);
     if (direction() == childInlineDirection && child.needsLayout() && shouldClearOverridingContainingBlockContentSizeForChild(child, ForColumns))
-        setOverridingContainingBlockContentSizeForChild(child, childInlineDirection, LayoutUnit());
+        setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, childInlineDirection, LayoutUnit());
     return GridTrackSizingAlgorithmStrategy::minContentForChild(child);
 }
 
@@ -1222,12 +1228,49 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
     }
 }
 
+static LayoutUnit marginAndBorderAndPaddingForEdge(const RenderGrid& grid, GridTrackSizingDirection direction, bool startEdge)
+{
+    if (direction == ForColumns)
+        return startEdge ? grid.marginAndBorderAndPaddingStart() : grid.marginAndBorderAndPaddingEnd();
+    return startEdge ? grid.marginAndBorderAndPaddingBefore() : grid.marginAndBorderAndPaddingAfter();
+}
+
+// https://drafts.csswg.org/css-grid-2/#subgrid-edge-placeholders
+// FIXME: This is a simplification of the specified behaviour, where we add the hypothetical
+// items directly to the edge tracks as if they had a span of 1. This matches the current Gecko
+// behavior.
+static void addSubgridMarginBorderPadding(const RenderGrid* outermost, GridTrackSizingDirection outermostDirection, Vector<GridTrack>& allTracks, GridSpan& span, RenderGrid* subgrid)
+{
+    // Convert the direction into the coordinate space of subgrid (which may not be a direct child
+    // of the outermost grid for which we're running the track sizing algorithm).
+    GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(*outermost, *subgrid, outermostDirection);
+    bool reversed = GridLayoutFunctions::isSubgridReversedDirection(*outermost, outermostDirection, *subgrid);
+
+    if (allTracks[span.startLine()].cachedTrackSize().hasIntrinsicMinTrackBreadth()) {
+        // If the subgrid has a reversed flow direction relative to the outermost grid, then
+        // we want the MBP from the end edge in its local coordinate space.
+        LayoutUnit mbpStart = marginAndBorderAndPaddingForEdge(*subgrid, direction, !reversed);
+        allTracks[span.startLine()].setBaseSize(std::max(allTracks[span.startLine()].baseSize(), mbpStart));
+    }
+    if (allTracks[span.endLine() - 1].cachedTrackSize().hasIntrinsicMinTrackBreadth()) {
+        LayoutUnit mbpEnd = marginAndBorderAndPaddingForEdge(*subgrid, direction, reversed);
+        allTracks[span.endLine() - 1].setBaseSize(std::max(allTracks[span.endLine() - 1].baseSize(), mbpEnd));
+    }
+}
+
 void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, HashSet<RenderBox*>& itemsSet)
 {
+    Vector<GridTrack>& allTracks = tracks(m_direction);
+
     while (auto* gridItem = iterator.nextGridItem()) {
         bool isNewEntry = itemsSet.add(gridItem).isNewEntry;
         if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
+            // Contribute the mbp of wrapper to the first and last tracks that we span.
             RenderGrid* inner = downcast<RenderGrid>(gridItem);
+            if (isNewEntry) {
+                GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
+                addSubgridMarginBorderPadding(m_renderGrid, m_direction, allTracks, span, inner);
+            }
 
             GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
             accumulateIntrinsicSizesForTrack(track, childIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet);

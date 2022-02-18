@@ -1,5 +1,16 @@
 2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Account for subgrid MBP when sizing
+        https://bugs.webkit.org/show_bug.cgi?id=236338
+
+        Reviewed by Dean Jackson.
+
+        Account for subgrid MBP when sizing
+
+        * TestExpectations:
+
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
         Include sub grid items in the track sizing algorithm of the outer grid
         https://bugs.webkit.org/show_bug.cgi?id=236337
 

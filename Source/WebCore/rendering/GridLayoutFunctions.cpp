@@ -66,15 +66,83 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
     return marginStartIsAuto(child, flowAwareDirection) ? marginEnd : marginEndIsAuto(child, flowAwareDirection) ? marginStart : marginStart + marginEnd;
 }
 
+static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
+{
+    return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
+}
+
+static bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    if (direction == ForColumns)
+        return child.hasRelativeLogicalWidth() || child.style().logicalWidth().isIntrinsicOrAuto();
+    return child.hasRelativeLogicalHeight() || child.style().logicalHeight().isIntrinsicOrAuto();
+}
+
+static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned startLine, unsigned endLine, GridTrackSizingDirection direction)
+{
+    unsigned numTracks = parent.numTracks(direction);
+    if (!numTracks || !parent.isSubgrid(direction))
+        return 0_lu;
+
+    std::optional<LayoutUnit> availableSpace;
+    if (!hasRelativeOrIntrinsicSizeForChild(parent, direction))
+        availableSpace = parent.availableSpaceForGutters(direction);
+
+    RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
+    LayoutUnit mbp;
+    if (!startLine)
+        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore();
+    else
+        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
+
+    if (endLine == numTracks)
+        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter();
+    else
+        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
+
+    return mbp;
+}
+
+static LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
+{
+    const RenderGrid* grid = downcast<RenderGrid>(child.parent());
+    LayoutUnit mbp;
+
+    while (grid->isSubgrid(direction)) {
+        GridSpan span = grid->gridSpanForChild(child, direction);
+
+        mbp += extraMarginForSubgrid(*grid, span.startLine(), span.endLine(), direction);
+
+        const RenderElement* parent = grid->parent();
+        if (!parent || !is<RenderGrid>(parent))
+            break;
+
+        const RenderGrid* parentGrid = downcast<RenderGrid>(parent);
+        direction = flowAwareDirectionForParent(*grid, *parentGrid, direction);
+
+        grid = parentGrid;
+    }
+
+    return mbp;
+}
+
 LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& child)
 {
+    LayoutUnit margin;
     if (child.needsLayout())
-        return computeMarginLogicalSizeForChild(grid, direction, child);
-    GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForChild(grid, child, direction);
-    bool isRowAxis = flowAwareDirection == ForColumns;
-    LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
-    LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
-    return marginStart + marginEnd;
+        margin = computeMarginLogicalSizeForChild(grid, direction, child);
+    else {
+        GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForChild(grid, child, direction);
+        bool isRowAxis = flowAwareDirection == ForColumns;
+        LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
+        LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
+        margin = marginStart + marginEnd;
+    }
+
+    if (&grid != child.parent())
+        margin += extraMarginForSubgridAncestors(direction, child);
+
+    return margin;
 }
 
 bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)

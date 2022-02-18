@@ -96,6 +96,7 @@ public:
         return isSubgrid(ForColumns);
     }
     bool isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const;
+    bool mayBeSubgridExcludingAbsPos(GridTrackSizingDirection) const;
 
     const Grid& currentGrid() const
     {
@@ -108,6 +109,10 @@ public:
     }
 
     void placeItems();
+
+    std::optional<LayoutUnit> availableSpaceForGutters(GridTrackSizingDirection) const;
+    LayoutUnit gridGap(GridTrackSizingDirection) const;
+    LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
 private:
     friend class GridTrackSizingAlgorithm;
@@ -124,8 +129,6 @@ private:
 
     bool selfAlignmentChangedToStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
     bool selfAlignmentChangedFromStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
-
-    std::optional<LayoutUnit> availableSpaceForGutters(GridTrackSizingDirection) const;
 
     bool explicitGridDidResize(const RenderStyle&) const;
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
@@ -206,9 +209,6 @@ private:
     LayoutUnit columnAxisBaselineOffsetForChild(const RenderBox&) const;
     LayoutUnit rowAxisBaselineOffsetForChild(const RenderBox&) const;
 
-    LayoutUnit gridGap(GridTrackSizingDirection) const;
-    LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
-
     unsigned nonCollapsedTracks(GridTrackSizingDirection) const;
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
@@ -222,7 +222,9 @@ private:
     Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems();
 
     GridSpan gridSpanForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection) const;
+
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
+    bool gridSpanCoversRealTracks(const RenderBox&, GridTrackSizingDirection) const;
 
     Grid m_grid;
 

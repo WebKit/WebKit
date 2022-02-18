@@ -1,3 +1,16 @@
+2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Account for subgrid MBP when sizing
+        https://bugs.webkit.org/show_bug.cgi?id=236338
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-002-expected.html:
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-003-expected.html:
+        * web-platform-tests/css/css-grid/subgrid/line-names-008.html:
+        * web-platform-tests/css/css-grid/subgrid/parent-repeat-auto-fit-001.html:
+        * web-platform-tests/css/css-grid/subgrid/parent-repeat-auto-fit-002.html:
+
 2022-02-17  Noam Rosenthal  <noam@webkit.org>
 
         Resync web-platform-tests/paint-timing from upstream
