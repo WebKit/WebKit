@@ -1,3 +1,69 @@
+2022-02-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290153. rdar://problem/89142268
+
+    [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+    https://bugs.webkit.org/show_bug.cgi?id=236787
+    <rdar://89076606>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Wrap call-sites in #if HAVE() macros.
+    
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::contentKeySession):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionForRequest const):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID const):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup):
+    
+    Source/WebCore/PAL:
+    
+    Follow-up: build problems still persist on certain platforms, so the "robustness"
+    changes made previously were not robust enough. The guards in AVFoundationSPI.h were
+    intended to ensure the definitions were present even on builds where the official API
+    is not supported. However, just because the API is not supported does not mean it's not
+    present, which leads to duplicate-interface build errors.
+    
+    Fix the AVFoundationSPI.h pragmas to only define the classes and methods where those
+    objects are supported, and in parallel, wrap implementations which use those objects
+    in those same guards (making these checks compile-time in addition to runtime).
+    
+    Move the declarations inside the #else (IOW, !USE(APPLE_INTERNAL_SDK)) block above,
+    and wrap each declaration in the correct HAVE() macro.
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290153 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-18  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+            https://bugs.webkit.org/show_bug.cgi?id=236787
+            <rdar://89076606>
+
+            Reviewed by Eric Carlson.
+
+            Follow-up: build problems still persist on certain platforms, so the "robustness"
+            changes made previously were not robust enough. The guards in AVFoundationSPI.h were
+            intended to ensure the definitions were present even on builds where the official API
+            is not supported. However, just because the API is not supported does not mean it's not
+            present, which leads to duplicate-interface build errors.
+
+            Fix the AVFoundationSPI.h pragmas to only define the classes and methods where those
+            objects are supported, and in parallel, wrap implementations which use those objects
+            in those same guards (making these checks compile-time in addition to runtime).
+
+            Move the declarations inside the #else (IOW, !USE(APPLE_INTERNAL_SDK)) block above,
+            and wrap each declaration in the correct HAVE() macro.
+
+            * pal/spi/cocoa/AVFoundationSPI.h:
+
 2022-02-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290076. rdar://problem/89076606
