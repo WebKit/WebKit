@@ -349,14 +349,6 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
     // when the style/content needs ideographic baseline setup in vertical writing mode.
     auto& rootInlineBox = lineBox.rootInlineBox();
 
-    auto isAtomicInlineLevelBoxWithIdeographicBaseline = [&](auto& atomicInlineLevelBox) {
-        ASSERT(atomicInlineLevelBox.isAtomicInlineLevelBox());
-        auto& layoutBox = atomicInlineLevelBox.layoutBox();
-        auto isReplaced = is<ReplacedBox>(layoutBox) && !layoutBox.isIntegrationInlineBlock();
-        auto isOrthogonalFormattingContextRoot = layoutBox.establishesBlockFormattingContext() && layoutBox.style().isHorizontalWritingMode();
-        return isReplaced || isOrthogonalFormattingContextRoot;
-    };
-
     auto lineNeedsIdeographicBaseline = [&] {
         auto styleToUse = [&] (auto& inlineLevelBox) -> const RenderStyle& {
             return !lineIndex ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
@@ -374,8 +366,6 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (inlineLevelBox.isInlineBox() && primaryFontRequiresIdeographicBaseline(styleToUse(inlineLevelBox)))
                 return true;
-            if (inlineLevelBox.isAtomicInlineLevelBox() && isAtomicInlineLevelBoxWithIdeographicBaseline(inlineLevelBox))
-                return true;
         }
         return false;
     };
@@ -391,11 +381,11 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         else if (inlineLevelBox.isLineBreakBox()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
             setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
-        } else if (inlineLevelBox.isAtomicInlineLevelBox() && isAtomicInlineLevelBoxWithIdeographicBaseline(inlineLevelBox)) {
-            auto alphabeticBaseline = inlineLevelBox.ascent();
-            InlineLayoutUnit ideographicBaseline = roundToInt(alphabeticBaseline / 2);
+        } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
+            auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
+            InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.
-            setBaselineAndLayoutBounds(inlineLevelBox, { ideographicBaseline, inlineLevelBox.layoutBounds().descent + (alphabeticBaseline - ideographicBaseline) });
+            setBaselineAndLayoutBounds(inlineLevelBox, { ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
         }
     }
 }
