@@ -130,6 +130,9 @@ double parseToDoubleForNumberType(const String& string, double fallbackValue)
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
+    if (string.endsWith('.'))
+        return fallbackValue;
+
     bool valid = false;
     double value = string.toDouble(&valid);
     if (!valid)

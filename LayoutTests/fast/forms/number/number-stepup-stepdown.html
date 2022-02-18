@@ -118,26 +118,26 @@ shouldBe('stepDown("-2.0", 1, null)', '"-3"');
 debug('');
 shouldBe('stepUp(".1", 1, null)', '"1.1"');
 shouldBe('stepUp(".2", 1, null)', '"1.2"');
-shouldBe('stepUp("1.", 1, null)', '"2"');
-shouldBe('stepUp("2.", 1, null)', '"3"');
+shouldBe('stepUp("1.", 1, null)', '"1"');
+shouldBe('stepUp("2.", 1, null)', '"1"');
 
 debug('');
 shouldBe('stepUp("-.1", 1, null)', '"0.9"');
 shouldBe('stepUp("-.2", 1, null)', '"0.8"');
-shouldBe('stepUp("-1.", 1, null)', '"0"');
-shouldBe('stepUp("-2.", 1, null)', '"-1"');
+shouldBe('stepUp("-1.", 1, null)', '"1"');
+shouldBe('stepUp("-2.", 1, null)', '"1"');
 
 debug('');
 shouldBe('stepDown(".1", 1, null)', '"-0.9"');
 shouldBe('stepDown(".2", 1, null)', '"-0.8"');
-shouldBe('stepDown("1.", 1, null)', '"0"');
-shouldBe('stepDown("2.", 1, null)', '"1"');
+shouldBe('stepDown("1.", 1, null)', '"-1"');
+shouldBe('stepDown("2.", 1, null)', '"-1"');
 
 debug('');
 shouldBe('stepDown("-.1", 1, null)', '"-1.1"');
 shouldBe('stepDown("-.2", 1, null)', '"-1.2"');
-shouldBe('stepDown("-1.", 1, null)', '"-2"');
-shouldBe('stepDown("-2.", 1, null)', '"-3"');
+shouldBe('stepDown("-1.", 1, null)', '"-1"');
+shouldBe('stepDown("-2.", 1, null)', '"-1"');
 
 // Same as above, but stepping by .1 rather than 1.
 debug('');
@@ -175,26 +175,26 @@ shouldBe('stepDown("-2.0", .1, null)', '"-2.1"');
 debug('');
 shouldBe('stepUp(".1", .1, null)', '"0.2"');
 shouldBe('stepUp(".2", .1, null)', '"0.3"');
-shouldBe('stepUp("1.", .1, null)', '"1.1"');
-shouldBe('stepUp("2.", .1, null)', '"2.1"');
+shouldBe('stepUp("1.", .1, null)', '"0.1"');
+shouldBe('stepUp("2.", .1, null)', '"0.1"');
 
 debug('');
 shouldBe('stepUp("-.1", .1, null)', '"0"');
 shouldBe('stepUp("-.2", .1, null)', '"-0.1"');
-shouldBe('stepUp("-1.", .1, null)', '"-0.9"');
-shouldBe('stepUp("-2.", .1, null)', '"-1.9"');
+shouldBe('stepUp("-1.", .1, null)', '"0.1"');
+shouldBe('stepUp("-2.", .1, null)', '"0.1"');
 
 debug('');
 shouldBe('stepDown(".1", .1, null)', '"0"');
 shouldBe('stepDown(".2", .1, null)', '"0.1"');
-shouldBe('stepDown("1.", .1, null)', '"0.9"');
-shouldBe('stepDown("2.", .1, null)', '"1.9"');
+shouldBe('stepDown("1.", .1, null)', '"-0.1"');
+shouldBe('stepDown("2.", .1, null)', '"-0.1"');
 
 debug('');
 shouldBe('stepDown("-.1", .1, null)', '"-0.2"');
 shouldBe('stepDown("-.2", .1, null)', '"-0.3"');
-shouldBe('stepDown("-1.", .1, null)', '"-1.1"');
-shouldBe('stepDown("-2.", .1, null)', '"-2.1"');
+shouldBe('stepDown("-1.", .1, null)', '"-0.1"');
+shouldBe('stepDown("-2.", .1, null)', '"-0.1"');
 
 debug('');
 debug('Extra arguments');
