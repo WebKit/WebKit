@@ -232,7 +232,7 @@ class Preferences
     resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
     tempResultFile = resultFile + ".tmp"
 
-    output = ERB.new(File.read(templateFile), 0, "-").result(binding)
+    output = ERB.new(File.read(templateFile), trim_mode:"-").result(binding)
     File.open(tempResultFile, "w+") do |f|
       f.write(output)
     end

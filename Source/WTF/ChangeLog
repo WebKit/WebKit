@@ -1,3 +1,16 @@
+2022-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        GeneratePreferences.rb: warning: Passing safe_level with the 2nd argument of ERB.new is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=236684
+
+        Reviewed by Yusuke Suzuki.
+
+        With Ruby 3.1.0, GeneratePreferences.rb reported the following warnings.
+        > GeneratePreferences.rb:235: warning: Passing safe_level with the 2nd argument of ERB.new is deprecated. Do not use it, and specify other arguments as keyword arguments.
+        > GeneratePreferences.rb:235: warning: Passing trim_mode with the 3rd argument of ERB.new is deprecated. Use keyword argument like ERB.new(str, trim_mode: ...) instead.
+
+        * Scripts/GeneratePreferences.rb: Changed to use the keyword argument for ERB.new.
+
 2022-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r289974.
