@@ -50,7 +50,9 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 static NSString * const InitializationDataTypeKey = @"InitializationDataType";
+#if HAVE(AVCONTENTKEYREPORTGROUP)
 static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
+#endif
 static const NSInteger SecurityLevelError = -42811;
 
 @interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
@@ -146,6 +148,7 @@ static const NSInteger SecurityLevelError = -42811;
         _parent->sessionIdentifierChanged(session.contentProtectionSessionIdentifier);
 }
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
 - (void)contentKeySession:(AVContentKeySession *)session contentProtectionSessionIdentifierDidChangeForKeyGroup:(nullable AVContentKeyReportGroup *)reportGroup
 {
     // FIXME: Remove after rdar://57430747 is fixed
@@ -158,6 +161,7 @@ static const NSInteger SecurityLevelError = -42811;
     if (_parent)
         _parent->groupSessionIdentifierChanged(reportGroup, reportGroup.contentProtectionSessionIdentifier);
 }
+#endif
 
 - (void)contentKeySession:(AVContentKeySession *)session externalProtectionStatusDidChangeForContentKeyRequest:(AVContentKeyRequest *)keyRequest
 {
@@ -247,8 +251,10 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
         return nullptr;
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (!PAL::getAVContentKeyReportGroupClass())
         return nullptr;
+#endif
 
     auto storageURL = this->storageURL();
     if (!persistentStateAllowed() || !storageURL)
@@ -440,6 +446,7 @@ const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
     return keySystem;
 }
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
 static AVContentKeyReportGroup* groupForRequest(AVContentKeyRequest* request)
 {
     ASSERT([request respondsToSelector:@selector(options)]);
@@ -448,6 +455,7 @@ static AVContentKeyReportGroup* groupForRequest(AVContentKeyRequest* request)
     ALLOW_NEW_API_WITHOUT_GUARDS_END
     return group;
 }
+#endif
 
 void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest *request)
 {
@@ -544,6 +552,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *)
 
 void CDMInstanceFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup* group, NSData *sessionIdentifier)
 {
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (group == [m_session defaultContentKeyGroup]) {
         INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- default unused group identifier changed; dropping");
         return;
@@ -556,6 +565,10 @@ void CDMInstanceFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVConten
 
     ASSERT_NOT_REACHED();
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- no responsible session; dropping");
+#else
+    UNUSED_PARAM(group);
+    UNUSED_PARAM(sessionIdentifier);
+#endif
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
@@ -603,9 +616,14 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     if (index != notFound)
         return m_sessions[index].get();
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     return sessionForGroup(groupForRequest(request));
+#else
+    return nullptr;
+#endif
 }
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForGroup(AVContentKeyReportGroup* group) const
 {
     auto index = m_sessions.findIf([group] (auto session) {
@@ -616,6 +634,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
         return m_sessions[index].get();
     return nullptr;
 }
+#endif
 
 bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
 {
@@ -725,11 +744,13 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
 
     if (auto unexpectedRequest = m_instance->takeUnexpectedKeyRequestForInitializationData(initDataType, initData)) {
         DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, " found unexpectedRequest matching initData");
+#if HAVE(AVCONTENTKEYREPORTGROUP)
         if (m_group) {
             ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
             [m_group associateContentKeyRequest:unexpectedRequest.get()];
             ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
+#endif
         m_requestLicenseCallback = WTFMove(callback);
         didProvideRequest(unexpectedRequest.get());
         return;
@@ -757,13 +778,16 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
     DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, " processing request");
     m_requestLicenseCallback = WTFMove(callback);
 
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (m_group) {
         auto* options = @{ ContentKeyReportGroupKey: m_group.get(), InitializationDataTypeKey: (NSString*)initDataType };
         [m_group processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
-    } else {
-        auto* options = @{ InitializationDataTypeKey: (NSString*)initDataType };
-        [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
+        return;
     }
+#endif
+
+    auto* options = @{ InitializationDataTypeKey: (NSString*)initDataType };
+    [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:options];
 }
 
 static bool isEqual(const FragmentedSharedBuffer& data, const String& value)
@@ -1011,9 +1035,11 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String& sessionId, LicenseType licenseType, RemoveSessionDataCallback&& callback)
 {
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     if (m_group)
         [m_group expire];
     else
+#endif
         [m_session expire];
 
     if (licenseType == LicenseType::PersistentUsageRecord) {
@@ -1132,7 +1158,13 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
                     return;
 
                 if (m_sessionId.isEmpty()) {
-                    auto sessionID = m_group ? m_group.get().contentProtectionSessionIdentifier : m_session.get().contentProtectionSessionIdentifier;
+                    NSData *sessionID = nullptr;
+#if HAVE(AVCONTENTKEYREPORTGROUP)
+                    if (m_group)
+                        sessionID = m_group.get().contentProtectionSessionIdentifier;
+                    else
+#endif
+                        sessionID = m_session.get().contentProtectionSessionIdentifier;
                     sessionIdentifierChanged(sessionID);
                 }
 
@@ -1417,7 +1449,11 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData *sessionIdentifier)
 {
+#if HAVE(AVCONTENTKEYREPORTGROUP)
     sessionIdentifierChanged(sessionIdentifier);
+#else
+    UNUSED_PARAM(sessionIdentifier);
+#endif
 }
 
 static auto requestStatusToCDMStatus(AVContentKeyRequestStatus status)
@@ -1507,6 +1543,7 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
     }
 #endif
 
+#if HAVE(AVCONTENTKEYSESSIONWILLOUTPUTBEOBSCURED)
     // FIXME: AVFoundation requires a connection to the WindowServer in order to query the HDCP status of individual
     // displays. Passing in an empty NSArray will cause AVFoundation to fall back to a "minimum supported HDCP level"
     // across all displays. Replace the below with explicit APIs to query the per-display HDCP status in the UIProcess
@@ -1525,6 +1562,7 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request { ", keyIDsForRequest(request), " } willOutputBeObscured...forDisplays:[ nil ] = ", obscured ? "true" : "false");
         return obscured ? CDMKeyStatus::OutputRestricted : CDMKeyStatus::Usable;
     }
+#endif
 
     // Only use the non-request-specific "outputObscuredDueToInsufficientExternalProtection" status if
     // AVContentKeyRequests do not support the finer grained "-willOutputBeObscured..." API.
@@ -1548,13 +1586,18 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDispla
 
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
 {
-    if (m_session || m_group)
+    if (m_session)
+        return true;
+
+#if HAVE(AVCONTENTKEYREPORTGROUP)
+    if (m_group)
         return true;
 
     if (auto* session = m_instance->contentKeySession()) {
         m_group = [session makeContentKeyGroup];
         return true;
     }
+#endif
 
     auto storageURL = m_instance->storageURL();
     if (!m_instance->persistentStateAllowed() || !storageURL)
