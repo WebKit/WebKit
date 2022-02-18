@@ -937,7 +937,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
     struct objc_method_description method = protocol_getMethodDescription(@protocol(AVContentKeySessionDelegate), @selector(contentKeySession:contentKeyRequestDidSucceed:), NO, YES);
     if (!method.name) {
-        KeyStatusVector keyStatuses { std::make_pair(WTFMove(keyIDs.first()), KeyStatus::Usable) };
+        KeyStatusVector keyStatuses { std::pair { WTFMove(keyIDs.first()), KeyStatus::Usable } };
         callback(false, std::make_optional(WTFMove(keyStatuses)), std::nullopt, std::nullopt, Succeeded);
         return;
     }

@@ -344,7 +344,7 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
         const auto* keys = factory->keysForSessionWithID(sessionID);
         if (keys) {
             changedKeys = keys->map([](auto& key) {
-                return std::make_pair(key.copyRef(), KeyStatus::Usable);
+                return std::pair { key.copyRef(), KeyStatus::Usable };
             });
         }
     }
@@ -393,7 +393,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
 
     auto keys = factory->removeKeysFromSessionWithID(id);
     auto keyStatusVector = WTF::map(WTFMove(keys), [](auto&& key) {
-        return std::make_pair(WTFMove(key), KeyStatus::Released);
+        return std::pair { WTFMove(key), KeyStatus::Released };
     });
 
     CString message { "remove-message" };

@@ -333,7 +333,7 @@ unsigned Code::jsHash() const
 
 void Code::setNumEntrypoints(unsigned numEntryPoints)
 {
-    m_prologueGenerators = Vector { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
+    m_prologueGenerators = { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
 }
 
 } } } // namespace JSC::B3::Air

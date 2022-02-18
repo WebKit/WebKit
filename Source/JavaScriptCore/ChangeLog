@@ -1,3 +1,16 @@
+2022-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236748
+        <rdar://problem/89090710>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r290026 to address feedback from Darin.
+
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::setNumEntrypoints):
+
 2022-02-17  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [32bit] Increase fixedExecutableMemoryPoolSize on ARM to 32MB

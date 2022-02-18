@@ -701,7 +701,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
     };
 
     m_statuses = WTF::map(WTFMove(inputStatuses), [](auto&& status) {
-        return std::make_pair(WTFMove(status.first), toMediaKeyStatus(status.second));
+        return std::pair { WTFMove(status.first), toMediaKeyStatus(status.second) };
     });
 
     // 5. Queue a task to fire a simple event named keystatuseschange at the session.

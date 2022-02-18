@@ -66,14 +66,9 @@ static inline RefPtr<CSSCalcOperationNode> createBlendHalf(const Length& length,
 
 static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr<CalcExpressionNode>>& nodes, const RenderStyle& style)
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(nodes.size());
-    for (auto& node : nodes) {
-        if (auto cssNode = createCSS(*node, style))
-            values.uncheckedAppend(cssNode.releaseNonNull());
-    }
-    values.shrinkToFit();
-    return values;
+    return WTF::compactMap(nodes, [&](auto& node) -> RefPtr<CSSCalcExpressionNode> {
+        return createCSS(*node, style);
+    });
 }
 
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, const RenderStyle& style)

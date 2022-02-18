@@ -366,10 +366,9 @@ StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const StyleRuleFontPalett
 StyleRuleFontPaletteValues::~StyleRuleFontPaletteValues() = default;
 
 DeferredStyleGroupRuleList::DeferredStyleGroupRuleList(const CSSParserTokenRange& range, CSSDeferredParser& parser)
-    : m_parser(parser)
+    : m_tokens(range.begin(), range.end() - range.begin())
+    , m_parser(parser)
 {
-    size_t length = range.end() - range.begin();
-    m_tokens.append(range.begin(), length);
 }
 
 DeferredStyleGroupRuleList::~DeferredStyleGroupRuleList() = default;

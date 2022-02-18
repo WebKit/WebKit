@@ -1803,10 +1803,9 @@ Ref<DeferredStyleProperties> DeferredStyleProperties::create(const CSSParserToke
 
 DeferredStyleProperties::DeferredStyleProperties(const CSSParserTokenRange& range, CSSDeferredParser& parser)
     : StylePropertiesBase(parser.mode(), DeferredPropertiesType)
+    , m_tokens(range.begin(), range.end() - range.begin())
     , m_parser(parser)
 {
-    size_t length = range.end() - range.begin();
-    m_tokens.append(range.begin(), length);
 }
     
 DeferredStyleProperties::~DeferredStyleProperties() = default;

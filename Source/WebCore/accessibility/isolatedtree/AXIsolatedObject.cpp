@@ -445,7 +445,7 @@ void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject&
         return;
 
     auto idPairs = pairs.map([](auto& mathPair) {
-        return std::make_pair(mathPair.first ? mathPair.first->objectID() : AXID(), mathPair.second ? mathPair.second->objectID() : AXID());
+        return std::pair { mathPair.first ? mathPair.first->objectID() : AXID(), mathPair.second ? mathPair.second->objectID() : AXID() };
     });
     setProperty(propertyName, WTFMove(idPairs));
 }

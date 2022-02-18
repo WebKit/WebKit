@@ -226,7 +226,7 @@ const RefPtr<KeyHandle>& KeyStore::keyHandle(const KeyIDType& keyID) const
 CDMInstanceSession::KeyStatusVector KeyStore::convertToJSKeyStatusVector() const
 {
     return m_keys.map([](auto& key) {
-        return std::make_pair(key->idAsSharedBuffer(), key->status());
+        return std::pair { key->idAsSharedBuffer(), key->status() };
     });
 }
 
