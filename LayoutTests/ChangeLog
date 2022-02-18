@@ -1,3 +1,15 @@
+2022-02-18  Tim Nguyen  <ntim@apple.com>
+
+        Re-import inert and <dialog> WPT
+        https://bugs.webkit.org/show_bug.cgi?id=236808
+
+        Reviewed by Simon Fraser.
+
+        Commit: https://github.com/web-platform-tests/wpt/commit/0d483a3bea340a2c60cb7a4add49eb63cbba2a64
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt: Added.
+
 2022-02-18  Sam Sneddon  <gsnedders@apple.com>
 
         ServiceWorkerGlobalScope+PushAPI requires PushAPIEnabled

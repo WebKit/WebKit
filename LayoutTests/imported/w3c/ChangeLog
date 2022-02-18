@@ -1,3 +1,38 @@
+2022-02-18  Tim Nguyen  <ntim@apple.com>
+
+        Re-import inert and <dialog> WPT
+        https://bugs.webkit.org/show_bug.cgi?id=236808
+
+        Reviewed by Simon Fraser.
+
+        Commit: https://github.com/web-platform-tests/wpt/commit/0d483a3bea340a2c60cb7a4add49eb63cbba2a64
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-double-nested-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-delegatesfocus-expected.txt.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-double-nested.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-delegatesfocus.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focus-shadow.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inertness-with-modal-dialogs-and-iframes-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inertness-with-modal-dialogs-and-iframes.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-scroll-height.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+        * web-platform-tests/inert/dynamic-inert-on-focused-element.tentative-expected.txt: Added.
+        * web-platform-tests/inert/dynamic-inert-on-focused-element.tentative.html: Added.
+        * web-platform-tests/inert/inert-canvas-fallback-content.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-canvas-fallback-content.tentative.html: Added.
+        * web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-iframe-hittest.tentative.html: Added.
+        * web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-iframe-tabbing.tentative.html: Added.
+        * web-platform-tests/inert/inert-node-is-uneditable.tentative.html:
+        * web-platform-tests/inert/inert-with-modal-dialog-001.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-with-modal-dialog-001.tentative.html: Added.
+        * web-platform-tests/inert/inert-with-modal-dialog-002.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-with-modal-dialog-002.tentative.html: Added.
+        * web-platform-tests/inert/w3c-import.log:
+
 2022-02-17  Jon Lee  <jonlee@apple.com>
 
         [iOS] css/css-color/t422-rgba-onscreen-b.xht and css/css-color/t425-hsla-onscreen-b.xht are consistently failing

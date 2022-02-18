@@ -1,0 +1,24 @@
+
+FAIL <input> that gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <input class="becomes-inert check-focus" inert=""></input>
+FAIL <input> whose parent gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <input class="check-focus"></input>
+FAIL <button> that gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <button class="becomes-inert check-focus" inert="">foo</b...
+FAIL <div> that gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <div class="becomes-inert check-focus" tabindex="-1" iner...
+FAIL <div> whose parent gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <div class="check-focus" tabindex="-1">bar</div>
+FAIL <div> whose grandparent gets 'inert' attribute assert_equals: The element stops being focused expected Element node <body><div id="log"></div>
+
+<div class="test-wrapper" dat... but got Element node <span class="check-focus" tabindex="-1">baz</span>
+
+
+foo
+bar
+baz
