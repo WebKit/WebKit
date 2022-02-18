@@ -1,0 +1,14 @@
+ Checks that update-draws of bufferSubData are respected
+
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS top-left of canvas should be green.
+PASS bottom-left of canvas should be green.
+PASS Top-right of canvas should be green.
+PASS bottom-right of canvas should be green.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
