@@ -32,7 +32,6 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RenderElement.h"
-#include "ScrollView.h"
 #include "Widget.h"
 
 namespace WebCore {
@@ -41,6 +40,8 @@ AccessibilityScrollView::AccessibilityScrollView(ScrollView* view)
     : m_scrollView(view)
     , m_childrenDirty(false)
 {
+    if (is<FrameView>(view))
+        m_frameOwnerElement = downcast<FrameView>(*view).frame().ownerElement();
 }
 
 AccessibilityScrollView::~AccessibilityScrollView()
@@ -52,13 +53,19 @@ void AccessibilityScrollView::detachRemoteParts(AccessibilityDetachmentType deta
 {
     AccessibilityObject::detachRemoteParts(detachmentType);
     m_scrollView = nullptr;
+    m_frameOwnerElement = nullptr;
 }
 
 Ref<AccessibilityScrollView> AccessibilityScrollView::create(ScrollView* view)
 {
     return adoptRef(*new AccessibilityScrollView(view));
 }
-    
+
+ScrollView* AccessibilityScrollView::currentScrollView() const
+{
+    return m_scrollView ? m_scrollView.get() : documentFrameView();
+}
+
 AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation orientation)
 {
     updateScrollbars();
@@ -80,19 +87,18 @@ AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation
 // In WebKit2, the ScrollView object will return the AX information (because there are no platform widgets).
 bool AccessibilityScrollView::isAttachment() const
 {
-    return m_scrollView && m_scrollView->platformWidget();
+    if (auto* scrollView = currentScrollView())
+        return scrollView->platformWidget();
+    return false;
 }
 
 PlatformWidget AccessibilityScrollView::platformWidget() const
 {
-    return m_scrollView ? m_scrollView->platformWidget() : nullptr;
+    if (auto* scrollView = currentScrollView())
+        return scrollView->platformWidget();
+    return nullptr;
 }
 
-Widget* AccessibilityScrollView::widgetForAttachmentView() const
-{
-    return m_scrollView.get();
-}
-    
 bool AccessibilityScrollView::canSetFocusAttribute() const
 {
     AccessibilityObject* webArea = webAreaObject();
@@ -125,19 +131,20 @@ void AccessibilityScrollView::updateChildrenIfNecessary()
 
 void AccessibilityScrollView::updateScrollbars()
 {
-    if (!m_scrollView)
+    auto* scrollView = currentScrollView();
+    if (!scrollView)
         return;
 
-    if (m_scrollView->horizontalScrollbar() && !m_horizontalScrollbar)
-        m_horizontalScrollbar = addChildScrollbar(m_scrollView->horizontalScrollbar());
-    else if (!m_scrollView->horizontalScrollbar() && m_horizontalScrollbar) {
+    if (scrollView->horizontalScrollbar() && !m_horizontalScrollbar)
+        m_horizontalScrollbar = addChildScrollbar(scrollView->horizontalScrollbar());
+    else if (!scrollView->horizontalScrollbar() && m_horizontalScrollbar) {
         removeChildScrollbar(m_horizontalScrollbar.get());
         m_horizontalScrollbar = nullptr;
     }
 
-    if (m_scrollView->verticalScrollbar() && !m_verticalScrollbar)
-        m_verticalScrollbar = addChildScrollbar(m_scrollView->verticalScrollbar());
-    else if (!m_scrollView->verticalScrollbar() && m_verticalScrollbar) {
+    if (scrollView->verticalScrollbar() && !m_verticalScrollbar)
+        m_verticalScrollbar = addChildScrollbar(scrollView->verticalScrollbar());
+    else if (!scrollView->verticalScrollbar() && m_verticalScrollbar) {
         removeChildScrollbar(m_verticalScrollbar.get());
         m_verticalScrollbar = nullptr;
     }
@@ -179,7 +186,7 @@ bool AccessibilityScrollView::computeAccessibilityIsIgnored() const
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)
         return true;
-    
+
     return webArea->accessibilityIsIgnored();
 }
 
@@ -187,23 +194,20 @@ void AccessibilityScrollView::addChildren()
 {
     ASSERT(!m_childrenInitialized);
     m_childrenInitialized = true;
-    
+
     addChild(webAreaObject());
-    updateScrollbars();    
+    updateScrollbars();
 }
 
 AccessibilityObject* AccessibilityScrollView::webAreaObject() const
 {
-    if (!is<FrameView>(m_scrollView))
-        return nullptr;
-
-    Document* document = downcast<FrameView>(*m_scrollView).frame().document();
+    auto* document = this->document();
     if (!document || !document->hasLivingRenderTree())
         return nullptr;
 
-    if (AXObjectCache* cache = axObjectCache())
+    if (auto* cache = axObjectCache())
         return cache->getOrCreate(document);
-    
+
     return nullptr;
 }
 
@@ -223,66 +227,57 @@ AXCoreObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& poin
 
 LayoutRect AccessibilityScrollView::elementRect() const
 {
-    if (!m_scrollView)
+    auto* scrollView = currentScrollView();
+    if (!scrollView)
         return LayoutRect();
 
-    LayoutRect rect = m_scrollView->frameRect();
-    float topContentInset = m_scrollView->topContentInset();
+    LayoutRect rect = scrollView->frameRect();
+    float topContentInset = scrollView->topContentInset();
+
     // Top content inset pushes the frame down and shrinks it.
     rect.move(0, topContentInset);
     rect.contract(0, topContentInset);
     return rect;
 }
 
+Document* AccessibilityScrollView::document() const
+{
+    if (is<FrameView>(m_scrollView))
+        return downcast<FrameView>(*m_scrollView).frame().document();
+    return AccessibilityObject::document();
+}
+
 FrameView* AccessibilityScrollView::documentFrameView() const
 {
-    if (!is<FrameView>(m_scrollView))
-        return nullptr;
+    if (is<FrameView>(m_scrollView))
+        return downcast<FrameView>(m_scrollView.get());
 
-    return downcast<FrameView>(m_scrollView.get());
-}    
+    if (m_frameOwnerElement && m_frameOwnerElement->contentDocument())
+        return m_frameOwnerElement->contentDocument()->view();
+
+    return nullptr;
+}
 
 AccessibilityObject* AccessibilityScrollView::parentObject() const
 {
-    if (!is<FrameView>(m_scrollView))
-        return nullptr;
-
     AXObjectCache* cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    HTMLFrameOwnerElement* owner = downcast<FrameView>(*m_scrollView).frame().ownerElement();
+    HTMLFrameOwnerElement* owner = m_frameOwnerElement.get();
+    if (is<FrameView>(m_scrollView))
+        owner = downcast<FrameView>(*m_scrollView).frame().ownerElement();
+
     if (owner && owner->renderer())
         return cache->getOrCreate(owner);
 
     return nullptr;
 }
-    
-AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
-{
-    if (!is<FrameView>(m_scrollView))
-        return nullptr;
-
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return nullptr;
-
-    HTMLFrameOwnerElement* owner = downcast<FrameView>(*m_scrollView).frame().ownerElement();
-    if (owner && owner->renderer())
-        return cache->get(owner);
-
-    return nullptr;
-}
-
-ScrollableArea* AccessibilityScrollView::getScrollableAreaIfScrollable() const
-{
-    return m_scrollView.get();
-}
 
 void AccessibilityScrollView::scrollTo(const IntPoint& point) const
 {
-    if (m_scrollView)
-        m_scrollView->setScrollPosition(point);
+    if (auto* scrollView = currentScrollView())
+        scrollView->setScrollPosition(point);
 }
 
 } // namespace WebCore    
