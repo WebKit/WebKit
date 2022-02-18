@@ -1,3 +1,11 @@
+2022-02-18  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION (r289990): [iOS] fast/backgrounds/gradient-background-shadow.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=236854
+
+        Unreviewed. Expanding fuzzy range.
+        * fast/backgrounds/gradient-background-shadow.html:
+
 2022-02-18  Tim Nguyen  <ntim@apple.com>
 
         Re-import inert and <dialog> WPT
