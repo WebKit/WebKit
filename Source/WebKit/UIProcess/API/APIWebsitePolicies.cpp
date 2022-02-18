@@ -59,8 +59,8 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-    policies->setLegacyCustomHeaderFields(Vector { m_legacyCustomHeaderFields });
-    policies->setCustomHeaderFields(Vector { m_customHeaderFields });
+    policies->setLegacyCustomHeaderFields(Vector<WebCore::HTTPHeaderField> { m_legacyCustomHeaderFields });
+    policies->setCustomHeaderFields(Vector<WebCore::CustomHeaderFields> { m_customHeaderFields });
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
