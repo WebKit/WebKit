@@ -1,3 +1,15 @@
+2022-02-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake: Use the OpenGL::OpenGL imported target instead of the
+        OPENGL_LIBRARIES variable.
+        * PlatformWPE.cmake: Remove linking againt OpenGL libraries; the WPE port is not
+        supposed to link to any of them directly.
+
 2022-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Don't use ANGLE's GBM-based display

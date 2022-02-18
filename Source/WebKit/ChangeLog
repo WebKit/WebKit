@@ -1,3 +1,14 @@
+2022-02-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: Remove usage of the OPENGL_ variables for the WebKit target, which is
+        uneeded because it links to WebCore, which transitively pulls the needed libraries now
+        that imported targets are being used.
+
 2022-02-18  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: isAXAuthenticatedCallback must be handled on the main runloop
