@@ -3467,6 +3467,8 @@ imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/opt
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-modify-scrolling-attr-to-yes.html [ Pass ]
 
+webkit.org/b/233284 http/wpt/cross-origin-opener-policy/single-request-to-server.html [ Pass Failure ]
+
 [ Release ] editing/spelling/toggle-spellchecking.html [ Failure Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
