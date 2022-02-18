@@ -63,6 +63,11 @@ void UIScriptControllerCocoa::setMinimumEffectiveWidth(double effectiveWidth)
     webView()._minimumEffectiveDeviceWidth = effectiveWidth;
 }
 
+void UIScriptControllerCocoa::setWebViewEditable(bool editable)
+{
+    webView()._editable = editable;
+}
+
 void UIScriptControllerCocoa::becomeFirstResponder()
 {
     [webView() becomeFirstResponder];

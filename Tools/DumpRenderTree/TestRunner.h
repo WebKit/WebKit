@@ -334,8 +334,6 @@ public:
 
     void setPOSIXLocale(JSStringRef);
 
-    void setWebViewEditable(bool);
-
     void abortModal();
 
     static void setSerializeHTTPLoads(bool);

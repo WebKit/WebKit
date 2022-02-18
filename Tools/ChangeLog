@@ -1,3 +1,44 @@
+2022-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        '-webkit-user-select: all' is not respected in editable views
+        https://bugs.webkit.org/show_bug.cgi?id=190977
+        rdar://34945944
+
+        Reviewed by Wenson Hsieh.
+
+        Add a UIScriptController method to make web views editable.
+
+        Remove TestRunner::setWebViewEditable as it is unused.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        (setWebViewEditableCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setWebViewEditable): Deleted.
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::setWebViewEditable):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::~TestRunner):
+        (TestRunner::setWebViewEditable): Deleted.
+        * DumpRenderTree/win/UIScriptControllerWin.cpp:
+        (WTR::UIScriptControllerWin::setWebViewEditable):
+        * DumpRenderTree/win/UIScriptControllerWin.h:
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setWebViewEditable):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setWebViewEditable):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        (WTR::UIScriptControllerGtk::setWebViewEditable):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.h:
+
 2022-02-17  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure NetworkStorageManager::moveData performs move operation based on data types

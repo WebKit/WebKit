@@ -203,4 +203,10 @@ JSObjectRef UIScriptControllerGtk::contentsOfUserInterfaceItem(JSStringRef inter
     return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), createJSString(jsonObject->toJSONString().utf8().data()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
 }
 
+void UIScriptControllerGtk::setWebViewEditable(bool editable)
+{
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+    WKViewSetEditable(webView, editable);
+}
+
 } // namespace WTR

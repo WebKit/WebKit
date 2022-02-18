@@ -70,4 +70,17 @@ double UIScriptControllerWin::zoomScale() const
     return 1;
 }
 
+void UIScriptControllerWin::setWebViewEditable(bool editable)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+
+    viewEditing->setEditable(editable);
+}
+
 }

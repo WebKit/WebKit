@@ -52,6 +52,7 @@ public:
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
+    void setWebViewEditable(bool) override;
 
 private:
     void overridePreference(JSStringRef, JSStringRef) override;

@@ -750,7 +750,7 @@ void Node::inspect()
         document().page()->inspectorController().inspect(this);
 }
 
-static Node::Editability computeEditabilityFromComputedStyle(const Node& startNode, Node::UserSelectAllTreatment treatment)
+static Node::Editability computeEditabilityFromComputedStyle(const Node& startNode, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
@@ -766,6 +766,10 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         // therefore non editable.
         if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->userSelectIncludingInert() == UserSelect::All)
             return Node::Editability::ReadOnly;
+
+        if (pageIsEditable == PageIsEditable::Yes)
+            return Node::Editability::CanEditRichly;
+
         switch (style->userModify()) {
         case UserModify::ReadOnly:
             return Node::Editability::ReadOnly;
@@ -777,6 +781,10 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         ASSERT_NOT_REACHED();
         return Node::Editability::ReadOnly;
     }
+
+    if (pageIsEditable == PageIsEditable::Yes)
+        return Node::Editability::CanEditRichly;
+
     return Node::Editability::ReadOnly;
 }
 
@@ -785,18 +793,19 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
 
+    Ref document = this->document();
+    auto pageIsEditable = document->page() && document->page()->isEditable() ? PageIsEditable::Yes : PageIsEditable::No;
+
     if (isInShadowTree())
-        return HTMLElement::editabilityFromContentEditableAttr(*this);
+        return HTMLElement::editabilityFromContentEditableAttr(*this, pageIsEditable);
 
-    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable())
-        return Editability::CanEditRichly;
-
-    if (shouldUpdateStyle == ShouldUpdateStyle::Update && document().needsStyleRecalc()) {
-        if (!document().usesStyleBasedEditability())
-            return HTMLElement::editabilityFromContentEditableAttr(*this);
-        document().updateStyleIfNeeded();
+    if (shouldUpdateStyle == ShouldUpdateStyle::Update && document->needsStyleRecalc()) {
+        if (!document->usesStyleBasedEditability())
+            return HTMLElement::editabilityFromContentEditableAttr(*this, pageIsEditable);
+        document->updateStyleIfNeeded();
     }
-    return computeEditabilityFromComputedStyle(*this, treatment);
+
+    return computeEditabilityFromComputedStyle(*this, treatment, pageIsEditable);
 }
 
 RenderBox* Node::renderBox() const

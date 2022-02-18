@@ -365,6 +365,8 @@ interface UIScriptController {
 
     undefined setHardwareKeyboardAttached(boolean attached);
 
+    undefined setWebViewEditable(boolean editable);
+
     object attachmentInfo(DOMString attachmentIdentifier);
     undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 

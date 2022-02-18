@@ -158,6 +158,11 @@ void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
     doAsyncTask(callback);
 }
 
+void UIScriptControllerMac::setWebViewEditable(bool editable)
+{
+    [mainFrame webView].editable = editable;
+}
+
 NSUndoManager *UIScriptControllerMac::platformUndoManager() const
 {
     return nil;

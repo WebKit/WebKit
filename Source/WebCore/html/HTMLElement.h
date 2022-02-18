@@ -39,6 +39,7 @@ class VisibleSelection;
 struct SimpleRange;
 struct TextRecognitionResult;
 
+enum class PageIsEditable : bool;
 enum class EnterKeyHint : uint8_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -61,7 +62,7 @@ public:
     WEBCORE_EXPORT String contentEditable() const;
     WEBCORE_EXPORT ExceptionOr<void> setContentEditable(const String&);
 
-    static Editability editabilityFromContentEditableAttr(const Node&);
+    static Editability editabilityFromContentEditableAttr(const Node&, PageIsEditable);
 
     virtual bool draggable() const;
     WEBCORE_EXPORT void setDraggable(bool);

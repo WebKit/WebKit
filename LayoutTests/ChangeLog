@@ -1,3 +1,29 @@
+2022-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        '-webkit-user-select: all' is not respected in editable views
+        https://bugs.webkit.org/show_bug.cgi?id=190977
+        rdar://34945944
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests to verify the behavior of `-[WKWebView _setEditable:]` with
+        '-webkit-user-select: all', '-webkit-user-modify: none', and
+        'contenteditable=false'. Elements with '-webkit-user-select: all' should
+        not be editable.
+
+        * editing/editability/contenteditable-false-in-editable-view-expected.txt: Added.
+        * editing/editability/contenteditable-false-in-editable-view.html: Added.
+        * editing/editability/user-modify-read-only-in-editable-view-expected.txt: Added.
+        * editing/editability/user-modify-read-only-in-editable-view.html: Added.
+        * editing/editability/user-select-all-in-editable-view-expected.txt: Added.
+        * editing/editability/user-select-all-in-editable-view.html: Added.
+        * editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page.html:
+
+        Replace the test option with the new UIHelper method.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.setWebViewEditable):
+
 2022-02-17  Matt Woodrow  <mattwoodrow@apple.com>
 
         Account for subgrid MBP when sizing

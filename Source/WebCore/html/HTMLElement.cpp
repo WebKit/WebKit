@@ -299,8 +299,11 @@ const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const Qualified
     return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
-Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& node)
+Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& node, PageIsEditable pageIsEditable)
 {
+    if (pageIsEditable == PageIsEditable::Yes)
+        return Editability::CanEditRichly;
+
     if (auto* startElement = is<Element>(node) ? &downcast<Element>(node) : node.parentElement()) {
         for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
             switch (contentEditableType(element)) {
@@ -320,16 +323,15 @@ Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& no
     if (containingShadowRoot && containingShadowRoot->mode() == ShadowRootMode::UserAgent)
         return Editability::ReadOnly;
 
-    auto& document = node.document();
-    if (is<HTMLDocument>(document))
-        return downcast<HTMLDocument>(document).inDesignMode() ? Editability::CanEditRichly : Editability::ReadOnly;
+    if (node.document().inDesignMode())
+        return Editability::CanEditRichly;
 
     return Editability::ReadOnly;
 }
 
 bool HTMLElement::matchesReadWritePseudoClass() const
 {
-    return editabilityFromContentEditableAttr(*this) != Editability::ReadOnly;
+    return editabilityFromContentEditableAttr(*this, PageIsEditable::No) != Editability::ReadOnly;
 }
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)

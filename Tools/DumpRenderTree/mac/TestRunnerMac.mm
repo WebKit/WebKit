@@ -958,12 +958,6 @@ void TestRunner::apiTestGoToCurrentBackForwardItem()
     [view goToBackForwardItem:[[view backForwardList] currentItem]];
 }
 
-void TestRunner::setWebViewEditable(bool editable)
-{
-    WebView *view = [mainFrame webView];
-    [view setEditable:editable];
-}
-
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
 @interface SynchronousLoader : NSObject <NSURLConnectionDelegate>

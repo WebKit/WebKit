@@ -197,6 +197,8 @@ public:
         return nullptr;
     }
 
+    virtual void setWebViewEditable(bool) { }
+
     virtual void rawKeyDown(JSStringRef) { notImplemented(); }
     virtual void rawKeyUp(JSStringRef) { notImplemented(); }
 

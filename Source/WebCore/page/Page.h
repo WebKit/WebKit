@@ -194,6 +194,8 @@ using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 enum class EventThrottlingBehavior : bool { Responsive, Unresponsive };
 enum class MainFrameMainResource : bool { No, Yes };
 
+enum class PageIsEditable : bool { No, Yes };
+
 enum class CompositingPolicy : bool {
     Normal,
     Conservative, // Used in low memory situations.

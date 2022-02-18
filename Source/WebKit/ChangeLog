@@ -1,3 +1,20 @@
+2022-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        '-webkit-user-select: all' is not respected in editable views
+        https://bugs.webkit.org/show_bug.cgi?id=190977
+        rdar://34945944
+
+        Reviewed by Wenson Hsieh.
+
+        Add methods for testing the GTK port.
+
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewSetEditable):
+        * UIProcess/API/C/gtk/WKViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetEditable):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2022-02-17  Devin Rousso  <drousso@apple.com>
 
         [MacCatalyst] improve support for resizing

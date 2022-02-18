@@ -1,0 +1,7 @@
+This tests that the cursor can be moved inside a "-webkit-user-modify: read-only" element if the web view is editable. The cursor should end up inside "some text in between". To test manually, ensure this page is opened in an editable web view.
+| "before "
+| <span>
+|   id="inner"
+|   style="-webkit-user-modify: read-only"
+|   "some <#selection-caret>text in between"
+| " after"
