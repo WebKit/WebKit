@@ -34,7 +34,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 #endif
 
 #include "GLContext.h"
@@ -83,7 +83,8 @@ void GCGLLayer::swapBuffersIfNeeded()
     {
         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
         Locker locker { proxy.lock() };
-        proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 
     m_context.markLayerComposited();

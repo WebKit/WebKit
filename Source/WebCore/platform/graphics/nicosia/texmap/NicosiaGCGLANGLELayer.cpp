@@ -36,7 +36,7 @@
 #include "Logging.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerDmabuf.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 
 namespace Nicosia {
 
@@ -62,7 +62,8 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
 
         {
             Locker locker { proxy.lock() };
-            proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerDmabuf>(size, format, stride, fd));
+            ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerDmabuf>(size, format, stride, fd));
         }
 
         m_context.markLayerComposited();
@@ -78,14 +79,15 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     auto flags = m_context.contextAttributes().alpha ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
     {
         Locker locker { proxy.lock() };
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = proxy.getAvailableBuffer(size, m_context.m_internalColorFormat);
+        ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = downcast<TextureMapperPlatformLayerProxyGL>(proxy).getAvailableBuffer(size, m_context.m_internalColorFormat);
         if (!layerBuffer) {
             auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
             layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
         }
 
         layerBuffer->textureGL().setPendingContents(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer)));
-        proxy.pushNextBuffer(WTFMove(layerBuffer));
+        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
     }
     m_context.markLayerComposited();
 }

@@ -24,7 +24,7 @@
 #if USE(EXTERNAL_HOLEPUNCH)
 #include "MediaPlayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
 #if USE(NICOSIA)
     , m_nicosiaLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 #else
-    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy()))
+    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL))
 #endif
 {
     pushNextHolePunchBuffer();
@@ -73,7 +73,7 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
     auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxy& proxy)
+        [this](TextureMapperPlatformLayerProxyGL& proxy)
         {
             Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
@@ -81,7 +81,9 @@ void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
         };
 
 #if USE(NICOSIA)
-    proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
 #else
     proxyOperation(*m_platformLayerProxy);
 #endif

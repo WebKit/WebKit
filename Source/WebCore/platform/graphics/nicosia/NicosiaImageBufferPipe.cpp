@@ -31,7 +31,7 @@
 #include "NativeImage.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -62,7 +62,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
 
     if (!m_imageBuffer) {
         auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
-            return proxy.scheduleUpdateOnCompositorThread([this] () mutable {
+            return downcast<TextureMapperPlatformLayerProxyGL>(proxy).scheduleUpdateOnCompositorThread([this] () mutable {
                 auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
                 Locker locker { proxy.lock() };
 
@@ -95,7 +95,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
 
                 auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
                 layerBuffer->setExtraFlags(TextureMapperGL::ShouldBlend);
-                proxy.pushNextBuffer(WTFMove(layerBuffer));
+                downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
             });
         };
         proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());

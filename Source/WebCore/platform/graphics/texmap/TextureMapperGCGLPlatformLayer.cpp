@@ -44,7 +44,7 @@ TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGL
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy());
+    m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxyGL);
 #endif
 }
 
@@ -97,7 +97,7 @@ void TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded()
 
     {
         Locker locker { m_platformLayerProxy->lock() };
-        m_platformLayerProxy->pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayerProxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 
     m_context.markLayerComposited();
