@@ -1124,6 +1124,8 @@ fast/css/accent-color/submit.html [ ImageOnlyFailure ]
 fast/css/accent-color/text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html [ ImageOnlyFailure ]
 
+webanimations/frame-rate [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

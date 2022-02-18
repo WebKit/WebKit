@@ -137,7 +137,10 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
             if (animationFrameRate) {
                 ASSERT(*animationFrameRate > 0);
-                if (m_frameRateAligner.updateFrameRate(*animationFrameRate) == FrameRateAligner::ShouldUpdate::No)
+                auto shouldUpdate = m_frameRateAligner.updateFrameRate(*animationFrameRate);
+                // Even if we're told not to update, any newly-added animation should fire right away,
+                // it will align with other animations of that frame rate at the next opportunity.
+                if (shouldUpdate == FrameRateAligner::ShouldUpdate::No && !animation->pending())
                     continue;
             }
 
@@ -155,6 +158,8 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
             }
         }
     }
+
+    m_frameRateAligner.finishUpdate();
 
     // If the maximum frame rate we've encountered is the same as the default frame rate,
     // let's reset it to not have an explicit value which will indicate that there is no

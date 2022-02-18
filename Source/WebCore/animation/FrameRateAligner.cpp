@@ -48,6 +48,10 @@ void FrameRateAligner::beginUpdate(ReducedResolutionSeconds timestamp, std::opti
 
     const auto nextUpdateTimeEpsilon = 1_ms;
     for (auto& [frameRate, data] : m_frameRates) {
+        // We can reset isNew to false for all entries since they were already present
+        // in the previous update.
+        data.isNew = false;
+
         // If the timeline frame rate is the same as this animation frame rate, then
         // we don't need to compute the next ideal sample time.
         if (timelineFrameRate == frameRate) {
@@ -78,11 +82,46 @@ auto FrameRateAligner::updateFrameRate(FramesPerSecond frameRate) -> ShouldUpdat
     }
 
     // We're dealing with a frame rate we didn't see in the previous update. In this case,
-    // we'll allow animations to be sampled right away.
-    // FIXME: We need make sure to reset the last update time to align this new frame rate
-    // with other compatible frame rates.
+    // we'll allow animations to be sampled right away. Later, in finishUpdate(), we'll
+    // make sure to reset the last update time to align this new frame rate with other
+    // compatible frame rates.
     m_frameRates.set(frameRate, FrameRateData { m_timestamp, m_timestamp });
     return ShouldUpdate::Yes;
+}
+
+// For two frame rates to be aligned, one must be the multitple of the other, or vice versa.
+static bool frameRatesCanBeAligned(FramesPerSecond a, FramesPerSecond b)
+{
+    return (a > b && a % b == 0) || (b > a && b % a == 0);
+}
+
+void FrameRateAligner::finishUpdate()
+{
+    // Iterate through the frame rates to find new entries and set their first update time
+    // in a way that future updates will be synchronized with other animations with that
+    // frame rate.
+    for (auto& [frameRate, data] : m_frameRates) {
+        if (!data.isNew)
+            continue;
+
+        // Look for the compatible frame rate with the highest value.
+        std::optional<FramesPerSecond> highestCompatibleFrameRate;
+        for (auto& [potentiallyCompatibleFrameRate, potentiallyCompatibleData] : m_frameRates) {
+            if (potentiallyCompatibleData.isNew)
+                continue;
+
+            if (frameRatesCanBeAligned(frameRate, potentiallyCompatibleFrameRate)) {
+                if (!highestCompatibleFrameRate || *highestCompatibleFrameRate > potentiallyCompatibleFrameRate)
+                    highestCompatibleFrameRate = potentiallyCompatibleFrameRate;
+            }
+        }
+
+        // If we don't find any compatible frame rate, we can leave the last update time as-is
+        // and use the current timestamp as the basis from which we'll align animations for this
+        // frame rate.
+        if (highestCompatibleFrameRate)
+            data.firstUpdateTime = m_frameRates.get(*highestCompatibleFrameRate).firstUpdateTime;
+    }
 }
 
 std::optional<Seconds> FrameRateAligner::timeUntilNextUpdateForFrameRate(FramesPerSecond frameRate, ReducedResolutionSeconds timestamp) const

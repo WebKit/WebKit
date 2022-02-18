@@ -1,3 +1,27 @@
+2022-02-18  Antoine Quint  <graouts@webkit.org>
+
+        [frame-rate] animation with different but compatible frame rates should be aligned
+        https://bugs.webkit.org/show_bug.cgi?id=236778
+        <rdar://problem/89083932>
+
+        Reviewed by Simon Fraser.
+
+        Add new tests that check the behavior of alignment when:
+        
+        - two animations are started together with the same frame rate,
+        - two animations are started one frame apart with the same frame rate,
+        - three animations are each started one frame apart and with different, but compatible frame rates.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * webanimations/frame-rate/animation-frame-rate-alignment-compatible-frame-rates-expected.txt: Added.
+        * webanimations/frame-rate/animation-frame-rate-alignment-compatible-frame-rates.html: Added.
+        * webanimations/frame-rate/animation-frame-rate-alignment-started-together-expected.txt: Added.
+        * webanimations/frame-rate/animation-frame-rate-alignment-started-together.html: Added.
+        * webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation-expected.txt: Added.
+        * webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html: Added.
+
 2022-02-18  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening for GPU Process bots. Update fuzzy data.

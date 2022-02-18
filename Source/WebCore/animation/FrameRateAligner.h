@@ -39,6 +39,7 @@ public:
     ~FrameRateAligner();
 
     void beginUpdate(ReducedResolutionSeconds, std::optional<FramesPerSecond>);
+    void finishUpdate();
 
     enum class ShouldUpdate { Yes, No };
     ShouldUpdate updateFrameRate(FramesPerSecond);
@@ -50,6 +51,7 @@ private:
     struct FrameRateData {
         ReducedResolutionSeconds firstUpdateTime;
         ReducedResolutionSeconds lastUpdateTime;
+        bool isNew { true };
     };
 
     HashMap<FramesPerSecond, FrameRateData> m_frameRates;
