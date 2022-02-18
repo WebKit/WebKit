@@ -18,3 +18,5 @@ GCC_WARN_UNUSED_FUNCTION = NO;
 
 // FIXME: There's no assembly used in the boringssl build yet :(
 GCC_PREPROCESSOR_DEFINITIONS = OPENSSL_NO_ASM $(inherited);
+
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

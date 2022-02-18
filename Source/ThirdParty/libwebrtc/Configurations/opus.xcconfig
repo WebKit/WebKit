@@ -29,3 +29,5 @@ EXCLUDED_SOURCE_FILE_NAMES[arch=arm64*] = *_sse.c *_sse2.c *_sse4_1.c x86_silk_m
 // The iOS Simulator and Catalyst can't use SSE4 intrinsics, but macOS can.
 SSE4_FLAG[sdk=macosx*] = $(SSE4_FLAG_$(WK_IS_CATALYST))
 SSE4_FLAG_NO = OPUS_X86_MAY_HAVE_SSE4_1;
+
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

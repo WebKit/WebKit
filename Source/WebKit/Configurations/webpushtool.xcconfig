@@ -37,7 +37,7 @@ WK_APPSERVERSUPPORT_LDFLAGS_iphoneos = $(WK_APPSERVERSUPPORT_LDFLAGS$(WK_IOS_15)
 WK_APPSERVERSUPPORT_LDFLAGS_iphonesimulator = $(WK_APPSERVERSUPPORT_LDFLAGS$(WK_IOS_15));
 WK_APPSERVERSUPPORT_LDFLAGS_IOS_SINCE_15 = -framework AppServerSupport;
 
-OTHER_LDFLAGS = -framework Foundation -framework CoreFoundation -framework WebKit -framework JavaScriptCore $(WK_APPSERVERSUPPORT_LDFLAGS);
+OTHER_LDFLAGS = -framework Foundation -framework CoreFoundation -framework WebKit -framework JavaScriptCore $(WK_APPSERVERSUPPORT_LDFLAGS) $(SOURCE_VERSION_LDFLAGS);
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 
 CODE_SIGN_ENTITLEMENTS = Resources/webpushtool.entitlements;

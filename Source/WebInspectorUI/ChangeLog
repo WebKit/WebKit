@@ -1,3 +1,14 @@
+2022-02-18  Saam Barati  <sbarati@apple.com>
+
+        Add LC_SOURCE_VERSION to compile targets
+        https://bugs.webkit.org/show_bug.cgi?id=236720
+        <rdar://84984140>
+
+        Reviewed by Michael Saboff.
+
+        * Configurations/Version.xcconfig:
+        * Configurations/WebInspectorUIFramework.xcconfig:
+
 2022-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Flexbox] Enable Flexbox Inspector feature

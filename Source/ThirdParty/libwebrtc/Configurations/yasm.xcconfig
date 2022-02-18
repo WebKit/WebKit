@@ -45,3 +45,5 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*] = main_noop.c;
 INCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = main_noop.c;
 
 WK_ASAN_DISALLOWED = YES;
+
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

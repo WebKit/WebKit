@@ -25,7 +25,7 @@
 
 PRODUCT_NAME = webpushd;
 
-OTHER_LDFLAGS = -framework WebKit;
+OTHER_LDFLAGS = -framework WebKit $(SOURCE_VERSION_LDFLAGS);
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
 
 // We want this to always be NO for non-simulator builds. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.

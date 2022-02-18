@@ -1,3 +1,22 @@
+2022-02-18  Saam Barati  <sbarati@apple.com>
+
+        Add LC_SOURCE_VERSION to compile targets
+        https://bugs.webkit.org/show_bug.cgi?id=236720
+        <rdar://84984140>
+
+        Reviewed by Michael Saboff.
+
+        * Configurations/GPUService.xcconfig:
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebAuthnService.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * Configurations/WebKitSwift.xcconfig:
+        * Configurations/adattributiond.xcconfig:
+        * Configurations/webpushd.xcconfig:
+        * Configurations/webpushtool.xcconfig:
+
 2022-02-17  Sihui Liu  <sihui_liu@apple.com>
 
         Exclude new LocalStorage directory from backup on iOS

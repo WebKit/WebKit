@@ -89,5 +89,4 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=arm64*] = $(EXCLUDED_SOURC
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx);
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=arm64*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx) $(EXCLUDED_SOURCE_FILE_NAMES_arm);
 
-OTHER_LDFLAGS[sdk=macosx10.13*] = $(inherited);
-OTHER_LDFLAGS[sdk=macosx10.14*] = $(inherited);
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);
