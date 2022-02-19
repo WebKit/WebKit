@@ -1,3 +1,10 @@
+2022-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, use ArrayWithUndecided in ArrayPrototype
+        https://bugs.webkit.org/show_bug.cgi?id=236869
+
+        * stress/array-prototype-concat.js: Added.
+
 2022-02-19  Dean Jackson  <dino@apple.com>
 
         [JSC] Implement Temporal.PlainDate

@@ -34,7 +34,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Base::createStructure(vm, globalObject, prototype, ArrayClass);
+        return Base::createStructure(vm, globalObject, prototype, ArrayWithUndecided);
     }
 
 private:
