@@ -254,6 +254,10 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    void reloadAfterUnblockedContentFilter(WebPageProxyIdentifier);
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);

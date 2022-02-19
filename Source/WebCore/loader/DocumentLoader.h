@@ -159,7 +159,7 @@ class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     , public ContentFilterClient
 #endif
     , private CachedRawResourceClient {
@@ -402,9 +402,13 @@ public:
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
 #if ENABLE(CONTENT_FILTERING)
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
     void ref() const final { RefCounted<DocumentLoader>::ref(); }
     void deref() const final { RefCounted<DocumentLoader>::deref(); }
+#endif
+    WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript);
+    WEBCORE_EXPORT void handleContentFilterProvisionalLoadFailure(const URL& blockedPageURL, const SubstituteData&);
 #endif
 
     void startIconLoading();
@@ -450,6 +454,11 @@ public:
 
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
     void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
+
+#if ENABLE(CONTENT_FILTERING)
+    bool contentFilterWillHandleProvisionalLoadFailure(const ResourceError&);
+    void contentFilterHandleProvisionalLoadFailure(const ResourceError&);
+#endif
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -503,7 +512,7 @@ private:
 
     void responseReceived(const ResourceResponse&, CompletionHandler<void()>&&);
 
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     // ContentFilterClient
     WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&) final;
     WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
@@ -655,7 +664,12 @@ private:
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
 #if ENABLE(CONTENT_FILTERING)
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     std::unique_ptr<ContentFilter> m_contentFilter;
+#else
+    bool m_blockedByContentFilter { false };
+    ResourceError m_blockedError;
+#endif
 #endif
 
 #if USE(QUICK_LOOK)

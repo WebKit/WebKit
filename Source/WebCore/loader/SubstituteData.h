@@ -59,12 +59,47 @@ namespace WebCore {
         const String& textEncoding() const { return m_response.textEncodingName(); }
         const URL& failingURL() const { return m_failingURL; }
         const ResourceResponse& response() const { return m_response; }
-        
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<SubstituteData> decode(Decoder&);
+
     private:
         RefPtr<FragmentedSharedBuffer> m_content;
         URL m_failingURL;
         ResourceResponse m_response;
         SessionHistoryVisibility m_shouldRevealToSessionHistory { SessionHistoryVisibility::Hidden };
     };
+
+template<class Encoder>
+void SubstituteData::encode(Encoder& encoder) const
+{
+    encoder << m_content << m_failingURL << m_response << m_shouldRevealToSessionHistory;
+}
+
+template<class Decoder>
+std::optional<SubstituteData> SubstituteData::decode(Decoder& decoder)
+{
+    std::optional<RefPtr<FragmentedSharedBuffer>> content;
+    decoder >> content;
+    if (!content)
+        return std::nullopt;
+
+    std::optional<URL> failingURL;
+    decoder >> failingURL;
+    if (!failingURL)
+        return std::nullopt;
+
+    std::optional<ResourceResponse> response;
+    decoder >> response;
+    if (!response)
+        return std::nullopt;
+
+    std::optional<SessionHistoryVisibility> shouldRevealToSessionHistory;
+    decoder >> shouldRevealToSessionHistory;
+    if (!shouldRevealToSessionHistory)
+        return std::nullopt;
+
+    return { { WTFMove(*content), *failingURL, *response, *shouldRevealToSessionHistory } };
+}
 
 } // namespace WebCore

@@ -2453,7 +2453,6 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
     m_provisionalLoadErrorBeingHandledURL = provisionalDocumentLoader.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    auto contentFilter = provisionalDocumentLoader.contentFilter();
     auto contentFilterWillContinueLoading = false;
 #endif
 
@@ -2461,7 +2460,7 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
     if (history().provisionalItem())
         willContinueLoading = WillContinueLoading::Yes;
 #if ENABLE(CONTENT_FILTERING)
-    if (contentFilter && contentFilter->willHandleProvisionalLoadFailure(error)) {
+    if (provisionalDocumentLoader.contentFilterWillHandleProvisionalLoadFailure(error)) {
         willContinueLoading = WillContinueLoading::Yes;
         contentFilterWillContinueLoading = true;
     }
@@ -2471,7 +2470,7 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
 
 #if ENABLE(CONTENT_FILTERING)
     if (contentFilterWillContinueLoading)
-        contentFilter->handleProvisionalLoadFailure(error);
+        provisionalDocumentLoader.contentFilterHandleProvisionalLoadFailure(error);
 #endif
 
     m_provisionalLoadErrorBeingHandledURL = { };

@@ -43,11 +43,13 @@ class SharedBufferCopy;
 }
 
 namespace WebCore {
+class ContentFilterUnblockHandler;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
+class SubstituteData;
 enum class MainFrameMainResource : bool;
 }
 
@@ -99,6 +101,12 @@ private:
     void didReceiveResource(const ShareableResource::Handle&);
 #endif
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    void contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler&, String&& unblockRequestDeniedScript);
+    void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&);
+    void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, const WebCore::SubstituteData&);
+#endif
+    
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     TrackingParameters m_trackingParameters;
     WebResourceInterceptController m_interceptController;

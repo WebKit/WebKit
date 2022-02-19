@@ -67,6 +67,11 @@
 #include <WebCore/PreviewConverter.h>
 #endif
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#include <WebCore/ContentFilter.h>
+#include <WebCore/ContentFilterUnblockHandler.h>
+#endif
+
 #define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 
@@ -187,8 +192,13 @@ void NetworkResourceLoader::start()
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
 
+    auto newRequest = ResourceRequest { originalRequest() };
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    startContentFiltering(newRequest);
+#endif
+
     if (m_networkLoadChecker) {
-        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this, weakThis = WeakPtr { *this }] (auto&& result) {
+        m_networkLoadChecker->check(ResourceRequest { newRequest }, this, [this, weakThis = WeakPtr { *this }] (auto&& result) {
             if (!weakThis)
                 return;
 
@@ -217,13 +227,25 @@ void NetworkResourceLoader::start()
         return;
     }
     // FIXME: Remove that code path once m_networkLoadChecker is used for all network loads.
-    if (canUseCache(originalRequest())) {
+    if (canUseCache(newRequest)) {
         retrieveCacheEntry(originalRequest());
         return;
     }
 
-    startNetworkLoad(ResourceRequest { originalRequest() }, FirstLoad::Yes);
+    startNetworkLoad(ResourceRequest { newRequest }, FirstLoad::Yes);
 }
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
+{
+    if (!isMainResource())
+        return;
+    m_contentFilter = ContentFilter::create(*this);
+    if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse()))
+        return;
+    m_contentFilter->startFilteringMainResource(request.url());
+}
+#endif
 
 void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 {
@@ -692,6 +714,11 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 {
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%" PRId64 ", hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(receivedResponse))
+        return completionHandler(PolicyAction::Ignore);
+#endif
+
     if (isMainResource())
         didReceiveMainResourceResponse(receivedResponse);
 
@@ -904,6 +931,13 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
             // FIXME: Pass a real value or remove the encoded data size feature.
             sendBuffer(*m_bufferedData.get(), -1);
         }
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+        if (m_contentFilter) {
+            m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+            m_contentFilter->stopFilteringMainResource();
+        }
+#endif
+
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
 
@@ -992,6 +1026,11 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     m_redirectResponse = redirectResponse;
     if (!m_firstResponseURL.isValid())
         m_firstResponseURL = redirectResponse.url();
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(request, redirectResponse))
+        return;
+#endif
 
     std::optional<WebCore::PrivateClickMeasurement::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (!sessionID().isEphemeral()) {
@@ -1251,8 +1290,14 @@ void NetworkResourceLoader::bufferingTimerFired()
     if (m_bufferedData.isEmpty())
         return;
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    auto sharedBuffer = m_bufferedData.takeAsContiguous();
+    bool shouldFilter = m_contentFilter && !m_contentFilter->continueAfterDataReceived(sharedBuffer, m_bufferedDataEncodedDataLength);
+    if (!shouldFilter)
+        send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(sharedBuffer.get()), m_bufferedDataEncodedDataLength));
+#else
     send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(*m_bufferedData.get()), m_bufferedDataEncodedDataLength));
-
+#endif
     m_bufferedData.empty();
     m_bufferedDataEncodedDataLength = 0;
 }
@@ -1260,6 +1305,11 @@ void NetworkResourceLoader::bufferingTimerFired()
 void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer.makeContiguous(), encodedDataLength))
+        return;
+#endif
 
     send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(buffer), encodedDataLength));
 }
@@ -1306,6 +1356,11 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 {
     LOADER_RELEASE_LOG("didRetrieveCacheEntry:");
     auto response = entry->response();
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (m_contentFilter && !m_contentFilter->responseReceived() && !m_contentFilter->continueAfterResponseReceived(response))
+        return;
+#endif
 
     if (isMainResource())
         didReceiveMainResourceResponse(response);
@@ -1358,6 +1413,13 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
 #if ENABLE(SHAREABLE_RESOURCE)
     if (!entry->shareableResourceHandle().isNull()) {
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+        if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(entry->buffer()->makeContiguous(), entry->buffer()->size())) {
+            m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+            m_contentFilter->stopFilteringMainResource();
+            return;
+        }
+#endif
         send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle()));
         return;
     }
@@ -1381,6 +1443,12 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     networkLoadMetrics.responseBodyDecodedSize = 0;
 
     sendBuffer(*entry->buffer(), entry->buffer()->size());
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (m_contentFilter) {
+        m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+        m_contentFilter->stopFilteringMainResource();
+    }
+#endif
     send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
 }
 
@@ -1696,6 +1764,43 @@ bool NetworkResourceLoader::isAppInitiated()
 {
     return m_parameters.request.isAppInitiated();
 }
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer, size_t encodedDataLength)
+{
+    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferCopy(buffer), encodedDataLength));
+}
+
+WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
+{
+    send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(unblockHandler, unblockRequestDeniedScript));
+    if (!unblockHandler.needsUIProcess()) {
+        unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }](bool unblocked) {
+            if (!unblocked)
+                return;
+            m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReloadAfterUnblockedContentFilter(m_parameters.webPageProxyID), 0);
+        });
+    }
+    return WebKit::blockedByContentFilterError(m_parameters.request);
+}
+
+void NetworkResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::ResourceError& error)
+{
+    RELEASE_ASSERT(m_contentFilter);
+    m_contentFilter->handleProvisionalLoadFailure(error);
+}
+
+void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData& substituteData)
+{
+    if (substituteData.isValid())
+        send(Messages::WebResourceLoader::HandleProvisionalLoadFailureFromContentFilter(blockedPageURL, substituteData));
+    else {
+        RELEASE_ASSERT(m_contentFilter);
+        auto& error = m_contentFilter->blockedError();
+        send(Messages::WebResourceLoader::CancelMainResourceLoadForContentFilter(error));
+    }
+}
+#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 
 } // namespace WebKit
 

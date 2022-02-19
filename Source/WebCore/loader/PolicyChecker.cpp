@@ -141,7 +141,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     auto& substituteData = loader->substituteData();
     if (substituteData.isValid() && !substituteData.failingURL().isEmpty()) {
         bool shouldContinue = true;
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         if (auto loader = m_frame.loader().activeDocumentLoader())
             shouldContinue = ContentFilter::continueAfterSubstituteDataRequest(*loader, substituteData);
 #endif

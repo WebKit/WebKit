@@ -1,5 +1,47 @@
 2022-02-18  Per Arne Vollan  <pvollan@apple.com>
 
+        Move content filtering to Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=233760
+        <rdar://problem/86150702>
+
+        Reviewed by Brent Fulgham.
+
+        Move content filtering from the DocumentLoader class in the WebProcess to the NetworkResourceLoader class in the
+        Networking process. The NetworkResourceLoader is now a client of the content filter, and will send messages
+        to the DocumentLoader in the WebProcess to cancel the load when the content filter decided to block the load.
+        If the content filter is providing replacement data, this will also be sent over IPC to the WebProcess.
+        Data is not being sent to the WebProcess until the content filter has decided to allow the load, if content
+        filtering is enabled.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::startContentFiltering):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBuffer):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        (WebKit::NetworkResourceLoader::dataReceivedThroughContentFilter):
+        (WebKit::NetworkResourceLoader::contentFilterDidBlock):
+        (WebKit::NetworkResourceLoader::cancelMainResourceLoadForContentFilter):
+        (WebKit::NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::reloadAfterUnblockedContentFilter):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::contentFilterDidBlockLoad):
+        (WebKit::WebResourceLoader::cancelMainResourceLoadForContentFilter):
+        (WebKit::WebResourceLoader::handleProvisionalLoadFailureFromContentFilter):
+        (WebKit::WebResourceLoader::reload):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
+2022-02-18  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add required Mach service to the sandbox of the GPU process
         https://bugs.webkit.org/show_bug.cgi?id=236860
 

@@ -54,6 +54,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
+#include <WebCore/SubstituteData.h>
 #include <wtf/CompletionHandler.h>
 
 #define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID.toUInt64(), ##__VA_ARGS__)
@@ -348,6 +349,29 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     m_coreLoader->didFinishLoading(emptyMetrics);
 }
 #endif
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler& unblockHandler, String&& unblockRequestDeniedScript)
+{
+    if (!m_coreLoader || !m_coreLoader->documentLoader())
+        return;
+    m_coreLoader->documentLoader()->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
+}
+
+void WebResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::ResourceError& error)
+{
+    if (!m_coreLoader || !m_coreLoader->documentLoader())
+        return;
+    m_coreLoader->documentLoader()->cancelMainResourceLoad(error);
+}
+
+void WebResourceLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, const WebCore::SubstituteData& substituteData)
+{
+    if (!m_coreLoader || !m_coreLoader->documentLoader() || !substituteData.isValid())
+        return;
+    m_coreLoader->documentLoader()->handleContentFilterProvisionalLoadFailure(blockedPageURL, substituteData);
+}
+#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 
 } // namespace WebKit
 

@@ -419,7 +419,7 @@ bool DocumentLoader::isLoading() const
 void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
     ASSERT(isMainThread());
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
@@ -710,7 +710,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         newRequest.setURL(WTFMove(url));
     }
 
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
         return completionHandler(WTFMove(newRequest));
 #endif
@@ -902,7 +902,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     ASSERT(response.certificateInfo());
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
@@ -1322,7 +1322,7 @@ void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& 
 
 void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer))
         return;
 #endif
@@ -1463,7 +1463,7 @@ void DocumentLoader::detachFromFrame()
     stopLoading();
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
 #endif
@@ -2025,7 +2025,7 @@ void DocumentLoader::startLoadingMainResource()
         return;
     }
 
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
 #endif
 
@@ -2230,7 +2230,7 @@ void DocumentLoader::clearMainResource()
     ASSERT(isMainThread());
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
 #endif
@@ -2357,7 +2357,7 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
 
 void DocumentLoader::becomeMainResourceClient()
 {
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (m_contentFilter)
         m_contentFilter->startFilteringMainResource(*m_mainResource);
 #endif
@@ -2414,7 +2414,7 @@ void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolation
     m_frame->document()->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
 }
 
-#if ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void DocumentLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer)
 {
     dataReceived(buffer);
@@ -2425,12 +2425,19 @@ void DocumentLoader::cancelMainResourceLoadForContentFilter(const ResourceError&
     cancelMainResourceLoad(error);
 }
 
+ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
+{
+    return handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
+}
+
 void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData& substituteData)
 {
     frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
 }
+#endif // ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 
-ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
+#if ENABLE(CONTENT_FILTERING)
+ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
 {
     unblockHandler.setUnreachableURL(documentURL());
     if (!unblockRequestDeniedScript.isEmpty() && frame()) {
@@ -2440,8 +2447,40 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler 
         });
     }
     frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));
-    return frameLoader()->blockedByContentFilterError(request());
+    auto error = frameLoader()->blockedByContentFilterError(request());
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    m_blockedByContentFilter = true;
+    m_blockedError = error;
+#endif
+
+    return error;
 }
+
+void DocumentLoader::handleContentFilterProvisionalLoadFailure(const URL& blockedPageURL, const SubstituteData& substituteData)
+{
+    frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
+}
+
+bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const ResourceError& error)
+{
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    return m_blockedByContentFilter && m_blockedError.errorCode() == error.errorCode() && m_blockedError.domain() == error.domain();
+#else
+    return m_contentFilter && m_contentFilter->willHandleProvisionalLoadFailure(error);
+#endif
+}
+
+void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceError& error)
+{
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    UNUSED_PARAM(error);
+#else
+    if (m_contentFilter)
+        m_contentFilter->handleProvisionalLoadFailure(error);
+#endif
+}
+
 #endif // ENABLE(CONTENT_FILTERING)
 
 void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>& patterns)

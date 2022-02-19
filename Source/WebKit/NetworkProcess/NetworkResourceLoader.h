@@ -34,6 +34,7 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PrivateRelayed.h"
+#include <WebCore/ContentFilterClient.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -45,6 +46,7 @@
 
 namespace WebCore {
 class BlobDataFileReference;
+class ContentFilter;
 class FormData;
 class NetworkStorageSession;
 class ResourceRequest;
@@ -72,6 +74,9 @@ class NetworkResourceLoader final
     , public IPC::MessageSender
     , public WebCore::ContentSecurityPolicyClient
     , public WebCore::CrossOriginAccessControlCheckDisabler
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    , public WebCore::ContentFilterClient
+#endif
     , public CanMakeWeakPtr<NetworkResourceLoader> {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&& reply = nullptr)
@@ -92,7 +97,7 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
-    void continueWillSendRequest(WebCore::ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials);
+    void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials);
 
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTFMove(response); }
     const WebCore::ResourceResponse& response() const { return m_response; }
@@ -155,12 +160,25 @@ public:
 
     bool isAppInitiated();
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    void ref() const final { RefCounted<NetworkResourceLoader>::ref(); }
+    void deref() const final { RefCounted<NetworkResourceLoader>::deref(); }
+#endif
+
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override { return m_parameters.identifier.toUInt64(); }
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    // ContentFilterClient
+    void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&, size_t) final;
+    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
+    void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
+    void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&) final;
+#endif
 
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
@@ -220,6 +238,10 @@ private:
 
     ResourceLoadInfo resourceLoadInfo();
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    void startContentFiltering(WebCore::ResourceRequest&);
+#endif
+
     const NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;
@@ -264,6 +286,11 @@ private:
     WebCore::ResourceResponse m_redirectResponse;
     URL m_firstResponseURL; // First URL in response's URL list (https://fetch.spec.whatwg.org/#concept-response-url-list).
     std::optional<WebCore::CrossOriginOpenerPolicyEnforcementResult> m_currentCoopEnforcementResult;
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    std::unique_ptr<WebCore::ContentFilter> m_contentFilter;
+#endif
+
     PrivateRelayed m_privateRelayed { PrivateRelayed::No };
 };
 
