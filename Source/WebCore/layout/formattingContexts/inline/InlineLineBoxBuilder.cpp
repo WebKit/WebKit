@@ -116,7 +116,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent, size_
     return lineBox;
 }
 
-void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const
+void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline fontBaseline) const
 {
     ASSERT(!fallbackFontsForContent.isEmpty());
     ASSERT(inlineBox.isInlineBox());
@@ -134,8 +134,8 @@ void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineB
     auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox() || isTextEdgeLeading;
     for (auto* font : fallbackFontsForContent) {
         auto& fontMetrics = font->fontMetrics();
-        InlineLayoutUnit ascent = fontMetrics.ascent();
-        InlineLayoutUnit descent = fontMetrics.descent();
+        InlineLayoutUnit ascent = fontMetrics.ascent(fontBaseline);
+        InlineLayoutUnit descent = fontMetrics.descent(fontBaseline);
         if (shouldUseLineGapToAdjustAscentDescent) {
             auto logicalHeight = ascent + descent;
             auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
@@ -151,8 +151,9 @@ void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineB
     inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
 }
 
-TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const Line::Run& run, const RenderStyle& style)
+TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run& run, const RenderStyle& style)
 {
+    ASSERT(parentInlineBox.isInlineBox());
     auto& inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
     if (inlineTextBox.canUseSimplifiedContentMeasuring()) {
         // Simplified text measuring works with primary font only.
@@ -163,15 +164,14 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const Line::Run&
     if (fallbackFonts.isEmpty())
         return { };
 
-    auto fallbackFontsHaveVerticalGlyph = [&] {
-        for (auto* font : fallbackFonts) {
-            if (font->hasVerticalGlyphs())
-                return true;
-        }
-        return false;
-    };
-    // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-    m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || fallbackFontsHaveVerticalGlyph();
+    auto fallbackFontsForInlineBoxes = m_fallbackFontsForInlineBoxes.get(&parentInlineBox);
+    auto numberOfFallbackFontsForInlineBox = fallbackFontsForInlineBoxes.size();
+    for (auto* font : fallbackFonts) {
+        fallbackFontsForInlineBoxes.add(font);
+        m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font->hasVerticalGlyphs();
+    }
+    if (fallbackFontsForInlineBoxes.size() != numberOfFallbackFontsForInlineBox)
+        m_fallbackFontsForInlineBoxes.set(&parentInlineBox, fallbackFontsForInlineBoxes);
     return fallbackFonts;
 }
 
@@ -331,9 +331,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         if (run.isText()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
             parentInlineBox.setHasContent();
-            if (auto fallbackFonts = collectFallbackFonts(run, style); !fallbackFonts.isEmpty()) {
+            if (auto fallbackFonts = collectFallbackFonts(parentInlineBox, run, style); !fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts);
+                adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts, AlphabeticBaseline);
             }
             continue;
         }
@@ -387,20 +387,36 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         return;
 
     lineBox.setBaselineType(IdeographicBaseline);
-    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsPrimaryMetricsForInlineBox(rootInlineBox, IdeographicBaseline));
-    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+
+    auto adjustLayoutBoundsWithIdeographicBaseline = [&] (auto& inlineLevelBox) {
+        auto initiatesLayoutBoundsChange = inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineLevelBox() || inlineLevelBox.isLineBreakBox();
+        if (!initiatesLayoutBoundsChange)
+            return;
+
+        auto layoutBoundsPrimaryMetrics = LayoutBoundsMetrics { };
         if (inlineLevelBox.isInlineBox())
-            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetricsForInlineBox(inlineLevelBox, IdeographicBaseline));
-        else if (inlineLevelBox.isLineBreakBox()) {
-            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
-            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
-        } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
+            layoutBoundsPrimaryMetrics = layoutBoundsPrimaryMetricsForInlineBox(inlineLevelBox, IdeographicBaseline);
+        else if (inlineLevelBox.isAtomicInlineLevelBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.
-            setBaselineAndLayoutBounds(inlineLevelBox, { ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
+            layoutBoundsPrimaryMetrics = { ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline };
+        } else if (inlineLevelBox.isLineBreakBox()) {
+            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
+            layoutBoundsPrimaryMetrics = layoutBoundsPrimaryMetricsForInlineBox(parentInlineBox, IdeographicBaseline);
         }
-    }
+        setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetrics);
+
+        auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox();
+        if (needsFontFallbackAdjustment) {
+            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmpty())
+                adjustLayoutBoundsWithFallbackFonts(inlineLevelBox, fallbackFonts, IdeographicBaseline);
+        }
+    };
+
+    adjustLayoutBoundsWithIdeographicBaseline(rootInlineBox);
+    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes())
+        adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
 }
 
 }
