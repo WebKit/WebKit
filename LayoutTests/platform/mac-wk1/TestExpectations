@@ -1773,3 +1773,10 @@ fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scr
 [ BigSur+ arm64 ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 webkit.org/b/236530 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
+
+# Push subscription tests don't work without service worker support.
+http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Skip ]
+http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Skip ]
+http/tests/push-api/subscribe-default-permissions.html [ Skip ]
+http/tests/push-api/subscribe-deny-permissions.html [ Skip ]
+http/tests/push-api/subscribe-grant-permissions.html [ Skip ]

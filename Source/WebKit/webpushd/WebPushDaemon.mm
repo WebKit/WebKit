@@ -622,12 +622,10 @@ void Daemon::getPushSubscription(ClientConnection* connection, const URL& scopeU
 
 void Daemon::getPushPermissionState(ClientConnection* connection, const URL& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
 {
-    // FIXME
-#if HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
-    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Granted));
-#else
+    // FIXME: This doesn't actually get called right now, since the permission is currently checked
+    // in WebProcess. However, we've left this stub in for now because there is a chance that we
+    // will move the permission check into webpushd when supporting other platforms.
     replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
-#endif
 }
 
 ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)

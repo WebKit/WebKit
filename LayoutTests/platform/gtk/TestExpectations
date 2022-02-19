@@ -1876,3 +1876,10 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-empty-container-with-filt
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
+
+# Push subscription tests fail without platform-specific PushCrypto implementations.
+http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
+http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]
+http/tests/push-api/subscribe-default-permissions.html [ Failure ]
+http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
+http/tests/push-api/subscribe-grant-permissions.html [ Failure ]

@@ -1,3 +1,14 @@
+2022-02-18  Ben Nham  <nham@apple.com>
+
+        Hook up PushManager to permission state
+        https://bugs.webkit.org/show_bug.cgi?id=236739
+
+        Reviewed by Brady Eidson.
+
+        Made the WebPushD API tests work now that subscribe checks for permission.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
 2022-02-18  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertion that no two network session share the same storage path

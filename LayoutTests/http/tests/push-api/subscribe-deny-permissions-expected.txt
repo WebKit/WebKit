@@ -1,0 +1,5 @@
+PASS: service worker permissionState was denied
+PASS: document permissionState was denied
+PASS: service worker subscribe was error: NotAllowedError
+PASS: document subscribe was error: NotAllowedError
+

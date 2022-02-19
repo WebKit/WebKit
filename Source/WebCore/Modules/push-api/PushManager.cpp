@@ -28,10 +28,12 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
+#include "NotificationClient.h"
 #include "PushCrypto.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
@@ -65,11 +67,11 @@ void PushManager::deref() const
     m_serviceWorkerRegistration.deref();
 }
 
-void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
+void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
 {
-    RELEASE_ASSERT(scriptExecutionContext.isSecureContext());
+    RELEASE_ASSERT(context.isSecureContext());
     
-    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
         if (!options || !options->userVisibleOnly) {
             promise.reject(Exception { NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
             return;
@@ -111,22 +113,68 @@ void PushManager::subscribe(ScriptExecutionContext& scriptExecutionContext, std:
             return;
         }
 
+        auto client = context->notificationClient();
+        auto permission = client ? client->checkPermission(context.ptr()) : NotificationPermission::Denied;
+
+        if (permission == NotificationPermission::Denied) {
+            promise.reject(Exception { NotAllowedError, "User denied push permission"_s });
+            return;
+        }
+
+        if (permission == NotificationPermission::Default && !context->isDocument()) {
+            promise.reject(Exception { NotAllowedError, "User denied push permission"_s });
+            return;
+        }
+
+        if (permission == NotificationPermission::Default) {
+            RELEASE_ASSERT(client);
+            RELEASE_ASSERT(context->isDocument());
+
+            if (!downcast<Document>(context.get()).isSameOriginAsTopDocument()) {
+                promise.reject(Exception { NotAllowedError, "Cannot request permission from cross-origin iframe"_s });
+                return;
+            }
+
+            client->requestPermission(context, [this, protectedThis = WTFMove(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTFMove(promise)](auto permission) mutable {
+                if (permission != NotificationPermission::Granted) {
+                    promise.reject(Exception { NotAllowedError, "User denied push permission"_s });
+                    return;
+                }
+
+                m_serviceWorkerRegistration.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
+            });
+            return;
+        }
+
+        RELEASE_ASSERT(permission == NotificationPermission::Granted);
         m_serviceWorkerRegistration.subscribeToPushService(keyDataResult.releaseReturnValue(), WTFMove(promise));
     });
 }
 
-void PushManager::getSubscription(ScriptExecutionContext& scriptExecutionContext, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
         m_serviceWorkerRegistration.getPushSubscription(WTFMove(promise));
     });
 }
 
-void PushManager::permissionState(ScriptExecutionContext& scriptExecutionContext, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+void PushManager::permissionState(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
-    UNUSED_PARAM(options);
-    scriptExecutionContext.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
-        m_serviceWorkerRegistration.getPushPermissionState(WTFMove(promise));
+    context.eventLoop().queueTask(TaskSource::Networking, [context = Ref { context }, promise = WTFMove(promise)]() mutable {
+        auto client = context->notificationClient();
+        auto permission = client ? client->checkPermission(context.ptr()) : NotificationPermission::Denied;
+
+        switch (permission) {
+        case NotificationPermission::Default:
+            promise.resolve(PushPermissionState::Prompt);
+            break;
+        case NotificationPermission::Granted:
+            promise.resolve(PushPermissionState::Granted);
+            break;
+        default:
+            promise.resolve(PushPermissionState::Denied);
+            break;
+        }
     });
 }
 

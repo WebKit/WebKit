@@ -4995,3 +4995,10 @@ fast/text/locale-shaping-3.html [ ImageOnlyFailure ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html [ Failure ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3.html [ Failure ]
+
+# Push subscription tests fail without platform-specific PushCrypto implementations.
+http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
+http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]
+http/tests/push-api/subscribe-default-permissions.html [ Failure ]
+http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
+http/tests/push-api/subscribe-grant-permissions.html [ Failure ]

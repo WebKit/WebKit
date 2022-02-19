@@ -1,3 +1,43 @@
+2022-02-18  Ben Nham  <nham@apple.com>
+
+        Hook up PushManager to permission state
+        https://bugs.webkit.org/show_bug.cgi?id=236739
+
+        Reviewed by Brady Eidson.
+
+        Added tests that make sure that PushManager.permissionState() and PushManager.subscribe()
+        respect the notification permission level for the current origin.
+
+        I made these regular tests rather than WPT tests because the WPT test harness calls
+        grantWebNotificationPermission at the top of its setup script (in testharnessreport.js), and
+        I didn't want to change that for this patch.
+
+        * http/tests/push-api/resources/push-api-test-pre.js: Added.
+        (finishPushAPITest):
+        (waitForState):
+        * http/tests/push-api/resources/subscribe-iframe-cross-origin.html: Added.
+        * http/tests/push-api/resources/subscribe-iframe-same-origin.html: Added.
+        * http/tests/push-api/resources/subscribe-tests.js: Added.
+        (async testServiceWorkerPermissionState):
+        (async testDocumentPermissionState):
+        (async testServiceWorkerSubscribe):
+        (async testDocumentSubscribe):
+        * http/tests/push-api/resources/subscribe-worker.js: Added.
+        (async event):
+        * http/tests/push-api/subscribe-default-permissions-expected.txt: Added.
+        * http/tests/push-api/subscribe-default-permissions-iframe-cross-origin-expected.txt: Added.
+        * http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html: Added.
+        * http/tests/push-api/subscribe-default-permissions-iframe-same-origin-expected.txt: Added.
+        * http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html: Added.
+        * http/tests/push-api/subscribe-default-permissions.html: Added.
+        * http/tests/push-api/subscribe-deny-permissions-expected.txt: Added.
+        * http/tests/push-api/subscribe-deny-permissions.html: Added.
+        * http/tests/push-api/subscribe-grant-permissions-expected.txt: Added.
+        * http/tests/push-api/subscribe-grant-permissions.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-02-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         http/wpt/push-api/onpush-disabled.html fails (incremental build issue?)

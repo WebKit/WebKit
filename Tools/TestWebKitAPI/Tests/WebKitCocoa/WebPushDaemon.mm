@@ -426,6 +426,10 @@ protected:
 
         m_notificationMessageHandler = adoptNS([[NotificationScriptMessageHandler alloc] init]);
         [[m_configuration userContentController] addScriptMessageHandler:m_notificationMessageHandler.get() name:@"note"];
+
+        m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
+        m_uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
+        [m_webView setUIDelegate:m_uiDelegate.get()];
     }
 
     void loadRequest(const char* htmlSource, const char* serviceWorkerScriptSource)
@@ -440,7 +444,6 @@ protected:
             { "/sw.js", { { { "Content-Type", "application/javascript" } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::Http));
 
-        m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
         [m_webView loadRequest:m_server->request()];
     }
 
@@ -456,6 +459,7 @@ protected:
     RetainPtr<NotificationScriptMessageHandler> m_notificationMessageHandler;
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
     RetainPtr<WKWebView> m_webView;
+    RetainPtr<id<WKUIDelegatePrivate>> m_uiDelegate;
 };
 
 class WebPushDInjectedPushTest : public WebPushDTest {

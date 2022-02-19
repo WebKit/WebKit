@@ -1,3 +1,15 @@
+2022-02-18  Ben Nham  <nham@apple.com>
+
+        Hook up PushManager to permission state
+        https://bugs.webkit.org/show_bug.cgi?id=236739
+
+        Reviewed by Brady Eidson.
+
+        Update comment explaining why we still have a permission state stub in webpushd.
+
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::getPushPermissionState):
+
 2022-02-18  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertion that no two network sessions share the same storage path
