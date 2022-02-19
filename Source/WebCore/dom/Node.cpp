@@ -2634,10 +2634,7 @@ bool Node::deprecatedIsInert() const
         }
     }
 
-    if (!document().frame() || !document().frame()->ownerElement())
-        return false;
-
-    return document().frame()->ownerElement()->deprecatedIsInert();
+    return false;
 }
 
 template<> ContainerNode* parent<Tree>(const Node& node)

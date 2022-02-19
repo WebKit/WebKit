@@ -1,5 +1,17 @@
 2022-02-18  Tim Nguyen  <ntim@apple.com>
 
+        Stop propagating inertness through iframes in Node::deprecatedIsInert()
+        https://bugs.webkit.org/show_bug.cgi?id=236512
+
+        Reviewed by Chris Dumez.
+
+        This is only a bug for Node::deprecatedIsInert(), so it only affects focus. Selection APIs, etc. weren't affected
+        before this bug.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+
+2022-02-18  Tim Nguyen  <ntim@apple.com>
+
         Re-import inert and <dialog> WPT
         https://bugs.webkit.org/show_bug.cgi?id=236808
 
