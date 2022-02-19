@@ -1,3 +1,5 @@
+# Good starting point is to look at the bots on results.webkit.org first
+
 # Incorrect size
 imported/w3c/web-platform-tests/css/css-contain/contain-size-breaks-001.html [ ImageOnlyFailure ]
 
@@ -190,7 +192,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-r
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-relative-length-invalid-012.html [ ImageOnlyFailure ]
 
-
 # Multicol failures
 ietestcenter/css3/multicolumn/column-containing-block-003.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-block-no-clip-001.xht [ ImageOnlyFailure ]
@@ -294,20 +295,22 @@ svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Crashes
 compositing/background-color/background-color-text-clip.html [ Crash ]
-fast/backgrounds/background-fast-path-simple-color.html [ Crash ]
 fast/canvas/canvas-composite-canvas.html [ Crash ]
 fast/clip/hidpi-background-clip-with-text-fill-color.html [ Crash ]
-fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
-fast/css/appearance-apple-pay-button-default-corners.html [ Crash ]
-fast/css/appearance-apple-pay-button.html [ Crash ]
 fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html [ Crash ]
 fast/inline/inline-background-clip-text-multiline.html [ Crash ]
 fast/inline/inline-background-clip-text.html [ Crash ]
 fast/text/text-decoration-currentcolor-fill-color.html [ Crash ]
-# arm64 only (which has Whippet enabled)
-fast/css/getComputedStyle/computed-style-border-image.html [ Crash ]
-fast/hidpi/device-scale-factor-paint.html [ Crash ]
-# x86_64 only (which does not have Whippet enabled)
+# arm64 only
+fast/css/getComputedStyle/computed-style-border-image.html [ Crash Pass ]
+fast/hidpi/device-scale-factor-paint.html [ Crash Pass ]
+
+# Apple Pay button
+fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
+fast/css/appearance-apple-pay-button-default-corners.html [ Crash ]
+fast/css/appearance-apple-pay-button.html [ Crash ]
+# x64_64 only
+fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Crash Pass ]
 
 # Flaky failure
 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
@@ -324,9 +327,11 @@ svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 ddcss3/images/cross-fade-simple.html [ Crash Pass ]
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Crash Pass ]
+fast/backgrounds/background-fast-path-simple-color.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-on-body.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-with-simple-container.html [ Crash Pass ]
 fast/backgrounds/background-clip-text.html [ Crash Pass ]
+fast/clip/clip-hit-null-iterator-path-comparison.html
 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ Crash ImageOnlyFailure ]
 fast/css/clip-zooming.html [ Crash Pass ]
 fast/hidpi/clip-text-in-hidpi.html [ Crash Pass ]
@@ -336,28 +341,27 @@ imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
 imported/w3c/web-platform-tests/webstorage/storage_session_window_open.window.html [ Crash Pass ]
 
-
 # Media failure
 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout ]
 webrtc/canvas-to-peer-connection.html [ Failure ]
-# arm64 only (which has Whippet enabled)
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Timeout ]
+# arm64 only
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Timeout Pass ]
 media/video-src-blob-replay.html [ Timeout Pass ]
-webrtc/vp9-profile2.html [ Timeout ]
+webrtc/vp9-profile2.html [ Timeout Pass ]
 
 # Forms failures
 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
 
-# arm64 only (which has Whippet enabled)
-fast/canvas/webgl/gl-teximage.html [ Failure ]
-fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+# arm64 only
+fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
+fast/canvas/webgl/premultiplyalpha-test.html [ Failure Pass ]
 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure Pass ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
-imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
-webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
+webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure Pass ]
+webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure Pass ]
 
 #####
 # Progressions with GPU Process (when turned on, need to find other citations of these tests and update expectations)
@@ -370,9 +374,9 @@ webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass ]
 
 # arm64 only
-compositing/overlap-blending/nested-overlap.html [ Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ]
-imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+compositing/overlap-blending/nested-overlap.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass Failure ]
+perf/nested-combined-selectors.html [ Pass Failure ]
 
 # iPhone simulator
 webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Pass ]

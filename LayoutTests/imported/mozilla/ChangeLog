@@ -1,3 +1,9 @@
+2022-02-19  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening for GPU Process bots.
+
+        * svg/blend-hard-light.svg:
+
 2022-02-16  Jon Lee  <jonlee@apple.com>
 
         Add fuzzy data for test failures seen on the iOS GPU Process bot
