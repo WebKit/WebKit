@@ -120,6 +120,12 @@ IDBStorageManager::IDBStorageManager(const String& path, IDBStorageRegistry& reg
 {
 }
 
+IDBStorageManager::~IDBStorageManager()
+{
+    for (auto& database : m_databases.values())
+        database->immediateClose();
+}
+
 bool IDBStorageManager::isActive() const
 {
     return !m_databases.isEmpty();

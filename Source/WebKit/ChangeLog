@@ -1,3 +1,20 @@
+2022-02-18  Sihui Liu  <sihui_liu@apple.com>
+
+        ASSERTION FAILED: !hasAnyOpenConnections() in UniqueIDBDatabase::~UniqueIDBDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=236856
+
+        Reviewed by Chris Dumez.
+
+        The assertion is hit when running API test WebKit.MigrateIndexedDBDataToGeneralStorageDirectory. We need to
+        properly close UniqueIDBDatabase before it's destroyed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::storageSession): remove logging as it was added when we had check for
+        default session. Since we don't have the check now, the logging does not make much sense.
+        * NetworkProcess/storage/IDBStorageManager.cpp:
+        (WebKit::IDBStorageManager::~IDBStorageManager):
+        * NetworkProcess/storage/IDBStorageManager.h:
+
 2022-02-18  Ben Nham  <nham@apple.com>
 
         Hook up PushManager to permission state

@@ -750,10 +750,7 @@ void NetworkConnectionToWebProcess::didFinishPreconnection(WebCore::ResourceLoad
 
 NetworkStorageSession* NetworkConnectionToWebProcess::storageSession()
 {
-    auto* session = networkProcess().storageSession(m_sessionID);
-    if (!session)
-        LOG_ERROR("Non-default storage session was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
-    return session;
+    return networkProcess().storageSession(m_sessionID);
 }
 
 void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName)

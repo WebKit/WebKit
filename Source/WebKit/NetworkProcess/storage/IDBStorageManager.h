@@ -52,6 +52,7 @@ public:
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
     IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&);
+    ~IDBStorageManager();
     bool isActive() const;
     bool hasDataInMemory() const;
     void closeDatabasesForDeletion();
