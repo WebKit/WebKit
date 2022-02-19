@@ -61,7 +61,6 @@ my @cmakeArgs;
 my $buildDir = "";
 my $startTime = time();
 my $useCCache = -1;
-my $exportCompileCommands = 0;
 
 my @features = getFeatureOptionList();
 
@@ -94,7 +93,6 @@ Usage: $programName [options] [options to pass to build system]
   --build-dir=<path>            Build out of tree in directory at <path>
 
   --[no-]use-ccache             Enable (or disable) CCache, if available
-  --export-compile-commands     Generate compile_commands.json (Apple platforms only)
 EOF
 
 my %options = (
@@ -107,8 +105,7 @@ my %options = (
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs,
     'build-dir=s' => \$buildDir,
-    'use-ccache!' => \$useCCache,
-    'export-compile-commands' => \$exportCompileCommands
+    'use-ccache!' => \$useCCache
 );
 
 foreach (@features) {
@@ -144,8 +141,6 @@ if ($useCCache == 1) {
 } elsif ($useCCache == 0) {
     $ENV{'WK_USE_CCACHE'} = "NO";
 }
-
-$ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 checkRequiredSystemConfig();
 setConfiguration();

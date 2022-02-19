@@ -1,3 +1,15 @@
+2022-02-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290149.
+
+        Broke Debug Builds.
+
+        Reverted changeset:
+
+        "Generate compile_commands.json on macOS Builds"
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+        https://commits.webkit.org/r290149
+
 2022-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace trac URLs in Introduction.md by equivalent GitHub URLs
