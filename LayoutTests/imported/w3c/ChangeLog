@@ -1,3 +1,20 @@
+2022-02-19  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r287524): hihello.me does not show sliding sheet at the bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=236838
+        rdar://88672183
+
+        Reviewed by Dean Jackson.
+
+        Add new WPT tests to check we correctly compute implicit keyframes when a 0% and/or 100% keyframe
+        is defined but only specifies a timing function. One test checks the output of getKeyframes() and
+        the other that we correctly account for the implicit vaues when computing styles.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+        * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function.html: Added.
+
 2022-02-18  Tim Nguyen  <ntim@apple.com>
 
         Stop propagating inertness through iframes in Node::deprecatedIsInert()

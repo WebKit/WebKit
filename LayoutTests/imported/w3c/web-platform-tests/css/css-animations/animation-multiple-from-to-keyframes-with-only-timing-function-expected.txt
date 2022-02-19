@@ -1,0 +1,3 @@
+
+PASS Animations should not use an implicit value when the first rule within a @keyframes rule specifies "from" and "to" but only specifies a timing function.
+

@@ -3703,27 +3703,26 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             
         auto* tf = currentKeyframe.timingFunction();
         
-        bool isFirstOrLastKeyframe = key == 0 || key == 1;
-        if ((hasRotate && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyRotate))
+        if (currentKeyframe.containsProperty(CSSPropertyRotate))
             rotateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->rotate(), tf));
 
-        if ((hasScale && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyScale))
+        if (currentKeyframe.containsProperty(CSSPropertyScale))
             scaleVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->scale(), tf));
 
-        if ((hasTranslate && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyTranslate))
+        if (currentKeyframe.containsProperty(CSSPropertyTranslate))
             translateVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->translate(), tf));
 
-        if ((hasTransform && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyTransform))
+        if (currentKeyframe.containsProperty(CSSPropertyTransform))
             transformVector.insert(makeUnique<TransformAnimationValue>(key, keyframeStyle->transform(), tf));
 
-        if ((hasOpacity && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyOpacity))
+        if (currentKeyframe.containsProperty(CSSPropertyOpacity))
             opacityVector.insert(makeUnique<FloatAnimationValue>(key, keyframeStyle->opacity(), tf));
 
-        if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyFilter))
+        if (currentKeyframe.containsProperty(CSSPropertyFilter))
             filterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
 
 #if ENABLE(FILTERS_LEVEL_2)
-        if ((hasBackdropFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
+        if (currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
 #endif
     }
