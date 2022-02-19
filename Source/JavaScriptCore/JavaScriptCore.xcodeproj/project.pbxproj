@@ -849,6 +849,9 @@
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
 		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31770C5527B94CE600308091 /* TemporalPlainDateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */; };
+		31770C5727B94CE600308091 /* TemporalPlainDatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C5127B94CE400308091 /* TemporalPlainDatePrototype.h */; };
+		31770C5827B94CE600308091 /* TemporalPlainDate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31770C5227B94CE500308091 /* TemporalPlainDate.h */; };
 		33111B8B2397256500AA34CE /* Scribble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33111B8A2397256500AA34CE /* Scribble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */; };
 		33A920BD23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 33A920BC23DA2C6D000EBAF0 /* CommonSlowPathsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3719,6 +3722,12 @@
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignatureInlines.h; sourceTree = "<group>"; };
+		31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDateConstructor.h; sourceTree = "<group>"; };
+		31770C5027B94CE400308091 /* TemporalPlainDateConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDateConstructor.cpp; sourceTree = "<group>"; };
+		31770C5127B94CE400308091 /* TemporalPlainDatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDatePrototype.h; sourceTree = "<group>"; };
+		31770C5227B94CE500308091 /* TemporalPlainDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDate.h; sourceTree = "<group>"; };
+		31770C5327B94CE500308091 /* TemporalPlainDate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDate.cpp; sourceTree = "<group>"; };
+		31770C5427B94CE500308091 /* TemporalPlainDatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDatePrototype.cpp; sourceTree = "<group>"; };
 		33111B8A2397256500AA34CE /* Scribble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scribble.h; sourceTree = "<group>"; };
 		33743649224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = B3OptimizeAssociativeExpressionTrees.cpp; path = b3/B3OptimizeAssociativeExpressionTrees.cpp; sourceTree = "<group>"; };
 		3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3OptimizeAssociativeExpressionTrees.h; path = b3/B3OptimizeAssociativeExpressionTrees.h; sourceTree = "<group>"; };
@@ -5931,7 +5940,6 @@
 				8603CEF014C753EF00AE59E3 /* tools */,
 				7B98D1331B60CD1E0023B1A4 /* wasm */,
 				86EAC48C0F93E8B9008EC948 /* yarr */,
-				533699AF27A306F600C9561D /* Recovered References */,
 			);
 			name = JavaScriptCore;
 			sourceTree = "<group>";
@@ -7326,9 +7334,6 @@
 		7B98D1331B60CD1E0023B1A4 /* wasm */ = {
 			isa = PBXGroup;
 			children = (
-				37AAC091279F124200D64842 /* WasmBranchHints.h */,
-				37AAC090279F124100D64842 /* WasmBranchHintsSectionParser.cpp */,
-				37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */,
 				AD2FCB8A1DB5840000B3E736 /* js */,
 				52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */,
 				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
@@ -7338,6 +7343,9 @@
 				53CA73081EA533D80076049D /* WasmBBQPlan.h */,
 				AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */,
 				AD4B1DF81DF244D70071AE32 /* WasmBinding.h */,
+				37AAC091279F124200D64842 /* WasmBranchHints.h */,
+				37AAC090279F124100D64842 /* WasmBranchHintsSectionParser.cpp */,
+				37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */,
 				525C0DD71E935847002184CD /* WasmCallee.cpp */,
 				525C0DD81E935847002184CD /* WasmCallee.h */,
 				526AC4B41E977C5D003500E1 /* WasmCalleeGroup.cpp */,
@@ -8259,6 +8267,12 @@
 				F6F150182693D33D004B98EF /* TemporalNow.h */,
 				F6F150192693D33E004B98EF /* TemporalObject.cpp */,
 				F6F1501A2693D33E004B98EF /* TemporalObject.h */,
+				31770C5327B94CE500308091 /* TemporalPlainDate.cpp */,
+				31770C5227B94CE500308091 /* TemporalPlainDate.h */,
+				31770C5027B94CE400308091 /* TemporalPlainDateConstructor.cpp */,
+				31770C4F27B94CE400308091 /* TemporalPlainDateConstructor.h */,
+				31770C5427B94CE500308091 /* TemporalPlainDatePrototype.cpp */,
+				31770C5127B94CE400308091 /* TemporalPlainDatePrototype.h */,
 				E386FD7726E867B700E4C28B /* TemporalPlainTime.cpp */,
 				E386FD7826E867B800E4C28B /* TemporalPlainTime.h */,
 				E386FD7426E867B700E4C28B /* TemporalPlainTimeConstructor.cpp */,
@@ -10978,7 +10992,6 @@
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
-				37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */,
 				33111B8B2397256500AA34CE /* Scribble.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
@@ -11096,6 +11109,9 @@
 				F6D67D4426F902E9006E0349 /* TemporalInstantPrototype.h in Headers */,
 				F6D67D4826F9130C006E0349 /* TemporalInstantPrototype.lut.h in Headers */,
 				F6F150212693D450004B98EF /* TemporalObject.lut.h in Headers */,
+				31770C5827B94CE600308091 /* TemporalPlainDate.h in Headers */,
+				31770C5527B94CE600308091 /* TemporalPlainDateConstructor.h in Headers */,
+				31770C5727B94CE600308091 /* TemporalPlainDatePrototype.h in Headers */,
 				E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */,
 				E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */,
 				E386FD7F26E867B800E4C28B /* TemporalPlainTimePrototype.h in Headers */,
@@ -11108,7 +11124,6 @@
 				FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
-				37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,
@@ -11165,6 +11180,8 @@
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
 				53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
+				37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */,
+				37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */,
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */,
 				E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */,

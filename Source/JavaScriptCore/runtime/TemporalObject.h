@@ -27,6 +27,12 @@
 
 namespace JSC {
 
+#define JSC_TEMPORAL_PLAIN_DATE_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month) \
+    macro(day, Day) \
+
+
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
     macro(minute, Minute) \
@@ -51,6 +57,7 @@ enum class TemporalUnit : uint8_t {
 };
 #define JSC_COUNT_TEMPORAL_UNITS(name, capitalizedName) + 1
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 

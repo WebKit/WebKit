@@ -76,6 +76,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantConstructor.l
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalNow.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalObject.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainDateConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainDatePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimeConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZoneConstructor.lut.h

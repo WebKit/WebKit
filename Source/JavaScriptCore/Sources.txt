@@ -1020,6 +1020,9 @@ runtime/TemporalInstantConstructor.cpp
 runtime/TemporalInstantPrototype.cpp
 runtime/TemporalNow.cpp
 runtime/TemporalObject.cpp
+runtime/TemporalPlainDate.cpp
+runtime/TemporalPlainDateConstructor.cpp
+runtime/TemporalPlainDatePrototype.cpp
 runtime/TemporalPlainTime.cpp
 runtime/TemporalPlainTimeConstructor.cpp
 runtime/TemporalPlainTimePrototype.cpp

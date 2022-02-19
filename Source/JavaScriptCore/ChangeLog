@@ -1,3 +1,70 @@
+2022-02-19  Dean Jackson  <dino@apple.com>
+
+        [JSC] Implement Temporal.PlainDate
+        https://bugs.webkit.org/show_bug.cgi?id=230033
+        <rdar://problem/83127747>
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement the constructor, `from` and `compare` for Temporal.PlainDate.
+        This is only a partial implementation, because `from` doesn't
+        support object parameters, and the `compare` function creates some
+        internally. However, it is a start!
+
+        * DerivedSources-input.xcfilelist: Add new files.
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+
+        * heap/Heap.cpp: Create the temporalPlainDateSpace.
+        * heap/Heap.h:
+        * heap/HeapSubspaceTypes.h:
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::daysInMonth): Make this publicly visible.
+        (JSC::ISO8601::temporalDateToString): New method for printing a date.
+        * runtime/ISO8601.h:
+
+        * runtime/JSGlobalObject.cpp: Make the m_plainDateStructure object.
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::plainDateStructure):
+
+        * runtime/TemporalObject.cpp: Add the PlainDate constructor.
+        (JSC::createPlainDateConstructor):
+        * runtime/TemporalObject.h:
+
+        * runtime/TemporalPlainDate.cpp: Added.
+        (JSC::TemporalPlainDate::create):
+        (JSC::TemporalPlainDate::createStructure):
+        (JSC::TemporalPlainDate::TemporalPlainDate):
+        (JSC::TemporalPlainDate::finishCreation):
+        (JSC::TemporalPlainDate::visitChildrenImpl):
+        (JSC::toPlainDate):
+        (JSC::TemporalPlainDate::tryCreateIfValid):
+        (JSC::TemporalPlainDate::toString const):
+        (JSC::TemporalPlainDate::from):
+        (JSC::TemporalPlainDate::compare):
+        * runtime/TemporalPlainDate.h: Added.
+        * runtime/TemporalPlainDateConstructor.cpp: Added.
+        (JSC::TemporalPlainDateConstructor::create):
+        (JSC::TemporalPlainDateConstructor::createStructure):
+        (JSC::TemporalPlainDateConstructor::TemporalPlainDateConstructor):
+        (JSC::TemporalPlainDateConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalPlainDateConstructor.h: Added.
+        * runtime/TemporalPlainDatePrototype.cpp: Added.
+        (JSC::TemporalPlainDatePrototype::create):
+        (JSC::TemporalPlainDatePrototype::createStructure):
+        (JSC::TemporalPlainDatePrototype::TemporalPlainDatePrototype):
+        (JSC::TemporalPlainDatePrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/TemporalPlainDatePrototype.h: Added.
+
+        * runtime/VM.h: Define the temporalPlainDateSpace.
+
 2022-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make ArrayPrototype just an array

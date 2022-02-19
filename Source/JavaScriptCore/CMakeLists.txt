@@ -117,6 +117,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalInstantPrototype.cpp
     runtime/TemporalNow.cpp
     runtime/TemporalObject.cpp
+    runtime/TemporalPlainDateConstructor.cpp
+    runtime/TemporalPlainDatePrototype.cpp
     runtime/TemporalPlainTimeConstructor.cpp
     runtime/TemporalPlainTimePrototype.cpp
     runtime/TemporalTimeZoneConstructor.cpp

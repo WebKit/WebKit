@@ -682,7 +682,7 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isodaysinmonth
-static inline unsigned daysInMonth(int32_t year, unsigned month)
+unsigned daysInMonth(int32_t year, unsigned month)
 {
     switch (month) {
     case 1:
@@ -985,6 +985,11 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     precisionValue -= paddingLength;
     fraction.resize(precisionValue);
     return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);
+}
+
+String temporalDateToString(PlainDate plainDate)
+{
+    return makeString(pad('0', 4, plainDate.year()), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));
 }
 
 // IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )

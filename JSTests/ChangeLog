@@ -1,3 +1,19 @@
+2022-02-19  Dean Jackson  <dino@apple.com>
+
+        [JSC] Implement Temporal.PlainDate
+        https://bugs.webkit.org/show_bug.cgi?id=230033
+        <rdar://problem/83127747>
+
+        Reviewed by Yusuke Suzuki.
+
+        Some basic tests for PlainDate.
+
+        * stress/temporal-plaindate.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldBe.String.Temporal.PlainDate.from):
+        (let.text.of.failures.shouldThrow):
+
 2022-02-17  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         [32bit] Increase fixedExecutableMemoryPoolSize on ARM to 32MB

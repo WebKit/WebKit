@@ -284,6 +284,8 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned> precision);
+String temporalDateToString(PlainDate);
+unsigned daysInMonth(int32_t year, unsigned month);
 
 bool isValidDuration(const Duration&);
 
