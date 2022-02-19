@@ -1,3 +1,17 @@
+2022-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make ArrayPrototype just an array
+        https://bugs.webkit.org/show_bug.cgi?id=236869
+
+        Reviewed by Saam Barati.
+
+        Originally, ArrayPrototype has slightly different memory layout & different logic etc.
+        But now, it is just an array with a lot of properties. We should just make it an array.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ArrayPrototype.h:
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.
