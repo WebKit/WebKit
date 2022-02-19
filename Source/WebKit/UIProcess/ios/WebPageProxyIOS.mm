@@ -1028,22 +1028,30 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(WebKit::Ta
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel);
 }
 
-std::pair<size_t, uint64_t> WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
+#if !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
+size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
-    if (!hasRunningProcess()) {
-        callback({ });
-        return { 0, 0 };
-    }
+    ASSERT_WITH_MESSAGE(!printInfo.snapshotFirstPage, "If we are just snapshotting the first page, we don't need a synchronous message to determine the page count, which is 1.");
+
+    if (!hasRunningProcess())
+        return 0;
 
     size_t pageCount = 0;
-    if (printInfo.snapshotFirstPage)
-        pageCount = 1;
-    else
-        sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
+    sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
+    return pageCount;
+}
 
-    auto callbackID = sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(callback));
-    
-    return { pageCount, callbackID };
+#endif // !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
+uint64_t WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return 0;
+    }
+
+    return sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)

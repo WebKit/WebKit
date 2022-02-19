@@ -1,3 +1,51 @@
+2022-02-18  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Safari can sometimes hang while printing due to sync IPC
+        https://bugs.webkit.org/show_bug.cgi?id=236811
+        <rdar://problem/56425783>
+
+        Reviewed by Aditya Keerthi.
+
+        * UIProcess/_WKWebViewPrintFormatter.h:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        (-[_WKWebViewPrintFormatter requiresMainThread]): Added.
+        Adopt new UIKit SPI for allowing `UIPrintFormatter` to be called off the main thread.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        (-[WKContentView _wk_printFormatterRequiresMainThread]): Added.
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        (-[WKContentView _waitForDrawToPDFCallbackIfNeeded:]): Added.
+        (-[WKContentView _wk_printedDocument:]):
+        (-[WKContentView _waitForDrawToPDFCallback:]): Deleted.
+        Reorganize this code to support both sync and async flows.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingiOS): Added.
+        (WebKit::WebPageProxy::drawToPDFiOS): Added.
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        Split `WebPageProxy::computePagesForPrintingAndDrawToPDF` into two methods, as the first
+        "part" (i.e. `computePagesForPrintingiOS`) is no longer needed with this new UIKit SPI.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::computePagesForPrinting):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageComputePagesForPrinting):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _askPageToComputePageRects]):
+        Have `WebPageProxy::computePagesForPrinting` take a `WebCore::FrameIdentifier` instead of a
+        `WebFrameProxy*` so that more callers (e.g. `API::FrameHandle`) can use it.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _wk_printFormatterRequiresMainThread]): Added.
+        By the time `WKPDFView` is asked to print, it should already have all the data necessary to
+        do so, so there's no reason to not use the main thread (since there's no sync IPC).
+
 2022-02-18  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support for conditional mediation

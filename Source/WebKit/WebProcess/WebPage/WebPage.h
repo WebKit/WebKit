@@ -1029,7 +1029,9 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#if !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
     void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, Messages::WebPage::ComputePagesForPrintingiOSDelayedReply&&);
+#endif
     void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, Messages::WebPage::DrawToPDFiOSAsyncReply&&);
 #endif
 

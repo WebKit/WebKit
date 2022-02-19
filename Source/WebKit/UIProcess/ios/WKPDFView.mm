@@ -629,6 +629,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _documentForPrinting.get();
 }
 
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
+- (BOOL)_wk_printFormatterRequiresMainThread
+{
+    return YES;
+}
+
+#endif // HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
     CGPDFDocumentRef documentForPrinting = [self _ensureDocumentForPrinting];
