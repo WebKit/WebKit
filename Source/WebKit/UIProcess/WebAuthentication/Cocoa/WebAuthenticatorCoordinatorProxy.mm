@@ -372,12 +372,14 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
         });
     });
     
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if ([requestContext respondsToSelector:@selector(requestStyle)] && requestContext.get().requestStyle == ASCredentialRequestStyleAutoFill) {
         [proxy performAutoFillAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([proxy = WTFMove(proxy), completionHandler = WTFMove(completionHandler)](id <ASCCredentialProtocol> credential, NSError *error) mutable {
             completionHandler(credential, error);
         }).get()];
         return;
     }
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
     
 #if PLATFORM(IOS)
     [proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([proxy = WTFMove(proxy), completionHandler = WTFMove(completionHandler)](id <ASCCredentialProtocol> credential, NSError *error) mutable {

@@ -1,5 +1,15 @@
 2022-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the internal iOS build after r290154
+
+        `-[ASCAgentProtocol performAutoFillAuthorizationRequestsForContext:]` only exists on macOS and Catalyst; as
+        such, this call site needs to be guarded for those platforms.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+
+2022-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [macOS] Hovering over "Copy Cropped Image" context menu item should reveal the cropped image
         https://bugs.webkit.org/show_bug.cgi?id=236845
         rdar://89152746
