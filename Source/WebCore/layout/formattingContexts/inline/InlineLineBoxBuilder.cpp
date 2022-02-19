@@ -166,7 +166,7 @@ struct LayoutBoundsMetrics {
     InlineLayoutUnit lineSpacing { 0 };
     std::optional<InlineLayoutUnit> preferredLineHeight { };
 };
-static LayoutBoundsMetrics layoutBoundsMetricsForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline = AlphabeticBaseline)
+static LayoutBoundsMetrics layoutBoundsPrimaryMetricsForInlineBox(const InlineLevelBox& inlineBox, FontBaseline fontBaseline = AlphabeticBaseline)
 {
     ASSERT(inlineBox.isInlineBox());
     auto& fontMetrics = inlineBox.primarymetricsOfPrimaryFont();
@@ -210,7 +210,7 @@ void LineBoxBuilder::setBaselineAndLayoutBounds(InlineLevelBox& inlineLevelBox, 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuilder::LineContent& lineContent, size_t lineIndex)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
-    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsMetricsForInlineBox(rootInlineBox));
+    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsPrimaryMetricsForInlineBox(rootInlineBox));
 
     auto styleToUse = [&] (const auto& layoutBox) -> const RenderStyle& {
         return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
@@ -278,7 +278,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto adjustedLogicalStart = logicalLeft + std::max(0.0f, marginStart);
             auto logicalWidth = rootInlineBox.logicalWidth() - adjustedLogicalStart;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, adjustedLogicalStart, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
-            setBaselineAndLayoutBounds(inlineBox, layoutBoundsMetricsForInlineBox(inlineBox));
+            setBaselineAndLayoutBounds(inlineBox, layoutBoundsPrimaryMetricsForInlineBox(inlineBox));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -293,7 +293,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
-            setBaselineAndLayoutBounds(inlineBox, layoutBoundsMetricsForInlineBox(inlineBox));
+            setBaselineAndLayoutBounds(inlineBox, layoutBoundsPrimaryMetricsForInlineBox(inlineBox));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -330,7 +330,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
-            setBaselineAndLayoutBounds(lineBreakBox, layoutBoundsMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent())));
+            setBaselineAndLayoutBounds(lineBreakBox, layoutBoundsPrimaryMetricsForInlineBox(lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent())));
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }
@@ -374,13 +374,13 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         return;
 
     lineBox.setBaselineType(IdeographicBaseline);
-    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsMetricsForInlineBox(rootInlineBox, IdeographicBaseline));
+    setBaselineAndLayoutBounds(rootInlineBox, layoutBoundsPrimaryMetricsForInlineBox(rootInlineBox, IdeographicBaseline));
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (inlineLevelBox.isInlineBox())
-            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(inlineLevelBox, IdeographicBaseline));
+            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetricsForInlineBox(inlineLevelBox, IdeographicBaseline));
         else if (inlineLevelBox.isLineBreakBox()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
-            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
+            setBaselineAndLayoutBounds(inlineLevelBox, layoutBoundsPrimaryMetricsForInlineBox(parentInlineBox, IdeographicBaseline));
         } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.layoutBounds().height();
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
