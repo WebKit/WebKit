@@ -22,8 +22,8 @@
 #include "JSTestNamespaceObject.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMClientIsoSubspaces.h"
-#include "DOMIsoSubspaces.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotCallable.h"
@@ -275,36 +275,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamespaceObjectConstructorFunction_namespaceOpera
 
 JSC::GCClient::IsoSubspace* JSTestNamespaceObject::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& clientSpaces = clientData.clientSubspaces();
-    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNamespaceObject.get())
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForTestNamespaceObject.get();
-    if (!space) {
-        Heap& heap = vm.heap;
-        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamespaceObject> || !JSTestNamespaceObject::needsDestruction);
-        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamespaceObject>)
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestNamespaceObject);
-        else
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestNamespaceObject);
-        spaces.m_subspaceForTestNamespaceObject = std::unique_ptr<IsoSubspace>(space);
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestNamespaceObject::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    clientSpaces.m_clientSubspaceForTestNamespaceObject = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-    return clientSpaces.m_clientSubspaceForTestNamespaceObject.get();
+    return WebCore::subspaceForImpl<JSTestNamespaceObject, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamespaceObject.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamespaceObject = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestNamespaceObject.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamespaceObject = WTFMove(space); }
+    );
 }
 
 

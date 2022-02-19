@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSFileSystemDirectoryHandleIterator.h"
 
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMOperation.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
@@ -50,36 +52,12 @@ const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "D
 GCClient::IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
 {
     JSLockHolder apiLocker(vm);
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    if (auto* clientSpace = clientData.fileSystemDirectoryHandleIteratorSpace())
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    IsoSubspace* space = heapData.fileSystemDirectoryHandleIteratorSpace();
-    if (!space) {
-        Heap& heap = vm.heap;
-        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator> || !JSFileSystemDirectoryHandleIterator::needsDestruction);
-        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator>)
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSFileSystemDirectoryHandleIterator);
-        else
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSFileSystemDirectoryHandleIterator);
-        heapData.setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<IsoSubspace>(space));
-
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSFileSystemDirectoryHandleIterator::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    auto* clientSpace = new GCClient::IsoSubspace(*space);
-    clientData.setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<GCClient::IsoSubspace>(clientSpace));
-    return clientSpace;
+    return WebCore::subspaceForImpl<JSFileSystemDirectoryHandleIterator, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForFileSystemDirectoryHandleIterator.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForFileSystemDirectoryHandleIterator = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForFileSystemDirectoryHandleIterator.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForFileSystemDirectoryHandleIterator = WTFMove(space); }
+    );
 }
 
 inline JSC::EncodedJSValue jsFileSystemDirectoryHandleIterator_onPromiseSettledBody(JSGlobalObject* globalObject, JSC::CallFrame*, JSFileSystemDirectoryHandleIterator* castedThis)

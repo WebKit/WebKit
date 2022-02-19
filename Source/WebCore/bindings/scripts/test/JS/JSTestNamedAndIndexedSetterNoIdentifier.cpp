@@ -22,8 +22,8 @@
 #include "JSTestNamedAndIndexedSetterNoIdentifier.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMClientIsoSubspaces.h"
-#include "DOMIsoSubspaces.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -339,36 +339,12 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedAndIndexedSetterNoIdentifierConstructor, (JS
 
 JSC::GCClient::IsoSubspace* JSTestNamedAndIndexedSetterNoIdentifier::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& clientSpaces = clientData.clientSubspaces();
-    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNamedAndIndexedSetterNoIdentifier.get())
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForTestNamedAndIndexedSetterNoIdentifier.get();
-    if (!space) {
-        Heap& heap = vm.heap;
-        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedAndIndexedSetterNoIdentifier> || !JSTestNamedAndIndexedSetterNoIdentifier::needsDestruction);
-        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedAndIndexedSetterNoIdentifier>)
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestNamedAndIndexedSetterNoIdentifier);
-        else
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestNamedAndIndexedSetterNoIdentifier);
-        spaces.m_subspaceForTestNamedAndIndexedSetterNoIdentifier = std::unique_ptr<IsoSubspace>(space);
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestNamedAndIndexedSetterNoIdentifier::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    clientSpaces.m_clientSubspaceForTestNamedAndIndexedSetterNoIdentifier = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-    return clientSpaces.m_clientSubspaceForTestNamedAndIndexedSetterNoIdentifier.get();
+    return WebCore::subspaceForImpl<JSTestNamedAndIndexedSetterNoIdentifier, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedAndIndexedSetterNoIdentifier.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedAndIndexedSetterNoIdentifier = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestNamedAndIndexedSetterNoIdentifier.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedAndIndexedSetterNoIdentifier = WTFMove(space); }
+    );
 }
 
 void JSTestNamedAndIndexedSetterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

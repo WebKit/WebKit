@@ -22,8 +22,8 @@
 #include "JSTestDefaultToJSONFilteredByExposed.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMClientIsoSubspaces.h"
-#include "DOMIsoSubspaces.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -265,36 +265,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunction_t
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONFilteredByExposed::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& clientSpaces = clientData.clientSubspaces();
-    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed.get())
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForTestDefaultToJSONFilteredByExposed.get();
-    if (!space) {
-        Heap& heap = vm.heap;
-        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONFilteredByExposed> || !JSTestDefaultToJSONFilteredByExposed::needsDestruction);
-        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDefaultToJSONFilteredByExposed>)
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestDefaultToJSONFilteredByExposed);
-        else
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestDefaultToJSONFilteredByExposed);
-        spaces.m_subspaceForTestDefaultToJSONFilteredByExposed = std::unique_ptr<IsoSubspace>(space);
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestDefaultToJSONFilteredByExposed::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    clientSpaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-    return clientSpaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed.get();
+    return WebCore::subspaceForImpl<JSTestDefaultToJSONFilteredByExposed, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDefaultToJSONFilteredByExposed = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestDefaultToJSONFilteredByExposed.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDefaultToJSONFilteredByExposed = WTFMove(space); }
+    );
 }
 
 void JSTestDefaultToJSONFilteredByExposed::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

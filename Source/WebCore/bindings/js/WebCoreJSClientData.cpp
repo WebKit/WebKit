@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebCoreJSClientData.h"
 
-#include "DOMClientIsoSubspaces.h"
 #include "DOMGCOutputConstraint.h"
-#include "DOMIsoSubspaces.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
@@ -90,7 +90,7 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_runtimeObjectSpace ISO_SUBSPACE_INIT(heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
     , m_windowProxySpace ISO_SUBSPACE_INIT(heap, m_windowProxyHeapCellType, JSWindowProxy)
     , m_idbSerializationSpace ISO_SUBSPACE_INIT(heap, m_heapCellTypeForJSIDBSerializationGlobalObject, JSIDBSerializationGlobalObject)
-    , m_subspaces(makeUnique<DOMIsoSubspaces>())
+    , m_subspaces(makeUnique<ExtendedDOMIsoSubspaces>())
 {
 }
 
@@ -122,7 +122,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , CLIENT_ISO_SUBSPACE_INIT(m_runtimeObjectSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_windowProxySpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_idbSerializationSpace)
-    , m_clientSubspaces(makeUnique<DOMClientIsoSubspaces>())
+    , m_clientSubspaces(makeUnique<ExtendedDOMClientIsoSubspaces>())
 {
 }
 
