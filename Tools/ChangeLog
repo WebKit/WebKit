@@ -1,3 +1,40 @@
+2022-02-18  David Kilzer  <ddkilzer@apple.com>
+
+        [Tools] Sanitizer builds should obey `set-webkit-configuration --force-optimization-level`
+        <https://webkit.org/b/236859>
+        <rdar://problem/89161649>
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        - Pass WK_FORCE_OPTIMIZATION_LEVEL instead of
+          GCC_OPTIMIZATION_LEVEL if sanitizers are enabled so the
+          optimization level can be overridden in sanitizer.xcconfig.
+
+        * sanitizer/asan.xcconfig:
+        (WK_NOT_): Remove.
+        (WK_NOT_YES): Remove.
+        - Move variables to sanitizer.xcconfig.
+
+        * sanitizer/sanitizer.xcconfig:
+        (WK_EMPTY_): Add.
+        (WK_NOT_): Add.
+        (WK_NOT_YES): Add.
+        - Add utility variables originally from SDKVariant.xcconfig.
+        (WK_OVERRIDE_OPTIMIZATION_LEVEL): Add.
+        - Set to YES/NO depending on whether WK_FORCE_OPTIMIZATION_LEVEL
+          is set.
+        (GCC_OPTIMIZATION_LEVEL):
+        (GCC_OPTIMIZATION_LEVEL_OVERRIDE_YES): Add.
+        (GCC_OPTIMIZATION_LEVEL_OVERRIDE_NO): Add.
+        (GCC_OPTIMIZATION_LEVEL_OVERRIDE_NO_Debug): Rename from GCC_OPTIMIZATION_LEVEL_Debug.
+        (GCC_OPTIMIZATION_LEVEL_OVERRIDE_NO_Production): Rename from GCC_OPTIMIZATION_LEVEL_Production.
+        (GCC_OPTIMIZATION_LEVEL_OVERRIDE_NO_Release): Rename from GCC_OPTIMIZATION_LEVEL_Release.
+        - Make use of WK_OVERRIDE_OPTIMIZATION_LEVEL and
+          WK_FORCE_OPTIMIZATION_LEVEL to allow overriding the default
+          optimization level for sanitizer builds.
+
 2022-02-18  Ben Nham  <nham@apple.com>
 
         Hook up PushManager to permission state

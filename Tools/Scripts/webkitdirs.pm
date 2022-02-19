@@ -1032,7 +1032,14 @@ sub XcodeOptions
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig"));
     }
     push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
-    push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
+    if ($forceOptimizationLevel) {
+        if ($asanIsEnabled || $tsanIsEnabled || $ubsanIsEnabled) {
+            # Command-line Xcode variable won't override that same varible set in a command-line xcconfig file.
+            push @options, "WK_FORCE_OPTIMIZATION_LEVEL=$forceOptimizationLevel";
+        } else {
+            push @options, "GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel";
+        }
+    }
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
