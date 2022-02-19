@@ -1,3 +1,15 @@
+2022-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Enable Thunder and remove old Clearkey CDM/Decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=235492
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Enable Thunder in developer builds, this is now needed for the clearkey EME layout tests.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.

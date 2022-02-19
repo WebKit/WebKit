@@ -31,7 +31,6 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
         platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
-        platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp
         platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
 
         platform/graphics/gstreamer/mse/AppendPipeline.cpp
@@ -186,7 +185,6 @@ endif ()
 if (ENABLE_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
         platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp
-        platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp
     )
 
     if (ENABLE_THUNDER)

@@ -123,15 +123,8 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
         std::string emptyString;
         if (opencdm_is_type_supported(GStreamerEMEUtilities::s_WidevineKeySystem, emptyString.c_str()) == ERROR_NONE)
             supportedKeySystems.append(GStreamerEMEUtilities::s_WidevineKeySystem);
-        if (!supportedKeySystems.isEmpty()) {
-            unsigned thunderRank = isThunderRanked() ? 300 : 100;
-            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
-        }
-#ifndef NDEBUG
-        else if (isThunderRanked())
-            GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
-                "Thunder running? Are the plugins built?");
-#endif
+        if (opencdm_is_type_supported(GStreamerEMEUtilities::s_ClearKeyKeySystem, emptyString.c_str()) == ERROR_NONE)
+            supportedKeySystems.append(GStreamerEMEUtilities::s_ClearKeyKeySystem);
         GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
     };
     return supportedKeySystems;

@@ -59,11 +59,9 @@
 #include "GStreamerVideoEncoder.h"
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-#include "WebKitClearKeyDecryptorGStreamer.h"
-#if ENABLE(THUNDER)
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
+#include "CDMThunder.h"
 #include "WebKitThunderDecryptorGStreamer.h"
-#endif
 #endif
 
 #if ENABLE(VIDEO)
@@ -312,8 +310,18 @@ void registerWebKitGStreamerElements()
         gst_init_static_plugins();
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 200, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
+        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
+            unsigned thunderRank = isThunderRanked() ? 300 : 100;
+            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
+        }
+#ifndef NDEBUG
+        else if (isThunderRanked()) {
+            GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
+                "Thunder running? Are the plugins built?");
+        }
+#endif
+
 #endif
 
 #if ENABLE(MEDIA_STREAM)

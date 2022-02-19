@@ -1,3 +1,16 @@
+2022-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Enable Thunder and remove old Clearkey CDM/Decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=235492
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update EME ClearKey baselines, a few more tests were enabled.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/idlharness.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/idlharness.https-expected.txt: Removed.
+
 2022-02-18  Ben Nham  <nham@apple.com>
 
         Hook up PushManager to permission state
