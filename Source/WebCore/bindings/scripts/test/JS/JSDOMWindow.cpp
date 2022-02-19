@@ -22,8 +22,8 @@
 #include "JSDOMWindow.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -366,13 +366,32 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_TestPromiseRejectionEventConstructor, (JSGl
 
 JSC::GCClient::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSDOMWindow, UseCustomHeapCellType::Yes>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForDOMWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDOMWindow = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForDOMWindow.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDOMWindow = WTFMove(space); },
-        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSDOMWindow; }
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForDOMWindow.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForDOMWindow.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heapData.m_heapCellTypeForJSDOMWindow, JSDOMWindow);
+        spaces.m_subspaceForDOMWindow = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSDOMWindow::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForDOMWindow = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForDOMWindow.get();
 }
 
 void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

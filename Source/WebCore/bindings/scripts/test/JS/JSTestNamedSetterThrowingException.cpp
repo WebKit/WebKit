@@ -22,8 +22,8 @@
 #include "JSTestNamedSetterThrowingException.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -295,13 +295,36 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterThrowingExceptionConstructor, (JSGloba
 
 JSC::GCClient::IsoSubspace* JSTestNamedSetterThrowingException::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestNamedSetterThrowingException, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedSetterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedSetterThrowingException = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestNamedSetterThrowingException.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedSetterThrowingException = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNamedSetterThrowingException.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestNamedSetterThrowingException.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterThrowingException> || !JSTestNamedSetterThrowingException::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedSetterThrowingException>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestNamedSetterThrowingException);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestNamedSetterThrowingException);
+        spaces.m_subspaceForTestNamedSetterThrowingException = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestNamedSetterThrowingException::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestNamedSetterThrowingException = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestNamedSetterThrowingException.get();
 }
 
 void JSTestNamedSetterThrowingException::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

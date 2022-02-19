@@ -22,8 +22,8 @@
 #include "JSTestGenerateIsReachable.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -192,13 +192,36 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachable_aSecretAttribute, (JSGlobalOb
 
 JSC::GCClient::IsoSubspace* JSTestGenerateIsReachable::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestGenerateIsReachable, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestGenerateIsReachable.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestGenerateIsReachable = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestGenerateIsReachable.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestGenerateIsReachable = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestGenerateIsReachable.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestGenerateIsReachable.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestGenerateIsReachable> || !JSTestGenerateIsReachable::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestGenerateIsReachable>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestGenerateIsReachable);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestGenerateIsReachable);
+        spaces.m_subspaceForTestGenerateIsReachable = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestGenerateIsReachable::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestGenerateIsReachable = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestGenerateIsReachable.get();
 }
 
 void JSTestGenerateIsReachable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

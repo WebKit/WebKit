@@ -22,8 +22,8 @@
 #include "JSTestNamedGetterCallWith.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -215,13 +215,36 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
 
 JSC::GCClient::IsoSubspace* JSTestNamedGetterCallWith::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestNamedGetterCallWith, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestNamedGetterCallWith.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNamedGetterCallWith = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestNamedGetterCallWith.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNamedGetterCallWith = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNamedGetterCallWith.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestNamedGetterCallWith.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedGetterCallWith> || !JSTestNamedGetterCallWith::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNamedGetterCallWith>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestNamedGetterCallWith);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestNamedGetterCallWith);
+        spaces.m_subspaceForTestNamedGetterCallWith = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestNamedGetterCallWith::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestNamedGetterCallWith = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestNamedGetterCallWith.get();
 }
 
 void JSTestNamedGetterCallWith::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

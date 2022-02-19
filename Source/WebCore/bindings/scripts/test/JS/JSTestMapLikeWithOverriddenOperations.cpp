@@ -22,8 +22,8 @@
 #include "JSTestMapLikeWithOverriddenOperations.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -375,13 +375,36 @@ JSC_DEFINE_HOST_FUNCTION(jsTestMapLikeWithOverriddenOperationsPrototypeFunction_
 
 JSC::GCClient::IsoSubspace* JSTestMapLikeWithOverriddenOperations::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestMapLikeWithOverriddenOperations, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestMapLikeWithOverriddenOperations.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestMapLikeWithOverriddenOperations = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestMapLikeWithOverriddenOperations.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestMapLikeWithOverriddenOperations> || !JSTestMapLikeWithOverriddenOperations::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestMapLikeWithOverriddenOperations>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestMapLikeWithOverriddenOperations);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestMapLikeWithOverriddenOperations);
+        spaces.m_subspaceForTestMapLikeWithOverriddenOperations = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestMapLikeWithOverriddenOperations::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestMapLikeWithOverriddenOperations.get();
 }
 
 void JSTestMapLikeWithOverriddenOperations::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

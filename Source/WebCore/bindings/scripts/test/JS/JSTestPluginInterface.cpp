@@ -22,8 +22,8 @@
 #include "JSTestPluginInterface.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
@@ -239,13 +239,36 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestPluginInterfaceConstructor, (JSGlobalObject* lexi
 
 JSC::GCClient::IsoSubspace* JSTestPluginInterface::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestPluginInterface, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestPluginInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestPluginInterface = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestPluginInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestPluginInterface = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestPluginInterface.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestPluginInterface.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestPluginInterface> || !JSTestPluginInterface::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestPluginInterface>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestPluginInterface);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestPluginInterface);
+        spaces.m_subspaceForTestPluginInterface = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestPluginInterface::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestPluginInterface = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestPluginInterface.get();
 }
 
 template<typename Visitor>

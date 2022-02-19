@@ -4871,32 +4871,50 @@ sub GenerateImplementation
     
     GenerateIterableDefinition($interface) if $interface->iterable;
 
-    AddToImplIncludes("ExtendedDOMClientIsoSubspaces.h");
-    AddToImplIncludes("ExtendedDOMIsoSubspaces.h");
+    AddToImplIncludes("DOMClientIsoSubspaces.h");
+    AddToImplIncludes("DOMIsoSubspaces.h");
     AddToImplIncludes("WebCoreJSClientData.h");
     AddToImplIncludes("<JavaScriptCore/JSDestructibleObjectHeapCellType.h>");
     AddToImplIncludes("<JavaScriptCore/SlotVisitorMacros.h>");
     AddToImplIncludes("<JavaScriptCore/SubspaceInlines.h>");
     push(@implContent, "JSC::GCClient::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
     push(@implContent, "{\n");
+    push(@implContent, "    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n");
+    push(@implContent, "    auto& clientSpaces = clientData.clientSubspaces();\n");
+    push(@implContent, "    if (auto* clientSpace = clientSpaces.m_clientSubspaceFor${interfaceName}.get())\n");
+    push(@implContent, "        return clientSpace;\n");
+    push(@implContent, "\n");
+    push(@implContent, "    auto& heapData = clientData.heapData();\n");
+    push(@implContent, "    Locker locker { heapData.lock() };\n");
+    push(@implContent, "\n");
+    push(@implContent, "    auto& spaces = heapData.subspaces();\n");
+    push(@implContent, "    IsoSubspace* space = spaces.m_subspaceFor${interfaceName}.get();\n");
+    push(@implContent, "    if (!space) {\n");
+    push(@implContent, "        Heap& heap = vm.heap;\n");
 
-    my $useCustomHeapCell;
-    my $customHeapCellTypeGetter;
     if (IsDOMGlobalObject($interface)) {
-        $useCustomHeapCell = "Yes";
-        $customHeapCellTypeGetter = "[] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }";
+        push(@implContent, "        space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heapData.m_heapCellTypeFor${className}, ${className});\n");
     } else {
-        $useCustomHeapCell = "No";
-        $customHeapCellTypeGetter = "nullptr";
+        push(@implContent, "        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${className}> || !${className}::needsDestruction);\n");
+        push(@implContent, "        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${className}>)\n");
+        push(@implContent, "            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, ${className});\n");
+        push(@implContent, "        else\n");
+        push(@implContent, "            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, ${className});\n");
     }
+    push(@implContent, "        spaces.m_subspaceFor${interfaceName} = std::unique_ptr<IsoSubspace>(space);\n");
+    push(@implContent, "IGNORE_WARNINGS_BEGIN(\"unreachable-code\")\n");
+    push(@implContent, "IGNORE_WARNINGS_BEGIN(\"tautological-compare\")\n");
+    push(@implContent, "        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = ${className}::visitOutputConstraints;\n");
+    push(@implContent, "        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;\n");
+    push(@implContent, "        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)\n");
+    push(@implContent, "            heapData.outputConstraintSpaces().append(space);\n");
+    push(@implContent, "IGNORE_WARNINGS_END\n");
+    push(@implContent, "IGNORE_WARNINGS_END\n");
+    push(@implContent, "    }\n");
+    push(@implContent, "\n");
 
-    push(@implContent, "    return subspaceForImpl<${className}, UseCustomHeapCellType::$useCustomHeapCell>(vm,\n");
-    push(@implContent, "        [] (auto& spaces) { return spaces.m_clientSubspaceFor${interfaceName}.get(); },\n");
-    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceFor${interfaceName} = WTFMove(space); },\n");
-    push(@implContent, "        [] (auto& spaces) { return spaces.m_subspaceFor${interfaceName}.get(); },\n");
-    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = WTFMove(space); },\n");
-    push(@implContent, "        $customHeapCellTypeGetter\n");
-    push(@implContent, "    );\n");
+    push(@implContent, "    clientSpaces.m_clientSubspaceFor${interfaceName} = makeUnique<JSC::GCClient::IsoSubspace>(*space);\n");
+    push(@implContent, "    return clientSpaces.m_clientSubspaceFor${interfaceName}.get();\n");
     push(@implContent, "}\n\n");
 
     if ($needsVisitChildren) {
@@ -6784,12 +6802,36 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return subspaceForImpl<${iteratorName}, UseCustomHeapCellType::No>(vm,
-            [] (auto& spaces) { return spaces.m_clientSubspaceFor${iteratorName}.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceFor${iteratorName} = WTFMove(space); },
-            [] (auto& spaces) { return spaces.m_subspaceFor${iteratorName}.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${iteratorName} = WTFMove(space); }
-        );
+        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+        auto& clientSpaces = clientData.clientSubspaces();
+        if (auto* clientSpace = clientSpaces.m_clientSubspaceFor${iteratorName}.get())
+            return clientSpace;
+
+        auto& heapData = clientData.heapData();
+        Locker locker { heapData.lock() };
+
+        auto& spaces = heapData.subspaces();
+        IsoSubspace* space = spaces.m_subspaceFor${iteratorName}.get();
+        if (!space) {
+            Heap& heap = vm.heap;
+            static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}> || !${iteratorName}::needsDestruction);
+            if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}>)
+                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, ${iteratorName});
+            else
+                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, ${iteratorName});
+            spaces.m_subspaceFor${iteratorName} = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN(\"unreachable-code\")
+IGNORE_WARNINGS_BEGIN(\"tautological-compare\")
+            void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = ${iteratorName}::visitOutputConstraints;
+            void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+            if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+                heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+        }
+
+        clientSpaces.m_clientSubspaceFor${iteratorName} = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+        return clientSpaces.m_clientSubspaceFor${iteratorName}.get();
     }
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

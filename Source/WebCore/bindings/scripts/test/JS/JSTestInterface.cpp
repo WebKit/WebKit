@@ -25,9 +25,9 @@
 #include "JSTestInterface.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "ElementInlines.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
 #include "HTMLNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -1101,12 +1101,36 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        return subspaceForImpl<TestInterfaceIterator, UseCustomHeapCellType::No>(vm,
-            [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterfaceIterator.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterfaceIterator = WTFMove(space); },
-            [] (auto& spaces) { return spaces.m_subspaceForTestInterfaceIterator.get(); },
-            [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterfaceIterator = WTFMove(space); }
-        );
+        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+        auto& clientSpaces = clientData.clientSubspaces();
+        if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestInterfaceIterator.get())
+            return clientSpace;
+
+        auto& heapData = clientData.heapData();
+        Locker locker { heapData.lock() };
+
+        auto& spaces = heapData.subspaces();
+        IsoSubspace* space = spaces.m_subspaceForTestInterfaceIterator.get();
+        if (!space) {
+            Heap& heap = vm.heap;
+            static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestInterfaceIterator> || !TestInterfaceIterator::needsDestruction);
+            if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestInterfaceIterator>)
+                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, TestInterfaceIterator);
+            else
+                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, TestInterfaceIterator);
+            spaces.m_subspaceForTestInterfaceIterator = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+            void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = TestInterfaceIterator::visitOutputConstraints;
+            void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+            if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+                heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+        }
+
+        clientSpaces.m_clientSubspaceForTestInterfaceIterator = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+        return clientSpaces.m_clientSubspaceForTestInterfaceIterator.get();
     }
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -1180,13 +1204,36 @@ JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_forEach, (JSC::JSGloba
 
 JSC::GCClient::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSTestInterface, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestInterface = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestInterface.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestInterface = WTFMove(space); },
-        nullptr
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestInterface.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForTestInterface.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterface> || !JSTestInterface::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterface>)
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestInterface);
+        else
+            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestInterface);
+        spaces.m_subspaceForTestInterface = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestInterface::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForTestInterface = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForTestInterface.get();
 }
 
 void JSTestInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

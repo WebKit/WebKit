@@ -22,9 +22,9 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMClientIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "DedicatedWorkerGlobalScope.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -167,13 +167,32 @@ JSC_DEFINE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScope_ExposedStarConstructor, (J
 
 JSC::GCClient::IsoSubspace* JSDedicatedWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)
 {
-    return subspaceForImpl<JSDedicatedWorkerGlobalScope, UseCustomHeapCellType::Yes>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForDedicatedWorkerGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForDedicatedWorkerGlobalScope = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForDedicatedWorkerGlobalScope.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForDedicatedWorkerGlobalScope = WTFMove(space); },
-        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeForJSDedicatedWorkerGlobalScope; }
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSpaces = clientData.clientSubspaces();
+    if (auto* clientSpace = clientSpaces.m_clientSubspaceForDedicatedWorkerGlobalScope.get())
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& spaces = heapData.subspaces();
+    IsoSubspace* space = spaces.m_subspaceForDedicatedWorkerGlobalScope.get();
+    if (!space) {
+        Heap& heap = vm.heap;
+        space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heapData.m_heapCellTypeForJSDedicatedWorkerGlobalScope, JSDedicatedWorkerGlobalScope);
+        spaces.m_subspaceForDedicatedWorkerGlobalScope = std::unique_ptr<IsoSubspace>(space);
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSDedicatedWorkerGlobalScope::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    clientSpaces.m_clientSubspaceForDedicatedWorkerGlobalScope = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    return clientSpaces.m_clientSubspaceForDedicatedWorkerGlobalScope.get();
 }
 
 void JSDedicatedWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

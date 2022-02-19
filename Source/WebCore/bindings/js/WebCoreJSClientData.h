@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-class ExtendedDOMClientIsoSubspaces;
-class ExtendedDOMIsoSubspaces;
+class DOMClientIsoSubspaces;
+class DOMIsoSubspaces;
 
 class JSHeapData {
     WTF_MAKE_NONCOPYABLE(JSHeapData);
@@ -44,7 +44,7 @@ public:
     static JSHeapData* ensureHeapData(JSC::Heap&);
 
     Lock& lock() { return m_lock; }
-    ExtendedDOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
+    DOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
 
     Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
 
@@ -54,6 +54,9 @@ public:
         for (auto* space : m_outputConstraintSpaces)
             func(*space);
     }
+
+    JSC::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
+    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
 
 private:
     Lock m_lock;
@@ -90,8 +93,9 @@ private:
     JSC::IsoSubspace m_runtimeObjectSpace;
     JSC::IsoSubspace m_windowProxySpace;
     JSC::IsoSubspace m_idbSerializationSpace;
+    std::unique_ptr<JSC::IsoSubspace> m_fileSystemDirectoryHandleIteratorSpace;
 
-    std::unique_ptr<ExtendedDOMIsoSubspaces> m_subspaces;
+    std::unique_ptr<DOMIsoSubspaces> m_subspaces;
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
 };
 
@@ -137,8 +141,10 @@ public:
     JSC::GCClient::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
     JSC::GCClient::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
     JSC::GCClient::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+    JSC::GCClient::IsoSubspace* fileSystemDirectoryHandleIteratorSpace() { return m_fileSystemDirectoryHandleIteratorSpace.get(); }
+    void setFileSystemDirectoryHandleIteratorSpace(std::unique_ptr<JSC::GCClient::IsoSubspace> space) { m_fileSystemDirectoryHandleIteratorSpace = std::exchange(space, nullptr); }
 
-    ExtendedDOMClientIsoSubspaces& clientSubspaces() { return *m_clientSubspaces.get(); }
+    DOMClientIsoSubspaces& clientSubspaces() { return *m_clientSubspaces.get(); }
 
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;
@@ -158,54 +164,8 @@ private:
     JSC::GCClient::IsoSubspace m_windowProxySpace;
     JSC::GCClient::IsoSubspace m_idbSerializationSpace;
 
-    std::unique_ptr<ExtendedDOMClientIsoSubspaces> m_clientSubspaces;
+    std::unique_ptr<JSC::GCClient::IsoSubspace> m_fileSystemDirectoryHandleIteratorSpace;
+    std::unique_ptr<DOMClientIsoSubspaces> m_clientSubspaces;
 };
-
-
-enum class UseCustomHeapCellType { Yes, No };
-
-template<typename T, UseCustomHeapCellType useCustomHeapCellType, typename GetClient, typename SetClient, typename GetServer, typename SetServer>
-ALWAYS_INLINE JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm, GetClient getClient, SetClient setClient, GetServer getServer, SetServer setServer, JSC::HeapCellType& (*getCustomHeapCellType)(JSHeapData&) = nullptr)
-{
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& clientSubspaces = clientData.clientSubspaces();
-    if (auto* clientSpace = getClient(clientSubspaces))
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    auto& subspaces = heapData.subspaces();
-    JSC::IsoSubspace* space = getServer(subspaces);
-    if (!space) {
-        JSC::Heap& heap = vm.heap;
-        std::unique_ptr<JSC::IsoSubspace> uniqueSubspace;
-        static_assert(useCustomHeapCellType == UseCustomHeapCellType::Yes || std::is_base_of_v<JSC::JSDestructibleObject, T> || !T::needsDestruction);
-        if constexpr (useCustomHeapCellType == UseCustomHeapCellType::Yes)
-            uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, getCustomHeapCellType(heapData), T);
-        else {
-            if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, T>)
-                uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, T);
-            else
-                uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, T);
-        }
-        space = uniqueSubspace.get();
-        setServer(subspaces, uniqueSubspace);
-
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = T::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    auto uniqueClientSubspace = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-    auto* clientSpace = uniqueClientSubspace.get();
-    setClient(clientSubspaces, uniqueClientSubspace);
-    return clientSpace;
-}
 
 } // namespace WebCore
