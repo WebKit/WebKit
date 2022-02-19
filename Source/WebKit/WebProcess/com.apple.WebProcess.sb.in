@@ -1773,16 +1773,6 @@
             "com.apple.iconservices"
             "com.apple.iconservices.store"
             "com.apple.tccd"
-
-            ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.accessibility.mediaaccessibilityd"
-            "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.audiohald" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
-            "com.apple.coremedia.endpointplaybacksession.xpc" "com.apple.coremedia.endpointremotecontrolsession.xpc" "com.apple.coremedia.routediscoverer.xpc"
-            "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.volumecontroller.xpc" "com.apple.lskdd" "com.apple.mediaremoted.xpc" "com.apple.trustd.agent"
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
-            "com.apple.coremedia.samplebufferconsumer.xpc"
-#endif
-            ;;; FIXME(207716): End services to remove.
         )
     )
 )
@@ -1793,19 +1783,6 @@
         (require-not (extension "com.apple.webkit.extension.mach"))
         (global-name "com.apple.audio.AudioComponentRegistrar")))
 #endif
-
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (xpc-service-name
-            ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.audio.SandboxHelper"
-            "com.apple.coremedia.videodecoder"
-            "com.apple.coremedia.videoencoder"
-            ;;; FIXME(207716): End services to remove.
-        )
-    )
-)
 
 ;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.
 (allow system-fsctl

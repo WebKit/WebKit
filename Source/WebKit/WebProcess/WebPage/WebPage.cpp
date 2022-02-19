@@ -657,13 +657,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if PLATFORM(COCOA)
-    // FIXME(207716): The following should be removed when the GPU process is complete.
-    static bool hasConsumedMediaExtensionHandles = false;
-    if (!hasConsumedMediaExtensionHandles && parameters.mediaExtensionHandles.size()) {
-        SandboxExtension::consumePermanently(parameters.mediaExtensionHandles);
-        SandboxExtension::consumePermanently(parameters.mediaIOKitExtensionHandles);
-        hasConsumedMediaExtensionHandles = true;
-    }
     static bool hasConsumedGPUExtensionHandles = false;
     if (!hasConsumedGPUExtensionHandles) {
         SandboxExtension::consumePermanently(parameters.gpuIOKitExtensionHandles);

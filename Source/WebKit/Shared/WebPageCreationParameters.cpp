@@ -112,9 +112,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
     encoder << additionalSupportedImageTypes;
-    // FIXME(207716): The following should be removed when the GPU process is complete.
-    encoder << mediaExtensionHandles;
-    encoder << mediaIOKitExtensionHandles;
     encoder << gpuIOKitExtensionHandles;
     encoder << gpuMachExtensionHandles;
 #endif
@@ -388,20 +385,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.additionalSupportedImageTypes))
         return std::nullopt;
-
-    // FIXME(207716): The following should be removed when the GPU process is complete.
-    std::optional<Vector<SandboxExtension::Handle>> mediaExtensionHandles;
-    decoder >> mediaExtensionHandles;
-    if (!mediaExtensionHandles)
-        return std::nullopt;
-    parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
-
-    std::optional<Vector<SandboxExtension::Handle>> mediaIOKitExtensionHandles;
-    decoder >> mediaIOKitExtensionHandles;
-    if (!mediaIOKitExtensionHandles)
-        return std::nullopt;
-    parameters.mediaIOKitExtensionHandles = WTFMove(*mediaIOKitExtensionHandles);
-    // FIXME(207716): End region to remove.
 
     std::optional<Vector<SandboxExtension::Handle>> gpuIOKitExtensionHandles;
     decoder >> gpuIOKitExtensionHandles;

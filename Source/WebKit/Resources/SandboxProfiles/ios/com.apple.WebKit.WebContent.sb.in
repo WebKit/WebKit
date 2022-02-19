@@ -1091,20 +1091,6 @@
             "com.apple.tccd"
             "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
             "com.apple.webinspector"
-
-            ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.airplay.apsynccontroller.xpc" "com.apple.audio.AURemoteIOServer" "com.apple.audio.AudioComponentPrefs" "com.apple.audio.AudioComponentRegistrar"
-            "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioSession" "com.apple.coremedia.admin" "com.apple.coremedia.asset.xpc"
-            "com.apple.coremedia.assetimagegenerator.xpc" "com.apple.coremedia.audiodeviceclock.xpc" "com.apple.coremedia.audioprocessingtap.xpc"
-            "com.apple.coremedia.capturesession" "com.apple.coremedia.capturesource" "com.apple.coremedia.compressionsession" "com.apple.coremedia.cpe.xpc"
-            "com.apple.coremedia.cpeprotector.xpc" "com.apple.coremedia.customurlloader.xpc" "com.apple.coremedia.decompressionsession"
-            "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.figcontentkeysession.xpc" "com.apple.coremedia.figcpecryptor"
-            "com.apple.coremedia.formatreader.xpc" "com.apple.coremedia.player.xpc" "com.apple.coremedia.remaker" "com.apple.coremedia.remotequeue"
-            "com.apple.coremedia.routediscoverer.xpc" "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.routingsessionmanager.xpc"
-            "com.apple.coremedia.samplebufferaudiorenderer.xpc" "com.apple.coremedia.samplebufferrendersynchronizer.xpc" "com.apple.coremedia.sandboxserver.xpc"
-            "com.apple.coremedia.sts" "com.apple.coremedia.systemcontroller.xpc" "com.apple.coremedia.videoqueue" "com.apple.coremedia.volumecontroller.xpc"
-            "com.apple.coremedia.visualcontext.xpc" "com.apple.mediaremoted.xpc" "com.apple.accessibility.mediaaccessibilityd"
-            ;;; FIXME(207716): End services to remove.
 )))
 
 ;; Silence warnings about these connections if we have decided not to extend access to them:
@@ -1122,17 +1108,6 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name
             "com.apple.iconservices"
-        )
-    )
-)
-
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (xpc-service-name
-            ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.MediaPlayer.RemotePlayerService"
-            ;;; FIXME(207716): End services to remove.
         )
     )
 )

@@ -8191,62 +8191,7 @@ static Span<const ASCIILiteral> gpuMachServices()
     return services;
 }
 
-// FIXME(207716): The following should be removed when the GPU process is complete.
-static Span<const ASCIILiteral> mediaRelatedMachServices()
-{
-    static constexpr std::array services {
-        "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
-        "com.apple.audio.AudioQueueServer"_s, "com.apple.coremedia.endpoint.xpc"_s,
-        "com.apple.coremedia.routediscoverer.xpc"_s, "com.apple.coremedia.routingcontext.xpc"_s,
-        "com.apple.coremedia.volumecontroller.xpc"_s, "com.apple.accessibility.mediaaccessibilityd"_s,
-        "com.apple.mediaremoted.xpc"_s,
-#if PLATFORM(IOS_FAMILY)
-        "com.apple.audio.AudioSession"_s, "com.apple.MediaPlayer.RemotePlayerService"_s,
-        "com.apple.coremedia.admin"_s,
-        "com.apple.coremedia.asset.xpc"_s, "com.apple.coremedia.assetimagegenerator.xpc"_s,
-        "com.apple.coremedia.audiodeviceclock.xpc"_s, "com.apple.coremedia.audioprocessingtap.xpc"_s,
-        "com.apple.coremedia.capturesession"_s, "com.apple.coremedia.capturesource"_s,
-        "com.apple.coremedia.compressionsession"_s, "com.apple.coremedia.cpe.xpc"_s,
-        "com.apple.coremedia.cpeprotector.xpc"_s, "com.apple.coremedia.customurlloader.xpc"_s,
-        "com.apple.coremedia.decompressionsession"_s, "com.apple.coremedia.figcontentkeysession.xpc"_s,
-        "com.apple.coremedia.figcpecryptor"_s, "com.apple.coremedia.formatreader.xpc"_s,
-        "com.apple.coremedia.player.xpc"_s, "com.apple.coremedia.remaker"_s,
-        "com.apple.coremedia.remotequeue"_s, "com.apple.coremedia.routingsessionmanager.xpc"_s,
-        "com.apple.coremedia.samplebufferaudiorenderer.xpc"_s, "com.apple.coremedia.samplebufferrendersynchronizer.xpc"_s,
-        "com.apple.coremedia.sandboxserver.xpc"_s, "com.apple.coremedia.sts"_s,
-        "com.apple.coremedia.systemcontroller.xpc"_s, "com.apple.coremedia.videoqueue"_s,
-        "com.apple.coremedia.visualcontext.xpc"_s, "com.apple.airplay.apsynccontroller.xpc"_s,
-        "com.apple.audio.AURemoteIOServer"_s,
-#endif
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        "com.apple.audio.audiohald"_s, "com.apple.audio.SandboxHelper"_s, "com.apple.coremedia.endpointstream.xpc"_s, "com.apple.coremedia.endpointplaybacksession.xpc"_s,
-        "com.apple.coremedia.endpointremotecontrolsession.xpc"_s, "com.apple.coremedia.videodecoder"_s,
-        "com.apple.coremedia.videoencoder"_s, "com.apple.lskdd"_s, "com.apple.trustd.agent"_s,
-#endif
-        // FIXME: Is this also needed in PLATFORM(MACCATALYST)?
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
-        "com.apple.coremedia.samplebufferconsumer.xpc"_s,
-#endif
-    };
-    return services;
-}
-
-static Span<const ASCIILiteral> mediaRelatedIOKitClasses()
-{
-#if !(PLATFORM(MAC) || PLATFORM(MACCATALYST))
-    return { };
-#else
-    static constexpr std::array services {
-#if CPU(ARM64)
-        "AppleAVDUserClient"_s,
-#endif
-        "RootDomainUserClient"_s,
-    };
-    return services;
-#endif
-}
-
-#endif
+#endif // PLATFORM(COCOA)
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
@@ -8333,17 +8278,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if PLATFORM(COCOA)
     parameters.smartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();
-    
-    bool needWebProcessExtensions = !preferences().useGPUProcessForMediaEnabled()
-        || !preferences().captureAudioInGPUProcessEnabled()
-        || !preferences().captureVideoInGPUProcessEnabled()
-        || !preferences().webRTCPlatformCodecsInGPUProcessEnabled();
-
-    if (needWebProcessExtensions) {
-        // FIXME(207716): The following should be removed when the GPU process is complete.
-        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), std::nullopt);
-        parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), std::nullopt);
-    }
 
     if (!preferences().useGPUProcessForMediaEnabled()
         || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())

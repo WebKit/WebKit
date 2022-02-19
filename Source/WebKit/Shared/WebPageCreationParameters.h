@@ -172,8 +172,6 @@ struct WebPageCreationParameters {
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
     Vector<String> additionalSupportedImageTypes;
-    Vector<SandboxExtension::Handle> mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
-    Vector<SandboxExtension::Handle> mediaIOKitExtensionHandles;
     Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles;
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif

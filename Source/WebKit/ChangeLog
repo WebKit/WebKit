@@ -1,5 +1,28 @@
 2022-02-18  Per Arne Vollan  <pvollan@apple.com>
 
+        Remove unneeded sandbox extension code
+        https://bugs.webkit.org/show_bug.cgi?id=228777
+        <rdar://problem/81516828>
+
+        Reviewed by Brent Fulgham.
+
+        Since the GPU process is now enabled by default, some related sandbox extension code can be removed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::mediaRelatedMachServices): Deleted.
+        (WebKit::mediaRelatedIOKitClasses): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-02-18  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add access to required Mach service in the Network process
         https://bugs.webkit.org/show_bug.cgi?id=236853
         <rdar://89031731>
