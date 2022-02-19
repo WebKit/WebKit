@@ -1,3 +1,12 @@
+2022-02-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        http/wpt/push-api/onpush-disabled.html fails (incremental build issue?)
+        https://bugs.webkit.org/show_bug.cgi?id=236874
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Mark test as failing to reduce impact on EWS.
+
 2022-02-18  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r287249): [ Monterey wk2 ] media/media-source/media-webm-vorbis-partial.html is a constant text failure
