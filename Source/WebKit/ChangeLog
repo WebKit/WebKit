@@ -1,3 +1,24 @@
+2022-02-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Add assertion that no two network sessions share the same storage path
+        https://bugs.webkit.org/show_bug.cgi?id=236844
+
+        Reviewed by Chris Dumez.
+
+        Each NetworkStorageManager has its own queue and accesses the storage files on that queue, so we can't have two
+        NetworkworkStorageManagers use the same path, as the path may be accessed concurrently and cause corruption. 
+        Currently we have an SPI for setting custom generalStorageDirectory for WebsiteDataStore (in 
+        _WKWebsiteDataStoreConfiguration), which means SPI clients can create two sessions with the same path in theory.
+        Let's add an assertion to ensure that does not happen.
+
+        This assertion has helped find a bug in WebKitTestRunner that we didn't set custom generalStorageDirectory for a
+        custom WebsiteDataStore (so it's using the same path as default WebsiteDataStore).
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::activePaths):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::~NetworkStorageManager):
+
 2022-02-18  Per Arne Vollan  <pvollan@apple.com>
 
         Move content filtering to Networking process

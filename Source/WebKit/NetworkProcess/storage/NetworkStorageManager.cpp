@@ -108,6 +108,12 @@ static void deleteOriginFileIfNecessary(const String& filePath)
         FileSystem::deleteFile(filePath);
 }
 
+static HashSet<String>& activePaths()
+{
+    static MainThreadNeverDestroyed<HashSet<String>> paths;
+    return paths;
+}
+
 Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths)
 {
     return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, shouldUseCustomPaths));
@@ -121,6 +127,12 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
     , m_parentConnection(connection)
 {
     ASSERT(RunLoop::isMain());
+
+    // Sessions are not supposed to share the same path, as each session runs on its own queue
+    // and this can cause corruption. If the assertion is hit, check if you create multiple
+    // WebsiteDataStores with the same generalStorageDirectory.
+    if (!path.isEmpty())
+        RELEASE_ASSERT(activePaths().add(path).isNewEntry);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), shouldUseCustomPaths]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
@@ -142,6 +154,9 @@ NetworkStorageManager::~NetworkStorageManager()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_closed);
+
+    if (!m_path.isEmpty())
+        activePaths().remove(m_path);
 }
 
 bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)

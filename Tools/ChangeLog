@@ -1,3 +1,13 @@
+2022-02-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Add assertion that no two network session share the same storage path
+        https://bugs.webkit.org/show_bug.cgi?id=236844
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::configureWebsiteDataStoreTemporaryDirectories):
+
 2022-02-18  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Fix test sharding when using --make-runner and --remote
