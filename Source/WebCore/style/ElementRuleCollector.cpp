@@ -507,10 +507,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
 
 bool ElementRuleCollector::containerQueryMatches(const FilteredContainerQuery& query)
 {
-    if (!m_selectorMatchingState)
-        return true;
-
-    ContainerQueryEvaluator evaluator(m_selectorMatchingState->queryContainers);
+    ContainerQueryEvaluator evaluator(element(), m_pseudoElementRequest.pseudoId , m_selectorMatchingState);
     return evaluator.evaluate(query);
 }
 

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ContainerQuery.h"
+#include "SelectorMatchingState.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -37,19 +38,22 @@ enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 class ContainerQueryEvaluator {
 public:
-    ContainerQueryEvaluator(const Vector<Ref<const Element>>& containers);
+    ContainerQueryEvaluator(const Element&, PseudoId, SelectorMatchingState*);
 
     bool evaluate(const FilteredContainerQuery&) const;
 
 private:
     struct ResolvedContainer;
+    std::optional<ResolvedContainer> resolveContainer(const FilteredContainerQuery&) const;
 
     EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const ResolvedContainer&) const;
     EvaluationResult evaluateQuery(const CQ::SizeQuery&, const ResolvedContainer&) const;
     template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const ResolvedContainer&) const;
     EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const ResolvedContainer&) const;
 
-    const Vector<Ref<const Element>>& m_containers;
+    const Ref<const Element> m_element;
+    const PseudoId m_pseudoId;
+    SelectorMatchingState* m_selectorMatchingState;
 };
 
 inline EvaluationResult toEvaluationResult(bool boolean)

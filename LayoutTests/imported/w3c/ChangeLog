@@ -1,3 +1,20 @@
+2022-02-19  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Match container queries correctly in non-rendered subtrees
+        https://bugs.webkit.org/show_bug.cgi?id=236840
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-contain/container-queries/backdrop-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-contents-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-none-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-001-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.tentative-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-container-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-nested-dialog-expected.txt:
+
 2022-02-19  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r287524): hihello.me does not show sliding sheet at the bottom of the page

@@ -41,8 +41,7 @@ namespace WebCore {
 static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, const RenderObject& firstLetterContainer)
 {
     auto* containerFirstLetterStyle = firstLetterBlock.getCachedPseudoStyle(PseudoId::FirstLetter, &firstLetterContainer.firstLineStyle());
-    // FIXME: There appears to be some path where we have a first letter renderer without first letter style.
-    ASSERT(containerFirstLetterStyle);
+    // FIXME: first-letter style needs to be computed eagerly.
     auto firstLetterStyle = RenderStyle::clone(containerFirstLetterStyle ? *containerFirstLetterStyle : firstLetterContainer.firstLineStyle());
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.

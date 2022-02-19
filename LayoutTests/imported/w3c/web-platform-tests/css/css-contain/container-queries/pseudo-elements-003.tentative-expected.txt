@@ -8,5 +8,5 @@ PASS Originating element container for ::first-line
 PASS Originating element container for ::first-letter
 PASS Originating element container for outer ::first-line
 PASS Originating element container for outer ::first-letter
-FAIL Originating element container for ::backdrop assert_equals: ::backdrop not rendered expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
+PASS Originating element container for ::backdrop
 
