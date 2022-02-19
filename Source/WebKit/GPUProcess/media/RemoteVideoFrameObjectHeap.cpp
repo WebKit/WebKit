@@ -33,6 +33,8 @@
 #include "RemoteVideoFrameProxy.h"
 
 #if PLATFORM(COCOA)
+#include <WebCore/MediaSampleAVFObjC.h>
+#include <WebCore/VideoFrameCV.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
@@ -90,15 +92,21 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     auto identifier = read.identifier();
-    auto mediaSample = retire(WTFMove(read), 0_s);
+    auto videoFrame = retire(WTFMove(read), 0_s);
 
-    if (!mediaSample)
+    if (!videoFrame)
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    if (is<VideoFrameCV>(videoFrame))
+        pixelBuffer = downcast<VideoFrameCV>(*videoFrame).pixelBuffer();
+    else if (is<MediaSampleAVFObjC>(*videoFrame))
+        pixelBuffer = downcast<MediaSampleAVFObjC>(*videoFrame).pixelBuffer();
+    else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    auto platformSample = mediaSample->platformSample();
-    ASSERT(platformSample.type == PlatformSample::CMSampleBufferType);
-
-    m_sharedVideoFrameWriter.write(static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(platformSample.sample.cmSampleBuffer)),
+    m_sharedVideoFrameWriter.write(pixelBuffer.get(),
         [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { handle }, 0); }
     );

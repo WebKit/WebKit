@@ -1,3 +1,14 @@
+2022-02-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r290175): ASSERTION FAILED: platformSample.type == PlatformSample::CMSampleBufferType while running webgl tests
+        https://bugs.webkit.org/show_bug.cgi?id=236878
+
+        Add a missing hunk.
+        Unreviewed, TBR Eric Carlson.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::RemoteVideoFrameObjectHeap::getVideoFrameBuffer):
+
 2022-02-18  Sihui Liu  <sihui_liu@apple.com>
 
         ASSERTION FAILED: !hasAnyOpenConnections() in UniqueIDBDatabase::~UniqueIDBDatabase()
