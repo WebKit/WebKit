@@ -84,7 +84,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -97,7 +97,7 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
     bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
 #endif
     if (!useWebAuthnProcess) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
+        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, isProcessingUserGesture), WTFMove(handler));
         return;
     }
 
@@ -105,6 +105,11 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         return;
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, isProcessingUserGesture), WTFMove(handler));
 }
+
+void WebAuthenticatorCoordinator::isConditionalMediationAvailable(QueryCompletionHandler&& handler)
+{
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(), WTFMove(handler));
+};
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {

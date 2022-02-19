@@ -98,7 +98,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, options.publicKey.value(), scope(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, WTFMove(options), scope(), WTFMove(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)

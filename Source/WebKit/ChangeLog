@@ -1,3 +1,31 @@
+2022-02-18  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support for conditional mediation
+        https://bugs.webkit.org/show_bug.cgi?id=236820
+        rdar://84821947
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        This patch adds support for conditional mediation, as defined in the
+        credentials management spec: https://w3c.github.io/webappsec-credential-management/#dom-credentialmediationrequirement-conditional
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::configurationAssertionRequestContext):
+        (WebKit::WebAuthenticatorCoordinatorProxy::contextForRequest):
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h:
+
 2022-02-18  Per Arne Vollan  <pvollan@apple.com>
 
         Remove unneeded sandbox extension code

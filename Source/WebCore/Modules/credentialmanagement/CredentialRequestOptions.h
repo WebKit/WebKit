@@ -35,8 +35,10 @@ namespace WebCore {
 
 class AbortSignal;
 
+enum class MediationRequirement : uint8_t { Silent, Optional, Required, Conditional };
+
 struct CredentialRequestOptions {
-    enum class MediationRequirement { Silent, Optional, Required };
+    using MediationRequirement = MediationRequirement;
 
     MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
@@ -44,5 +46,20 @@ struct CredentialRequestOptions {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CredentialRequestOptions::MediationRequirement> {
+    using values = EnumValues<
+        WebCore::CredentialRequestOptions::MediationRequirement,
+        WebCore::CredentialRequestOptions::MediationRequirement::Silent,
+        WebCore::CredentialRequestOptions::MediationRequirement::Optional,
+        WebCore::CredentialRequestOptions::MediationRequirement::Required,
+        WebCore::CredentialRequestOptions::MediationRequirement::Conditional
+    >;
+};
+
+} // namespace WTF
+
 
 #endif // ENABLE(WEB_AUTHN)

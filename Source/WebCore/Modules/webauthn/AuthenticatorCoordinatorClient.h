@@ -38,6 +38,7 @@ class Frame;
 class SecurityOrigin;
 
 enum class AuthenticatorAttachment;
+enum class MediationRequirement : uint8_t;
 
 struct AuthenticatorResponseData;
 struct PublicKeyCredentialCreationOptions;
@@ -46,16 +47,17 @@ struct PublicKeyCredentialRequestOptions;
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
-class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
+class AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
 public:
     AuthenticatorCoordinatorClient() = default;
     virtual ~AuthenticatorCoordinatorClient() = default;
 
-    virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
-    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
-    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) { };
+    virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;
+    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, MediationRequirement, RequestCompletionHandler&&) = 0;
+    virtual void isConditionalMediationAvailable(QueryCompletionHandler&&) = 0;
+    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
 
     virtual void resetUserGestureRequirement() { }
 };

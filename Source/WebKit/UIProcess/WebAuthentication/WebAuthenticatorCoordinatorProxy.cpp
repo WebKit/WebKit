@@ -58,12 +58,12 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, std::nullopt }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation }, WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -105,6 +105,11 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
     handler(LocalService::isAvailable());
+}
+
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(QueryCompletionHandler&& handler)
+{
+    handler(false);
 }
 #endif // !HAVE(UNIFIED_ASC_AUTH_UI)
 

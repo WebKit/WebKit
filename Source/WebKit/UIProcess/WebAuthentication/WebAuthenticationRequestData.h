@@ -30,6 +30,7 @@
 #include "APIWebAuthenticationPanel.h"
 #include "FrameInfoData.h"
 #include "WebAuthenticationFlags.h"
+#include <WebCore/CredentialRequestOptions.h>
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
@@ -56,6 +57,7 @@ struct WebAuthenticationRequestData {
     bool processingUserGesture;
     String cachedPin; // Only used to improve NFC Client PIN experience.
     WeakPtr<API::WebAuthenticationPanel> weakPanel;
+    std::optional<WebCore::MediationRequirement> mediation;
 };
 
 WebCore::ClientDataType getClientDataType(const std::variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);

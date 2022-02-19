@@ -229,6 +229,11 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 
 @end
 
+typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
+    ASCredentialRequestStyleModal,
+    ASCredentialRequestStyleAutoFill,
+};
+
 @interface ASCCredentialRequestContext : NSObject <NSSecureCoding>
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -244,6 +249,8 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 
 @property (nonatomic, nullable, copy) ASCPublicKeyCredentialAssertionOptions *platformKeyCredentialAssertionOptions;
 @property (nonatomic, nullable, copy) ASCPublicKeyCredentialAssertionOptions *securityKeyCredentialAssertionOptions;
+
+@property (nonatomic) ASCredentialRequestStyle requestStyle;
 
 @end
 
@@ -320,6 +327,8 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 - (void)userSelectedLoginChoice:(id <ASCLoginChoiceProtocol>)loginChoice authenticatedContext:(LAContext *)context completionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
 
 - (void)requestCompletedWithCredential:(nullable id<ASCCredentialProtocol>)credential error:(nullable NSError *)error;
+
+- (void)performAutoFillAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
 #endif
 
 @end
