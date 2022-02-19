@@ -215,6 +215,10 @@
     (allow mach-lookup
            (global-name "com.apple.nehelper"))
 
+    ;; <rdar://89031731>
+    (allow mach-lookup
+        (global-name "com.apple.networkserviceproxy.fetch-token"))
+           
     (allow-well-known-system-group-container-literal-read
            "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
 
