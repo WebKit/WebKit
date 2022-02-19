@@ -48,6 +48,7 @@ public:
 private:
     void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
     void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
+    TextUtil::FallbackFontList collectFallbackFonts(const Line::Run&, const RenderStyle&);
 
     void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
     void adjustIdeographicBaselineIfApplicable(LineBox&, size_t lineIndex);

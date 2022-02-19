@@ -54,7 +54,8 @@ public:
     static InlineLayoutUnit trailingWhitespaceWidth(const InlineTextBox&, const FontCascade&, size_t startPosition, size_t endPosition);
 
     using FallbackFontList = HashSet<const Font*>;
-    static FallbackFontList fallbackFontsForRun(const Line::Run&, const RenderStyle&);
+    enum class IncludeHyphen : uint8_t { No, Yes };
+    static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
 
     struct WordBreakLeft {
         size_t length { 0 };

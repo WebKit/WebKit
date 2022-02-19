@@ -36,15 +36,6 @@
 namespace WebCore {
 namespace Layout {
 
-static bool fallbackFontHasVerticalGlyph(const TextUtil::FallbackFontList& fallbackFontList)
-{
-    for (auto* font : fallbackFontList) {
-        if (font->hasVerticalGlyphs())
-            return true;
-    }
-    return false;
-}
-
 static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(TextAlignMode textAlign, const LineBuilder::LineContent& lineContent, bool isLeftToRightDirection)
 {
     // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
@@ -158,6 +149,30 @@ void LineBoxBuilder::adjustLayoutBoundsWithFallbackFonts(InlineLevelBox& inlineB
     // We need floor/ceil to match legacy layout integral positioning.
     auto layoutBounds = inlineBox.layoutBounds();
     inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
+}
+
+TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const Line::Run& run, const RenderStyle& style)
+{
+    auto& inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
+    if (inlineTextBox.canUseSimplifiedContentMeasuring()) {
+        // Simplified text measuring works with primary font only.
+        return { };
+    }
+    auto text = *run.textContent();
+    auto fallbackFonts = TextUtil::fallbackFontsForText(StringView(inlineTextBox.content()).substring(text.start, text.length), style, text.needsHyphen ? TextUtil::IncludeHyphen::Yes : TextUtil::IncludeHyphen::No);
+    if (fallbackFonts.isEmpty())
+        return { };
+
+    auto fallbackFontsHaveVerticalGlyph = [&] {
+        for (auto* font : fallbackFonts) {
+            if (font->hasVerticalGlyphs())
+                return true;
+        }
+        return false;
+    };
+    // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
+    m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || fallbackFontsHaveVerticalGlyph();
+    return fallbackFonts;
 }
 
 struct LayoutBoundsMetrics {
@@ -316,10 +331,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         if (run.isText()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
             parentInlineBox.setHasContent();
-            auto fallbackFonts = TextUtil::fallbackFontsForRun(run, style);
-            if (!fallbackFonts.isEmpty()) {
+            if (auto fallbackFonts = collectFallbackFonts(run, style); !fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || fallbackFontHasVerticalGlyph(fallbackFonts);
                 adjustLayoutBoundsWithFallbackFonts(parentInlineBox, fallbackFonts);
             }
             continue;
