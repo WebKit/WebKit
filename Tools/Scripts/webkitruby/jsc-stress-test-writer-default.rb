@@ -356,7 +356,7 @@ class TestRunnerMake < TestRunner
         outp.puts "\tsh test_script_#{index}"
         target
     end
-    def prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteIndex)
+    def prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, remoteIndex)
         # The goals of our parallel test runner are scalability and simplicity. The
         # simplicity part is particularly important. We don't want to have to have
         # a full-time contributor just philosophising about parallel testing.
@@ -400,7 +400,7 @@ class TestRunnerMake < TestRunner
             if completedPlans.include?(plan)
                 next
             end
-            if @remoteHosts.nil? or plan.index % @remoteHosts.length == remoteIndex
+            if remoteHosts.nil? or plan.index % remoteHosts.length == remoteIndex
                 if serialPlans.include?(plan)
                     serialRunPlans << plan
                 else
@@ -431,11 +431,11 @@ class TestRunnerMake < TestRunner
     end
     def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
         if remoteHosts.nil?
-            prepareRunnerForRemote(runlist, serialPlans, completedPlans, 0)
+            prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, 0)
         else
             remoteHosts.each_index {
                 |remoteIndex|
-                prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteIndex)
+                prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, remoteIndex)
             }
         end
     end
