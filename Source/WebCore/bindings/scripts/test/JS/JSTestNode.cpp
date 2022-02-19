@@ -22,9 +22,9 @@
 #include "JSTestNode.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMClientIsoSubspaces.h"
-#include "DOMIsoSubspaces.h"
 #include "DOMPromiseProxy.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -402,36 +402,12 @@ public:
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
-        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-        auto& clientSpaces = clientData.clientSubspaces();
-        if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNodeIterator.get())
-            return clientSpace;
-
-        auto& heapData = clientData.heapData();
-        Locker locker { heapData.lock() };
-
-        auto& spaces = heapData.subspaces();
-        IsoSubspace* space = spaces.m_subspaceForTestNodeIterator.get();
-        if (!space) {
-            Heap& heap = vm.heap;
-            static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator> || !TestNodeIterator::needsDestruction);
-            if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator>)
-                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, TestNodeIterator);
-            else
-                space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, TestNodeIterator);
-            spaces.m_subspaceForTestNodeIterator = std::unique_ptr<IsoSubspace>(space);
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-            void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = TestNodeIterator::visitOutputConstraints;
-            void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-            if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-                heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-        }
-
-        clientSpaces.m_clientSubspaceForTestNodeIterator = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-        return clientSpaces.m_clientSubspaceForTestNodeIterator.get();
+        return subspaceForImpl<TestNodeIterator, UseCustomHeapCellType::No>(vm,
+            [] (auto& spaces) { return spaces.m_clientSubspaceForTestNodeIterator.get(); },
+            [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNodeIterator = WTFMove(space); },
+            [] (auto& spaces) { return spaces.m_subspaceForTestNodeIterator.get(); },
+            [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNodeIterator = WTFMove(space); }
+        );
     }
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -505,36 +481,13 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_forEach, (JSC::JSGlobalObje
 
 JSC::GCClient::IsoSubspace* JSTestNode::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& clientSpaces = clientData.clientSubspaces();
-    if (auto* clientSpace = clientSpaces.m_clientSubspaceForTestNode.get())
-        return clientSpace;
-
-    auto& heapData = clientData.heapData();
-    Locker locker { heapData.lock() };
-
-    auto& spaces = heapData.subspaces();
-    IsoSubspace* space = spaces.m_subspaceForTestNode.get();
-    if (!space) {
-        Heap& heap = vm.heap;
-        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode> || !JSTestNode::needsDestruction);
-        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode>)
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, JSTestNode);
-        else
-            space = new IsoSubspace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSTestNode);
-        spaces.m_subspaceForTestNode = std::unique_ptr<IsoSubspace>(space);
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestNode::visitOutputConstraints;
-        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-            heapData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    }
-
-    clientSpaces.m_clientSubspaceForTestNode = makeUnique<JSC::GCClient::IsoSubspace>(*space);
-    return clientSpaces.m_clientSubspaceForTestNode.get();
+    return subspaceForImpl<JSTestNode, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestNode.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestNode = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestNode.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestNode = WTFMove(space); },
+        nullptr
+    );
 }
 
 void JSTestNode::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
