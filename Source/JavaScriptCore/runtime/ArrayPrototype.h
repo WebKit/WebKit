@@ -24,17 +24,23 @@
 
 namespace JSC {
 
-// This is a simple JSArray, only including some special initialization sequence.
-// We must not have special ArrayPrototype::info.
 class ArrayPrototype final : public JSArray {
 public:
     using Base = JSArray;
 
+    enum class SpeciesWatchpointStatus {
+        Uninitialized,
+        Initialized,
+        Fired
+    };
+
     static ArrayPrototype* create(VM&, JSGlobalObject*, Structure*);
+        
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Base::createStructure(vm, globalObject, prototype, ArrayWithUndecided);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
     }
 
 private:
