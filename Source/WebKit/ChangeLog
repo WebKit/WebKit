@@ -1,3 +1,81 @@
+2022-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Hovering over "Copy Cropped Image" context menu item should reveal the cropped image
+        https://bugs.webkit.org/show_bug.cgi?id=236845
+        rdar://89152746
+
+        Reviewed by Dean Jackson.
+
+        Add support for revealing the "cropped" region of an image element (while dimming out the rest of the image)
+        when the user highlights the new "Copy Cropped Image" context menu item on macOS. See below for more details.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+
+        Adjust `requestImageAnalysisMarkup` to take a completion handler with both the resulting CGImageRef, as well as
+        a CGRect that represents the frame of the cropped image with respect to the source image, normalized to the unit
+        square. Additionally, tweak all call sites of `requestImageAnalysisMarkup` to pass in completion handlers that
+        accept both arguments.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::hitTestedElementContext const):
+
+        Add an optional ElementContext representing the inner hit-tested element for the context menu. We use this below
+        in `WebPageProxy::willHighlightContextMenuItem` to know where we need to install the cropped image overlay.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDismissContextMenu):
+
+        Reset the cached cropped image result as well as the cropped image overlay state when the context menu is
+        dismissed.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
+        Also clear the above state if the process crashes.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView doAfterComputingImageAnalysisResultsForMarkup:]):
+        (-[WKContentView actionSheetAssistant:copyCroppedImage:sourceMIMEType:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuDelegate menu:willHighlightItem:]):
+
+        Implement this NSMenu delegate method and call out to WebPageProxy whenever the highlighted context menu item
+        changes. See below for more details.
+
+        (WebKit::WebContextMenuProxyMac::applyMarkupToControlledImage):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::willHighlightContextMenuItem):
+
+        This method coordinates showing or hiding the cropped image overlay when the user highlights (but does not yet
+        select) the "Copy Cropped Image" context menu item. When the user first highlights this item, we trigger an
+        analysis request in VisionKit; when we later obtain the results, we send the image to the web process as TIFF
+        data, and inject it into the image using `ImageOverlay::CroppedImage::install`. Un-highlighting and re-
+        highlighting the menu item then respectively hides and shows the cropped image overlay by setting visibility.
+
+        (WebKit::WebPageProxy::handleContextMenuCopyCroppedImage):
+
+        Adjust this to use the cached `m_croppedImageResult` if it has already been computed.
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didDismissContextMenu):
+
+        Destroy the `m_croppedImageOverlay` after the context menu is dismissed (which uninstalls the cropped image
+        overlay in the process).
+
+        (WebKit::WebPage::installCroppedImageOverlay):
+        (WebKit::WebPage::setCroppedImageOverlayVisibility):
+
+        Add methods to install and toggle the visibility of the cropped image overlay.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-02-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(r290175): ASSERTION FAILED: platformSample.type == PlatformSample::CMSampleBufferType while running webgl tests

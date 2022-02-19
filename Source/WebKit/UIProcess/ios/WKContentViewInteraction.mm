@@ -4765,7 +4765,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             return;
         }
 
-        WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result) mutable {
+        WebKit::requestImageAnalysisMarkup(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
@@ -10903,7 +10903,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
 {
     auto changeCount = UIPasteboard.generalPasteboard.changeCount;
-    WebKit::requestImageAnalysisMarkup(image.CGImage, [changeCount, weakSelf = WeakObjCPtr<WKContentView>(self), originalImage = RetainPtr { image }, sourceMIMEType = RetainPtr { sourceMIMEType }](CGImageRef result) mutable {
+    WebKit::requestImageAnalysisMarkup(image.CGImage, [changeCount, weakSelf = WeakObjCPtr<WKContentView>(self), originalImage = RetainPtr { image }, sourceMIMEType = RetainPtr { sourceMIMEType }](CGImageRef result, CGRect) mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;

@@ -43,13 +43,14 @@ ContextMenuContextData::ContextMenuContextData()
 {
 }
 
-ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
+ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, std::optional<ElementContext>&& hitTestedElementContext, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
 #if ENABLE(SERVICE_CONTROLS)
     : m_type(context.controlledImage() ? Type::ServicesMenu : context.type())
 #else
     : m_type(context.type())
 #endif
     , m_menuLocation(menuLocation)
+    , m_hitTestedElementContext(WTFMove(hitTestedElementContext))
     , m_menuItems(menuItems)
     , m_webHitTestResultData({ context.hitTestResult(), true })
     , m_selectedText(context.selectedText())
@@ -94,6 +95,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 {
     encoder << m_type;
     encoder << m_menuLocation;
+    encoder << m_hitTestedElementContext;
     encoder << m_menuItems;
     encoder << m_webHitTestResultData;
     encoder << m_selectedText;
@@ -119,6 +121,9 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
     if (!decoder.decode(result.m_menuLocation))
+        return false;
+
+    if (!decoder.decode(result.m_hitTestedElementContext))
         return false;
 
     if (!decoder.decode(result.m_menuItems))

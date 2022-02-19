@@ -134,6 +134,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RequestImageBitmap(struct WebCore::ElementContext elementContext) -> (WebKit::ShareableBitmap::Handle image, String sourceMIMEType) Async
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    InstallCroppedImageOverlay(struct WebCore::ElementContext elementContext, WebKit::SharedMemory::IPCHandle imageData, String mimeType, WebCore::FloatRect normalizedCropRect)
+    SetCroppedImageOverlayVisibility(bool visible)
+#endif
+
     SetControlledByAutomation(bool controlled)
 
     ConnectInspector(String targetId, Inspector::FrontendChannel::ConnectionType connectionType)

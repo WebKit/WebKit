@@ -186,6 +186,11 @@
     _menuProxy->page()->didDismissContextMenu();
 }
 
+- (void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
+{
+    _menuProxy->page()->willHighlightContextMenuItem(static_cast<WebCore::ContextMenuAction>(item.tag));
+}
+
 @end
 
 namespace WebKit {
@@ -343,7 +348,7 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
     if (!image)
         return;
 
-    requestImageAnalysisMarkup(image.get(), [weakPage = WeakPtr { page() }, preferredMIMEType = m_context.controlledImageMIMEType(), elementContext = WTFMove(*elementContext)](CGImageRef result) {
+    requestImageAnalysisMarkup(image.get(), [weakPage = WeakPtr { page() }, preferredMIMEType = m_context.controlledImageMIMEType(), elementContext = WTFMove(*elementContext)](CGImageRef result, CGRect) {
         RefPtr protectedPage = weakPage.get();
         if (!protectedPage || !result)
             return;

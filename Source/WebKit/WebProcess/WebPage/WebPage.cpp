@@ -2905,6 +2905,10 @@ void WebPage::didShowContextMenu()
 void WebPage::didDismissContextMenu()
 {
     corePage()->contextMenuController().didDismissContextMenu();
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    m_croppedImageOverlay = nullptr;
+#endif
 }
 
 #endif // ENABLE(CONTEXT_MENUS)
@@ -7790,6 +7794,29 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
     ASSERT(!mimeType.isEmpty());
     completion(handle, mimeType);
 }
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+void WebPage::installCroppedImageOverlay(const ElementContext& context, const SharedMemory::IPCHandle& imageData, const String& mimeType, FloatRect normalizedCropRect)
+{
+    auto sharedMemory = SharedMemory::map(imageData.handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
+
+    RefPtr element = dynamicDowncast<HTMLElement>(elementForContext(context).get());
+    if (!element)
+        return;
+
+    m_croppedImageOverlay = ImageOverlay::CroppedImage::install(*element, sharedMemory->createSharedBuffer(imageData.dataSize), mimeType, normalizedCropRect);
+}
+
+void WebPage::setCroppedImageOverlayVisibility(bool visible)
+{
+    if (m_croppedImageOverlay)
+        m_croppedImageOverlay->setVisibility(visible);
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
