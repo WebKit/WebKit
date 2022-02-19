@@ -38,7 +38,7 @@ Instance::Instance() = default;
 
 Instance::~Instance() = default;
 
-Ref<Surface> Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
+RefPtr<Surface> Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
     return Surface::create();
@@ -300,7 +300,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    return new WGPUSurfaceImpl { instance->instance->createSurface(descriptor) };
+    auto result = instance->instance->createSurface(descriptor);
+    return result ? new WGPUSurfaceImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)

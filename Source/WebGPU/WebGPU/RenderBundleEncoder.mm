@@ -67,7 +67,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
     UNUSED_PARAM(indirectOffset);
 }
 
-Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor* descriptor)
+RefPtr<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
     return RenderBundle::create();
@@ -151,7 +151,8 @@ void wgpuRenderBundleEncoderDrawIndirect(WGPURenderBundleEncoder renderBundleEnc
 
 WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBundleEncoder, const WGPURenderBundleDescriptor* descriptor)
 {
-    return new WGPURenderBundleImpl { renderBundleEncoder->renderBundleEncoder->finish(descriptor) };
+    auto result = renderBundleEncoder->renderBundleEncoder->finish(descriptor);
+    return result ? new WGPURenderBundleImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuRenderBundleEncoderInsertDebugMarker(WGPURenderBundleEncoder renderBundleEncoder, const char* markerLabel)

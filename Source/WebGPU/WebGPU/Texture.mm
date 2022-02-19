@@ -35,7 +35,7 @@ Texture::Texture() = default;
 
 Texture::~Texture() = default;
 
-Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor* descriptor)
+RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
     return TextureView::create();
@@ -59,7 +59,8 @@ void wgpuTextureRelease(WGPUTexture texture)
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    return new WGPUTextureViewImpl { texture->texture->createView(descriptor) };
+    auto result = texture->texture->createView(descriptor);
+    return result ? new WGPUTextureViewImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)

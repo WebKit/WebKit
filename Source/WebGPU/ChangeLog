@@ -1,3 +1,79 @@
+2022-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Any object-creation function that takes a descriptor can fail
+        https://bugs.webkit.org/show_bug.cgi?id=236855
+
+        Reviewed by Dean Jackson.
+
+        Generally, we view allocation failure as catastrophic, and crash. Because of that, I originally
+        made these methods return Refs, because I expected the failure case to cause intentional crashes
+        rather than return nullptr.
+
+        However, descriptors the shared header have a nextInChain pointer, which allows callers to pass
+        in extra extension-specific structs, as a linked list. If the WebGPU implementation sees one of
+        these extra structs that it doesn't know what to do with, it has to fail. That means that it's
+        possible to fail in a way other than an allocation failure, which means these functions have to
+        return RefPtrs instead of Refs.
+
+        * WebGPU/Adapter.h:
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        (wgpuAdapterRequestDevice):
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::beginComputePass):
+        (WebGPU::CommandEncoder::beginRenderPass):
+        (WebGPU::CommandEncoder::finish):
+        (wgpuCommandEncoderBeginComputePass):
+        (wgpuCommandEncoderBeginRenderPass):
+        (wgpuCommandEncoderFinish):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::createBindGroup):
+        (WebGPU::Device::createBindGroupLayout):
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Device::createCommandEncoder):
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::Device::createComputePipelineAsync):
+        (WebGPU::Device::createPipelineLayout):
+        (WebGPU::Device::createQuerySet):
+        (WebGPU::Device::createRenderBundleEncoder):
+        (WebGPU::Device::createRenderPipeline):
+        (WebGPU::Device::createRenderPipelineAsync):
+        (WebGPU::Device::createSampler):
+        (WebGPU::Device::createShaderModule):
+        (WebGPU::Device::createSwapChain):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Device::getQueue):
+        (wgpuDeviceCreateBindGroup):
+        (wgpuDeviceCreateBindGroupLayout):
+        (wgpuDeviceCreateBuffer):
+        (wgpuDeviceCreateCommandEncoder):
+        (wgpuDeviceCreateComputePipeline):
+        (wgpuDeviceCreateComputePipelineAsync):
+        (wgpuDeviceCreatePipelineLayout):
+        (wgpuDeviceCreateQuerySet):
+        (wgpuDeviceCreateRenderBundleEncoder):
+        (wgpuDeviceCreateRenderPipeline):
+        (wgpuDeviceCreateRenderPipelineAsync):
+        (wgpuDeviceCreateSampler):
+        (wgpuDeviceCreateShaderModule):
+        (wgpuDeviceCreateSwapChain):
+        (wgpuDeviceCreateTexture):
+        (wgpuDeviceGetQueue):
+        * WebGPU/Instance.h:
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::createSurface):
+        (wgpuInstanceCreateSurface):
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::finish):
+        (wgpuRenderBundleEncoderFinish):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::createView):
+        (wgpuTextureCreateView):
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.

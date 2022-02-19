@@ -30,6 +30,7 @@
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RefPtr.h>
 
 namespace WebGPU {
 
@@ -59,25 +60,25 @@ public:
 
     ~Device();
 
-    Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor*);
-    Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor*);
-    Ref<Buffer> createBuffer(const WGPUBufferDescriptor*);
-    Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor*);
-    Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor*);
-    void createComputePipelineAsync(const WGPUComputePipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, const char* message)>&& callback);
-    Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor*);
-    Ref<QuerySet> createQuerySet(const WGPUQuerySetDescriptor*);
-    Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor*);
-    Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor*);
-    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, const char* message)>&& callback);
-    Ref<Sampler> createSampler(const WGPUSamplerDescriptor*);
-    Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor*);
-    Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor*);
-    Ref<Texture> createTexture(const WGPUTextureDescriptor*);
+    RefPtr<BindGroup> createBindGroup(const WGPUBindGroupDescriptor*);
+    RefPtr<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor*);
+    RefPtr<Buffer> createBuffer(const WGPUBufferDescriptor*);
+    RefPtr<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor*);
+    RefPtr<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor*);
+    void createComputePipelineAsync(const WGPUComputePipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback);
+    RefPtr<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor*);
+    RefPtr<QuerySet> createQuerySet(const WGPUQuerySetDescriptor*);
+    RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor*);
+    RefPtr<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor*);
+    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor*, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback);
+    RefPtr<Sampler> createSampler(const WGPUSamplerDescriptor*);
+    RefPtr<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor*);
+    RefPtr<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor*);
+    RefPtr<Texture> createTexture(const WGPUTextureDescriptor*);
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits*);
-    Ref<Queue> getQueue();
+    RefPtr<Queue> getQueue();
     bool hasFeature(WGPUFeatureName);
     bool popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback);
     void pushErrorScope(WGPUErrorFilter);

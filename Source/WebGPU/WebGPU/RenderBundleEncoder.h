@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RefPtr.h>
 
 namespace WebGPU {
 
@@ -51,7 +52,7 @@ public:
     void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
     void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
-    Ref<RenderBundle> finish(const WGPURenderBundleDescriptor*);
+    RefPtr<RenderBundle> finish(const WGPURenderBundleDescriptor*);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
     void pushDebugGroup(const char* groupLabel);

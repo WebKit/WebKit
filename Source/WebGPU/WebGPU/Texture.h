@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RefPtr.h>
 
 namespace WebGPU {
 
@@ -44,7 +45,7 @@ public:
 
     ~Texture();
 
-    Ref<TextureView> createView(const WGPUTextureViewDescriptor*);
+    RefPtr<TextureView> createView(const WGPUTextureViewDescriptor*);
     void destroy();
     void setLabel(const char*);
 

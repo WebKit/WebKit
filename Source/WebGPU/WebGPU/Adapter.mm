@@ -59,7 +59,7 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
     return false;
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback)
+void Adapter::requestDevice(const WGPUDeviceDescriptor* descriptor, WTF::Function<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);
@@ -94,7 +94,7 @@ bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    adapter->adapter->requestDevice(descriptor, [callback, userdata] (WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, const char* message) {
-        callback(status, new WGPUDeviceImpl { WTFMove(device) }, message, userdata);
+    adapter->adapter->requestDevice(descriptor, [callback, userdata] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
+        callback(status, device ? new WGPUDeviceImpl { device.releaseNonNull() } : nullptr, message, userdata);
     });
 }

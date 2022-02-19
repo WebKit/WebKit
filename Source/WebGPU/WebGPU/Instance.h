@@ -30,6 +30,7 @@
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RefPtr.h>
 
 namespace WebGPU {
 
@@ -46,7 +47,7 @@ public:
 
     ~Instance();
 
-    Ref<Surface> createSurface(const WGPUSurfaceDescriptor*);
+    RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor*);
     void processEvents();
     void requestAdapter(const WGPURequestAdapterOptions*, WTF::Function<void(WGPURequestAdapterStatus, Ref<Adapter>&&, const char*)>&& callback);
 
