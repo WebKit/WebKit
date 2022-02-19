@@ -61,7 +61,11 @@ double pas_scavenger_deep_sleep_timeout_in_milliseconds = 10. * 1000.;
 double pas_scavenger_period_in_milliseconds = 10.;
 uint64_t pas_scavenger_max_epoch_delta = 10ll * 1000ll * 1000ll;
 #else
+#if PAS_OS(DARWIN) && PAS_X86_64
+double pas_scavenger_period_in_milliseconds = 125.;
+#else
 double pas_scavenger_period_in_milliseconds = 100.;
+#endif
 uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
 #endif
 

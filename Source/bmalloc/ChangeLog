@@ -1,3 +1,17 @@
+2022-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Increase scavenger period from 100ms to 125ms in Darwin x64
+        https://bugs.webkit.org/show_bug.cgi?id=236873
+
+        Reviewed by Saam Barati.
+
+        Make x64 scavenger less aggressive while maintaining Membuster neutral
+        to make it less work.
+
+        * libpas/src/libpas/pas_config_prefix.h:
+        * libpas/src/libpas/pas_scavenger.c:
+        * libpas/src/libpas/pas_utils.h:
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.
