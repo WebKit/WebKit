@@ -1,5 +1,12 @@
 2022-02-19  Jon Lee  <jonlee@apple.com>
 
+        Unreviewed gardening for GPU Process bots.
+
+        * gpu-process/TestExpectations:
+        * platform/ios/TestExpectations:
+
+2022-02-19  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening. Relating tests failing due to turning accel drawing on to b236904.
         * platform/ios/TestExpectations:
 

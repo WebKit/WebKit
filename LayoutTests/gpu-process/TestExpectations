@@ -312,13 +312,21 @@ fast/css/appearance-apple-pay-button.html [ Crash ]
 # x64_64 only
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Crash Pass ]
 
+# Flaky timeout
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Timeout Pass ]
+
 # Flaky failure
 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
+editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass Failure ]
+fast/events/ios/rotation/zz-no-rotation.html [ Pass Failure ]
+fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ Pass Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/coep-navigate-popup-unsafe-inherit.https.html [ Pass Failure ]
 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Pass ImageOnlyFailure ]
 # Also happening on Mac...
 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
 js/dom/Promise-reject-large-string.html [ Pass Failure ]
 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
@@ -331,18 +339,24 @@ fast/backgrounds/background-fast-path-simple-color.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-on-body.html [ Crash Pass ]
 fast/backgrounds/background-clip-text-with-simple-container.html [ Crash Pass ]
 fast/backgrounds/background-clip-text.html [ Crash Pass ]
-fast/clip/clip-hit-null-iterator-path-comparison.html
+fast/clip/clip-hit-null-iterator-path-comparison.html [ Crash Pass ]
 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ Crash ImageOnlyFailure ]
 fast/css/clip-zooming.html [ Crash Pass ]
 fast/hidpi/clip-text-in-hidpi.html [ Crash Pass ]
 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash Pass ]
 imported/blink/fast/backgrounds/bug420029.html [ Crash Pass ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-popup-behavior.html [ Crash Pass ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-cross-origin.https.html [ Crash Pass ]
+imported/w3c/web-platform-tests/html/dom/historical.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Crash Pass ]
 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
+imported/w3c/web-platform-tests/shadow-dom/Element-interface-attachShadow.html [ Crash Pass ]
 imported/w3c/web-platform-tests/webstorage/storage_session_window_open.window.html [ Crash Pass ]
 
 # Media failure
 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout ]
+imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
+media/video-src-blob-using-open-panel.html [ Timeout ]
 webrtc/canvas-to-peer-connection.html [ Failure ]
 # arm64 only
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
@@ -353,6 +367,7 @@ webrtc/vp9-profile2.html [ Timeout Pass ]
 # Forms failures
 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
+fast/forms/input-text-autofocus.html [ Pass Failure ]
 
 # arm64 only
 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
@@ -375,7 +390,7 @@ webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 
 # arm64 only
 compositing/overlap-blending/nested-overlap.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 perf/nested-combined-selectors.html [ Pass Failure ]
 
 # iPhone simulator
