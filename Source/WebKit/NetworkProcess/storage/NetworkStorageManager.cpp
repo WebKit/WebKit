@@ -227,21 +227,14 @@ static String originFilePath(const String& directory)
     return FileSystem::pathByAppendingComponent(directory, OriginStorageManager::originFileIdentifier());
 }
 
-OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const WebCore::ClientOrigin& origin)
+OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
 {
     ASSERT(!RunLoop::isMain());
 
     return *m_localOriginStorageManagers.ensure(origin, [&] {
         auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
-        // Write origin file asynchronously to avoid delay in replying sync messages for Web Storage API.
-        if (!originDirectory.isEmpty()) {
-            m_queue->dispatch([this, protectedThis = Ref { *this }, origin, originDirectory]() mutable {
-                if (!m_localOriginStorageManagers.contains(origin))
-                    return;
-
-                writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
-            });
-        }
+        if (!originDirectory.isEmpty() && shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
+            writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
         auto localStoragePath = LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin);
         auto idbStoragePath = IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, origin);
         auto cacheStoragePath = CacheStorage::Engine::storagePath(m_customCacheStoragePath, origin);
@@ -729,7 +722,17 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
     ASSERT(!RunLoop::isMain());
 
     auto connectionIdentifier = connection.uniqueID();
-    auto& originStorageManager = localOriginStorageManager(origin);
+    bool willCreateOriginStorageManager = !m_localOriginStorageManagers.contains(origin);
+    // Avoid delay in replying sync message by writing origin file after replying message.
+    auto& originStorageManager = localOriginStorageManager(origin, ShouldWriteOriginFile::No);
+    auto writeOriginFile = makeScopeExit([&] {
+        if (!willCreateOriginStorageManager)
+            return;
+
+        if (auto originDirectory = originDirectoryPath(m_path, origin, m_salt); !originDirectory.isEmpty())
+            writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
+    });
+
     StorageAreaIdentifier resultIdentifier;
     switch (type) {
     case WebCore::StorageType::Local:

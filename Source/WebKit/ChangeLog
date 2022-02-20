@@ -1,3 +1,31 @@
+2022-02-20  Sihui Liu  <sihui_liu@apple.com>
+
+        Origin file may not be created after migrating data to general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=236901
+
+        Reviewed by Chris Dumez.
+
+        In r289081, we started writing origin file asynchronouly (we used to write it at creation of 
+        OriginStorageManager), to avoid delay in replying sync WebStorage message. In the async task, we check if the
+        OriginStorageManager still exists. If it does not, we will not write origin file, because the 
+        OriginStorageManager may be removed after origin data gets deleted, and there's no need to add new origin file.
+        It's also possible that the OriginStorageManager is created for website data fetch, and removed immediately 
+        after the fetch task is done (see NetworkStorageManager::fetchDataFromDisk). We used to not store 
+        new data in general storage directory during data fetch, so it's fine to not write origin file in this case. 
+
+        With r289878, existing data can be migrated to general storage directory at data fetch, so it is important to 
+        ensure we write origin to file; otherwise, we will lose track of the origin. To solve this, let's restore the
+        old behavior that synchronouly writes origin file at creation of OriginStorageManager. To solve the delay issue,
+        in the sync message handler (NetworkStorageManager::connectToStorageArea), we specifically ask to not write 
+        origin file, and manually write origin file after message is replied. 
+
+        Updated existing API test to add test coverage.
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::NetworkStorageManager::connectToStorageArea):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+
 2022-02-20  Brandon Stewart  <brandonstewart@apple.com>
 
         Generate compile_commands.json on macOS Builds

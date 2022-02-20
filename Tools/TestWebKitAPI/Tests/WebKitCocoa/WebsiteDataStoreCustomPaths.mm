@@ -962,8 +962,10 @@ TEST(WebKit, FetchDataAfterEnablingGeneralStorageDirectory)
     NSURL *webkitGeneralStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
     NSURL *webkitGeneralLocalStorageDirectory = [webkitGeneralStorageDirectory URLByAppendingPathComponent:@"LocalStorage"];
     NSURL *webKitGeneralLocalStorageFile = [webkitGeneralLocalStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
-    NSURL *appleGeneralLocalStorageFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/LocalStorage/localstorage.sqlite3"];
-    NSURL *appleGeneralIndexedDBDatabaseFile = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/IndexedDB/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9/IndexedDB.sqlite3"];
+    NSURL *appleGeneralStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI/xKK8XQeHebxhSzMyotOOtNKp2jWZ4l_CEN4WggYYXbI"];
+    NSURL *appleGeneralOriginFile = [appleGeneralStorageDirectory URLByAppendingPathComponent:@"origin"];
+    NSURL *appleGeneralLocalStorageFile = [appleGeneralStorageDirectory URLByAppendingPathComponent:@"LocalStorage/localstorage.sqlite3"];
+    NSURL *appleGeneralIndexedDBDatabaseFile = [appleGeneralStorageDirectory URLByAppendingPathComponent:@"IndexedDB/620AD548000B0A49C02D2E8D75C32E0F85697B54DF86146ECAE360DE104AB3F9/IndexedDB.sqlite3"];
 
     // Copy apple.com files to custom path.
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -989,12 +991,12 @@ TEST(WebKit, FetchDataAfterEnablingGeneralStorageDirectory)
 
     // Ensure data is fetched from both custom path and new path.
     auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, nil];
+    auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
+        return [record1.displayName compare:record2.displayName];
+    };
     done = false;
     [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
         EXPECT_EQ(records.count, 2u);
-        auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
-            return [record1.displayName compare:record2.displayName];
-        };
         auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
         auto appleRecord = [sortedRecords objectAtIndex:0];
         EXPECT_WK_STREQ(@"apple.com", [appleRecord displayName]);
@@ -1009,8 +1011,18 @@ TEST(WebKit, FetchDataAfterEnablingGeneralStorageDirectory)
     // Ensure apple.com data is moved to new path after fetch.
     EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomLocalStorageFile.path]);
     EXPECT_FALSE([fileManager fileExistsAtPath:appleCustomIndexedDBDatabaseFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:appleGeneralOriginFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:appleGeneralLocalStorageFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:appleGeneralIndexedDBDatabaseFile.path]);
+
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 2u);
+        auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
+        EXPECT_WK_STREQ(@"apple.com", [[sortedRecords objectAtIndex:0] displayName]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST(WebKit, DeleteDataAfterEnablingGeneralStorageDirectory)

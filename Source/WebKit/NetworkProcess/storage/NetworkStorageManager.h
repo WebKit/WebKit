@@ -97,7 +97,8 @@ public:
 private:
     NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
     ~NetworkStorageManager();
-    OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&);
+    enum class ShouldWriteOriginFile : bool { No, Yes };
+    OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
     void deleteOriginDirectoryIfPossible(const WebCore::ClientOrigin&);
 
