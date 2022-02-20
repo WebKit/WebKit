@@ -1,5 +1,12 @@
 2022-02-20  Jon Lee  <jonlee@apple.com>
 
+        Unreviewed gardening for GPU Process bots
+
+        * gpu-process/TestExpectations:
+        * platform/ios-wk2/TestExpectations: Newly revealed flaky timeout.
+
+2022-02-20  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening.
 
         * TestExpectations: Tests are passing after r290229.

@@ -328,6 +328,7 @@ webkit.org/b/236929 fast/hidpi/device-scale-factor-paint.html [ Crash Pass ]
 
 # Flaky timeout
 webkit.org/b/236931 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Timeout Pass ]
+webkit.org/b/236931 compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Timeout Pass ]
 
 # Flaky failure
 webkit.org/b/236932 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]

@@ -2024,7 +2024,7 @@ webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Failure Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
 
@@ -2152,10 +2152,10 @@ webkit.org/b/231612 imported/blink/fast/dom/importNode-cdata.html [ Pass Timeout
 
 webkit.org/b/231610 applicationmanifest/developer-warnings.html [ Pass Timeout ]
 
-webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-confirmation.html [ Pass Timeout ]
+webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-confirmation.html [ Pass Failure Timeout ]
 webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html [ Pass Timeout Failure ]
 webkit.org/b/231619 [ Debug ] editing/pasteboard/dom-paste/dom-paste-rejection.html [ Pass Timeout ]
-webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Timeout ]
+webkit.org/b/231619 editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html [ Pass Failure Timeout ]
 
 webkit.org/b/231622 fast/events/ios/rotation/orientationchange-event-listener-on.body.html [ Pass Timeout ]
 webkit.org/b/231622 fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html [ Pass Timeout ]
