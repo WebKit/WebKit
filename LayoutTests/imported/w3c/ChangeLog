@@ -1,3 +1,13 @@
+2022-02-20  Tim Nguyen  <ntim@apple.com>
+
+        Rebaseline inert-focus-in-frames.html after r290197.
+
+        Unreviewed test gardening.
+
+        For some reason, the rebaselining changes didn't make it in the patch.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+
 2022-02-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable non-paginated vertical-lr writing mode
