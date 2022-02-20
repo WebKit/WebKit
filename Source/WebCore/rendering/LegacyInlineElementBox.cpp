@@ -76,7 +76,7 @@ void LegacyInlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& pain
 
     LayoutPoint childPoint = paintOffset;
     if (is<RenderBox>(renderer()) && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
-        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&downcast<RenderBox>(renderer()), childPoint);
+        childPoint = renderer().containingBlock()->flipForWritingModeForChild(downcast<RenderBox>(renderer()), childPoint);
 
     renderer().paintAsInlineBlock(paintInfo, childPoint);
 }
@@ -89,7 +89,7 @@ bool LegacyInlineElementBox::nodeAtPoint(const HitTestRequest& request, HitTestR
     // specification.)
     LayoutPoint childPoint = accumulatedOffset;
     if (is<RenderBox>(renderer()) && parent()->renderer().style().isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
-        childPoint = renderer().containingBlock()->flipForWritingModeForChild(&downcast<RenderBox>(renderer()), childPoint);
+        childPoint = renderer().containingBlock()->flipForWritingModeForChild(downcast<RenderBox>(renderer()), childPoint);
 
     return renderer().hitTest(request, result, locationInContainer, childPoint);
 }

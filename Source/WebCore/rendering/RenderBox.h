@@ -583,7 +583,7 @@ override;
     LayoutUnit offsetLeft() const override;
     LayoutUnit offsetTop() const override;
 
-    LayoutPoint flipForWritingModeForChild(const RenderBox* child, const LayoutPoint&) const;
+    LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
     LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     LayoutPoint flipForWritingMode(const LayoutPoint&) const;
     LayoutSize flipForWritingMode(const LayoutSize&) const;

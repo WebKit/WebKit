@@ -2157,7 +2157,7 @@ void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& 
 
     // Iterate over our children and paint the column rules as needed.
     for (auto& columnSet : childrenOfType<RenderMultiColumnSet>(*this)) {
-        LayoutPoint childPoint = columnSet.location() + flipForWritingModeForChild(&columnSet, point);
+        LayoutPoint childPoint = columnSet.location() + flipForWritingModeForChild(columnSet, point);
         columnSet.paintColumnRules(paintInfo, childPoint);
     }
 }

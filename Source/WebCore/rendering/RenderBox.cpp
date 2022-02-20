@@ -5266,7 +5266,7 @@ LayoutUnit RenderBox::offsetTop() const
     return adjustedPositionRelativeToOffsetParent(topLeftLocation()).y();
 }
 
-LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox* child, const LayoutPoint& point) const
+LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox& child, const LayoutPoint& point) const
 {
     if (!style().isFlippedBlocksWritingMode())
         return point;
@@ -5274,8 +5274,8 @@ LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox* child, const 
     // The child is going to add in its x() and y(), so we have to make sure it ends up in
     // the right place.
     if (isHorizontalWritingMode())
-        return LayoutPoint(point.x(), point.y() + height() - child->height() - (2 * child->y()));
-    return LayoutPoint(point.x() + width() - child->width() - (2 * child->x()), point.y());
+        return LayoutPoint(point.x(), point.y() + height() - child.height() - (2 * child.y()));
+    return LayoutPoint(point.x() + width() - child.width() - (2 * child.x()), point.y());
 }
 
 void RenderBox::flipForWritingMode(LayoutRect& rect) const
@@ -5336,7 +5336,7 @@ LayoutPoint RenderBox::topLeftLocation() const
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
-    return containerBlock->flipForWritingModeForChild(this, location());
+    return containerBlock->flipForWritingModeForChild(*this, location());
 }
 
 LayoutSize RenderBox::topLeftLocationOffset() const

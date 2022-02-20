@@ -1195,7 +1195,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
         }
     }
 
-    LayoutPoint childPoint = flipForWritingModeForChild(&child, paintOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);
     if (!child.hasSelfPaintingLayer() && !child.isFloating()) {
         if (paintType == PaintAsInlineBlock)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
@@ -2102,7 +2102,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
     if (hitTestAction == HitTestChildBlockBackgrounds)
         childHitTest = HitTestChildBlockBackground;
     for (auto* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-        LayoutPoint childPoint = flipForWritingModeForChild(child, accumulatedOffset);
+        LayoutPoint childPoint = flipForWritingModeForChild(*child, accumulatedOffset);
         if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
             return true;
     }
@@ -3467,7 +3467,7 @@ void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const Layo
     if (!box || !box->isExcludedFromNormalLayout() || box->hasSelfPaintingLayer())
         return;
     
-    LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(*box, paintOffset);
     box->paintAsInlineBlock(paintInfo, childPoint);
 }
 
@@ -3483,7 +3483,7 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
     HitTestAction childHitTest = hitTestAction;
     if (hitTestAction == HitTestChildBlockBackgrounds)
         childHitTest = HitTestChildBlockBackground;
-    LayoutPoint childPoint = flipForWritingModeForChild(legend, accumulatedOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(*legend, accumulatedOffset);
     return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
 

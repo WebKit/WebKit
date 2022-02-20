@@ -345,7 +345,7 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
     for (auto* child : reversedOrderIteratorForHitTesting) {
         if (child->hasSelfPaintingLayer())
             continue;
-        auto childPoint = flipForWritingModeForChild(child, scrolledOffset);
+        auto childPoint = flipForWritingModeForChild(*child, scrolledOffset);
         if (child->hitTest(request, result, locationInContainer, childPoint)) {
             updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
             return true;
