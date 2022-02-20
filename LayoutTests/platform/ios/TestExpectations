@@ -3404,9 +3404,9 @@ fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 webkit.org/b/231337 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
 
 # Test failures due to framework bugs that occur only with --accelerated-drawing flag turned on
-svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/blend-color-burn.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/path-02.svg [ ImageOnlyFailure ]
+webkit.org/b/236904 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
+webkit.org/b/236904 imported/mozilla/svg/blend-color-burn.svg [ ImageOnlyFailure ]
+webkit.org/b/236904 imported/mozilla/svg/path-02.svg [ ImageOnlyFailure ]
 
 # Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
 css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
