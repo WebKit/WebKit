@@ -2004,6 +2004,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     UIWindowScene *windowScene = self.window.windowScene;
     if (!windowScene)
         return;
+    if (![windowScene respondsToSelector:@selector(_holdLiveResizeSnapshotForReason:)])
+        return;
 
     if (_resizeAssertions.isEmpty()) {
         [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
