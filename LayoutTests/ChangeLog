@@ -1,3 +1,9 @@
+2022-02-20  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed garden for GPU Process bots.
+
+        * gpu-process/TestExpectations: Annotate tests with filed bugs.
+
 2022-02-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable non-paginated vertical-lr writing mode
