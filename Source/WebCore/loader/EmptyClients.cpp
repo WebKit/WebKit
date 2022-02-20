@@ -498,7 +498,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         {
         }
     private:
-        Ref<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
+        Ref<StorageArea> storageArea(const SecurityOrigin&) final { return adoptRef(*new EmptyStorageArea); }
         Ref<StorageNamespace> copy(Page&) final { return adoptRef(*new EmptyStorageNamespace { m_sessionID }); }
         PAL::SessionID sessionID() const final { return m_sessionID; }
         void setSessionIDForTesting(PAL::SessionID sessionID) final { m_sessionID = sessionID; };

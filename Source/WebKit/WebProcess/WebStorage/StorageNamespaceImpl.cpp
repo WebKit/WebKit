@@ -100,10 +100,10 @@ void StorageNamespaceImpl::destroyStorageAreaMap(StorageAreaMap& map)
     m_storageAreaMaps.remove(map.securityOrigin().data());
 }
 
-Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOriginData)
+Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOrigin& securityOrigin)
 {
-    auto& map = m_storageAreaMaps.ensure(securityOriginData, [&] {
-        return makeUnique<StorageAreaMap>(*this, securityOriginData.securityOrigin());
+    auto& map = m_storageAreaMaps.ensure(securityOrigin.data(), [&] {
+        return makeUnique<StorageAreaMap>(*this, securityOrigin);
     }).iterator->value;
     return StorageAreaImpl::create(*map);
 }

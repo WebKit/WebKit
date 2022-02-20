@@ -37,7 +37,7 @@ namespace WebKit {
 
 class StorageAreaImpl;
 
-class StorageNamespaceImpl : public WebCore::StorageNamespace {
+class StorageNamespaceImpl final : public WebCore::StorageNamespace {
 public:
     static Ref<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota, PAL::SessionID);
     static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota, PAL::SessionID);
@@ -54,14 +54,14 @@ public:
     void sync();
     void closeIdleLocalStorageDatabases();
 
-    PAL::SessionID sessionID() const override { return m_sessionID; }
-    void setSessionIDForTesting(PAL::SessionID) override;
+    PAL::SessionID sessionID() const final { return m_sessionID; }
+    void setSessionIDForTesting(PAL::SessionID) final;
 
 private:
     StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota, PAL::SessionID);
 
-    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
-    Ref<StorageNamespace> copy(WebCore::Page& newPage) override;
+    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOrigin&) final;
+    Ref<StorageNamespace> copy(WebCore::Page& newPage) final;
 
     typedef HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;

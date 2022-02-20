@@ -50,7 +50,7 @@ class StorageNamespaceImpl;
 class StorageAreaMap final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
+    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
 
     WebCore::StorageType type() const { return m_type; }
@@ -100,7 +100,7 @@ private:
     StorageAreaMapIdentifier m_identifier;
     uint64_t m_lastHandledMessageIdentifier { 0 };
     StorageNamespaceImpl& m_namespace;
-    Ref<WebCore::SecurityOrigin> m_securityOrigin;
+    Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
     std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;
     HashCountedSet<String> m_pendingValueChanges;

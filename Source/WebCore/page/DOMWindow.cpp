@@ -830,7 +830,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage()
     if (!page)
         return nullptr;
 
-    auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin().data());
+    auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
     m_sessionStorage = Storage::create(*this, WTFMove(storageArea));
     return m_sessionStorage.get();
 }

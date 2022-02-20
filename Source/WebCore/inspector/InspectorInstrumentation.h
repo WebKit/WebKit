@@ -274,7 +274,7 @@ public:
 
     static void didOpenDatabase(Database&);
 
-    static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
+    static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
     static bool shouldWaitForDebuggerOnStart(ScriptExecutionContext&);
     static void workerStarted(WorkerInspectorProxy&);
@@ -477,7 +477,7 @@ private:
 
     static void didOpenDatabaseImpl(InstrumentingAgents&, Database&);
 
-    static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
+    static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
     static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
@@ -1325,7 +1325,7 @@ inline void InspectorInstrumentation::didOpenDatabase(Database& database)
         didOpenDatabaseImpl(*agents, database);
 }
 
-inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)
+inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didDispatchDOMStorageEventImpl(instrumentingAgents(page), key, oldValue, newValue, storageType, securityOrigin);

@@ -168,18 +168,18 @@ String InspectorDOMStorageAgent::storageId(Storage& storage)
     ASSERT(window);
     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
     bool isLocalStorage = window->optionalLocalStorage() == &storage;
-    return InspectorDOMStorageAgent::storageId(securityOrigin.ptr(), isLocalStorage)->toJSONString();
+    return InspectorDOMStorageAgent::storageId(securityOrigin, isLocalStorage)->toJSONString();
 }
 
-Ref<Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
+Ref<Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(const SecurityOrigin& securityOrigin, bool isLocalStorage)
 {
     return Protocol::DOMStorage::StorageId::create()
-        .setSecurityOrigin(securityOrigin->toRawString())
+        .setSecurityOrigin(securityOrigin.toRawString())
         .setIsLocalStorage(isLocalStorage)
         .release();
 }
 
-void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)
+void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     auto id = InspectorDOMStorageAgent::storageId(securityOrigin, storageType == StorageType::Local);
 
@@ -214,7 +214,7 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Protocol::ErrorStr
     }
 
     if (!*isLocalStorage)
-        return m_inspectedPage.sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
+        return m_inspectedPage.sessionStorage()->storageArea(targetFrame->document()->securityOrigin());
     return m_inspectedPage.storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 

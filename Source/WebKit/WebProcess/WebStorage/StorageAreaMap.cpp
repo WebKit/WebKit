@@ -38,6 +38,7 @@
 #include "WebProcess.h"
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -50,7 +51,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
+StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
     : m_identifier(StorageAreaMapIdentifier::generate())
     , m_namespace(storageNamespace)
     , m_securityOrigin(WTFMove(securityOrigin))
@@ -295,15 +296,15 @@ void StorageAreaMap::clearCache(uint64_t messageIdentifier)
     resetValues();
 }
 
-static Vector<RefPtr<Frame>> framesForEventDispatching(Page& page, SecurityOrigin& origin, StorageType storageType, const std::optional<StorageAreaImplIdentifier>& storageAreaImplID)
+static Vector<Ref<Frame>> framesForEventDispatching(Page& page, const SecurityOrigin& origin, StorageType storageType, const std::optional<StorageAreaImplIdentifier>& storageAreaImplID)
 {
-    Vector<RefPtr<Frame>> frames;
+    Vector<Ref<Frame>> frames;
     page.forEachDocument([&](auto& document) {
         if (!document.securityOrigin().equal(&origin))
             return;
 
         auto* window = document.domWindow();
-        if (!window)
+        if (!window || !window->hasEventListeners(eventNames().storageEvent))
             return;
         
         Storage* storage = nullptr;
@@ -327,7 +328,7 @@ static Vector<RefPtr<Frame>> framesForEventDispatching(Page& page, SecurityOrigi
         }
        
         if (auto* frame = document.frame()) 
-            frames.append(frame);
+            frames.append(*frame);
     });
     return frames;
 }
@@ -345,21 +346,21 @@ void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageArea
         return;
 
     auto frames = framesForEventDispatching(*page, m_securityOrigin, StorageType::Session, storageAreaImplID);
-    StorageEventDispatcher::dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, urlString, m_securityOrigin->data());
+    StorageEventDispatcher::dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, urlString, m_securityOrigin);
 }
 
 void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     ASSERT(isLocalStorage(type()));
 
-    Vector<RefPtr<Frame>> frames;
+    Vector<Ref<Frame>> frames;
 
     // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
     auto& pageGroup = *WebProcess::singleton().webPageGroup(m_namespace.pageGroupID())->corePageGroup();
     for (auto& page : pageGroup.pages())
         frames.appendVector(framesForEventDispatching(page, m_securityOrigin, StorageType::Local, storageAreaImplID));
 
-    StorageEventDispatcher::dispatchLocalStorageEventsToFrames(pageGroup, frames, key, oldValue, newValue, urlString, m_securityOrigin->data());
+    StorageEventDispatcher::dispatchLocalStorageEventsToFrames(pageGroup, frames, key, oldValue, newValue, urlString, m_securityOrigin);
 }
 
 void StorageAreaMap::sendConnectMessage(SendMode mode)

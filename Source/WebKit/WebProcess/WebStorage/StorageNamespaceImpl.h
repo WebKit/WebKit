@@ -67,7 +67,7 @@ public:
 private:
     StorageNamespaceImpl(WebCore::StorageType, Identifier, const std::optional<WebCore::PageIdentifier>&, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
-    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
+    Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOrigin&) final;
     uint64_t storageAreaMapCountForTesting() const final { return m_storageAreaMaps.size(); }
 
     // FIXME: This is only valid for session storage and should probably be moved to a subclass.

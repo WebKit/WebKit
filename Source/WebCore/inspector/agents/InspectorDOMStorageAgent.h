@@ -65,11 +65,11 @@ public:
     Inspector::Protocol::ErrorStringOr<void> clearDOMStorageItems(Ref<JSON::Object>&& storageId);
 
     // InspectorInstrumentation
-    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
+    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
     // CommandLineAPI
     static String storageId(Storage&);
-    static Ref<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
+    static Ref<Inspector::Protocol::DOMStorage::StorageId> storageId(const SecurityOrigin&, bool isLocalStorage);
 
 private:
     RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, Ref<JSON::Object>&& storageId, Frame*&);

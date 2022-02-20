@@ -1007,7 +1007,7 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrume
         databaseAgent->didOpenDatabase(database);
 }
 
-void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)
+void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     if (auto* domStorageAgent = instrumentingAgents.enabledDOMStorageAgent())
         domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin);

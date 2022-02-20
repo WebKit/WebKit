@@ -28,6 +28,7 @@
 #include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageType.h>
 #include <wtf/MainThread.h>
@@ -102,17 +103,14 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page&)
     return WTFMove(newNamespace);
 }
 
-Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& origin)
+Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOrigin& origin)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
 
-    if (RefPtr<StorageAreaImpl> storageArea = m_storageAreaMap.get(origin))
-        return storageArea.releaseNonNull();
-
-    auto storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager.get(), m_quota);
-    m_storageAreaMap.set(origin, storageArea.ptr());
-    return WTFMove(storageArea);
+    return *m_storageAreaMap.ensure(origin.data(), [&] {
+        return StorageAreaImpl::create(m_storageType, origin, m_syncManager.get(), m_quota);
+    }).iterator->value;
 }
 
 void StorageNamespaceImpl::close()
