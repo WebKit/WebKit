@@ -301,7 +301,7 @@ webkit.org/b/236925 fast/css/getComputedStyle/computed-style-apple-pay-button.ht
 # Media failures
 webkit.org/b/236926 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
-webkit.org/b/236926 media/video-src-blob-using-open-panel.html [ Timeout ]
+webkit.org/b/236926 media/video-src-blob-using-open-panel.html [ Timeout Pass ]
 webkit.org/b/236926 webrtc/canvas-to-peer-connection.html [ Failure ]
 # arm64 only
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
