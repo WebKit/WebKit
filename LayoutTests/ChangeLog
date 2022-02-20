@@ -1,5 +1,13 @@
 2022-02-19  Jon Lee  <jonlee@apple.com>
 
+        Test gardening for [CSS Blending] Non-separable blend modes don't work
+        https://bugs.webkit.org/show_bug.cgi?id=131354
+
+        Unreviewed.
+        * TestExpectations:
+
+2022-02-19  Jon Lee  <jonlee@apple.com>
+
         Unreviewed gardening for GPU Process bots.
 
         * gpu-process/TestExpectations:

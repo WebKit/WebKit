@@ -3,6 +3,7 @@
      http://creativecommons.org/publicdomain/zero/1.0/
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400" >
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=8000-11200" />
 <defs>
   <g id="patch">
     <rect x="0" y="0" width="40" height="160" fill="rgb(255,0,0)"/>
