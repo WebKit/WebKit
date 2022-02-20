@@ -156,50 +156,48 @@ body {
     </div>
 </div>
 
-<!-- FIXME: All the vertical-lr cases are off by 4px in the x direction. See http://webkit.org/b/71193. -->
-
 <div class="flexbox fixed row vertical-lr">
     <div data-expected-height data-expected-width=100>
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=0></div>
     </div>
     <div data-expected-height=100 data-expected-width=40 style="align-self: flex-start;">
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=100></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=100></div>
     </div>
 </div>
 
 <div class="flexbox fixed column vertical-lr">
     <div data-expected-height=200 data-expected-width=50>
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=0></div>
     </div>
     <div data-expected-height=200 data-expected-width=50 style="align-self: flex-start;">
-        <div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=54></div><div data-offset-x=74 data-offset-y=0></div>
+        <div data-offset-x=50></div><div data-offset-x=50></div><div data-offset-x=50></div><div data-offset-x=50></div><div data-offset-x=50></div><div data-offset-x=70 data-offset-y=0></div>
     </div>
 </div>
 
 <div class="flexbox fixed column vertical-lr">
     <div data-expected-height=200 data-expected-width=50>
-        <div data-offset-x=4></div><div data-offset-x=4></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div>
     </div>
     <div data-expected-height=80 data-expected-width=50 style="align-self: flex-start;">
-        <div data-offset-x=54></div><div data-offset-x=54></div>
+        <div data-offset-x=50></div><div data-offset-x=50></div>
     </div>
 </div>
 
 <div class="flexbox auto row vertical-lr" data-expected-height=500>
     <div data-expected-height=250 data-expected-width=100>
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=0></div>
     </div>
     <div data-expected-height=250 data-expected-width=40 style="align-self: flex-start;">
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=250></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=250></div>
     </div>
 </div>
 
 <div data-expected-height=500 data-expected-width=80 class="flexbox auto column vertical-lr">
     <div data-expected-height=500 data-expected-width=40>
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
+        <div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=0></div><div data-offset-x=20 data-offset-y=0></div>
     </div>
     <div data-expected-height=500 data-expected-width=40 style="align-self: flex-start;">
-        <div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=64 data-offset-y=0></div>
+        <div data-offset-x=40></div><div data-offset-x=40></div><div data-offset-x=40></div><div data-offset-x=40></div><div data-offset-x=40></div><div data-offset-x=60 data-offset-y=0></div>
     </div>
 </div>
 

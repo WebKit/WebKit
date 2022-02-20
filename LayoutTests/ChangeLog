@@ -1,3 +1,27 @@
+2022-02-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable non-paginated vertical-lr writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=236481
+        <rdar://problem/89123721>
+
+        Reviewed by Antti Koivisto.
+
+        Progression:
+        * css3/flexbox/line-wrapping.html:
+
+        Legacy layout bounds floor/ceil mismatch:
+        * fast/block/float/float-with-fractional-height-vertical-lr.html:
+        * imported/blink/fast/multicol/vertical-lr/float-big-line-expected.html:
+        * imported/blink/fast/multicol/vertical-lr/float-big-line.html:
+
+        Progression (visually matching Chrome)
+        * platform/mac/fast/writing-mode/border-image-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/border-radius-clipping-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/border-styles-vertical-lr-mixed-expected.txt:
+        * platform/mac/fast/writing-mode/box-shadow-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.txt:
+
 2022-02-19  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening for GPU Process bots.

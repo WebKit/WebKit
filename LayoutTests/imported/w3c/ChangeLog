@@ -1,3 +1,16 @@
+2022-02-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable non-paginated vertical-lr writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=236481
+        <rdar://problem/89123721>
+
+        Reviewed by Antti Koivisto.
+    
+        Progressions.
+
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt:
+        * web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt:
+
 2022-02-19  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Match container queries correctly in non-rendered subtrees

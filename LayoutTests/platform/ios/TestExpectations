@@ -2157,6 +2157,18 @@ imported/blink/svg/text/text-outline-2.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/text/tspan-outline-crash.html [ ImageOnlyFailure Pass ]
 imported/blink/transitions/transition-shape-outside-crash.html [ Pass Timeout ]
 
+#1px inline geometry floor/ceil differences
+imported/blink/fast/multicol/vertical-lr/float-big-line.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-lr/float-break.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-lr/float-edge.html [ ImageOnlyFailure ]
+imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
+imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
+fast/writing-mode/vertical-align-flexbox-baseline.html [ ImageOnlyFailure ]
+
 # Failing tests related to picture element
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]
 webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Skip ]

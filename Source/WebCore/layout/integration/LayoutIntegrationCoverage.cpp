@@ -86,9 +86,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIsInsideANonMultiColumnThread:
         stream << "flow is inside a non-multicolumn container";
         break;
-    case AvoidanceReason::FlowHasHorizonalWritingMode:
-        stream << "horizontal writing mode";
-        break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
@@ -116,8 +113,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasLineBoxContainProperty:
         stream << "line-box-contain value indicates variable line height";
         break;
-    case AvoidanceReason::FlowIsNotTopToBottom:
-        stream << "non top-to-bottom flow";
+    case AvoidanceReason::FlowHasUnsupportedWritingMode:
+        stream << "unsupported writing mode (vertical-rl/horizontal-bt";
         break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
@@ -412,8 +409,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (style.writingMode() != WritingMode::TopToBottom)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
+    if (style.writingMode() == WritingMode::RightToLeft || style.writingMode() == WritingMode::BottomToTop)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
@@ -571,7 +568,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (!is<RenderMultiColumnFlow>(fragmentedFlow))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
         auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
-        if (columnThread.parent() != &flow.view())
+        if (columnThread.parent() != &flow.view() || !flow.style().isHorizontalWritingMode())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
         if (columnThread.hasColumnSpanner())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
@@ -581,8 +578,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
-    if (!flow.isHorizontalWritingMode())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (!flow.style().hangingPunctuation().isEmpty())
