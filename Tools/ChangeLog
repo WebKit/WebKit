@@ -1,3 +1,15 @@
+2022-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r289470): [Flatpak SDK] Broken local SDK handling
+        https://bugs.webkit.org/show_bug.cgi?id=236940
+
+        Reviewed by Martin Robinson.
+
+        The .Local path was incorrectly generated to WebKitBuild/UserFlatpak/.Local.
+        
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args): Revert .Local SDK path handling to the version before r289470.
+
 2022-02-19  Sihui Liu  <sihui_liu@apple.com>
 
         Set custom general storage directory for custom WebsiteDataStore in TestController

@@ -592,7 +592,7 @@ class WebkitFlatpak:
 
     def clean_args(self):
         if self.user_repo:
-            os.environ["FLATPAK_USER_DIR"] = os.path.join(FLATPAK_USER_DIR_PATH, ".Local")
+            os.environ["FLATPAK_USER_DIR"] = FLATPAK_USER_DIR_PATH + ".Local"
         else:
             os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
         self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
