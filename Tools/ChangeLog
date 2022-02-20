@@ -1,3 +1,13 @@
+2022-02-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Enable iOS Simulator queues for PRs
+        https://bugs.webkit.org/show_bug.cgi?id=236816
+        <rdar://problem/89117393>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/config.json:
+
 2022-02-20  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r289470): [Flatpak SDK] Broken local SDK handling

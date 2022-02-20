@@ -349,7 +349,7 @@
     {
       "type": "AnyBranchScheduler", "name": "pullrequest",
       "builderNames": [
-            "Bindings-Tests-EWS", "iOS-15-Build-EWS",
+            "Bindings-Tests-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
             "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
