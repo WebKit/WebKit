@@ -258,7 +258,7 @@ public:
             FileSystem::excludeFromBackup(localStorageDirectory);
 
             auto localStoragePath = LocalStorageManager::localStorageFilePath(localStorageDirectory);
-            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath))
+            if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath) && FileSystem::fileExists(m_customLocalStoragePath))
                 WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
 
             m_resolvedLocalStoragePath = localStoragePath;
@@ -280,9 +280,9 @@ public:
             m_resolvedIDBStoragePath = m_customIDBStoragePath;
         } else {
             auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
-            if (!m_customIDBStoragePath.isEmpty() && !FileSystem::fileExists(idbStoragePath)) {
-                FileSystem::moveFile(m_customIDBStoragePath, idbStoragePath);
+            if (!m_customIDBStoragePath.isEmpty() && !FileSystem::fileExists(idbStoragePath) && FileSystem::fileExists(m_customIDBStoragePath)) {
                 FileSystem::makeAllDirectories(idbStoragePath);
+                FileSystem::moveFile(m_customIDBStoragePath, idbStoragePath);
             }
 
             m_resolvedIDBStoragePath = idbStoragePath;
@@ -317,17 +317,18 @@ private:
     OptionSet<WebsiteDataType> fetchDataTypesInListFromDisk(OptionSet<WebsiteDataType> types)
     {
         OptionSet<WebsiteDataType> result;
-        for (auto& storageType : FileSystem::listDirectory(m_rootPath)) {
-            if (auto type = toWebsiteDataType(storageType); type && types.contains(*type))
-                result.add(*type);
+        if (types.contains(WebsiteDataType::FileSystem)) {
+            auto fileSystemStoragePath = typeStoragePath(StorageType::FileSystem);
+            if (auto files = FileSystem::listDirectory(fileSystemStoragePath); !files.isEmpty())
+                result.add(WebsiteDataType::FileSystem);
         }
 
-        if (types.contains(WebsiteDataType::LocalStorage) && !result.contains(WebsiteDataType::LocalStorage)) {
+        if (types.contains(WebsiteDataType::LocalStorage)) {
             if (FileSystem::fileExists(resolvedLocalStoragePath()))
                 result.add(WebsiteDataType::LocalStorage);
         }
 
-        if (types.contains(WebsiteDataType::IndexedDBDatabases) && !result.contains(WebsiteDataType::IndexedDBDatabases)) {
+        if (types.contains(WebsiteDataType::IndexedDBDatabases)) {
             if (auto databases = FileSystem::listDirectory(resolvedIDBStoragePath()); !databases.isEmpty())
                 result.add(WebsiteDataType::IndexedDBDatabases);
         }

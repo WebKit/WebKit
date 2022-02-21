@@ -1,3 +1,13 @@
+2022-02-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Fetching website data may get wrong record after migrating data to general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=236905
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2022-02-20  Sihui Liu  <sihui_liu@apple.com>
 
         Origin file may not be created after migrating data to general storage directory

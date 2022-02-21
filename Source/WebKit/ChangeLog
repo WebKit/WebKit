@@ -1,3 +1,22 @@
+2022-02-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Fetching website data may get wrong record after migrating data to general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=236905
+
+        Reviewed by Chris Dumez.
+
+        To decide if an origin has data, we need to not only check if its directory exists but also if the directory is 
+        empty.
+
+        Modified existing test to add test coverage.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath): directory should be created before moving
+        files.
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk): given that IndexedDB and 
+        LocalStorage can have custom paths, we may just check data by type.
+
 2022-02-19  Jon Lee  <jonlee@apple.com>
 
         Turn WebGL in GPU Process on by default

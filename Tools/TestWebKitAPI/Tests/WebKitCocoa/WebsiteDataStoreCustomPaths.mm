@@ -1082,4 +1082,12 @@ TEST(WebKit, DeleteDataAfterEnablingGeneralStorageDirectory)
     // Ensure apple.com data is not just moved but actually deleted.
     EXPECT_FALSE([fileManager fileExistsAtPath:appleGeneralLocalStorageFile.path]);
     EXPECT_FALSE([fileManager fileExistsAtPath:appleGeneralIndexedDBDatabaseFile.path]);
+
+    // Ensure data records do not exist after deletion.
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
