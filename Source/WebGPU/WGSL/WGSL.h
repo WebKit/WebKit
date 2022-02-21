@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,9 +58,11 @@ struct CompilationMessage {
 class AST;
 
 struct SuccessfulCheck {
+    SuccessfulCheck() = delete;
+    SuccessfulCheck(SuccessfulCheck&&);
     ~SuccessfulCheck();
     Vector<CompilationMessage> warnings;
-    std::unique_ptr<AST> ast;
+    UniqueRef<AST> ast;
 };
 
 struct FailedCheck {
@@ -193,10 +196,12 @@ struct SpecializationConstant {
 };
 
 struct EntryPointInformation {
+    // FIXME: This can probably be factored better.
     String mangledName;
     std::optional<PipelineLayout> defaultLayout; // If the input PipelineLayout is nullopt, the compiler computes a layout and returns it. https://gpuweb.github.io/gpuweb/#default-pipeline-layout
     HashMap<std::pair<size_t, size_t>, size_t> bufferLengthLocations; // Metal buffer identity -> offset within helper buffer where its size needs to lie
-    Vector<SpecializationConstant> specializationConstants;
+    HashMap<size_t, SpecializationConstant> specializationConstants;
+    HashMap<String, size_t> specializationConstantIndices; // Points into specializationConstantsByIndex
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
 };
 
@@ -209,7 +214,7 @@ struct PrepareResult {
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
-PrepareResult prepare(const AST&, const HashMap<String, std::optional<PipelineLayout>>&);
+PrepareResult prepare(const AST&, const HashMap<String, PipelineLayout>&);
 PrepareResult prepare(const AST&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL
