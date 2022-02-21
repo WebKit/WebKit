@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace WebGPU {
 class CommandBuffer : public RefCounted<CommandBuffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandBuffer> create()
+    static Ref<CommandBuffer> create(id <MTLCommandBuffer> commandBuffer)
     {
-        return adoptRef(*new CommandBuffer());
+        return adoptRef(*new CommandBuffer(commandBuffer));
     }
 
     ~CommandBuffer();
@@ -45,7 +45,9 @@ public:
     void setLabel(const char*);
 
 private:
-    CommandBuffer();
+    CommandBuffer(id <MTLCommandBuffer>);
+
+    id <MTLCommandBuffer> m_commandBuffer { nil };
 };
 
 } // namespace WebGPU

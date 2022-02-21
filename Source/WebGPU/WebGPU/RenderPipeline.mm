@@ -35,7 +35,7 @@ namespace WebGPU {
 RefPtr<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPipeline::create();
+    return RenderPipeline::create(nil);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback)
@@ -44,14 +44,18 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descr
     UNUSED_PARAM(callback);
 }
 
-RenderPipeline::RenderPipeline() = default;
+RenderPipeline::RenderPipeline(id <MTLRenderPipelineState> renderPipelineState)
+    : m_renderPipelineState(renderPipelineState)
+{
+    UNUSED_VARIABLE(m_renderPipelineState);
+}
 
 RenderPipeline::~RenderPipeline() = default;
 
 Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     UNUSED_PARAM(groupIndex);
-    return BindGroupLayout::create();
+    return BindGroupLayout::create(nil, nil, nil);
 }
 
 void RenderPipeline::setLabel(const char* label)

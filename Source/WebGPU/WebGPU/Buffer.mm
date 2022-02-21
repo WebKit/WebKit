@@ -34,10 +34,14 @@ namespace WebGPU {
 RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return Buffer::create();
+    return Buffer::create(nil);
 }
 
-Buffer::Buffer() = default;
+Buffer::Buffer(id <MTLBuffer> buffer)
+    : m_buffer(buffer)
+{
+    UNUSED_VARIABLE(m_buffer);
+}
 
 Buffer::~Buffer() = default;
 

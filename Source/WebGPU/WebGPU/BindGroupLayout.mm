@@ -34,10 +34,18 @@ namespace WebGPU {
 RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return BindGroupLayout::create();
+    return BindGroupLayout::create(nil, nil, nil);
 }
 
-BindGroupLayout::BindGroupLayout() = default;
+BindGroupLayout::BindGroupLayout(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder)
+    : m_vertexArgumentEncoder(vertexArgumentEncoder)
+    , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
+    , m_computeArgumentEncoder(computeArgumentEncoder)
+{
+    UNUSED_VARIABLE(m_vertexArgumentEncoder);
+    UNUSED_VARIABLE(m_fragmentArgumentEncoder);
+    UNUSED_VARIABLE(m_computeArgumentEncoder);
+}
 
 BindGroupLayout::~BindGroupLayout() = default;
 

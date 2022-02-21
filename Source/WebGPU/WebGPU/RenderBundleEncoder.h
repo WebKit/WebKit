@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,9 @@ class RenderPipeline;
 class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create()
+    static Ref<RenderBundleEncoder> create(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
     {
-        return adoptRef(*new RenderBundleEncoder());
+        return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer));
     }
 
     ~RenderBundleEncoder();
@@ -63,7 +63,9 @@ public:
     void setLabel(const char*);
 
 private:
-    RenderBundleEncoder();
+    RenderBundleEncoder(id <MTLIndirectCommandBuffer>);
+
+    id <MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 };
 
 } // namespace WebGPU

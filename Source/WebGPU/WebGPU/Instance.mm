@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,11 @@ void Instance::processEvents()
 {
 }
 
-void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, Ref<Adapter>&&, const char*)>&& callback)
+void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
 {
     UNUSED_PARAM(options);
     UNUSED_PARAM(callback);
-    callback(WGPURequestAdapterStatus_Unavailable, Adapter::create(), "Adapter");
+    callback(WGPURequestAdapterStatus_Unavailable, Adapter::create(nil), "Adapter");
 }
 
 } // namespace WebGPU
@@ -311,8 +311,8 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, const char* message) {
-        callback(status, new WGPUAdapterImpl { WTFMove(adapter) }, message, userdata);
+    instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
+        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message, userdata);
     });
 }
 

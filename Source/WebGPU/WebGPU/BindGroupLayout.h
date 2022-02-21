@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace WebGPU {
 class BindGroupLayout : public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create()
+    static Ref<BindGroupLayout> create(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder)
     {
-        return adoptRef(*new BindGroupLayout());
+        return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
     }
 
     ~BindGroupLayout();
@@ -45,7 +45,11 @@ public:
     void setLabel(const char*);
 
 private:
-    BindGroupLayout();
+    BindGroupLayout(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder);
+
+    id <MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
+    id <MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
+    id <MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 };
 
 } // namespace WebGPU

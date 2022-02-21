@@ -35,17 +35,21 @@ namespace WebGPU {
 RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return Texture::create();
+    return Texture::create(nil);
 }
 
-Texture::Texture() = default;
+Texture::Texture(id <MTLTexture> texture)
+    : m_texture(texture)
+{
+    UNUSED_VARIABLE(m_texture);
+}
 
 Texture::~Texture() = default;
 
 RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return TextureView::create();
+    return TextureView::create(nil);
 }
 
 void Texture::destroy()

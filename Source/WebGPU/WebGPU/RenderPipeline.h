@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,9 @@ class BindGroupLayout;
 class RenderPipeline : public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create()
+    static Ref<RenderPipeline> create(id <MTLRenderPipelineState> renderPipelineState)
     {
-        return adoptRef(*new RenderPipeline());
+        return adoptRef(*new RenderPipeline(renderPipelineState));
     }
 
     ~RenderPipeline();
@@ -48,7 +48,9 @@ public:
     void setLabel(const char*);
 
 private:
-    RenderPipeline();
+    RenderPipeline(id <MTLRenderPipelineState>);
+
+    id <MTLRenderPipelineState> m_renderPipelineState { nil };
 };
 
 } // namespace WebGPU

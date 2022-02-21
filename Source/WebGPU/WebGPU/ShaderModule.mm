@@ -34,10 +34,14 @@ namespace WebGPU {
 RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return ShaderModule::create();
+    return ShaderModule::create(nil);
 }
 
-ShaderModule::ShaderModule() = default;
+ShaderModule::ShaderModule(id <MTLLibrary> library)
+    : m_library(library)
+{
+    UNUSED_VARIABLE(m_library);
+}
 
 ShaderModule::~ShaderModule() = default;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace WebGPU {
 class TextureView : public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create()
+    static Ref<TextureView> create(id <MTLTexture> texture)
     {
-        return adoptRef(*new TextureView());
+        return adoptRef(*new TextureView(texture));
     }
 
     ~TextureView();
@@ -45,7 +45,9 @@ public:
     void setLabel(const char*);
 
 private:
-    TextureView();
+    TextureView(id <MTLTexture>);
+
+    id <MTLTexture> m_texture { nil };
 };
 
 } // namespace WebGPU

@@ -39,23 +39,27 @@ namespace WebGPU {
 RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return CommandEncoder::create();
+    return CommandEncoder::create(nil);
 }
 
-CommandEncoder::CommandEncoder() = default;
+CommandEncoder::CommandEncoder(id <MTLCommandBuffer> commandBuffer)
+    : m_commandBuffer(commandBuffer)
+{
+    UNUSED_VARIABLE(m_commandBuffer);
+}
 
 CommandEncoder::~CommandEncoder() = default;
 
 RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return ComputePassEncoder::create();
+    return ComputePassEncoder::create(nil);
 }
 
 RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPassEncoder::create();
+    return RenderPassEncoder::create(nil);
 }
 
 void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
@@ -98,7 +102,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
 RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return CommandBuffer::create();
+    return CommandBuffer::create(nil);
 }
 
 void CommandEncoder::insertDebugMarker(const char* markerLabel)

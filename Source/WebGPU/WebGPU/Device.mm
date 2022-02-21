@@ -46,7 +46,16 @@
 
 namespace WebGPU {
 
-Device::Device() = default;
+RefPtr<Device> Device::create(id <MTLDevice> device)
+{
+    return adoptRef(*new Device(device));
+}
+
+Device::Device(id <MTLDevice> device)
+    : m_device(device)
+{
+    UNUSED_VARIABLE(m_device);
+}
 
 Device::~Device() = default;
 
@@ -68,7 +77,7 @@ bool Device::getLimits(WGPUSupportedLimits* limits)
 
 RefPtr<Queue> Device::getQueue()
 {
-    return Queue::create();
+    return Queue::create(nil);
 }
 
 bool Device::hasFeature(WGPUFeatureName feature)

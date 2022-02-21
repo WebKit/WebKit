@@ -34,10 +34,18 @@ namespace WebGPU {
 RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return BindGroup::create();
+    return BindGroup::create(nil, nil, nil);
 }
 
-BindGroup::BindGroup() = default;
+BindGroup::BindGroup(id <MTLBuffer> vertexArgumentBuffer, id <MTLBuffer> fragmentArgumentBuffer, id <MTLBuffer> computeArgumentBuffer)
+    : m_vertexArgumentBuffer(vertexArgumentBuffer)
+    , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
+    , m_computeArgumentBuffer(computeArgumentBuffer)
+{
+    UNUSED_VARIABLE(m_vertexArgumentBuffer);
+    UNUSED_VARIABLE(m_fragmentArgumentBuffer);
+    UNUSED_VARIABLE(m_computeArgumentBuffer);
+}
 
 BindGroup::~BindGroup() = default;
 

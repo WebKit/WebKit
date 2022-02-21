@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace WebGPU {
 class ShaderModule : public RefCounted<ShaderModule> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ShaderModule> create()
+    static Ref<ShaderModule> create(id <MTLLibrary> library)
     {
-        return adoptRef(*new ShaderModule());
+        return adoptRef(*new ShaderModule(library));
     }
 
     ~ShaderModule();
@@ -46,7 +46,9 @@ public:
     void setLabel(const char*);
 
 private:
-    ShaderModule();
+    ShaderModule(id <MTLLibrary>);
+
+    id <MTLLibrary> m_library { nil };
 };
 
 } // namespace WebGPU

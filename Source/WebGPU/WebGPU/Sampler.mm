@@ -34,10 +34,14 @@ namespace WebGPU {
 RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return Sampler::create();
+    return Sampler::create(nil);
 }
 
-Sampler::Sampler() = default;
+Sampler::Sampler(id <MTLSamplerState> samplerState)
+    : m_samplerState(samplerState)
+{
+    UNUSED_VARIABLE(m_samplerState);
+}
 
 Sampler::~Sampler() = default;
 

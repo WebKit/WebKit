@@ -1,5 +1,118 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 5: Give Metal objects to WebGPU objects
+        https://bugs.webkit.org/show_bug.cgi?id=236898
+
+        Reviewed by Dean Jackson.
+
+        Each WebGPU object gets its own backing Metal object.
+
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::create):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        * WebGPU/BindGroup.h:
+        (WebGPU::BindGroup::create):
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        (WebGPU::BindGroup::BindGroup):
+        * WebGPU/BindGroupLayout.h:
+        (WebGPU::BindGroupLayout::create):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::Device::createBindGroupLayout):
+        (WebGPU::BindGroupLayout::BindGroupLayout):
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::create):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Buffer::Buffer):
+        * WebGPU/CommandBuffer.h:
+        (WebGPU::CommandBuffer::create):
+        * WebGPU/CommandBuffer.mm:
+        (WebGPU::CommandBuffer::CommandBuffer):
+        * WebGPU/CommandEncoder.h:
+        (WebGPU::CommandEncoder::create):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::Device::createCommandEncoder):
+        (WebGPU::CommandEncoder::CommandEncoder):
+        (WebGPU::CommandEncoder::beginComputePass):
+        (WebGPU::CommandEncoder::beginRenderPass):
+        (WebGPU::CommandEncoder::finish):
+        * WebGPU/ComputePassEncoder.h:
+        (WebGPU::ComputePassEncoder::create):
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::ComputePassEncoder):
+        * WebGPU/ComputePipeline.h:
+        (WebGPU::ComputePipeline::create):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::ComputePipeline::ComputePipeline):
+        (WebGPU::ComputePipeline::getBindGroupLayout):
+        * WebGPU/Device.h:
+        (WebGPU::Device::create): Deleted.
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::Device):
+        (WebGPU::Device::getQueue):
+        * WebGPU/Instance.h:
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::requestAdapter):
+        (wgpuInstanceRequestAdapter):
+        * WebGPU/QuerySet.h:
+        (WebGPU::QuerySet::create):
+        * WebGPU/QuerySet.mm:
+        (WebGPU::Device::createQuerySet):
+        (WebGPU::QuerySet::QuerySet):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::create):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::Queue):
+        * WebGPU/RenderBundle.h:
+        (WebGPU::RenderBundle::create):
+        * WebGPU/RenderBundle.mm:
+        (WebGPU::RenderBundle::RenderBundle):
+        * WebGPU/RenderBundleEncoder.h:
+        (WebGPU::RenderBundleEncoder::create):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::Device::createRenderBundleEncoder):
+        (WebGPU::RenderBundleEncoder::RenderBundleEncoder):
+        (WebGPU::RenderBundleEncoder::finish):
+        * WebGPU/RenderPassEncoder.h:
+        (WebGPU::RenderPassEncoder::create):
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::RenderPassEncoder):
+        * WebGPU/RenderPipeline.h:
+        (WebGPU::RenderPipeline::create):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::Device::createRenderPipeline):
+        (WebGPU::RenderPipeline::RenderPipeline):
+        (WebGPU::RenderPipeline::getBindGroupLayout):
+        * WebGPU/Sampler.h:
+        (WebGPU::Sampler::create):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Device::createSampler):
+        (WebGPU::Sampler::Sampler):
+        * WebGPU/ShaderModule.h:
+        (WebGPU::ShaderModule::create):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::Device::createShaderModule):
+        (WebGPU::ShaderModule::ShaderModule):
+        * WebGPU/SwapChain.mm:
+        (WebGPU::SwapChain::getCurrentTextureView):
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::create):
+        * WebGPU/Texture.mm:
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::Texture):
+        (WebGPU::Texture::createView):
+        * WebGPU/TextureView.h:
+        (WebGPU::TextureView::create):
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::TextureView):
+        * WebGPU/config.h:
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 4: Move Device's construction methods to the files of the things they create
         https://bugs.webkit.org/show_bug.cgi?id=236891
 

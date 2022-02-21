@@ -45,7 +45,7 @@ SwapChain::~SwapChain() = default;
 
 Ref<TextureView> SwapChain::getCurrentTextureView()
 {
-    return TextureView::create();
+    return TextureView::create(nil);
 }
 
 void SwapChain::present()

@@ -25,6 +25,8 @@
 
 #include "ExportMacros.h"
 
+#include <Metal/Metal.h>
+
 #include <wtf/Assertions.h>
 
 #include <wtf/DisallowCType.h>
