@@ -1,3 +1,30 @@
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add CalendarDateTime parsing
+        https://bugs.webkit.org/show_bug.cgi?id=236886
+
+        Reviewed by Dean Jackson.
+
+        This patch adds calendar parsing code to ISO8601 so that Temporal.Instant / Temporal.PlainDate / Temporal.PlainTime
+        can parse string with calendar correctly via "from" methods. Currently, we are just ignoring these calendar values,
+        but we should create a calendar instance from that in a subsequent patch.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::canBeCalendar):
+        (JSC::ISO8601::canBeTimeZone):
+        (JSC::ISO8601::parseTimeZone):
+        (JSC::ISO8601::parseCalendar):
+        (JSC::ISO8601::parseTime):
+        (JSC::ISO8601::parseDateTime):
+        (JSC::ISO8601::parseCalendarTime):
+        (JSC::ISO8601::parseCalendarDateTime):
+        (JSC::ISO8601::parseInstant):
+        * runtime/ISO8601.h:
+        * runtime/TemporalPlainDate.cpp:
+        (JSC::TemporalPlainDate::from):
+        * runtime/TemporalPlainTime.cpp:
+        (JSC::TemporalPlainTime::from):
+
 2022-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290194 and r290210.

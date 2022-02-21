@@ -247,7 +247,13 @@ static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 class PlainDate {
     WTF_MAKE_FAST_ALLOCATED(PlainDate);
 public:
-    constexpr PlainDate() = default;
+    constexpr PlainDate()
+        : m_year(0)
+        , m_month(1)
+        , m_day(1)
+    {
+    }
+
     constexpr PlainDate(int32_t year, unsigned month, unsigned day)
         : m_year(year)
         , m_month(month)
@@ -260,10 +266,13 @@ public:
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year { 0 };
-    uint8_t m_month { 1 };
-    uint8_t m_day { 1 };
+    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
+    int32_t m_month : 5;
+    int32_t m_day : 6;
 };
+#if COMPILER(GCC_COMPATIBLE)
+static_assert(sizeof(PlainDate) == sizeof(int32_t));
+#endif
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
@@ -275,13 +284,21 @@ struct TimeZoneRecord {
     std::variant<Vector<LChar>, int64_t> m_nameOrOffset;
 };
 
+static constexpr unsigned minCalendarLength = 3;
+static constexpr unsigned maxCalendarLength = 8;
+struct CalendarRecord {
+    Vector<LChar, maxCalendarLength> m_name;
+};
+
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<Duration> parseDuration(StringView);
 std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
 enum class ValidateTimeZoneID { Yes, No };
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
+std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView);
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned> precision);
 String temporalDateToString(PlainDate);

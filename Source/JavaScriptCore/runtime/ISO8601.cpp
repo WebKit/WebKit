@@ -433,6 +433,45 @@ std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView string)
 }
 
 template<typename CharacterType>
+static bool canBeCalendar(const StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-Calendar
+    // Calendar :
+    //     [u-ca= CalendarName]
+    return buffer.lengthRemaining() >= 6 && buffer[0] == '[' && buffer[1] == 'u' && buffer[2] == '-' && buffer[3] == 'c' && buffer[4] == 'a' && buffer[5] == '=';
+}
+
+template<typename CharacterType>
+static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
+{
+    switch (static_cast<UChar>(character)) {
+    // UTCDesignator
+    // https://tc39.es/proposal-temporal/#prod-UTCDesignator
+    case 'z':
+    case 'Z':
+    // TimeZoneUTCOffsetSign
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
+    case '+':
+    case '-':
+    case minusSign:
+        return true;
+    // TimeZoneBracketedAnnotation
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
+    case '[': {
+        // We should reject calendar extension case.
+        // https://tc39.es/proposal-temporal/#prod-Calendar
+        // Calendar :
+        //     [u-ca= CalendarName]
+        if (canBeCalendar(buffer))
+            return false;
+        return true;
+    }
+    default:
+        return false;
+    }
+}
+
+template<typename CharacterType>
 static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
@@ -585,35 +624,6 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
 }
 
 template<typename CharacterType>
-static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
-{
-    switch (static_cast<UChar>(character)) {
-    // UTCDesignator
-    // https://tc39.es/proposal-temporal/#prod-UTCDesignator
-    case 'z':
-    case 'Z':
-    // TimeZoneUTCOffsetSign
-    // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
-    case '+':
-    case '-':
-    case minusSign:
-    // TimeZoneBracketedAnnotation
-    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
-    case '[': {
-        // We should reject calendar extension case.
-        // https://tc39.es/proposal-temporal/#prod-Calendar
-        // Calendar :
-        //     [u-ca= CalendarName]
-        if (buffer.lengthRemaining() >= 6 && buffer[1] == 'u' && buffer[2] == '-' && buffer[3] == 'c' && buffer[4] == 'a' && buffer[5] == '=')
-            return false;
-        return true;
-    }
-    default:
-        return false;
-    }
-}
-
-template<typename CharacterType>
 static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
@@ -624,7 +634,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case 'z':
     case 'Z': {
         buffer.advance();
-        if (!buffer.atEnd() && *buffer == '[') {
+        if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
             auto timeZone = parseTimeZoneBracketedAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
@@ -640,7 +650,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
         auto offset = parseTimeZoneNumericUTCOffset(buffer);
         if (!offset)
             return std::nullopt;
-        if (!buffer.atEnd() && *buffer == '[') {
+        if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
             auto timeZone = parseTimeZoneBracketedAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
@@ -662,6 +672,97 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 }
 
 template<typename CharacterType>
+static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
+    // Calendar :
+    //     [u-ca= CalendarName ]
+    //
+    // CalendarName :
+    //     CalendarNameComponent
+    //     CalendarNameComponent - CalendarName
+    //
+    // CalendarNameComponent :
+    //     CalChar CalChar CalChar CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt]
+    //
+    // CalChar :
+    //     Alpha
+    //     Digit
+
+    if (!canBeCalendar(buffer))
+        return std::nullopt;
+    buffer.advanceBy(6);
+
+    if (buffer.atEnd())
+        return std::nullopt;
+
+    unsigned nameLength = 0;
+    {
+        unsigned index = 0;
+        for (; index < buffer.lengthRemaining(); ++index) {
+            auto character = buffer[index];
+            if (character == ']')
+                break;
+            if (!isASCIIAlpha(character) && !isASCIIDigit(character) && character != '-')
+                return std::nullopt;
+        }
+        if (!index)
+            return std::nullopt;
+        nameLength = index;
+    }
+
+    auto isValidComponent = [&](unsigned start, unsigned end) {
+        unsigned componentLength = end - start;
+        if (componentLength < minCalendarLength)
+            return false;
+        if (componentLength > maxCalendarLength)
+            return false;
+        return true;
+    };
+
+    unsigned currentNameComponentStartIndex = 0;
+    bool isLeadingCharacterInNameComponent = true;
+    for (unsigned index = 0; index < nameLength; ++index) {
+        auto character = buffer[index];
+        if (isLeadingCharacterInNameComponent) {
+            if (!(isASCIIAlpha(character) || isASCIIDigit(character)))
+                return std::nullopt;
+
+            currentNameComponentStartIndex = index;
+            isLeadingCharacterInNameComponent = false;
+            continue;
+        }
+
+        if (character == '-') {
+            if (!isValidComponent(currentNameComponentStartIndex, index))
+                return std::nullopt;
+            isLeadingCharacterInNameComponent = true;
+            continue;
+        }
+
+        if (!(isASCIIAlpha(character) || isASCIIDigit(character)))
+            return std::nullopt;
+    }
+    if (isLeadingCharacterInNameComponent)
+        return std::nullopt;
+    if (!isValidComponent(currentNameComponentStartIndex, nameLength))
+        return std::nullopt;
+
+    Vector<LChar, maxCalendarLength> result;
+    result.reserveInitialCapacity(nameLength);
+    for (unsigned index = 0; index < nameLength; ++index)
+        result.uncheckedAppend(buffer[index]);
+    buffer.advanceBy(nameLength);
+
+    if (buffer.atEnd())
+        return std::nullopt;
+    if (*buffer != ']')
+        return std::nullopt;
+    buffer.advance();
+    return CalendarRecord { WTFMove(result) };
+}
+
+template<typename CharacterType>
 static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-Time
@@ -671,14 +772,14 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parse
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { plainTime.value(), std::nullopt };
+        return std::tuple { WTFMove(plainTime.value()), std::nullopt };
     if (canBeTimeZone(buffer, *buffer)) {
         auto timeZone = parseTimeZone(buffer);
         if (!timeZone)
             return std::nullopt;
-        return std::tuple { plainTime.value(), timeZone };
+        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZone) };
     }
-    return std::tuple { plainTime.value(), std::nullopt };
+    return std::tuple { WTFMove(plainTime.value()), std::nullopt };
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isodaysinmonth
@@ -839,25 +940,91 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
     if (!plainDate)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { plainDate.value(), std::nullopt, std::nullopt };
+        return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt };
 
     if (*buffer == ' ' || *buffer == 'T' || *buffer == 't') {
         buffer.advance();
         auto plainTimeAndTimeZone = parseTime(buffer);
         if (!plainTimeAndTimeZone)
             return std::nullopt;
-        auto [plainTime, timeZone] = plainTimeAndTimeZone.value();
-        return std::tuple { plainDate.value(), plainTime, timeZone };
+        auto [plainTime, timeZone] = WTFMove(plainTimeAndTimeZone.value());
+        return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTime), WTFMove(timeZone) };
     }
 
     if (canBeTimeZone(buffer, *buffer)) {
         auto timeZone = parseTimeZone(buffer);
         if (!timeZone)
             return std::nullopt;
-        return std::tuple { plainDate.value(), std::nullopt, timeZone };
+        return std::tuple { WTFMove(plainDate.value()), std::nullopt, WTFMove(timeZone) };
     }
 
-    return std::tuple { plainDate.value(), std::nullopt, std::nullopt };
+    return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt };
+}
+
+template<typename CharacterType>
+static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-CalendarTime
+    // CalendarTime :
+    //     TimeDesignator TimeSpec TimeZone[opt] Calendar[opt]
+    //     TimeSpec TimeZone[opt] Calendar
+    //     TimeSpecWithOptionalTimeZoneNotAmbiguous
+
+    if (buffer.atEnd())
+        return std::nullopt;
+
+    if (*buffer == 'T' || *buffer == 't')
+        buffer.advance();
+
+    auto plainTime = parseTimeSpec(buffer, Second60Mode::Accept);
+    if (!plainTime)
+        return std::nullopt;
+    if (buffer.atEnd())
+        return std::tuple { WTFMove(plainTime.value()), std::nullopt, std::nullopt };
+
+    std::optional<TimeZoneRecord> timeZoneOptional;
+    if (canBeTimeZone(buffer, *buffer)) {
+        auto timeZone = parseTimeZone(buffer);
+        if (!timeZone)
+            return std::nullopt;
+        timeZoneOptional = WTFMove(timeZone);
+    }
+
+    if (buffer.atEnd())
+        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), std::nullopt };
+
+    std::optional<CalendarRecord> calendarOptional;
+    if (canBeCalendar(buffer)) {
+        auto calendar = parseCalendar(buffer);
+        if (!calendar)
+            return std::nullopt;
+        calendarOptional = WTFMove(calendar);
+    }
+
+    return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), WTFMove(calendarOptional) };
+}
+
+template<typename CharacterType>
+static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringParsingBuffer<CharacterType>& buffer)
+{
+    // https://tc39.es/proposal-temporal/#prod-DateTime
+    // CalendarDateTime :
+    //     DateTime CalendarName[opt]
+    //
+    auto dateTime = parseDateTime(buffer);
+    if (!dateTime)
+        return std::nullopt;
+
+    auto [plainDate, plainTimeOptional, timeZoneOptional] = WTFMove(dateTime.value());
+
+    if (!buffer.atEnd() && canBeCalendar(buffer)) {
+        auto calendar = parseCalendar(buffer);
+        if (!calendar)
+            return std::nullopt;
+        return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), WTFMove(calendar) };
+    }
+
+    return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), std::nullopt };
 }
 
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView string)
@@ -870,10 +1037,30 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
     });
 }
 
+std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+        auto result = parseCalendarTime(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> {
         auto result = parseDateTime(buffer);
+        if (!buffer.atEnd())
+            return std::nullopt;
+        return result;
+    });
+}
+
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+        auto result = parseCalendarDateTime(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -892,22 +1079,19 @@ std::optional<ExactTime> parseInstant(StringView string)
     //     TimeZoneUTCOffset TimeZoneBracketedAnnotation_opt
 
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<ExactTime> {
-        auto datetime = parseDateTime(buffer);
+        auto datetime = parseCalendarDateTime(buffer);
         if (!datetime)
             return std::nullopt;
-        auto [date, maybeTime, maybeTimeZone] = datetime.value();
-        if (!maybeTimeZone || (!maybeTimeZone->m_z && !maybeTimeZone->m_offset))
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
+        if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset))
             return std::nullopt;
-        // FIXME: parse calendar annotation
         if (!buffer.atEnd())
             return std::nullopt;
 
-        PlainTime time;
-        if (maybeTime)
-            time = maybeTime.value();
+        PlainTime plainTime = plainTimeOptional.value_or(PlainTime());
 
-        int64_t offset = maybeTimeZone->m_z ? 0 : *maybeTimeZone->m_offset;
-        return { ExactTime::fromISOPartsAndOffset(date.year(), date.month(), date.day(), time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(), time.nanosecond(), offset) };
+        int64_t offset = timeZoneOptional->m_z ? 0 : *timeZoneOptional->m_offset;
+        return { ExactTime::fromISOPartsAndOffset(plainDate.year(), plainDate.month(), plainDate.day(), plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond(), offset) };
     });
 }
 

@@ -47,7 +47,6 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09t03:24:30')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30Z')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30+20:20:59')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30-20:20:59')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30\u221220:20:59')), `2007-01-09`);
@@ -77,6 +76,9 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.123
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.123456789]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[-01:00]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[\u221201:00]')), `2007-01-09`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[u-ca=japanese]')), `2007-01-09`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `2007-01-09`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-09`);
 {
     let date = Temporal.PlainDate.from('2007-01-09T03:24:30+01:00[Europe/Brussels]')
     shouldBe(date === Temporal.PlainDate.from(date), false);
@@ -142,6 +144,9 @@ let failures = [
     "2007-01-09 03:24:30+01:00[02:0000.123456789]",
     "2007-01-09 03:24:30+01:00[0200:00.123456789]",
     "2007-01-09 03:24:30+01:00[02:00:60.123456789]",
+    "2007-01-09T03:24:30Z", // UTCDesignator
+    "2007-01-09 03:24:30[u-ca=japanese][Europe/Brussels]",
+    "2007-01-09 03:24:30+01:00[u-ca=japanese][Europe/Brussels]",
 ];
 
 for (let text of failures) {

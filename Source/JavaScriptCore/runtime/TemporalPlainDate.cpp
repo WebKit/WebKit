@@ -151,10 +151,14 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto dateTime = ISO8601::parseDateTime(string);
+    // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaldatestring
+    // TemporalDateString :
+    //     CalendarDateTime
+    auto dateTime = ISO8601::parseCalendarDateTime(string);
     if (dateTime) {
-        auto [plainDate, plainTimeOptional, timeZoneOptional] = dateTime.value();
-        return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate));
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
+        if (!(timeZoneOptional && timeZoneOptional->m_z))
+            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate));
     }
 
     throwRangeError(globalObject, scope, "invalid date string"_s);

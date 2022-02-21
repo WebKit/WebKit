@@ -415,20 +415,28 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
         return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
     }
 
+    // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimestring
+    // TemporalTimeString :
+    //    CalendarTime
+    //    CalendarDateTimeTimeRequired
+
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto time = ISO8601::parseTime(string);
+    auto time = ISO8601::parseCalendarTime(string);
     if (time) {
-        auto [plainTime, timeZoneOptional] = time.value();
-        return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
+        auto [plainTime, timeZoneOptional, calendarOptional] = WTFMove(time.value());
+        if (!(timeZoneOptional && timeZoneOptional->m_z))
+            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTime));
     }
 
-    auto dateTime = ISO8601::parseDateTime(string);
+    auto dateTime = ISO8601::parseCalendarDateTime(string);
     if (dateTime) {
-        auto [plainDate, plainTimeOptional, timeZoneOptional] = dateTime.value();
-        if (plainTimeOptional)
-            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTimeOptional.value()));
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
+        if (plainTimeOptional) {
+            if (!(timeZoneOptional && timeZoneOptional->m_z))
+                return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(plainTimeOptional.value()));
+        }
     }
 
     throwRangeError(globalObject, scope, "invalid time string"_s);

@@ -1,3 +1,14 @@
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add CalendarDateTime parsing
+        https://bugs.webkit.org/show_bug.cgi?id=236886
+
+        Reviewed by Dean Jackson.
+
+        * stress/temporal-instant.js:
+        * stress/temporal-plaindate.js:
+        * stress/temporal-plaintime.js:
+
 2022-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290194 and r290210.
