@@ -475,6 +475,7 @@ accessibility/ancestor-computation.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/table-search-traversal.html [ Skip ]
+accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]

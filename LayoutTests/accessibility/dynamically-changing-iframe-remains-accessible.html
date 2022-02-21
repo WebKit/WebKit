@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<input type="text" id="text-input-outside-iframe">
+<iframe id="iframe-contentwindow" width=500 height=500></iframe>
+<iframe id="iframe-src" width=500 height=500></iframe>
+
+<script>
+    var testOutput = "This test ensures that an iframe that changes its document dynamically remains accessible.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var contentWindowIframe = document.getElementById('iframe-contentwindow');
+        var srcIframe = document.getElementById('iframe-src');
+
+        setTimeout(async () => {
+            const updateIframeMilliseconds = 500;
+            const firstHtmlFilePath = "resources/text.html";
+            const secondHtmlFilePath = "resources/purple-pineapple-text.html";
+
+            contentWindowIframe.contentWindow.location = firstHtmlFilePath;
+            srcIframe.src = firstHtmlFilePath;
+            await sleep(updateIframeMilliseconds);
+
+            contentWindowIframe.contentWindow.location = secondHtmlFilePath;
+            srcIframe.src = secondHtmlFilePath;
+            await sleep(updateIframeMilliseconds);
+
+            traverseBodyContent();
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+
+    function traverseBodyContent() {
+        const body = accessibilityController.accessibleElementById("body");
+
+        testOutput += "Beginning search traversal from the body element.\n";
+        let elementCount = 0;
+        let searchResult = null;
+        while (true) {
+            searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+            if (!searchResult)
+                break;
+
+            const role = searchResult.role;
+            testOutput += `\n${role}`;
+            if (role.includes("StaticText")) {
+                let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+                testOutput += `\n${textContent}`;
+            }
+
+            if (searchResult.domIdentifier)
+                testOutput += `\n${searchResult.domIdentifier}`;
+
+            testOutput += "\n";
+            elementCount += 1;
+        }
+        testOutput += `\nTraversed ${elementCount} elements.`;
+    }
+
+</script>
+</body>
+</html>
+

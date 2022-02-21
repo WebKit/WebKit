@@ -106,6 +106,10 @@ function spinnerForTextInput(accessibilityObject) {
     return accessibilityObject.childAtIndex(index);
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function waitFor(condition)
 {
     return new Promise((resolve, reject) => {

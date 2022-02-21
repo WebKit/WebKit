@@ -342,6 +342,7 @@ accessibility/focusable-div.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/table-search-traversal.html [ Skip ]
+accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 

@@ -1,0 +1,30 @@
+This test ensures that an iframe that changes its document dynamically remains accessible.
+
+Beginning search traversal from the body element.
+
+AXRole: AXTextField
+text-input-outside-iframe
+
+AXRole: AXScrollArea
+
+AXRole: AXWebArea
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Purple pineapple
+
+AXRole: AXScrollArea
+
+AXRole: AXWebArea
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Purple pineapple
+
+Traversed 9 elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
