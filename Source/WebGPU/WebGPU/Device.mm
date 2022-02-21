@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,97 +49,6 @@ namespace WebGPU {
 Device::Device() = default;
 
 Device::~Device() = default;
-
-RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return BindGroup::create();
-}
-
-RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return BindGroupLayout::create();
-}
-
-RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return Buffer::create();
-}
-
-RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return CommandEncoder::create();
-}
-
-RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return ComputePipeline::create();
-}
-
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
-{
-    UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(callback);
-}
-
-RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return PipelineLayout::create();
-}
-
-RefPtr<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return QuerySet::create();
-}
-
-RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return RenderBundleEncoder::create();
-}
-
-RefPtr<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return RenderPipeline::create();
-}
-
-void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback)
-{
-    UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(callback);
-}
-
-RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return Sampler::create();
-}
-
-RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return ShaderModule::create();
-}
-
-RefPtr<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor* descriptor)
-{
-    UNUSED_PARAM(surface);
-    UNUSED_PARAM(descriptor);
-    return SwapChain::create();
-}
-
-RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor* descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return Texture::create();
-}
 
 void Device::destroy()
 {

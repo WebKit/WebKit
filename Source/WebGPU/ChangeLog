@@ -1,5 +1,62 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 4: Move Device's construction methods to the files of the things they create
+        https://bugs.webkit.org/show_bug.cgi?id=236891
+
+        Reviewed by Dean Jackson.
+
+        Device is kind of a factory object, and has lots of methods which create
+        other objects in the API. To avoid Device.cpp becoming a catch-all place
+        for tons of unrelated creation routines, this patch moves the routine that
+        creates an X into X.mm.
+
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::Device::createBindGroupLayout):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Device::createBuffer):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::Device::createCommandEncoder):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::Device::createComputePipelineAsync):
+        * WebGPU/Device.mm:
+        (WebGPU::Device::createBindGroup): Deleted.
+        (WebGPU::Device::createBindGroupLayout): Deleted.
+        (WebGPU::Device::createBuffer): Deleted.
+        (WebGPU::Device::createCommandEncoder): Deleted.
+        (WebGPU::Device::createComputePipeline): Deleted.
+        (WebGPU::Device::createComputePipelineAsync): Deleted.
+        (WebGPU::Device::createPipelineLayout): Deleted.
+        (WebGPU::Device::createQuerySet): Deleted.
+        (WebGPU::Device::createRenderBundleEncoder): Deleted.
+        (WebGPU::Device::createRenderPipeline): Deleted.
+        (WebGPU::Device::createRenderPipelineAsync): Deleted.
+        (WebGPU::Device::createSampler): Deleted.
+        (WebGPU::Device::createShaderModule): Deleted.
+        (WebGPU::Device::createSwapChain): Deleted.
+        (WebGPU::Device::createTexture): Deleted.
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::Device::createPipelineLayout):
+        * WebGPU/QuerySet.mm:
+        (WebGPU::Device::createQuerySet):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::Device::createRenderBundleEncoder):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::Device::createRenderPipeline):
+        (WebGPU::Device::createRenderPipelineAsync):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Device::createSampler):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::Device::createShaderModule):
+        * WebGPU/SwapChain.mm:
+        (WebGPU::Device::createSwapChain):
+        * WebGPU/Texture.mm:
+        (WebGPU::Device::createTexture):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 3: Tweak WGSL API
         https://bugs.webkit.org/show_bug.cgi?id=236889
 

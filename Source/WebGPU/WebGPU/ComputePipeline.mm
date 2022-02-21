@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,22 @@
 
 
 #import "BindGroupLayout.h"
+#import "Device.h"
 #import "WebGPUExt.h"
 
 namespace WebGPU {
+
+RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
+{
+    UNUSED_PARAM(descriptor);
+    return ComputePipeline::create();
+}
+
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
+{
+    UNUSED_PARAM(descriptor);
+    UNUSED_PARAM(callback);
+}
 
 ComputePipeline::ComputePipeline() = default;
 
