@@ -29,7 +29,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if USE(SYSTEM_MALLOC)
-#define GIGACAGE_ENABLED 0
+#define 0 0
 
 namespace Gigacage {
 

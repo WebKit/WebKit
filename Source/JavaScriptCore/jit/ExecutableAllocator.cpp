@@ -386,7 +386,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
         bool fastJITPermissionsIsSupported = false;
 #if OS(DARWIN) && CPU(ARM64)
-#if USE(PTHREAD_JIT_PERMISSIONS_API) 
+#if CPU(ARM64) 
         fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
 #elif USE(APPLE_INTERNAL_SDK)
         fastJITPermissionsIsSupported = !!os_thread_self_restrict_rwx_is_supported();
