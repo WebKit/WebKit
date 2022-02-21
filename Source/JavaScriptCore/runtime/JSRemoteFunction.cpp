@@ -126,6 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallGeneric, (JSGlobalObject* globalObjec
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
         JSValue wrappedValue = wrapArgument(globalObject, targetGlobalObject, callFrame->uncheckedArgument(i));
+        RETURN_IF_EXCEPTION(scope, { });
         args.append(wrappedValue);
     }
     if (UNLIKELY(args.hasOverflowed())) {

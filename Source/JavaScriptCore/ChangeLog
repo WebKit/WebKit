@@ -1,5 +1,18 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ShadowRealm wrapArgument should check exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=236984
+        rdar://89226554
+
+        Reviewed by Alexey Shvayka.
+
+        We should check exceptions after wrapArgument.
+
+        * runtime/JSRemoteFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add explicit exception check after appendWithoutSideEffects
         https://bugs.webkit.org/show_bug.cgi?id=236986
         rdar://88258776
