@@ -27,7 +27,6 @@
 #import "QuerySet.h"
 
 #import "Device.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

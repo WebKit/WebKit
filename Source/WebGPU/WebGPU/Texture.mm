@@ -28,7 +28,6 @@
 
 #import "Device.h"
 #import "TextureView.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

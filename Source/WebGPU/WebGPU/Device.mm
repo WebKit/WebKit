@@ -41,7 +41,6 @@
 #import "Surface.h"
 #import "SwapChain.h"
 #import "Texture.h"
-#import "WebGPUExt.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {

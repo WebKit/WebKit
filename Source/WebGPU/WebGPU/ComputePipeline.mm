@@ -29,7 +29,6 @@
 
 #import "BindGroupLayout.h"
 #import "Device.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

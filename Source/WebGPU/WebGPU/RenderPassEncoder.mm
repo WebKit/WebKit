@@ -31,7 +31,6 @@
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

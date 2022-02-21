@@ -27,7 +27,6 @@
 #import "Sampler.h"
 
 #import "Device.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

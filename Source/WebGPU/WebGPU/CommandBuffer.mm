@@ -26,7 +26,6 @@
 #import "config.h"
 #import "CommandBuffer.h"
 
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

@@ -28,7 +28,6 @@
 
 #import "Adapter.h"
 #import "Surface.h"
-#import "WebGPUExt.h"
 #import <cstring>
 #import <wtf/StdLibExtras.h>
 

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "TextureView.h"
 
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

@@ -27,7 +27,6 @@
 #import "Adapter.h"
 
 #import "Device.h"
-#import "WebGPUExt.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {

@@ -30,7 +30,6 @@
 #import "Buffer.h"
 #import "ComputePipeline.h"
 #import "QuerySet.h"
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 

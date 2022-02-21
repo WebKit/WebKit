@@ -26,7 +26,6 @@
 #import "config.h"
 #import "RenderBundle.h"
 
-#import "WebGPUExt.h"
 
 namespace WebGPU {
 
