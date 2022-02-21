@@ -76,6 +76,25 @@ template<typename T, typename = void> struct ArgumentCoder {
     }
 };
 
+template<>
+struct ArgumentCoder<bool> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, bool value)
+    {
+        uint8_t data = value ? 1 : 0;
+        encoder << data;
+    }
+
+    template<typename Decoder>
+    static std::optional<bool> decode(Decoder& decoder)
+    {
+        uint8_t data;
+        if (decoder.decodeFixedLengthData(&data, sizeof(uint8_t), alignof(uint8_t)))
+            return !!data; // This ensures that only the lower bit is set in a boolean for IPC messages
+        return std::nullopt;
+    }
+};
+
 template<typename T>
 struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
     template<typename Encoder>

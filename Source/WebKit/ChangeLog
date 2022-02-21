@@ -1,3 +1,17 @@
+2022-02-21  Simon Lewis  <simon.lewis@apple.com>
+
+        Change IPC encoding of boolean type to use one bit
+        https://bugs.webkit.org/show_bug.cgi?id=236801
+        rdar://85811396
+
+        Reviewed by Chris Dumez.
+
+        This patch ensures that only the lower bit is set in a boolean for IPC messages.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder<bool>::encode):
+        (IPC::ArgumentCoder<bool>::decode):
+
 2022-02-21  Sihui Liu  <sihui_liu@apple.com>
 
         Fetching website data may get wrong record after migrating data to general storage directory
