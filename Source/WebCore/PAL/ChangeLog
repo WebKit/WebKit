@@ -1,3 +1,32 @@
+2022-02-21  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Use native build phases to copy PAL's headers
+        https://bugs.webkit.org/show_bug.cgi?id=236683
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replaces the "Copy PAL Headers" script with a native Headers phase. Xcode copies the headers
+        to a flattened directory, but we hack around this using build rules. This is a different
+        approach than we took with WTF <https://bugs.webkit.org/show_bug.cgi?id=235744> but could be
+        replicated there to remove the one-build-phase-per-directory boilerplate.
+
+        The idea is that we have one build rule for each "depth" of headers: Build rule "pal/*.h" is
+        depth 1 and matches headers like "pal/FileSizeFormatter.h", buld rule "pal/*/*.h" is depth 2
+        and matches headers like "pal/text/EncodingTables.h", etc.
+
+        Each rule uses build setting macros to determine the header's relative path within
+        /usr/local/include/pal, and copies it there. Having one build rule per depth level is hacky,
+        but it's superior to adding 23 copy file phases. In the future, we'll simplify this with
+        <rdar://88771729>.
+
+        The legacy build system doesn't support running build rules on headers. To compensate,
+        legacy builds copy to a separate directory, /usr/local/include/pal_flattened. A script phase
+        that runs after the native Headers phase copies these flattened headers into the right place.
+
+        * Configurations/CopyPALHeaders.xcconfig: Removed.
+        * Configurations/PAL.xcconfig: Header settings, notably PRIVATE_HEADERS_FOLDER_PATH.
+        * PAL.xcodeproj/project.pbxproj: Remove target, add phases, set header attrs.
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.

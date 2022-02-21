@@ -160,6 +160,7 @@
 		CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA072A9236FFBF70018839C /* CrashReporter.cpp */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 862A8D32278DE74A0014120C /* SignedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD20DE7127BDB9950093D175 /* legacy-build-copy-nested-headers.py in Headers <wtf/Scripts> */ = {isa = PBXBuildFile; fileRef = DD20DE7027BDB9850093D175 /* legacy-build-copy-nested-headers.py */; };
 		DD3DC85E27A4BF8E007E5B61 /* WeakHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B67F3F12228D5310030DE9C /* WeakHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85F27A4BF8E007E5B61 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B6151A825A004123FF /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86027A4BF8E007E5B61 /* Observer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD48A87024C8A21600F5800C /* Observer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -995,6 +996,7 @@
 			files = (
 				DD3DCA0827A4E197007E5B61 /* generate-unified-source-bundles.rb in Headers <wtf/Scripts> */,
 				DD3DCA0927A4E197007E5B61 /* GeneratePreferences.rb in Headers <wtf/Scripts> */,
+				DD20DE7127BDB9950093D175 /* legacy-build-copy-nested-headers.py in Headers <wtf/Scripts> */,
 			);
 			name = "Headers <wtf/Scripts>";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1735,6 +1737,7 @@
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
+		DD20DE7027BDB9850093D175 /* legacy-build-copy-nested-headers.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "legacy-build-copy-nested-headers.py"; sourceTree = "<group>"; };
 		DD3DC9C127A4C4BD007E5B61 /* spi */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spi; sourceTree = "<group>"; };
 		DD3DCA0127A4E176007E5B61 /* WebPreferencesDebug.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesDebug.yaml; sourceTree = "<group>"; };
 		DD3DCA0227A4E176007E5B61 /* WebPreferencesExperimental.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesExperimental.yaml; sourceTree = "<group>"; };
@@ -2755,6 +2758,7 @@
 				DD3DCA0027A4E176007E5B61 /* Preferences */,
 				DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */,
 				DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */,
+				DD20DE7027BDB9850093D175 /* legacy-build-copy-nested-headers.py */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
