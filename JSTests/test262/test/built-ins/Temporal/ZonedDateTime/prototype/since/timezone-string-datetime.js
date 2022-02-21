@@ -28,16 +28,16 @@ timeZone = "2021-08-19T17:30-07:00";
 instance2.since({ year: 2020, month: 5, day: 2, timeZone });
 instance2.since({ year: 2020, month: 5, day: 2, timeZone: { timeZone } });
 
-expectedTimeZone = "America/Vancouver";
+expectedTimeZone = "UTC";
 const instance3 = new Temporal.ZonedDateTime(0n, expectedTimeZone);
-timeZone = "2021-08-19T17:30[America/Vancouver]";
+timeZone = "2021-08-19T17:30[UTC]";
 instance3.since({ year: 2020, month: 5, day: 2, timeZone });
 instance3.since({ year: 2020, month: 5, day: 2, timeZone: { timeZone } });
 
-timeZone = "2021-08-19T17:30Z[America/Vancouver]";
+timeZone = "2021-08-19T17:30Z[UTC]";
 instance3.since({ year: 2020, month: 5, day: 2, timeZone });
 instance3.since({ year: 2020, month: 5, day: 2, timeZone: { timeZone } });
 
-timeZone = "2021-08-19T17:30-07:00[America/Vancouver]";
+timeZone = "2021-08-19T17:30-07:00[UTC]";
 instance3.since({ year: 2020, month: 5, day: 2, timeZone });
 instance3.since({ year: 2020, month: 5, day: 2, timeZone: { timeZone } });

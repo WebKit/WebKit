@@ -1191,13 +1191,23 @@ var TemporalHelpers = {
    * will log any calls to its accessors to the array @calls.
    */
   observeProperty(calls, object, propertyName, value) {
+    let displayName = propertyName;
+    if (typeof propertyName === 'symbol') {
+      if (Symbol.keyFor(propertyName) !== undefined) {
+        displayName = `[Symbol.for('${Symbol.keyFor(propertyName)}')]`;
+      } else if (propertyName.description.startsWith('Symbol.')) {
+        displayName = `[${propertyName.description}]`;
+      } else {
+        displayName = `[Symbol('${propertyName.description}')]`
+      }
+    }
     Object.defineProperty(object, propertyName, {
       get() {
-        calls.push(`get ${propertyName}`);
+        calls.push(`get ${displayName}`);
         return value;
       },
       set(v) {
-        calls.push(`set ${propertyName}`);
+        calls.push(`set ${displayName}`);
       }
     });
   },

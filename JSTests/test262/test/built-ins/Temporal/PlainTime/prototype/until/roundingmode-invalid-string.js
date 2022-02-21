@@ -9,4 +9,6 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainTime(12, 34, 56, 0, 0, 0);
 const later = new Temporal.PlainTime(13, 35, 57, 123, 987, 500);
-assert.throws(RangeError, () => earlier.until(later, { smallestUnit: "microsecond", roundingMode: "other string" }));
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l"]) {
+  assert.throws(RangeError, () => earlier.until(later, { smallestUnit: "microsecond", roundingMode }));
+}

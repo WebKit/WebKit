@@ -9,4 +9,7 @@ features: [Temporal]
 
 const earlier = new Temporal.Instant(1_000_000_000_000_000_000n);
 const later = new Temporal.Instant(1_000_090_061_987_654_321n);
-assert.throws(RangeError, () => earlier.until(later, { smallestUnit: "other string" }));
+const values = ["era", "eraYear", "years", "months", "weeks", "days", "other string"];
+for (const smallestUnit of values) {
+  assert.throws(RangeError, () => earlier.until(later, { smallestUnit }));
+}

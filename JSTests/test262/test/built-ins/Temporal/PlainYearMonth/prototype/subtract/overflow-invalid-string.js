@@ -20,4 +20,6 @@ features: [Temporal]
 
 const yearmonth = new Temporal.PlainYearMonth(2000, 5);
 const duration = new Temporal.Duration(1, 1);
-assert.throws(RangeError, () => yearmonth.subtract(duration, { overflow: "other string" }));
+for (const overflow of ["", "CONSTRAIN", "balance", "other string", "constra\u0131n"]) {
+  assert.throws(RangeError, () => yearmonth.subtract(duration, { overflow }));
+}

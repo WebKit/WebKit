@@ -15,4 +15,6 @@ features: [Temporal]
 ---*/
 
 const yearmonth = new Temporal.PlainYearMonth(2000, 5);
-assert.throws(RangeError, () => yearmonth.toString({ calendarName: "other string" }));
+for (const calendarName of ["ALWAYS", "sometimes", "other string"]) {
+  assert.throws(RangeError, () => yearmonth.toString({ calendarName }));
+}

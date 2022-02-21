@@ -4,40 +4,21 @@
 /*---
 esid: sec-temporal.timezone.prototype.tojson
 description: TypeError thrown when toString property not present
-includes: [compareArray.js]
+includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const actual = [];
 const expected = [
-  'get timeZone[@@toPrimitive]',
-  'get timeZone.toString',
-  'get timeZone.valueOf',
+  'get [Symbol.toPrimitive]',
+  'get toString',
+  'get valueOf',
 ];
 
-const timeZone = new Proxy(
-  {
-    toString: undefined
-  },
-  {
-    has(target, property) {
-      if (property === Symbol.toPrimitive) {
-        actual.push('has timeZone[@@toPrimitive]');
-      } else {
-        actual.push(`has timeZone.${property}`);
-      }
-      return property in target;
-    },
-    get(target, property) {
-      if (property === Symbol.toPrimitive) {
-        actual.push('get timeZone[@@toPrimitive]');
-      } else {
-        actual.push(`get timeZone.${property}`);
-      }
-      return target[property];
-    }
-  }
-);
+const timeZone = new Temporal.TimeZone("UTC");
+TemporalHelpers.observeProperty(actual, timeZone, Symbol.toPrimitive, undefined);
+TemporalHelpers.observeProperty(actual, timeZone, "toString", undefined);
+TemporalHelpers.observeProperty(actual, timeZone, "valueOf", Object.prototype.valueOf);
 
-assert.throws(TypeError, () => Temporal.TimeZone.prototype.toJSON.call(timeZone));
+assert.throws(TypeError, () => timeZone.toJSON());
 assert.compareArray(actual, expected);

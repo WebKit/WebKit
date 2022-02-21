@@ -22,3 +22,5 @@ const explicit = yearmonth.with({ month: 15 }, { overflow: undefined });
 TemporalHelpers.assertPlainYearMonth(explicit, 2000, 12, "M12", "default overflow is constrain");
 const implicit = yearmonth.with({ month: 15 }, {});
 TemporalHelpers.assertPlainYearMonth(implicit, 2000, 12, "M12", "default overflow is constrain");
+const lambda = yearmonth.with({ month: 15 }, () => {});
+TemporalHelpers.assertPlainYearMonth(lambda, 2000, 12, "M12", "default overflow is constrain");

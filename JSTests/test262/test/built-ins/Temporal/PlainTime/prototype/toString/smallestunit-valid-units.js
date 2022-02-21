@@ -8,12 +8,18 @@ features: [Temporal]
 ---*/
 
 const time = new Temporal.PlainTime(12, 34, 56, 789, 999, 999);
-
 assert.sameValue(time.toString({ smallestUnit: "minute" }), "12:34");
 assert.sameValue(time.toString({ smallestUnit: "second" }), "12:34:56");
 assert.sameValue(time.toString({ smallestUnit: "millisecond" }), "12:34:56.789");
 assert.sameValue(time.toString({ smallestUnit: "microsecond" }), "12:34:56.789999");
 assert.sameValue(time.toString({ smallestUnit: "nanosecond" }), "12:34:56.789999999");
+
+const time2 = new Temporal.PlainTime(12, 34);
+assert.sameValue(time2.toString({ smallestUnit: "minute" }), "12:34");
+assert.sameValue(time2.toString({ smallestUnit: "second" }), "12:34:00");
+assert.sameValue(time2.toString({ smallestUnit: "millisecond" }), "12:34:00.000");
+assert.sameValue(time2.toString({ smallestUnit: "microsecond" }), "12:34:00.000000");
+assert.sameValue(time2.toString({ smallestUnit: "nanosecond" }), "12:34:00.000000000");
 
 const notValid = [
   "year",

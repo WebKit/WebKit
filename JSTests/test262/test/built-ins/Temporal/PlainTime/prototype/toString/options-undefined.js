@@ -7,14 +7,18 @@ description: Verify that undefined options are handled correctly.
 features: [Temporal]
 ---*/
 
-const time = new Temporal.PlainTime(12, 34, 56, 987, 650);
-const expected = "12:34:56.98765";
+const tests = [
+  ["15:23", "15:23:00"],
+  ["15:23:30", "15:23:30"],
+  ["15:23:30.1234", "15:23:30.1234"],
+];
 
-const explicit = time.toString(undefined);
-assert.sameValue(explicit, expected, "default precision is auto and no rounding");
+for (const [input, expected] of tests) {
+  const time = Temporal.PlainTime.from(input);
 
-const propertyImplicit = time.toString({});
-assert.sameValue(propertyImplicit, expected, "default precision is auto and no rounding");
+  const explicit = time.toString(undefined);
+  assert.sameValue(explicit, expected, "default precision is auto and no rounding");
 
-const implicit = time.toString();
-assert.sameValue(implicit, expected, "default precision is auto and no rounding");
+  const implicit = time.toString();
+  assert.sameValue(implicit, expected, "default precision is auto and no rounding");
+}

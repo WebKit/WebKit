@@ -20,5 +20,7 @@ const validValues = [
   "12:00",
 ];
 validValues.forEach((value) => {
-  assert.throws(RangeError, () => Temporal.PlainTime.from(value, { overflow: "other string" }));
+  ["", "CONSTRAIN", "balance", "other string", "constra\u0131n"].forEach((overflow) => {
+    assert.throws(RangeError, () => Temporal.PlainTime.from(value, { overflow }));
+  });
 });

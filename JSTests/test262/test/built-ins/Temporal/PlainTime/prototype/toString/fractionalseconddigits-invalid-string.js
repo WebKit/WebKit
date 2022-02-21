@@ -16,4 +16,6 @@ features: [Temporal]
 
 const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
 
-assert.throws(RangeError, () => time.toString({ fractionalSecondDigits: "other string" }));
+for (const fractionalSecondDigits of ["other string", "AUTO", "not-auto", "autos"]) {
+  assert.throws(RangeError, () => time.toString({ fractionalSecondDigits }));
+}

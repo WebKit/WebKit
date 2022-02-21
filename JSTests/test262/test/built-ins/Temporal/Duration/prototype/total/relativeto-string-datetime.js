@@ -23,17 +23,17 @@ relativeTo = "2019-11-01T00:00-07:00";
 const result3 = instance.total({ unit: "days", relativeTo });
 assert.sameValue(result3, 367, "date-time + offset is a plain relativeTo");
 
-relativeTo = "2019-11-01T00:00[America/Vancouver]";
+relativeTo = "2019-11-01T00:00[-07:00]";
 const result4 = instance.total({ unit: "days", relativeTo });
-assert.sameValue(result4, 366.96, "date-time + IANA annotation is a zoned relativeTo");
+assert.sameValue(result4, 367, "date-time + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00Z[America/Vancouver]";
+relativeTo = "2019-11-01T00:00Z[-07:00]";
 const result5 = instance.total({ unit: "days", relativeTo });
-assert.sameValue(result5, 366.96, "date-time + Z + IANA annotation is a zoned relativeTo");
+assert.sameValue(result5, 367, "date-time + Z + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00-07:00[America/Vancouver]";
+relativeTo = "2019-11-01T00:00+00:00[UTC]";
 const result6 = instance.total({ unit: "days", relativeTo });
-assert.sameValue(result6, 366.96, "date-time + offset + IANA annotation is a zoned relativeTo");
+assert.sameValue(result6, 367, "date-time + offset + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00+04:15[America/Vancouver]";
+relativeTo = "2019-11-01T00:00+04:15[UTC]";
 assert.throws(RangeError, () => instance.total({ unit: "days", relativeTo }), "date-time + offset + IANA annotation throws if wall time and exact time mismatch");

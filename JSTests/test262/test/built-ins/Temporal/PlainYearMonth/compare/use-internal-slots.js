@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal-sec-temporal.yearmonth.compare
+esid: sec-temporal.plainyearmonth.compare
 description: compare() ignores the observable properties and uses internal slots
 features: [Temporal]
 ---*/

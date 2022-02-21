@@ -16,10 +16,21 @@ info: |
 features: [Temporal]
 ---*/
 
-const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
+const tests = [
+  ["15:23", "15:23:00"],
+  ["15:23:30", "15:23:30"],
+  ["15:23:30.1234", "15:23:30.1234"],
+];
 
-const explicit = time.toString({ fractionalSecondDigits: undefined });
-assert.sameValue(explicit, "12:34:56.98765", "default fractionalSecondDigits is auto");
+for (const [input, expected] of tests) {
+  const time = Temporal.PlainTime.from(input);
 
-const implicit = time.toString({});
-assert.sameValue(implicit, "12:34:56.98765", "default fractionalSecondDigits is auto");
+  const explicit = time.toString({ fractionalSecondDigits: undefined });
+  assert.sameValue(explicit, expected, "default fractionalSecondDigits is auto");
+
+  const implicit = time.toString({});
+  assert.sameValue(implicit, expected, "default fractionalSecondDigits is auto");
+
+  const lambda = time.toString(() => {});
+  assert.sameValue(lambda, expected, "default fractionalSecondDigits is auto");
+}

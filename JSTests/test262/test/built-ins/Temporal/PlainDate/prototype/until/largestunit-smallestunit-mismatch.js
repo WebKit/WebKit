@@ -7,8 +7,8 @@ description: RangeError thrown when smallestUnit is larger than largestUnit
 features: [Temporal]
 ---*/
 
-const earlier = Temporal.PlainDate.from("2019-01-08");
-const later = Temporal.PlainDate.from("2021-09-07");
+const earlier = new Temporal.PlainDate(2000, 5, 2);
+const later = new Temporal.PlainDate(2001, 6, 3);
 const units = ["years", "months", "weeks", "days"];
 for (let largestIdx = 1; largestIdx < units.length; largestIdx++) {
   for (let smallestIdx = 0; smallestIdx < largestIdx; smallestIdx++) {

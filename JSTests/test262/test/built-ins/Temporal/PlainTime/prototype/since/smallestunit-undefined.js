@@ -15,3 +15,5 @@ const explicit = later.since(earlier, { smallestUnit: undefined });
 TemporalHelpers.assertDuration(explicit, 0, 0, 0, 0, 1, 1, 1, 987, 654, 321, "default smallestUnit is nanosecond");
 const implicit = later.since(earlier, {});
 TemporalHelpers.assertDuration(implicit, 0, 0, 0, 0, 1, 1, 1, 987, 654, 321, "default smallestUnit is nanosecond");
+const lambda = later.since(earlier, () => {});
+TemporalHelpers.assertDuration(lambda, 0, 0, 0, 0, 1, 1, 1, 987, 654, 321, "default smallestUnit is nanosecond");

@@ -16,5 +16,7 @@ features: [Temporal]
 
 const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
 
+assert.throws(RangeError, () => time.toString({ fractionalSecondDigits: -Infinity }));
 assert.throws(RangeError, () => time.toString({ fractionalSecondDigits: -1 }));
 assert.throws(RangeError, () => time.toString({ fractionalSecondDigits: 10 }));
+assert.throws(RangeError, () => time.toString({ fractionalSecondDigits: Infinity }));

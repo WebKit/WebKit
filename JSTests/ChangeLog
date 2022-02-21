@@ -1,5 +1,15 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=236990
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/expectations.yaml:
+        * test262/test262-Revision.txt:
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add explicit exception check after appendWithoutSideEffects
         https://bugs.webkit.org/show_bug.cgi?id=236986
         rdar://88258776

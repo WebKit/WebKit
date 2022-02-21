@@ -24,17 +24,17 @@ relativeTo = "2019-11-01T00:00-07:00";
 const result3 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
 TemporalHelpers.assertDuration(result3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + offset is a plain relativeTo");
 
-relativeTo = "2019-11-01T00:00[America/Vancouver]";
+relativeTo = "2019-11-01T00:00[-07:00]";
 const result4 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
-TemporalHelpers.assertDuration(result4, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, "date-time + IANA annotation is a zoned relativeTo");
+TemporalHelpers.assertDuration(result4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00Z[America/Vancouver]";
+relativeTo = "2019-11-01T00:00Z[-07:00]";
 const result5 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
-TemporalHelpers.assertDuration(result5, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, "date-time + Z + IANA annotation is a zoned relativeTo");
+TemporalHelpers.assertDuration(result5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + Z + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00-07:00[America/Vancouver]";
+relativeTo = "2019-11-01T00:00+00:00[UTC]";
 const result6 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
-TemporalHelpers.assertDuration(result6, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, "date-time + offset + IANA annotation is a zoned relativeTo");
+TemporalHelpers.assertDuration(result6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + offset + IANA annotation is a zoned relativeTo");
 
-relativeTo = "2019-11-01T00:00+04:15[America/Vancouver]";
+relativeTo = "2019-11-01T00:00+04:15[UTC]";
 assert.throws(RangeError, () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }), "date-time + offset + IANA annotation throws if wall time and exact time mismatch");

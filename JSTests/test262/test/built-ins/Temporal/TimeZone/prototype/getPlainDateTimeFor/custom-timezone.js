@@ -10,28 +10,18 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
-  "get timeZone.getOffsetNanosecondsFor",
+  "get getOffsetNanosecondsFor",
   "call timeZone.getOffsetNanosecondsFor",
 ];
 
 const instant = Temporal.Instant.from("1975-02-02T14:25:36.123456789Z");
-const timeZone = new Proxy({
-  getOffsetNanosecondsFor(instantArg) {
-    actual.push("call timeZone.getOffsetNanosecondsFor");
-    assert.sameValue(instantArg, instant);
-    return 9876543210123;
-  },
-}, {
-  has(target, property) {
-    actual.push(`has timeZone.${property}`);
-    return property in target;
-  },
-  get(target, property) {
-    actual.push(`get timeZone.${property}`);
-    return target[property];
-  },
+const timeZone = new Temporal.TimeZone("UTC");
+TemporalHelpers.observeProperty(actual, timeZone, "getOffsetNanosecondsFor", function (instantArg) {
+  actual.push("call timeZone.getOffsetNanosecondsFor");
+  assert.sameValue(instantArg, instant);
+  return 9876543210123;
 });
 
-const result = Temporal.TimeZone.prototype.getPlainDateTimeFor.call(timeZone, instant);
+const result = timeZone.getPlainDateTimeFor(instant);
 TemporalHelpers.assertPlainDateTime(result, 1975, 2, "M02", 2, 17, 10, 12, 666, 666, 912);
 assert.compareArray(actual, expected);

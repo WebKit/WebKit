@@ -9,7 +9,7 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainDate(2000, 5, 2);
 const later = new Temporal.PlainDate(2001, 6, 3);
-const values = ["era", "hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds", "other string"];
+const values = ["era", "eraYear", "hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds", "other string"];
 for (const smallestUnit of values) {
   assert.throws(RangeError, () => later.since(earlier, { smallestUnit }));
 }

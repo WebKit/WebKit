@@ -9,4 +9,8 @@ features: [Temporal]
 
 const instance = new Temporal.Duration(1, 0, 0, 1);
 const relativeTo = "2000-01-01T00:00+05:30[UTC]";
-assert.throws(RangeError, () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }));
+assert.throws(
+  RangeError,
+  () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }),
+  "subtract should throw RangeError on a string with UTC offset mismatch"
+);

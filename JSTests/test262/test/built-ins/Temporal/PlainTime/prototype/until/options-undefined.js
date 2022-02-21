@@ -14,6 +14,6 @@ const explicit = earlier.until(later, undefined);
 assert.sameValue(explicit.hours, 6, "default largest unit is hours");
 assert.sameValue(explicit.nanoseconds, 1, "default smallest unit is nanoseconds and no rounding");
 
-const implicit = earlier.until(later, undefined);
+const implicit = earlier.until(later);
 assert.sameValue(implicit.hours, 6, "default largest unit is hours");
 assert.sameValue(implicit.nanoseconds, 1, "default smallest unit is nanoseconds and no rounding");

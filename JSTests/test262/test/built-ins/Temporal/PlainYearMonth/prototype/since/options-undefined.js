@@ -4,16 +4,19 @@
 /*---
 esid: sec-temporal.plainyearmonth.prototype.since
 description: Verify that undefined options are handled correctly.
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const earlier = new Temporal.PlainYearMonth(2000, 5);
 const later = new Temporal.PlainYearMonth(2002, 12);
 
-const explicit = later.since(earlier, undefined);
-assert.sameValue(explicit.years, 2, "default largest unit is years");
-assert.sameValue(explicit.months, 7, "default smallest unit is months and rounding is none");
+TemporalHelpers.assertDuration(later.since(earlier, undefined),
+  2, 7, 0, 0, 0, 0, 0, 0, 0, 0, "default largestUnit is year (explicit, pos)");
+TemporalHelpers.assertDuration(earlier.since(later, undefined),
+  -2, -7, 0, 0, 0, 0, 0, 0, 0, 0, "default largestUnit is year (explicit, neg)");
 
-const implicit = later.since(earlier);
-assert.sameValue(implicit.years, 2, "default largest unit is years");
-assert.sameValue(implicit.months, 7, "default smallest unit is months and rounding is none");
+TemporalHelpers.assertDuration(later.since(earlier),
+  2, 7, 0, 0, 0, 0, 0, 0, 0, 0, "default largestUnit is year (implicit, pos)");
+TemporalHelpers.assertDuration(earlier.since(later),
+  -2, -7, 0, 0, 0, 0, 0, 0, 0, 0, "default largestUnit is year (implicit, neg)");

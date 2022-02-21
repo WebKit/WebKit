@@ -9,4 +9,4 @@ info: |
 features: [Temporal]
 ---*/
 
-assert.throws(TypeError, () => Temporal.PlainYearMonth());
+assert.throws(TypeError, () => Temporal.PlainYearMonth(1970, 1));

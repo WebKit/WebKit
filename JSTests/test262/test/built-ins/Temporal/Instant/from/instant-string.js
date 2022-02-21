@@ -9,7 +9,7 @@ features: [Temporal]
 
 let str = "1970-01-01T00:00";
 assert.throws(RangeError, () => Temporal.Instant.from(str), "bare date-time string is not an instant");
-str = "1970-01-01T00:00[America/Vancouver]";
+str = "1970-01-01T00:00[UTC]";
 assert.throws(RangeError, () => Temporal.Instant.from(str), "date-time + IANA annotation is not an instant");
 
 str = "1970-01-01T00:00Z";
@@ -20,10 +20,10 @@ str = "1970-01-01T00:00+01:00";
 const result2 = Temporal.Instant.from(str);
 assert.sameValue(result2.epochNanoseconds, -3600_000_000_000n, "date-time + offset preserves exact time with offset");
 
-str = "1970-01-01T00:00Z[America/Vancouver]";
+str = "1970-01-01T00:00Z[Etc/Ignored]";
 const result3 = Temporal.Instant.from(str);
 assert.sameValue(result3.epochNanoseconds, 0n, "date-time + Z + IANA annotation ignores the IANA annotation");
 
-str = "1970-01-01T00:00+01:00[America/Vancouver]";
+str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 const result4 = Temporal.Instant.from(str);
 assert.sameValue(result4.epochNanoseconds, -3600_000_000_000n, "date-time + offset + IANA annotation ignores the IANA annotation");

@@ -32,6 +32,8 @@ validValues.forEach((value) => {
   TemporalHelpers.assertPlainDate(explicit, 2000, 5, "M05", 2, "overflow is ignored");
   const implicit = Temporal.PlainDate.from(value, {});
   TemporalHelpers.assertPlainDate(implicit, 2000, 5, "M05", 2, "overflow is ignored");
+  const lambda = Temporal.PlainDate.from(value, () => {});
+  TemporalHelpers.assertPlainDate(lambda, 2000, 5, "M05", 2, "overflow is ignored");
 });
 
 const propertyBag = { year: 2000, month: 13, day: 34 };
@@ -39,3 +41,5 @@ const explicit = Temporal.PlainDate.from(propertyBag, { overflow: undefined });
 TemporalHelpers.assertPlainDate(explicit, 2000, 12, "M12", 31, "default overflow is constrain");
 const implicit = Temporal.PlainDate.from(propertyBag, {});
 TemporalHelpers.assertPlainDate(implicit, 2000, 12, "M12", 31, "default overflow is constrain");
+const lambda = Temporal.PlainDate.from(propertyBag, () => {});
+TemporalHelpers.assertPlainDate(lambda, 2000, 12, "M12", 31, "default overflow is constrain");

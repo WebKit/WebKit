@@ -17,11 +17,13 @@ info: |
     8. Perform CreateDataProperty(unscopableList, "findLastIndex", true).
     9. Perform CreateDataProperty(unscopableList, "flat", true).
     10. Perform CreateDataProperty(unscopableList, "flatMap", true).
-    11. Perform CreateDataProperty(unscopableList, "includes", true).
-    12. Perform CreateDataProperty(unscopableList, "keys", true).
-    13. Perform CreateDataProperty(unscopableList, "values", true).
-    14. Assert: Each of the above calls returns true.
-    15. Return unscopableList.
+    11. Perform ! CreateDataPropertyOrThrow(unscopableList, "groupBy", true).
+    12. Perform ! CreateDataPropertyOrThrow(unscopableList, "groupByToMap", true).
+    13. Perform CreateDataProperty(unscopableList, "includes", true).
+    14. Perform CreateDataProperty(unscopableList, "keys", true).
+    15. Perform CreateDataProperty(unscopableList, "values", true).
+    16. Assert: Each of the above calls returns true.
+    17. Return unscopableList.
 includes: [propertyHelper.js]
 features: [Symbol.unscopables, array-find-from-last]
 ---*/
@@ -75,6 +77,16 @@ assert.sameValue(unscopables.flatMap, true, '`flatMap` property value');
 verifyEnumerable(unscopables, 'flatMap');
 verifyWritable(unscopables, 'flatMap');
 verifyConfigurable(unscopables, 'flatMap');
+
+assert.sameValue(unscopables.groupBy, true, '`groupBy` property value');
+verifyEnumerable(unscopables, 'groupBy');
+verifyWritable(unscopables, 'groupBy');
+verifyConfigurable(unscopables, 'groupBy');
+
+assert.sameValue(unscopables.groupByToMap, true, '`groupByToMap` property value');
+verifyEnumerable(unscopables, 'groupByToMap');
+verifyWritable(unscopables, 'groupByToMap');
+verifyConfigurable(unscopables, 'groupByToMap');
 
 assert.sameValue(unscopables.includes, true, '`includes` property value');
 verifyEnumerable(unscopables, 'includes');

@@ -14,7 +14,7 @@ info: |
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("America/St_Johns");
+const timeZone = new Temporal.TimeZone("-03:30");
 
 const datetime = new Temporal.ZonedDateTime(1572757201_000_000_000n, timeZone);
 const explicit = datetime.with({ minute: 31 }, { offset: undefined });

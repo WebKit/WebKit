@@ -7,6 +7,8 @@ includes: [propertyHelper.js]
 features: [Temporal]
 ---*/
 
+assert.sameValue(typeof Temporal.Now.instant, "function", "typeof is function");
+
 verifyProperty(Temporal.Now, 'instant', {
   enumerable: false,
   writable: true,

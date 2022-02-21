@@ -25,20 +25,20 @@ assert.sameValue(result3.substr(-6), "-07:00", "date-time + offset is the offset
 const result4 = instance.toString({ timeZone: { timeZone } });
 assert.sameValue(result4.substr(-6), "-07:00", "date-time + offset is the offset time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30[America/Vancouver]";
+timeZone = "2021-08-19T17:30[UTC]";
 const result5 = instance.toString({ timeZone });
-assert.sameValue(result5.substr(-6), "-08:00", "date-time + IANA annotation is the offset time zone");
+assert.sameValue(result5.substr(-6), "+00:00", "date-time + IANA annotation is the offset time zone");
 const result6 = instance.toString({ timeZone: { timeZone } });
-assert.sameValue(result6.substr(-6), "-08:00", "date-time + IANA annotation is the offset time zone (string in property bag)");
+assert.sameValue(result6.substr(-6), "+00:00", "date-time + IANA annotation is the offset time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30Z[America/Vancouver]";
+timeZone = "2021-08-19T17:30Z[UTC]";
 const result7 = instance.toString({ timeZone });
-assert.sameValue(result7.substr(-6), "-08:00", "date-time + Z + IANA annotation is the offset time zone");
+assert.sameValue(result7.substr(-6), "+00:00", "date-time + Z + IANA annotation is the offset time zone");
 const result8 = instance.toString({ timeZone: { timeZone } });
-assert.sameValue(result8.substr(-6), "-08:00", "date-time + Z + IANA annotation is the offset time zone (string in property bag)");
+assert.sameValue(result8.substr(-6), "+00:00", "date-time + Z + IANA annotation is the offset time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30-07:00[America/Vancouver]";
+timeZone = "2021-08-19T17:30-07:00[UTC]";
 const result9 = instance.toString({ timeZone });
-assert.sameValue(result9.substr(-6), "-08:00", "date-time + offset + IANA annotation is the offset time zone");
+assert.sameValue(result9.substr(-6), "+00:00", "date-time + offset + IANA annotation is the offset time zone");
 const result10 = instance.toString({ timeZone: { timeZone } });
-assert.sameValue(result10.substr(-6), "-08:00", "date-time + offset + IANA annotation is the offset time zone (string in property bag)");
+assert.sameValue(result10.substr(-6), "+00:00", "date-time + offset + IANA annotation is the offset time zone (string in property bag)");

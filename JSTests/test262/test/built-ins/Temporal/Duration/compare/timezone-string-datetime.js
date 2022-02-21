@@ -15,10 +15,19 @@ assert.throws(RangeError, () => Temporal.Duration.compare(new Temporal.Duration(
 
 [
   "2021-08-19T17:30Z",
+  "2021-08-19T1730Z",
   "2021-08-19T17:30-07:00",
-  "2021-08-19T17:30[America/Vancouver]",
-  "2021-08-19T17:30Z[America/Vancouver]",
-  "2021-08-19T17:30-07:00[America/Vancouver]",
+  "2021-08-19T1730-07:00",
+  "2021-08-19T17:30-0700",
+  "2021-08-19T1730-0700",
+  "2021-08-19T17:30[UTC]",
+  "2021-08-19T1730[UTC]",
+  "2021-08-19T17:30Z[UTC]",
+  "2021-08-19T1730Z[UTC]",
+  "2021-08-19T17:30-07:00[UTC]",
+  "2021-08-19T1730-07:00[UTC]",
+  "2021-08-19T17:30-0700[UTC]",
+  "2021-08-19T1730-0700[UTC]",
 ].forEach((timeZone) => {
   Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
   Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone: { timeZone } } });

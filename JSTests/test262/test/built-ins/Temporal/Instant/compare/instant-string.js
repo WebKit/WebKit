@@ -13,7 +13,7 @@ const hourBefore = new Temporal.Instant(-3600_000_000_000n);
 let str = "1970-01-01T00:00";
 assert.throws(RangeError, () => Temporal.Instant.compare(str, epoch), "bare date-time string is not an instant (first argument)");
 assert.throws(RangeError, () => Temporal.Instant.compare(epoch, str), "bare date-time string is not an instant (second argument)");
-str = "1970-01-01T00:00[America/Vancouver]";
+str = "1970-01-01T00:00[UTC]";
 assert.throws(RangeError, () => Temporal.Instant.compare(str, epoch), "date-time + IANA annotation is not an instant (first argument)");
 assert.throws(RangeError, () => Temporal.Instant.compare(epoch, str), "date-time + IANA annotation is not an instant (second argument)");
 
@@ -25,10 +25,10 @@ str = "1970-01-01T00:00+01:00";
 assert.sameValue(Temporal.Instant.compare(str, hourBefore), 0, "date-time + offset preserves exact time with offset (first argument)");
 assert.sameValue(Temporal.Instant.compare(hourBefore, str), 0, "date-time + offset preserves exact time with offset (second argument)");
 
-str = "1970-01-01T00:00Z[America/Vancouver]";
+str = "1970-01-01T00:00Z[Etc/Ignored]";
 assert.sameValue(Temporal.Instant.compare(str, epoch), 0, "date-time + Z + IANA annotation ignores the IANA annotation (first argument)");
 assert.sameValue(Temporal.Instant.compare(epoch, str), 0, "date-time + Z + IANA annotation ignores the IANA annotation (second argument)");
 
-str = "1970-01-01T00:00+01:00[America/Vancouver]";
+str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 assert.sameValue(Temporal.Instant.compare(str, hourBefore), 0, "date-time + offset + IANA annotation ignores the IANA annotation (first argument)");
 assert.sameValue(Temporal.Instant.compare(hourBefore, str), 0, "date-time + offset + IANA annotation ignores the IANA annotation (second argument)");

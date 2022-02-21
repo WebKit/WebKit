@@ -24,6 +24,8 @@ validValues.forEach((value) => {
   TemporalHelpers.assertPlainTime(explicit, 12, 0, 0, 0, 0, 0, "overflow is ignored");
   const implicit = Temporal.PlainTime.from(value, {});
   TemporalHelpers.assertPlainTime(implicit, 12, 0, 0, 0, 0, 0, "overflow is ignored");
+  const lambda = Temporal.PlainTime.from(value, () => {});
+  TemporalHelpers.assertPlainTime(lambda, 12, 0, 0, 0, 0, 0, "overflow is ignored");
 });
 
 const propertyBag = { hour: 26 };
@@ -31,3 +33,5 @@ const explicit = Temporal.PlainTime.from(propertyBag, { overflow: undefined });
 TemporalHelpers.assertPlainTime(explicit, 23, 0, 0, 0, 0, 0, "default overflow is constrain");
 const implicit = Temporal.PlainTime.from(propertyBag, {});
 TemporalHelpers.assertPlainTime(implicit, 23, 0, 0, 0, 0, 0, "default overflow is constrain");
+const lambda = Temporal.PlainTime.from(propertyBag, () => {});
+TemporalHelpers.assertPlainTime(lambda, 23, 0, 0, 0, 0, 0, "default overflow is constrain");

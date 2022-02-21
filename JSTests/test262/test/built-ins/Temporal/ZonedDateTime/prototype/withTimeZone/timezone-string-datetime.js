@@ -25,20 +25,20 @@ assert.sameValue(result3.timeZone.id, "-07:00", "date-time + offset is the offse
 const result4 = instance.withTimeZone({ timeZone });
 assert.sameValue(result4.timeZone.id, "-07:00", "date-time + offset is the offset time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30[America/Vancouver]";
+timeZone = "2021-08-19T17:30[UTC]";
 const result5 = instance.withTimeZone(timeZone);
-assert.sameValue(result5.timeZone.id, "America/Vancouver", "date-time + IANA annotation is the IANA time zone");
+assert.sameValue(result5.timeZone.id, "UTC", "date-time + IANA annotation is the IANA time zone");
 const result6 = instance.withTimeZone({ timeZone });
-assert.sameValue(result6.timeZone.id, "America/Vancouver", "date-time + IANA annotation is the IANA time zone (string in property bag)");
+assert.sameValue(result6.timeZone.id, "UTC", "date-time + IANA annotation is the IANA time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30Z[America/Vancouver]";
+timeZone = "2021-08-19T17:30Z[UTC]";
 const result7 = instance.withTimeZone(timeZone);
-assert.sameValue(result7.timeZone.id, "America/Vancouver", "date-time + Z + IANA annotation is the IANA time zone");
+assert.sameValue(result7.timeZone.id, "UTC", "date-time + Z + IANA annotation is the IANA time zone");
 const result8 = instance.withTimeZone({ timeZone });
-assert.sameValue(result8.timeZone.id, "America/Vancouver", "date-time + Z + IANA annotation is the IANA time zone (string in property bag)");
+assert.sameValue(result8.timeZone.id, "UTC", "date-time + Z + IANA annotation is the IANA time zone (string in property bag)");
 
-timeZone = "2021-08-19T17:30-07:00[America/Vancouver]";
+timeZone = "2021-08-19T17:30-07:00[UTC]";
 const result9 = instance.withTimeZone(timeZone);
-assert.sameValue(result9.timeZone.id, "America/Vancouver", "date-time + offset + IANA annotation is the IANA time zone");
+assert.sameValue(result9.timeZone.id, "UTC", "date-time + offset + IANA annotation is the IANA time zone");
 const result10 = instance.withTimeZone({ timeZone });
-assert.sameValue(result10.timeZone.id, "America/Vancouver", "date-time + offset + IANA annotation is the IANA time zone (string in property bag)");
+assert.sameValue(result10.timeZone.id, "UTC", "date-time + offset + IANA annotation is the IANA time zone (string in property bag)");

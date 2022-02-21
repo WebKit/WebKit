@@ -15,10 +15,19 @@ assert.throws(RangeError, () => Temporal.Now.plainDateTime("iso8601", { timeZone
 
 [
   "2021-08-19T17:30Z",
+  "2021-08-19T1730Z",
   "2021-08-19T17:30-07:00",
-  "2021-08-19T17:30[America/Vancouver]",
-  "2021-08-19T17:30Z[America/Vancouver]",
-  "2021-08-19T17:30-07:00[America/Vancouver]",
+  "2021-08-19T1730-07:00",
+  "2021-08-19T17:30-0700",
+  "2021-08-19T1730-0700",
+  "2021-08-19T17:30[UTC]",
+  "2021-08-19T1730[UTC]",
+  "2021-08-19T17:30Z[UTC]",
+  "2021-08-19T1730Z[UTC]",
+  "2021-08-19T17:30-07:00[UTC]",
+  "2021-08-19T1730-07:00[UTC]",
+  "2021-08-19T17:30-0700[UTC]",
+  "2021-08-19T1730-0700[UTC]",
 ].forEach((timeZone) => {
   Temporal.Now.plainDateTime("iso8601", timeZone);
   Temporal.Now.plainDateTime("iso8601", { timeZone });

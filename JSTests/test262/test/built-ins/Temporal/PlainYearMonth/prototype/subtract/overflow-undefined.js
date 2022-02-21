@@ -29,3 +29,5 @@ const explicit = yearmonth.subtract(duration, { overflow: undefined });
 TemporalHelpers.assertPlainYearMonth(explicit, 1999, 4, "M04", "default overflow is constrain");
 const implicit = yearmonth.subtract(duration, {});
 TemporalHelpers.assertPlainYearMonth(implicit, 1999, 4, "M04", "default overflow is constrain");
+const lambda = yearmonth.subtract(duration, () => {});
+TemporalHelpers.assertPlainYearMonth(lambda, 1999, 4, "M04", "default overflow is constrain");

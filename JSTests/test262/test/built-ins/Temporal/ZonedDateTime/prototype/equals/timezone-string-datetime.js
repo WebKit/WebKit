@@ -28,16 +28,15 @@ timeZone = "2021-02-19T17:30-08:00";
 assert(instance2.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone }), "date-time + offset is the offset time zone");
 assert(instance2.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone: { timeZone } }), "date-time + offset is the offset time zone (string in property bag)");
 
-expectedTimeZone = "America/Vancouver";
 const instance3 = new Temporal.ZonedDateTime(0n, expectedTimeZone);
-timeZone = "2021-02-19T17:30[America/Vancouver]";
+timeZone = "2021-02-19T17:30[-08:00]";
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone }), "date-time + IANA annotation is the IANA time zone");
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone: { timeZone } }), "date-time + IANA annotation is the IANA time zone (string in property bag)");
 
-timeZone = "2021-02-19T17:30Z[America/Vancouver]";
+timeZone = "2021-02-19T17:30Z[-08:00]";
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone }), "date-time + Z + IANA annotation is the IANA time zone");
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone: { timeZone } }), "date-time + Z + IANA annotation is the IANA time zone (string in property bag)");
 
-timeZone = "2021-02-19T17:30-08:00[America/Vancouver]";
+timeZone = "2021-02-19T17:30-08:00[-08:00]";
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone }), "date-time + offset + IANA annotation is the IANA time zone");
 assert(instance3.equals({ year: 1969, month: 12, day: 31, hour: 16, timeZone: { timeZone } }), "date-time + offset + IANA annotation is the IANA time zone (string in property bag)");

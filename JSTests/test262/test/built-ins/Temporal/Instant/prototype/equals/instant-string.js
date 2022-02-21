@@ -11,7 +11,7 @@ const instance = new Temporal.Instant(0n);
 
 let str = "1970-01-01T00:00";
 assert.throws(RangeError, () => instance.equals(str), "bare date-time string is not an instant");
-str = "1970-01-01T00:00[America/Vancouver]";
+str = "1970-01-01T00:00[UTC]";
 assert.throws(RangeError, () => instance.equals(str), "date-time + IANA annotation is not an instant");
 
 str = "1970-01-01T00:00Z";
@@ -22,10 +22,10 @@ str = "1970-01-01T00:00+01:00";
 const result2 = instance.equals(str);
 assert.sameValue(result2, false, "date-time + offset preserves exact time with offset");
 
-str = "1970-01-01T00:00Z[America/Vancouver]";
+str = "1970-01-01T00:00Z[Etc/Ignored]";
 const result3 = instance.equals(str);
 assert.sameValue(result3, true, "date-time + Z + IANA annotation ignores the IANA annotation");
 
-str = "1970-01-01T00:00+01:00[America/Vancouver]";
+str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 const result4 = instance.equals(str);
 assert.sameValue(result4, false, "date-time + offset + IANA annotation ignores the IANA annotation");

@@ -24,3 +24,5 @@ const explicit = date.subtract(duration, { overflow: undefined });
 TemporalHelpers.assertPlainDate(explicit, 1997, 4, "M04", 30, "default overflow is constrain");
 const implicit = date.subtract(duration, {});
 TemporalHelpers.assertPlainDate(implicit, 1997, 4, "M04", 30, "default overflow is constrain");
+const lambda = date.subtract(duration, {});
+TemporalHelpers.assertPlainDate(lambda, 1997, 4, "M04", 30, "default overflow is constrain");

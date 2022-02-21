@@ -7,7 +7,7 @@ description: TypeError thrown when a primitive is passed as the options argument
 features: [Temporal]
 ---*/
 
-const fields = { year: 2000, month: 13, day: 2 };
+const fields = { year: 2000, month: 11, day: 2 };
 
 const values = [null, true, "hello", Symbol("foo"), 1, 1n];
 for (const badOptions of values) {

@@ -16,7 +16,7 @@ const primitives = [
   "string",
   "local",
   "Z",
-  "-08:00[America/Vancouver]",
+  "-00:00[UTC]",
   "+00:01.1",
   "-01.1",
   "1994-11-05T08:15:30+25:00",

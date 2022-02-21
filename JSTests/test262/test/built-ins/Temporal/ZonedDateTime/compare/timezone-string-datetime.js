@@ -20,9 +20,9 @@ assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(instance, { year:
 [
   "2021-08-19T17:30Z",
   "2021-08-19T17:30-07:00",
-  "2021-08-19T17:30[America/Vancouver]",
-  "2021-08-19T17:30Z[America/Vancouver]",
-  "2021-08-19T17:30-07:00[America/Vancouver]",
+  "2021-08-19T17:30[UTC]",
+  "2021-08-19T17:30Z[UTC]",
+  "2021-08-19T17:30-07:00[UTC]",
 ].forEach((timeZone) => {
   Temporal.ZonedDateTime.compare({ year: 2000, month: 5, day: 2, timeZone }, instance);
   Temporal.ZonedDateTime.compare(instance, { year: 2000, month: 5, day: 2, timeZone });

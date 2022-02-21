@@ -9,4 +9,7 @@ features: [Temporal]
 
 const earlier = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
 const later = new Temporal.ZonedDateTime(1_000_090_061_987_654_321n, "UTC");
-assert.throws(RangeError, () => later.since(earlier, { smallestUnit: "other string" }));
+const values = ["era", "eraYear", "other string"];
+for (const smallestUnit of values) {
+  assert.throws(RangeError, () => later.since(earlier, { smallestUnit }));
+}

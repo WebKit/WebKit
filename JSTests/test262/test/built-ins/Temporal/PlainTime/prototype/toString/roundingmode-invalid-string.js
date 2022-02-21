@@ -8,4 +8,6 @@ features: [Temporal]
 ---*/
 
 const time = new Temporal.PlainTime(12, 34, 56, 123, 987, 500);
-assert.throws(RangeError, () => time.toString({ smallestUnit: "microsecond", roundingMode: "other string" }));
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l"]) {
+  assert.throws(RangeError, () => time.toString({ smallestUnit: "microsecond", roundingMode }));
+}
