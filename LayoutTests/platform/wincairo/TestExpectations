@@ -390,13 +390,6 @@ webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-window-made-passi
 webkit.org/b/219842 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ]
 
 # Needs WebGL video texture support
-webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ]
-webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
 webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
 webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
@@ -531,7 +524,6 @@ css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
-css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failure ]
 fast/css/background-image-with-baseurl.html [ Failure ]
@@ -826,7 +818,6 @@ http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/form-submit-file-cross-site.html [ Skip ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
-http/tests/misc/submit-post-keygen.html [ Skip ]
 http/tests/misc/timer-vs-loading.html [ Skip ]
 http/tests/misc/webtiming-cross-origin-and-back1.html [ Failure Pass ]
 http/tests/misc/webtiming-no-origin.html [ Failure Pass ]
@@ -848,6 +839,7 @@ http/tests/paymentrequest [ Skip ]
 http/tests/plugins [ Skip ]
 http/tests/pointer-lock [ Skip ]
 http/tests/preconnect [ Skip ]
+http/tests/push-api [ Skip ]
 http/tests/preload [ Skip ]
 http/tests/quicklook [ Skip ]
 http/tests/referrer-policy-iframe [ Skip ]
@@ -996,7 +988,7 @@ compositing/visible-rect/  [ Skip ]
 
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Skip ]
 
-# WinCairo DRT and WTR don't support pixel dump yet
+# WinCairo DRT doesn't support pixel dump yet
 webkit.org/b/215041 webgl/smell-test.html [ Skip ]
 webkit.org/b/215041 webgl/webgl-backing-store-size-update.html [ Skip ]
 webkit.org/b/215041 webgl/webgl-border.html [ Skip ]
@@ -1682,6 +1674,8 @@ traversal [ Skip ]
 userscripts [ Skip ]
 webanimations [ Skip ]
 webexposed [ Skip ]
+webgl/1.0.3 [ Skip ]
+webgl/1.0.x [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 webxr [ Skip ]
@@ -1705,12 +1699,6 @@ webxr [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] storage/indexeddb/database-odd-names.html [ Failure Pass ]
 [ Debug ] storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout Pass ]
-[ Debug ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Skip ] # Slow
-[ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
-[ Debug ] webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
-[ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
-[ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
@@ -1729,7 +1717,6 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 [ Release ] editing/selection/caret-rtl-2-left.html [ Pass Failure ]
 [ Release ] fetch/fetch-worker-crash.html [ Pass Timeout ]
-[ Release ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
 [ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
 accessibility/canvas-fallback-content.html [ Timeout ]
 animations/shadow-host-child-change.html [ Skip ]
@@ -1971,7 +1958,6 @@ fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
 fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
 fast/text/shadow-no-blur.html [ Failure ]
 fast/text/shadow-translucent-fill.html [ Failure ]
-fast/text/simple-line-layout-simple-text-but-complex-font-path.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 fast/text/small-caps-web-font.html [ ImageOnlyFailure ]
@@ -1987,7 +1973,6 @@ fast/text/system-font-weight.html [ Failure ]
 fast/text/tatechuyoko.html [ Failure Pass ]
 fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
 fast/text/text-transform-turkish-and-azeri.html [ ImageOnlyFailure ]
-fast/text/trailing-word-detection.html [ Failure ]
 fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 fast/text/trimmable-whitespace-followed-by-br.html [ ImageOnlyFailure ]
 fast/text/updateNewFont.html [ Failure ]
@@ -2073,15 +2058,6 @@ storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
 storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
-webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
-webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
-webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
-webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
-webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
-webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]

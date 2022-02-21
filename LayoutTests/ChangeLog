@@ -1,3 +1,14 @@
+2022-02-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/css/font-face-implicit-local-font-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-override-expected.txt:
+        * platform/wincairo/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/wincairo/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt:
+
 2022-02-21  Rob Buis  <rbuis@igalia.com>
 
         Null check parent node in outdentParagraph
