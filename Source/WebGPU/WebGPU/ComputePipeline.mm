@@ -29,17 +29,150 @@
 
 #import "BindGroupLayout.h"
 #import "Device.h"
+#import "PipelineLayout.h"
+#import "ShaderModule.h"
 
 namespace WebGPU {
 
+struct LibraryCreationResult {
+    id <MTLLibrary> library;
+    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME: This is big. Don't copy this around.
+};
+
+static std::optional<LibraryCreationResult> createLibrary(id <MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
+{
+    if (shaderModule.library()) {
+        if (const auto* pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
+            if (*pipelineLayoutHint == pipelineLayout) {
+                if (const auto* entryPointInformation = shaderModule.entryPointInformation(entryPoint))
+                    return { { shaderModule.library(), *entryPointInformation } };
+            }
+        }
+    }
+
+    const auto* ast = shaderModule.ast();
+    if (!ast)
+        return std::nullopt;
+
+    auto prepareResult = WGSL::prepare(*ast, entryPoint, ShaderModule::convertPipelineLayout(pipelineLayout));
+
+    auto library = ShaderModule::createLibrary(device, prepareResult.msl, label);
+
+    auto iterator = prepareResult.entryPoints.find(entryPoint);
+    if (iterator == prepareResult.entryPoints.end())
+        return std::nullopt;
+    const auto& entryPointInformation = iterator->value;
+
+    return { { library, entryPointInformation } };
+}
+
+static MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, const WGPUConstantEntry* constants, const WGSL::Reflection::EntryPointInformation& entryPointInformation)
+{
+    auto constantValues = [MTLFunctionConstantValues new];
+    for (uint32_t i = 0; i < constantCount; ++i) {
+        const auto& entry = constants[i];
+        auto nameIterator = entryPointInformation.specializationConstantIndices.find(entry.key);
+        if (nameIterator == entryPointInformation.specializationConstantIndices.end())
+            return nullptr;
+        auto specializationConstantIndex = nameIterator->value;
+        auto indexIterator = entryPointInformation.specializationConstants.find(specializationConstantIndex);
+        if (indexIterator == entryPointInformation.specializationConstants.end())
+            return nullptr;
+        const auto& specializationConstant = indexIterator->value;
+        switch (specializationConstant.type) {
+        case WGSL::Reflection::SpecializationConstantType::Boolean: {
+            bool value = entry.value;
+            [constantValues setConstantValue:&value type:MTLDataTypeBool withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Float: {
+            float value = entry.value;
+            [constantValues setConstantValue:&value type:MTLDataTypeFloat withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Int: {
+            int value = entry.value;
+            [constantValues setConstantValue:&value type:MTLDataTypeInt withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Unsigned: {
+            unsigned value = entry.value;
+            [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
+            break;
+        }
+        default:
+            return nullptr;
+        }
+    }
+    return constantValues;
+}
+
+static id <MTLFunction> createFunction(id <MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor& compute, NSString *label)
+{
+    auto functionDescriptor = [MTLFunctionDescriptor new];
+    functionDescriptor.name = entryPointInformation.mangledName;
+    if (compute.constantCount) {
+        auto constantValues = createConstantValues(compute.constantCount, compute.constants, entryPointInformation);
+        if (!constantValues)
+            return nullptr;
+        functionDescriptor.constantValues = constantValues;
+    }
+    NSError *error = nil;
+    id <MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
+    if (error)
+        WTFLogAlways("Function creation error: %@", error);
+    function.label = label;
+    return function;
+}
+
+static id <MTLComputePipelineState> createComputePipelineState(id <MTLDevice> device, id <MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label)
+{
+    auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
+    computePipelineDescriptor.computeFunction = function;
+    // FIXME: check this calculation for overflow
+    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = computeInformation.workgroupSize.width * computeInformation.workgroupSize.height * computeInformation.workgroupSize.depth;
+    for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
+        computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
+    computePipelineDescriptor.supportIndirectCommandBuffers = YES;
+    computePipelineDescriptor.label = label;
+    NSError *error = nil;
+    // FIXME: Run the asynchronous version of this
+    id <MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:MTLPipelineOptionNone reflection:nil error:&error];
+    if (error)
+        WTFLogAlways("Pipeline state creation error: %@", error);
+    return computePipelineState;
+}
+
 RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return ComputePipeline::create(nil);
+    if (descriptor->nextInChain || descriptor->compute.nextInChain)
+        return nullptr;
+
+    const ShaderModule& shaderModule = descriptor->compute.module->shaderModule;
+    const PipelineLayout& pipelineLayout = descriptor->layout->pipelineLayout;
+    auto label = [NSString stringWithCString:descriptor->label encoding:NSUTF8StringEncoding];
+
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, descriptor->compute.entryPoint, label);
+    if (!libraryCreationResult)
+        return nullptr;
+
+    auto library = libraryCreationResult->library;
+    const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+
+    if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
+        return nullptr;
+    const auto& computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
+
+    auto function = createFunction(library, entryPointInformation, descriptor->compute, label);
+
+    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label);
+
+    return ComputePipeline::create(computePipelineState);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
 {
+    // FIXME: Implement this
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);
 }

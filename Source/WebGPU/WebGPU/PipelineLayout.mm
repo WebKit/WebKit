@@ -57,6 +57,18 @@ void PipelineLayout::setLabel(const char*)
     // There is no Metal object that represents a pipeline layout.
 }
 
+bool PipelineLayout::operator==(const PipelineLayout& other) const
+{
+    UNUSED_PARAM(other);
+    // FIXME: Implement this
+    return false;
+}
+
+bool PipelineLayout::operator!=(const PipelineLayout& other) const
+{
+    return !(*this == other);
+}
+
 }
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)

@@ -25,18 +25,23 @@
 
 #pragma once
 
+#import "WGSL.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/text/StringHash.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebGPU {
+
+class PipelineLayout;
 
 class ShaderModule : public RefCounted<ShaderModule> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ShaderModule> create(id <MTLLibrary> library)
+    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id <MTLLibrary> library)
     {
-        return adoptRef(*new ShaderModule(library));
+        return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library));
     }
 
     ~ShaderModule();
@@ -44,12 +49,22 @@ public:
     void getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback);
     void setLabel(const char*);
 
+    static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
+    static id <MTLLibrary> createLibrary(id <MTLDevice>, const String& msl, NSString *label);
+
+    const WGSL::AST* ast() const;
+
+    const PipelineLayout* pipelineLayoutHint(const String&) const;
+    const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
     id <MTLLibrary> library() const { return m_library; }
 
 private:
-    ShaderModule(id <MTLLibrary>);
+    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id <MTLLibrary>);
 
-    id <MTLLibrary> m_library { nil };
+    const std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> m_checkResult;
+    const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
+    const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
+    id <MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
 };
 
 } // namespace WebGPU

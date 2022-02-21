@@ -1,5 +1,43 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 11: Implement shader creation methods
+        https://bugs.webkit.org/show_bug.cgi?id=236933
+
+        Reviewed by Dean Jackson.
+
+        This implements Device::createShaderModule() and Device::createComputePipeline(). The async versions (neither
+        the WebGPU nor the Metal flavor) aren't implemented yet; this is just the first basic implementation.
+
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::createLibrary):
+        (WebGPU::createConstantValues):
+        (WebGPU::createFunction):
+        (WebGPU::createComputePipelineState):
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::Device::createComputePipelineAsync):
+        * WebGPU/PipelineLayout.h:
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::PipelineLayout::operator== const):
+        (WebGPU::PipelineLayout::operator!= const):
+        * WebGPU/ShaderModule.h:
+        (WebGPU::ShaderModule::create):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::findShaderModuleParameters):
+        (WebGPU::ShaderModule::createLibrary):
+        (WebGPU::earlyCompileShaderModule):
+        (WebGPU::Device::createShaderModule):
+        (WebGPU::ShaderModule::ShaderModule):
+        (WebGPU::CompilationMessageData::CompilationMessageData):
+        (WebGPU::convertMessages):
+        (WebGPU::ShaderModule::getCompilationInfo):
+        (WebGPU::ShaderModule::setLabel):
+        (WebGPU::ShaderModule::convertPipelineLayout):
+        (WebGPU::ShaderModule::ast const):
+        (WebGPU::ShaderModule::pipelineLayoutHint const):
+        (WebGPU::ShaderModule::entryPointInformation const):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 10: Implement setLabel() and Metal accessors
         https://bugs.webkit.org/show_bug.cgi?id=236910
 
