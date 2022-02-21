@@ -9,7 +9,7 @@
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2020, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -632,7 +632,45 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     if (!isPositioningAllowed)
         style.setPosition(RenderStyle::initialPosition());
 
-    // LegacyRenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // SVG2: A new stacking context must be established at an SVG element for its descendants if:
+    // - it is the root element
+    // - the "z-index" property applies to the element and its computed value is an integer
+    // - the element is an outermost svg element, or a "foreignObject", "image", "marker", "mask", "pattern", "symbol" or "use" element
+    // - the element is an inner "svg" element and the computed value of its "overflow" property is a value other than visible
+    // - the element is subject to explicit clipping:
+    //   - the "clip" property applies to the element and it has a computed value other than auto
+    //   - the "clip-path" property applies to the element and it has a computed value other than none
+    // - the "mask" property applies to the element and it has a computed value other than none
+    // - the "filter" property applies to the element and it has a computed value other than none
+    // - a property defined in another specification is applied and that property is defined to establish a stacking context in SVG
+    //
+    // Some of the rules above were already enforced in StyleResolver::adjustRenderStyle() - for those cases assertions were added.
+    if (svgElement.document().settings().layerBasedSVGEngineEnabled() && style.hasAutoUsedZIndex()) {
+        // adjustRenderStyle() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
+        ASSERT(!style.hasClip());
+        ASSERT(!style.clipPath());
+        ASSERT(!style.hasFilter());
+        ASSERT(!svgElement.isOutermostSVGSVGElement());
+
+        auto isInnerSVGElement = [] (const SVGElement& svgElement) -> bool {
+            return svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && is<SVGElement>(svgElement.parentNode());
+        };
+
+        if (svgElement.hasTagName(SVGNames::foreignObjectTag)
+            || svgElement.hasTagName(SVGNames::imageTag)
+            || svgElement.hasTagName(SVGNames::markerTag)
+            || svgElement.hasTagName(SVGNames::maskTag)
+            || svgElement.hasTagName(SVGNames::patternTag)
+            || svgElement.hasTagName(SVGNames::symbolTag)
+            || svgElement.hasTagName(SVGNames::useTag)
+            || (isInnerSVGElement(svgElement) && (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible))
+            || style.hasPositionedMask())
+        style.setUsedZIndex(0);
+    }
+#endif
+
+    // (Legacy)RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
     // not be scaled again.
     if (svgElement.hasTagName(SVGNames::foreignObjectTag))
         style.setEffectiveZoom(RenderStyle::initialZoom());
