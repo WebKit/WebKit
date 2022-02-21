@@ -1,3 +1,14 @@
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] WebGPU.xcodeproj cannot be opened on Big Sur's Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=236982
+
+        Unreviewed.
+
+        Just change the project version number from 55 to 51, like the rest of the projects in WebKit.
+
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Any object-creation function that takes a descriptor can fail
