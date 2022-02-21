@@ -563,16 +563,18 @@ class AutoInstall(object):
         if local:
             if package.name == 'autoinstalled':
                 raise ValueError("local package name 'autoinstalled' is forbidden")
-            libraries = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            containing_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            libraries = os.path.dirname(containing_path)
             checkout_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(libraries))))
             for candidate in [
+                containing_path,
                 os.path.join(libraries, package.pypi_name),
                 os.path.join(checkout_root, 'Internal', 'Tools', 'Scripts', 'libraries', package.pypi_name),
             ]:
-                if candidate in sys.path:
-                    return package
                 if not os.path.isdir(os.path.join(candidate, package.name)):
                     continue
+                if candidate in sys.path:
+                    return [package]
                 sys.path.insert(0, candidate)
                 return [package]
             else:
