@@ -26,23 +26,35 @@
 #import "config.h"
 #import "PipelineLayout.h"
 
+#import "BindGroupLayout.h"
 #import "Device.h"
 
 namespace WebGPU {
 
 RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor* descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return PipelineLayout::create();
+    if (descriptor->nextInChain)
+        return nullptr;
+
+    Vector<Ref<BindGroupLayout>> bindGroupLayouts;
+    bindGroupLayouts.reserveInitialCapacity(descriptor->bindGroupLayoutCount);
+    for (uint32_t i = 0; i < descriptor->bindGroupLayoutCount; ++i) {
+        const auto* bindGroupLayout = descriptor->bindGroupLayouts[i];
+        bindGroupLayouts.uncheckedAppend(bindGroupLayout->bindGroupLayout);
+    }
+    return PipelineLayout::create(WTFMove(bindGroupLayouts));
 }
 
-PipelineLayout::PipelineLayout() = default;
+PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts)
+    : m_bindGroupLayouts(WTFMove(bindGroupLayouts))
+{
+}
 
 PipelineLayout::~PipelineLayout() = default;
 
-void PipelineLayout::setLabel(const char* label)
+void PipelineLayout::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // There is no Metal object that represents a pipeline layout.
 }
 
 }

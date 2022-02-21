@@ -43,6 +43,8 @@ public:
 
     void setLabel(const char*);
 
+    id <MTLTexture> texture() const { return m_texture; }
+
 private:
     TextureView(id <MTLTexture>);
 

@@ -43,6 +43,8 @@ public:
 
     void setLabel(const char*);
 
+    id <MTLSamplerState> samplerState() const { return m_samplerState; }
+
 private:
     Sampler(id <MTLSamplerState>);
 

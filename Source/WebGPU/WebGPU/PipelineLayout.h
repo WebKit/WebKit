@@ -28,23 +28,31 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 namespace WebGPU {
+
+class BindGroupLayout;
 
 class PipelineLayout : public RefCounted<PipelineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PipelineLayout> create()
+    static Ref<PipelineLayout> create(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts)
     {
-        return adoptRef(*new PipelineLayout());
+        return adoptRef(*new PipelineLayout(WTFMove(bindGroupLayouts)));
     }
 
     ~PipelineLayout();
 
     void setLabel(const char*);
 
+    size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts.size(); }
+    const BindGroupLayout& bindGroupLayout(size_t i) const { return m_bindGroupLayouts[i]; }
+
 private:
-    PipelineLayout();
+    PipelineLayout(Vector<Ref<BindGroupLayout>>&&);
+
+    const Vector<Ref<BindGroupLayout>> m_bindGroupLayouts;
 };
 
 } // namespace WebGPU

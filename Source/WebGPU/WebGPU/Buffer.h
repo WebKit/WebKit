@@ -49,6 +49,8 @@ public:
     void unmap();
     void setLabel(const char*);
 
+    id <MTLBuffer> buffer() const { return m_buffer; }
+
 private:
     Buffer(id <MTLBuffer>);
 

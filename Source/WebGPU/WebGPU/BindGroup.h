@@ -43,6 +43,10 @@ public:
 
     void setLabel(const char*);
 
+    id <MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
+    id <MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
+    id <MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
+
 private:
     BindGroup(id <MTLBuffer> vertexArgumentBuffer, id <MTLBuffer> fragmentArgumentBuffer, id <MTLBuffer> computeArgumentBuffer);
 

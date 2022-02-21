@@ -1,5 +1,59 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 9: Basic implementation of bindings
+        https://bugs.webkit.org/show_bug.cgi?id=236903
+
+        Reviewed by Dean Jackson.
+
+        This is a basic implementation of the BindGroup, BindGroupLayout, and PipelineLayout methods.
+        Eventually we'll want to suballocate multiple BindGroups so they coexist within the same Buffer,
+        but this is an initial simple implementation that doesn't do that.
+
+        * WebGPU/BindGroup.h:
+        (WebGPU::BindGroup::vertexArgumentBuffer const):
+        (WebGPU::BindGroup::fragmentArgumentBuffer const):
+        (WebGPU::BindGroup::computeArgumentBuffer const):
+        * WebGPU/BindGroup.mm:
+        (WebGPU::bufferIsPresent):
+        (WebGPU::samplerIsPresent):
+        (WebGPU::textureViewIsPresent):
+        (WebGPU::Device::createBindGroup):
+        (WebGPU::BindGroup::BindGroup):
+        (WebGPU::BindGroup::setLabel):
+        * WebGPU/BindGroupLayout.h:
+        (WebGPU::BindGroupLayout::vertexArgumentEncoder const):
+        (WebGPU::BindGroupLayout::fragmentArgumentEncoder const):
+        (WebGPU::BindGroupLayout::computeArgumentEncoder const):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::isPresent):
+        (WebGPU::createArgumentDescriptor):
+        (WebGPU::Device::createBindGroupLayout):
+        (WebGPU::BindGroupLayout::BindGroupLayout):
+        (WebGPU::BindGroupLayout::setLabel):
+        (WebGPU::BindGroupLayout::encodedLength const):
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::buffer const):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::Buffer):
+        * WebGPU/PipelineLayout.h:
+        (WebGPU::PipelineLayout::create):
+        (WebGPU::PipelineLayout::numberOfBindGroupLayouts const):
+        (WebGPU::PipelineLayout::bindGroupLayout const):
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::Device::createPipelineLayout):
+        (WebGPU::PipelineLayout::PipelineLayout):
+        (WebGPU::PipelineLayout::setLabel):
+        * WebGPU/Sampler.h:
+        (WebGPU::Sampler::samplerState const):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Sampler::Sampler):
+        * WebGPU/TextureView.h:
+        (WebGPU::TextureView::texture const):
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::TextureView):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 8: Basic implementation of device creation routines
         https://bugs.webkit.org/show_bug.cgi?id=236902
 

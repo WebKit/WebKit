@@ -43,6 +43,12 @@ public:
 
     void setLabel(const char*);
 
+    NSUInteger encodedLength() const;
+
+    id <MTLArgumentEncoder> vertexArgumentEncoder() const { return m_vertexArgumentEncoder; }
+    id <MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
+    id <MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
+
 private:
     BindGroupLayout(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder);
 

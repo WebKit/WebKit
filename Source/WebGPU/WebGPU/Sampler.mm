@@ -39,7 +39,6 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
 Sampler::Sampler(id <MTLSamplerState> samplerState)
     : m_samplerState(samplerState)
 {
-    UNUSED_VARIABLE(m_samplerState);
 }
 
 Sampler::~Sampler() = default;
