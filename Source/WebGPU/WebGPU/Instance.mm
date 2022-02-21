@@ -34,18 +34,45 @@
 
 namespace WebGPU {
 
-Instance::Instance() = default;
+static constexpr NSString *runLoopMode = @"kCFRunLoopWebGPUMode";
+
+RefPtr<Instance> Instance::create(const WGPUInstanceDescriptor* descriptor)
+{
+    if (descriptor->nextInChain)
+        return nullptr;
+
+    NSRunLoop *runLoop = NSRunLoop.currentRunLoop;
+    if (!runLoop)
+        return nullptr;
+
+    return adoptRef(*new Instance(runLoop));
+}
+
+Instance::Instance(NSRunLoop *runLoop)
+    : m_runLoop(runLoop)
+{
+}
 
 Instance::~Instance() = default;
 
 RefPtr<Surface> Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(descriptor);
     return Surface::create();
 }
 
 void Instance::processEvents()
 {
+    // NSRunLoops are not thread-safe, but then again neither is WebGPU.
+    // If the caller does all the necessary synchronization themselves, this will be safe.
+    // In that situation, we have to make sure we're using the run loop we were created on,
+    // so tasks that were queued up on one thread actually get executed here, even if
+    // this is executing on a different thread.
+    BOOL result;
+    do {
+        result = [m_runLoop runMode:runLoopMode beforeDate:[NSDate date]];
+    } while (result);
 }
 
 void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
@@ -64,8 +91,8 @@ void wgpuInstanceRelease(WGPUInstance instance)
 
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return new WGPUInstanceImpl { WebGPU::Instance::create() };
+    auto result = WebGPU::Instance::create(descriptor);
+    return result ? new WGPUInstanceImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)

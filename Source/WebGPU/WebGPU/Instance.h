@@ -26,6 +26,7 @@
 #pragma once
 
 #import "WebGPU.h"
+#import <Foundation/Foundation.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -40,10 +41,7 @@ class Surface;
 class Instance : public RefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Instance> create()
-    {
-        return adoptRef(*new Instance());
-    }
+    static RefPtr<Instance> create(const WGPUInstanceDescriptor*);
 
     ~Instance();
 
@@ -51,8 +49,12 @@ public:
     void processEvents();
     void requestAdapter(const WGPURequestAdapterOptions*, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
 
+    NSRunLoop *runLoop() const { return m_runLoop; }
+
 private:
-    Instance();
+    Instance(NSRunLoop *);
+
+    NSRunLoop *m_runLoop;
 };
 
 } // namespace WebGPU

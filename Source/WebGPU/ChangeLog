@@ -1,5 +1,26 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 6: Give a RunLoop to Instance
+        https://bugs.webkit.org/show_bug.cgi?id=236899
+
+        Reviewed by Dean Jackson.
+
+        The shared header has a function, wgpuInstanceProcessEvents(), which is supposed
+        to synchronously call all outstanding callbacks. A natural way to do this is to
+        hook this up to [NSRunLoop runMode:beforeDate:].
+
+        * WebGPU/Instance.h:
+        (WebGPU::Instance::runLoop const):
+        (WebGPU::Instance::create): Deleted.
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::create):
+        (WebGPU::Instance::Instance):
+        (WebGPU::Instance::createSurface):
+        (WebGPU::Instance::processEvents):
+        (wgpuCreateInstance):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 5: Give Metal objects to WebGPU objects
         https://bugs.webkit.org/show_bug.cgi?id=236898
 
