@@ -218,6 +218,9 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
     if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
+    if (entryType == "paint" && m_firstContentfulPaint)
+        entries.append(m_firstContentfulPaint);
+
     if (m_userTiming) {
         if (entryType.isNull() || entryType == "mark")
             entries.appendVector(m_userTiming->getMarks());

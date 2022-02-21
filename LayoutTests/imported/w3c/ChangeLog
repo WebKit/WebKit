@@ -1,3 +1,13 @@
+2022-02-21  Noam Rosenthal  <noam@webkit.org>
+
+        PerformanceObserver: buffered flag not working in Paint Timing
+        https://bugs.webkit.org/show_bug.cgi?id=225305
+        <rdar://problem/77746237>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/paint-timing/fcp-only/buffered-flag.window-expected.txt: This test now passes
+
 2022-02-20  Tim Nguyen  <ntim@apple.com>
 
         Rebaseline inert-focus-in-frames.html after r290197.
