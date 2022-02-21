@@ -108,7 +108,9 @@ public:
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
 
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
-    const FilteredContainerQuery* containerQueryFor(const RuleData&) const;
+
+    bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
+    Vector<const FilteredContainerQuery*> containerQueriesFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -144,7 +146,7 @@ private:
     CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
 
     struct ContainerQueryAndParent {
-        FilteredContainerQuery query;
+        Ref<StyleRuleContainer> containerRule;
         ContainerQueryIdentifier parent;
     };
 
@@ -221,16 +223,21 @@ inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& rul
     return cascadeLayerPriorityForIdentifier(identifier);
 }
 
-inline const FilteredContainerQuery* RuleSet::containerQueryFor(const RuleData& ruleData) const
+inline Vector<const FilteredContainerQuery*> RuleSet::containerQueriesFor(const RuleData& ruleData) const
 {
     if (m_containerQueryIdentifierForRulePosition.size() <= ruleData.position())
-        return nullptr;
+        return { };
+
+    Vector<const FilteredContainerQuery*> queries;
 
     auto identifier = m_containerQueryIdentifierForRulePosition[ruleData.position()];
-    if (!identifier)
-        return nullptr;
+    while (identifier) {
+        auto& query = m_containerQueries[identifier - 1];
+        queries.append(&query.containerRule->filteredQuery());
+        identifier = query.parent;
+    };
 
-    return &m_containerQueries[identifier - 1].query;
+    return queries;
 }
 
 

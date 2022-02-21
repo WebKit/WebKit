@@ -112,7 +112,7 @@ private:
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
-    bool containerQueryMatches(const FilteredContainerQuery&);
+    bool containerQueriesMatch(const Vector<const FilteredContainerQuery*>&);
 
     void sortMatchedRules();
 

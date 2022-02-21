@@ -113,7 +113,7 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             auto& containerRule = downcast<StyleRuleContainer>(*rule);
             auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
             if (m_ruleSet) {
-                m_ruleSet->m_containerQueries.append({ containerRule.filteredQuery(), previousContainerQueryIdentifier });
+                m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
                 m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
             }
             addChildRules(containerRule.childRules());
