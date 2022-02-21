@@ -1,3 +1,17 @@
+2022-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove resource access in sandbox for older OS versions
+        https://bugs.webkit.org/show_bug.cgi?id=236975
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to some resources in sandbox for older OS versions. Access to these resources were initially
+        added in https://trac.webkit.org/changeset/290180/webkit and https://trac.webkit.org/changeset/290066/webkit,
+        and was only intended to land on a branch.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-21  Simon Lewis  <simon.lewis@apple.com>
 
         Change IPC encoding of boolean type to use one bit

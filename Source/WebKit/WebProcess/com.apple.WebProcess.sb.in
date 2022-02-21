@@ -1872,57 +1872,6 @@
 (disable-syscall-inference)
 #endif
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-(define (syscall-unix-older-macOS)
-    (syscall-number
-        SYS___pthread_markcancel
-        SYS_abort_with_payload
-        SYS_chmod_extended
-        SYS_connect_nocancel
-        SYS_connectx
-        SYS_fgetattrlist ;; <rdar://problem/50931110>
-        SYS_fileport_makeport
-        SYS_fstat64_extended ;; <rdar://problem/61310019>
-        SYS_getpeername
-        SYS_getsockopt
-        SYS_guarded_write_np
-        SYS_lstat64_extended
-        SYS_lstat_extended
-        SYS_memorystatus_control ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
-        SYS_mkdirat
-        SYS_open_dprotected_np ;; <rdar://problem/74473824>
-        SYS_pipe
-        SYS_process_policy
-        SYS_psynch_rw_rdlock ;; <rdar://problem/49060359>
-        SYS_pwrite
-        SYS_quotactl ;; <rdar://problem/49945031>
-        SYS_recvfrom
-        SYS_recvfrom_nocancel
-        SYS_rmdir
-        SYS_select
-        SYS_select_nocancel
-        SYS_sem_post
-        SYS_sem_wait
-        SYS_sendmsg_nocancel
-        SYS_sendto_nocancel
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-        SYS_setattrlist ;; rdar://problem/74162777
-#endif
-        SYS_setpriority
-        SYS_setrlimit
-        SYS_setsockopt
-        SYS_shutdown
-        SYS_sigreturn
-        SYS_socketpair
-        SYS_stat64_extended ;; <rdar://problem/50473330>
-        SYS_terminate_with_payload ;; <rdar://problem/50026580>
-        SYS_thread_selfusage
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        SYS_ulock_wait2 ;; <rdar://problem/58743778>
-#endif
-))
-#endif
-
 (define (syscall-unix-common)
     (syscall-number
         SYS___disable_threadsignal
@@ -1970,7 +1919,6 @@
         SYS_kdebug_trace
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
-        SYS_kevent ;; <rdar://89072361>
         SYS_kevent_id
         SYS_kevent_qos
         SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
@@ -2046,6 +1994,7 @@
         SYS_guarded_open_np
         SYS_guarded_pwrite_np
         SYS_kdebug_typefilter
+        SYS_kevent ;; <rdar://89072361>
         SYS_mlock
         SYS_munlock
         SYS_necp_client_action
@@ -2077,11 +2026,6 @@
     (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
         (syscall-unix-common))
-
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
-    (allow syscall-unix
-        (syscall-unix-older-macOS))
-#endif
 
     (if (equal? (param "CPU") "arm64")
         (begin
