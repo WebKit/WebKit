@@ -6,6 +6,8 @@ sources:
   ref: freedesktop-sdk-21.08.10-21-g7f2b952d70b0cd71ef9156983947b1dc713a393f
 - kind: patch
   path: patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch
+- kind: patch
+  path: patches/fdo-0001-pango-Bump-to-1.50.4.patch
 config:
   options:
     target_arch: '%{arch}'

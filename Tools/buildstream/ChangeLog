@@ -1,3 +1,16 @@
+2022-02-21  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update pango and gtk4
+        https://bugs.webkit.org/show_bug.cgi?id=236939
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update to GTK 4.6.2, which requires Pango 1.50.x, so also update Pango.
+        
+        * elements/freedesktop-sdk.bst:
+        * elements/sdk/gtk.bst:
+        * patches/fdo-0001-pango-Bump-to-1.50.4.patch: Added.
+
 2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Add mold linker
